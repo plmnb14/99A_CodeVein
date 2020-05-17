@@ -6,11 +6,13 @@
 CPlayerHP::CPlayerHP(_Device pGraphic_Device)
 	: CUI(pGraphic_Device)
 {
+	ZeroMemory(&m_vecNoiseDir, sizeof(_v2));
 }
 
 CPlayerHP::CPlayerHP(const CPlayerHP & rhs)
 	: CUI(rhs)
 {
+	ZeroMemory(&m_vecNoiseDir, sizeof(_v2));
 }
 
 HRESULT CPlayerHP::Ready_GameObject_Prototype()
@@ -60,6 +62,7 @@ _int CPlayerHP::Update_GameObject(_double TimeDelta)
 
 	m_pFontTotalHP->Update_NumberValue(m_fTotalHP);
 
+	
 	return NO_EVENT;
 }
 
@@ -89,17 +92,43 @@ HRESULT CPlayerHP::Render_GameObject()
 	g_pManagement->Set_Transform(D3DTS_PROJECTION, m_matProj);
 
 	_uint iPass = 0;
-	LOOP(4)
+	_uint iIndex = 0;
+	LOOP(5)
 	{
-		if (1 == i)
+		if (0 == i)
+		{
+			m_fSizeX = 320.f;
+			m_fSizeY = 64.f;
+			iIndex = 0;
+			iPass = 1;
+		}
+		else if (1 == i)
 		{
 			m_fSizeX = 300.f;
 			m_fSizeY = 64.f;
+			iIndex = 1;
+			iPass = 2;
+		}
+		else if (2 == i)
+		{
+			m_fSizeX = 300.f;
+			m_fSizeY = 32.f;
+			iIndex = 4;
+			iPass = 10;
+		}
+		else if (3 == i)
+		{
+			m_fSizeX = 300.f;
+			m_fSizeY = 64.f;
+			iIndex = 3;
+			iPass = 1;
 		}
 		else
 		{
 			m_fSizeX = 320.f;
 			m_fSizeY = 64.f;
+			iIndex = 2;
+			iPass = 1;
 		}
 
 		m_matWorld._11 = m_fSizeX;
@@ -108,9 +137,11 @@ HRESULT CPlayerHP::Render_GameObject()
 		m_matWorld._41 = m_fPosX - WINCX * 0.5f;
 		m_matWorld._42 = -m_fPosY + WINCY * 0.5f;
 
-		if (FAILED(SetUp_ConstantTable(i)))
+		
+		if (FAILED(SetUp_ConstantTable(iIndex)))
 			return E_FAIL;
-		(i == 1) ? (iPass = 2) : (iPass = 1);
+		//(i == 1) ? (iPass = 2) : (iPass = 1);
+
 		m_pShaderCom->Begin_Shader();
 
 		m_pShaderCom->Begin_Pass(iPass);
@@ -156,7 +187,7 @@ HRESULT CPlayerHP::SetUp_ConstantTable(_uint iIndex)
 	if (nullptr == m_pShaderCom)
 		return E_FAIL;
 
-	if (iIndex == 1)
+	//if (iIndex == 1)
 	{
 		if (FAILED(m_pShaderCom->Set_Value("g_matWorld", &m_matWorld, sizeof(_mat))))
 			return E_FAIL;
@@ -168,19 +199,16 @@ HRESULT CPlayerHP::SetUp_ConstantTable(_uint iIndex)
 		if (FAILED(m_pShaderCom->Set_Value("g_fSpeed", &m_fSpeed, sizeof(_float))))
 			return E_FAIL;
 
-		if (FAILED(m_pShaderCom->Set_Value("g_fPosX", &m_fPosX, sizeof(_float))))
-			return E_FAIL;
-
-		if (FAILED(m_pShaderCom->Set_Value("g_fSizeX", &m_fSizeX, sizeof(_float))))
-			return E_FAIL;
-
 		if (FAILED(m_pShaderCom->Set_Value("g_fPercentage", &m_fPercentage, sizeof(_float))))
+			return E_FAIL;
+
+		if (FAILED(m_pShaderCom->Set_Value("g_vNoiseDir", &m_vecNoiseDir, sizeof(_v2))))
 			return E_FAIL;
 
 		if (FAILED(m_pTextureCom->SetUp_OnShader("g_DiffuseTexture", m_pShaderCom, iIndex)))
 			return E_FAIL;
 	}
-	else
+	/*else
 	{
 		if (FAILED(m_pShaderCom->Set_Value("g_matWorld", &m_matWorld, sizeof(_mat))))
 			return E_FAIL;
@@ -190,7 +218,7 @@ HRESULT CPlayerHP::SetUp_ConstantTable(_uint iIndex)
 			return E_FAIL;
 		if (FAILED(m_pTextureCom->SetUp_OnShader("g_DiffuseTexture", m_pShaderCom, iIndex)))
 			return E_FAIL;
-	}
+	}*/
 
 	return NOERROR;
 }
@@ -199,19 +227,20 @@ void CPlayerHP::SetUp_Default()
 {
 	// Player 현재 체력 폰트
 	m_pFontCurHP = static_cast<CPlayerFontUI*>(g_pManagement->Clone_GameObject_Return(L"GameObject_PlayerFontUI", nullptr));
-	m_pFontCurHP->Set_UI_Pos(m_fPosX + 65.f, m_fPosY);
-	m_pFontCurHP->Set_UI_Size(10.4f, 20.f);
+	m_pFontCurHP->Set_UI_Pos(m_fPosX + 68.f, m_fPosY);
+	m_pFontCurHP->Set_UI_Size(15.f, 30.f);
 	m_pFontCurHP->Set_ViewZ(m_fViewZ - 0.1f);
 	m_pFontCurHP->Set_Active(true);
 	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pFontCurHP, SCENE_MORTAL, L"Layer_PlayerUI", nullptr);
 
 	// 플레이어 전체 체력 폰트
 	m_pFontTotalHP = static_cast<CPlayerFontUI*>(g_pManagement->Clone_GameObject_Return(L"GameObject_PlayerFontUI", nullptr));
-	m_pFontTotalHP->Set_UI_Pos(m_fPosX + 125.f, m_fPosY);
-	m_pFontTotalHP->Set_UI_Size(7.8f, 15.f);
+	m_pFontTotalHP->Set_UI_Pos(m_fPosX + 123.f, m_fPosY);
+	m_pFontTotalHP->Set_UI_Size(10.f, 20.f);
 	m_pFontTotalHP->Set_ViewZ(m_fViewZ - 0.1f);
 	m_pFontTotalHP->Set_Active(true);
 	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pFontTotalHP, SCENE_MORTAL, L"Layer_PlayerUI", nullptr);
+
 }
 
 void CPlayerHP::SetUp_State(_double TimeDelta)
@@ -227,6 +256,8 @@ void CPlayerHP::SetUp_State(_double TimeDelta)
 	
 	// Texture UV 흐르는 속도
 	m_fSpeed += -0.2f * _float(TimeDelta);
+
+	m_vecNoiseDir += -0.1f * _float(TimeDelta) * V2_ONE;
 
 	m_fPercentage = m_fPlayerHP / m_fTotalHP;
 }
