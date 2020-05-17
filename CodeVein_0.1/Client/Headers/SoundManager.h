@@ -74,6 +74,9 @@ public:
 	Purchase_GeneralShop_MtrlSlot01, Purchase_GeneralShop_MtrlSlot02, Purchase_GeneralShop_MtrlSlot03,
 	Expend_Buy_Left, Expend_Buy_Right, Expend_Buy_Purchase, Expend_Buy_Fail,
 	Material_Buy_Left, Material_Buy_Right, Material_Buy_Purchase, Material_Buy_Fail,
+	BloodCode_Slot01, BloodCode_Slot02, BloodCode_Slot03, BloodCode_Slot04, BloodCode_Slot05,
+	BloodSkill_Slot01, BloodSkill_Slot02, BloodSkill_Slot03, BloodSkill_Slot04, BloodSkill_Slot05,
+	BloodCode_Select, Skill_Release_Question, Skill_Release_OK, Skill_Release_Cancel, 
 	//===============================================================
 	MAX_CHANNEL
 	};

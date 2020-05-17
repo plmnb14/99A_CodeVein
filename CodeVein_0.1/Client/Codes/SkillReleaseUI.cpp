@@ -244,7 +244,7 @@ void CSkillReleaseUI::SetUp_Default()
 		g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_MORTAL, L"Layer_PlayerUI", nullptr);
 		m_vecSkillSlot.push_back(pInstance);
 	}
-
+	
 	m_pQuestionUI = static_cast<CReleaseQuestionUI*>(g_pManagement->Clone_GameObject_Return(L"GameObject_ReleaseQuestionUI", nullptr));
 	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pQuestionUI, SCENE_MORTAL, L"Layer_PlayerUI", nullptr);
 	TARGET_TO_TRANS(m_pQuestionUI)->Set_Scale(_v3(2.f, 1.f, 1.6f));
@@ -255,6 +255,7 @@ void CSkillReleaseUI::Click_SkillSlot()
 	if (!m_bIsActive)
 		return;
 
+	_uint iIdx = 0;
 	for (auto& iter : m_vecSkillSlot)
 	{
 		if (SkillID_End == iter->Get_Skill_ID())
@@ -267,12 +268,15 @@ void CSkillReleaseUI::Click_SkillSlot()
 			{
 				m_pQuestionUI->Set_Active(true);
 				m_pQuestionUI->Set_BloodInfo(m_eID, iter->Get_Skill_ID());
+
+				Click_BloodSkillSlot_Sound(iIdx);
 			}
 
 		}
 		else
 			iter->Set_Select(false);
 		
+		iIdx++;
 	}
 
 	
@@ -282,6 +286,16 @@ void CSkillReleaseUI::Reset_Select()
 {
 	for (auto& iter : m_vecSkillSlot)
 		iter->Set_Select(false);
+}
+
+void CSkillReleaseUI::Click_BloodSkillSlot_Sound(_uint iIdx)
+{
+	if (iIdx > 4)
+		return;
+
+	_uint iChannel = CSoundManager::CHANNELID::BloodSkill_Slot01 + iIdx;
+
+	g_pSoundManager->Play_Sound(L"UI_CommonClick.wav", CSoundManager::CHANNELID(iChannel), CSoundManager::Ambient_Sound);
 }
 
 void CSkillReleaseUI::Back_To_BloodCodeUI()
