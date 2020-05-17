@@ -39,7 +39,7 @@ HRESULT COptimization::Ready_Optimization(_bool bChoice, const _ulong dwCntX, co
 
 _bool COptimization::Check_InFrustumforObject(const _v3 * pPos, const _float & fRadius)
 {
-	return m_pFrustum->Check_InFrustum(pPos, fRadius);
+	return m_pFrustum->Check_InFrustumObj(pPos, fRadius);
 }
 
 COptimization* COptimization::Create(_Device _pGraphicDev, _bool bChoice, _ulong dwCntX , _ulong dwCntZ)

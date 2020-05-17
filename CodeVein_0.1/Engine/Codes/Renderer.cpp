@@ -43,7 +43,7 @@ HRESULT CRenderer::Ready_Component_Prototype()
 		return E_FAIL;
 
 	// Target_Normal
-	if (FAILED(m_pTarget_Manager->Add_Render_Target(m_pGraphic_Dev, L"Target_Normal", ViewPort.Width, ViewPort.Height, D3DFMT_A16B16G16R16F, D3DXCOLOR(0.f, 1.f, 0.f, 0.f))))
+	if (FAILED(m_pTarget_Manager->Add_Render_Target(m_pGraphic_Dev, L"Target_Normal", ViewPort.Width, ViewPort.Height, D3DFMT_A16B16G16R16F, D3DXCOLOR(0.f, 1.f, 0.f, 1.f))))
 		return E_FAIL;
 
 	// Target_Depth
@@ -58,7 +58,7 @@ HRESULT CRenderer::Ready_Component_Prototype()
 	if (FAILED(m_pTarget_Manager->Add_Render_Target(m_pGraphic_Dev, L"Target_Velocity", ViewPort.Width, ViewPort.Height, D3DFMT_A32B32G32R32F, D3DXCOLOR(0.0f, 0.0f, 0.0f, 0.f))))
 		return E_FAIL;
 	// Target_NormalForRim
-	if (FAILED(m_pTarget_Manager->Add_Render_Target(m_pGraphic_Dev, L"Target_SkinShading", ViewPort.Width, ViewPort.Height, D3DFMT_A16B16G16R16F, D3DXCOLOR(0.0f, 0.0f, 0.0f, 0.f))))
+	if (FAILED(m_pTarget_Manager->Add_Render_Target(m_pGraphic_Dev, L"Target_SkinShading", ViewPort.Width, ViewPort.Height, D3DFMT_A16B16G16R16F, D3DXCOLOR(0.0f, 0.0f, 0.0f, 1.f))))
 		return E_FAIL;
 	// Target_BloomPower
 	if (FAILED(m_pTarget_Manager->Add_Render_Target(m_pGraphic_Dev, L"Target_BloomPower", ViewPort.Width, ViewPort.Height, D3DFMT_A8R8G8B8, D3DXCOLOR(0.0f, 0.0f, 0.0f, 0.f))))
@@ -574,8 +574,6 @@ HRESULT CRenderer::Render_NonAlpha()
 	if (FAILED(m_pTarget_Manager->Begin_MRT(L"MRT_Deferred")))
 		return E_FAIL;
 
-	m_pShader_RenderMesh->Begin_Shader();
-
 	CManagement* pManagement = CManagement::Get_Instance();
 	Safe_AddRef(pManagement);
 
@@ -584,6 +582,7 @@ HRESULT CRenderer::Render_NonAlpha()
 	matView = pManagement->Get_Transform(D3DTS_VIEW);
 	matProj = pManagement->Get_Transform(D3DTS_PROJECTION);
 
+	m_pShader_RenderMesh->Begin_Shader();
 
 	if (FAILED(m_pShader_RenderMesh->Set_Value("g_matView", &matView, sizeof(_mat))))
 		return E_FAIL;

@@ -58,6 +58,10 @@
 #include "SoundManager.h"
 #include "ClothManager.h"
 
+#include "Costume_Body.h"
+#include "Costume_Head.h"
+#include "Costume_Mask.h"
+
 USING(Client)
 
 CLoading::CLoading(_Device pGraphicDev)
@@ -1285,14 +1289,23 @@ _uint CLoading::Loading_Title()
 	//============================================================================================================
 	// 다이나믹 메쉬 불러오는 중
 	//============================================================================================================
-	cout << "Essential Dynamic Mesh 불러오는 중 . . ." << endl;
-	g_pManagement->LoadMesh_FromPath(m_pGraphicDev, L"../../Data/Load_MeshData/Mesh_Essential_Dynamic_Path.dat");
+	//cout << "Essential Dynamic Mesh 불러오는 중 . . ." << endl;
+	//g_pManagement->LoadMesh_FromPath(m_pGraphicDev, L"../../Data/Load_MeshData/Mesh_Essential_Dynamic_Path.dat");
 
-	cout << "DynamicMesh 불러오는 중 . . ." << endl;
-	g_pManagement->LoadMesh_FromPath(m_pGraphicDev, L"../../Data/Load_MeshData/Mesh_Dynamic_Path.dat");
+	cout << "Costume Static Mesh 불러오는 중 . . ." << endl;
+	g_pManagement->LoadMesh_FromPath(m_pGraphicDev, L"../../Data/Load_MeshData/Mesh_Costume_Static_Path.dat");
+
+	cout << "Costume Dynamic Mesh 불러오는 중 . . ." << endl;
+	g_pManagement->LoadMesh_FromPath(m_pGraphicDev, L"../../Data/Load_MeshData/Mesh_Costume_Dynamic_Path.dat");
+
+	cout << " 옷 생성 중 . . ." << endl;
+	g_pClothManager->Ready_ClothManager();
+
+	//cout << "DynamicMesh 불러오는 중 . . ." << endl;
+	//g_pManagement->LoadMesh_FromPath(m_pGraphicDev, L"../../Data/Load_MeshData/Mesh_Dynamic_Path.dat");
 	
-	cout << "NPC 불러오는 중 . . ." << endl;
-	g_pManagement->LoadMesh_FromPath(m_pGraphicDev, L"../../Data/Load_MeshData/Mesh_NPC_Path.dat");
+	//cout << "NPC 불러오는 중 . . ." << endl;
+	//g_pManagement->LoadMesh_FromPath(m_pGraphicDev, L"../../Data/Load_MeshData/Mesh_NPC_Path.dat");
 	//============================================================================================================
 	// 무기 불러오는 중
 	//============================================================================================================
@@ -1339,6 +1352,15 @@ _uint CLoading::Loading_Title()
 	//============================================================================================================
 	cout << "Essential Protorypes 추가 중 . . ."  << endl;
 	//============================================================================================================
+	// Costume Head
+	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_Costume_Head", CCostume_Head::Create(m_pGraphicDev))))
+		return E_FAIL;
+	// Costume Body
+	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_Costume_Body", CCostume_Body::Create(m_pGraphicDev))))
+		return E_FAIL;
+	// Costume Mask
+	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_Costume_Mask", CCostume_Mask::Create(m_pGraphicDev))))
+		return E_FAIL;
 	// 흡혈 무기
 	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_DrainWeapon", CDrain_Weapon::Create(m_pGraphicDev))))
 		return E_FAIL;
@@ -1368,8 +1390,8 @@ _uint CLoading::Loading_Title()
 	//============================================================================================================
 	// 옷
 	//============================================================================================================
-	cout << " 옷 생성 중 . . ." << endl;
-	g_pClothManager->Ready_ClothManager();
+	//cout << " 옷 생성 중 . . ." << endl;
+	//g_pClothManager->Ready_ClothManager();
 	//============================================================================================================
 
 	m_bFinish = true;

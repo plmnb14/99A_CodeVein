@@ -107,10 +107,6 @@ private:
 	// For	MotionBlur
 	_mat	m_matLastWVP;
 
-	// For	Shader
-	_mat*	m_pmatView = nullptr;
-	_mat*	m_pmatProj = nullptr;
-
 
 	// 툴에서 사용되는 변수
 protected:

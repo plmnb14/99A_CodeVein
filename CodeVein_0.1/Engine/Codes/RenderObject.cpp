@@ -40,19 +40,19 @@ _int CRenderObject::Update_GameObject(_double _TimeDelta)
 	if(nullptr == m_pMesh_Static)
 		return NO_EVENT;
 
-	if (nullptr != m_pOptimization)
-		m_bInFrustum = m_pOptimization->Check_InFrustumforObject(&m_pTransform->Get_Pos(), 10.f);
-	else
-		cout << "옵티마이즈 없어요!!!!!" << endl;
+	if (nullptr == m_pOptimization)
+		return NO_EVENT;
 
-	//if (false == m_bUpdated)
-	//{
+	m_bInFrustum = m_pOptimization->Check_InFrustumforObject(&m_pTransform->Get_Pos(), 10.f);
+
+	if (false == m_bUpdated)
+	{
 		// 스태틱은 한번만 배치되면 되서 계속 갱신할 필요없음
-		//m_bUpdated = true;
+		m_bUpdated = true;
 
 		CGameObject::LateInit_GameObject();
 		CGameObject::Update_GameObject(_TimeDelta);
-	//}
+	}
 
 	if (m_bOnTool)
 		Update_Collider();
@@ -62,7 +62,9 @@ _int CRenderObject::Update_GameObject(_double _TimeDelta)
 
 _int CRenderObject::Late_Update_GameObject(_double TimeDelta)
 {
-	if (false == m_bEnable)
+	if (false == m_bEnable ||
+		nullptr == m_pOptimization ||
+		nullptr == m_pRenderer)
 		return NO_EVENT;
 
 	m_pRenderer->Add_RenderList(RENDER_SHADOWTARGET, this);
@@ -81,10 +83,18 @@ HRESULT CRenderObject::Render_GameObject()
 	if (false == m_bEnable)
 		return NO_EVENT;
 
+	CManagement* pManagement = CManagement::Get_Instance();
+	Safe_AddRef(pManagement);
+
+	_mat matView, matProj;
+
+	matView = pManagement->Get_Transform(D3DTS_VIEW);
+	matProj = pManagement->Get_Transform(D3DTS_PROJECTION);
+
 	Init_Shader(m_pShader);
 
-	m_pShader->Set_Value("g_matView", m_pmatView, sizeof(_mat));
-	m_pShader->Set_Value("g_matProj", m_pmatProj, sizeof(_mat));
+	m_pShader->Set_Value("g_matView", matView, sizeof(_mat));
+	m_pShader->Set_Value("g_matProj", matProj, sizeof(_mat));
 
 	m_pShader->Begin_Shader();
 
@@ -107,6 +117,8 @@ HRESULT CRenderObject::Render_GameObject()
 
 	m_pShader->End_Shader();
 
+
+	Safe_Release(pManagement);
 
 	CGizmo::Get_Instance()->Draw_AABB(m_pCollider->Get_GizmoPos(), m_pCollider->Get_CenterPos(), m_pTransform->Get_Size());
 
@@ -339,7 +351,7 @@ void CRenderObject::SetUp_IndividualShaderValue()
 {
 	m_tPBRInfo.fEmissivePower = 1.f;
 	m_tPBRInfo.fSpecularPower = 0.f;
-	m_tPBRInfo.fRoughnessPower = 1.f;
+	m_tPBRInfo.fRoughnessPower = 0.f;
 	m_tPBRInfo.fMinSpecular = 0.f;
 	m_tPBRInfo.fID_R = 1.f;
 	m_tPBRInfo.fID_G = 0.5f;
@@ -351,7 +363,7 @@ void CRenderObject::SetUp_IndividualShaderValue()
 	{
 		m_tPBRInfo.fEmissivePower = 0.f;
 		m_tPBRInfo.fSpecularPower = 0.0f;
-		m_tPBRInfo.fRoughnessPower = 1.f;
+		m_tPBRInfo.fRoughnessPower = 0.f;
 		m_tPBRInfo.fMinSpecular = 0.f;
 	}
 
@@ -359,7 +371,7 @@ void CRenderObject::SetUp_IndividualShaderValue()
 	{
 		m_tPBRInfo.fEmissivePower = 0.f;
 		m_tPBRInfo.fSpecularPower = 0.0f;
-		m_tPBRInfo.fRoughnessPower = 1.f;
+		m_tPBRInfo.fRoughnessPower = 0.f;
 		m_tPBRInfo.fMinSpecular = 0.f;
 	}
 
@@ -367,7 +379,7 @@ void CRenderObject::SetUp_IndividualShaderValue()
 	{
 		m_tPBRInfo.fEmissivePower = 0.f;
 		m_tPBRInfo.fSpecularPower = 0.0f;
-		m_tPBRInfo.fRoughnessPower = 1.f;
+		m_tPBRInfo.fRoughnessPower = 0.f;
 		m_tPBRInfo.fMinSpecular = 0.f;
 	}
 }
@@ -403,9 +415,6 @@ CRenderObject * CRenderObject::Create(_Device _pGraphicDev)
 
 void CRenderObject::Free()
 {
-	m_pmatView = nullptr;
-	m_pmatProj = nullptr;
-
 	Safe_Release(m_pTransform);
 	Safe_Release(m_pCollider);
 	Safe_Release(m_pMesh_Static);
@@ -492,9 +501,6 @@ HRESULT CRenderObject::Ready_GameObject(void * pAvg)
 		m_dwSubsetCnt = m_pMesh_Static->Get_NumMaterials();
 
 	SetUp_IndividualShaderValue();
-
-	m_pmatView = &CManagement::Get_Instance()->Get_Transform(D3DTS_VIEW);
-	m_pmatProj = &CManagement::Get_Instance()->Get_Transform(D3DTS_PROJECTION);
 
 	return S_OK;
 }
