@@ -102,6 +102,8 @@
 #include "GeneralStoreBuyUI.h"
 #include "BuyOptionUI.h"
 
+#include "PickUp_ItemUI.h"
+
 BEGIN(Client)
 
 class CUI_Manager final : public CBase
@@ -148,6 +150,8 @@ public:
 	// ∆Í ¿Œ∫•≈‰∏Æ
 	CPet_Inven* Get_Pet_Inven() { return m_pPet_Inven; }
 
+	CPickUp_ItemUI* Get_PickUp_ItemUI() { return m_pPickUp_ItemUI; }
+
 private:
 	_uint m_uiCoundItem = 0;
 	_bool m_bTest = false;
@@ -178,6 +182,8 @@ private:
 
 	// ∆Í ¿Œ∫•≈‰∏Æ
 	CPet_Inven* m_pPet_Inven = nullptr;
+
+	CPickUp_ItemUI* m_pPickUp_ItemUI = nullptr;
 
 public:
 	virtual void Free();
