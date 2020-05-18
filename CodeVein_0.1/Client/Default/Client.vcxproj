@@ -185,6 +185,7 @@
     <ClInclude Include="..\Headers\BossHP.h" />
     <ClInclude Include="..\Headers\BossNameUI.h" />
     <ClInclude Include="..\Headers\BuyOptionUI.h" />
+    <ClInclude Include="..\Headers\Calling_Colleague.h" />
     <ClInclude Include="..\Headers\Client_Defines.h" />
     <ClInclude Include="..\Headers\Cloth.h" />
     <ClInclude Include="..\Headers\ClothDynamic.h" />
@@ -368,6 +369,7 @@
     <ClInclude Include="..\Headers\YachaMan.h" />
     <ClInclude Include="..\Headers\Yeti.h" />
     <ClInclude Include="..\Headers\YetiBullet.h" />
+    <ClInclude Include="..\Headers\YetiTrap.h" />
     <ClInclude Include="Client.h" />
     <ClInclude Include="Client_Item_Enum.h" />
     <ClInclude Include="Resource.h" />
@@ -392,6 +394,7 @@
     <ClCompile Include="..\Codes\BossHP.cpp" />
     <ClCompile Include="..\Codes\BossNameUI.cpp" />
     <ClCompile Include="..\Codes\BuyOptionUI.cpp" />
+    <ClCompile Include="..\Codes\Calling_Colleague.cpp" />
     <ClCompile Include="..\Codes\Cloth.cpp" />
     <ClCompile Include="..\Codes\ClothDynamic.cpp" />
     <ClCompile Include="..\Codes\ClothManager.cpp" />
@@ -573,6 +576,7 @@
     <ClCompile Include="..\Codes\YachaMan.cpp" />
     <ClCompile Include="..\Codes\Yeti.cpp" />
     <ClCompile Include="..\Codes\YetiBullet.cpp" />
+    <ClCompile Include="..\Codes\YetiTrap.cpp" />
     <ClCompile Include="Client.cpp" />
     <ClCompile Include="SkillIcon.cpp" />
     <ClCompile Include="stdafx.cpp">

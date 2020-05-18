@@ -141,6 +141,9 @@ void CClothManager::Clear_Collider(physx::PxCloth* pCloth)
 {
 	Reset_CurRadius();
 
+	if (nullptr == pCloth)
+		return;
+
 	for (_uint i = 0; i < pCloth->getNbCollisionSpheres(); ++i)
 		pCloth->removeCollisionSphere(i);
 
@@ -248,7 +251,7 @@ HRESULT CClothManager::Ready_Cloth_Static()
 		// 잠깐 가져온 것 제거
 		Safe_Release(pMesh_Static);
 
-		m_bValid_CLoth_Static[i] = true;
+		m_bValid_Cloth_Static[i] = true;
 	}
 
 	return S_OK;
@@ -359,7 +362,7 @@ HRESULT CClothManager::Ready_Cloth_Dynamic()
 		// 잠깐 가져온 것 제거
 		Safe_Release(pMesh_Dynamic);
 
-		m_bValid_CLoth_Dynamic[i] = true;
+		m_bValid_Cloth_Dynamic[i] = true;
 	}
 
 	return S_OK;
@@ -452,6 +455,46 @@ HRESULT CClothManager::Ready_ColRadius()
 	m_fCurRadius[RightFoot] = 0.1f;
 
 	return S_OK;
+}
+
+void CClothManager::Set_Value_LongCoat(physx::PxCloth * pCloth)
+{
+	// set solver settings
+	pCloth->setSolverFrequency(120);
+
+	// damp global particle velocity to 90% every 0.1 seconds
+	pCloth->setDampingCoefficient(PxVec3(0.1f)); // damp local particle velocity
+	pCloth->setLinearDragCoefficient(PxVec3(0.1f)); // transfer frame velocity
+	pCloth->setAngularDragCoefficient(PxVec3(0.1f)); // transfer frame rotation
+
+													 // reduce impact of frame acceleration
+													 // x, z: cloth swings out less when walking in a circle
+													 // y: cloth responds less to jump acceleration
+	pCloth->setLinearInertiaScale(PxVec3(0.1f, 0.1f, 0.1f));
+
+	// leave impact of frame torque at default
+	//m_pCloth->setAngularInertiaScale(PxVec3(1.0f));
+	pCloth->setAngularInertiaScale(PxVec3(0.1f));
+
+	// reduce centrifugal force of rotating frame
+	pCloth->setCentrifugalInertiaScale(PxVec3(0.1f));
+
+	pCloth->setInertiaScale(0.3f);
+
+	const bool useCustomConfig = true;
+
+	// custom fiber configuration
+	if (useCustomConfig)
+	{
+		PxClothStretchConfig stretchConfig;
+		stretchConfig.stiffness = 1.0f;
+
+		pCloth->setStretchConfig(PxClothFabricPhaseType::eVERTICAL, PxClothStretchConfig(0.8f));
+		pCloth->setStretchConfig(PxClothFabricPhaseType::eHORIZONTAL, PxClothStretchConfig(0.6f));
+		pCloth->setStretchConfig(PxClothFabricPhaseType::eSHEARING, PxClothStretchConfig(0.5f));
+		pCloth->setStretchConfig(PxClothFabricPhaseType::eBENDING, PxClothStretchConfig(0.5f));
+		pCloth->setTetherConfig(PxClothTetherConfig(1.0f));
+	}
 }
 
 void CClothManager::Set_Wind(physx::PxCloth * pCloth, _v3 vWindDir)
@@ -750,50 +793,110 @@ void CClothManager::Update_Cloth_ColPos(physx::PxCloth * pCloth)
 	// 드레이프 충돌 구
 	if (pCloth == m_pCloth_Dynamic[Drape_01])
 	{
-
-	}
-
-	// 건틀릿 충돌 구
-	else if (pCloth == m_pCloth_Dynamic[Gauntlet_01] ||
-		pCloth == m_pCloth_Dynamic[Gauntlet_03])
-	{
 		if (0 == pCloth->getNbCollisionSpheres())
 		{
 			vector<PxClothCollisionSphere> vecSpheres;
-			vecSpheres.resize(3);
+			vecSpheres.resize(7);
 
 			_v3 vHip = *(_v3*)(&(m_pPlayerFrame[Hips]->CombinedTransformationMatrix.m[3]));
 			vecSpheres[0] = (PxClothCollisionSphere(*(PxVec3*)(&vHip), m_fCurRadius[Hips]));
 
+			_v3 vLeftUpLeg = *(_v3*)(&(m_pPlayerFrame[LeftUpLeg]->CombinedTransformationMatrix.m[3]));
+			vecSpheres[1] = (PxClothCollisionSphere(*(PxVec3*)(&vLeftUpLeg), m_fCurRadius[LeftUpLeg]));
+
+			_v3 vRightUpLeg = *(_v3*)(&(m_pPlayerFrame[RightUpLeg]->CombinedTransformationMatrix.m[3]));
+			vecSpheres[2] = (PxClothCollisionSphere(*(PxVec3*)(&vRightUpLeg), m_fCurRadius[RightUpLeg]));
+
 			_v3 vLeftForeArm = *(_v3*)(&(m_pPlayerFrame[LeftForeArm]->CombinedTransformationMatrix.m[3]));
-			vecSpheres[1] = (PxClothCollisionSphere(*(PxVec3*)(&vLeftForeArm), m_fCurRadius[LeftForeArm]));
+			vecSpheres[3] = (PxClothCollisionSphere(*(PxVec3*)(&vLeftForeArm), m_fCurRadius[LeftForeArm]));
 
 			_v3 vLeftHand = *(_v3*)(&(m_pPlayerFrame[LeftHand]->CombinedTransformationMatrix.m[3]));
-			vecSpheres[2] = (PxClothCollisionSphere(*(PxVec3*)(&vLeftHand), m_fCurRadius[LeftHand]));
+			vecSpheres[4] = (PxClothCollisionSphere(*(PxVec3*)(&vLeftHand), m_fCurRadius[LeftHand]));
+
+			_v3 vRightForeArm = *(_v3*)(&(m_pPlayerFrame[RightForeArm]->CombinedTransformationMatrix.m[3]));
+			vecSpheres[5] = (PxClothCollisionSphere(*(PxVec3*)(&vRightForeArm), m_fCurRadius[RightForeArm]));
+
+			_v3 vRightHand = *(_v3*)(&(m_pPlayerFrame[RightHand]->CombinedTransformationMatrix.m[3]));
+			vecSpheres[6] = (PxClothCollisionSphere(*(PxVec3*)(&vRightHand), m_fCurRadius[RightHand]));
 
 			pCloth->setCollisionSpheres(&vecSpheres.front(), (PxU32)vecSpheres.size());
 
-			pCloth->addCollisionCapsule(1, 2);
+			pCloth->addCollisionCapsule(3, 4);
+			pCloth->addCollisionCapsule(5, 6);
 		}
 
 		vector<PxClothCollisionSphere> vecSpheres;
-		vecSpheres.resize(3);
+		vecSpheres.resize(7);
 
 		pCloth->getCollisionData(&vecSpheres.front(), 0, 0, 0, 0);
 
 		vecSpheres[0].pos = *(PxVec3*)(&m_pPlayerFrame[Hips]->CombinedTransformationMatrix.m[3]);
 		vecSpheres[0].radius = m_fCurRadius[Hips];
 
-		vecSpheres[1].pos = *(PxVec3*)(&m_pPlayerFrame[LeftForeArm]->CombinedTransformationMatrix.m[3]);
-		vecSpheres[1].radius = m_fCurRadius[LeftForeArm];
+		vecSpheres[1].pos = *(PxVec3*)(&m_pPlayerFrame[LeftUpLeg]->CombinedTransformationMatrix.m[3]);
+		vecSpheres[1].radius = m_fCurRadius[LeftUpLeg];
 
-		vecSpheres[2].pos = *(PxVec3*)(&m_pPlayerFrame[LeftHand]->CombinedTransformationMatrix.m[3]);
-		vecSpheres[2].radius = m_fCurRadius[LeftHand];
+		vecSpheres[2].pos = *(PxVec3*)(&m_pPlayerFrame[RightUpLeg]->CombinedTransformationMatrix.m[3]);
+		vecSpheres[2].radius = m_fCurRadius[RightUpLeg];
+
+		vecSpheres[3].pos = *(PxVec3*)(&m_pPlayerFrame[LeftForeArm]->CombinedTransformationMatrix.m[3]);
+		vecSpheres[3].radius = m_fCurRadius[LeftForeArm];
+
+		vecSpheres[4].pos = *(PxVec3*)(&m_pPlayerFrame[LeftHand]->CombinedTransformationMatrix.m[3]);
+		vecSpheres[4].radius = m_fCurRadius[LeftHand];
+
+		vecSpheres[5].pos = *(PxVec3*)(&m_pPlayerFrame[RightForeArm]->CombinedTransformationMatrix.m[3]);
+		vecSpheres[5].radius = m_fCurRadius[RightForeArm];
+
+		vecSpheres[6].pos = *(PxVec3*)(&m_pPlayerFrame[RightHand]->CombinedTransformationMatrix.m[3]);
+		vecSpheres[6].radius = m_fCurRadius[RightHand];
 
 		pCloth->setCollisionSpheres(&vecSpheres.front(), (PxU32)vecSpheres.size());
+
 	}
+
+	//// 건틀릿 충돌 구
+	//else if (pCloth == m_pCloth_Dynamic[Gauntlet_01] ||
+	//	pCloth == m_pCloth_Dynamic[Gauntlet_03])
+	//{
+	//	if (0 == pCloth->getNbCollisionSpheres())
+	//	{
+	//		vector<PxClothCollisionSphere> vecSpheres;
+	//		vecSpheres.resize(3);
+
+	//		_v3 vHip = *(_v3*)(&(m_pPlayerFrame[Hips]->CombinedTransformationMatrix.m[3]));
+	//		vecSpheres[0] = (PxClothCollisionSphere(*(PxVec3*)(&vHip), m_fCurRadius[Hips]));
+
+	//		_v3 vLeftForeArm = *(_v3*)(&(m_pPlayerFrame[LeftForeArm]->CombinedTransformationMatrix.m[3]));
+	//		vecSpheres[1] = (PxClothCollisionSphere(*(PxVec3*)(&vLeftForeArm), m_fCurRadius[LeftForeArm]));
+
+	//		_v3 vLeftHand = *(_v3*)(&(m_pPlayerFrame[LeftHand]->CombinedTransformationMatrix.m[3]));
+	//		vecSpheres[2] = (PxClothCollisionSphere(*(PxVec3*)(&vLeftHand), m_fCurRadius[LeftHand]));
+
+	//		pCloth->setCollisionSpheres(&vecSpheres.front(), (PxU32)vecSpheres.size());
+
+	//		pCloth->addCollisionCapsule(1, 2);
+	//	}
+
+	//	vector<PxClothCollisionSphere> vecSpheres;
+	//	vecSpheres.resize(3);
+
+	//	pCloth->getCollisionData(&vecSpheres.front(), 0, 0, 0, 0);
+
+	//	vecSpheres[0].pos = *(PxVec3*)(&m_pPlayerFrame[Hips]->CombinedTransformationMatrix.m[3]);
+	//	vecSpheres[0].radius = m_fCurRadius[Hips];
+
+	//	vecSpheres[1].pos = *(PxVec3*)(&m_pPlayerFrame[LeftForeArm]->CombinedTransformationMatrix.m[3]);
+	//	vecSpheres[1].radius = m_fCurRadius[LeftForeArm];
+
+	//	vecSpheres[2].pos = *(PxVec3*)(&m_pPlayerFrame[LeftHand]->CombinedTransformationMatrix.m[3]);
+	//	vecSpheres[2].radius = m_fCurRadius[LeftHand];
+
+	//	pCloth->setCollisionSpheres(&vecSpheres.front(), (PxU32)vecSpheres.size());
+	//}
 	// 롱코트 충돌 구
 	else if (pCloth == m_pCloth_Dynamic[LongCoat_01] ||
+		pCloth == m_pCloth_Dynamic[LongCoat_02] ||
 		pCloth == m_pCloth_Dynamic[LongCoat_03])
 	{
 		if (0 == pCloth->getNbCollisionSpheres())
@@ -1226,8 +1329,10 @@ void CClothManager::Init_Drape_01(physx::PxClothMeshDesc & pClothMeshDesc, vecto
 {
 	for (PxU32 i = 0; i < 9226; i++)
 	{
-		if (vertices[i].y < 1.0f)
+		if(vertices[i].y < 1.0f)
 			vertices[i].w = 0.2f;
+		else if (vertices[i].y < 1.2f)
+			vertices[i].w = 0.1f;
 	}
 
 	m_pCloth_Dynamic[Drape_01] = CreateQuadifier(pClothMeshDesc);
@@ -1245,7 +1350,10 @@ void CClothManager::Init_Gauntlet_01(physx::PxClothMeshDesc & pClothMeshDesc, ve
 {
 	for (PxU32 i = 0; i < 13432; i++)
 	{
-		if (vertices[i].y < 1.2f &&
+		if (vertices[i].y < 1.0f &&
+			vertices[i].x < 0.f)
+			vertices[i].w = 0.1f;
+		else if (vertices[i].y < 1.2f &&
 			vertices[i].x < 0.f)
 			vertices[i].w = 0.2f;
 	}
@@ -1267,11 +1375,15 @@ void CClothManager::Init_Gauntlet_03(physx::PxClothMeshDesc & pClothMeshDesc, ve
 	{
 		if (vertices[i].y < 1.0f)
 			vertices[i].w = 0.2f;
+		else if (vertices[i].y < 1.2f)
+			vertices[i].w = 0.1f;
 	}
 	for (PxU32 i = 15285; i < 15285 + 906; i++)
 	{
 		if (vertices[i].y < 1.0f)
 			vertices[i].w = 0.2f;
+		else if (vertices[i].y < 1.2f)
+			vertices[i].w = 0.1f;
 	}
 
 	m_pCloth_Dynamic[Gauntlet_03] = CreateQuadifier(pClothMeshDesc);
@@ -1291,6 +1403,8 @@ void CClothManager::Init_LongCoat_01(physx::PxClothMeshDesc & pClothMeshDesc, ve
 	{
 		if (vertices[i].y < 0.7f)
 			vertices[i].w = 0.2f;
+		else if (vertices[i].y < 0.8f)
+			vertices[i].w = 0.1f;
 	}
 
 	m_pCloth_Dynamic[LongCoat_01] = CreateQuadifier(pClothMeshDesc);
@@ -1299,7 +1413,7 @@ void CClothManager::Init_LongCoat_01(physx::PxClothMeshDesc & pClothMeshDesc, ve
 
 	scene.addActor(*m_pCloth_Dynamic[LongCoat_01]);
 
-	Set_Cloth_Default(m_pCloth_Dynamic[LongCoat_01]);
+	Set_Value_LongCoat(m_pCloth_Dynamic[LongCoat_01]);
 
 	m_pCloth_Dynamic[LongCoat_01]->putToSleep();
 }
@@ -1309,25 +1423,25 @@ void CClothManager::Init_LongCoat_02(physx::PxClothMeshDesc & pClothMeshDesc, ve
 	for (PxU32 i = 0; i < 316; i++)
 	{
 		if (vertices[i].y < 0.7f)
-			vertices[i].w = 0.2f;
+			vertices[i].w = 0.1f;
 	}
 
 	for (PxU32 i = 14203; i < 14203 + 825; i++)
 	{
 		if (vertices[i].y < 0.7f)
-			vertices[i].w = 0.2f;
+			vertices[i].w = 0.1f;
 	}
 
 	for (PxU32 i = 15028; i < 15028 + 316; i++)
 	{
 		if (vertices[i].y < 0.7f)
-			vertices[i].w = 0.2f;
+			vertices[i].w = 0.1f;
 	}
 
 	for (PxU32 i = 15344; i < 15344 + 825; i++)
 	{
 		if (vertices[i].y < 0.7f)
-			vertices[i].w = 0.2f;
+			vertices[i].w = 0.1f;
 	}
 
 	m_pCloth_Dynamic[LongCoat_02] = CreateQuadifier(pClothMeshDesc);
@@ -1336,7 +1450,7 @@ void CClothManager::Init_LongCoat_02(physx::PxClothMeshDesc & pClothMeshDesc, ve
 
 	scene.addActor(*m_pCloth_Dynamic[LongCoat_02]);
 
-	Set_Cloth_Default(m_pCloth_Dynamic[LongCoat_02]);
+	Set_Value_LongCoat(m_pCloth_Dynamic[LongCoat_02]);
 
 	m_pCloth_Dynamic[LongCoat_02]->putToSleep();
 }
@@ -1347,18 +1461,24 @@ void CClothManager::Init_LongCoat_03(physx::PxClothMeshDesc & pClothMeshDesc, ve
 	{
 		if (vertices[i].y < 0.7f)
 			vertices[i].w = 0.2f;
+		else if (vertices[i].y < 0.8f)
+			vertices[i].w = 0.1f;
 	}
 
 	for (PxU32 i = 939; i < 939 + 3459; i++)
 	{
 		if (vertices[i].y < 0.7f)
 			vertices[i].w = 0.2f;
+		else if (vertices[i].y < 0.8f)
+			vertices[i].w = 0.1f;
 	}
 
 	for (PxU32 i = 17444; i < 17444 + 3459; i++)
 	{
 		if (vertices[i].y < 0.7f)
 			vertices[i].w = 0.2f;
+		else if (vertices[i].y < 0.8f)
+			vertices[i].w = 0.1f;
 	}
 
 	m_pCloth_Dynamic[LongCoat_03] = CreateQuadifier(pClothMeshDesc);
@@ -1367,7 +1487,7 @@ void CClothManager::Init_LongCoat_03(physx::PxClothMeshDesc & pClothMeshDesc, ve
 
 	scene.addActor(*m_pCloth_Dynamic[LongCoat_03]);
 
-	Set_Cloth_Default(m_pCloth_Dynamic[LongCoat_03]);
+	Set_Value_LongCoat(m_pCloth_Dynamic[LongCoat_03]);
 
 	m_pCloth_Dynamic[LongCoat_03]->putToSleep();
 }
@@ -1378,6 +1498,8 @@ void CClothManager::Init_Muffler_01(physx::PxClothMeshDesc & pClothMeshDesc, vec
 	{
 		if (vertices[i].y < 1.1f)
 			vertices[i].w = 0.2f;
+		else if (vertices[i].y < 1.2f)
+			vertices[i].w = 0.1f;
 	}
 
 	m_pCloth_Dynamic[Muffler_01] = CreateQuadifier(pClothMeshDesc);
@@ -1397,6 +1519,8 @@ void CClothManager::Init_Muffler_02(physx::PxClothMeshDesc & pClothMeshDesc, vec
 	{
 		if (vertices[i].y < 1.1f)
 			vertices[i].w = 0.2f;
+		else if (vertices[i].y < 1.2f)
+			vertices[i].w = 0.1f;
 	}
 
 	m_pCloth_Dynamic[Muffler_02] = CreateQuadifier(pClothMeshDesc);

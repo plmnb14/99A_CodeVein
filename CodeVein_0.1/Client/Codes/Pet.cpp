@@ -32,7 +32,6 @@ void CPet::Check_CollisionEvent()
 
 void CPet::Check_CollisionPush()
 {
-
 	return;
 }
 
@@ -67,13 +66,12 @@ void CPet::Check_CollisionHit(list<CGameObject*> plistGameObject)
 
 					if (false == iter->Get_Target_IsDodge())
 					{
-						iter->Set_Target_CanHit(false);
-						iter->Add_Target_Hp(m_tObjParam.fDamage);
+						//iter->Set_Target_CanHit(false);
 
 						if (iter->Get_Target_IsHit())
-						{
 							iter->Set_HitAgain(true);
-						}
+
+						iter->Add_Target_Hp(m_tObjParam.fDamage);
 					}
 
 					vecIter->Set_Enabled(false);
@@ -84,8 +82,7 @@ void CPet::Check_CollisionHit(list<CGameObject*> plistGameObject)
 				}
 				else
 				{
-					if (bFirst)
-						break;
+					if (bFirst) break;
 				}
 			}
 		}

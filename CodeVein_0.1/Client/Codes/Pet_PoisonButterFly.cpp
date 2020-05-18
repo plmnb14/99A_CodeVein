@@ -363,7 +363,7 @@ void CPet_PoisonButterFly::Check_Dist()
 						Check_Action();
 					else
 					{
-						Function_CalcMoveSpeed(m_fPersonalRange);
+						Function_CalcMoveSpeed(m_fAtkRange);
 
 						//특정거리보다 가까워진 경우, 속도를 잃고 idle
 						if (0.f >= m_fSkillMoveSpeed_Cur)
@@ -562,9 +562,8 @@ void CPet_PoisonButterFly::Check_Action()
 					//쿨타임o
 					else
 					{
-						m_bCanMoveAround = true;
-						m_eFirstCategory = PET_STATE_TYPE::MOVE;
-						m_eSecondCategory_MOVE = PET_MOVE_TYPE::MOVE_ALERT;
+						m_eFirstCategory = PET_STATE_TYPE::IDLE;
+						m_eSecondCategory_IDLE = PET_IDLE_TYPE::IDLE_IDLE;
 					}
 				}
 				//근거리 범위x
@@ -744,7 +743,7 @@ void CPet_PoisonButterFly::Play_5Shot()
 		{
 			Function_ResetAfterAtk();
 			m_bCanCoolDown = true;
-			m_fCoolDownMax = 1.0f;
+			m_fCoolDownMax = 0.8f;
 
 			return;
 		}

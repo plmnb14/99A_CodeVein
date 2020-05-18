@@ -12,6 +12,8 @@
 #include "Weapon.h"
 #include "Pet.h"
 
+#include "Get_ItemUI.h"
+
 BEGIN(Client)
 
 class CDropItem :public CGameObject
@@ -39,6 +41,13 @@ public:
 		{
 		}
 
+		ITEM_STATUS(ITEM_GRADE_TYPE _eGrade, ITEM_NAMETYPE _eItemName, _v3 _vBirthPos, _double _dLimitTime)
+			: eItemGradeType(_eGrade), eItem_NameType(_eItemName), vBirthPos(_vBirthPos), dCanGetLimitTimeMax(_dLimitTime)
+		{
+		}
+
+		ITEM_NAMETYPE					eItem_NameType;
+
 		ITEM_TYPE						eItemType; //최상위 - 아이템 종류
 		ITEM_GRADE_TYPE					eItemGradeType; //최상위 - 아이템 등급
 
@@ -46,13 +55,15 @@ public:
 
 		CExpendables::EXPEND_TYPE		eExpendablesType; //상위 - 소모품 종류
 
-		WEAPON_DATA			eWeaponType;	//상위 - 무기 종류
+		WEAPON_DATA						eWeaponType;	//상위 - 무기 종류
 
 		CPet::PET_TYPE					ePetType; //상위 - 펫 종류
+
 
 		_v3			vBirthPos; //생성위치
 		_double		dCanGetLimitTimeMax; //소멸제한 시간
 	};
+
 protected:
 	explicit CDropItem(LPDIRECT3DDEVICE9 pGraphic_Device);
 	explicit CDropItem(const CDropItem& rhs);
@@ -86,6 +97,11 @@ private:
 	CTrail_VFX*						m_pTrailEffect = nullptr;
 	CEffect*						m_pEffect = nullptr;
 
+	CGet_ItemUI*					m_pGet_ItemUI = nullptr;
+
+
+	ITEM_NAMETYPE					m_eItem_NameType = ITEM_NAMETYPE::NAMETYPE_End;	// 아이템 이름
+
 	ITEM_TYPE						m_eItemType = ITEM_TYPE::ITEM_TYPE_END; //아이템 종류
 
 	ITEM_GRADE_TYPE					m_eItemGrade = ITEM_GRADE_TYPE::ITEM_GRADE_TYPE_END; //등급 종류
@@ -100,9 +116,14 @@ private:
 
 	_double							m_dCanGetItemLimitTimeCur = 0; //누적을 위한 값
 	_double							m_dCanGetItemLimitTimeMax = 0; //시간값이라 double형, 해당 시간이 지나면 획득 불가, 사망
+
 	_float							m_fTempEffectLimitTime = 0.f; //이펙트를 위한 변수, 임시로 만든 변수, 변경 예정
 	_float							m_fCanGetDist = 1.5f; //획득 가능범위
+	
 	_bool							m_bCanGetItem = false; //항시 false 상호작용시 true
+	_bool							m_bCheck_Start_GetItemUI = false;
+
+	_uint							m_iRenderIndex = 0;
 };
 
 END

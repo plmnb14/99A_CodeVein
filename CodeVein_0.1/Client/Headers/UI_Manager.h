@@ -104,6 +104,9 @@
 #include "BuyOptionUI.h"
 #include "PurchaseFailUI.h"
 
+#include "PickUp_ItemUI.h"
+#include "Calling_Colleague.h"
+
 BEGIN(Client)
 
 class CUI_Manager final : public CBase
@@ -151,6 +154,13 @@ public:
 	// 펫 인벤토리
 	CPet_Inven* Get_Pet_Inven() { return m_pPet_Inven; }
 
+
+	// 아이템 획득 UI
+	CPickUp_ItemUI*			Get_PickUp_ItemUI() { return m_pPickUp_ItemUI; }
+
+	// 동료 활성화/비활성화 UI
+	CCalling_Colleague*		Get_Calling_Colleague() { return m_pCalling_Colleague; }
+
 private:
 	_uint m_uiCoundItem = 0;
 	_bool m_bTest = false;
@@ -182,6 +192,12 @@ private:
 
 	// 펫 인벤토리
 	CPet_Inven* m_pPet_Inven = nullptr;
+
+	// 아이템 획득 UI
+	CPickUp_ItemUI*			m_pPickUp_ItemUI = nullptr;
+
+	// 동료 활성/비활성화 UI
+	CCalling_Colleague*		m_pCalling_Colleague = nullptr;
 
 public:
 	virtual void Free();
