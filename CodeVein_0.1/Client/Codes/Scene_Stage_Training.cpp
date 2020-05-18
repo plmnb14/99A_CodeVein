@@ -47,8 +47,8 @@ HRESULT CScene_Stage_Training::Ready_Scene()
 	if (FAILED(Ready_Layer_Environment()))
 		return E_FAIL;
 
-	//if (FAILED(Ready_Layer_Custom(L"Layer_Custom")))
-	//	return E_FAIL;
+	if (FAILED(Ready_Layer_Custom(L"Layer_Custom")))
+		return E_FAIL;
 
 	CRenderer* pRenderer = static_cast<CRenderer*>(CManagement::Get_Instance()->Clone_Component(SCENE_STATIC, L"Renderer"));
 	pRenderer->Fog_On(false);
@@ -135,7 +135,7 @@ HRESULT CScene_Stage_Training::Ready_Layer_Enemies()
 	//g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Colleague", nullptr);
 
 	// ¾ßÄí¸ð
-	g_pManagement->Add_GameObject_ToLayer(L"GameObject_NPC_Yakumo", SCENE_STAGE, L"Layer_NPC", &CNPC_Yakumo::NPC_INFO(_v3(-4.46f, 0.f, -5.294f), D3DXToRadian(90.f)));
+	//g_pManagement->Add_GameObject_ToLayer(L"GameObject_NPC_Yakumo", SCENE_STAGE, L"Layer_NPC", &CNPC_Yakumo::NPC_INFO(_v3(-4.46f, 0.f, -5.294f), D3DXToRadian(90.f)));
 
 	//// ÅäÅÛ
 	//pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_Cocoon",

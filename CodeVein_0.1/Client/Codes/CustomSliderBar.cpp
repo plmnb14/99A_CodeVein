@@ -59,6 +59,9 @@ HRESULT CCustomSliderBar::Ready_GameObject(void * pArg)
 
 _int CCustomSliderBar::Update_GameObject(_double TimeDelta)
 {
+	if (!m_bIsActive)
+		return S_OK;
+
 	CUI::Update_GameObject(TimeDelta);
 
 	Late_Init();

@@ -1204,8 +1204,7 @@ PS_OUT_ADVENCE PS_DISSOLVE(PS_IN In)
 	return Out;
 }
 
-//float3 lumCoeff = float3(0.2125, 0.7154, 0.0721);
-float3 lumCoeff = float3(0.299, 0.587, 0.114);
+float3 lumCoeff = float3(0.2125, 0.7154, 0.0721);
 float3 root3 = float3(0.57735, 0.57735, 0.57735);
 float3x3 QuaternionToMatrix(float4 quat)
 {

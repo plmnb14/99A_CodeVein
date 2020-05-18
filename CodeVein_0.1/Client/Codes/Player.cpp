@@ -31,6 +31,11 @@ void CPlayer::Set_WeaponSlot(ACTIVE_WEAPON_SLOT eType, WEAPON_DATA eData)
 			Safe_Release(m_pWeapon[eType]);
 
 		m_bWeaponActive[eType] = false;
+		m_bWeaponActive[!eType] = true;
+		m_eActiveSlot = (ACTIVE_WEAPON_SLOT)(!eType);
+
+		Change_Weapon();
+
 		return;
 	}
 

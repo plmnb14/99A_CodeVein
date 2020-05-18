@@ -36,7 +36,7 @@ void CCustomInven::Set_ActiveSlot(INVEN_TYPE eType)
 		Active_SlotType(true, &m_vecHairSlot);
 
 		for (_int i = 0; i < 4; i++)
-			m_pHairSlider[i]->Set_Active(false);
+			m_pHairSlider[i]->Set_Active(true);
 
 		break;
 	}
@@ -58,6 +58,11 @@ void CCustomInven::Set_Active(_bool bActive)
 	Active_SlotType(bActive, &m_vecFaceSlot);
 	Active_SlotType(bActive, &m_vecEyeSlot);
 	Active_SlotType(bActive, &m_vecMaskSlot);
+
+	for (_int i = 0; i < 4; i++)
+		m_pHairSlider[i]->Set_Active(bActive);
+
+	m_bIsActive = bActive;
 }
 
 HRESULT CCustomInven::Ready_GameObject_Prototype()
@@ -74,7 +79,7 @@ HRESULT CCustomInven::Ready_GameObject(void * pArg)
 
 	CUI::Ready_GameObject(pArg);
 
-	m_fPosX = 329.5f;
+	m_fPosX = 350.5f;
 	m_fPosY = 325.5f;
 	m_fSizeX = 280.f;
 	m_fSizeY = 471.f;
@@ -158,7 +163,7 @@ void CCustomInven::SetUp_Default()
 	}
 
 	// Mask
-	const _int MASK_COUNT = 1;
+	const _int MASK_COUNT = 10;
 	for (_int i = 0; i < MASK_COUNT; i++)
 	{
 		Add_Slot(TYPE_MASK, i);

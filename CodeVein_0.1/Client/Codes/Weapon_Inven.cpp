@@ -259,12 +259,11 @@ void CWeapon_Inven::UnRegist_Weapon(CWeapon_Slot * pWeaponSlot)
 	_bool bIsNull = false;
 	for (_int i = 0; i < 2; i++)
 	{
-		if (nullptr == m_vecWeaponSlot[i] || false == pWeaponSlot->Get_Select())
+		if (nullptr == m_vecWeaponSlot[i] || false == m_vecWeaponSlot[i]->Get_Select())
 			bIsNull = true;
-
-		if (bIsNull)
-			return;
 	}
+	if (bIsNull)
+		return;
 	
 	if (pWeaponSlot->Get_WeaponParam().iWeaponName == m_UseWeaponParam[0].iWeaponName)
 	{

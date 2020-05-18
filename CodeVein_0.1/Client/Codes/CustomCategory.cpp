@@ -44,6 +44,7 @@ HRESULT CCustomCategory::Ready_GameObject(void * pArg)
 	m_iTexIdx = 0;
 
 	SetUp_Default();
+	m_pCustomInven->Set_Active(m_bIsActive);
 
 	return NOERROR;
 }
@@ -52,8 +53,10 @@ _int CCustomCategory::Update_GameObject(_double TimeDelta)
 {
 	if (g_pInput_Device->Key_Down(DIK_T))
 	{
-		Set_Active(!Get_Active());
-		m_pCustomInven->Set_Active(!Get_Active());
+		Set_Active(!m_bIsActive);
+		m_pCustomInven->Set_Active(m_bIsActive);
+		if(m_bIsActive)
+			m_pCustomInven->Set_ActiveSlot(CCustomInven::TYPE_HAIR);
 	}
 
 	CUI::Update_GameObject(TimeDelta);
