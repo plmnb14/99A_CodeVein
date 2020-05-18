@@ -154,7 +154,7 @@ protected:
 	virtual _int Update_GameObject(_double TimeDelta) PURE;
 	virtual _int Late_Update_GameObject(_double TimeDelta) PURE;
 	virtual HRESULT LateInit_GameObject();
-	virtual HRESULT Render_GameObject() PURE;
+	virtual HRESULT Render_GameObject();
 	virtual HRESULT Render_GameObject_SetShader(CShader* pShader);
 	virtual HRESULT Render_GameObject_SetPass(CShader* pShader, _int iPass, _bool _bIsForMotionBlur = false);
 

@@ -84,7 +84,7 @@ _int CDeerKingJumpFistCol::Late_Update_GameObject(_double TimeDelta)
 	return NOERROR;
 }
 
-HRESULT CDeerKingJumpFistCol::Render_GameObject()
+HRESULT CDeerKingJumpFistCol::Render_GameObject_Instancing_SetPass(CShader * pShader)
 {
 	Update_Collider();
 	Draw_Collider();

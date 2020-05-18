@@ -77,7 +77,12 @@ _int CColdBeamBig::Update_GameObject(_double TimeDelta)
 	CGameObject::Update_GameObject(TimeDelta);
 
 	if (m_bDead)
+	{
+		g_pSoundManager->Stop_Sound(CSoundManager::CHANNELID::IceGirl_SFX_02);
+		g_pSoundManager->Play_Sound(const_cast<TCHAR*>(L"SE_BOSSGUY_ICE_ATTACK_011.ogg"), CSoundManager::CHANNELID::IceGirl_SFX_02, CSoundManager::SOUND::Effect_Sound);
+
 		return DEAD_OBJ;
+	}
 
 	m_dCurTime += TimeDelta;
 
@@ -140,7 +145,7 @@ _int CColdBeamBig::Late_Update_GameObject(_double TimeDelta)
 	return NOERROR;
 }
 
-HRESULT CColdBeamBig::Render_GameObject()
+HRESULT CColdBeamBig::Render_GameObject_Instancing_SetPass(CShader * pShader)
 {
 	Update_Collider();
 	Draw_Collider();

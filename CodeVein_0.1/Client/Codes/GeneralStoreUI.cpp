@@ -185,6 +185,8 @@ void CGeneralStoreUI::Click_SubUI()
 	{
 		m_pExpendCollectionUI->Set_Active(true);
 		m_pMaterialCollectionUI->Set_Active(false);
+
+		g_pSoundManager->Play_Sound(L"UI_CommonHover.wav", CSoundManager::CHANNELID::Purchase_GeneralShop_Icon01, CSoundManager::Ambient_Sound);
 	}
 
 	// 재료 버튼 클릭시
@@ -192,6 +194,8 @@ void CGeneralStoreUI::Click_SubUI()
 	{
 		m_pExpendCollectionUI->Set_Active(false);
 		m_pMaterialCollectionUI->Set_Active(true);
+
+		g_pSoundManager->Play_Sound(L"UI_CommonHover.wav", CSoundManager::CHANNELID::Purchase_GeneralShop_Icon02, CSoundManager::Ambient_Sound);
 	}
 }
 

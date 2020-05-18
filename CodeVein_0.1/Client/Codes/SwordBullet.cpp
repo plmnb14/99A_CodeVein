@@ -118,7 +118,7 @@ _int CSwordBullet::Late_Update_GameObject(_double TimeDelta)
 	return NOERROR;
 }
 
-HRESULT CSwordBullet::Render_GameObject()
+HRESULT CSwordBullet::Render_GameObject_Instancing_SetPass(CShader * pShader)
 {
 	Update_Collider();
 	Draw_Collider();

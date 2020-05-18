@@ -89,6 +89,7 @@ private:
 	void Play_PoisonWheelWind(); //atk_poisonmine
 
 protected:
+	virtual void Play_Deformation() override;
 	virtual void Play_Idle() override;
 	virtual void Play_Move() override;
 	virtual void Play_CC() override;

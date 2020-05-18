@@ -70,7 +70,7 @@ private:	// ÆÐÅÏ
 	CBT_Composite_Node* Fire_BigSphere();
 	// 4. ÇÃ·¹ÀÌ¾î ¹Ù´Ú¿¡¼­ È­¿°
 	CBT_Composite_Node* Fire_Ground();
-	// 5. ¿Þ¼Õ¿¡¼­ À§·Î ºÒ½î°í »õÀå¸ð¾çÀ¸·Î ºÒ²É ¶³¾îÁü,  ÀÌÆåÆ® Àç¼³Á¤ ÇØ¾ßÇÔ.
+	// 5. ¿Þ¼Õ¿¡¼­ À§·Î ºÒ½î°í »õÀå¸ð¾çÀ¸·Î ºÒ²É ¶³¾îÁü
 	CBT_Composite_Node* Fire_Flame();
 
 
@@ -120,12 +120,12 @@ private:
 	_bool				m_bAIController = true;
 
 	// ºí·¢º¸µå¿¡¼­ »ÀÀÇ Pos ÀúÀå¼Ò
-	_v3					m_vMuzzle				= _v3(0.f, 0.f, 0.f);	// ÃÑ±¸ »À
-	_v3					m_vLeftForeArm			= _v3(0.f, 0.f, 0.f);	// ÆÈ²ÞÄ¡ »À
-	_v3					m_vLeftHand				= _v3(0.f, 0.f, 0.f);	// ¿Þ¼Õ »À
-	_v3					m_vLeftHandAttach		= _v3(0.f, 0.f, 0.f);	// ¿Þ¼Õ ºÎÂø »À
-	_v3					m_vLeftHandMiddle2		= _v3(0.f, 0.f, 0.f);	// ¿Þ¼Õ °¡¿îµ¥ ¼Õ°¡¶ô »À	
-	_v3					m_vRightHand			= _v3(0.f, 0.f, 0.f);	// ¿À¸¥¼Õ »À
+	_v3					m_vMuzzle = _v3(0.f, 0.f, 0.f);	// ÃÑ±¸ »À
+	_v3					m_vLeftForeArm = _v3(0.f, 0.f, 0.f);	// ÆÈ²ÞÄ¡ »À
+	_v3					m_vLeftHand = _v3(0.f, 0.f, 0.f);	// ¿Þ¼Õ »À
+	_v3					m_vLeftHandAttach = _v3(0.f, 0.f, 0.f);	// ¿Þ¼Õ ºÎÂø »À
+	_v3					m_vLeftHandMiddle2 = _v3(0.f, 0.f, 0.f);	// ¿Þ¼Õ °¡¿îµ¥ ¼Õ°¡¶ô »À	
+	_v3					m_vRightHand = _v3(0.f, 0.f, 0.f);	// ¿À¸¥¼Õ »À
 
 	//»À ÁÖ¼Ò
 	D3DXFRAME_DERIVED*	m_pLeftForeArmFrame = nullptr;
@@ -143,6 +143,9 @@ private:	// ÃÖÃÊ»óÅÂ ¼¼ÆÃ
 
 private:
 	_bool				m_bPlayerFriendly = false;		// ÇÃ·¹ÀÌ¾î ²«Áö
+
+private:
+	map<_int, const TCHAR*>	m_mapSound;
 
 private:
 	HRESULT Update_Bone_Of_BlackBoard();
@@ -167,6 +170,7 @@ private:
 	HRESULT Ready_BoneMatrix();
 	HRESULT Ready_Collider();
 	HRESULT Ready_NF(void* pArg);
+	HRESULT Ready_Sound();
 
 public:
 	static CFireBoy* Create(LPDIRECT3DDEVICE9 pGraphic_Device);

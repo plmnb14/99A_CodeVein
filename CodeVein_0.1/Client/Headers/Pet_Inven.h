@@ -58,7 +58,7 @@ private:
 	CPet::PET_TYPE			m_eOldType = CPet::PET_TYPE::PET_TYPE_END;
 	
 	_bool					m_bCanActivePet = true;
-	_uint					m_VectorNum = 0;
+	_uint					m_ivectorNum = 999999;
 
 };
 

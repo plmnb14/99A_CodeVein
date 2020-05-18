@@ -196,6 +196,7 @@ void CWeapon_Inven::Click_Inven()
 	if (!m_bIsActive)
 		return;
 
+	_uint iIdx = 0;
 	for (auto& pSlot : m_vecWeaponSlot)
 	{
 		if (pSlot->Pt_InRect())
@@ -214,6 +215,7 @@ void CWeapon_Inven::Click_Inven()
 			}
 			
 		}
+		iIdx++;
 	}
 }
 
@@ -227,13 +229,15 @@ void CWeapon_Inven::Regist_Weapon(CWeapon_Slot* pWeaponSlot)
 		m_UseWeaponParam[0] = pWeaponSlot->Get_WeaponParam();
 
 		pWeaponSlot->Set_Select(true);
-		
+
+		g_pSoundManager->Play_Sound(L"UI_CommonHover.wav", CSoundManager::WeaponInven_Regist_Slot01, CSoundManager::Ambient_Sound);
 	}
 	else if (m_UseWeaponParam[1].iWeaponName == WPN_DATA_End)
 	{
 		m_UseWeaponParam[1] = pWeaponSlot->Get_WeaponParam();
 		pWeaponSlot->Set_Select(true);
 		
+		g_pSoundManager->Play_Sound(L"UI_CommonHover.wav", CSoundManager::WeaponInven_Regist_Slot02, CSoundManager::Ambient_Sound);
 	}
 	else
 		return;
@@ -256,6 +260,8 @@ void CWeapon_Inven::UnRegist_Weapon(CWeapon_Slot * pWeaponSlot)
 		m_UseWeaponParam[0].fTrail_Max = 0.f;
 		m_UseWeaponParam[0].fCol_Height = 0.f;
 		pWeaponSlot->Set_Select(false);
+
+		g_pSoundManager->Play_Sound(L"UI_CommonClick.wav", CSoundManager::WeaponInven_UnRegist_Slot01, CSoundManager::Ambient_Sound);
 	}
 	else if (pWeaponSlot->Get_WeaponParam().iWeaponName == m_UseWeaponParam[1].iWeaponName)
 	{
@@ -270,6 +276,8 @@ void CWeapon_Inven::UnRegist_Weapon(CWeapon_Slot * pWeaponSlot)
 		m_UseWeaponParam[1].fTrail_Max = 0.f;
 		m_UseWeaponParam[1].fCol_Height = 0.f;
 		pWeaponSlot->Set_Select(false);
+
+		g_pSoundManager->Play_Sound(L"UI_CommonClick.wav", CSoundManager::WeaponInven_UnRegist_Slot02, CSoundManager::Ambient_Sound);
 	}
 	else
 		return;

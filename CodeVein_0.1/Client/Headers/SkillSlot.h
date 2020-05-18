@@ -48,6 +48,7 @@ private:
 	Skill_ID				m_eSkillID = SkillID_End;
 	_bool					m_bIsSelect = false;
 	_bool					m_bIsRegist = false;
+	_bool					m_bIsSound = false;
 
 public:
 	static CSkillSlot*		Create(_Device pGraphic_Device);

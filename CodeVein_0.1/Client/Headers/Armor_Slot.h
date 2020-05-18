@@ -36,6 +36,7 @@ private:
 	HRESULT Add_Component();
 	HRESULT SetUp_ConstantTable(_uint iIndex);
 	void	SetUp_Default();
+	void	SetUp_SlotTexIdx();
 
 private:
 	CTransform*				m_pTransformCom = nullptr;

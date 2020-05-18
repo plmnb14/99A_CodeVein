@@ -621,6 +621,9 @@ void CWolf::Play_Bite_LRL()
 				m_bEventTrigger[1] = true;
 				m_vecAttackCol[0]->Set_Enabled(true);
 				m_tObjParam.bSuperArmor = true;
+
+				g_pSoundManager->Stop_Sound(CSoundManager::Wolf_SFX_01);
+				g_pSoundManager->Play_Sound(L"Wolf_Bite4.ogg", CSoundManager::Wolf_SFX_01, CSoundManager::Effect_Sound);
 			}
 		}
 		else if (3.367 <= AniTime)
@@ -639,6 +642,9 @@ void CWolf::Play_Bite_LRL()
 				m_bEventTrigger[3] = true;
 				m_vecAttackCol[0]->Set_Enabled(true);
 				m_tObjParam.bSuperArmor = true;
+
+				g_pSoundManager->Stop_Sound(CSoundManager::Wolf_SFX_02);
+				g_pSoundManager->Play_Sound(L"Wolf_Bite4.ogg", CSoundManager::Wolf_SFX_01, CSoundManager::Effect_Sound);
 			}
 		}
 		else if (2.167 <= AniTime)
@@ -657,6 +663,9 @@ void CWolf::Play_Bite_LRL()
 				m_bEventTrigger[5] = true;
 				m_vecAttackCol[0]->Set_Enabled(true);
 				m_tObjParam.bSuperArmor = true;
+
+				g_pSoundManager->Stop_Sound(CSoundManager::Wolf_SFX_01);
+				g_pSoundManager->Play_Sound(L"Wolf_Bite4.ogg", CSoundManager::Wolf_SFX_01, CSoundManager::Effect_Sound);
 			}
 		}
 
@@ -739,6 +748,9 @@ void CWolf::Play_RDodgeAtk()
 				m_bEventTrigger[1] = true;
 				m_vecAttackCol[0]->Set_Enabled(true);
 				m_tObjParam.bSuperArmor = true;
+
+				g_pSoundManager->Stop_Sound(CSoundManager::Wolf_SFX_01);
+				g_pSoundManager->Play_Sound(L"Wolf_Bite3.ogg", CSoundManager::Wolf_SFX_01, CSoundManager::Effect_Sound);
 			}
 		}
 
@@ -808,6 +820,9 @@ void CWolf::Play_LDodgeAtk()
 				m_bEventTrigger[1] = true;
 				m_vecAttackCol[0]->Set_Enabled(true);
 				m_tObjParam.bSuperArmor = true;
+
+				g_pSoundManager->Stop_Sound(CSoundManager::Wolf_SFX_01);
+				g_pSoundManager->Play_Sound(L"Wolf_Bite2.ogg", CSoundManager::Wolf_SFX_01, CSoundManager::Effect_Sound);
 			}
 		}
 
@@ -877,6 +892,9 @@ void CWolf::Play_Frisbee()
 				m_bEventTrigger[1] = true;
 				m_vecAttackCol[0]->Set_Enabled(true);
 				m_tObjParam.bSuperArmor = true;
+
+				g_pSoundManager->Stop_Sound(CSoundManager::Wolf_SFX_01);
+				g_pSoundManager->Play_Sound(L"Wolf_Bite1.ogg", CSoundManager::Wolf_SFX_01, CSoundManager::Effect_Sound);
 			}
 		}
 
@@ -1189,6 +1207,9 @@ void CWolf::Play_Hit()
 			m_eState = WOLF_ANI::Dmg_B;
 			break;
 		}
+
+		g_pSoundManager->Stop_Sound(CSoundManager::Wolf_SFX_01);
+		g_pSoundManager->Play_Sound(L"Wolf_Hit.ogg", CSoundManager::Wolf_SFX_01, CSoundManager::Effect_Sound);
 	}
 	else
 	{
@@ -1207,7 +1228,6 @@ void CWolf::Play_Hit()
 			if (false == m_tObjParam.bCanHit)
 			{
 				m_tObjParam.bCanHit = true;
-
 				if (nullptr == m_pAggroTarget)
 					m_eFBLR = FBLR::FRONTLEFT;
 				else

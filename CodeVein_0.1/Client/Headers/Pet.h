@@ -3,8 +3,6 @@
 #include "Client_Defines.h"
 #include "GameObject.h"
 #include "Management.h"
-#include "MonsterUI.h"
-#include "Weapon.h"
 #include "Haze.h"
 #include "ObjectPool_Manager.h"
 #include "Trail_VFX.h"
@@ -122,7 +120,6 @@ public:
 	{
 		PET_DEERKING,
 		PET_POISONBUTTERFLY,
-		PET_WOLF,
 		PET_TYPE_END
 	};
 
@@ -146,6 +143,8 @@ public:
 	{
 		PET_BULLET_POISON,
 		PET_BULLET_ICE,
+		PET_BULLET_ICICLEBLADE,
+		PET_BULLET_ICICLEBEAM,
 		PET_BULLET_FIRE,
 		PET_BULLET_NONE
 	};
@@ -170,6 +169,7 @@ public:
 		{}
 
 		PET_BULLET_TYPE	eType = PET_BULLET_NONE;
+
 		_v3			vCreatePos = _v3(0.f, 0.f, 0.f);
 		_v3			vDir = _v3(0.f, 0.f, 0.f);
 		_float		fSpeed = 0.f;
@@ -190,29 +190,26 @@ protected:
 	virtual HRESULT Render_GameObject_Instancing_SetPass(CShader* pShader);
 	virtual HRESULT Render_GameObject_SetPass(CShader* pShader, _int iPass);
 
-protected:
 	virtual void Check_CollisionEvent();
 	virtual void Check_CollisionPush();
 	virtual void Check_CollisionHit(list<CGameObject*> plistGameObject);
 
-	virtual void Function_FBLR(CGameObject* _pGameObject);
-	virtual void Function_RotateBody(CGameObject* _pGameObject);
-	virtual void Function_MoveAround(CGameObject* _pGameObject, _float _fSpeed, _v3 _vDir = { V3_NULL });
-	virtual void Function_CoolDown();
-	virtual void Function_Movement(_float _fspeed, _v3 _vDir = { V3_NULL });
-	virtual void Function_DecreMoveMent(_float _fMutiply = 1.f);
-	virtual void Function_CalcMoveSpeed(_float _fMidDist);
-	virtual void Function_Find_Target();
-	virtual void Function_ResetAfterAtk();
-
+	virtual void Play_Deformation() PURE;
 	virtual void Play_Idle();
 	virtual void Play_Move();
 	virtual void Play_Hit();
 	virtual void Play_CC();
 	virtual void Play_Dead();
 
+protected:
+	virtual HRESULT Add_Component(void* pArg);
+	virtual HRESULT SetUp_ConstantTable(CShader* pShader);
+	virtual HRESULT Ready_Status(void* pArg);
+	virtual HRESULT Ready_Weapon(void* pArg);
+	virtual HRESULT Ready_Collider(void* pArg);
+	virtual HRESULT Ready_BoneMatrix(void* pArg);
+
 public:
-	virtual void Check_Navi();
 	virtual PET_PLUS_TYPE Get_PetPlus() { return m_ePlusType; }
 	virtual PET_TYPE Get_PetType() { return m_eType; }
 	virtual PET_GRADE_TYPE Get_PetGrade() { return m_eGradeType; }
@@ -224,13 +221,18 @@ public:
 	PET_MODE_TYPE Get_Pet_Mode() { return m_eNowPetMode; }
 	void Set_Pet_Mode(PET_MODE_TYPE _eMode) { m_eNowPetMode = _eMode; }
 
-protected:
-	virtual HRESULT Add_Component(void* pArg);
-	virtual HRESULT SetUp_ConstantTable(CShader* pShader);
-	virtual HRESULT Ready_Status(void* pArg);
-	virtual HRESULT Ready_Weapon(void* pArg);
-	virtual HRESULT Ready_Collider(void* pArg);
-	virtual HRESULT Ready_BoneMatrix(void* pArg);
+	virtual void Function_FBLR(CGameObject* _pGameObject);
+	virtual void Function_RotateBody(CGameObject* _pGameObject);
+	virtual void Function_MoveAround(CGameObject* _pGameObject, _float _fSpeed, _v3 _vDir = { V3_NULL });
+	virtual void Function_CoolDown();
+	virtual void Function_Movement(_float _fspeed, _v3 _vDir = { V3_NULL });
+	virtual void Function_DecreMoveMent(_float _fMutiply = 1.f);
+	virtual void Function_CalcMoveSpeed(_float _fMidDist);
+	virtual void Function_Find_Target();
+	virtual void Function_ResetAfterAtk();
+	virtual void Function_Change_Mode();
+	virtual void Function_Check_Navi();
+	virtual void Function_Teleport_Near_Player();
 
 protected:
 	virtual CGameObject* Clone_GameObject(void* pArg) PURE;
@@ -245,8 +247,6 @@ protected:
 	CCollider*			m_pCollider = nullptr;
 	COptimization*		m_pOptimization = nullptr;
 	CBattleAgent*		m_pBattleAgent = nullptr;
-
-	CWeapon*			m_pWeapon = nullptr;
 
 	CGameObject*		m_pPlayer = nullptr;
 
@@ -271,7 +271,6 @@ protected:
 	_double				m_dTimeDelta = 0;
 	_double				m_dAniPlayMul = 1;
 
-	//공통 사용 변수
 	_float				m_fSkillMoveSpeed_Cur = 0.f;
 	_float				m_fSkillMoveSpeed_Max = 0.f;
 	_float				m_fSkillMoveAccel_Cur = 0.f;
@@ -280,7 +279,8 @@ protected:
 	_float				m_fPersonalRange = 4.f; //player, 목표와의 사회적 거리두기 변수
 
 	_bool				m_bEventTrigger[30] = {};
-	_bool				m_bCanSummonInStage = false;
+	_bool				m_bCanSummon = false; //소환 여부
+	_bool				m_bIsSummon = false; //소환중 여부
 
 	// For Effect
 	_float				m_fDeadEffect_Delay = 0.f;

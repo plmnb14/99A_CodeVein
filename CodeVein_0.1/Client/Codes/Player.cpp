@@ -276,8 +276,8 @@ HRESULT CPlayer::Render_GameObject_Instancing_SetPass(CShader * pShader)
 	m_pDynamicMesh->Play_Animation_LeftArm(g_pTimer_Manager->Get_DeltaTime(L"Timer_Fps_60") * m_fAnimMutiply);
 
 	// 머리 위치 업데이트
-	m_pHair->Update_GameObject(g_pTimer_Manager->Get_DeltaTime(L"Timer_Fps_60") * m_fAnimMutiply, m_bOnSkill);
-	m_pOuter->Update_GameObject(g_pTimer_Manager->Get_DeltaTime(L"Timer_Fps_60") * m_fAnimMutiply, m_bOnSkill);
+	m_pHair->Update_GameObject(g_pTimer_Manager->Get_DeltaTime(L"Timer_Fps_60") * m_fAnimMutiply, (m_bOnSkill || m_bOnDodge));
+	m_pOuter->Update_GameObject(g_pTimer_Manager->Get_DeltaTime(L"Timer_Fps_60") * m_fAnimMutiply, (m_bOnSkill || m_bOnDodge));
 
 
 	if (m_tObjParam.bInvisible)
