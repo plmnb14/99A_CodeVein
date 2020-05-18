@@ -3,12 +3,29 @@ vector		g_vCamPosition;
 matrix		g_matProjInv;
 matrix		g_matViewInv;
 
+// 피부 예외처리
+texture		g_SkinTexture;
+
+sampler SkinSampler = sampler_state
+{
+	texture = g_SkinTexture;
+
+	minfilter = linear;
+	magfilter = linear;
+	mipfilter = linear;
+};
+
+
 // 노멀
 texture		g_NormalTexture;
 
 sampler NormalSampler = sampler_state
 {
 	texture = g_NormalTexture;
+
+	minfilter = linear;
+	magfilter = linear;
+	mipfilter = linear;
 };
 
 // 뎁스
@@ -150,6 +167,12 @@ PS_OUT PS_SSAO(PS_IN In)
 	//Out.vSSAO = ao;
 	Out.vSSAO	= 1.f - ao;
 	Out.vSSAO.a = 1.f;
+
+
+	float	fSkin = tex2D(SkinSampler, In.vTexUV).x;
+	
+	if (fSkin > 0.99f)
+		Out.vSSAO = 1.f;
 
 	return Out;
 }

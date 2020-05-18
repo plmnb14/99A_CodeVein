@@ -107,7 +107,7 @@ PS_OUT PS_MAIN_DIRECTIONAL(PS_IN In)
 	// -1 ~ 1
 	vector		vNormal = vector((vNormalInfo.xyz * 2.f - 1.f), 0.f) ;
 
-	float2		vHeightValue = tex2D(RimNormalSampler, In.vTexUV).xy;
+	float3		vHeightValue = tex2D(RimNormalSampler, In.vTexUV).xyz;
 
 	Out.vShade = g_vLightDiffuse * saturate(dot(normalize(g_vLightDir) * -1.f, vNormal)) + saturate(g_vLightAmbient * g_vMtrlAmbient);
 	Out.vShade.a = 1.f;
@@ -136,19 +136,6 @@ PS_OUT PS_MAIN_DIRECTIONAL(PS_IN In)
 	Out.vSpecular = (g_vLightDiffuse * pow(saturate(dot(normalize(vLook) * -1.f, vReflect)), 20.f * Roughness)) * Metalness;
 	Out.vSpecular.a = AO;
 
-	if (vHeightValue.x > 0.0001f)
-	{
-		Out.vShade.xyz = ceil(Out.vShade.xyz * 2.f) / 2.f;
-		Out.vSpecular.a = 1.f;
-
-		if (vHeightValue.y > 0.f)
-		{
-			//Out.vSpecular.a = 0.2f;
-			//Out.vShade.xyz += 0.5f;
-			//Out.vShade.xyz = saturate(Out.vShade.xyz);
-		}
-	}
-
 	// Shadow ====================================================================
 
 	float fShadow = tex2D(ShadowMapSampler, In.vTexUV).x;
@@ -158,6 +145,32 @@ PS_OUT PS_MAIN_DIRECTIONAL(PS_IN In)
 		Out.vSpecular.xyz = 0.f;
 
 	// Shadow End ====================================================================
+
+	if (vHeightValue.x > 0.99f)
+	{
+		if (Out.vShade.x < 0.8f)
+			Out.vShade.xyz = 0.8f;
+	
+		if (vHeightValue.z > 0.99f)
+		{
+			//if (fShadow < 0.8f)
+			//	fShadow = 0.8f;
+	
+			Out.vShade.xyz = 0.8f;
+		}
+
+		//float NdotL = dot(g_vLightDir, vNormal);
+	
+		//float fLightIntencity = smoothstep(0.f, 0.01f, NdotL);
+	
+		//Out.vShade.xyz = (fLightIntencity + 0.1f);
+	
+		//Out.vShade.xyz = ceil(Out.vShade.xyz * 2.f) / 2.f;
+		//Out.vSpecular.a = 1.f;
+	
+		Out.vSpecular.xyz = smoothstep(0.0, 0.025, Out.vSpecular.xyz);
+		Out.vSpecular.xyz *= 0.05f;
+	}
 
 	return Out;
 }
@@ -194,17 +207,14 @@ PS_OUT PS_MAIN_POINT(PS_IN In)
 
 	vector		vReflect = reflect(normalize(vLightDir), vNormal);
 
-
-	Out.vShade = fAtt * g_vLightDiffuse * saturate(dot(normalize(vLightDir) * -1.f, vNormal));// +saturate(g_vLightAmbient * g_vMtrlAmbient);
+	Out.vShade = fAtt * g_vLightDiffuse * saturate(dot(normalize(g_vLightDir) * -1.f, vNormal)) + saturate(g_vLightAmbient * g_vMtrlAmbient);
+	//Out.vShade = fAtt * g_vLightDiffuse * saturate(dot(normalize(vLightDir) * -1.f, vNormal));
 	Out.vShade.a = 1.f;
 
 	vector		vLook = vWorldPos - g_vCamPosition;
 
-	Out.vSpecular = fAtt * (g_vLightDiffuse * pow(saturate(dot(normalize(vLook) * -1.f, vReflect)), 5.f * Roughness)) * Metalness * 2.f;
+	Out.vSpecular = (fAtt * g_vLightDiffuse * pow(saturate(dot(normalize(vLook) * -1.f, vReflect)), 20.f * Roughness)) * Metalness;
 	Out.vSpecular.a = AO;
-
-	//float fShadow = tex2D(ShadowMapSampler, In.vTexUV).x;
-	//Out.vShade *= fShadow;
 
 	return Out;
 }

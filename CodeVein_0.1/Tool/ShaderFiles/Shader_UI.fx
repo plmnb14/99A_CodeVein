@@ -3,6 +3,7 @@ float		g_fPosX, g_fSizeX;
 float		g_fPercentage;
 float		g_fAlpha;
 float		g_fSparkle;
+float2		g_vNoiseDir;
 
 matrix		g_matWorld, g_matView, g_matProj;
 
@@ -266,6 +267,23 @@ PS_OUT PS_UI_MASK3(PS_IN In)
 	return Out;
 }
 
+PS_OUT PS_HPBar_Noise(PS_IN In)
+{
+	PS_OUT			Out = (PS_OUT)0;
+
+	In.vTexUV += g_vNoiseDir;
+
+	Out.vColor = tex2D(DiffuseSampler, In.vTexUV);
+
+	Out.vColor.a *= Out.vColor.r;
+
+	Out.vColor.r = 1.f;
+	Out.vColor.g = 0.5f;
+	Out.vColor.b = 0.036f;
+
+	return Out;
+}
+
 technique Default_Technique
 {
 	pass Default_Rendering	// 0
@@ -365,5 +383,15 @@ technique Default_Technique
 
 		vertexshader = compile vs_3_0 VS_MAIN();
 		pixelshader = compile ps_3_0 PS_UI_MASK2();
+	}
+	pass	UI_HP_Noise	// 10
+	{
+		zEnable = true;
+		AlphaBlendEnable = true;
+		srcblend = srcalpha;
+		destblend = invsrcalpha;
+
+		vertexshader = compile vs_3_0 VS_2D_UV_CTRL();
+		pixelshader = compile ps_3_0 PS_HPBar_Noise();
 	}
 }

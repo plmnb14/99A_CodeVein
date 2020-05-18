@@ -146,7 +146,6 @@ private:
 	D3DXFRAME_DERIVED*	m_pHeadFrame = nullptr;
 	D3DXFRAME_DERIVED*	m_pRightToeBaseFrame = nullptr;
 
-
 private:
 	_float				m_fSkillMoveSpeed_Cur = 0.f;
 	_float				m_fSkillMoveSpeed_Max = 0.f;

@@ -34,17 +34,26 @@ public:
 	_uint Get_WeaponDataSize() { return _uint(m_vecWeaponData.size()); }
 	
 	
-	
+public:
+	_uint	Get_PickUp_Number() { return m_iPickUp_ItemNumber; }
+	_bool	Get_PickUI() { return m_bCheck_PickUI; }
+
+	void	Set_PickUp_Number(_uint _iNumber) { m_iPickUp_ItemNumber = _iNumber; }
+	void	Set_PickUI(_bool _Check) { m_bCheck_PickUI = _Check; }
 
 public:
 	HRESULT Add_Item_Prototype(_Device pDevice);
 	
 
 private:
-	vector<CExpendables*>	m_vecExpendables;
+	vector<CExpendables*>		m_vecExpendables;
 	vector<CExpendables_Slot*>	m_vecQuickSlot;
-	vector<CMaterial*>		m_vecMaterial;
-	vector<WEAPON_DATA>	m_vecWeaponData;
+	vector<CMaterial*>			m_vecMaterial;
+	vector<WEAPON_DATA>			m_vecWeaponData;
+
+	_uint		m_iPickUp_ItemNumber = 0;
+
+	_bool		m_bCheck_PickUI = false;
 
 
 public:

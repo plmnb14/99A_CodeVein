@@ -11,6 +11,8 @@ public:
 	{
 		Extract_Essential,
 		Extract_Dynamic_Essential,
+		Extract_Costume_Dynamic,
+		Extract_Costume_Static,
 		Extract_NPC,
 		Extract_Static_Common,
 		Extract_Field_Gimmick,

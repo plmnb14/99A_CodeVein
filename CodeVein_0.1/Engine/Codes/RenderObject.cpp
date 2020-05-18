@@ -4,10 +4,12 @@
 CRenderObject::CRenderObject(_Device _pGraphicDev)
 	:CGameObject(_pGraphicDev)
 {
+	ZeroMemory(&m_tPBRInfo, sizeof(PBR));
 }
 
 CRenderObject::CRenderObject(const CRenderObject& rhs)
-	: CGameObject(rhs)
+	: CGameObject(rhs),
+	m_tPBRInfo(rhs.m_tPBRInfo)
 {
 
 }
@@ -38,13 +40,19 @@ _int CRenderObject::Update_GameObject(_double _TimeDelta)
 	if(nullptr == m_pMesh_Static)
 		return NO_EVENT;
 
-	if (nullptr != m_pOptimization)
-		m_bInFrustum = m_pOptimization->Check_InFrustumforObject(&m_pTransform->Get_Pos(), 10.f);
-	else
-		cout << "옵티마이즈 없어요!!!!!" << endl;
+	if (nullptr == m_pOptimization)
+		return NO_EVENT;
 
-	CGameObject::LateInit_GameObject();
-	CGameObject::Update_GameObject(_TimeDelta);
+	m_bInFrustum = m_pOptimization->Check_InFrustumforObject(&m_pTransform->Get_Pos(), 10.f);
+
+	if (false == m_bUpdated)
+	{
+		// 스태틱은 한번만 배치되면 되서 계속 갱신할 필요없음
+		m_bUpdated = true;
+
+		CGameObject::LateInit_GameObject();
+		CGameObject::Update_GameObject(_TimeDelta);
+	}
 
 	if (m_bOnTool)
 		Update_Collider();
@@ -54,7 +62,9 @@ _int CRenderObject::Update_GameObject(_double _TimeDelta)
 
 _int CRenderObject::Late_Update_GameObject(_double TimeDelta)
 {
-	if (false == m_bEnable)
+	if (false == m_bEnable ||
+		nullptr == m_pOptimization ||
+		nullptr == m_pRenderer)
 		return NO_EVENT;
 
 	m_pRenderer->Add_RenderList(RENDER_SHADOWTARGET, this);
@@ -73,19 +83,24 @@ HRESULT CRenderObject::Render_GameObject()
 	if (false == m_bEnable)
 		return NO_EVENT;
 
+	CManagement* pManagement = CManagement::Get_Instance();
+	Safe_AddRef(pManagement);
+
+	_mat matView, matProj;
+
+	matView = pManagement->Get_Transform(D3DTS_VIEW);
+	matProj = pManagement->Get_Transform(D3DTS_PROJECTION);
+
 	Init_Shader(m_pShader);
 
-	_mat matveiwView = CManagement::Get_Instance()->Get_Transform(D3DTS_VIEW);
-	_mat matPro = CManagement::Get_Instance()->Get_Transform(D3DTS_PROJECTION);
-
-	m_pShader->Set_Value("g_matView", &matveiwView, sizeof(_mat));
-	m_pShader->Set_Value("g_matProj", &matPro, sizeof(_mat));
+	m_pShader->Set_Value("g_matView", matView, sizeof(_mat));
+	m_pShader->Set_Value("g_matProj", matProj, sizeof(_mat));
 
 	m_pShader->Begin_Shader();
 
-	_ulong dwNumSubSet = m_pMesh_Static->Get_NumMaterials();
+	_ulong dwSubCnt = m_pMesh_Static->Get_NumMaterials();
 
-	for (_ulong i = 0; i < dwNumSubSet; ++i)
+	for (_ulong i = 0; i < dwSubCnt; ++i)
 	{
 		m_iPass = m_pMesh_Static->Get_MaterialPass(i);
 
@@ -103,6 +118,8 @@ HRESULT CRenderObject::Render_GameObject()
 	m_pShader->End_Shader();
 
 
+	Safe_Release(pManagement);
+
 	CGizmo::Get_Instance()->Draw_AABB(m_pCollider->Get_GizmoPos(), m_pCollider->Get_CenterPos(), m_pTransform->Get_Size());
 
 	if (m_bIsSelected)
@@ -118,9 +135,9 @@ HRESULT CRenderObject::Render_GameObject_Instancing_SetPass(CShader * pShader)
 
 	Init_Shader(pShader);
 
-	_ulong dwNumSubSet = m_pMesh_Static->Get_NumMaterials();
+	_ulong dwSubsetCnt = m_pMesh_Static->Get_NumMaterials();
 
-	for (_ulong i = 0; i < dwNumSubSet; ++i)
+	for (_ulong i = 0; i < dwSubsetCnt; ++i)
 	{
 		m_iPass = m_pMesh_Static->Get_MaterialPass(i);
 
@@ -150,26 +167,28 @@ HRESULT CRenderObject::Render_GameObject_SetPass(CShader* pShader, _int iPass, _
 	// 공통 변수
 	//============================================================================================
 
-	_mat	ViewMatrix = CManagement::Get_Instance()->Get_Transform(D3DTS_VIEW);
-	_mat	ProjMatrix = CManagement::Get_Instance()->Get_Transform(D3DTS_PROJECTION);
 	_mat	WorldMatrix = m_pTransform->Get_WorldMat();
 
 	if (FAILED(pShader->Set_Value("g_matWorld", &WorldMatrix, sizeof(_mat))))
 		return E_FAIL;
+
+	CManagement* pManagement = CManagement::Get_Instance();
+	Safe_AddRef(pManagement);
+
+	_mat matView, matProj;
+
+	matView = pManagement->Get_Transform(D3DTS_VIEW);
+	matProj = pManagement->Get_Transform(D3DTS_PROJECTION);
 
 	//============================================================================================
 	// 모션 블러 상수
 	//============================================================================================
 	if (_bIsForMotionBlur)
 	{
-		if (FAILED(pShader->Set_Value("g_matView", &ViewMatrix, sizeof(_mat))))
-			return E_FAIL;
-		if (FAILED(pShader->Set_Value("g_matProj", &ProjMatrix, sizeof(_mat))))
-			return E_FAIL;
 		if (FAILED(pShader->Set_Value("g_matLastWVP", &m_matLastWVP, sizeof(_mat))))
 			return E_FAIL;
 
-		m_matLastWVP = WorldMatrix * ViewMatrix * ProjMatrix;
+		m_matLastWVP = WorldMatrix * matView * matProj;
 
 		_bool bMotionBlur = true;
 		if (FAILED(pShader->Set_Bool("g_bMotionBlur", bMotionBlur)))
@@ -187,7 +206,7 @@ HRESULT CRenderObject::Render_GameObject_SetPass(CShader* pShader, _int iPass, _
 	//============================================================================================
 	else
 	{
-		_mat matWVP = WorldMatrix * ViewMatrix * ProjMatrix;
+		_mat matWVP = WorldMatrix * matView * matProj;
 
 		if (FAILED(pShader->Set_Value("g_matWVP", &matWVP, sizeof(_mat))))
 			return E_FAIL;
@@ -199,9 +218,9 @@ HRESULT CRenderObject::Render_GameObject_SetPass(CShader* pShader, _int iPass, _
 	// 쉐이더 시작
 	//============================================================================================
 
-	_ulong dwNumSubSet = m_pMesh_Static->Get_NumMaterials();
+	_ulong dwSubCnt = m_pMesh_Static->Get_NumMaterials();
 
-	for (_ulong i = 0; i < dwNumSubSet; ++i)
+	for (_ulong i = 0; i < dwSubCnt; ++i)
 	{
 		pShader->Begin_Pass(iPass);
 
@@ -213,6 +232,8 @@ HRESULT CRenderObject::Render_GameObject_SetPass(CShader* pShader, _int iPass, _
 	}
 
 	//============================================================================================
+
+	Safe_Release(pManagement);
 
 	return NOERROR;
 }
@@ -315,12 +336,52 @@ void CRenderObject::Change_Mesh(const _tchar* _MeshName)
 	iter->second = m_pMesh_Static = static_cast<CMesh_Static*>(CManagement::Get_Instance()->Clone_Component(SCENE_STATIC, m_szName));
 	Safe_AddRef(iter->second);
 
+	// 메쉬 개수 갱신
+	m_dwSubsetCnt = m_pMesh_Static->Get_NumMaterials();
+
 	return;
 }
 
 void CRenderObject::Set_RenderGroup(RENDERID _eGroup)
 {
 	m_eGroup = _eGroup;
+}
+
+void CRenderObject::SetUp_IndividualShaderValue()
+{
+	m_tPBRInfo.fEmissivePower = 1.f;
+	m_tPBRInfo.fSpecularPower = 0.f;
+	m_tPBRInfo.fRoughnessPower = 0.f;
+	m_tPBRInfo.fMinSpecular = 0.f;
+	m_tPBRInfo.fID_R = 1.f;
+	m_tPBRInfo.fID_G = 0.5f;
+	m_tPBRInfo.fID_B = 0.1f;
+	m_tPBRInfo.fRimPower = 0.f;
+	m_tPBRInfo.fRimAlpha = 0.f;
+
+	if (!lstrcmp(L"Mesh_Homefloorstone", m_szName))
+	{
+		m_tPBRInfo.fEmissivePower = 0.f;
+		m_tPBRInfo.fSpecularPower = 0.0f;
+		m_tPBRInfo.fRoughnessPower = 0.f;
+		m_tPBRInfo.fMinSpecular = 0.f;
+	}
+
+	else if (!lstrcmp(L"Mesh_Home_Floor_One", m_szName))
+	{
+		m_tPBRInfo.fEmissivePower = 0.f;
+		m_tPBRInfo.fSpecularPower = 0.0f;
+		m_tPBRInfo.fRoughnessPower = 0.f;
+		m_tPBRInfo.fMinSpecular = 0.f;
+	}
+
+	else if (!lstrcmp(L"Long_Longcarpet", m_szName))
+	{
+		m_tPBRInfo.fEmissivePower = 0.f;
+		m_tPBRInfo.fSpecularPower = 0.0f;
+		m_tPBRInfo.fRoughnessPower = 0.f;
+		m_tPBRInfo.fMinSpecular = 0.f;
+	}
 }
 
 CRenderObject * CRenderObject::Create_For_Tool(_Device _pGraphicDev)
@@ -405,37 +466,23 @@ void CRenderObject::Init_Shader(CShader* pShader)
 	//=============================================================================================
 	// 쉐이더 재질정보 수치 입력
 	//=============================================================================================
-	_float	fEmissivePower = 5.f;	// 이미시브 : 높을 수록, 자체 발광이 강해짐.
-	_float	fSpecularPower = 1.f;	// 메탈니스 : 높을 수록, 정반사가 강해짐.
-	_float	fRoughnessPower = 0.1f;	// 러프니스 : 높을 수록, 빛 산란이 적어짐(빛이 응집됨).
-	_float	fMinSpecular = 0.1f;	// 최소 빛	: 최소 단위의 빛을 더해줌.
-	_float	fID_R = 1.0f;	// ID_R : R채널 ID 값 , 1이 최대
-	_float	fID_G = 0.5f;	// ID_G : G채널 ID 값 , 1이 최대
-	_float	fID_B = 0.1f;	// ID_B	: B채널 ID 값 , 1이 최대
-	_float	fRimAlpha = 0.0f;	// ID_B	: B채널 ID 값 , 1이 최대
-
-	if (!lstrcmp(m_szName, L"Mesh_Home_Floor_One"))
-	{
-		fSpecularPower = 0.1f;
-		fMinSpecular = 0.f;
-		fRoughnessPower = 0.85f;
-	}
-
-	if (FAILED(pShader->Set_Value("g_fEmissivePower", &fEmissivePower, sizeof(_float))))
+	if (FAILED(pShader->Set_Value("g_fEmissivePower", &m_tPBRInfo.fEmissivePower, sizeof(_float))))
 		return;
-	if (FAILED(pShader->Set_Value("g_fSpecularPower", &fSpecularPower, sizeof(_float))))
+	if (FAILED(pShader->Set_Value("g_fSpecularPower", &m_tPBRInfo.fSpecularPower, sizeof(_float))))
 		return;
-	if (FAILED(pShader->Set_Value("g_fRoughnessPower", &fRoughnessPower, sizeof(_float))))
+	if (FAILED(pShader->Set_Value("g_fRoughnessPower", &m_tPBRInfo.fRoughnessPower, sizeof(_float))))
 		return;
-	if (FAILED(pShader->Set_Value("g_fMinSpecular", &fMinSpecular, sizeof(_float))))
+	if (FAILED(pShader->Set_Value("g_fMinSpecular", &m_tPBRInfo.fMinSpecular, sizeof(_float))))
 		return;
-	if (FAILED(pShader->Set_Value("g_fID_R_Power", &fID_R, sizeof(_float))))
+	if (FAILED(pShader->Set_Value("g_fID_R_Power", &m_tPBRInfo.fID_R, sizeof(_float))))
 		return;
-	if (FAILED(pShader->Set_Value("g_fID_G_Power", &fID_G, sizeof(_float))))
+	if (FAILED(pShader->Set_Value("g_fID_G_Power", &m_tPBRInfo.fID_G, sizeof(_float))))
 		return;
-	if (FAILED(pShader->Set_Value("g_fID_B_Power", &fID_B, sizeof(_float))))
+	if (FAILED(pShader->Set_Value("g_fID_B_Power", &m_tPBRInfo.fID_B, sizeof(_float))))
 		return;
-	if (FAILED(pShader->Set_Value("g_fRimAlpha", &fRimAlpha, sizeof(_float))))
+	if (FAILED(pShader->Set_Value("g_fRimAlpha", &m_tPBRInfo.fRimAlpha, sizeof(_float))))
+		return;
+	if (FAILED(pShader->Set_Value("g_fRimPower", &m_tPBRInfo.fRimPower, sizeof(_float))))
 		return;
 	//=============================================================================================
 }
@@ -449,6 +496,11 @@ HRESULT CRenderObject::Ready_GameObject(void * pAvg)
 	m_pTransform->Set_Pos(Info.vPos);
 	m_pTransform->Set_Angle(Info.vAngle);
 	m_pTransform->Set_Scale(Info.vScale);
+
+	if(nullptr != m_pMesh_Static)
+		m_dwSubsetCnt = m_pMesh_Static->Get_NumMaterials();
+
+	SetUp_IndividualShaderValue();
 
 	return S_OK;
 }
