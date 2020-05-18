@@ -18,8 +18,13 @@ HRESULT CDropItem::Ready_GameObject_Prototype()
 
 HRESULT CDropItem::Ready_GameObject(void * pArg)
 {
-	if (FAILED(Add_Component(pArg)))
-		return E_FAIL;
+	if (nullptr == pArg)
+	{
+		if (FAILED(Add_Component(pArg)))
+			return E_FAIL;
+
+		return S_OK;
+	}
 
 	Ready_Status(pArg);
 
@@ -45,8 +50,6 @@ _int CDropItem::Update_GameObject(_double TimeDelta)
 
 	//상호작용 대상과 충돌 여부 체크
 	Check_Dist();
-
-
 
 	//0.05초마다 이펙트효과 발생
 	if (m_fTempEffectLimitTime > 0.05f)
@@ -592,14 +595,14 @@ void CDropItem::Free()
 
 	IF_NOT_NULL(m_pTrailEffect)
 		m_pTrailEffect->Set_Dead();
-	if(nullptr != m_pGet_ItemUI)
+
+	IF_NOT_NULL(m_pGet_ItemUI)
 		Safe_Release(m_pGet_ItemUI);
+
 	Safe_Release(m_pTransform);
 	Safe_Release(m_pRenderer);
 
 	CGameObject::Free();
-
-	
 
 	return;
 }
