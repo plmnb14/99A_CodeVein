@@ -53,6 +53,7 @@ public:
 		_v3			vBirthPos; //생성위치
 		_double		dCanGetLimitTimeMax; //소멸제한 시간
 	};
+
 protected:
 	explicit CDropItem(LPDIRECT3DDEVICE9 pGraphic_Device);
 	explicit CDropItem(const CDropItem& rhs);

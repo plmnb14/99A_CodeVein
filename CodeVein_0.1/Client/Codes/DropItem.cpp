@@ -18,8 +18,13 @@ HRESULT CDropItem::Ready_GameObject_Prototype()
 
 HRESULT CDropItem::Ready_GameObject(void * pArg)
 {
-	if (FAILED(Add_Component(pArg)))
-		return E_FAIL;
+	if (nullptr == pArg)
+	{
+		if (FAILED(Add_Component(pArg)))
+			return E_FAIL;
+
+		return S_OK;
+	}
 
 	Ready_Status(pArg);
 

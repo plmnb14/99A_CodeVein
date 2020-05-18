@@ -366,6 +366,7 @@
     <ClInclude Include="..\Headers\YachaMan.h" />
     <ClInclude Include="..\Headers\Yeti.h" />
     <ClInclude Include="..\Headers\YetiBullet.h" />
+    <ClInclude Include="..\Headers\YetiTrap.h" />
     <ClInclude Include="Client.h" />
     <ClInclude Include="Client_Item_Enum.h" />
     <ClInclude Include="Resource.h" />
@@ -569,6 +570,7 @@
     <ClCompile Include="..\Codes\YachaMan.cpp" />
     <ClCompile Include="..\Codes\Yeti.cpp" />
     <ClCompile Include="..\Codes\YetiBullet.cpp" />
+    <ClCompile Include="..\Codes\YetiTrap.cpp" />
     <ClCompile Include="Client.cpp" />
     <ClCompile Include="SkillIcon.cpp" />
     <ClCompile Include="stdafx.cpp">

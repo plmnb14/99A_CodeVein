@@ -413,8 +413,7 @@ void CMonkey::Check_Dist()
 
 		Function_Find_Target();
 
-	if (true == m_bIsIdle ||
-		true == m_bIsCombo ||
+	if (true == m_bIsCombo ||
 		true == m_tObjParam.bIsAttack ||
 		true == m_tObjParam.bIsDodge ||
 		true == m_tObjParam.bIsHit)
@@ -422,29 +421,35 @@ void CMonkey::Check_Dist()
 
 	if (nullptr == m_pAggroTarget)
 	{
-		Function_ResetAfterAtk();
-
-		m_eFirstCategory = MONSTER_STATE_TYPE::IDLE;
-
-		if (true == m_bCanIdle)
+		//모든 행동을 초기화 하고 idle 상태를 진행하자
+		if (false == m_bIsIdle)
 		{
-			m_bCanIdle = false;
+			Function_ResetAfterAtk();
 
-			switch (CALC::Random_Num(MONSTER_IDLE_TYPE::IDLE_IDLE, MONSTER_IDLE_TYPE::IDLE_STAND))
+			m_bIsIdle = true;
+
+			m_eFirstCategory = MONSTER_STATE_TYPE::IDLE;
+
+			if (true == m_bCanIdle)
 			{
-			case MONSTER_IDLE_TYPE::IDLE_IDLE:
-			case MONSTER_IDLE_TYPE::IDLE_CROUCH:
-			case MONSTER_IDLE_TYPE::IDLE_EAT:
-				m_eSecondCategory_IDLE = MONSTER_IDLE_TYPE::IDLE_IDLE;
-				m_eState = MONKEY_ANI::Idle;
-				break;
-			case MONSTER_IDLE_TYPE::IDLE_LURK:
-			case MONSTER_IDLE_TYPE::IDLE_SCRATCH:
-			case MONSTER_IDLE_TYPE::IDLE_SIT:
-			case MONSTER_IDLE_TYPE::IDLE_STAND:
-				m_eSecondCategory_IDLE = MONSTER_IDLE_TYPE::IDLE_SIT;
-				m_eState = MONKEY_ANI::NF_Sit;
-				break;
+				m_bCanIdle = false;
+
+				switch (CALC::Random_Num(MONSTER_IDLE_TYPE::IDLE_IDLE, MONSTER_IDLE_TYPE::IDLE_STAND))
+				{
+				case MONSTER_IDLE_TYPE::IDLE_IDLE:
+				case MONSTER_IDLE_TYPE::IDLE_CROUCH:
+				case MONSTER_IDLE_TYPE::IDLE_EAT:
+					m_eSecondCategory_IDLE = MONSTER_IDLE_TYPE::IDLE_IDLE;
+					m_eState = MONKEY_ANI::Idle;
+					break;
+				case MONSTER_IDLE_TYPE::IDLE_LURK:
+				case MONSTER_IDLE_TYPE::IDLE_SCRATCH:
+				case MONSTER_IDLE_TYPE::IDLE_SIT:
+				case MONSTER_IDLE_TYPE::IDLE_STAND:
+					m_eSecondCategory_IDLE = MONSTER_IDLE_TYPE::IDLE_SIT;
+					m_eState = MONKEY_ANI::NF_Sit;
+					break;
+				}
 			}
 		}
 

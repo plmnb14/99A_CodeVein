@@ -568,6 +568,9 @@
     <Filter Include="02.GameObject\Stage\5%29 UI\UI\19.NPC_InteractionUI">
       <UniqueIdentifier>{2daaaef8-fa47-4495-9b69-26032a063b5f}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObject\Stage\2%29 Monster\Yeti\YetiTrap">
+      <UniqueIdentifier>{528e16d8-34c1-40cd-a3f5-e6cd73494f2b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -1167,9 +1170,6 @@
     <ClInclude Include="..\Headers\Pet_Bullet.h">
       <Filter>02.GameObject\Stage\10%29 Pet\00.Pet_Bullet</Filter>
     </ClInclude>
-    <ClInclude Include="..\Headers\GeneralStoreBuyUI.h">
-      <Filter>02.GameObject\Stage\5%29 UI\UI\18. GeneralStoreUI%28잡화점%29\02. GeneralStoreBuyUI</Filter>
-    </ClInclude>
     <ClInclude Include="..\Headers\BuyOptionUI.h">
       <Filter>02.GameObject\Stage\5%29 UI\UI\18. GeneralStoreUI%28잡화점%29\02. GeneralStoreBuyUI</Filter>
     </ClInclude>
@@ -1202,6 +1202,9 @@
     </ClInclude>
     <ClInclude Include="..\Headers\NPC_InteractionUI.h">
       <Filter>02.GameObject\Stage\5%29 UI\UI\19.NPC_InteractionUI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\YetiTrap.h">
+      <Filter>02.GameObject\Stage\2%29 Monster\Yeti\YetiTrap</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -1787,9 +1790,6 @@
     <ClCompile Include="..\Codes\Pet_Bullet.cpp">
       <Filter>02.GameObject\Stage\10%29 Pet\00.Pet_Bullet</Filter>
     </ClCompile>
-    <ClCompile Include="..\Codes\GeneralStoreBuyUI.cpp">
-      <Filter>02.GameObject\Stage\5%29 UI\UI\18. GeneralStoreUI%28잡화점%29\02. GeneralStoreBuyUI</Filter>
-    </ClCompile>
     <ClCompile Include="..\Codes\BuyOptionUI.cpp">
       <Filter>02.GameObject\Stage\5%29 UI\UI\18. GeneralStoreUI%28잡화점%29\02. GeneralStoreBuyUI</Filter>
     </ClCompile>
@@ -1822,6 +1822,9 @@
     </ClCompile>
     <ClCompile Include="..\Codes\NPC_InteractionUI.cpp">
       <Filter>02.GameObject\Stage\5%29 UI\UI\19.NPC_InteractionUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\YetiTrap.cpp">
+      <Filter>02.GameObject\Stage\2%29 Monster\Yeti\YetiTrap</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
