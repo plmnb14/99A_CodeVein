@@ -200,6 +200,7 @@ HRESULT CShader::Set_StaticTexture_Auto(CMesh_Static * pMeshStatic, _ulong dwSub
 		m_pEffect->SetTexture("g_NormalTexture", pMeshStatic->Get_Texture(dwSubsetNum, MESHTEXTURE::TYPE_NORMAL_MAP));
 		m_pEffect->SetTexture("g_SpecularTexture", pMeshStatic->Get_Texture(dwSubsetNum, MESHTEXTURE::TYPE_SPECULAR_MAP));
 		m_pEffect->SetTexture("g_HeightTexture", pMeshStatic->Get_Texture(dwSubsetNum,  MESHTEXTURE::TYPE_HEIGHT_MAP));
+		m_pEffect->SetTexture("g_UnionTexture", pMeshStatic->Get_Texture(dwSubsetNum, MESHTEXTURE::TYPE_UNION_MAP));
 
 		break;
 	}

@@ -12,7 +12,7 @@ private:
 	virtual		~CFrustum_Culling();
 
 public:
-	//_bool		Check_InFrustumObj(const _v3* _pPos, const _float& fRadius , CQuadTree* pQuadTree = nullptr);
+	_bool		Check_InFrustumObj(const _v3* _pPos, const _float& fRadius);
 	_bool		Check_InFrustum(const _v3* _Pos, const _float fRadius = 0.f);
 
 public:
