@@ -50,6 +50,8 @@ private:
 
 private:
 	virtual void Calc_AttachBoneTransform();
+
+public:
 	virtual void Change_OuterMesh(CClothManager::Cloth_Dynamic _eOuterTag);
 
 private:

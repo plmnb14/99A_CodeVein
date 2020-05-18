@@ -61,11 +61,6 @@ HRESULT CMesh_Static::Ready_Component_Prototype(const _tchar * pFilePath, const 
 	m_ppTextures = new MESHTEXTURE[m_dwNumMaterials];
 	ZeroMemory(m_ppTextures, sizeof(MESHTEXTURE) * m_dwNumMaterials);
 
-	if (!lstrcmp(pFileName, L"SM_MERGED_SplineGaia88.X"))
-	{
-		cout << "!" << endl;
-	}
-
 	for (size_t i = 0; i < m_dwNumMaterials; ++i)
 	{
 		lstrcpy(szFullPath, pFilePath);
@@ -78,6 +73,31 @@ HRESULT CMesh_Static::Ready_Component_Prototype(const _tchar * pFilePath, const 
 		Change_TextureFileExtension(szTextureFileName);
 
 		lstrcat(szFullPath, szTextureFileName);
+
+		if (!lstrcmp(szTextureFileName, L"T_EyeInner_01_C.dds"))
+		{
+			m_sMaterialPass[i] = 14;
+		}
+
+		else if (!lstrcmp(szTextureFileName, L"T_Eyelash_Female1.dds"))
+		{
+			m_sMaterialPass[i] = 15;
+		}
+
+		else if (!lstrcmp(szTextureFileName, L"T_Eyelash_Female8.dds"))
+		{
+			m_sMaterialPass[i] = 15;
+		}
+
+		else if (!lstrcmp(szTextureFileName, L"T_Eyelash_Female9.dds"))
+		{
+			m_sMaterialPass[i] = 15;
+		}
+
+		else if (!lstrcmp(szTextureFileName, L"T_Eyelash_Female10.dds"))
+		{
+			m_sMaterialPass[i] = 15;
+		}
 
 		//==================================================================================================================================
 		// C - Color
@@ -159,10 +179,27 @@ HRESULT CMesh_Static::Ready_Component_Prototype(const _tchar * pFilePath, const 
 			D3DXCreateTextureFromFile(m_pGraphic_Dev, szFullPath, &m_ppTextures[i].pTextures[MESHTEXTURE::TYPE_EMISSIVE_MAP]);
 			m_bIncludeMap[MESHTEXTURE::TYPE_EMISSIVE_MAP] = true;
 		}
+
+		////==================================================================================================================================
+		//// H - Height
+		////==================================================================================================================================
+		Change_TextureFileName(szFullPath, L"E", L"H");
+		if (NO_EVENT == _waccess(szFullPath, 0))
+		{
+			//D3DXCreateTextureFromFileEx(
+			//	m_pGraphic_Dev, szFullPath,
+			//	D3DX_DEFAULT, D3DX_DEFAULT,
+			//	0, 0,
+			//	D3DFMT_UNKNOWN, D3DPOOL_MANAGED,
+			//	D3DX_DEFAULT, D3DX_FILTER_NONE, 0, 0, 0, &m_ppTextures[i].pTextures[MESHTEXTURE::TYPE_EMISSIVE_MAP]);
+
+			D3DXCreateTextureFromFile(m_pGraphic_Dev, szFullPath, &m_ppTextures[i].pTextures[MESHTEXTURE::TYPE_HEIGHT_MAP]);
+			m_bIncludeMap[MESHTEXTURE::TYPE_HEIGHT_MAP] = true;
+		}
 		////==================================================================================================================================
 		//// U - Union
 		////==================================================================================================================================
-		Change_TextureFileName(szFullPath, L"E", L"U");
+		Change_TextureFileName(szFullPath, L"H", L"U");
 		if (NO_EVENT == _waccess(szFullPath, 0))
 		{
 			//D3DXCreateTextureFromFileEx(
@@ -225,6 +262,8 @@ HRESULT CMesh_Static::Ready_Component_Prototype(const _tchar * pFilePath, const 
 		}
 		////==================================================================================================================================
 
+		if(m_sMaterialPass[i] == 14 || m_sMaterialPass[i] == 15)
+			continue;
 
 		m_sMaterialPass[i] = 4;
 
@@ -251,6 +290,18 @@ HRESULT CMesh_Static::Ready_Component_Prototype(const _tchar * pFilePath, const 
 					continue;
 				}
 
+				else if ((m_bIncludeMap[MESHTEXTURE::TYPE_UNION_MAP] == true))
+				{
+						// D N S U
+						m_sMaterialPass[i] = 19;
+
+						if ((m_bIncludeMap[MESHTEXTURE::TYPE_HEIGHT_MAP] == true))
+						{
+							// D N S U H
+							m_sMaterialPass[i] = 22;
+						}
+				}
+
 				continue;
 			}
 
@@ -266,6 +317,8 @@ HRESULT CMesh_Static::Ready_Component_Prototype(const _tchar * pFilePath, const 
 
 				else if (m_bIncludeMap[MESHTEXTURE::TYPE_UNION_MAP] == true)
 				{
+
+					// D N E U
 					m_sMaterialPass[i] = 18;
 				}
 

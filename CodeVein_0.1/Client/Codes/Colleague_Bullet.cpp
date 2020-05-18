@@ -27,6 +27,7 @@ HRESULT CColleague_Bullet::Ready_GameObject(void * pArg)
 
 		return S_OK;
 	}
+
 	cout << "Create Colleague Bullet!!!!!" << endl;
 	BULLET_INFO temp = *(BULLET_INFO*)(pArg);
 
@@ -42,13 +43,13 @@ HRESULT CColleague_Bullet::Ready_GameObject(void * pArg)
 	m_pTransformCom->Set_Scale(_v3(1.f, 1.f, 1.f));
 
 	m_tObjParam.bCanAttack = true;
-	//m_tObjParam.fDamage = 200.f;
+	m_tObjParam.fDamage = 200.f;
 
 
-	//m_pBulletBody = static_cast<CEffect*>(g_pManagement->Clone_GameObject_Return(L"Bullet_Body", nullptr));
-	//m_pBulletBody->Set_Desc(_v3(0, 0, 0), m_pTransformCom);
-	//m_pBulletBody->Reset_Init();
-	//g_pManagement->Add_GameOject_ToLayer_NoClone(m_pBulletBody, SCENE_STAGE, L"Layer_Effect", nullptr);
+	m_pBulletBody = static_cast<CEffect*>(g_pManagement->Clone_GameObject_Return(L"Bullet_Body", nullptr));
+	m_pBulletBody->Set_Desc(_v3(0, 0, 0), m_pTransformCom);
+	m_pBulletBody->Reset_Init();
+	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pBulletBody, SCENE_STAGE, L"Layer_Effect", nullptr);
 
 	m_pTrailEffect = g_pManagement->Create_Trail();
 	m_pTrailEffect->Set_TrailIdx(5); // Red Tail
@@ -74,7 +75,9 @@ _int CColleague_Bullet::Update_GameObject(_double TimeDelta)
 	if (m_dCurTime > m_dLifeTime)
 	{
 		// Death Effect
-		//m_pBulletBody->Set_Dead();
+		if (nullptr == m_pBulletBody || nullptr == m_pTrailEffect)
+			return E_FAIL;
+		m_pBulletBody->Set_Dead();
 		m_pTrailEffect->Set_Dead();
 
 		CParticleMgr::Get_Instance()->Create_Effect(L"Colleague_Skill_PinkSmoke_0", m_pTransformCom->Get_Pos());
@@ -280,7 +283,12 @@ CGameObject* CColleague_Bullet::Clone_GameObject(void * pArg)
 
 void CColleague_Bullet::Free()
 {
-	//Safe_Release(m_pTrailEffect);
+	if (nullptr != m_pTrailEffect)
+		m_pTrailEffect->Set_Dead();
+
+	if (nullptr != m_pBulletBody)
+		m_pBulletBody->Set_Dead();
+
 	Safe_Release(m_pTransformCom);
 	Safe_Release(m_pCollider);
 	Safe_Release(m_pRendererCom);

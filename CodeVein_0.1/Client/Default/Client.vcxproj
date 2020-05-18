@@ -185,6 +185,7 @@
     <ClInclude Include="..\Headers\BossHP.h" />
     <ClInclude Include="..\Headers\BossNameUI.h" />
     <ClInclude Include="..\Headers\BuyOptionUI.h" />
+    <ClInclude Include="..\Headers\Calling_Colleague.h" />
     <ClInclude Include="..\Headers\Client_Defines.h" />
     <ClInclude Include="..\Headers\Cloth.h" />
     <ClInclude Include="..\Headers\ClothDynamic.h" />
@@ -202,6 +203,8 @@
     <ClInclude Include="..\Headers\ColdBeamSmall.h" />
     <ClInclude Include="..\Headers\ColdBeamBig.h" />
     <ClInclude Include="..\Headers\ColdBeamMiddle.h" />
+    <ClInclude Include="..\Headers\Costume_Body.h" />
+    <ClInclude Include="..\Headers\Costume_Head.h" />
     <ClInclude Include="..\Headers\ExpendCollectionUI.h" />
     <ClInclude Include="..\Headers\ExpendOptionUI.h" />
     <ClInclude Include="..\Headers\Expend_InfoUI.h" />
@@ -220,7 +223,7 @@
     <ClInclude Include="..\Headers\Pet_DeerKing.h" />
     <ClInclude Include="..\Headers\PurchaseFailUI.h" />
     <ClInclude Include="..\Headers\ScriptUI.h" />
-    <ClInclude Include="..\Headers\Costume_Accessory.h" />
+    <ClInclude Include="..\Headers\Costume_Mask.h" />
     <ClInclude Include="..\Headers\Costume_Hair.h" />
     <ClInclude Include="..\Headers\Costume_Outer.h" />
     <ClInclude Include="..\Headers\CursorEffect.h" />
@@ -391,6 +394,7 @@
     <ClCompile Include="..\Codes\BossHP.cpp" />
     <ClCompile Include="..\Codes\BossNameUI.cpp" />
     <ClCompile Include="..\Codes\BuyOptionUI.cpp" />
+    <ClCompile Include="..\Codes\Calling_Colleague.cpp" />
     <ClCompile Include="..\Codes\Cloth.cpp" />
     <ClCompile Include="..\Codes\ClothDynamic.cpp" />
     <ClCompile Include="..\Codes\ClothManager.cpp" />
@@ -407,6 +411,8 @@
     <ClCompile Include="..\Codes\ColdBeamSmall.cpp" />
     <ClCompile Include="..\Codes\ColdBeamBig.cpp" />
     <ClCompile Include="..\Codes\ColdBeamMiddle.cpp" />
+    <ClCompile Include="..\Codes\Costume_Body.cpp" />
+    <ClCompile Include="..\Codes\Costume_Head.cpp" />
     <ClCompile Include="..\Codes\ExpendCollectionUI.cpp" />
     <ClCompile Include="..\Codes\ExpendOptionUI.cpp" />
     <ClCompile Include="..\Codes\Expend_InfoUI.cpp" />
@@ -425,7 +431,7 @@
     <ClCompile Include="..\Codes\Pet_DeerKing.cpp" />
     <ClCompile Include="..\Codes\PurchaseFailUI.cpp" />
     <ClCompile Include="..\Codes\ScriptUI.cpp" />
-    <ClCompile Include="..\Codes\Costume_Accessory.cpp" />
+    <ClCompile Include="..\Codes\Costume_Mask.cpp" />
     <ClCompile Include="..\Codes\Costume_Hair.cpp" />
     <ClCompile Include="..\Codes\Costume_Outer.cpp" />
     <ClCompile Include="..\Codes\CursorEffect.cpp" />

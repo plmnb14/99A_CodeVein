@@ -24,6 +24,13 @@ public:
 	static void V3_RotZ(_v3* _pOut, const _v3* _pIn , const _float _fRadian);
 
 public:
+	static void Generate_ViewMat(_mat* _pOut, const _v3 * vPos, const _v3 * vRight, const _v3 * vUp, const _v3 * vLook);
+	static void Generate_ViewMat(_mat* _pOut, const _v3 * vPos, const _v3 * vLookAt , const _v3 * vUp);
+	static void Generate_ProjMat_Per(_mat* matOut, const _float * fFovY, const _float * fAspect, const _float * fZN, const _float * fZF);
+	static void Generate_ProjMat_Ortho(_mat* matOut, const _float * fW, const _float * fH, const _float * fZN, const _float * fZF);
+
+
+public:
 	static float Lerp(float _fValue1, float _fValue2, float _fAmount);
 
 public:

@@ -82,6 +82,9 @@ protected:
 	_int			m_iIndex = 0;
 	_ulong			m_dwPassNum = 0;
 
+private:
+	_ulong			m_dwSubsetCnt = 0;
+
 	// For	MotionBlur
 	_mat	m_matLastWVP;
 

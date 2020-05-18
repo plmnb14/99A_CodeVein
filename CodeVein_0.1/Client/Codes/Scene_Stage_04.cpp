@@ -10,6 +10,7 @@
 #include "ScriptManager.h"
 
 #include "Player.h"
+#include "Player_Colleague.h"
 
 CScene_Stage_04::CScene_Stage_04(LPDIRECT3DDEVICE9 pGraphic_Device)
 	: CScene(pGraphic_Device)
@@ -24,6 +25,9 @@ HRESULT CScene_Stage_04::Ready_Scene()
 
 	if (FAILED(Ready_Layer_Player(L"Layer_Player")))
 		return E_FAIL;
+
+	/*if (FAILED(Ready_Layer_Colleague(L"Layer_Colleague")))
+		return E_FAIL;*/
 
 	if (FAILED(Ready_Layer_Environment(L"Layer_Environment")))
 		return E_FAIL;
@@ -102,6 +106,18 @@ HRESULT CScene_Stage_04::Ready_Layer_Environment(const _tchar* pLayerTag)
 
 	if (FAILED(g_pManagement->Add_GameObject_ToLayer(L"GameObject_BossMassageUI", SCENE_STAGE, L"Layer_BossMassageUI")))
 		return E_FAIL;
+
+	return S_OK;
+}
+
+HRESULT CScene_Stage_04::Ready_Layer_Colleague(const _tchar * pLayerTag)
+{
+	// ±èÀç±¸ Ãß°¡
+	CGameObject* pInstance = nullptr;
+
+	pInstance = g_pManagement->Clone_GameObject_Return(L"GameObject_Colleague",
+		&CPlayer_Colleague::JACK_INFO(_v3(-100.f, 50.f, 0.f), 0.f, 3));
+	g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Colleague", nullptr);
 
 	return S_OK;
 }
