@@ -187,12 +187,16 @@ void CReleaseQuestionUI::Click_Option()
 				}*/
 				
 				m_bIsRelease = true;
+
+				g_pSoundManager->Play_Sound(L"UI_SkillRelease.ogg", CSoundManager::CHANNELID::Skill_Release_OK, CSoundManager::Ambient_Sound);
 			}
 			else if ((1 == m_vecOption[i]->Get_UI_Index()) && g_pInput_Device->Get_DIMouseState(CInput_Device::DIM_LB))
 			{
 				// Ãë¼Ò
 				m_bIsActive = false;
 				m_bIsRelease = false;
+
+				g_pSoundManager->Play_Sound(L"UI_UpgradeFailed.wav", CSoundManager::CHANNELID::Skill_Release_Cancel, CSoundManager::Ambient_Sound);
 			}
 		}
 		else

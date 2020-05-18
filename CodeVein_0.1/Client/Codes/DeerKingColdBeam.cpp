@@ -75,7 +75,12 @@ _int CDeerKingColdBeam::Update_GameObject(_double TimeDelta)
 	CGameObject::Update_GameObject(TimeDelta);
 
 	if (m_bDead)
+	{
+		g_pSoundManager->Stop_Sound(CSoundManager::CHANNELID::DearKing_SFX_02);
+		g_pSoundManager->Play_Sound(const_cast<TCHAR*>(L"SE_BOSSGUY_ICE_ATTACK_011.ogg"), CSoundManager::CHANNELID::DearKing_SFX_02, CSoundManager::SOUND::Effect_Sound);
+
 		return DEAD_OBJ;
+	}
 
 	m_dCurTime += TimeDelta;
 

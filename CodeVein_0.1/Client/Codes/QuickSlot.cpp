@@ -29,8 +29,8 @@ HRESULT CQuickSlot::Ready_GameObject(void * pArg)
 	
 	CUI::Ready_GameObject(pArg);
 
-	m_fPosX = 120.f;
-	m_fPosY = 500.f;
+	m_fPosX = 100.f;
+	m_fPosY = 520.f;
 	m_fSizeX = 80.f;
 	m_fSizeY = 80.f;
 	m_bIsActive = true;
@@ -59,8 +59,6 @@ _int CQuickSlot::Update_GameObject(_double TimeDelta)
 		m_eType = CExpendables::EXPEND_TYPE(m_vecQuickSlot[m_iSelect]->Get_Type());
 		m_pItemCntFont->Update_NumberValue(_float(m_vecQuickSlot[m_iSelect]->Get_Size()));
 	}
-		
-	
 
 	switch (m_eType)
 	{
@@ -94,6 +92,7 @@ _int CQuickSlot::Update_GameObject(_double TimeDelta)
 
 	m_pItemCntFont->Set_Active(m_bIsActive);
 
+	// µð¹ö±ë¿ë
 	if (g_pInput_Device->Key_Up(DIK_DOWN))
 		Use_QuickSlot_Item();
 	return NO_EVENT;
@@ -252,7 +251,7 @@ void CQuickSlot::Use_QuickSlot_Item()
 	OBJECT_PARAM tPlayerParam = pPlayer->Get_Target_Param();
 	CExpendables_Inven* pExpendInven = CUI_Manager::Get_Instance()->Get_Expendables_Inven();
 
-	g_pSoundManager->Play_Sound(L"UI_QuickSlotUse.wav", CSoundManager::CHANNELID::QuickSlot_Use_Item, CSoundManager::Ambient_Sound);
+	g_pSoundManager->Play_Sound(L"UI_UpgradeSuccess.wav", CSoundManager::CHANNELID::QuickSlot_Use_Item, CSoundManager::Ambient_Sound);
 
 	switch (m_vecQuickSlot[m_iSelect]->Get_Type())
 	{
@@ -260,7 +259,6 @@ void CQuickSlot::Use_QuickSlot_Item()
 	{		
 		pExpendInven->Use_Expendableas(m_vecQuickSlot[m_iSelect]);
 		pExpendInven->Set_MaximumItemCnt(pExpendInven->Get_MaximumItemCnt() + 1);
-		
 	}
 		break;
 	case CExpendables::Expend_Hp:
@@ -299,6 +297,8 @@ void CQuickSlot::Use_QuickSlot_Item()
 	case CExpendables::EXPEND_END:
 		return;
 	}
+
+	
 }
 
 

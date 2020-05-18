@@ -1509,8 +1509,11 @@ HRESULT CPoisonButterfly::Update_NF()
 	{
 		m_pMeshCom->SetUp_Animation(Ani_Appearance_End);
 
+
 		if (!m_bAppearanceEffect && m_pMeshCom->Is_Finish_Animation(0.472f))
 		{
+			g_pSoundManager->Play_Sound(const_cast<TCHAR*>(L"SE_GODDESS_BARK_004.ogg"), CSoundManager::CHANNELID::ButterFly_Voice, CSoundManager::SOUND::Effect_Sound);
+
 			// 이펙트 나올 뼈 위치 업데이트
 			Update_Bone_Of_BlackBoard();
 
@@ -1521,6 +1524,8 @@ HRESULT CPoisonButterfly::Update_NF()
 
 		if (m_pMeshCom->Is_Finish_Animation(0.95f))
 		{
+			g_pSoundManager->Stop_Sound(CSoundManager::CHANNELID::ButterFly_Voice);
+
 			m_pMeshCom->SetUp_Animation(Ani_Idle);
 			m_bFight = true;
 
@@ -1630,6 +1635,9 @@ void CPoisonButterfly::Check_PhyCollider()
 		}
 		else
 		{
+			g_pSoundManager->Stop_Sound(CSoundManager::CHANNELID::ButterFly_Voice);
+			g_pSoundManager->Play_Sound(const_cast<TCHAR*>(L"Los_BossDead_01_gate_f.ogg"), CSoundManager::CHANNELID::ButterFly_Voice, CSoundManager::SOUND::Effect_Sound);
+		
 			m_pMeshCom->SetUp_Animation(Ani_Death);	// 죽음처리 시작
 			Start_Dissolve(0.7f, false, true, 0.6f);
 			CParticleMgr::Get_Instance()->Create_BossDeadParticle_Effect(m_pTransformCom->Get_Pos() + _v3(0.f, 1.3f, 0.f), 0.6f, 0.5f);

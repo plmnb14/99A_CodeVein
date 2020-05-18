@@ -1466,6 +1466,9 @@ void CSwordGenji::Check_PhyCollider()
 		{
 			_float fAngle = D3DXToDegree(m_pTransformCom->Chase_Target_Angle(&TARGET_TO_TRANS(CMonster::Get_pTargetObject())->Get_Pos()));
 
+			g_pSoundManager->Stop_Sound(CSoundManager::CHANNELID::SwordGenji_SFX_02);
+			g_pSoundManager->Play_Sound(const_cast<TCHAR*>(L"SE_NEW_BARK_DAMAGE_SMALL_MV_004.ogg"), CSoundManager::CHANNELID::SwordGenji_SFX_02, CSoundManager::SOUND::Effect_Sound);
+
 			if (0.f <= fAngle && fAngle < 90.f)
 				m_pMeshCom->SetUp_Animation(Ani_Dmg01_FR);
 			else if (90.f <= fAngle && fAngle < 180.f)
@@ -1477,6 +1480,9 @@ void CSwordGenji::Check_PhyCollider()
 		}
 		else
 		{
+			g_pSoundManager->Stop_Sound(CSoundManager::CHANNELID::SwordGenji_SFX_02);
+			g_pSoundManager->Play_Sound(const_cast<TCHAR*>(L"SE_NEW_BARK_DEATH_MV_V3_003.ogg"), CSoundManager::CHANNELID::SwordGenji_SFX_02, CSoundManager::SOUND::Effect_Sound);
+
 			Ani eTmpAnim = (m_tObjParam.bIsExecution ? Ani_Death_F : Ani_Death);
 			_float fDelay = (m_tObjParam.bIsExecution ? 0.5f : 0.1f);
 
