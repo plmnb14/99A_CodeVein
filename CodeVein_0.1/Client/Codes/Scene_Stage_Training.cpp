@@ -52,7 +52,7 @@ HRESULT CScene_Stage_Training::Ready_Scene()
 
 _int CScene_Stage_Training::Update_Scene(_double TimeDelta)
 {
-	CUI_Manager::Get_Instance()->Update_UI();
+	//CUI_Manager::Get_Instance()->Update_UI();
 
 	//Create_Fog(TimeDelta);
 	//Create_Snow(TimeDelta);

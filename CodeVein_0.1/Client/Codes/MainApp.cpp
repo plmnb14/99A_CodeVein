@@ -50,7 +50,7 @@ _int CMainApp::Update_MainApp(_double TimeDelta)
 
 void CMainApp::LateUpdate_MainApp(_double TimeDelta)
 {
-	m_pStageAgent->Update_StageAgent(m_pGraphic_Dev);
+	//m_pStageAgent->Update_StageAgent(m_pGraphic_Dev);
 
 	Global_KeyInput();
 }
@@ -111,10 +111,10 @@ HRESULT CMainApp::Ready_Default_Setting(CGraphic_Device::WINMODE eMode, _ushort 
 
 	CScriptManager::Get_Instance()->Ready_ScriptManager(m_pGraphic_Dev);
 
-	m_pStageAgent = CStageAgent::Get_Instance();
-	Safe_AddRef(m_pStageAgent);
+	//m_pStageAgent = CStageAgent::Get_Instance();
+	//Safe_AddRef(m_pStageAgent);
 
-	g_pSoundManager->Load_Directory_SouneFile_W(L"BGM");
+	//g_pSoundManager->Load_Directory_SouneFile_W(L"BGM");
 
 	//g_pSoundManager->Stop_Sound(CSoundManager::Background_01);
 	//g_pSoundManager->Play_Sound(L"Gwan_Cchak.wav", CSoundManager::Background_01, CSoundManager::BGM_Sound); 

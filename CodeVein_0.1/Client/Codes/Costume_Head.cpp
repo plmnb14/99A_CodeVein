@@ -39,21 +39,26 @@ HRESULT CCostume_Head::Ready_GameObject(void * pArg)
 	_tchar szMeshName[STR_128] = L"";
 
 	lstrcpy(szMeshName , 
-		pInfo.eHeadTag == Chara_Head_01 ? L"Mesh_Face_1" :
-		pInfo.eHeadTag == Chara_Head_02 ? L"Mesh_Face_2" :
-		pInfo.eHeadTag == Chara_Head_03 ? L"Mesh_Face_3" :
-		pInfo.eHeadTag == Chara_Head_04 ? L"Mesh_Face_4" :
-		pInfo.eHeadTag == Chara_Head_05 ? L"Mesh_Face_5" :
-		pInfo.eHeadTag == Chara_Head_06 ? L"Mesh_Face_6" :
-		pInfo.eHeadTag == Chara_Head_07 ? L"Mesh_Face_7" :
-		pInfo.eHeadTag == Chara_Head_08 ? L"Mesh_Face_8" :
-		pInfo.eHeadTag == Chara_Head_09 ? L"Mesh_Face_9" : L"Mesh_Face_10");
+		pInfo.eHeadTag == Chara_Head_01 ? L"Mesh_Face_01" :
+		pInfo.eHeadTag == Chara_Head_02 ? L"Mesh_Face_02" :
+		pInfo.eHeadTag == Chara_Head_03 ? L"Mesh_Face_03" :
+		pInfo.eHeadTag == Chara_Head_04 ? L"Mesh_Face_04" :
+		pInfo.eHeadTag == Chara_Head_05 ? L"Mesh_Face_05" :
+		pInfo.eHeadTag == Chara_Head_06 ? L"Mesh_Face_06" :
+		pInfo.eHeadTag == Chara_Head_07 ? L"Mesh_Face_07" :
+		pInfo.eHeadTag == Chara_Head_08 ? L"Mesh_Face_08" :
+		pInfo.eHeadTag == Chara_Head_09 ? L"Mesh_Face_09" : L"Mesh_Face_10");
 
 	if (FAILED(Add_Components(szMeshName)))
 		return E_FAIL;
 
 	if (FAILED(Setup_Default()))
 		return E_FAIL;
+
+	m_pBattleAgent->Set_OriginRimAlpha(0.25f);
+	m_pBattleAgent->Set_OriginRimValue(7.f);
+	m_pBattleAgent->Set_RimAlpha(0.25f);
+	m_pBattleAgent->Set_RimValue(7.f);
 
 	return S_OK;
 }
@@ -88,6 +93,7 @@ HRESULT CCostume_Head::Setup_Default()
 	m_pTransform->Set_Pos(V3_NULL);
 	m_pTransform->Set_Angle(V3_NULL);
 	m_pTransform->Set_Scale(V3_ONE);
+	m_pTransform->Set_Angle(AXIS_X, D3DXToRadian(-90.f));
 
 	return S_OK;
 }
@@ -144,9 +150,6 @@ HRESULT CCostume_Head::SetUp_ConstantTable(CShader* pShader)
 
 void CCostume_Head::Calc_AttachBoneTransform()
 {
-	_mat tmpMat;
-	D3DXMatrixIdentity(&tmpMat);
-
 	m_pTransform->Calc_ParentMat(&(*m_pmatBone * *m_pmatParent));
 }
 
@@ -256,10 +259,6 @@ HRESULT CCostume_Head::Render_GameObject_SetPass(CShader * pShader, _int iPass, 
 	//============================================================================================
 	if (_bIsForMotionBlur)
 	{
-		if (FAILED(pShader->Set_Value("g_matView", &ViewMatrix, sizeof(_mat))))
-			return E_FAIL;
-		if (FAILED(pShader->Set_Value("g_matProj", &ProjMatrix, sizeof(_mat))))
-			return E_FAIL;
 		if (FAILED(pShader->Set_Value("g_matLastWVP", &m_matLastWVP, sizeof(_mat))))
 			return E_FAIL;
 
@@ -295,7 +294,24 @@ HRESULT CCostume_Head::Render_GameObject_SetPass(CShader * pShader, _int iPass, 
 
 	for (_ulong i = 0; i < dwNumSubSet; ++i)
 	{
-		pShader->Begin_Pass(iPass);
+		_ulong tmpPass = m_pStaticMesh->Get_MaterialPass(i);
+
+		if (14 == tmpPass || 15 == tmpPass)
+		{
+			// ´«½ç , ´«
+			pShader->Begin_Pass(3);
+		}
+
+		else if (22 == tmpPass)
+		{
+			// ¾ó±¼
+			pShader->Begin_Pass(2);
+		}
+
+		else
+		{
+			pShader->Begin_Pass(iPass);
+		}
 
 		pShader->Commit_Changes();
 

@@ -62,13 +62,13 @@ HRESULT CPlayer::Ready_GameObject(void * pArg)
 
 	m_tObjParam.sMana_Cur = 100;
 
-
-
 	m_pHair = (CCostume_Hair*)g_pManagement->Clone_GameObject_Return(L"GameObject_Costume_Hair", 
 		&CCostume_Hair::_INFO(&m_pTransform->Get_WorldMat(), m_matBones[Bone_Head], _v4(0.f, 0.f, 0.f, 0.f)));
 
 	m_pOuter = (CCostume_Outer*)g_pManagement->Clone_GameObject_Return(L"GameObject_Costume_Outer", 
 		&CCostume_Outer::_INFO(&m_pTransform->Get_WorldMat(), m_matBones[Bone_Head], _v4(0.f, 0.f, 0.f, 0.f), nullptr));
+
+	m_pOuter->Change_OuterMesh(CClothManager::Gauntlet_01);
 
 	return NOERROR;
 }
@@ -106,6 +106,28 @@ _int CPlayer::Update_GameObject(_double TimeDelta)
 	Check_Mistletoe();
 
 
+	IF_NOT_NULL(m_pWeapon[m_eActiveSlot])
+		m_pWeapon[m_eActiveSlot]->Update_GameObject(TimeDelta);
+
+	IF_NOT_NULL(m_pDrainWeapon)
+		m_pDrainWeapon->Update_GameObject(TimeDelta);
+
+	m_pNavMesh->Goto_Next_Subset(m_pTransform->Get_Pos(), nullptr);
+
+	CScriptManager::Get_Instance()->Update_ScriptMgr(TimeDelta, m_pNavMesh->Get_SubSetIndex(), m_pNavMesh->Get_CellIndex());
+
+	return NO_EVENT;
+}
+
+_int CPlayer::Late_Update_GameObject(_double TimeDelta)
+{
+	if (false == m_bEnable)
+		return NO_EVENT;
+
+	if (nullptr == m_pRenderer ||
+		nullptr == m_pDynamicMesh)
+		return E_FAIL;
+
 
 	if (!m_tObjParam.bInvisible)
 	{
@@ -131,42 +153,18 @@ _int CPlayer::Update_GameObject(_double TimeDelta)
 		}
 	}
 
-	IF_NOT_NULL(m_pWeapon[m_eActiveSlot])
-		m_pWeapon[m_eActiveSlot]->Update_GameObject(TimeDelta);
-
-	IF_NOT_NULL(m_pDrainWeapon)
-		m_pDrainWeapon->Update_GameObject(TimeDelta);
-
-	m_pNavMesh->Goto_Next_Subset(m_pTransform->Get_Pos(), nullptr);
-
-	CScriptManager::Get_Instance()->Update_ScriptMgr(TimeDelta, m_pNavMesh->Get_SubSetIndex(), m_pNavMesh->Get_CellIndex());
-
-	return NO_EVENT;
-}
-
-_int CPlayer::Late_Update_GameObject(_double TimeDelta)
-{
-	if (false == m_bEnable)
-		return NO_EVENT;
-
-	if (nullptr == m_pRenderer ||
-		nullptr == m_pDynamicMesh)
-		return E_FAIL;
-
 	Reset_BloodSuck_Options();	
 
 	m_pHair->Late_Update_GameObject(TimeDelta);
-	//m_pOuter->Late_Update_GameObject(TimeDelta);
-	//m_pHead[m_eHeadType]->Late_Update_GameObject(TimeDelta);
-	//m_pMask[m_eMaskType]->Late_Update_GameObject(TimeDelta);
+	m_pOuter->Late_Update_GameObject(TimeDelta);
+
+	m_pHead[m_eHeadType]->Late_Update_GameObject(TimeDelta);
+	m_pMask[m_eMaskType]->Late_Update_GameObject(TimeDelta);
 
 	m_pDynamicMesh->SetUp_Animation_Lower(m_eAnim_Lower , m_bOffLerp);
 	m_pDynamicMesh->SetUp_Animation_Upper(m_eAnim_Upper , m_bOffLerp);
 	m_pDynamicMesh->SetUp_Animation_RightArm(m_eAnim_RightArm , m_bOffLerp);
-	m_pDynamicMesh->SetUp_Animation_LeftArm(m_eAnim_RightArm, m_bOffLerp);
-
-	// Outer 애니 세팅.
-	//m_pOuter->SetUP_NEWANImation(m_eAnim_Upper, m_bOffLerp);
+	m_pDynamicMesh->SetUp_Animation_LeftArm(m_eAnim_LeftArm, m_bOffLerp);
 
 	IF_NOT_NULL(m_pWeapon[m_eActiveSlot])
 		m_pWeapon[m_eActiveSlot]->Late_Update_GameObject(TimeDelta);
@@ -266,21 +264,19 @@ HRESULT CPlayer::Render_GameObject_Instancing_SetPass(CShader * pShader)
 		nullptr == m_pDynamicMesh)
 		return E_FAIL;
 
-	//m_pHead[m_eHeadType]->Render_GameObject_Instancing_SetPass(pShader);
-	//m_pMask[m_eMaskType]->Render_GameObject_Instancing_SetPass(pShader);
+	_double dDeltaTime = g_pTimer_Manager->Get_DeltaTime(L"Timer_Fps_60");
 
-	m_pDynamicMesh->Play_Animation_Lower(g_pTimer_Manager->Get_DeltaTime(L"Timer_Fps_60") * m_fAnimMutiply);
-	m_pDynamicMesh->Play_Animation_Upper(g_pTimer_Manager->Get_DeltaTime(L"Timer_Fps_60") * m_fAnimMutiply);
-	m_pDynamicMesh->Play_Animation_RightArm(g_pTimer_Manager->Get_DeltaTime(L"Timer_Fps_60") * m_fAnimMutiply, false);
-	m_pDynamicMesh->Play_Animation_LeftArm(g_pTimer_Manager->Get_DeltaTime(L"Timer_Fps_60") * m_fAnimMutiply);
+	m_pDynamicMesh->Play_Animation_Lower(dDeltaTime * m_fAnimMutiply);
+	m_pDynamicMesh->Play_Animation_Upper(dDeltaTime * m_fAnimMutiply);
+	m_pDynamicMesh->Play_Animation_RightArm(dDeltaTime * m_fAnimMutiply, false);
+	m_pDynamicMesh->Play_Animation_LeftArm(dDeltaTime * m_fAnimMutiply);
 
 	// 머리 위치 업데이트
-	m_pHair->Update_GameObject(g_pTimer_Manager->Get_DeltaTime(L"Timer_Fps_60") * m_fAnimMutiply, (m_bOnSkill || m_bOnDodge));
-	m_pOuter->Update_GameObject(g_pTimer_Manager->Get_DeltaTime(L"Timer_Fps_60") * m_fAnimMutiply, (m_bOnSkill || m_bOnDodge));
+	m_pHair->Update_GameObject(dDeltaTime * m_fAnimMutiply, (m_bOnSkill || m_bOnDodge));
+	m_pOuter->Update_GameObject(dDeltaTime * m_fAnimMutiply, (m_bOnSkill || m_bOnDodge));
 
-	// 외투 위치 업데이트
-	//
-	//m_pOuter->Update_GameObject(g_pTimer_Manager->Get_DeltaTime(L"Timer_Fps_60") * m_fAnimMutiply, m_bOnSkill);
+	m_pHead[m_eHeadType]->Update_GameObject(dDeltaTime);
+	m_pMask[m_eMaskType]->Update_GameObject(dDeltaTime);
 
 	if (m_tObjParam.bInvisible)
 		return S_OK;
@@ -290,17 +286,11 @@ HRESULT CPlayer::Render_GameObject_Instancing_SetPass(CShader * pShader)
 
 
 	_uint iNumMeshContainer = _uint(m_pDynamicMesh->Get_NumMeshContainer());
-	// 메쉬 컨테이너는 3개
 
 	for (_uint i = 0; i < _uint(iNumMeshContainer); ++i)
 	{
-		if (i == 1)
-			continue;
-
 		_uint iNumSubSet = (_uint)m_pDynamicMesh->Get_NumMaterials(i);
-		// 서브셋은 5개
 
-		// 메시를 뼈에 붙인다.
 		m_pDynamicMesh->Update_SkinnedMesh(i);
 
 		for (_uint j = 0; j < iNumSubSet; ++j)
@@ -335,7 +325,7 @@ HRESULT CPlayer::Render_GameObject_SetPass(CShader* pShader, _int iPass, _bool _
 		return S_OK;
 
 	if (nullptr == pShader ||
-		nullptr == m_pBody[m_eBodyType])
+		nullptr == m_pDynamicMesh)
 		return E_FAIL;
 
 	//============================================================================================
@@ -354,10 +344,6 @@ HRESULT CPlayer::Render_GameObject_SetPass(CShader* pShader, _int iPass, _bool _
 	//============================================================================================
 	if (_bIsForMotionBlur)
 	{
-		if (FAILED(pShader->Set_Value("g_matView", &ViewMatrix, sizeof(_mat))))
-			return E_FAIL;
-		if (FAILED(pShader->Set_Value("g_matProj", &ProjMatrix, sizeof(_mat))))
-			return E_FAIL;
 		if (FAILED(pShader->Set_Value("g_matLastWVP", &m_matLastWVP, sizeof(_mat))))
 			return E_FAIL;
 
@@ -369,7 +355,7 @@ HRESULT CPlayer::Render_GameObject_SetPass(CShader* pShader, _int iPass, _bool _
 		_bool bDecalTarget = false;
 		if (FAILED(pShader->Set_Bool("g_bDecalTarget", bDecalTarget)))
 			return E_FAIL;
-		_float fBloomPower = 10.f;
+		_float fBloomPower = 0.f;
 		if (FAILED(pShader->Set_Value("g_fBloomPower", &fBloomPower, sizeof(_float))))
 			return E_FAIL;
 	}
@@ -400,23 +386,11 @@ HRESULT CPlayer::Render_GameObject_SetPass(CShader* pShader, _int iPass, _bool _
 
 			if (_bIsForMotionBlur)
 			{
-				//if (14 == tmpPass || 15 == tmpPass)
-				//{
-				//	// 눈썹 , 눈
-				//	pShader->Begin_Pass(3);
-				//}
-
-				if (11 == tmpPass)
+				if (13 == tmpPass)
 				{
 					// 피부
 					pShader->Begin_Pass(1);
 				}
-
-			//else if (19 == tmpPass)
-			//{
-			//	// 얼굴
-			//	pShader->Begin_Pass(2);
-			//}
 
 				else
 				{
@@ -4743,7 +4717,11 @@ void CPlayer::Play_Summon()
 
 		Reset_BattleState();
 
-		Start_Dissolve(0.15f, true, false);
+		Start_Dissolve(0.3f, true, false);
+
+		m_pHair->Start_Dissolve(0.3f, true, false);
+		m_pMask[m_eMaskType]->Start_Dissolve(0.3f, true, false);
+		m_pHead[m_eHeadType]->Start_Dissolve(0.3f, true, false);
 	}
 
 	else if (true == m_bOnSummon)

@@ -372,10 +372,6 @@ HRESULT CRenderer::Ready_Component_Prototype()
 		return E_FAIL;
 #endif
 
-
-	//m_pmatView = &CManagement::Get_Instance()->Get_Transform(D3DTS_VIEW);
-	//m_pmatProj = &CManagement::Get_Instance()->Get_Transform(D3DTS_PROJECTION);
-
 	return NOERROR;
 }
 
@@ -400,7 +396,6 @@ HRESULT CRenderer::Add_RenderList(RENDERID eGroup, CGameObject * pGameObject)
 
 HRESULT CRenderer::Draw_RenderList()
 {
-
 	// 디퓨즈, 노멀타겟에 필요한 정보를 그려놓느낟.
 	if (FAILED(Render_NonAlpha()))
 		return E_FAIL;
@@ -745,10 +740,13 @@ HRESULT CRenderer::Render_MotionBlurTarget()
 	if (FAILED(m_pTarget_Manager->Begin_MRT(L"MRT_Velocity")))
 		return E_FAIL;
 
+	CManagement* pManagement = CManagement::Get_Instance();
+	Safe_AddRef(pManagement);
+
 	_mat matView, matProj;
 
-	matView = CManagement::Get_Instance()->Get_Transform(D3DTS_VIEW);
-	matProj = CManagement::Get_Instance()->Get_Transform(D3DTS_PROJECTION);
+	matView = pManagement->Get_Transform(D3DTS_VIEW);
+	matProj = pManagement->Get_Transform(D3DTS_PROJECTION);
 
 	m_pShader_Blur->Begin_Shader();
 
@@ -777,6 +775,8 @@ HRESULT CRenderer::Render_MotionBlurTarget()
 
 	if (FAILED(m_pTarget_Manager->End_MRT(L"MRT_Velocity")))
 		return E_FAIL;
+
+	Safe_Release(pManagement);
 
 	return NOERROR;
 }

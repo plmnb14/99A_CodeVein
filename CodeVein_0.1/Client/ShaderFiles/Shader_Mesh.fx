@@ -1558,5 +1558,20 @@ technique Default_Technique
 		VertexShader = compile vs_3_0 VS_MAIN();
 		PixelShader = compile ps_3_0 PS_Default_DZ();
 	}
+
+	//====================================================================================================
+	// 22 - Default ( D N S H U )
+	//====================================================================================================
+	pass Default_DNSHU
+	{
+		AlphablendEnable = false;
+
+		AlphaTestEnable = true;
+		AlphaRef = 0;
+		AlphaFunc = Greater;
+
+		VertexShader = compile vs_3_0 VS_MAIN();
+		PixelShader = compile ps_3_0 PS_Default_DNSH();
+	}
 }
 

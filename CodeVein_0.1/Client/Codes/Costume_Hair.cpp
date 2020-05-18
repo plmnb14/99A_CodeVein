@@ -24,13 +24,18 @@ HRESULT CCostume_Hair::Ready_GameObject(void * pArg)
 	m_pmatBone = pInfo.pmatBone;
 	m_vColorValue = pInfo.vColorValue;
 
-
-
 	if (FAILED(Add_Components()))
 		return E_FAIL;
 
 	if (FAILED(Setup_Default()))
 		return E_FAIL;
+
+	m_pBattleAgent->Set_RimChangeData(false);
+
+	m_pBattleAgent->Set_OriginRimAlpha(0.f);
+	m_pBattleAgent->Set_OriginRimValue(0.f);
+	m_pBattleAgent->Set_RimAlpha(0.f);
+	m_pBattleAgent->Set_RimValue(0.f);
 
 	return S_OK;
 }
@@ -76,29 +81,28 @@ HRESULT CCostume_Hair::SetUp_ConstantTable(CShader* pShader)
 	if (nullptr == pShader)
 		return E_FAIL;
 
+	//=============================================================================================
+	// 기본 메트릭스
+	//=============================================================================================
 	if (FAILED(pShader->Set_Value("g_matWorld", &m_pTransform->Get_WorldMat(), sizeof(_mat))))
 		return E_FAIL;
 
-	_mat ViewMatrix = g_pManagement->Get_Transform(D3DTS_VIEW);
-	_mat ProjMatrix = g_pManagement->Get_Transform(D3DTS_PROJECTION);
-
-	if (FAILED(pShader->Set_Value("g_matView", &ViewMatrix, sizeof(_mat))))
-		return E_FAIL;
-	if (FAILED(pShader->Set_Value("g_matProj", &ProjMatrix, sizeof(_mat))))
-		return E_FAIL;
-	if (FAILED(g_pDissolveTexture->SetUp_OnShader("g_FXTexture", pShader)))
-		return E_FAIL;
+	//=============================================================================================
+	// 디졸브용 상수
+	//=============================================================================================
 	if (FAILED(pShader->Set_Value("g_fFxAlpha", &m_fFXAlpha, sizeof(_float))))
 		return E_FAIL;
 
 	//=============================================================================================
 	// 쉐이더 재질정보 수치 입력
 	//=============================================================================================
-	_float	fEmissivePower = 3.f;	// 이미시브 : 높을 수록, 자체 발광이 강해짐.
-	_float	fSpecularPower = 5.f;	// 메탈니스 : 높을 수록, 정반사가 강해짐.
-	_float	fRoughnessPower = 0.5f;	// 러프니스 : 높을 수록, 빛 산란이 적어짐(빛이 응집됨).
-	_float	fRimLightPower = 0.f;	// 림		: 높을 수록 빛이 퍼짐(림라이트의 범위가 넓어지고 , 밀집도가 낮아짐).
-	_float	fMinSpecular = 1.f;	// 최소 빛	: 높을 수록 빛이 퍼짐(림라이트의 범위가 넓어지고 , 밀집도가 낮아짐).
+	_float	fEmissivePower = 0.f;	// 이미시브 : 높을 수록, 자체 발광이 강해짐.
+	_float	fSpecularPower = 1.f;	// 메탈니스 : 높을 수록, 정반사가 강해짐.
+	_float	fRoughnessPower = 1.f;	// 러프니스 : 높을 수록, 빛 산란이 적어짐(빛이 응집됨).
+	_float	fMinSpecular = 0.1f;	// 최소 빛	: 최소 단위의 빛을 더해줌.
+	_float	fID_R = 1.0f;	// ID_R : R채널 ID 값 , 1이 최대
+	_float	fID_G = 0.5f;	// ID_G : G채널 ID 값 , 1이 최대
+	_float	fID_B = 0.1f;	// ID_B	: B채널 ID 값 , 1이 최대
 
 	if (FAILED(pShader->Set_Value("g_fEmissivePower", &fEmissivePower, sizeof(_float))))
 		return E_FAIL;
@@ -106,12 +110,17 @@ HRESULT CCostume_Hair::SetUp_ConstantTable(CShader* pShader)
 		return E_FAIL;
 	if (FAILED(pShader->Set_Value("g_fRoughnessPower", &fRoughnessPower, sizeof(_float))))
 		return E_FAIL;
-	if (FAILED(pShader->Set_Value("g_fRimAlpha", &fRimLightPower, sizeof(_float))))
-		return E_FAIL;
 	if (FAILED(pShader->Set_Value("g_fMinSpecular", &fMinSpecular, sizeof(_float))))
+		return E_FAIL;
+	if (FAILED(pShader->Set_Value("g_fID_R_Power", &fID_R, sizeof(_float))))
+		return E_FAIL;
+	if (FAILED(pShader->Set_Value("g_fID_G_Power", &fID_G, sizeof(_float))))
+		return E_FAIL;
+	if (FAILED(pShader->Set_Value("g_fID_B_Power", &fID_B, sizeof(_float))))
 		return E_FAIL;
 	//=============================================================================================
 
+	m_pBattleAgent->Update_RimParam_OnShader(pShader);
 
 	return NOERROR;
 }
@@ -365,7 +374,6 @@ HRESULT CCostume_Hair::Render_GameObject_Instancing_SetPass(CShader * pShader)
 	if (FAILED(SetUp_ConstantTable(pShader)))
 		return E_FAIL;
 
-
 	_uint iNumSubSet = (_uint)m_pStaticMesh->Get_NumMaterials();
 
 	for (_uint i = 0; i < iNumSubSet; ++i)
@@ -385,9 +393,6 @@ HRESULT CCostume_Hair::Render_GameObject_Instancing_SetPass(CShader * pShader)
 
 		pShader->End_Pass();
 	}
-
-	// 버텍스 교체
-	//Change_Vertex();
 
 	return S_OK;
 }
@@ -414,10 +419,6 @@ HRESULT CCostume_Hair::Render_GameObject_SetPass(CShader * pShader, _int iPass, 
 	//============================================================================================
 	if (_bIsForMotionBlur)
 	{
-		if (FAILED(pShader->Set_Value("g_matView", &ViewMatrix, sizeof(_mat))))
-			return E_FAIL;
-		if (FAILED(pShader->Set_Value("g_matProj", &ProjMatrix, sizeof(_mat))))
-			return E_FAIL;
 		if (FAILED(pShader->Set_Value("g_matLastWVP", &m_matLastWVP, sizeof(_mat))))
 			return E_FAIL;
 

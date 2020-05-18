@@ -144,6 +144,19 @@ HRESULT CShader::Set_StaticTexture_Auto(CMesh_Static * pMeshStatic, _ulong dwSub
 		break;
 	}
 
+	case 14:	// D
+	{
+		m_pEffect->SetTexture("g_DiffuseTexture", pMeshStatic->Get_Texture(dwSubsetNum, MESHTEXTURE::TYPE_DIFFUSE_MAP));
+
+		break;
+	}
+	case 15:	// D _ Alpha
+	{
+		m_pEffect->SetTexture("g_DiffuseTexture", pMeshStatic->Get_Texture(dwSubsetNum, MESHTEXTURE::TYPE_DIFFUSE_MAP));
+
+		break;
+	}
+
 	case 16:	// D N ID
 	{
 		m_pEffect->SetTexture("g_DiffuseTexture", pMeshStatic->Get_Texture(dwSubsetNum, MESHTEXTURE::TYPE_DIFFUSE_MAP));
@@ -177,6 +190,16 @@ HRESULT CShader::Set_StaticTexture_Auto(CMesh_Static * pMeshStatic, _ulong dwSub
 	{
 		m_pEffect->SetTexture("g_DiffuseTexture", pMeshStatic->Get_Texture(dwSubsetNum, MESHTEXTURE::TYPE_DIFFUSE_MAP));
 		m_pEffect->SetTexture("g_ZTexture", pMeshStatic->Get_Texture(dwSubsetNum, MESHTEXTURE::TYPE_NR_MAP));
+
+		break;
+	}
+
+	case 22:	// D N S H U
+	{
+		m_pEffect->SetTexture("g_DiffuseTexture", pMeshStatic->Get_Texture(dwSubsetNum, MESHTEXTURE::TYPE_DIFFUSE_MAP));
+		m_pEffect->SetTexture("g_NormalTexture", pMeshStatic->Get_Texture(dwSubsetNum, MESHTEXTURE::TYPE_NORMAL_MAP));
+		m_pEffect->SetTexture("g_SpecularTexture", pMeshStatic->Get_Texture(dwSubsetNum, MESHTEXTURE::TYPE_SPECULAR_MAP));
+		m_pEffect->SetTexture("g_HeightTexture", pMeshStatic->Get_Texture(dwSubsetNum,  MESHTEXTURE::TYPE_HEIGHT_MAP));
 
 		break;
 	}

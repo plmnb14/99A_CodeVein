@@ -148,18 +148,17 @@ PS_OUT PS_MAIN_DIRECTIONAL(PS_IN In)
 
 	if (vHeightValue.x > 0.99f)
 	{
-		return Out;
-
-		if (Out.vShade.x < 0.4f)
-			Out.vShade.xyz = 0.4f;
+		if (Out.vShade.x < 0.8f)
+			Out.vShade.xyz = 0.8f;
 	
 		if (vHeightValue.z > 0.99f)
 		{
-			if (fShadow < 0.8f)
-				fShadow = 0.8f;
+			//if (fShadow < 0.8f)
+			//	fShadow = 0.8f;
 	
-			Out.vShade.xyz = 0.95f;
+			Out.vShade.xyz = 0.8f;
 		}
+
 		//float NdotL = dot(g_vLightDir, vNormal);
 	
 		//float fLightIntencity = smoothstep(0.f, 0.01f, NdotL);

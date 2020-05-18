@@ -11,7 +11,7 @@ CClothManager::CClothManager()
 
 HRESULT CClothManager::Ready_ClothManager()
 {
-	//Ready_Cloth_Dynamic();
+	Ready_Cloth_Dynamic();
 	Ready_Cloth_Static();
 	Ready_ColRadius();
 
