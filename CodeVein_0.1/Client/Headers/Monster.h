@@ -27,7 +27,8 @@ public:
 		BACKLEFT,
 		BACKRIGHT,
 		LEFT,
-		RIGHT
+		RIGHT,
+		FBLR_END
 	};
 
 	enum MONSTER_STATE_TYPE
@@ -120,8 +121,6 @@ public:
 		_v3					vPos = {};
 		_v3					vAngle = {};
 		_ushort				sStageIdx = 0;
-		//_ushort			sSubSetIdx = 0;
-		//_ushort			sCellIdx = 0;
 
 		MONSTER_STATUS(MONSTER_COLOR_TYPE _eColor, WEAPON_STATE _eWeapon, _bool _bSpawn = false,
 			_v3 vPos = V3_NULL, _v3 vAngle = V3_NULL, _ushort sStageIdx = 0)
@@ -224,10 +223,10 @@ protected:
 	MONSTER_CC_TYPE			m_eSecondCategory_CC = MONSTER_CC_TYPE::CC_END;
 	MONSTER_DEAD_TYPE		m_eSecondCategory_DEAD = MONSTER_DEAD_TYPE::DEAD_END;
 
-	WEAPON_STATE			m_eWeaponState = WEAPON_STATE::WEAPON_None;
-	FBLR					m_eFBLR = FBLR::FRONT;
 	MONSTER_COLOR_TYPE		m_eMonsterColor = MONSTER_COLOR_TYPE::COLOR_NONE;
 	MONSTER_BULLET_TYPE		m_eBulletType = MONSTER_BULLET_TYPE::BULLET_NORMAL;
+	WEAPON_STATE			m_eWeaponState = WEAPON_STATE::WEAPON_None;
+	FBLR					m_eFBLR = FBLR::FBLR_END;
 
 	_double					m_dTimeDelta = 0;
 	_double					m_dAniPlayMul = 1;
@@ -259,12 +258,13 @@ protected:
 	_float					m_fCoolDownMax = 0.f;
 	_float					m_fCoolDownCur = 0.f;
 
+	_float					m_fDeadEffect_Delay = 0.f;
+	_float					m_fDeadEffect_Offset = 0.f;
+
 	_int					m_iRandom = 0;
 	_int					m_iDodgeCount = 0;
 	_int					m_iDodgeCountMax = 0;
 
-	_float					m_fDeadEffect_Delay = 0.f;
-	_float					m_fDeadEffect_Offset = 0.f;
 };
 
 END

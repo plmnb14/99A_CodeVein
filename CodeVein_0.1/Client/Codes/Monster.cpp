@@ -156,8 +156,6 @@ void CMonster::Set_Target_Auto(_bool Ransdom_Aggro)
 		}
 	}
 
-
-
 }
 
 CGameObject * CMonster::Get_pTargetObject()
@@ -333,9 +331,7 @@ void CMonster::Check_CollisionHit(list<CGameObject*> plistGameObject)
 						iter->Add_Target_Hp(m_tObjParam.fDamage);
 
 						if (iter->Get_Target_IsHit())
-						{
 							iter->Set_HitAgain(true);
-						}
 					}
 
 					vecIter->Set_Enabled(false);
