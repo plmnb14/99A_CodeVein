@@ -173,7 +173,7 @@ void CCostume_Outer::Change_OuterMesh(CClothManager::Cloth_Dynamic _eOuterType)
 	}
 	case CClothManager::LongCoat_02:
 	{
-		lstrcpy(szMeshName, L"Mesh_LongCoat_01");
+		lstrcpy(szMeshName, L"Mesh_LongCoat_02");
 		m_eOuterType = CClothManager::LongCoat_02;
 		break;
 	}

@@ -413,8 +413,7 @@ void CMonkey::Check_Dist()
 
 		Function_Find_Target();
 
-	if (true == m_bIsIdle ||
-		true == m_bIsCombo ||
+	if (true == m_bIsCombo ||
 		true == m_tObjParam.bIsAttack ||
 		true == m_tObjParam.bIsDodge ||
 		true == m_tObjParam.bIsHit)
@@ -422,29 +421,35 @@ void CMonkey::Check_Dist()
 
 	if (nullptr == m_pAggroTarget)
 	{
-		Function_ResetAfterAtk();
-
-		m_eFirstCategory = MONSTER_STATE_TYPE::IDLE;
-
-		if (true == m_bCanIdle)
+		//모든 행동을 초기화 하고 idle 상태를 진행하자
+		if (false == m_bIsIdle)
 		{
-			m_bCanIdle = false;
+			Function_ResetAfterAtk();
 
-			switch (CALC::Random_Num(MONSTER_IDLE_TYPE::IDLE_IDLE, MONSTER_IDLE_TYPE::IDLE_STAND))
+			m_bIsIdle = true;
+
+			m_eFirstCategory = MONSTER_STATE_TYPE::IDLE;
+
+			if (true == m_bCanIdle)
 			{
-			case MONSTER_IDLE_TYPE::IDLE_IDLE:
-			case MONSTER_IDLE_TYPE::IDLE_CROUCH:
-			case MONSTER_IDLE_TYPE::IDLE_EAT:
-				m_eSecondCategory_IDLE = MONSTER_IDLE_TYPE::IDLE_IDLE;
-				m_eState = MONKEY_ANI::Idle;
-				break;
-			case MONSTER_IDLE_TYPE::IDLE_LURK:
-			case MONSTER_IDLE_TYPE::IDLE_SCRATCH:
-			case MONSTER_IDLE_TYPE::IDLE_SIT:
-			case MONSTER_IDLE_TYPE::IDLE_STAND:
-				m_eSecondCategory_IDLE = MONSTER_IDLE_TYPE::IDLE_SIT;
-				m_eState = MONKEY_ANI::NF_Sit;
-				break;
+				m_bCanIdle = false;
+
+				switch (CALC::Random_Num(MONSTER_IDLE_TYPE::IDLE_IDLE, MONSTER_IDLE_TYPE::IDLE_STAND))
+				{
+				case MONSTER_IDLE_TYPE::IDLE_IDLE:
+				case MONSTER_IDLE_TYPE::IDLE_CROUCH:
+				case MONSTER_IDLE_TYPE::IDLE_EAT:
+					m_eSecondCategory_IDLE = MONSTER_IDLE_TYPE::IDLE_IDLE;
+					m_eState = MONKEY_ANI::Idle;
+					break;
+				case MONSTER_IDLE_TYPE::IDLE_LURK:
+				case MONSTER_IDLE_TYPE::IDLE_SCRATCH:
+				case MONSTER_IDLE_TYPE::IDLE_SIT:
+				case MONSTER_IDLE_TYPE::IDLE_STAND:
+					m_eSecondCategory_IDLE = MONSTER_IDLE_TYPE::IDLE_SIT;
+					m_eState = MONKEY_ANI::NF_Sit;
+					break;
+				}
 			}
 		}
 
@@ -2578,19 +2583,12 @@ HRESULT CMonkey::SetUp_ConstantTable(CShader* pShader)
 	//=============================================================================================
 	// 기본 메트릭스
 	//=============================================================================================
-
 	if (FAILED(pShader->Set_Value("g_matWorld", &m_pTransformCom->Get_WorldMat(), sizeof(_mat))))
-		return E_FAIL;
-	if (FAILED(pShader->Set_Value("g_matView", &ViewMatrix, sizeof(_mat))))
-		return E_FAIL;
-	if (FAILED(pShader->Set_Value("g_matProj", &ProjMatrix, sizeof(_mat))))
 		return E_FAIL;
 
 	//=============================================================================================
 	// 디졸브용 상수
 	//=============================================================================================
-	if (FAILED(g_pDissolveTexture->SetUp_OnShader("g_FXTexture", pShader)))
-		return E_FAIL;
 	if (FAILED(pShader->Set_Value("g_fFxAlpha", &m_fFXAlpha, sizeof(_float))))
 		return E_FAIL;
 
@@ -2631,38 +2629,34 @@ HRESULT CMonkey::SetUp_ConstantTable(CShader* pShader)
 
 HRESULT CMonkey::Ready_Status(void * pArg)
 {
-	if (nullptr != pArg)
+	if (nullptr == pArg)
 	{
-		MONSTER_STATUS Info = *(MONSTER_STATUS*)pArg;
-		m_pBattleAgentCom->Set_RimAlpha(0.5f);
-		m_pBattleAgentCom->Set_RimValue(8.f);
-		m_pBattleAgentCom->Set_OriginRimAlpha(0.5f);
-		m_pBattleAgentCom->Set_OriginRimValue(8.f);
-
-		if (true == Info.bSpawnOnTrigger)
-		{
-			_tchar szNavData[STR_128] = L"";
-
-			lstrcpy(szNavData, (
-				Info.sStageIdx == 0 ? L"Navmesh_Training.dat" :
-				Info.sStageIdx == 1 ? L"Navmesh_Stage_01.dat" :
-				Info.sStageIdx == 2 ? L"Navmesh_Stage_02.dat" :
-				Info.sStageIdx == 3 ? L"Navmesh_Stage_03.dat" : L"Navmesh_Stage_04.dat"));
-
-			m_pNavMeshCom->Set_Index(-1);
-			m_pNavMeshCom->Ready_NaviMesh(m_pGraphic_Dev, szNavData);
-			m_pNavMeshCom->Check_OnNavMesh(Info.vPos);
-			m_pTransformCom->Set_Pos(Info.vPos);
-			m_pTransformCom->Set_Angle(Info.vAngle);
-
-			//m_pNavMeshCom->Set_SubsetIndex(Info.sSubSetIdx);
-			//m_pNavMeshCom->Set_Index(Info.sCellIdx);
-		}
-	}
-	else
-	{
-		MSG_BOX("Create Monster pArgument == nullptr Failed");
+		MSG_BOX("Create CMonkey pArgument nullptr Failed");
 		return E_FAIL;
+	}
+
+	MONSTER_STATUS Info = *(MONSTER_STATUS*)pArg;
+
+	m_pBattleAgentCom->Set_RimAlpha(0.5f);
+	m_pBattleAgentCom->Set_RimValue(8.f);
+	m_pBattleAgentCom->Set_OriginRimAlpha(0.5f);
+	m_pBattleAgentCom->Set_OriginRimValue(8.f);
+
+	if (true == Info.bSpawnOnTrigger)
+	{
+		_tchar szNavData[STR_128] = L"";
+
+		lstrcpy(szNavData, (
+			Info.sStageIdx == 0 ? L"Navmesh_Training.dat" :
+			Info.sStageIdx == 1 ? L"Navmesh_Stage_01.dat" :
+			Info.sStageIdx == 2 ? L"Navmesh_Stage_02.dat" :
+			Info.sStageIdx == 3 ? L"Navmesh_Stage_03.dat" : L"Navmesh_Stage_04.dat"));
+
+		m_pNavMeshCom->Set_Index(-1);
+		m_pNavMeshCom->Ready_NaviMesh(m_pGraphic_Dev, szNavData);
+		m_pNavMeshCom->Check_OnNavMesh(Info.vPos);
+		m_pTransformCom->Set_Pos(Info.vPos);
+		m_pTransformCom->Set_Angle(Info.vAngle);
 	}
 
 	m_tObjParam.fDamage = -250.f;
