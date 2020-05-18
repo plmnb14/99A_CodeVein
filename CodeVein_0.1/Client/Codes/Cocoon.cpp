@@ -975,7 +975,7 @@ HRESULT CCocoon::Ready_Status(void * pArg)
 		{
 			m_eMonsterColor = Info.eMonsterColor;
 			m_tObjParam.fDamage = 250.f;
-			m_tObjParam.fHp_Max = 850.f;
+			m_tObjParam.fHp_Max = 85000.f;
 			m_tObjParam.fArmor_Max = 100.f;
 		}
 		else

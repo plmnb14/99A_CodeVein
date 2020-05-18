@@ -12,6 +12,11 @@ CCostume_Outer::CCostume_Outer(const CCostume_Outer& rhs)
 {
 }
 
+void CCostume_Outer::Reset_OldAniIdx(_ulong _dwNumber)
+{
+	m_pDynamicMesh->Reset_OldIndx(1);
+}
+
 HRESULT CCostume_Outer::Ready_GameObject_Prototype()
 {
 	return S_OK;
@@ -33,6 +38,11 @@ HRESULT CCostume_Outer::Ready_GameObject(void * pArg)
 
 	if (FAILED(Setup_Default()))
 		return E_FAIL;
+
+	m_pBattleAgent->Set_OriginRimAlpha(0.f);
+	m_pBattleAgent->Set_OriginRimValue(7.f);
+	m_pBattleAgent->Set_RimAlpha(0.f);
+	m_pBattleAgent->Set_RimValue(7.f);
 
 	return S_OK;
 }
@@ -410,14 +420,12 @@ HRESULT CCostume_Outer::Render_GameObject_Instancing_SetPass(CShader * pShader)
 	if (m_eOuterType != CClothManager::Cloth_Dynamic::None)
 		Change_Vertex();
 
-	//m_pDynamicMesh->SetUp_Animation(0);
+	m_pDynamicMesh->Play_Animation_Lower(g_pTimer_Manager->Get_DeltaTime(L"Timer_Fps_60") * m_fAnimMultiply);
+	m_pDynamicMesh->Play_Animation_Upper(g_pTimer_Manager->Get_DeltaTime(L"Timer_Fps_60") * m_fAnimMultiply);
+	m_pDynamicMesh->Play_Animation_RightArm(g_pTimer_Manager->Get_DeltaTime(L"Timer_Fps_60") * m_fAnimMultiply, false);
+	m_pDynamicMesh->Play_Animation_LeftArm(g_pTimer_Manager->Get_DeltaTime(L"Timer_Fps_60") * m_fAnimMultiply);
 
-	//m_pDynamicMesh->Play_Animation_Lower(g_pTimer_Manager->Get_DeltaTime(L"Timer_Fps_60") * m_fAnimMultiply);
-	//m_pDynamicMesh->Play_Animation_Upper(g_pTimer_Manager->Get_DeltaTime(L"Timer_Fps_60") * m_fAnimMultiply);
-	//m_pDynamicMesh->Play_Animation_RightArm(g_pTimer_Manager->Get_DeltaTime(L"Timer_Fps_60") * m_fAnimMultiply, false);
-	//m_pDynamicMesh->Play_Animation_LeftArm(g_pTimer_Manager->Get_DeltaTime(L"Timer_Fps_60") * m_fAnimMultiply);
-
-	m_pDynamicMesh->Play_Animation(g_pTimer_Manager->Get_DeltaTime(L"Timer_Fps_60") * m_fAnimMultiply);
+	//m_pDynamicMesh->Play_Animation(g_pTimer_Manager->Get_DeltaTime(L"Timer_Fps_60") * m_fAnimMultiply);
 
 	if (m_tObjParam.bInvisible)
 		return S_OK;
@@ -538,6 +546,29 @@ HRESULT CCostume_Outer::Render_GameObject_SetPass(CShader * pShader, _int iPass,
 	//============================================================================================
 
 	return S_OK;
+}
+
+void CCostume_Outer::Set_LowerAnimation(_ulong _dwAnimIdx, _bool _bOffLerp)
+{
+	m_pDynamicMesh->SetUp_Animation_Lower(_dwAnimIdx, _bOffLerp);
+}
+
+void CCostume_Outer::Set_UpperAnimation(_ulong _dwAnimIdx, _bool _bOffLerp)
+{
+	m_pDynamicMesh->SetUp_Animation_Upper(_dwAnimIdx, _bOffLerp);
+
+}
+
+void CCostume_Outer::Set_LeftArmAnimation(_ulong _dwAnimIdx, _bool _bOffLerp)
+{
+	m_pDynamicMesh->SetUp_Animation_LeftArm(_dwAnimIdx, _bOffLerp);
+
+}
+
+void CCostume_Outer::Set_RightArmAnimation(_ulong _dwAnimIdx, _bool _bOffLerp)
+{
+	m_pDynamicMesh->SetUp_Animation_RightArm(_dwAnimIdx, _bOffLerp);
+
 }
 
 CCostume_Outer * CCostume_Outer::Create(_Device pGraphicDev)

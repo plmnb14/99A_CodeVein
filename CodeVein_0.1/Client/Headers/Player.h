@@ -101,12 +101,15 @@ public:
 	virtual HRESULT Render_GameObject_SetPass(CShader* pShader, _int iPass, _bool _bIsForMotionBlur = false);
 
 public:
+	virtual void Reset_OldAnimations();
+
+public:
 	virtual void Teleport_ResetOptions(_int _eSceneID, _int _eTeleportID);
 private:
 	ACTOR_INFO				m_tInfo = {};
 	ACT_STATE				m_eActState = ACT_Summon;
-	WEAPON_STATE			m_eMainWpnState = WEAPON_None;
-	WEAPON_STATE			m_eSubWpnState = WEAPON_None;
+	WEAPON_STATE			m_eMainWpnState = WEAPON_Hammer;
+	WEAPON_STATE			m_eSubWpnState = WEAPON_Hammer;
 	DRAIN_STATE				m_eDrainState = DRAIN_END;
 	ACTIVE_WEAPON_SLOT		m_eActiveSlot = WPN_SLOT_A;
 
@@ -152,6 +155,8 @@ private:
 
 private:
 	_mat*					m_matBones[Bone_End];
+	_mat*					m_matHandBone = nullptr;
+	_mat*					m_matTailBone = nullptr;
 
 private:
 	_bool					m_bMove[MOVE_End] = {};
@@ -274,6 +279,7 @@ private:
 
 private:
 	virtual void Change_PlayerBody(PLAYER_BODY _eBodyType);
+	virtual void Update_OuterAnim();
 
 private:
 	virtual void Parameter_State();

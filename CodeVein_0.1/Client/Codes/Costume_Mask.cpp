@@ -46,9 +46,9 @@ HRESULT CCostume_Mask::Ready_GameObject(void * pArg)
 		return E_FAIL;
 
 	m_pBattleAgent->Set_OriginRimAlpha(1.f);
-	m_pBattleAgent->Set_OriginRimValue(12.f);
+	m_pBattleAgent->Set_OriginRimValue(5.f);
 	m_pBattleAgent->Set_RimAlpha(1.f);
-	m_pBattleAgent->Set_RimValue(12.f);
+	m_pBattleAgent->Set_RimValue(5.f);
 
 	return S_OK;
 }
@@ -110,7 +110,7 @@ HRESULT CCostume_Mask::SetUp_ConstantTable(CShader* pShader)
 	//=============================================================================================
 	_float	fEmissivePower = 0.f;	// 이미시브 : 높을 수록, 자체 발광이 강해짐.
 	_float	fSpecularPower = 30.f;	// 메탈니스 : 높을 수록, 정반사가 강해짐.
-	_float	fRoughnessPower = 5.f;	// 러프니스 : 높을 수록, 빛 산란이 적어짐(빛이 응집됨).
+	_float	fRoughnessPower = 3.f;	// 러프니스 : 높을 수록, 빛 산란이 적어짐(빛이 응집됨).
 	_float	fMinSpecular = 1.f;	// 최소 빛	: 최소 단위의 빛을 더해줌.
 	_float	fID_R = 1.0f;	// ID_R : R채널 ID 값 , 1이 최대
 	_float	fID_G = 0.5f;	// ID_G : G채널 ID 값 , 1이 최대
