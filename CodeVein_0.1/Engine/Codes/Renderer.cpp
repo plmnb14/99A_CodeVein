@@ -424,9 +424,9 @@ HRESULT CRenderer::Draw_RenderList()
 	if (FAILED(Render_LightAcc()))
 		return E_FAIL;
 	
-	// GodRay
-	if (FAILED(Render_GodRay()))
-		return E_FAIL;
+	//// GodRay
+	//if (FAILED(Render_GodRay()))
+	//	return E_FAIL;
 
 	// 디퓨즈, 셰이드 두 타겟을 혼합하여 백버퍼에 찍는다.
 	// With Skybox(priority), With Alpha

@@ -1204,6 +1204,97 @@ PS_OUT_ADVENCE PS_DISSOLVE(PS_IN In)
 	return Out;
 }
 
+//float3 lumCoeff = float3(0.2125, 0.7154, 0.0721);
+float3 lumCoeff = float3(0.299, 0.587, 0.114);
+float3 root3 = float3(0.57735, 0.57735, 0.57735);
+float3x3 QuaternionToMatrix(float4 quat)
+{
+	float3 cross = quat.yzx * quat.zxy;
+	float3 square = quat.xyz * quat.xyz;
+	float3 wimag = quat.w * quat.xyz;
+
+	square = square.xyz + square.yzx;
+
+	float3 diag = 0.5 - square;
+	float3 a = (cross + wimag);
+	float3 b = (cross - wimag);
+
+	return float3x3(
+		2.0 * float3(diag.x, b.z, a.y),
+		2.0 * float3(a.z, diag.y, b.x),
+		2.0 * float3(b.y, a.x, diag.z));
+}
+float4 g_vColor;
+PS_OUT_ADVENCE PS_Default_DNU_Custom(PS_IN In)
+{
+	// 디퓨즈 | 노말 | 이미시브
+
+	PS_OUT_ADVENCE			Out = (PS_OUT_ADVENCE)0;
+
+	//========================================================================================================================
+
+	Out.vDiffuse = 1.f;
+	Out.vDiffuse.xyz = pow(tex2D(DiffuseSampler, In.vTexUV), 2.2);
+
+	//========================================================================================================================
+
+	float3 vUnion = tex2D(UnionSampler, In.vTexUV).xyz;
+
+	// 메탈니스 : 빛 전체의 강도
+	float Metalness = vUnion.x;
+	// 러프니스 : 정반사의 정도.. 쉽게 말하면 == Specular Power
+	float Roughness = vUnion.y;
+	// AO
+	float AO = vUnion.z;
+
+	//========================================================================================================================
+
+	float3 TanNormal = tex2D(NormalSampler, In.vTexUV).xyz;
+
+	TanNormal = normalize(TanNormal * 2.f - 1.f);
+
+	float3x3 TBN = float3x3(normalize(In.T), normalize(In.B), normalize(In.N));
+	TBN = transpose(TBN);
+
+	float3 worldNormal = mul(TBN, TanNormal);
+
+	Out.vNormal = vector(worldNormal.xyz * 0.5f + 0.5f, AO);
+
+	//========================================================================================================================
+
+	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / 500.f, Roughness * g_fRoughnessPower, Metalness * g_fSpecularPower);
+
+	//========================================================================================================================
+	float fRim = 1.f - saturate(dot(In.N, In.vRimDir));
+
+	float4 fFinalRimColor = g_vRimColor;
+	float4 fFinalRim = (pow(fRim, g_fRimPower) * fFinalRimColor) * g_fRimAlpha;
+
+	Out.vEmissive = fFinalRim;
+	//========================================================================================================================
+
+	// Custom Color
+	// ==============================================================================================
+	// g_vColor.x = Hue / y = Contrast / z = Brightness / w = Saturation
+	// ==============================================================================================
+	float4 vChangeColor = Out.vDiffuse;
+
+	float3 intensity;
+	float half_angle = 0.5 * radians(g_vColor.x); // Hue is radians of 0 ~ 360 degree
+	float4 rot_quat = float4((root3 * sin(half_angle)), cos(half_angle));
+	float3x3 rot_Matrix = QuaternionToMatrix(rot_quat);
+	
+	vChangeColor.rgb = mul(rot_Matrix, vChangeColor.rgb);
+	vChangeColor.rgb = (vChangeColor.rgb - 0.5) *(g_vColor.y + 1.0) + 0.5;
+	vChangeColor.rgb = vChangeColor.rgb + g_vColor.z;
+	intensity = float(dot(vChangeColor.rgb, lumCoeff));
+	vChangeColor.rgb = lerp(intensity, vChangeColor.rgb, g_vColor.w);
+
+	Out.vDiffuse = vChangeColor;
+	// End ==========================================================================================
+
+	return Out;
+}
 
 technique Default_Technique
 {
@@ -1572,6 +1663,21 @@ technique Default_Technique
 
 		VertexShader = compile vs_3_0 VS_MAIN();
 		PixelShader = compile ps_3_0 PS_Default_DNSH();
+	}
+
+	//====================================================================================================
+	// 23 - For_CustomHair ( D N U )
+	//====================================================================================================
+	pass Default_DNU_Custom
+	{
+		AlphablendEnable = false;
+
+		AlphaTestEnable = true;
+		AlphaRef = 0;
+		AlphaFunc = Greater;
+
+		VertexShader = compile vs_3_0 VS_MAIN();
+		PixelShader = compile ps_3_0 PS_Default_DNU_Custom();
 	}
 }
 

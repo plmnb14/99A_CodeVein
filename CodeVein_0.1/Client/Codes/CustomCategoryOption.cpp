@@ -32,10 +32,7 @@ HRESULT CCustomCategoryOption::Ready_GameObject(void * pArg)
 	m_fSizeY = 44.f;
 	
 	m_fViewZ = 0.1f;
-	m_fAlpha = 0.f;
 	m_bIsActive = false;
-	if (FAILED(SetUp_CursorEffect()))
-		return E_FAIL;
 	
 	return NOERROR;
 }
@@ -48,14 +45,6 @@ _int CCustomCategoryOption::Update_GameObject(_double TimeDelta)
 
 	D3DXMatrixOrthoLH(&m_matProj, WINCX, WINCY, 0.f, 1.f);
 	m_bIsColl = Coll_Mouse();
-
-	m_pCursorEffect->Set_Active(m_bIsColl && m_bIsActive);
-	
-	if (m_bIsActive)
-	{
-		if (m_fAlpha < 1.f)
-			m_fAlpha += 0.2f * (_float)TimeDelta;
-	}
 
 	return NO_EVENT;
 }
@@ -90,7 +79,7 @@ HRESULT CCustomCategoryOption::Render_GameObject()
 
 	m_pShaderCom->Begin_Shader();
 
-	m_pShaderCom->Begin_Pass(5);
+	m_pShaderCom->Begin_Pass(1);
 
 	m_pBufferCom->Render_VIBuffer();
 
@@ -143,30 +132,9 @@ HRESULT CCustomCategoryOption::SetUp_ConstantTable(_uint iIndex)
 
 	if (FAILED(m_pTextureCom->SetUp_OnShader("g_DiffuseTexture", m_pShaderCom, iIndex)))
 		return E_FAIL;
-	if (FAILED(m_pShaderCom->Set_Value("g_fAlpha", &m_fAlpha, sizeof(_float))))
-		return E_FAIL;
+
 	return NOERROR;
 }
-
-HRESULT CCustomCategoryOption::SetUp_CursorEffect()
-{
-	UI_DESC* pDesc = new UI_DESC;
-	pDesc->fPosX = m_fPosX;
-	pDesc->fPosY = m_fPosY + 5.f;
-	pDesc->fSizeX = m_fSizeX;
-	pDesc->fSizeY = m_fSizeY;
-	pDesc->iIndex = 0;
-	if (FAILED(g_pManagement->Add_GameObject_ToLayer(L"GameObject_CursorEffect", SCENE_LOGO, L"Layer_CursorEffect", pDesc)))
-		return E_FAIL;
-	m_pCursorEffect = static_cast<CCursorEffect*>(g_pManagement->Get_GameObjectBack(L"Layer_CursorEffect", SCENE_LOGO));
-	if (nullptr == m_pCursorEffect)
-		return E_FAIL;
-
-	m_pCursorEffect->Set_Active(false);
-	m_pCursorEffect->Set_ViewZ(m_fViewZ + 0.1f);
-	return NOERROR;
-}
-
 
 _bool CCustomCategoryOption::Coll_Mouse()
 {

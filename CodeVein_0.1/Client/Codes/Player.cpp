@@ -23,6 +23,34 @@ CPlayer::CPlayer(const CPlayer & rhs)
 
 }
 
+void CPlayer::Set_WeaponSlot(ACTIVE_WEAPON_SLOT eType, WEAPON_DATA eData)
+{
+	if (WEAPON_DATA::WPN_DATA_End == eData)
+	{
+		if (m_pWeapon[eType])
+			Safe_Release(m_pWeapon[eType]);
+
+		m_bWeaponActive[eType] = false;
+		return;
+	}
+
+	if (m_pWeapon[eType])
+		Safe_Release(m_pWeapon[eType]);
+
+	LPCSTR tmpChar = "RightHandAttach";
+	_mat   matAttach;
+
+	D3DXFRAME_DERIVED*	pFrame = (D3DXFRAME_DERIVED*)m_pDynamicMesh->Get_BonInfo(tmpChar, 2);
+
+	m_pWeapon[eType] = static_cast<CWeapon*>(g_pManagement->Clone_GameObject_Return(L"GameObject_Weapon", NULL));
+	m_pWeapon[eType]->Change_WeaponData(eData);
+	m_pWeapon[eType]->Set_Friendly(true);
+	m_pWeapon[eType]->Set_AttachBoneMartix(&pFrame->CombinedTransformationMatrix);
+	m_pWeapon[eType]->Set_ParentMatrix(&m_pTransform->Get_WorldMat());
+	//m_bWeaponActive[eType] = true;
+
+}
+
 HRESULT CPlayer::Ready_GameObject_Prototype()
 {
 	return S_OK;
@@ -63,7 +91,7 @@ HRESULT CPlayer::Ready_GameObject(void * pArg)
 	m_tObjParam.sMana_Cur = 100;
 
 	m_pHair = (CCostume_Hair*)g_pManagement->Clone_GameObject_Return(L"GameObject_Costume_Hair", 
-		&CCostume_Hair::_INFO(&m_pTransform->Get_WorldMat(), m_matBones[Bone_Head], _v4(0.f, 0.f, 0.f, 0.f)));
+		&CCostume_Hair::_INFO(&m_pTransform->Get_WorldMat(), m_matBones[Bone_Head], _v4(1.f, 0.f, 0.f, 1.f)));
 
 	m_pOuter = (CCostume_Outer*)g_pManagement->Clone_GameObject_Return(L"GameObject_Costume_Outer", 
 		&CCostume_Outer::_INFO(&m_pTransform->Get_WorldMat(), m_matBones[Bone_Head], _v4(0.f, 0.f, 0.f, 0.f), nullptr));
@@ -886,8 +914,7 @@ void CPlayer::Parameter_CheckActiveSkill()
 
 void CPlayer::Parameter_CheckActiveWeapon()
 {
-	//m_pUIManager->Get_Weapon_Inven()->Get_UseWeaponState(WPN_SLOT_A);
-	//m_pUIManager->Get_Weapon_Inven()->Get_UseWeaponState(WPN_SLOT_B);
+	
 }
 
 void CPlayer::Movement_Aiming(_float _fAngle, _float _fMovespeed)
@@ -2153,6 +2180,7 @@ void CPlayer::Key_UI_n_Utiliy(_bool _bActiveUI)
 				m_pUIManager->Get_StatusUI()->Set_Active(false);
 
 				Parameter_CheckActiveSkill();
+				Parameter_CheckActiveWeapon();
 			}
 
 			else
@@ -4506,11 +4534,13 @@ void CPlayer::Play_WeaponChange()
 
 		if (m_pDynamicMesh->Is_Finish_Animation_Upper(0.95f))
 		{
-			m_eActiveSlot =
-				(m_eActiveSlot == WPN_SLOT_A ? WPN_SLOT_B :
-					m_eActiveSlot == WPN_SLOT_B ? WPN_SLOT_C :
-					m_eActiveSlot == WPN_SLOT_C ? WPN_SLOT_D :
-					m_eActiveSlot == WPN_SLOT_D ? WPN_SLOT_E : WPN_SLOT_A);
+			//m_eActiveSlot =
+			//	(m_eActiveSlot == WPN_SLOT_A ? WPN_SLOT_B :
+			//		m_eActiveSlot == WPN_SLOT_B ? WPN_SLOT_C :
+			//		m_eActiveSlot == WPN_SLOT_C ? WPN_SLOT_D :
+			//		m_eActiveSlot == WPN_SLOT_D ? WPN_SLOT_E : WPN_SLOT_A);
+
+			m_eActiveSlot = (m_eActiveSlot == WPN_SLOT_A) ? WPN_SLOT_B : WPN_SLOT_A;
 
 			m_eMainWpnState = m_pWeapon[m_eActiveSlot]->Get_WeaponType();
 
@@ -10394,11 +10424,11 @@ void CPlayer::Ready_Weapon()
 	m_pWeapon[WPN_SLOT_A]->Set_AttachBoneMartix(&pFamre->CombinedTransformationMatrix);
 	m_pWeapon[WPN_SLOT_A]->Set_ParentMatrix(&m_pTransform->Get_WorldMat());
 
-	m_pWeapon[WPN_SLOT_B] = static_cast<CWeapon*>(g_pManagement->Clone_GameObject_Return(L"GameObject_Weapon", NULL));
-	m_pWeapon[WPN_SLOT_B]->Change_WeaponData(Wpn_Hammer);
-	m_pWeapon[WPN_SLOT_B]->Set_AttachBoneMartix(&pFamre->CombinedTransformationMatrix);
-	m_pWeapon[WPN_SLOT_B]->Set_ParentMatrix(&m_pTransform->Get_WorldMat());
-	m_pWeapon[WPN_SLOT_B]->Set_Friendly(true);
+	//m_pWeapon[WPN_SLOT_B] = static_cast<CWeapon*>(g_pManagement->Clone_GameObject_Return(L"GameObject_Weapon", NULL));
+	//m_pWeapon[WPN_SLOT_B]->Change_WeaponData(Wpn_Hammer);
+	//m_pWeapon[WPN_SLOT_B]->Set_AttachBoneMartix(&pFamre->CombinedTransformationMatrix);
+	//m_pWeapon[WPN_SLOT_B]->Set_ParentMatrix(&m_pTransform->Get_WorldMat());
+	//m_pWeapon[WPN_SLOT_B]->Set_Friendly(true);
 
 	m_bWeaponActive[WPN_SLOT_A] = true;
 	m_bWeaponActive[WPN_SLOT_B] = false;
@@ -10749,14 +10779,14 @@ void CPlayer::Change_Weapon()
 	// 무기가 없으면 교체 못함
 	IF_NULL_RETURN(m_pWeapon[WPN_SLOT_B]);
 
-	// 무기가 없으면 교체 못함
-	IF_NULL_RETURN(m_pWeapon[WPN_SLOT_C]);
-
-	// 무기가 없으면 교체 못함
-	IF_NULL_RETURN(m_pWeapon[WPN_SLOT_D]);
-
-	// 무기가 없으면 교체 못함
-	IF_NULL_RETURN(m_pWeapon[WPN_SLOT_E]);
+	//// 무기가 없으면 교체 못함
+	//IF_NULL_RETURN(m_pWeapon[WPN_SLOT_C]);
+	//
+	//// 무기가 없으면 교체 못함
+	//IF_NULL_RETURN(m_pWeapon[WPN_SLOT_D]);
+	//
+	//// 무기가 없으면 교체 못함
+	//IF_NULL_RETURN(m_pWeapon[WPN_SLOT_E]);
 
 
 	if (m_eActState == ACT_WeaponChange)

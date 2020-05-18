@@ -29,7 +29,6 @@ public:
 public:
 	HRESULT Ready_Essential_Prototype_GameObject();
 	HRESULT Ready_Layer_Logo(const _tchar* pLayerTag);
-	HRESULT Ready_Layer_Custom(const _tchar* pLayerTag);
 	HRESULT Late_Init();
 private:
 	virtual void Update_DebugStage_Console();

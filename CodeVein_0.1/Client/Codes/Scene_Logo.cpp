@@ -12,11 +12,6 @@
 
 #include "OrthoEffect.h"
 
-#include "CustomCategory.h"
-#include "CustomCategoryOption.h"
-#include "CustomInven.h"
-#include "CustomSlot.h"
-
 CScene_Logo::CScene_Logo(LPDIRECT3DDEVICE9 pGraphic_Device)
 	: CScene(pGraphic_Device)
 	, m_pLoading(nullptr)
@@ -44,7 +39,7 @@ HRESULT CScene_Logo::Ready_Scene()
 
 _int CScene_Logo::Update_Scene(_double TimeDelta)
 {
-	Late_Init();
+	//Late_Init();
 	Logo_KeyInput();
 
 	if (true == m_pLoading->Get_Finish())
@@ -166,6 +161,23 @@ HRESULT CScene_Logo::Ready_Layer_Logo(const _tchar * pLayerTag)
 	if (FAILED(g_pManagement->Add_GameOject_ToLayer_NoClone(pMouseUI, SCENE_STATIC, L"Layer_MouseUI", nullptr)))
 		return E_FAIL;
 
+	if (FAILED(g_pManagement->Add_GameObject_ToLayer(L"GameObject_LoadingScreen", SCENE_STATIC, L"Layer_LoadingScreen")))
+		return E_FAIL;
+	m_pLoadingScreen = static_cast<CLoadingScreen*>(g_pManagement->Get_GameObjectBack(L"Layer_LoadingScreen", SCENE_STATIC));
+	m_pLoadingScreen->Set_FadeSpeed(0.6f);
+
+	if (FAILED(g_pManagement->Add_GameObject_ToLayer(L"GameObject_LogoBackGround", SCENE_LOGO, L"Layer_LogoBackGround")))
+		return E_FAIL;
+	if (FAILED(g_pManagement->Add_GameObject_ToLayer(L"GameObject_LogoButton", SCENE_LOGO, L"Layer_LogoButton")))
+		return E_FAIL;
+
+	m_pLogoBtn = static_cast<CLogoBtn*>(g_pManagement->Get_GameObjectBack(L"Layer_LogoButton", SCENE_LOGO));
+	Safe_AddRef(m_pLogoBtn);
+
+	m_pTitleBG = static_cast<COrthoEffect*>(CParticleMgr::Get_Instance()->Create_EffectReturn(L"Ortho_Title_BG"));
+	m_pTitleBG->Set_Desc(_v3(0, 0, 0), nullptr);
+	m_pTitleBG->Reset_Init();
+
 	m_pGlitterEffect_0 = static_cast<COrthoEffect*>(CParticleMgr::Get_Instance()->Create_EffectReturn(L"Ortho_Title_Glitter_0"));
 	m_pGlitterEffect_0->Set_Desc(_v3(0, 0, 0), nullptr);
 	m_pGlitterEffect_0->Set_UV_Speed(0.03f, 0.f);
@@ -191,64 +203,14 @@ HRESULT CScene_Logo::Ready_Layer_Logo(const _tchar * pLayerTag)
 	return S_OK;
 }
 
-HRESULT CScene_Logo::Ready_Layer_Custom(const _tchar* pLayerTag)
-{
-
-	if (FAILED(g_pManagement->Add_Prototype(SCENE_STATIC, L"DefaultTex_Custom_UI", CTexture::Create(m_pGraphic_Device, CTexture::TYPE_GENERAL, L"../Resources/Texture/DefaultUI/Customize/Custom_UI/Custom_UI_%d.dds", 12))))
-		return E_FAIL;
-	if (FAILED(g_pManagement->Add_Prototype(SCENE_STATIC, L"DefaultTex_Custom_Hair", CTexture::Create(m_pGraphic_Device, CTexture::TYPE_GENERAL, L"../Resources/Texture/DefaultUI/Customize/Custom_Hair/Custom_Hair_%d.dds", 7))))
-		return E_FAIL;
-	if (FAILED(g_pManagement->Add_Prototype(SCENE_STATIC, L"DefaultTex_Custom_Face", CTexture::Create(m_pGraphic_Device, CTexture::TYPE_GENERAL, L"../Resources/Texture/DefaultUI/Customize/Custom_Face/Custom_Face_%d.dds", 10))))
-		return E_FAIL;
-	if (FAILED(g_pManagement->Add_Prototype(SCENE_STATIC, L"DefaultTex_Custom_ToxicGuard", CTexture::Create(m_pGraphic_Device, CTexture::TYPE_GENERAL, L"../Resources/Texture/DefaultUI/Customize/Custom_ToxicGuard/Custom_ToxicGuard_%d.dds", 10))))
-		return E_FAIL;
-
-	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_CustomCategory", CCustomCategory::Create(m_pGraphic_Device))))
-		return E_FAIL;
-	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_CustomCategoryOption", CCustomCategoryOption::Create(m_pGraphic_Device))))
-		return E_FAIL;
-	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_CustomInven", CCustomInven::Create(m_pGraphic_Device))))
-		return E_FAIL;
-	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_CustomSlot", CCustomSlot::Create(m_pGraphic_Device))))
-		return E_FAIL;
-
-	CCustomCategory* pCustomCategory = static_cast<CCustomCategory*>(g_pManagement->Clone_GameObject_Return(L"GameObject_CustomCategory", nullptr));
-	pCustomCategory->Set_Active(true);
-	if (FAILED(g_pManagement->Add_GameOject_ToLayer_NoClone(pCustomCategory, SCENE_LOGO, pLayerTag, nullptr)))
-		return E_FAIL;
-
-	CCustomInven* pCustomInven = static_cast<CCustomInven*>(g_pManagement->Clone_GameObject_Return(L"GameObject_CustomInven", nullptr));
-	pCustomInven->Set_ActiveSlot(CCustomInven::TYPE_HAIR);
-	pCustomInven->Set_Active(true);
-	if (FAILED(g_pManagement->Add_GameOject_ToLayer_NoClone(pCustomInven, SCENE_LOGO, pLayerTag, nullptr)))
-		return E_FAIL;
-
-
-	return S_OK;
-}
-
 HRESULT CScene_Logo::Late_Init()
 {
 	if (m_bLateInit)
 		return S_OK;
+
 	m_bLateInit = true;
 
-	if (FAILED(g_pManagement->Add_GameObject_ToLayer(L"GameObject_LoadingScreen", SCENE_STATIC, L"Layer_LoadingScreen")))
-		return E_FAIL;
-	m_pLoadingScreen = static_cast<CLoadingScreen*>(g_pManagement->Get_GameObjectBack(L"Layer_LoadingScreen", SCENE_STATIC));
-	m_pLoadingScreen->Set_FadeSpeed(0.6f);
-
-	if (FAILED(g_pManagement->Add_GameObject_ToLayer(L"GameObject_LogoBackGround", SCENE_LOGO, L"Layer_LogoBackGround")))
-		return E_FAIL;
-	if (FAILED(g_pManagement->Add_GameObject_ToLayer(L"GameObject_LogoButton", SCENE_LOGO, L"Layer_LogoButton")))
-		return E_FAIL;
-
-	m_pLogoBtn = static_cast<CLogoBtn*>(g_pManagement->Get_GameObjectBack(L"Layer_LogoButton", SCENE_LOGO));
-	Safe_AddRef(m_pLogoBtn);
-
-	m_pTitleBG = static_cast<COrthoEffect*>(CParticleMgr::Get_Instance()->Create_EffectReturn(L"Ortho_Title_BG"));
-	m_pTitleBG->Set_Desc(_v3(0, 0, 0), nullptr);
-	m_pTitleBG->Reset_Init();
+	
 
 	return S_OK;
 }

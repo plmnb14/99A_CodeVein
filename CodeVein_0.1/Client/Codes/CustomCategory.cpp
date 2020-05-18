@@ -1,6 +1,8 @@
 #include "stdafx.h"
 #include "..\Headers\CustomCategory.h"
 #include "UI_Manager.h"
+#include "CustomInven.h"
+
 
 CCustomCategory::CCustomCategory(_Device pDevice)
 	: CUI(pDevice)
@@ -32,7 +34,7 @@ HRESULT CCustomCategory::Ready_GameObject(void * pArg)
 		return E_FAIL;
 	CUI::Ready_GameObject(pArg);
 
-	m_fSizeX = 500.f;
+	m_fSizeX = 256.f;
 	m_fSizeY = 60.f;
 	m_fPosX = WINCX * 0.2f;
 	m_fPosY = WINCY * 0.1f;
@@ -48,10 +50,14 @@ HRESULT CCustomCategory::Ready_GameObject(void * pArg)
 
 _int CCustomCategory::Update_GameObject(_double TimeDelta)
 {
-	if (!m_bIsActive)
-		return S_OK;
+	if (g_pInput_Device->Key_Down(DIK_T))
+	{
+		Set_Active(!Get_Active());
+		m_pCustomInven->Set_Active(!Get_Active());
+	}
 
 	CUI::Update_GameObject(TimeDelta);
+	m_fPosX = WINCX * 0.1f;
 
 	LOOP(4)
 	{
@@ -59,14 +65,15 @@ _int CCustomCategory::Update_GameObject(_double TimeDelta)
 		TARGET_TO_TRANS(m_vecOption[i])->Set_At(m_pTransformCom->Get_At());
 
 		m_vecOption[i]->Set_UI_Pos(Get_UI_Pos().x, Get_UI_Pos().y + 76.f + (i * 40.f));
-
-		m_vecOption[i]->Set_UI_Size(500, 60);
+		m_vecOption[i]->Set_UI_Size(256.f, 60.f);
 		m_vecOption[i]->Set_ViewZ(m_fViewZ - 0.01f);
 		m_vecOption[i]->Set_UI_Index(i + 1);
-
 		m_vecOption[i]->Set_Active(m_bIsActive);
 	}
-	
+
+	if (!m_bIsActive)
+		return S_OK;
+
 	Click_Option();
 
 	D3DXMatrixOrthoLH(&m_matProj, WINCX, WINCY, 0.f, 1.f);
@@ -135,10 +142,7 @@ void CCustomCategory::Click_Option()
 	
 			if (g_pInput_Device->Get_DIMouseState(CInput_Device::DIM_LB))
 			{
-				if (0 == iIdx)
-				{
-					Set_Active(false);
-				}
+				m_pCustomInven->Set_ActiveSlot(CCustomInven::INVEN_TYPE(iIdx));
 			}
 		}
 		else
@@ -221,6 +225,14 @@ void CCustomCategory::SetUp_Default()
 		g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_PREPARE_ALL, L"Layer_CustomUI", nullptr);
 		m_vecOption.push_back(pInstance);
 	}
+
+	m_pCustomInven = static_cast<CCustomInven*>(g_pManagement->Clone_GameObject_Return(L"GameObject_CustomInven", nullptr));
+	m_pCustomInven->Set_Active(false);
+	m_pCustomInven->Set_ActiveSlot(CCustomInven::TYPE_HAIR);
+
+	if (FAILED(g_pManagement->Add_GameOject_ToLayer_NoClone(m_pCustomInven, SCENE_STAGE_BASE, L"Layer_Custom", nullptr)))
+		return;
+
 }
 
 CCustomCategory * CCustomCategory::Create(_Device pGraphic_Device)

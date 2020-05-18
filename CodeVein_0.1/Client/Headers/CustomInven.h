@@ -4,7 +4,9 @@
 #include "UI.h"
 
 BEGIN(Client)
+class CPlayer;
 class CCustomSlot;
+class CCustomSliderBar;
 class CCustomInven final : public CUI
 {
 public:
@@ -24,7 +26,7 @@ private:
 
 public:
 	void Set_ActiveSlot(INVEN_TYPE eType);
-
+	void Set_Active(_bool bActive);
 public:
 	virtual HRESULT			Ready_GameObject_Prototype();
 	virtual HRESULT			Ready_GameObject(void* pArg);
@@ -36,6 +38,7 @@ private:
 	HRESULT					Add_Component();
 	HRESULT					SetUp_ConstantTable();
 	void					SetUp_Default();
+	void					Late_Init();
 
 	void					Click_Inven();
 	void					Select_Elem(CCustomSlot* pArmorSlot);
@@ -51,15 +54,19 @@ private:
 	CTransform*				m_pTransformCom = nullptr;
 
 private:
+	CPlayer*				m_pPlayer = nullptr;
+
 	vector<CCustomSlot*>	m_vecHairSlot;
 	vector<CCustomSlot*>	m_vecFaceSlot;
 	vector<CCustomSlot*>	m_vecEyeSlot;
 	vector<CCustomSlot*>	m_vecMaskSlot;
 
+	CCustomSliderBar*		m_pHairSlider[4];
+
 	INVEN_TYPE				m_eActiveType = TYPE_END;
 
 	_int					m_iSelectIndex[TYPE_END];
-
+	_bool					m_bLateInit = false;
 public:
 	static CCustomInven*	Create(_Device pGraphic_Device);
 	virtual CGameObject*	Clone_GameObject(void* pArg);

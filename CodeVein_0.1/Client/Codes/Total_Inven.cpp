@@ -20,6 +20,11 @@ Skill_ID CTotal_Inven::Get_Registration_Skill(_uint iNum)
 	return m_vecSkillIcon[iNum]->Get_SkillID();
 }
 
+WEAPON_DATA CTotal_Inven::Get_Registration_Weapon(_uint iNum)
+{
+	return (WEAPON_DATA)m_pWeapon_Slot[iNum]->Get_WeaponParam().iWeaponType;
+}
+
 void CTotal_Inven::Set_Skill_ID(_uint iNum, Skill_ID eSkillID)
 {
 	if (iNum < 0 || iNum > m_vecSkillIcon.size() - 1)

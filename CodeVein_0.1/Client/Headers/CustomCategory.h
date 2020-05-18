@@ -5,7 +5,7 @@
 #include "CustomCategoryOption.h"
 
 BEGIN(Client)
-class CShopItemIcon;
+class CCustomInven;
 class CCustomCategory final : public CUI
 {
 private:
@@ -41,7 +41,9 @@ private:
 	CBuffer_RcTex*			m_pBufferCom = nullptr;
 
 private:
+	CCustomInven*						m_pCustomInven = nullptr;
 	vector<CCustomCategoryOption*>		m_vecOption;
+
 	_bool								m_bLateInit = false;
 	_int								m_iTexIdx = 0;
 

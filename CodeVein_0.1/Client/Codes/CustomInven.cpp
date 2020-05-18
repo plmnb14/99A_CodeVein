@@ -2,6 +2,10 @@
 #include "..\Headers\CustomInven.h"
 //#include "UI_Manager.h"
 #include "CustomSlot.h"
+#include "CustomSliderBar.h"
+
+#include "Player.h"
+#include "Costume_Hair.h"
 
 CCustomInven::CCustomInven(_Device pDevice)
 	: CUI(pDevice)
@@ -22,11 +26,20 @@ void CCustomInven::Set_ActiveSlot(INVEN_TYPE eType)
 
 	m_eActiveType = eType;
 
+	for (_int i = 0; i < 4; i++)
+		m_pHairSlider[i]->Set_Active(false);
+
 	switch (m_eActiveType)
 	{
 	case Client::CCustomInven::TYPE_HAIR:
+	{
 		Active_SlotType(true, &m_vecHairSlot);
+
+		for (_int i = 0; i < 4; i++)
+			m_pHairSlider[i]->Set_Active(false);
+
 		break;
+	}
 	case Client::CCustomInven::TYPE_FACE:
 		Active_SlotType(true, &m_vecFaceSlot);
 		break;
@@ -37,6 +50,14 @@ void CCustomInven::Set_ActiveSlot(INVEN_TYPE eType)
 		Active_SlotType(true, &m_vecMaskSlot);
 		break;
 	}
+}
+
+void CCustomInven::Set_Active(_bool bActive)
+{
+	Active_SlotType(bActive, &m_vecHairSlot);
+	Active_SlotType(bActive, &m_vecFaceSlot);
+	Active_SlotType(bActive, &m_vecEyeSlot);
+	Active_SlotType(bActive, &m_vecMaskSlot);
 }
 
 HRESULT CCustomInven::Ready_GameObject_Prototype()
@@ -70,6 +91,7 @@ _int CCustomInven::Update_GameObject(_double TimeDelta)
 {
 	CUI::Update_GameObject(TimeDelta);
 
+	Late_Init();
 	Click_Inven();
 		
 	return NO_EVENT;
@@ -141,6 +163,29 @@ void CCustomInven::SetUp_Default()
 	{
 		Add_Slot(TYPE_MASK, i);
 	}
+
+	LOOP(4)
+	{
+		m_pHairSlider[i] = static_cast<CCustomSliderBar*>(g_pManagement->Clone_GameObject_Return(L"GameObject_CustomSlider", nullptr));
+		m_pHairSlider[i]->Set_Type(CCustomSliderBar::SLIDER_TYPE(i));
+
+		_float fPosX = WINCX * 0.8f;
+		_float fPosY = 270.f;
+
+		m_pHairSlider[i]->Set_UI_Pos(fPosX, fPosY + (i * 50.f));
+		if (FAILED(g_pManagement->Add_GameOject_ToLayer_NoClone(m_pHairSlider[i], SCENE_STAGE_BASE, L"Layer_Custom", nullptr)))
+			return;
+	}
+}
+
+void CCustomInven::Late_Init()
+{
+	if (m_bLateInit)
+		return;
+
+	m_bLateInit = true;
+
+	m_pPlayer = static_cast<CPlayer*>(g_pManagement->Get_GameObjectBack(L"Layer_Player", SCENE_MORTAL));
 }
 
 void CCustomInven::Click_Inven()
@@ -173,6 +218,9 @@ void CCustomInven::Click_Inven()
 			Reset_SelectSlot(pvecActiveSlot);
 			pSlot->Set_Select(true);
 			m_iSelectIndex[m_eActiveType] = iIdx;
+
+			if(TYPE_HAIR == m_eActiveType)
+				m_pPlayer->Get_Hair()->Change_HairMesh(CClothManager::Cloth_Static(iIdx));
 		}
 		iIdx++;
 	}
@@ -204,9 +252,9 @@ void CCustomInven::Add_Slot(INVEN_TYPE eType, _int iIdx)
 	pDesc->fSizeX = 50.f;
 	pDesc->fSizeY = 50.f;
 	
-	g_pManagement->Add_GameObject_ToLayer(L"GameObject_CustomSlot", SCENE_LOGO, L"Layer_CustomUI", pDesc);
+	g_pManagement->Add_GameObject_ToLayer(L"GameObject_CustomSlot", SCENE_STAGE_BASE, L"Layer_CustomUI", pDesc);
 
-	pSlot = static_cast<CCustomSlot*>(g_pManagement->Get_GameObjectBack(L"Layer_CustomUI", SCENE_LOGO));
+	pSlot = static_cast<CCustomSlot*>(g_pManagement->Get_GameObjectBack(L"Layer_CustomUI", SCENE_STAGE_BASE));
 	pSlot->Set_Type(CCustomSlot::SLOT_TYPE(eType));
 	pSlot->Set_SlotIdx(iIdx);
 

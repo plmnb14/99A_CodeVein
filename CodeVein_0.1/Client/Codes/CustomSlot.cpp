@@ -213,6 +213,9 @@ HRESULT CCustomSlot::Add_Component()
 
 HRESULT CCustomSlot::SetUp_ConstantTable(_int iIdx, _bool bElem)
 {
+	if (!m_bIsActive)
+		return NOERROR;
+
 	if (nullptr == m_pShaderCom)
 		return E_FAIL;
 
@@ -273,7 +276,7 @@ void CCustomSlot::Check_SlotTexture()
 
 void CCustomSlot::Change_Texture(const _tchar * _Name)
 {
-	auto& iter = m_pmapComponents.find(L"Com_ElemTexture");
+	auto& iter = m_pmapComponents.find(L"Com_ElemTexture" );
 
 	Safe_Release(m_pElemTextureCom);
 	Safe_Release(iter->second);
