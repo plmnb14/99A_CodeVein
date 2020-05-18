@@ -27,6 +27,7 @@ HRESULT CPoisonButterfly::Ready_GameObject(void * pArg)
 	Ready_NF(pArg);
 	Ready_BoneMatrix();
 	Ready_Collider();
+	Ready_Sound();
 
 	m_tObjParam.bCanHit = true;
 	m_tObjParam.fHp_Cur = 10000.f;
@@ -60,6 +61,17 @@ HRESULT CPoisonButterfly::Ready_GameObject(void * pArg)
 
 	pBlackBoard->Set_Value(L"PushCol", true);	// 충돌여부 제어변수
 
+	//소리 제어 변수
+	pBlackBoard->Set_Value(L"SFX_01_Tag", 0);
+	pBlackBoard->Set_Value(L"SFX_01_Play", false);
+	pBlackBoard->Set_Value(L"SFX_01_Stop", false);
+	pBlackBoard->Set_Value(L"SFX_02_Tag", 0);
+	pBlackBoard->Set_Value(L"SFX_02_Play", false);
+	pBlackBoard->Set_Value(L"SFX_02_Stop", false);
+	pBlackBoard->Set_Value(L"Voice_Tag", 0);
+	pBlackBoard->Set_Value(L"Voice_Play", false);
+	pBlackBoard->Set_Value(L"Voice_Stop", false);
+
 	CBT_Selector* Start_Sel = Node_Selector("행동 시작");
 	//CBT_Sequence* Start_Sel = Node_Sequence("행동 시작");	//테스트
 
@@ -72,16 +84,16 @@ HRESULT CPoisonButterfly::Ready_GameObject(void * pArg)
 	//Start_Sel->Add_Child(Check_ShowValue);
 	//Start_Sel->Add_Child(Start_Game());
 
-	CBT_CompareValue* Check_ShowValue = Node_BOOL_A_Equal_Value("시연회 변수 체크", L"Show", false);
-	Check_ShowValue->Set_Child(Start_Game());
-	Start_Sel->Add_Child(Check_ShowValue);
-	Start_Sel->Add_Child(Start_Show());
+	//CBT_CompareValue* Check_ShowValue = Node_BOOL_A_Equal_Value("시연회 변수 체크", L"Show", false);
+	//Check_ShowValue->Set_Child(Start_Game());
+	//Start_Sel->Add_Child(Check_ShowValue);
+	//Start_Sel->Add_Child(Start_Show());
 
 	////////////
 
 	// 패턴 확인용,  각 패턴 함수를 아래에 넣으면 재생됨
 
-	//Start_Sel->Add_Child(Start_Game());
+	Start_Sel->Add_Child(OneTurn_Poison());
 
 	//CBT_RotationDir* Rotation0 = Node_RotationDir("돌기", L"Player_Pos", 0.2);
 	//Start_Sel->Add_Child(Rotation0);
@@ -402,6 +414,9 @@ CBT_Composite_Node * CPoisonButterfly::Left_Eat(_float fWeight)
 	CBT_Sequence* SubSeq = Node_Sequence("이동");
 	CBT_ChaseDir* ChaseDir0 = Node_ChaseDir("방향 추적", L"Player_Pos", 1.4, 0);
 	CBT_RotationDir* RotationDir0 = Node_RotationDir("방향 회전", L"Player_Pos", 0.156);
+	CBT_SetValue* Sound1Stop = Node_BOOL_SetValue("소리1 재생", L"SFX_01_Stop", true);
+	CBT_SetValue* Sound1Play = Node_BOOL_SetValue("소리1 재생", L"SFX_01_Play", true);
+	CBT_SetValue* Sound1Tag = Node_INT_SetValue("소리1 이름 설정", L"SFX_01_Tag", 0);
 
 	CBT_CreateEffect* Effect0 = Node_CreateEffect_Finite("왜곡", L"ButterFly_Distortion_Circle", L"Bone_Tail6", 1.75f, 1, 0.01, 0);
 	CBT_CreateEffect* Effect1 = Node_CreateEffect_Finite("보라 파티클", L"ButterFly_PointParticle", L"Bone_Tail6", 0.f, 160, 0.7, 0);
@@ -422,6 +437,9 @@ CBT_Composite_Node * CPoisonButterfly::Left_Eat(_float fWeight)
 	Root_Parallel->Set_Sub_Child(SubSeq);
 	SubSeq->Add_Child(ChaseDir0);
 	SubSeq->Add_Child(RotationDir0);
+	SubSeq->Add_Child(Sound1Stop);
+	SubSeq->Add_Child(Sound1Play);
+	SubSeq->Add_Child(Sound1Tag);
 
 	CBT_UpdateParam* pHitCol = Node_UpdateParam("무기 히트 On", &m_tObjParam, CBT_UpdateParam::Collider, 1.566, 1, 0.234, 0);
 	Root_Parallel->Add_Service(pHitCol);
@@ -440,6 +458,9 @@ CBT_Composite_Node * CPoisonButterfly::Right_Eat(_float fWeight)
 	CBT_Sequence* SubSeq = Node_Sequence("이동");
 	CBT_ChaseDir* ChaseDir0 = Node_ChaseDir("방향 추적", L"Player_Pos", 1.2, 0);
 	CBT_RotationDir* RotationDir0 = Node_RotationDir("방향 회전", L"Player_Pos", 0.183);
+	CBT_SetValue* Sound1Stop = Node_BOOL_SetValue("소리1 재생", L"SFX_01_Stop", true);
+	CBT_SetValue* Sound1Play = Node_BOOL_SetValue("소리1 재생", L"SFX_01_Play", true);
+	CBT_SetValue* Sound1Tag = Node_INT_SetValue("소리1 이름 설정", L"SFX_01_Tag", 0);
 
 	CBT_CreateEffect* Effect0 = Node_CreateEffect_Finite("왜곡", L"ButterFly_Distortion_Circle", L"Bone_Tail6", 1.65f, 1, 0.01, 0);
 	CBT_CreateEffect* Effect1 = Node_CreateEffect_Finite("보라 파티클", L"ButterFly_PointParticle", L"Bone_Tail6", 0.f, 160, 0.7, 0);
@@ -460,6 +481,9 @@ CBT_Composite_Node * CPoisonButterfly::Right_Eat(_float fWeight)
 	Root_Parallel->Set_Sub_Child(SubSeq);
 	SubSeq->Add_Child(ChaseDir0);
 	SubSeq->Add_Child(RotationDir0);
+	SubSeq->Add_Child(Sound1Stop);
+	SubSeq->Add_Child(Sound1Play);
+	SubSeq->Add_Child(Sound1Tag);
 
 	CBT_UpdateParam* pHitCol = Node_UpdateParam("무기 히트 On", &m_tObjParam, CBT_UpdateParam::Collider, 1.383, 1, 0.2, 0);
 	Root_Parallel->Add_Service(pHitCol);
@@ -479,10 +503,16 @@ CBT_Composite_Node * CPoisonButterfly::Eat_TurnEat()
 	CBT_Sequence* SubSeq = Node_Sequence("이동");
 	CBT_ChaseDir* ChaseDir0 = Node_ChaseDir("방향 추적0", L"Player_Pos", 1.2, 0);
 	CBT_RotationDir* RotationDir0 = Node_RotationDir("방향 회전0", L"Player_Pos", 0.183);
+	CBT_SetValue* Sound1Stop = Node_BOOL_SetValue("소리1 재생", L"SFX_01_Stop", true);
+	CBT_SetValue* Sound1Play = Node_BOOL_SetValue("소리1 재생", L"SFX_01_Play", true);
+	CBT_SetValue* Sound1Tag = Node_INT_SetValue("소리1 이름 설정", L"SFX_01_Tag", 0);
 	CBT_Wait* Wait0 = Node_Wait("대기0", 0.417, 0);
 	// 22번 애니 * 0.6 = 1.8
 	CBT_Wait* Wait1 = Node_Wait("대기1", 0.6, 0);
 	CBT_RotationDir* RotationDir1 = Node_RotationDir("방향 회전1", L"Player_Pos", 0.216);
+	CBT_SetValue* Sound1Stop1 = Node_BOOL_SetValue("소리1 재생", L"SFX_01_Stop", true);
+	CBT_SetValue* Sound1Play1 = Node_BOOL_SetValue("소리1 재생", L"SFX_01_Play", true);
+	CBT_SetValue* Sound1Tag1 = Node_INT_SetValue("소리1 이름 설정", L"SFX_01_Tag", 0);
 	CBT_MoveDirectly* Move0 = Node_MoveDirectly_Rush("이동", L"Monster_Speed", L"Monster_Dir", 10, 0.2, 0);
 
 	CBT_CreateEffect* Effect0 = Node_CreateEffect_Finite("왜곡", L"ButterFly_Distortion_Circle", L"Bone_Tail6_Tongue2", 1.5, 1, 0.01, 0);
@@ -507,9 +537,15 @@ CBT_Composite_Node * CPoisonButterfly::Eat_TurnEat()
 	Root_Parallel->Set_Sub_Child(SubSeq);
 	SubSeq->Add_Child(ChaseDir0);
 	SubSeq->Add_Child(RotationDir0);
+	SubSeq->Add_Child(Sound1Stop);
+	SubSeq->Add_Child(Sound1Play);
+	SubSeq->Add_Child(Sound1Tag);
 	SubSeq->Add_Child(Wait0);
 	SubSeq->Add_Child(Wait1);
 	SubSeq->Add_Child(RotationDir1);
+	SubSeq->Add_Child(Sound1Stop1);
+	SubSeq->Add_Child(Sound1Play1);
+	SubSeq->Add_Child(Sound1Tag1);
 	SubSeq->Add_Child(Move0);
 
 	CBT_UpdateParam* pHitCol0 = Node_UpdateParam("무기 히트 On", &m_tObjParam, CBT_UpdateParam::Collider, 1.383, 1, 0.2, 0);
@@ -525,6 +561,9 @@ CBT_Composite_Node * CPoisonButterfly::Poison_Tornado_After_Charging()
 {
 	CBT_Sequence* Root_Seq = Node_Sequence("기모아서 독 소용돌이");
 
+	CBT_SetValue* VoiceStop = Node_BOOL_SetValue("소리1 재생", L"Voice_Stop", true);
+	CBT_SetValue* VoicePlay = Node_BOOL_SetValue("소리1 재생", L"Voice_Play", true);
+	CBT_SetValue* VoiceTag = Node_INT_SetValue("소리1 이름 설정", L"Voice_Tag", 10);
 	CBT_Play_Ani* Show_Ani26 = Node_Ani("기모아서 독 소용돌이", 26, 0.95f);
 	CBT_Play_Ani* Show_Ani6 = Node_Ani("기본", 0, 0.f);
 
@@ -560,7 +599,9 @@ CBT_Composite_Node * CPoisonButterfly::Poison_Tornado_After_Charging()
 	CBT_CreateBullet* PoisonBullet0 = Node_CreateBullet("독 총알", L"Monster_PoisonTornado", L"Self_Pos", L"", 0, 2, 3.36, 1, 0, 0, CBT_Service_Node::Finite);
 	Root_Seq->Add_Service(PoisonBullet0);
 
-
+	Root_Seq->Add_Child(VoiceStop);
+	Root_Seq->Add_Child(VoicePlay);
+	Root_Seq->Add_Child(VoiceTag);
 	Root_Seq->Add_Child(Show_Ani26);
 	Root_Seq->Add_Child(Show_Ani6);
 
@@ -578,6 +619,9 @@ CBT_Composite_Node * CPoisonButterfly::OneTurn_Poison()
 	CBT_Sequence* SubSeq = Node_Sequence("이동");
 	CBT_ChaseDir* ChaseDir0 = Node_ChaseDir("방향 추적0", L"Player_Pos", 1.2, 0);
 	CBT_RotationDir* RotationDir0 = Node_RotationDir("방향 회전0", L"Player_Pos", 0.2);
+	CBT_SetValue* Sound1Stop = Node_BOOL_SetValue("소리1 재생", L"SFX_01_Stop", true);
+	CBT_SetValue* Sound1Play = Node_BOOL_SetValue("소리1 재생", L"SFX_01_Play", true);
+	CBT_SetValue* Sound1Tag = Node_INT_SetValue("소리1 이름 설정", L"SFX_01_Tag", 0);
 
 	CBT_CreateEffect* Effect0 = Node_CreateEffect_Finite("전체적으로 보라 동그라미 파티클", L"ButterFly_PointParticle", L"Bone_Tail6", 0, 150, 0.01, 0);
 	CBT_CreateEffect* Effect1 = Node_CreateEffect_Finite("전체적으로 쓰이는 옅은 독안개", L"ButterFly_SoftSmoke_Mist", L"Bone_Tail6", 0, 150, 0.01, 0);
@@ -596,6 +640,9 @@ CBT_Composite_Node * CPoisonButterfly::OneTurn_Poison()
 	Root_Parallel->Set_Sub_Child(SubSeq);
 	SubSeq->Add_Child(ChaseDir0);
 	SubSeq->Add_Child(RotationDir0);
+	SubSeq->Add_Child(Sound1Stop);
+	SubSeq->Add_Child(Sound1Play);
+	SubSeq->Add_Child(Sound1Tag);
 
 	CBT_UpdateParam* pHitCol = Node_UpdateParam("무기 히트 On", &m_tObjParam, CBT_UpdateParam::Collider, 1.25, 1, 1.816, 0);
 	Root_Parallel->Add_Service(pHitCol);
@@ -614,11 +661,21 @@ CBT_Composite_Node * CPoisonButterfly::Eat_Turn()
 	CBT_Sequence* SubSeq = Node_Sequence("이동");
 	CBT_ChaseDir* ChaseDir0 = Node_ChaseDir("방향 추적0", L"Player_Pos", 1.4, 0);
 	CBT_RotationDir* RotationDir0 = Node_RotationDir("방향 회전0", L"Player_Pos", 0.156);
+	CBT_SetValue* Sound1Stop = Node_BOOL_SetValue("소리1 재생", L"SFX_01_Stop", true);
+	CBT_SetValue* Sound1Play = Node_BOOL_SetValue("소리1 재생", L"SFX_01_Play", true);
+	CBT_SetValue* Sound1Tag = Node_INT_SetValue("소리1 이름 설정", L"SFX_01_Tag", 0);
 	CBT_Wait* Wait0 = Node_Wait("대기", 0.319, 0);
 	// 27번 애니 * 0.5 = 1.875
 	CBT_ChaseDir* ChaseDir1 = Node_ChaseDir("방향 추적1", L"Player_Pos", 1, 0);
 	CBT_RotationDir* RotationDir1 = Node_RotationDir("방향 회전1", L"Player_Pos", 0.166);
-	CBT_MoveDirectly* Move0 = Node_MoveDirectly_Rush("이동", L"Monster_Speed", L"Monster_Dir", 10, 0.734, 0);
+	CBT_SetValue* Sound1Stop1 = Node_BOOL_SetValue("소리1 재생", L"SFX_01_Stop", true);
+	CBT_SetValue* Sound1Play1 = Node_BOOL_SetValue("소리1 재생", L"SFX_01_Play", true);
+	CBT_SetValue* Sound1Tag1 = Node_INT_SetValue("소리1 이름 설정", L"SFX_01_Tag", 0);
+	CBT_MoveDirectly* Move0 = Node_MoveDirectly_Rush("이동", L"Monster_Speed", L"Monster_Dir", 10, 0.367, 0);
+	CBT_SetValue* Sound2Stop1 = Node_BOOL_SetValue("소리2 재생", L"SFX_02_Stop", true);
+	CBT_SetValue* Sound2Play1 = Node_BOOL_SetValue("소리2 재생", L"SFX_02_Play", true);
+	CBT_SetValue* Sound2Tag1 = Node_INT_SetValue("소리2 이름 설정", L"SFX_02_Tag", 0);
+	CBT_MoveDirectly* Move1 = Node_MoveDirectly_Rush("이동", L"Monster_Speed", L"Monster_Dir", 10, 0.367, 0);
 
 	CBT_CreateEffect* Effect0 = Node_CreateEffect_Finite("전체적으로 보라 동그라미 파티클", L"ButterFly_PointParticle", L"Bone_Tail6", 0, 300, 0.01, 0);
 	CBT_CreateEffect* Effect1 = Node_CreateEffect_Finite("전체적으로 쓰이는 옅은 독안개", L"ButterFly_SoftSmoke_Mist", L"Bone_Tail6", 0, 300, 0.01, 0);
@@ -642,10 +699,20 @@ CBT_Composite_Node * CPoisonButterfly::Eat_Turn()
 	Root_Parallel->Set_Sub_Child(SubSeq);
 	SubSeq->Add_Child(ChaseDir0);
 	SubSeq->Add_Child(RotationDir0);
+	SubSeq->Add_Child(Sound1Stop);
+	SubSeq->Add_Child(Sound1Play);
+	SubSeq->Add_Child(Sound1Tag);
 	SubSeq->Add_Child(Wait0);
 	SubSeq->Add_Child(ChaseDir1);
 	SubSeq->Add_Child(RotationDir1);
+	SubSeq->Add_Child(Sound1Stop1);
+	SubSeq->Add_Child(Sound1Play1);
+	SubSeq->Add_Child(Sound1Tag1);
 	SubSeq->Add_Child(Move0);
+	SubSeq->Add_Child(Sound2Stop1);
+	SubSeq->Add_Child(Sound2Play1);
+	SubSeq->Add_Child(Sound2Tag1);
+	SubSeq->Add_Child(Move1);
 
 
 	CBT_UpdateParam* pHitCol0 = Node_UpdateParam("무기 히트 On", &m_tObjParam, CBT_UpdateParam::Collider, 1.566, 1, 0.234, 0);
@@ -666,10 +733,16 @@ CBT_Composite_Node * CPoisonButterfly::Rush()
 
 	CBT_Sequence* MoveSequence = Node_Sequence("돌진 이동");
 	CBT_RotationDir* Rotation0 = Node_RotationDir("방향 추적0", L"Player_Pos", 0.2);
+	CBT_SetValue* Sound1Stop = Node_BOOL_SetValue("소리1 재생", L"SFX_01_Stop", true);
+	CBT_SetValue* Sound1Play = Node_BOOL_SetValue("소리1 재생", L"SFX_01_Play", true);
+	CBT_SetValue* Sound1Tag = Node_INT_SetValue("소리1 이름 설정", L"SFX_01_Tag", 0);
 	CBT_MoveDirectly* Move0 = Node_MoveDirectly_Rush("뒤로 이동", L"Monster_Speed", L"Monster_Dir", -3.f, 1.083, 0);
 	CBT_ChaseDir* ChaseDir0 = Node_ChaseDir("방향 추적1", L"Player_Pos", 0.3, 0);
 	CBT_RotationDir* Rotation1 = Node_RotationDir("방향 추적1", L"Player_Pos", 0.267);
 	CBT_SetValue* PushColOff = Node_BOOL_SetValue("PushColOff", L"PushCol", false);
+	CBT_SetValue* Sound1Stop1 = Node_BOOL_SetValue("소리1 재생", L"SFX_01_Stop", true);
+	CBT_SetValue* Sound1Play1 = Node_BOOL_SetValue("소리1 재생", L"SFX_01_Play", true);
+	CBT_SetValue* Sound1Tag1 = Node_INT_SetValue("소리1 이름 설정", L"SFX_01_Tag", 0);
 	CBT_MoveDirectly* Move1 = Node_MoveDirectly_Rush("돌진", L"Monster_Speed", L"Monster_Dir", 13, 1.1, 0);
 	CBT_SetValue* PushColOn = Node_BOOL_SetValue("PushColOn", L"PushCol", true);
 
@@ -691,10 +764,16 @@ CBT_Composite_Node * CPoisonButterfly::Rush()
 
 	RushParallel->Set_Sub_Child(MoveSequence);
 	MoveSequence->Add_Child(Rotation0);
+	MoveSequence->Add_Child(Sound1Stop);
+	MoveSequence->Add_Child(Sound1Play);
+	MoveSequence->Add_Child(Sound1Tag);
 	MoveSequence->Add_Child(Move0);
 	MoveSequence->Add_Child(ChaseDir0);
 	MoveSequence->Add_Child(Rotation1);
 	MoveSequence->Add_Child(PushColOff);
+	MoveSequence->Add_Child(Sound1Stop1);
+	MoveSequence->Add_Child(Sound1Play1);
+	MoveSequence->Add_Child(Sound1Tag1);
 	MoveSequence->Add_Child(Move1);
 	MoveSequence->Add_Child(PushColOn);
 
@@ -715,6 +794,9 @@ CBT_Composite_Node * CPoisonButterfly::Fire_5Bullet()
 	CBT_Sequence* SubSeq = Node_Sequence("발사준비");
 	CBT_ChaseDir* Chase0 = Node_ChaseDir("방향 추적", L"Player_Pos", 1.25, 0);
 	CBT_RotationDir* Rotation0 = Node_RotationDir("방향 회전", L"Player_Pos", 0.2);
+	CBT_SetValue* VoiceStop = Node_BOOL_SetValue("소리1 재생", L"Voice_Stop", true);
+	CBT_SetValue* VoicePlay = Node_BOOL_SetValue("소리1 재생", L"Voice_Play", true);
+	CBT_SetValue* VoiceTag = Node_INT_SetValue("소리1 이름 설정", L"Voice_Tag", 10);
 
 	CBT_CreateBullet* PoisonBullet0 = Node_CreateBullet("독 총알", L"Monster_PoisonBullet", L"Bone_Head", L"Self_PoisonDir0", 5, 5, 1.45, 1, 1, 0, CBT_Service_Node::Finite);
 	CBT_CreateBullet* PoisonBullet1 = Node_CreateBullet("독 총알", L"Monster_PoisonBullet", L"Bone_Head", L"Self_PoisonDir1", 5, 5, 1.45, 1, 1, 0, CBT_Service_Node::Finite);
@@ -735,16 +817,27 @@ CBT_Composite_Node * CPoisonButterfly::Fire_5Bullet()
 	Root_Parallel->Set_Sub_Child(SubSeq);
 	SubSeq->Add_Child(Chase0);
 	SubSeq->Add_Child(Rotation0);
+	SubSeq->Add_Child(VoiceStop);
+	SubSeq->Add_Child(VoicePlay);
+	SubSeq->Add_Child(VoiceTag);
 
 	return Root_Parallel;
 }
 
 CBT_Composite_Node * CPoisonButterfly::Fire_ChaseBullet()
 {
-	CBT_Sequence* Root_Seq = Node_Sequence("반바퀴 돌아서 독샷");
+	CBT_Simple_Parallel* Root_Parallel = Node_Parallel_Immediate("반바퀴 돌아서 독샷");
 
+	CBT_Sequence* MainSeq = Node_Sequence("반바퀴 돌아서 독샷");
 	CBT_Play_Ani* Show_Ani21 = Node_Ani("반바퀴 돌아서 독샷", 21, 0.95f);//23
-	CBT_Play_Ani* Show_Ani6 = Node_Ani("기본", 0, 0.3f);
+	CBT_Play_Ani* Show_Ani6 = Node_Ani("기본", 0, 0.f);
+
+	CBT_Sequence* SubSeq = Node_Sequence("이동");
+	//CBT_Wait* Wait0 = Node_Wait("대기", )
+	CBT_SetValue* VoiceStop = Node_BOOL_SetValue("소리1 재생", L"Voice_Stop", true);
+	CBT_SetValue* VoicePlay = Node_BOOL_SetValue("소리1 재생", L"Voice_Play", true);
+	CBT_SetValue* VoiceTag = Node_INT_SetValue("소리1 이름 설정", L"Voice_Tag", 10);
+
 
 	CBT_CreateBullet* PoisonBullet0 = Node_CreateBullet("독 총알", L"Monster_PoisonChaseBullet", L"Bone_Tail6", L"Self_PoisonDir2", 5, 5, 2.5, 1, 1, 0, CBT_Service_Node::Finite);
 
@@ -753,26 +846,39 @@ CBT_Composite_Node * CPoisonButterfly::Fire_ChaseBullet()
 	CBT_CreateEffect* Effect2 = Node_CreateEffect_Finite("반짝이는 보라색 모래", L"ButterFly_GlitterSand", L"Bone_Tail6", 0, 150, 0.01, 0);
 	CBT_CreateEffect* Effect3 = Node_CreateEffect_Finite("안개와 같이 나오는 왜곡", L"ButterFly_Distortion_Smoke", L"Bone_Tail6", 0, 150, 0.01, 0);
 
-	Root_Seq->Add_Service(PoisonBullet0);
+	Root_Parallel->Add_Service(PoisonBullet0);
 
-	Root_Seq->Add_Service(Effect0);
-	Root_Seq->Add_Service(Effect1);
-	Root_Seq->Add_Service(Effect2);
-	Root_Seq->Add_Service(Effect3);
-
-	Root_Seq->Add_Child(Show_Ani21);
-	Root_Seq->Add_Child(Show_Ani6);
+	Root_Parallel->Add_Service(Effect0);
+	Root_Parallel->Add_Service(Effect1);
+	Root_Parallel->Add_Service(Effect2);
+	Root_Parallel->Add_Service(Effect3);
 
 
-	return Root_Seq;
+	Root_Parallel->Set_Main_Child(MainSeq);
+	MainSeq->Add_Child(Show_Ani21);
+	MainSeq->Add_Child(Show_Ani6);
+
+	Root_Parallel->Set_Sub_Child(SubSeq);
+	SubSeq->Add_Child(VoiceStop);
+	SubSeq->Add_Child(VoicePlay);
+	SubSeq->Add_Child(VoiceTag);
+
+	return Root_Parallel;
 }
 
 CBT_Composite_Node * CPoisonButterfly::Turn_4PoisonShot()
 {
-	CBT_Sequence* Root_Seq = Node_Sequence("돌면서 사방으로 독 날리기");
-
+	CBT_Simple_Parallel* Root_Parallel = Node_Parallel_Immediate("돌면서 사방으로 독 날리기");
+	
+	CBT_Sequence* MainSeq = Node_Sequence("돌면서 사방으로 독 날리기");
 	CBT_Play_Ani* Show_Ani22 = Node_Ani("돌면서 사방으로 독 날리기", 22, 0.95f);//24
-	CBT_Play_Ani* Show_Ani6 = Node_Ani("기본", 0, 0.3f);
+	CBT_Play_Ani* Show_Ani6 = Node_Ani("기본", 0, 0.f);
+
+	CBT_Sequence* SubSeq = Node_Sequence("이동");
+	CBT_Wait*	Wait0 = Node_Wait("대기", 1.5, 0);
+	CBT_SetValue* Sound1Stop = Node_BOOL_SetValue("소리1 재생", L"SFX_01_Stop", true);
+	CBT_SetValue* Sound1Play = Node_BOOL_SetValue("소리1 재생", L"SFX_01_Play", true);
+	CBT_SetValue* Sound1Tag = Node_INT_SetValue("소리1 이름 설정", L"SFX_01_Tag", 0);
 
 	CBT_CreateBullet* PoisonBullet0 = Node_CreateBullet("독 총알", L"Monster_PoisonRotationBullet", L"Bone_Tail6", L"Self_Front", 1.5, 3, 1.53, 1, 1, 0, CBT_Service_Node::Finite);
 	CBT_CreateBullet* PoisonBullet1 = Node_CreateBullet("독 총알", L"Monster_PoisonRotationBullet", L"Bone_Tail6", L"Self_Right", 1.5, 3, 1.70, 1, 1, 0, CBT_Service_Node::Finite);
@@ -784,21 +890,27 @@ CBT_Composite_Node * CPoisonButterfly::Turn_4PoisonShot()
 	CBT_CreateEffect* Effect2 = Node_CreateEffect_Finite("반짝이는 보라색 모래", L"ButterFly_GlitterSand", L"Bone_Tail6", 0, 150, 0.01, 0);
 	CBT_CreateEffect* Effect3 = Node_CreateEffect_Finite("안개와 같이 나오는 왜곡", L"ButterFly_Distortion_Smoke", L"Bone_Tail6", 0, 150, 0.01, 0);
 
-	Root_Seq->Add_Service(Effect0);
-	Root_Seq->Add_Service(Effect1);
-	Root_Seq->Add_Service(Effect2);
-	Root_Seq->Add_Service(Effect3);
+	Root_Parallel->Add_Service(Effect0);
+	Root_Parallel->Add_Service(Effect1);
+	Root_Parallel->Add_Service(Effect2);
+	Root_Parallel->Add_Service(Effect3);
 
-	Root_Seq->Add_Service(PoisonBullet0);
-	Root_Seq->Add_Service(PoisonBullet1);
-	Root_Seq->Add_Service(PoisonBullet2);
-	Root_Seq->Add_Service(PoisonBullet3);
+	Root_Parallel->Add_Service(PoisonBullet0);
+	Root_Parallel->Add_Service(PoisonBullet1);
+	Root_Parallel->Add_Service(PoisonBullet2);
+	Root_Parallel->Add_Service(PoisonBullet3);
 
-	Root_Seq->Add_Child(Show_Ani22);
-	Root_Seq->Add_Child(Show_Ani6);
+	Root_Parallel->Set_Main_Child(MainSeq);
+	MainSeq->Add_Child(Show_Ani22);
+	MainSeq->Add_Child(Show_Ani6);
 
+	Root_Parallel->Set_Sub_Child(SubSeq);
+	SubSeq->Add_Child(Wait0);
+	SubSeq->Add_Child(Sound1Stop);
+	SubSeq->Add_Child(Sound1Play);
+	SubSeq->Add_Child(Sound1Tag);
 
-	return Root_Seq;
+	return Root_Parallel;
 }
 
 CBT_Composite_Node * CPoisonButterfly::Smart_Eat()
@@ -823,10 +935,16 @@ CBT_Composite_Node * CPoisonButterfly::Rush_And_ChaseBullet()
 
 	CBT_Sequence* MoveSequence = Node_Sequence("돌진 이동");
 	CBT_RotationDir* Rotation0 = Node_RotationDir("방향 추적0", L"Player_Pos", 0.2);
+	CBT_SetValue* Sound1Stop = Node_BOOL_SetValue("소리1 재생", L"SFX_01_Stop", true);
+	CBT_SetValue* Sound1Play = Node_BOOL_SetValue("소리1 재생", L"SFX_01_Play", true);
+	CBT_SetValue* Sound1Tag = Node_INT_SetValue("소리1 이름 설정", L"SFX_01_Tag", 0);
 	CBT_MoveDirectly* Move0 = Node_MoveDirectly_Rush("뒤로 이동", L"Monster_Speed", L"Monster_Dir", -3.f, 1.083, 0);
 	CBT_ChaseDir* ChaseDir0 = Node_ChaseDir("방향 추적1", L"Player_Pos", 0.3, 0);
 	CBT_RotationDir* Rotation1 = Node_RotationDir("방향 추적1", L"Player_Pos", 0.267);
 	CBT_SetValue* PushColOff = Node_BOOL_SetValue("PushColOff", L"PushCol", false);
+	CBT_SetValue* Sound1Stop1 = Node_BOOL_SetValue("소리1 재생", L"SFX_01_Stop", true);
+	CBT_SetValue* Sound1Play1 = Node_BOOL_SetValue("소리1 재생", L"SFX_01_Play", true);
+	CBT_SetValue* Sound1Tag1 = Node_INT_SetValue("소리1 이름 설정", L"SFX_01_Tag", 0);
 	CBT_MoveDirectly* Move1 = Node_MoveDirectly_Rush("돌진", L"Monster_Speed", L"Monster_Dir", 13, 1.1, 0);
 	CBT_SetValue* PushColOn = Node_BOOL_SetValue("PushColOn", L"PushCol", true);
 
@@ -851,10 +969,16 @@ CBT_Composite_Node * CPoisonButterfly::Rush_And_ChaseBullet()
 
 	RushParallel->Set_Sub_Child(MoveSequence);
 	MoveSequence->Add_Child(Rotation0);
+	MoveSequence->Add_Child(Sound1Stop);
+	MoveSequence->Add_Child(Sound1Play);
+	MoveSequence->Add_Child(Sound1Tag);
 	MoveSequence->Add_Child(Move0);
 	MoveSequence->Add_Child(ChaseDir0);
 	MoveSequence->Add_Child(Rotation1);
 	MoveSequence->Add_Child(PushColOff);
+	MoveSequence->Add_Child(Sound1Stop1);
+	MoveSequence->Add_Child(Sound1Play1);
+	MoveSequence->Add_Child(Sound1Tag1);
 	MoveSequence->Add_Child(Move1);
 	MoveSequence->Add_Child(PushColOn);
 
@@ -874,7 +998,15 @@ CBT_Composite_Node * CPoisonButterfly::WhirlWind()
 
 	CBT_Sequence* SubSeq = Node_Sequence("이동");
 	CBT_ChaseDir* ChaseDir0 = Node_ChaseDir("방향 추적", L"Player_Pos", 1.2, 0);
-	CBT_MoveDirectly* Move0 = Node_MoveDirectly_Rush("이동", L"Monster_Speed", L"Monster_Dir", 2, 1, 0);
+	CBT_SetValue* Sound1Stop1 = Node_BOOL_SetValue("소리1 재생", L"SFX_01_Stop", true);
+	CBT_SetValue* Sound1Play1 = Node_BOOL_SetValue("소리1 재생", L"SFX_01_Play", true);
+	CBT_SetValue* Sound1Tag1 = Node_INT_SetValue("소리1 이름 설정", L"SFX_01_Tag", 0);
+	CBT_MoveDirectly* Move0 = Node_MoveDirectly_Rush("이동", L"Monster_Speed", L"Monster_Dir", 3, 0.5, 0);
+	CBT_SetValue* Sound2Stop1 = Node_BOOL_SetValue("소리2 재생", L"SFX_02_Stop", true);
+	CBT_SetValue* Sound2Play1 = Node_BOOL_SetValue("소리2 재생", L"SFX_02_Play", true);
+	CBT_SetValue* Sound2Tag1 = Node_INT_SetValue("소리2 이름 설정", L"SFX_02_Tag", 0);
+	CBT_MoveDirectly* Move1 = Node_MoveDirectly_Rush("이동", L"Monster_Speed", L"Monster_Dir", 3, 0.5, 0);
+
 
 	CBT_CreateEffect* Effect0 = Node_CreateEffect_Finite("전체적으로 보라 동그라미 파티클", L"ButterFly_PointParticle", L"Bone_Tail6", 0, 150, 0.01, 0);
 	CBT_CreateEffect* Effect1 = Node_CreateEffect_Finite("전체적으로 쓰이는 옅은 독안개", L"ButterFly_SoftSmoke_Mist", L"Bone_Tail6", 0, 150, 0.01, 0);
@@ -892,7 +1024,14 @@ CBT_Composite_Node * CPoisonButterfly::WhirlWind()
 
 	Root_Parallel->Set_Sub_Child(SubSeq);
 	SubSeq->Add_Child(ChaseDir0);
+	SubSeq->Add_Child(Sound1Stop1);
+	SubSeq->Add_Child(Sound1Play1);
+	SubSeq->Add_Child(Sound1Tag1);
 	SubSeq->Add_Child(Move0);
+	SubSeq->Add_Child(Sound2Stop1);
+	SubSeq->Add_Child(Sound2Play1);
+	SubSeq->Add_Child(Sound2Tag1);
+	SubSeq->Add_Child(Move1);
 
 	CBT_UpdateParam* pHitCol0 = Node_UpdateParam("무기 히트 On", &m_tObjParam, CBT_UpdateParam::Collider, 1, 1, 1.7, 0);
 	CBT_UpdateParam* pHitCol1 = Node_UpdateParam("무기 히트 On", &m_tObjParam, CBT_UpdateParam::Collider, 1.6, 1, 1.1, 0);
@@ -1242,7 +1381,51 @@ HRESULT CPoisonButterfly::Update_Value_Of_BB()
 	// 3. 체력 비율 업데이트
 	m_pAIControllerCom->Set_Value_Of_BlackBoard(L"HPRatio", _float(m_tObjParam.fHp_Cur / m_tObjParam.fHp_Max) * 100);
 
+	// 사운드
+	// SFX_01
+	if (true == m_pAIControllerCom->Get_BoolValue(L"SFX_01_Stop"))	// 멈춤
+	{
+		m_pAIControllerCom->Set_Value_Of_BlackBoard(L"SFX_01_Stop", false);
 
+		g_pSoundManager->Stop_Sound(CSoundManager::CHANNELID::Butterfly_SFX_01);
+	}
+
+	if (true == m_pAIControllerCom->Get_BoolValue(L"SFX_01_Play"))	// 재생
+	{
+		m_pAIControllerCom->Set_Value_Of_BlackBoard(L"SFX_01_Play", false);
+
+		g_pSoundManager->Play_Sound(const_cast<TCHAR*>(m_mapSound[m_pAIControllerCom->Get_IntValue(L"SFX_01_Tag")]), CSoundManager::CHANNELID::Butterfly_SFX_01, CSoundManager::SOUND::Effect_Sound);
+	}
+
+	// SFX_02
+	if (true == m_pAIControllerCom->Get_BoolValue(L"SFX_02_Stop"))	// 멈춤
+	{
+		m_pAIControllerCom->Set_Value_Of_BlackBoard(L"SFX_02_Stop", false);
+
+		g_pSoundManager->Stop_Sound(CSoundManager::CHANNELID::Butterfly_SFX_02);
+	}
+
+	if (true == m_pAIControllerCom->Get_BoolValue(L"SFX_02_Play"))	// 재생
+	{
+		m_pAIControllerCom->Set_Value_Of_BlackBoard(L"SFX_02_Play", false);
+
+		g_pSoundManager->Play_Sound(const_cast<TCHAR*>(m_mapSound[m_pAIControllerCom->Get_IntValue(L"SFX_02_Tag")]), CSoundManager::CHANNELID::Butterfly_SFX_02, CSoundManager::SOUND::Effect_Sound);
+	}
+
+	// Voice
+	if (true == m_pAIControllerCom->Get_BoolValue(L"Voice_Stop"))	// 멈춤
+	{
+		m_pAIControllerCom->Set_Value_Of_BlackBoard(L"Voice_Stop", false);
+
+		g_pSoundManager->Stop_Sound(CSoundManager::CHANNELID::ButterFly_Voice);
+	}
+
+	if (true == m_pAIControllerCom->Get_BoolValue(L"Voice_Play"))	// 재생
+	{
+		m_pAIControllerCom->Set_Value_Of_BlackBoard(L"Voice_Play", false);
+
+		g_pSoundManager->Play_Sound(const_cast<TCHAR*>(m_mapSound[m_pAIControllerCom->Get_IntValue(L"Voice_Tag")]), CSoundManager::CHANNELID::ButterFly_Voice, CSoundManager::SOUND::Effect_Sound);
+	}
 
 	// 1. 5샷 방향
 	_v3 pPlayerPos = pPlayer_Trans->Get_Pos();
@@ -1326,8 +1509,11 @@ HRESULT CPoisonButterfly::Update_NF()
 	{
 		m_pMeshCom->SetUp_Animation(Ani_Appearance_End);
 
+
 		if (!m_bAppearanceEffect && m_pMeshCom->Is_Finish_Animation(0.472f))
 		{
+			g_pSoundManager->Play_Sound(const_cast<TCHAR*>(L"SE_GODDESS_BARK_004.ogg"), CSoundManager::CHANNELID::ButterFly_Voice, CSoundManager::SOUND::Effect_Sound);
+
 			// 이펙트 나올 뼈 위치 업데이트
 			Update_Bone_Of_BlackBoard();
 
@@ -1338,6 +1524,8 @@ HRESULT CPoisonButterfly::Update_NF()
 
 		if (m_pMeshCom->Is_Finish_Animation(0.95f))
 		{
+			g_pSoundManager->Stop_Sound(CSoundManager::CHANNELID::ButterFly_Voice);
+
 			m_pMeshCom->SetUp_Animation(Ani_Idle);
 			m_bFight = true;
 
@@ -1405,6 +1593,9 @@ void CPoisonButterfly::Check_PhyCollider()
 			{
 				if (0.7 >= (m_tObjParam.fHp_Cur / m_tObjParam.fHp_Max))
 				{
+					g_pSoundManager->Stop_Sound(CSoundManager::CHANNELID::ButterFly_Voice);
+					g_pSoundManager->Play_Sound(const_cast<TCHAR*>(L"Los_BossDown_02_gate_f.ogg"), CSoundManager::CHANNELID::ButterFly_Voice, CSoundManager::SOUND::Effect_Sound);
+
 					m_bDown_Start = true;
 
 					m_tObjParam.bDown = true;
@@ -1422,6 +1613,9 @@ void CPoisonButterfly::Check_PhyCollider()
 			{
 				if (0.4 >= (m_tObjParam.fHp_Cur / m_tObjParam.fHp_Max))
 				{
+					g_pSoundManager->Stop_Sound(CSoundManager::CHANNELID::ButterFly_Voice);
+					g_pSoundManager->Play_Sound(const_cast<TCHAR*>(L"Los_BossDown_02_gate_f.ogg"), CSoundManager::CHANNELID::ButterFly_Voice, CSoundManager::SOUND::Effect_Sound);
+
 					m_bDown_Start = true;
 
 					m_tObjParam.bDown = true;
@@ -1441,6 +1635,9 @@ void CPoisonButterfly::Check_PhyCollider()
 		}
 		else
 		{
+			g_pSoundManager->Stop_Sound(CSoundManager::CHANNELID::ButterFly_Voice);
+			g_pSoundManager->Play_Sound(const_cast<TCHAR*>(L"Los_BossDead_01_gate_f.ogg"), CSoundManager::CHANNELID::ButterFly_Voice, CSoundManager::SOUND::Effect_Sound);
+		
 			m_pMeshCom->SetUp_Animation(Ani_Death);	// 죽음처리 시작
 			Start_Dissolve(0.7f, false, true, 0.6f);
 			CParticleMgr::Get_Instance()->Create_BossDeadParticle_Effect(m_pTransformCom->Get_Pos() + _v3(0.f, 1.3f, 0.f), 0.6f, 0.5f);
@@ -1832,6 +2029,14 @@ HRESULT CPoisonButterfly::Ready_NF(void * pArg)
 	}
 	//===================================================================
 
+
+	return S_OK;
+}
+
+HRESULT CPoisonButterfly::Ready_Sound()
+{
+	m_mapSound.emplace(0, L"SE_GODDESS_ATTACK_SWING_000.ogg");	// 꼬리 공격 바람소리
+	m_mapSound.emplace(10, L"SE_GODDESS_BARK_004.ogg");	// 공격하기 전 소리지르기
 
 	return S_OK;
 }

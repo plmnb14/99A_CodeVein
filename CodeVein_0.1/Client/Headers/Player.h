@@ -7,8 +7,15 @@
 
 #include "UI_Manager.h"
 
+#include "Costume_Body.h"
+#include "Costume_Mask.h"
+#include "Costume_Head.h"
+
 BEGIN(Client)
 
+class CCostume_Mask;
+class CCostume_Head;
+class CCostume_Body;
 class CCostume_Outer;
 class CCostume_Hair;
 class CStageAgent;
@@ -27,6 +34,13 @@ public:
 		SCENEID eSceneID = SCENE_END;
 
 	}TELEPORT_RESET;
+	
+public:
+	typedef enum tagPlayerBodyType
+	{
+		Player_Body_01, Player_Body_02, Player_Body_03, Player_Body_04,
+		Player_Body_End
+	}PLAYER_BODY;
 
 public:
 	enum DODGE_TYPE
@@ -116,6 +130,14 @@ private:
 private:
 	CCostume_Hair*			m_pHair = nullptr;
 	CCostume_Outer*			m_pOuter = nullptr;
+	CCostume_Mask*			m_pMask[CCostume_Mask::Mask_End] = {};
+	CCostume_Head*			m_pHead[CCostume_Head::Chara_Head_End] = {};		// 머리 미리 준비
+	CCostume_Body*			m_pBody[CCostume_Body::Chara_Body_End] = {};
+
+private:
+	CCostume_Mask::MASK_TYPE	m_eMaskType = CCostume_Mask::Mask_11;
+	CCostume_Head::CHAR_HEAD	m_eHeadType = CCostume_Head::Chara_Head_02;
+	CCostume_Body::CHAR_BODY	m_eBodyType = CCostume_Body::Chara_Body_01;
 
 private:
 	CUI_Manager*			m_pUIManager = nullptr;
@@ -251,6 +273,9 @@ private:
 	virtual _bool Check_CunterTarget();
 
 private:
+	virtual void Change_PlayerBody(PLAYER_BODY _eBodyType);
+
+private:
 	virtual void Parameter_State();
 	virtual void Parameter_State_Upper();
 	virtual void Parameter_Atk();
@@ -353,6 +378,9 @@ private:
 	virtual void Play_Lsword_DashAtk();
 
 private:
+	virtual void Ready_Bodys();
+	virtual void Ready_Heads();
+	virtual void Ready_Masks();
 	virtual void Ready_Weapon();
 	virtual void Ready_DrainWeapon();
 	virtual void Ready_BoneMatrix();
@@ -392,6 +420,7 @@ public:
 	virtual void Free();
 
 private:
+	/*
 	typedef enum Player_Anim
 	{
 		Cmn_Idle,
@@ -810,12 +839,293 @@ private:
 		Hammer_Down_02
 
 	}P_ANI;
+	*/
+
+	typedef enum tagPlayerNewAni
+	{
+		Cmn_Active_Mistletoe,
+		Cmn_PickItemStand,
+		Cmn_UseItem,
+		Cmn_CheckPoint_Start,
+		Cmn_CheckPoint_Loop,
+		Cmn_CheckPoint_End,
+		Cmn_UseItemEnchant,
+		Cmn_UseItemInjection,
+		Cmn_UseItemRecovery,
+		Cmn_UseItemThrow,
+		Cmn_WeaponChange,
+		Cmn_BoxOpen,
+		Cmn_Idle,
+		Cmn_Walk_F,
+		Cmn_Walk_FL,
+		Cmn_Walk_FR,
+		Cmn_Walk_L,
+		Cmn_Walk_R,
+		Cmn_Walk_B,
+		Cmn_Walk_BL,
+		Cmn_Walk_BR,
+		Cmn_Run_F,
+		Cmn_Run_FL,
+		Cmn_Run_FR,
+		Cmn_Run_L,
+		Cmn_Run_R,
+		Cmn_Run_B,
+		Cmn_Run_BL,
+		Cmn_Run_BR,
+		Cmn_Damage_01_F,
+		Cmn_Damage_01_FL,
+		Cmn_Damage_01_FR,
+		Cmn_Damage_01_L,
+		Cmn_Damage_01_R,
+		Cmn_Damage_01_B,
+		Cmn_Damage_01_BL,
+		Cmn_Damage_01_BR,
+		Cmn_Damage_02_F,
+		Cmn_Damage_02_L,
+		Cmn_Damage_02_R,
+		Cmn_Damage_02_B,
+		Cmn_Damage_03_F,
+		Cmn_Damage_03_L,
+		Cmn_Damage_03_R,
+		Cmn_Damage_03_B,
+		Cmn_Damage_04_F,
+		Cmn_Damage_04_L,
+		Cmn_Damage_04_R,
+		Cmn_Damage_04_B,
+		Cmn_Damage_Blow_F,
+		Cmn_Damage_Blow_B,
+		Cmn_Dash,
+		Cmn_Dash_End,
+		Cmn_Down_F_Loop,
+		Cmn_Down_F_End,
+		Cmn_Down_F_Death,
+		Cmn_Down_F_Alive,
+		Cmn_Down_B_Loop,
+		Cmn_Down_B_End,
+		Cmn_Down_B_Death,
+		Cmn_Down_B_Alive,
+		Cmn_Dying_Loop,
+		Cmn_Dying_Alive,
+		Cmn_Dying_Death,
+		Cmn_NoBuddy_Death,
+		Cmn_Damage_Blow_L,
+		Cmn_Damage_Blow_R,
+		Cmn_Fall_Loop,
+		Cmn_Fall_End,
+		Cmn_Run_F_End_L,
+		Cmn_Run_FL_End,
+		Cmn_Run_FR_End,
+		Cmn_Run_L_LEnd,
+		Cmn_Run_R_End,
+		Cmn_Run_B_End,
+		Cmn_Run_BL_End,
+		Cmn_Run_BR_End,
+		Ssword_BlendWalk,
+		Ssword_BlendRun,
+		Ssword_BlendDash,
+		Ssword_WeakAtk_01,
+		Ssword_WeakAtk_02,
+		Ssword_WeakAtk_03,
+		Ssword_WeakAtk_04,
+		Ssword_WeakAtk_05,
+		Ssword_Down_02,
+		Ssword_Down_01,
+		Ssword_Charge,
+		Ssword_HeavyAtk_01,
+		Ssword_HeavyAtk_02,
+		Ssword_DodgeAtk_F,
+		Ssword_DodgeAtk_B,
+		Lsword_BlendWalk,
+		Lsword_BlendRun,
+		Lsword_BlendDash,
+		LSword_BlendIdle,
+		LSword_WeakAtk_01,
+		LSword_WeakAtk_02,
+		LSword_WeakAtk_03,
+		LSword_WeakAtk_04,
+		LSword_WeakAtk_05,
+		Lsword_Down,
+		Lsword_SpecialLaunch,
+		Lsword_Charge,
+		Lsword_HeavyAtk_01,
+		Lsword_HeavyAtk_02,
+		Lsword_DodgeAtk_F,
+		Lsword_DodgeAtk_B,
+		Hammer_BlendWalk,
+		Hammer_BlendRun,
+		Hammer_BlendDash,
+		Hammer_BlendIdle,
+		Hammer_WeakAtk_01,
+		Hammer_WeakAtk_02,
+		Hammer_WeakAtk_04,
+		Hammer_WeakAtk_07,
+		Hammer_WeakAtk_Down_01,
+		Hammer_WeakAtk_Down_02,
+		Hammer_Charge,
+		Hammer_HeavyAtk_01,
+		Hammer_HeavyAtk_02,
+		Hammer_DodgeAtk_F,
+		Hammer_DodgeAtk_B,
+		Halberd_BlendWalk,
+		Halberd_BlendRun,
+		Halberd_BlendDash,
+		Halberd_BlendIdle,
+		Halberd_WeakAtk_03,
+		Halberd_WeakAtk_06,
+		Halberd_WeakAtk_07,
+		Halberd_WeakAtk_08,
+		Halberd_SpecialLaunch,
+		Halberd_DownAtk_03,
+		Halberd_DownAtk_02,
+		Halberd_Charge,
+		Halberd_HeavyAtk_06,
+		Halberd_HeavyAtk_07,
+		Halberd_DodgeAtk_F,
+		Halberd_DodgeAtk_B,
+		Gun_BlendWalk,
+		Gun_BlendRun,
+		Gun_BlendDash,
+		Gun_BlendIdle,
+		Gun_WeakAtk_01,
+		Gun_WeakAtk_02,
+		Gun_WeakAtk_03,
+		Gun_WeakAtk_04,
+		Gun_WeakAtk_05,
+		Gun_WeakAtk_10,
+		Gun_Charge,
+		Gun_HeavyAtk_01,
+		Gun_HeavyAtk_02,
+		Gun_DodgeAtk_F,
+		Gun_DodgeAtk_B,
+		Gun_Dodge_F,
+		Gun_Dodge_FL,
+		Gun_Dodge_FR,
+		Gun_Dodge_L,
+		Gun_Dodge_R,
+		Gun_Dodge_B,
+		Gun_Dodge_BL,
+		Gun_Dodge_BR,
+		Ssword_Dodge_F,
+		Ssword_Dodge_FL,
+		Ssword_Dodge_FR,
+		Ssword_Dodge_L,
+		Ssword_Dodge_R,
+		Ssword_Dodge_B,
+		Ssword_Dodge_BL,
+		Ssword_Dodge_BR,
+		Lsword_Dodge_F,
+		Lsword_Dodge_FL,
+		Lsword_Dodge_FR,
+		Lsword_Dodge_L,
+		Lsword_Dodge_R,
+		Lsword_Dodge_B,
+		Lsword_Dodge_BL,
+		Lsword_Dodge_BR,
+		Halberd_Dodge_F,
+		Halberd_Dodge_FL,
+		Halberd_Dodge_FR,
+		Halberd_Dodge_L,
+		Halberd_Dodge_R,
+		Halberd_Dodge_B,
+		Halberd_Dodge_BL,
+		Halberd_Dodge_BR,
+		Hammer_Dodge_F,
+		Hammer_Dodge_FL,
+		Hammer_Dodge_FR,
+		Hammer_Dodge_L,
+		Hammer_Dodge_R,
+		Hammer_Dodge_B,
+		Hammer_Dodge_BL,
+		Hammer_Dodge_BR,
+		Renketsu_01,
+		Renketsu_02,
+		Renketsu_03,
+		Renketsu_04,
+		Renketsu_05,
+		Renketsu_06,
+		Renketsu_07,
+		Renketsu_09,
+		Renketsu_10,
+		Renketsu_11,
+		Renketsu_12,
+		Renketsu_Spear,
+		Renketsu_Gun,
+		Renketsu_Buff,
+		Renketsu_Wave,
+		Renketsu_Search,
+		Renketsu_Enchant,
+		Renketsu_Throw,
+		Renketsu_AimShot,
+		LongCoat_Parry,
+		LongCoat_Charge_Start,
+		LongCoat_Charge_End,
+		LongCoat_Combo,
+		LongCoat_GroundCombo,
+		LongCoat_Exicution_Cinema,
+		LongCoat_Exicution,
+		Guantlet_Parry,
+		Gauntlet_Charge_Start,
+		Gauntlet_Charge_End,
+		Gauntlet_Combo,
+		Gauntlet_GroundCombo,
+		Drape_Parry,
+		Drape_Charge_Start,
+		Drape_Charge_End,
+		Drape_GroundCombo,
+		Drape_Exicution_Cinema,
+		Muffler_Parry,
+		Muffler_Charge_Start,
+		Muffler_Charge_End,
+		Muffler_Combo,
+		Muffler_GroundCombo,
+		Gun_Flame_A,
+		Gun_Flame_B,
+		Cinema_01_Walk,
+		Cinema_01_BattleReady,
+		Cinema_02_Stand,
+		Guard_Walk_F,
+		Guard_Walk_FL,
+		Guard_Walk_FR,
+		Guard_Walk_L,
+		Guard_Walk_R,
+		Guard_Walk_B,
+		Guard_Walk_BL,
+		Guard_Walk_BR,
+		Guard_Ssword_Start,
+		Guard_Ssword_Loop,
+		Guard_Ssword_End,
+		Guard_Ssword_Break,
+		Guard_Ssword_Hit,
+		Guard_Gun_Start,
+		Guard_Gun_Loop,
+		Guard_Gun_End,
+		Guard_Gun_Break,
+		Guard_Gun_Hit,
+		Guard_Halberd_Start,
+		Guard_Halberd_Loop,
+		Guard_Halberd_End,
+		Guard_Halberd_Break,
+		Guard_Halberd_Hit,
+		Guard_Hammer_Start,
+		Guard_Hammer_Loop,
+		Guard_Hammer_End,
+		Guard_Hammer_Break,
+		Guard_Hammer_Hit,
+		Guard_LSword_Start,
+		Guard_LSword_Loop,
+		Guard_LSword_End,
+		Guard_LSword_Break,
+		Guard_LSword_Hit,
+	}P_NEWANI;
 
 private:
-	P_ANI	m_eAnim_Upper = Cmn_GameStart;
-	P_ANI	m_eAnim_Lower = Cmn_GameStart;
-	P_ANI	m_eAnim_RightArm = Cmn_GameStart;
-	P_ANI	m_eAnim_LeftArm = Cmn_GameStart;
+	P_NEWANI	m_eAnim_Upper = Cmn_CheckPoint_End;
+	P_NEWANI	m_eAnim_Lower = Cmn_CheckPoint_End;
+	P_NEWANI	m_eAnim_RightArm = Cmn_CheckPoint_End;
+	P_NEWANI	m_eAnim_LeftArm = Cmn_CheckPoint_End;
+
+private:
+	PLAYER_BODY	m_ePlayerBody = Player_Body_01;
 
 private:
 	_long	m_lDebugValue = 0;

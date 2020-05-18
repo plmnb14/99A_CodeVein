@@ -58,6 +58,10 @@
 #include "SoundManager.h"
 #include "ClothManager.h"
 
+#include "Costume_Body.h"
+#include "Costume_Head.h"
+#include "Costume_Mask.h"
+
 USING(Client)
 
 CLoading::CLoading(_Device pGraphicDev)
@@ -1290,14 +1294,23 @@ _uint CLoading::Loading_Title()
 	//============================================================================================================
 	// 다이나믹 메쉬 불러오는 중
 	//============================================================================================================
-	cout << "Essential Dynamic Mesh 불러오는 중 . . ." << endl;
-	g_pManagement->LoadMesh_FromPath(m_pGraphicDev, L"../../Data/Load_MeshData/Mesh_Essential_Dynamic_Path.dat");
+	//cout << "Essential Dynamic Mesh 불러오는 중 . . ." << endl;
+	//g_pManagement->LoadMesh_FromPath(m_pGraphicDev, L"../../Data/Load_MeshData/Mesh_Essential_Dynamic_Path.dat");
+
+	cout << "Costume Static Mesh 불러오는 중 . . ." << endl;
+	g_pManagement->LoadMesh_FromPath(m_pGraphicDev, L"../../Data/Load_MeshData/Mesh_Costume_Static_Path.dat");
+
+	cout << "Costume Dynamic Mesh 불러오는 중 . . ." << endl;
+	g_pManagement->LoadMesh_FromPath(m_pGraphicDev, L"../../Data/Load_MeshData/Mesh_Costume_Dynamic_Path.dat");
+
+	cout << " 옷 생성 중 . . ." << endl;
+	g_pClothManager->Ready_ClothManager();
 
 	//cout << "DynamicMesh 불러오는 중 . . ." << endl;
 	//g_pManagement->LoadMesh_FromPath(m_pGraphicDev, L"../../Data/Load_MeshData/Mesh_Dynamic_Path.dat");
 	
-	cout << "NPC 불러오는 중 . . ." << endl;
-	g_pManagement->LoadMesh_FromPath(m_pGraphicDev, L"../../Data/Load_MeshData/Mesh_NPC_Path.dat");
+	//cout << "NPC 불러오는 중 . . ." << endl;
+	//g_pManagement->LoadMesh_FromPath(m_pGraphicDev, L"../../Data/Load_MeshData/Mesh_NPC_Path.dat");
 	//============================================================================================================
 	// 무기 불러오는 중
 	//============================================================================================================
@@ -1344,6 +1357,15 @@ _uint CLoading::Loading_Title()
 	//============================================================================================================
 	cout << "Essential Protorypes 추가 중 . . ."  << endl;
 	//============================================================================================================
+	// Costume Head
+	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_Costume_Head", CCostume_Head::Create(m_pGraphicDev))))
+		return E_FAIL;
+	// Costume Body
+	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_Costume_Body", CCostume_Body::Create(m_pGraphicDev))))
+		return E_FAIL;
+	// Costume Mask
+	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_Costume_Mask", CCostume_Mask::Create(m_pGraphicDev))))
+		return E_FAIL;
 	// 흡혈 무기
 	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_DrainWeapon", CDrain_Weapon::Create(m_pGraphicDev))))
 		return E_FAIL;
@@ -1361,13 +1383,28 @@ _uint CLoading::Loading_Title()
 		return E_FAIL;
 	//============================================================================================================
 	// 사운드
+	// 하위 폴더 순회 안합니다.
+	// 사운드가 포함된 경로 이름만 지정해주면 알아서 불러옵니다. ( # 하위폴더 순회 안함. 두번 말함 # )
+	// 각 파트별로 사운드 정리해서 쓰시면될 듯함.
+	// 기본 경로는 ../Sounds/ 임. 추가로 경로를 추가는 인자값으로 "Path" 를 넘겨주고, 
+	//  하위폴더의 경우 "path/path" 이런식으로 슬레시 하나만 쳐주면됨
 	//============================================================================================================
+
+	g_pSoundManager->Load_Directory_SouneFile_W(L"Title");
 	g_pSoundManager->Load_Directory_SouneFile_W(L"BGM");
+	//g_pSoundManager->Load_Directory_SouneFile_W(L"Effect");
+	//g_pSoundManager->Load_Directory_SouneFile_W(L"Effect/Effect_Fire");
+	g_pSoundManager->Load_Directory_SouneFile_W(L"Effect");
+	g_pSoundManager->Load_Directory_SouneFile_W(L"UI");
+	g_pSoundManager->Load_Directory_SouneFile_W(L"UI/UI_WeaponShop");
+	g_pSoundManager->Load_Directory_SouneFile_W(L"NPC/Yakumo");
+	g_pSoundManager->Load_Directory_SouneFile_W(L"Boss_Genji");
+
 	//============================================================================================================
 	// 옷
 	//============================================================================================================
-	cout << " 옷 생성 중 . . ." << endl;
-	g_pClothManager->Ready_ClothManager();
+	//cout << " 옷 생성 중 . . ." << endl;
+	//g_pClothManager->Ready_ClothManager();
 	//============================================================================================================
 
 	m_bFinish = true;
@@ -1396,10 +1433,38 @@ _uint CLoading::Loading_Title()
 	cout << "[9] # 릴리즈 모드 # ";
 	cout << (g_bReleaseMode ? "true" : "false") << endl;
 	cout << "-------------------------------------------------------------------------------" << endl;
+	
+	//====================================================================================================
+	// 사운드 재생 방법
+	//====================================================================================================
+	// 인자 값으로 넣은 사운드 채널을 멈춤
+	// 주로 사운드 재생 전에 한번씩 함수 실행해줌. ( 혹시나 같은 채널의 소리가 나오고 있을 수도 있기 때문 )
+	// 사운드를 강제로 멈출 때도 사용함. 
+	//----------------------------------------------------------------------------------------------------
+	// 단, 이펙트 같은 사운드를 멈춘다고 이걸 불러오면 되게 어색하게 
+	// "뚝!" 하고 끊기기 때문에 보통 사운드가 끝날 때는 잘 안씀. 변경될 때 자주씀.
+	//----------------------------------------------------------------------------------------------------
+	//g_pSoundManager->Stop_Sound(CSoundManager::Background_01);
+	//----------------------------------------------------------------------------------------------------
+	// 사운드 파일 명 : wav , ogg 로 불러오면 좋음. ogg 가 용량이 작은거 같았음
+	// 사운드 채널    : 채널에 해당하는 사운드를 Stop & Play 할 수 있게 함. 한번에 하나씩만 재생됨.
+	// 사운드 그룹 ( volume, Pitch ) 등 한번에 컨트롤 가능함. [ 이건 왠만하면 안씀 ]
+	//----------------------------------------------------------------------------------------------------
+	// Play_Sound 는 계속해서 업데이트 되도, 하나의 재생이 멈추기 전까지 다음 곡이 안나옴.
+	// 음악 바꿔줄라면, 무조건 Stop_Sound 이후에 해야함.
+	// 1번 인자 : 사운드 파일명. 설명이 필요없음
+	// 2번 인자 : 채널명. 각자 사운드마다 세부적으로 채널 나눠야함. 채널 추가는 맘대로 해도 무관함.
+	//            사운드 채널 나누는 건 대강 아래와 같음.
+	//            겐지의 경우, 공격을 할때
+	//			  [1] 검 휘두르는 소리 (Genji_Sfx_01) , 
+	//            [2] 검이 불타는 검이라 검의 불소리 (Genji_Sfx_02), 
+	//			  [3] 검에서 생성되는 불칼날 이펙트 사운드 (Effect_Sfx_01) , <<= ( 이건 아마 이펙트에서 따로 해줄꺼임 )
+	//			  [4] 겐지 기합 (Genji_Voice)
+	//				이런식으로 한번에 여러가지 섞어쓰면 사운드가 풍부해짐.
+	//g_pSoundManager->Play_Sound(L"Gwan_Cchak.wav", CSoundManager::Background_01, CSoundManager::BGM_Sound);
+	//====================================================================================================
 
-	g_pSoundManager->Stop_Sound(CSoundManager::Background_01);
-	g_pSoundManager->Play_Sound(L"UI_UpgradeSuccess.wav", CSoundManager::Effect_SFX_01, CSoundManager::Effect_Sound);
-	//g_pSoundManager->Play_Sound(L"Title_Intro_02.wav", CSoundManager::Background_01, CSoundManager::Master_Sound);
+
 	//g_pSoundManager->Play_Sound(L"Gwan_Cchak.wav", CSoundManager::Background_01, CSoundManager::BGM_Sound);
 	//g_pSoundManager->Play_BGM(L"Gwan_Cchak.wav");
 
@@ -1593,7 +1658,7 @@ _uint CLoading::Loading_Stage()
 			return E_FAIL;
 		CObjectPool_Manager::Get_Instance()->Create_ObjectPool(L"GameObject_EffParent", L"GameObject_EffParent", 100);
 
-		///////test로 만들어둔 드롭아이템입니다 수정 Test 실험 심규명
+		// Drop_Item
 		if (FAILED(g_pManagement->Add_Prototype(L"GameObject_DropItem", CDropItem::Create(m_pGraphicDev))))
 			return E_FAIL;
 		CObjectPool_Manager::Get_Instance()->Create_ObjectPool(L"GameObject_DropItem", L"GameObject_DropItem", 200);
@@ -1920,6 +1985,11 @@ HRESULT CLoading::Ready_Intro_MonsterPrototype()
 	if (FAILED(g_pManagement->Add_Prototype(L"Pet_Bullet", CPet_Bullet::Create(m_pGraphicDev))))
 		return E_FAIL;
 	CObjectPool_Manager::Get_Instance()->Create_ObjectPool(L"Pet_Bullet", L"Pet_Bullet", 100);
+	//============================================================================================================================================
+	// 펫_사슴킹
+	//============================================================================================================================================
+	if (FAILED(g_pManagement->Add_Prototype(L"Pet_DeerKing", CPet_DeerKing::Create(m_pGraphicDev))))
+		return E_FAIL;
 	//============================================================================================================================================
 
 

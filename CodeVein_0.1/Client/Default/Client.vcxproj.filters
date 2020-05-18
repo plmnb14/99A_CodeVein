@@ -397,9 +397,6 @@
     <Filter Include="02.GameObject\Stage\10%29 Pet\01.PoisonButterFly">
       <UniqueIdentifier>{2f0b99ca-05de-474b-a3f2-deaf4be55682}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02.GameObject\Stage\10%29 Pet\02.DeerKing">
-      <UniqueIdentifier>{12d43b02-9be4-4bc8-8f7d-849ac5ca6a8d}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02.GameObject\Stage\5%29 UI\UI\03.Inven_UI\00.Inventory\08. Pet_Inven">
       <UniqueIdentifier>{a7a0f26e-f1c3-4bbe-a84d-2ece8c87140c}</UniqueIdentifier>
     </Filter>
@@ -421,9 +418,6 @@
     <Filter Include="02.GameObject\Stage\9%29 Player_Colleague\Colleague Bullet\Heal Bullet">
       <UniqueIdentifier>{b84dff3e-d563-4cc5-bc33-692582cf11b8}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02.GameObject\Stage\5%29 UI\UI\15. Colleague UI\Colleague Jack">
-      <UniqueIdentifier>{1256d69f-6532-4f43-93af-fc4859017616}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02.GameObject\Stage\3%29 Effect\Effect_FireFlower">
       <UniqueIdentifier>{e3f3b1d2-c8df-469c-b4a2-7ebc9b7ebbc1}</UniqueIdentifier>
     </Filter>
@@ -438,15 +432,6 @@
     </Filter>
     <Filter Include="02.GameObject\Stage\0%29 Player\01%29 Costume">
       <UniqueIdentifier>{fb9e8e53-a817-46da-b751-1fe5abd1c284}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObject\Stage\0%29 Player\01%29 Costume\[1] Hair">
-      <UniqueIdentifier>{7f462560-9057-4fa4-ac19-b1a9f293ab64}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObject\Stage\0%29 Player\01%29 Costume\[2] Outer">
-      <UniqueIdentifier>{554d7a5c-d8fa-46d4-9db4-34f13afd960b}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObject\Stage\0%29 Player\01%29 Costume\[3] Accessory">
-      <UniqueIdentifier>{a9416921-45fb-498f-978c-3e12343dcd6f}</UniqueIdentifier>
     </Filter>
     <Filter Include="02.GameObject\Stage\5%29 UI\UI\04. HazeUI">
       <UniqueIdentifier>{b43ab97b-58b5-48ec-bf6c-e7cb04438b4a}</UniqueIdentifier>
@@ -532,11 +517,44 @@
     <Filter Include="02.GameObject\Stage\5%29 UI\UI\17. WeaponShopUI\WeaponUpgradeUI\WeaponUpgradeSuccessPopupUI\Option">
       <UniqueIdentifier>{023eafb9-cae5-4944-a116-3d2c0d39de3f}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObject\Stage\10%29 Pet\02.Pet_DeerKing">
+      <UniqueIdentifier>{12d43b02-9be4-4bc8-8f7d-849ac5ca6a8d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Stage\10%29 Pet\00.Pet_Bullet">
+      <UniqueIdentifier>{e24f803d-c1b7-44e9-adbb-8fa7d5e7df5a}</UniqueIdentifier>
+    </Filter>
     <Filter Include="02.GameObject\Stage\5%29 UI\UI\18. GeneralStoreUI%28잡화점%29\02. GeneralStoreBuyUI">
       <UniqueIdentifier>{41c3c3de-dd61-4d16-868c-53b157aa6803}</UniqueIdentifier>
     </Filter>
     <Filter Include="02.GameObject\Stage\5%29 UI\UI\17. WeaponShopUI\ShopActionFailedPopup">
       <UniqueIdentifier>{fb48775f-5ad6-495d-b848-d4a07f0be4b3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Stage\0%29 Player\01%29 Costume\[3] Hair">
+      <UniqueIdentifier>{7f462560-9057-4fa4-ac19-b1a9f293ab64}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Stage\0%29 Player\01%29 Costume\[1] Head">
+      <UniqueIdentifier>{dcd41aa6-5167-46bf-af7c-ff8f3653a67f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Stage\0%29 Player\01%29 Costume\[2] Body">
+      <UniqueIdentifier>{045c3905-5b4f-43e1-835b-73a3cfd2f179}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Stage\0%29 Player\01%29 Costume\[4] Outer">
+      <UniqueIdentifier>{554d7a5c-d8fa-46d4-9db4-34f13afd960b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Stage\0%29 Player\01%29 Costume\[5] Mask">
+      <UniqueIdentifier>{a9416921-45fb-498f-978c-3e12343dcd6f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Stage\5%29 UI\UI\18. GeneralStoreUI%28잡화점%29\02. GeneralStoreBuyUI\BuyOptions">
+      <UniqueIdentifier>{aa9ae945-c50e-428b-80c8-86d9854a412e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Stage\5%29 UI\UI\18. GeneralStoreUI%28잡화점%29\02. GeneralStoreBuyUI\ExpendBuyUI">
+      <UniqueIdentifier>{6a79ab2c-c230-4ddd-9c3d-e03797b6657a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Stage\5%29 UI\UI\18. GeneralStoreUI%28잡화점%29\02. GeneralStoreBuyUI\MaterialBuyUI">
+      <UniqueIdentifier>{2e9af6be-dff2-499c-b091-3d6c2a8198ce}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Stage\5%29 UI\UI\18. GeneralStoreUI%28잡화점%29\02. GeneralStoreBuyUI\PurchaseFailUI">
+      <UniqueIdentifier>{91753981-d825-4b95-b825-8445657cc02e}</UniqueIdentifier>
     </Filter>
     <Filter Include="02.GameObject\Stage\5%29 UI\UI\17. WeaponShopUI\ShopItemIcon">
       <UniqueIdentifier>{348a2642-8d5b-474a-9535-b1311577cd9a}</UniqueIdentifier>
@@ -570,6 +588,15 @@
     </Filter>
     <Filter Include="02.GameObject\Custom\Category\Option">
       <UniqueIdentifier>{341712b1-4c65-4d00-a8a7-aed85b673f86}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Stage\5%29 UI\UI\15. Colleague UI\00. Base_Colleague">
+      <UniqueIdentifier>{4d703d90-b4cc-4d4a-b54e-77f6bd367b9d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Stage\5%29 UI\UI\15. Colleague UI\01. Colleague Jack">
+      <UniqueIdentifier>{1256d69f-6532-4f43-93af-fc4859017616}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Stage\5%29 UI\UI\15. Colleague UI\02. Calling_Colleague">
+      <UniqueIdentifier>{9fbf4ba7-29f6-4035-b2af-46743d057ed1}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -960,9 +987,6 @@
     <ClInclude Include="..\Headers\Pet.h">
       <Filter>02.GameObject\Stage\10%29 Pet</Filter>
     </ClInclude>
-    <ClInclude Include="..\Headers\Pet_Bullet.h">
-      <Filter>02.GameObject\Stage\10%29 Pet</Filter>
-    </ClInclude>
     <ClInclude Include="..\Headers\Monster.h">
       <Filter>02.GameObject\Stage\2%29 Monster</Filter>
     </ClInclude>
@@ -993,14 +1017,11 @@
     <ClInclude Include="..\Headers\Pet_Slot.h">
       <Filter>02.GameObject\Stage\5%29 UI\UI\03.Inven_UI\01.Slot\11.PetSlot</Filter>
     </ClInclude>
-    <ClInclude Include="..\Headers\Colleague_UI.h">
-      <Filter>02.GameObject\Stage\5%29 UI\UI\15. Colleague UI</Filter>
-    </ClInclude>
     <ClInclude Include="..\Headers\Colleague_Bullet.h">
       <Filter>02.GameObject\Stage\9%29 Player_Colleague\Colleague Bullet\Att Bullet</Filter>
     </ClInclude>
     <ClInclude Include="..\Headers\Colleague_Jack.h">
-      <Filter>02.GameObject\Stage\5%29 UI\UI\15. Colleague UI\Colleague Jack</Filter>
+      <Filter>02.GameObject\Stage\5%29 UI\UI\15. Colleague UI\01. Colleague Jack</Filter>
     </ClInclude>
     <ClInclude Include="..\Headers\CollBullet_Heal.h">
       <Filter>02.GameObject\Stage\9%29 Player_Colleague\Colleague Bullet\Heal Bullet</Filter>
@@ -1078,13 +1099,10 @@
       <Filter>94.StageAgent</Filter>
     </ClInclude>
     <ClInclude Include="..\Headers\Costume_Hair.h">
-      <Filter>02.GameObject\Stage\0%29 Player\01%29 Costume\[1] Hair</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Headers\Costume_Accessory.h">
-      <Filter>02.GameObject\Stage\0%29 Player\01%29 Costume\[3] Accessory</Filter>
+      <Filter>02.GameObject\Stage\0%29 Player\01%29 Costume\[3] Hair</Filter>
     </ClInclude>
     <ClInclude Include="..\Headers\Costume_Outer.h">
-      <Filter>02.GameObject\Stage\0%29 Player\01%29 Costume\[2] Outer</Filter>
+      <Filter>02.GameObject\Stage\0%29 Player\01%29 Costume\[4] Outer</Filter>
     </ClInclude>
     <ClInclude Include="..\Headers\HazeUI.h">
       <Filter>02.GameObject\Stage\5%29 UI\UI\04. HazeUI</Filter>
@@ -1162,13 +1180,16 @@
       <Filter>02.GameObject\Stage\5%29 UI\UI\17. WeaponShopUI\WeaponUpgradeUI\WeaponUpgradeOptionUI</Filter>
     </ClInclude>
     <ClInclude Include="..\Headers\Pet_DeerKing.h">
-      <Filter>02.GameObject\Stage\10%29 Pet\02.DeerKing</Filter>
+      <Filter>02.GameObject\Stage\10%29 Pet\02.Pet_DeerKing</Filter>
     </ClInclude>
     <ClInclude Include="..\Headers\WeaponUpgradeSuccessPopupUI.h">
       <Filter>02.GameObject\Stage\5%29 UI\UI\17. WeaponShopUI\WeaponUpgradeUI\WeaponUpgradeSuccessPopupUI</Filter>
     </ClInclude>
     <ClInclude Include="..\Headers\WeaponUpgradeSuccessPopupOptionUI.h">
       <Filter>02.GameObject\Stage\5%29 UI\UI\17. WeaponShopUI\WeaponUpgradeUI\WeaponUpgradeSuccessPopupUI\Option</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\Pet_Bullet.h">
+      <Filter>02.GameObject\Stage\10%29 Pet\00.Pet_Bullet</Filter>
     </ClInclude>
     <ClInclude Include="..\Headers\GeneralStoreBuyUI.h">
       <Filter>02.GameObject\Stage\5%29 UI\UI\18. GeneralStoreUI%28잡화점%29\02. GeneralStoreBuyUI</Filter>
@@ -1182,6 +1203,27 @@
     <ClInclude Include="..\Headers\ShopActionFailedPopup.h">
       <Filter>02.GameObject\Stage\5%29 UI\UI\17. WeaponShopUI\ShopActionFailedPopup</Filter>
     </ClInclude>
+    <ClInclude Include="..\Headers\Costume_Mask.h">
+      <Filter>02.GameObject\Stage\0%29 Player\01%29 Costume\[5] Mask</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\Costume_Body.h">
+      <Filter>02.GameObject\Stage\0%29 Player\01%29 Costume\[2] Body</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\Costume_Head.h">
+      <Filter>02.GameObject\Stage\0%29 Player\01%29 Costume\[1] Head</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\BuyOptionUI.h">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\18. GeneralStoreUI%28잡화점%29\02. GeneralStoreBuyUI\BuyOptions</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\ExpendBuyUI.h">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\18. GeneralStoreUI%28잡화점%29\02. GeneralStoreBuyUI\ExpendBuyUI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\MaterialBuyUI.h">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\18. GeneralStoreUI%28잡화점%29\02. GeneralStoreBuyUI\MaterialBuyUI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\PurchaseFailUI.h">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\18. GeneralStoreUI%28잡화점%29\02. GeneralStoreBuyUI\PurchaseFailUI</Filter>
+    </ClInclude>
     <ClInclude Include="..\Headers\ShopItemIcon.h">
       <Filter>02.GameObject\Stage\5%29 UI\UI\17. WeaponShopUI\ShopItemIcon</Filter>
     </ClInclude>
@@ -1194,6 +1236,7 @@
     <ClInclude Include="..\Headers\NPC_InteractionUI.h">
       <Filter>02.GameObject\Stage\5%29 UI\UI\19.NPC_InteractionUI</Filter>
     </ClInclude>
+
     <ClInclude Include="..\Headers\CustomInven.h">
       <Filter>02.GameObject\Custom\CategoryElem\Inven</Filter>
     </ClInclude>
@@ -1205,6 +1248,12 @@
     </ClInclude>
     <ClInclude Include="..\Headers\CustomCategory.h">
       <Filter>02.GameObject\Custom\Category</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\Colleague_UI.h">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\15. Colleague UI\00. Base_Colleague</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\Calling_Colleague.h">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\15. Colleague UI\02. Calling_Colleague</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -1586,9 +1635,6 @@
     <ClCompile Include="..\Codes\Pet.cpp">
       <Filter>02.GameObject\Stage\10%29 Pet</Filter>
     </ClCompile>
-    <ClCompile Include="..\Codes\Pet_Bullet.cpp">
-      <Filter>02.GameObject\Stage\10%29 Pet</Filter>
-    </ClCompile>
     <ClCompile Include="..\Codes\DeerKingIceSword.cpp">
       <Filter>02.GameObject\Stage\1%29 Boss\DeerKing\Bullet</Filter>
     </ClCompile>
@@ -1616,14 +1662,11 @@
     <ClCompile Include="..\Codes\Pet_Slot.cpp">
       <Filter>02.GameObject\Stage\5%29 UI\UI\03.Inven_UI\01.Slot\11.PetSlot</Filter>
     </ClCompile>
-    <ClCompile Include="..\Codes\Colleague_UI.cpp">
-      <Filter>02.GameObject\Stage\5%29 UI\UI\15. Colleague UI</Filter>
-    </ClCompile>
     <ClCompile Include="..\Codes\Colleague_Bullet.cpp">
       <Filter>02.GameObject\Stage\9%29 Player_Colleague\Colleague Bullet\Att Bullet</Filter>
     </ClCompile>
     <ClCompile Include="..\Codes\Colleague_Jack.cpp">
-      <Filter>02.GameObject\Stage\5%29 UI\UI\15. Colleague UI\Colleague Jack</Filter>
+      <Filter>02.GameObject\Stage\5%29 UI\UI\15. Colleague UI\01. Colleague Jack</Filter>
     </ClCompile>
     <ClCompile Include="..\Codes\CollBullet_Heal.cpp">
       <Filter>02.GameObject\Stage\9%29 Player_Colleague\Colleague Bullet\Heal Bullet</Filter>
@@ -1698,13 +1741,10 @@
       <Filter>94.StageAgent</Filter>
     </ClCompile>
     <ClCompile Include="..\Codes\Costume_Hair.cpp">
-      <Filter>02.GameObject\Stage\0%29 Player\01%29 Costume\[1] Hair</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Codes\Costume_Accessory.cpp">
-      <Filter>02.GameObject\Stage\0%29 Player\01%29 Costume\[3] Accessory</Filter>
+      <Filter>02.GameObject\Stage\0%29 Player\01%29 Costume\[3] Hair</Filter>
     </ClCompile>
     <ClCompile Include="..\Codes\Costume_Outer.cpp">
-      <Filter>02.GameObject\Stage\0%29 Player\01%29 Costume\[2] Outer</Filter>
+      <Filter>02.GameObject\Stage\0%29 Player\01%29 Costume\[4] Outer</Filter>
     </ClCompile>
     <ClCompile Include="..\Codes\HazeUI.cpp">
       <Filter>02.GameObject\Stage\5%29 UI\UI\04. HazeUI</Filter>
@@ -1782,13 +1822,16 @@
       <Filter>02.GameObject\Stage\5%29 UI\UI\17. WeaponShopUI\WeaponUpgradeUI\WeaponUpgradeOptionUI</Filter>
     </ClCompile>
     <ClCompile Include="..\Codes\Pet_DeerKing.cpp">
-      <Filter>02.GameObject\Stage\10%29 Pet\02.DeerKing</Filter>
+      <Filter>02.GameObject\Stage\10%29 Pet\02.Pet_DeerKing</Filter>
     </ClCompile>
     <ClCompile Include="..\Codes\WeaponUpgradeSuccessPopupUI.cpp">
       <Filter>02.GameObject\Stage\5%29 UI\UI\17. WeaponShopUI\WeaponUpgradeUI\WeaponUpgradeSuccessPopupUI</Filter>
     </ClCompile>
     <ClCompile Include="..\Codes\WeaponUpgradeSuccessPopupOptionUI.cpp">
       <Filter>02.GameObject\Stage\5%29 UI\UI\17. WeaponShopUI\WeaponUpgradeUI\WeaponUpgradeSuccessPopupUI\Option</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\Pet_Bullet.cpp">
+      <Filter>02.GameObject\Stage\10%29 Pet\00.Pet_Bullet</Filter>
     </ClCompile>
     <ClCompile Include="..\Codes\GeneralStoreBuyUI.cpp">
       <Filter>02.GameObject\Stage\5%29 UI\UI\18. GeneralStoreUI%28잡화점%29\02. GeneralStoreBuyUI</Filter>
@@ -1801,6 +1844,27 @@
     </ClCompile>
     <ClCompile Include="..\Codes\ShopActionFailedPopup.cpp">
       <Filter>02.GameObject\Stage\5%29 UI\UI\17. WeaponShopUI\ShopActionFailedPopup</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\Costume_Mask.cpp">
+      <Filter>02.GameObject\Stage\0%29 Player\01%29 Costume\[5] Mask</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\Costume_Body.cpp">
+      <Filter>02.GameObject\Stage\0%29 Player\01%29 Costume\[2] Body</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\Costume_Head.cpp">
+      <Filter>02.GameObject\Stage\0%29 Player\01%29 Costume\[1] Head</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\BuyOptionUI.cpp">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\18. GeneralStoreUI%28잡화점%29\02. GeneralStoreBuyUI\BuyOptions</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\ExpendBuyUI.cpp">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\18. GeneralStoreUI%28잡화점%29\02. GeneralStoreBuyUI\ExpendBuyUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\MaterialBuyUI.cpp">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\18. GeneralStoreUI%28잡화점%29\02. GeneralStoreBuyUI\MaterialBuyUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\PurchaseFailUI.cpp">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\18. GeneralStoreUI%28잡화점%29\02. GeneralStoreBuyUI\PurchaseFailUI</Filter>
     </ClCompile>
     <ClCompile Include="..\Codes\ShopItemIcon.cpp">
       <Filter>02.GameObject\Stage\5%29 UI\UI\17. WeaponShopUI\ShopItemIcon</Filter>
@@ -1825,6 +1889,12 @@
     </ClCompile>
     <ClCompile Include="..\Codes\CustomCategory.cpp">
       <Filter>02.GameObject\Custom\Category</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\Colleague_UI.cpp">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\15. Colleague UI\00. Base_Colleague</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\Calling_Colleague.cpp">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\15. Colleague UI\02. Calling_Colleague</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

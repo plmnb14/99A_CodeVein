@@ -3,7 +3,7 @@
 #include "Client_Defines.h"
 #include "UI.h"
 #include "Item_Manager.h"
-
+#include "MouseUI.h"
 
 #include "PlayerHP.h"
 #include "PlayerST.h"
@@ -99,8 +99,13 @@
 #include "ExpendOptionUI.h"
 #include "Expend_InfoUI.h"
 
-#include "GeneralStoreBuyUI.h"
+#include "ExpendBuyUI.h"
+#include "MaterialBuyUI.h"
 #include "BuyOptionUI.h"
+#include "PurchaseFailUI.h"
+
+#include "PickUp_ItemUI.h"
+#include "Calling_Colleague.h"
 
 BEGIN(Client)
 
@@ -120,6 +125,7 @@ public:
 	HRESULT Add_UI_Prototype(_Device pDevice);
 	HRESULT SetUp_UILayer();
 	_int	Update_UI();
+	CMouseUI* Get_MouseUI() { return m_pMouseUI; }
 	CStatusUI* Get_StatusUI() { return m_pStatusUI; }
 	CMistletoeUI* Get_MistletoeUI() { return m_pMistletoeUI; }
 	CStageSelectUI* Get_StageSelectUI() { return m_pStageSelectUI; }
@@ -148,9 +154,17 @@ public:
 	// 펫 인벤토리
 	CPet_Inven* Get_Pet_Inven() { return m_pPet_Inven; }
 
+
+	// 아이템 획득 UI
+	CPickUp_ItemUI*			Get_PickUp_ItemUI() { return m_pPickUp_ItemUI; }
+
+	// 동료 활성화/비활성화 UI
+	CCalling_Colleague*		Get_Calling_Colleague() { return m_pCalling_Colleague; }
+
 private:
 	_uint m_uiCoundItem = 0;
 	_bool m_bTest = false;
+	CMouseUI* m_pMouseUI = nullptr;
 	CStatusUI* m_pStatusUI = nullptr;
 	CMistletoeUI* m_pMistletoeUI = nullptr;
 	CStageSelectUI* m_pStageSelectUI = nullptr;
@@ -178,6 +192,12 @@ private:
 
 	// 펫 인벤토리
 	CPet_Inven* m_pPet_Inven = nullptr;
+
+	// 아이템 획득 UI
+	CPickUp_ItemUI*			m_pPickUp_ItemUI = nullptr;
+
+	// 동료 활성/비활성화 UI
+	CCalling_Colleague*		m_pCalling_Colleague = nullptr;
 
 public:
 	virtual void Free();

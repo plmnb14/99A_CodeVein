@@ -154,7 +154,7 @@ _int CFireHandBall::Late_Update_GameObject(_double TimeDelta)
 	return NOERROR;
 }
 
-HRESULT CFireHandBall::Render_GameObject()
+HRESULT CFireHandBall::Render_GameObject_Instancing_SetPass(CShader * pShader)
 {
 	Update_Collider();
 	Draw_Collider();

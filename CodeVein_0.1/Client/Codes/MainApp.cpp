@@ -9,7 +9,6 @@
 #include "ObjectPool_Manager.h"
 #include "SoundManager.h"
 
-
 CMainApp::CMainApp()
 {
 }
@@ -26,7 +25,7 @@ HRESULT CMainApp::Ready_MainApp()
 		return E_FAIL;
 
 	// º¼·ýÁ¶Àý
-	g_pSoundManager->Set_Volume(CSoundManager::Master_Volume, 0.5f);
+	g_pSoundManager->Set_Volume(CSoundManager::Master_Volume, 0.f);
 
 	return S_OK;
 }
@@ -51,7 +50,7 @@ _int CMainApp::Update_MainApp(_double TimeDelta)
 
 void CMainApp::LateUpdate_MainApp(_double TimeDelta)
 {
-	m_pStageAgent->Update_StageAgent(m_pGraphic_Dev);
+	//m_pStageAgent->Update_StageAgent(m_pGraphic_Dev);
 
 	Global_KeyInput();
 }
@@ -112,8 +111,8 @@ HRESULT CMainApp::Ready_Default_Setting(CGraphic_Device::WINMODE eMode, _ushort 
 
 	CScriptManager::Get_Instance()->Ready_ScriptManager(m_pGraphic_Dev);
 
-	m_pStageAgent = CStageAgent::Get_Instance();
-	Safe_AddRef(m_pStageAgent);
+	//m_pStageAgent = CStageAgent::Get_Instance();
+	//Safe_AddRef(m_pStageAgent);
 
 	g_pSoundManager->Load_Directory_SouneFile_W(L"BGM");
 	g_pSoundManager->Load_Directory_SouneFile_W(L"UI/UI_WeaponShop");

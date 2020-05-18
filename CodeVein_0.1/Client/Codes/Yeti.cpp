@@ -386,14 +386,16 @@ void CYeti::Check_Dist()
 		MONSTER_STATE_TYPE::DEAD == m_eFirstCategory)
 		return;
 
-	if (true == m_bIsCombo ||
+	Function_Find_Target();
+
+	if (true == m_bIsIdle ||
+		true == m_bIsCombo ||
 		true == m_bIsMoveAround ||
 		true == m_tObjParam.bIsAttack ||
 		true == m_tObjParam.bIsDodge ||
 		true == m_tObjParam.bIsHit)
 		return;
 
-	Function_Find_Target();
 
 	if (nullptr == m_pAggroTarget)
 	{
@@ -553,7 +555,7 @@ void CYeti::Check_AniEvent()
 	case MONSTER_STATE_TYPE::DEAD:
 		Play_Dead();
 		break;
-}
+	}
 
 return;
 }
@@ -686,6 +688,42 @@ void CYeti::Play_BodyPress()
 				m_tObjParam.bSuperArmor = true;
 			}
 		}
+		else if (4.f <= AniTime)
+		{
+			if (false == m_bEventTrigger[3])
+			{
+				m_bEventTrigger[3] = true;
+
+				g_pSoundManager->Stop_Sound(CSoundManager::Yeti_Voice);
+
+				m_iRandom = CALC::Random_Num(0, 6);
+
+				switch (m_iRandom)
+				{
+				case 0:
+					g_pSoundManager->Play_Sound(L"Yeti_Atk_Voice0.ogg", CSoundManager::Yeti_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 1:
+					g_pSoundManager->Play_Sound(L"Yeti_Atk_Voice1.ogg", CSoundManager::Yeti_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 2:
+					g_pSoundManager->Play_Sound(L"Yeti_Atk_Voice2.ogg", CSoundManager::Yeti_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 3:
+					g_pSoundManager->Play_Sound(L"Yeti_Atk_Voice3.ogg", CSoundManager::Yeti_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 4:
+					g_pSoundManager->Play_Sound(L"Yeti_Atk_Voice4.ogg", CSoundManager::Yeti_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 5:
+					g_pSoundManager->Play_Sound(L"Yeti_Atk_Voice5.ogg", CSoundManager::Yeti_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 6:
+					g_pSoundManager->Play_Sound(L"Yeti_Atk_Voice6.ogg", CSoundManager::Yeti_Voice, CSoundManager::Effect_Sound);
+					break;
+				}
+			}
+		}
 
 		if (3.133f < AniTime && 4.200f > AniTime)
 		{
@@ -748,6 +786,42 @@ void CYeti::Play_SlowLR()
 				m_tObjParam.bSuperArmor = true;
 			}
 		}
+		else if (3.f <= AniTime)
+		{
+			if (false == m_bEventTrigger[6])
+			{
+				m_bEventTrigger[6] = true;
+
+				g_pSoundManager->Stop_Sound(CSoundManager::Yeti_Voice);
+
+				m_iRandom = CALC::Random_Num(0, 6);
+
+				switch (m_iRandom)
+				{
+				case 0:
+					g_pSoundManager->Play_Sound(L"Yeti_Atk_Voice0.ogg", CSoundManager::Yeti_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 1:
+					g_pSoundManager->Play_Sound(L"Yeti_Atk_Voice1.ogg", CSoundManager::Yeti_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 2:
+					g_pSoundManager->Play_Sound(L"Yeti_Atk_Voice2.ogg", CSoundManager::Yeti_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 3:
+					g_pSoundManager->Play_Sound(L"Yeti_Atk_Voice3.ogg", CSoundManager::Yeti_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 4:
+					g_pSoundManager->Play_Sound(L"Yeti_Atk_Voice4.ogg", CSoundManager::Yeti_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 5:
+					g_pSoundManager->Play_Sound(L"Yeti_Atk_Voice5.ogg", CSoundManager::Yeti_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 6:
+					g_pSoundManager->Play_Sound(L"Yeti_Atk_Voice6.ogg", CSoundManager::Yeti_Voice, CSoundManager::Effect_Sound);
+					break;
+				}
+			}
+		}
 		else if (1.700f <= AniTime)
 		{
 			if (false == m_bEventTrigger[2])
@@ -764,6 +838,42 @@ void CYeti::Play_SlowLR()
 				m_bEventTrigger[3] = true;
 				m_vecAttackCol[1]->Set_Enabled(true);
 				m_tObjParam.bSuperArmor = true;
+			}
+		}
+		else if (1.2f <= AniTime)
+		{
+			if (false == m_bEventTrigger[7])
+			{
+				m_bEventTrigger[7] = true;
+
+				g_pSoundManager->Stop_Sound(CSoundManager::Yeti_Voice);
+
+				m_iRandom = CALC::Random_Num(0, 6);
+
+				switch (m_iRandom)
+				{
+				case 0:
+					g_pSoundManager->Play_Sound(L"Yeti_Atk_Voice0.ogg", CSoundManager::Yeti_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 1:
+					g_pSoundManager->Play_Sound(L"Yeti_Atk_Voice1.ogg", CSoundManager::Yeti_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 2:
+					g_pSoundManager->Play_Sound(L"Yeti_Atk_Voice2.ogg", CSoundManager::Yeti_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 3:
+					g_pSoundManager->Play_Sound(L"Yeti_Atk_Voice3.ogg", CSoundManager::Yeti_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 4:
+					g_pSoundManager->Play_Sound(L"Yeti_Atk_Voice4.ogg", CSoundManager::Yeti_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 5:
+					g_pSoundManager->Play_Sound(L"Yeti_Atk_Voice5.ogg", CSoundManager::Yeti_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 6:
+					g_pSoundManager->Play_Sound(L"Yeti_Atk_Voice6.ogg", CSoundManager::Yeti_Voice, CSoundManager::Effect_Sound);
+					break;
+				}
 			}
 		}
 
@@ -835,6 +945,42 @@ void CYeti::Play_RUpperChop()
 				m_tObjParam.bSuperArmor = true;
 			}
 		}
+		else if (4.1f <= AniTime)
+		{
+			if (false == m_bEventTrigger[9])
+			{
+				m_bEventTrigger[9] = true;
+
+				g_pSoundManager->Stop_Sound(CSoundManager::Yeti_Voice);
+
+				m_iRandom = CALC::Random_Num(0, 6);
+
+				switch (m_iRandom)
+				{
+				case 0:
+					g_pSoundManager->Play_Sound(L"Yeti_Atk_Voice0.ogg", CSoundManager::Yeti_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 1:
+					g_pSoundManager->Play_Sound(L"Yeti_Atk_Voice1.ogg", CSoundManager::Yeti_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 2:
+					g_pSoundManager->Play_Sound(L"Yeti_Atk_Voice2.ogg", CSoundManager::Yeti_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 3:
+					g_pSoundManager->Play_Sound(L"Yeti_Atk_Voice3.ogg", CSoundManager::Yeti_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 4:
+					g_pSoundManager->Play_Sound(L"Yeti_Atk_Voice4.ogg", CSoundManager::Yeti_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 5:
+					g_pSoundManager->Play_Sound(L"Yeti_Atk_Voice5.ogg", CSoundManager::Yeti_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 6:
+					g_pSoundManager->Play_Sound(L"Yeti_Atk_Voice6.ogg", CSoundManager::Yeti_Voice, CSoundManager::Effect_Sound);
+					break;
+				}
+			}
+		}
 		else if (3.367f <= AniTime)
 		{
 			if (false == m_bEventTrigger[2])
@@ -853,6 +999,42 @@ void CYeti::Play_RUpperChop()
 				m_tObjParam.bSuperArmor = true;
 			}
 		}
+		else if (3.f <= AniTime)
+		{
+			if (false == m_bEventTrigger[10])
+			{
+				m_bEventTrigger[10] = true;
+
+				g_pSoundManager->Stop_Sound(CSoundManager::Yeti_Voice);
+
+				m_iRandom = CALC::Random_Num(0, 6);
+
+				switch (m_iRandom)
+				{
+				case 0:
+					g_pSoundManager->Play_Sound(L"Yeti_Atk_Voice0.ogg", CSoundManager::Yeti_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 1:
+					g_pSoundManager->Play_Sound(L"Yeti_Atk_Voice1.ogg", CSoundManager::Yeti_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 2:
+					g_pSoundManager->Play_Sound(L"Yeti_Atk_Voice2.ogg", CSoundManager::Yeti_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 3:
+					g_pSoundManager->Play_Sound(L"Yeti_Atk_Voice3.ogg", CSoundManager::Yeti_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 4:
+					g_pSoundManager->Play_Sound(L"Yeti_Atk_Voice4.ogg", CSoundManager::Yeti_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 5:
+					g_pSoundManager->Play_Sound(L"Yeti_Atk_Voice5.ogg", CSoundManager::Yeti_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 6:
+					g_pSoundManager->Play_Sound(L"Yeti_Atk_Voice6.ogg", CSoundManager::Yeti_Voice, CSoundManager::Effect_Sound);
+					break;
+				}
+			}
+		}
 		else if (1.233f <= AniTime)
 		{
 			if (false == m_bEventTrigger[4])
@@ -869,6 +1051,42 @@ void CYeti::Play_RUpperChop()
 				m_bEventTrigger[5] = true;
 				m_vecAttackCol[2]->Set_Enabled(true);
 				m_tObjParam.bSuperArmor = true;
+			}
+		}
+		else if (1.f <= AniTime)
+		{
+			if (false == m_bEventTrigger[11])
+			{
+				m_bEventTrigger[11] = true;
+
+				g_pSoundManager->Stop_Sound(CSoundManager::Yeti_Voice);
+
+				m_iRandom = CALC::Random_Num(0, 6);
+
+				switch (m_iRandom)
+				{
+				case 0:
+					g_pSoundManager->Play_Sound(L"Yeti_Atk_Voice0.ogg", CSoundManager::Yeti_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 1:
+					g_pSoundManager->Play_Sound(L"Yeti_Atk_Voice1.ogg", CSoundManager::Yeti_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 2:
+					g_pSoundManager->Play_Sound(L"Yeti_Atk_Voice2.ogg", CSoundManager::Yeti_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 3:
+					g_pSoundManager->Play_Sound(L"Yeti_Atk_Voice3.ogg", CSoundManager::Yeti_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 4:
+					g_pSoundManager->Play_Sound(L"Yeti_Atk_Voice4.ogg", CSoundManager::Yeti_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 5:
+					g_pSoundManager->Play_Sound(L"Yeti_Atk_Voice5.ogg", CSoundManager::Yeti_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 6:
+					g_pSoundManager->Play_Sound(L"Yeti_Atk_Voice6.ogg", CSoundManager::Yeti_Voice, CSoundManager::Effect_Sound);
+					break;
+				}
 			}
 		}
 
@@ -953,6 +1171,42 @@ void CYeti::Play_LRSweap()
 				m_tObjParam.bSuperArmor = true;
 			}
 		}
+		else if (2.1f <= AniTime)
+		{
+			if (false == m_bEventTrigger[9])
+			{
+				m_bEventTrigger[9] = true;
+
+				g_pSoundManager->Stop_Sound(CSoundManager::Yeti_Voice);
+
+				m_iRandom = CALC::Random_Num(0, 6);
+
+				switch (m_iRandom)
+				{
+				case 0:
+					g_pSoundManager->Play_Sound(L"Yeti_Atk_Voice0.ogg", CSoundManager::Yeti_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 1:
+					g_pSoundManager->Play_Sound(L"Yeti_Atk_Voice1.ogg", CSoundManager::Yeti_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 2:
+					g_pSoundManager->Play_Sound(L"Yeti_Atk_Voice2.ogg", CSoundManager::Yeti_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 3:
+					g_pSoundManager->Play_Sound(L"Yeti_Atk_Voice3.ogg", CSoundManager::Yeti_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 4:
+					g_pSoundManager->Play_Sound(L"Yeti_Atk_Voice4.ogg", CSoundManager::Yeti_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 5:
+					g_pSoundManager->Play_Sound(L"Yeti_Atk_Voice5.ogg", CSoundManager::Yeti_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 6:
+					g_pSoundManager->Play_Sound(L"Yeti_Atk_Voice6.ogg", CSoundManager::Yeti_Voice, CSoundManager::Effect_Sound);
+					break;
+				}
+			}
+		}
 		else if (1.633f <= AniTime)
 		{
 			if (false == m_bEventTrigger[2])
@@ -971,6 +1225,42 @@ void CYeti::Play_LRSweap()
 				m_tObjParam.bSuperArmor = true;
 			}
 		}
+		else if (1.3f <= AniTime)
+		{
+			if (false == m_bEventTrigger[10])
+			{
+				m_bEventTrigger[10] = true;
+
+				g_pSoundManager->Stop_Sound(CSoundManager::Yeti_Voice);
+
+				m_iRandom = CALC::Random_Num(0, 6);
+
+				switch (m_iRandom)
+				{
+				case 0:
+					g_pSoundManager->Play_Sound(L"Yeti_Atk_Voice0.ogg", CSoundManager::Yeti_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 1:
+					g_pSoundManager->Play_Sound(L"Yeti_Atk_Voice1.ogg", CSoundManager::Yeti_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 2:
+					g_pSoundManager->Play_Sound(L"Yeti_Atk_Voice2.ogg", CSoundManager::Yeti_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 3:
+					g_pSoundManager->Play_Sound(L"Yeti_Atk_Voice3.ogg", CSoundManager::Yeti_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 4:
+					g_pSoundManager->Play_Sound(L"Yeti_Atk_Voice4.ogg", CSoundManager::Yeti_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 5:
+					g_pSoundManager->Play_Sound(L"Yeti_Atk_Voice5.ogg", CSoundManager::Yeti_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 6:
+					g_pSoundManager->Play_Sound(L"Yeti_Atk_Voice6.ogg", CSoundManager::Yeti_Voice, CSoundManager::Effect_Sound);
+					break;
+				}
+			}
+		}
 		else if (0.967f <= AniTime)
 		{
 			if (false == m_bEventTrigger[4])
@@ -987,6 +1277,42 @@ void CYeti::Play_LRSweap()
 				m_bEventTrigger[5] = true;
 				m_vecAttackCol[1]->Set_Enabled(true);
 				m_tObjParam.bSuperArmor = true;
+			}
+		}
+		else if (0.5f <= AniTime)
+		{
+			if (false == m_bEventTrigger[11])
+			{
+				m_bEventTrigger[11] = true;
+
+				g_pSoundManager->Stop_Sound(CSoundManager::Yeti_Voice);
+
+				m_iRandom = CALC::Random_Num(0, 6);
+
+				switch (m_iRandom)
+				{
+				case 0:
+					g_pSoundManager->Play_Sound(L"Yeti_Atk_Voice0.ogg", CSoundManager::Yeti_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 1:
+					g_pSoundManager->Play_Sound(L"Yeti_Atk_Voice1.ogg", CSoundManager::Yeti_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 2:
+					g_pSoundManager->Play_Sound(L"Yeti_Atk_Voice2.ogg", CSoundManager::Yeti_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 3:
+					g_pSoundManager->Play_Sound(L"Yeti_Atk_Voice3.ogg", CSoundManager::Yeti_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 4:
+					g_pSoundManager->Play_Sound(L"Yeti_Atk_Voice4.ogg", CSoundManager::Yeti_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 5:
+					g_pSoundManager->Play_Sound(L"Yeti_Atk_Voice5.ogg", CSoundManager::Yeti_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 6:
+					g_pSoundManager->Play_Sound(L"Yeti_Atk_Voice6.ogg", CSoundManager::Yeti_Voice, CSoundManager::Effect_Sound);
+					break;
+				}
 			}
 		}
 
@@ -1071,6 +1397,42 @@ void CYeti::Play_FastLR()
 				m_tObjParam.bSuperArmor = true;
 			}
 		}
+		else if (2.1f <= AniTime)
+		{
+			if (false == m_bEventTrigger[6])
+			{
+				m_bEventTrigger[6] = true;
+
+				g_pSoundManager->Stop_Sound(CSoundManager::Yeti_Voice);
+
+				m_iRandom = CALC::Random_Num(0, 6);
+
+				switch (m_iRandom)
+				{
+				case 0:
+					g_pSoundManager->Play_Sound(L"Yeti_Atk_Voice0.ogg", CSoundManager::Yeti_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 1:
+					g_pSoundManager->Play_Sound(L"Yeti_Atk_Voice1.ogg", CSoundManager::Yeti_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 2:
+					g_pSoundManager->Play_Sound(L"Yeti_Atk_Voice2.ogg", CSoundManager::Yeti_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 3:
+					g_pSoundManager->Play_Sound(L"Yeti_Atk_Voice3.ogg", CSoundManager::Yeti_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 4:
+					g_pSoundManager->Play_Sound(L"Yeti_Atk_Voice4.ogg", CSoundManager::Yeti_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 5:
+					g_pSoundManager->Play_Sound(L"Yeti_Atk_Voice5.ogg", CSoundManager::Yeti_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 6:
+					g_pSoundManager->Play_Sound(L"Yeti_Atk_Voice6.ogg", CSoundManager::Yeti_Voice, CSoundManager::Effect_Sound);
+					break;
+				}
+			}
+		}
 		else if (0.967f <= AniTime)
 		{
 			if (false == m_bEventTrigger[2])
@@ -1087,6 +1449,42 @@ void CYeti::Play_FastLR()
 				m_bEventTrigger[3] = true;
 				m_vecAttackCol[1]->Set_Enabled(true);
 				m_tObjParam.bSuperArmor = true;
+			}
+		}
+		else if (0.4f <= AniTime)
+		{
+			if (false == m_bEventTrigger[7])
+			{
+				m_bEventTrigger[7] = true;
+
+				g_pSoundManager->Stop_Sound(CSoundManager::Yeti_Voice);
+
+				m_iRandom = CALC::Random_Num(0, 6);
+
+				switch (m_iRandom)
+				{
+				case 0:
+					g_pSoundManager->Play_Sound(L"Yeti_Atk_Voice0.ogg", CSoundManager::Yeti_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 1:
+					g_pSoundManager->Play_Sound(L"Yeti_Atk_Voice1.ogg", CSoundManager::Yeti_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 2:
+					g_pSoundManager->Play_Sound(L"Yeti_Atk_Voice2.ogg", CSoundManager::Yeti_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 3:
+					g_pSoundManager->Play_Sound(L"Yeti_Atk_Voice3.ogg", CSoundManager::Yeti_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 4:
+					g_pSoundManager->Play_Sound(L"Yeti_Atk_Voice4.ogg", CSoundManager::Yeti_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 5:
+					g_pSoundManager->Play_Sound(L"Yeti_Atk_Voice5.ogg", CSoundManager::Yeti_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 6:
+					g_pSoundManager->Play_Sound(L"Yeti_Atk_Voice6.ogg", CSoundManager::Yeti_Voice, CSoundManager::Effect_Sound);
+					break;
+				}
 			}
 		}
 
@@ -1158,6 +1556,42 @@ void CYeti::Play_WoodChop()
 				m_tObjParam.bSuperArmor = true;
 			}
 		}
+		else if (3.f <= AniTime)
+		{
+			if (false == m_bEventTrigger[2])
+			{
+				m_bEventTrigger[2] = true;
+
+				g_pSoundManager->Stop_Sound(CSoundManager::Yeti_Voice);
+
+				m_iRandom = CALC::Random_Num(0, 6);
+
+				switch (m_iRandom)
+				{
+				case 0:
+					g_pSoundManager->Play_Sound(L"Yeti_Atk_Voice0.ogg", CSoundManager::Yeti_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 1:
+					g_pSoundManager->Play_Sound(L"Yeti_Atk_Voice1.ogg", CSoundManager::Yeti_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 2:
+					g_pSoundManager->Play_Sound(L"Yeti_Atk_Voice2.ogg", CSoundManager::Yeti_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 3:
+					g_pSoundManager->Play_Sound(L"Yeti_Atk_Voice3.ogg", CSoundManager::Yeti_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 4:
+					g_pSoundManager->Play_Sound(L"Yeti_Atk_Voice4.ogg", CSoundManager::Yeti_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 5:
+					g_pSoundManager->Play_Sound(L"Yeti_Atk_Voice5.ogg", CSoundManager::Yeti_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 6:
+					g_pSoundManager->Play_Sound(L"Yeti_Atk_Voice6.ogg", CSoundManager::Yeti_Voice, CSoundManager::Effect_Sound);
+					break;
+				}
+			}
+		}
 	}
 
 	return;
@@ -1200,6 +1634,42 @@ void CYeti::Play_RLRL()
 				m_tObjParam.bSuperArmor = true;
 			}
 		}
+		else if (4.2f <= AniTime)
+		{
+			if (false == m_bEventTrigger[13])
+			{
+				m_bEventTrigger[13] = true;
+
+				g_pSoundManager->Stop_Sound(CSoundManager::Yeti_Voice);
+
+				m_iRandom = CALC::Random_Num(0, 6);
+
+				switch (m_iRandom)
+				{
+				case 0:
+					g_pSoundManager->Play_Sound(L"Yeti_Atk_Voice0.ogg", CSoundManager::Yeti_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 1:
+					g_pSoundManager->Play_Sound(L"Yeti_Atk_Voice1.ogg", CSoundManager::Yeti_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 2:
+					g_pSoundManager->Play_Sound(L"Yeti_Atk_Voice2.ogg", CSoundManager::Yeti_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 3:
+					g_pSoundManager->Play_Sound(L"Yeti_Atk_Voice3.ogg", CSoundManager::Yeti_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 4:
+					g_pSoundManager->Play_Sound(L"Yeti_Atk_Voice4.ogg", CSoundManager::Yeti_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 5:
+					g_pSoundManager->Play_Sound(L"Yeti_Atk_Voice5.ogg", CSoundManager::Yeti_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 6:
+					g_pSoundManager->Play_Sound(L"Yeti_Atk_Voice6.ogg", CSoundManager::Yeti_Voice, CSoundManager::Effect_Sound);
+					break;
+				}
+			}
+		}
 		else if (3.700f <= AniTime)
 		{
 			if (false == m_bEventTrigger[2])
@@ -1216,6 +1686,42 @@ void CYeti::Play_RLRL()
 				m_bEventTrigger[3] = true;
 				m_vecAttackCol[2]->Set_Enabled(true);
 				m_tObjParam.bSuperArmor = true;
+			}
+		}
+		else if (3.3f <= AniTime)
+		{
+			if (false == m_bEventTrigger[14])
+			{
+				m_bEventTrigger[14] = true;
+
+				g_pSoundManager->Stop_Sound(CSoundManager::Yeti_Voice);
+
+				m_iRandom = CALC::Random_Num(0, 6);
+
+				switch (m_iRandom)
+				{
+				case 0:
+					g_pSoundManager->Play_Sound(L"Yeti_Atk_Voice0.ogg", CSoundManager::Yeti_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 1:
+					g_pSoundManager->Play_Sound(L"Yeti_Atk_Voice1.ogg", CSoundManager::Yeti_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 2:
+					g_pSoundManager->Play_Sound(L"Yeti_Atk_Voice2.ogg", CSoundManager::Yeti_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 3:
+					g_pSoundManager->Play_Sound(L"Yeti_Atk_Voice3.ogg", CSoundManager::Yeti_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 4:
+					g_pSoundManager->Play_Sound(L"Yeti_Atk_Voice4.ogg", CSoundManager::Yeti_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 5:
+					g_pSoundManager->Play_Sound(L"Yeti_Atk_Voice5.ogg", CSoundManager::Yeti_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 6:
+					g_pSoundManager->Play_Sound(L"Yeti_Atk_Voice6.ogg", CSoundManager::Yeti_Voice, CSoundManager::Effect_Sound);
+					break;
+				}
 			}
 		}
 		else if (2.800f <= AniTime)
@@ -1236,6 +1742,42 @@ void CYeti::Play_RLRL()
 				m_tObjParam.bSuperArmor = true;
 			}
 		}
+		else if (2.4f <= AniTime)
+		{
+			if (false == m_bEventTrigger[15])
+			{
+				m_bEventTrigger[15] = true;
+
+				g_pSoundManager->Stop_Sound(CSoundManager::Yeti_Voice);
+
+				m_iRandom = CALC::Random_Num(0, 6);
+
+				switch (m_iRandom)
+				{
+				case 0:
+					g_pSoundManager->Play_Sound(L"Yeti_Atk_Voice0.ogg", CSoundManager::Yeti_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 1:
+					g_pSoundManager->Play_Sound(L"Yeti_Atk_Voice1.ogg", CSoundManager::Yeti_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 2:
+					g_pSoundManager->Play_Sound(L"Yeti_Atk_Voice2.ogg", CSoundManager::Yeti_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 3:
+					g_pSoundManager->Play_Sound(L"Yeti_Atk_Voice3.ogg", CSoundManager::Yeti_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 4:
+					g_pSoundManager->Play_Sound(L"Yeti_Atk_Voice4.ogg", CSoundManager::Yeti_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 5:
+					g_pSoundManager->Play_Sound(L"Yeti_Atk_Voice5.ogg", CSoundManager::Yeti_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 6:
+					g_pSoundManager->Play_Sound(L"Yeti_Atk_Voice6.ogg", CSoundManager::Yeti_Voice, CSoundManager::Effect_Sound);
+					break;
+				}
+			}
+		}
 		else if (1.967f <= AniTime)
 		{
 			if (false == m_bEventTrigger[6])
@@ -1252,6 +1794,42 @@ void CYeti::Play_RLRL()
 				m_bEventTrigger[7] = true;
 				m_vecAttackCol[2]->Set_Enabled(true);
 				m_tObjParam.bSuperArmor = true;
+			}
+		}
+		else if (1.3f <= AniTime)
+		{
+			if (false == m_bEventTrigger[16])
+			{
+				m_bEventTrigger[16] = true;
+
+				g_pSoundManager->Stop_Sound(CSoundManager::Yeti_Voice);
+
+				m_iRandom = CALC::Random_Num(0, 6);
+
+				switch (m_iRandom)
+				{
+				case 0:
+					g_pSoundManager->Play_Sound(L"Yeti_Atk_Voice0.ogg", CSoundManager::Yeti_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 1:
+					g_pSoundManager->Play_Sound(L"Yeti_Atk_Voice1.ogg", CSoundManager::Yeti_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 2:
+					g_pSoundManager->Play_Sound(L"Yeti_Atk_Voice2.ogg", CSoundManager::Yeti_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 3:
+					g_pSoundManager->Play_Sound(L"Yeti_Atk_Voice3.ogg", CSoundManager::Yeti_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 4:
+					g_pSoundManager->Play_Sound(L"Yeti_Atk_Voice4.ogg", CSoundManager::Yeti_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 5:
+					g_pSoundManager->Play_Sound(L"Yeti_Atk_Voice5.ogg", CSoundManager::Yeti_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 6:
+					g_pSoundManager->Play_Sound(L"Yeti_Atk_Voice6.ogg", CSoundManager::Yeti_Voice, CSoundManager::Effect_Sound);
+					break;
+				}
 			}
 		}
 
@@ -1338,8 +1916,7 @@ void CYeti::Play_IceThrowing()
 	}
 	else
 	{
-		//1.500 ¶¥¿¡¼­ Áý¾îµé°í ÀÕÀ½
-		//4.400 ÅõÃ´
+		//1.500 ¶¥¿¡¼­ Áý¾îµé°í ÀÕÀ½ //4.400 ÅõÃ´
 		if (m_pMeshCom->Is_Finish_Animation(0.95f))
 		{
 			Function_ResetAfterAtk();
@@ -1361,6 +1938,42 @@ void CYeti::Play_IceThrowing()
 				vBirth += (vLook * fLength); //»ý¼ºÀ§Ä¡ = »ý¼ºÀ§Ä¡ +(·è*±æÀÌ)
 
 				CObjectPool_Manager::Get_Instance()->Create_Object(L"Monster_YetiBullet", &BULLET_INFO(vBirth, m_pTransformCom->Get_Axis(AXIS_Z), 8.f, 1.5));
+			}
+		}
+		else if (4.f <= AniTime)
+		{
+			if (false == m_bEventTrigger[2])
+			{
+				m_bEventTrigger[2] = true;
+
+				g_pSoundManager->Stop_Sound(CSoundManager::Yeti_Voice);
+
+				m_iRandom = CALC::Random_Num(0, 6);
+
+				switch (m_iRandom)
+				{
+				case 0:
+					g_pSoundManager->Play_Sound(L"Yeti_Atk_Voice0.ogg", CSoundManager::Yeti_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 1:
+					g_pSoundManager->Play_Sound(L"Yeti_Atk_Voice1.ogg", CSoundManager::Yeti_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 2:
+					g_pSoundManager->Play_Sound(L"Yeti_Atk_Voice2.ogg", CSoundManager::Yeti_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 3:
+					g_pSoundManager->Play_Sound(L"Yeti_Atk_Voice3.ogg", CSoundManager::Yeti_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 4:
+					g_pSoundManager->Play_Sound(L"Yeti_Atk_Voice4.ogg", CSoundManager::Yeti_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 5:
+					g_pSoundManager->Play_Sound(L"Yeti_Atk_Voice5.ogg", CSoundManager::Yeti_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 6:
+					g_pSoundManager->Play_Sound(L"Yeti_Atk_Voice6.ogg", CSoundManager::Yeti_Voice, CSoundManager::Effect_Sound);
+					break;
+				}
 			}
 		}
 
@@ -1438,6 +2051,35 @@ void CYeti::Play_RollingSlash()
 				m_bEventTrigger[1] = true;
 				m_vecAttackCol[2]->Set_Enabled(true);
 				m_tObjParam.bSuperArmor = true;
+
+				g_pSoundManager->Stop_Sound(CSoundManager::Yeti_Voice);
+
+				m_iRandom = CALC::Random_Num(0, 6);
+
+				switch (m_iRandom)
+				{
+				case 0:
+					g_pSoundManager->Play_Sound(L"Yeti_Atk_Voice0.ogg", CSoundManager::Yeti_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 1:
+					g_pSoundManager->Play_Sound(L"Yeti_Atk_Voice1.ogg", CSoundManager::Yeti_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 2:
+					g_pSoundManager->Play_Sound(L"Yeti_Atk_Voice2.ogg", CSoundManager::Yeti_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 3:
+					g_pSoundManager->Play_Sound(L"Yeti_Atk_Voice3.ogg", CSoundManager::Yeti_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 4:
+					g_pSoundManager->Play_Sound(L"Yeti_Atk_Voice4.ogg", CSoundManager::Yeti_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 5:
+					g_pSoundManager->Play_Sound(L"Yeti_Atk_Voice5.ogg", CSoundManager::Yeti_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 6:
+					g_pSoundManager->Play_Sound(L"Yeti_Atk_Voice6.ogg", CSoundManager::Yeti_Voice, CSoundManager::Effect_Sound);
+					break;
+				}
 			}
 		}
 		else if (1.433f <= AniTime)
@@ -1456,6 +2098,42 @@ void CYeti::Play_RollingSlash()
 				m_bEventTrigger[3] = true;
 				m_vecAttackCol[0]->Set_Enabled(true);
 				m_tObjParam.bSuperArmor = true;
+			}
+		}
+		else if (1.1f <= AniTime)
+		{
+			if (false == m_bEventTrigger[11])
+			{
+				m_bEventTrigger[11] = true;
+
+				g_pSoundManager->Stop_Sound(CSoundManager::Yeti_Voice);
+
+				m_iRandom = CALC::Random_Num(0, 6);
+
+				switch (m_iRandom)
+				{
+				case 0:
+					g_pSoundManager->Play_Sound(L"Yeti_Atk_Voice0.ogg", CSoundManager::Yeti_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 1:
+					g_pSoundManager->Play_Sound(L"Yeti_Atk_Voice1.ogg", CSoundManager::Yeti_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 2:
+					g_pSoundManager->Play_Sound(L"Yeti_Atk_Voice2.ogg", CSoundManager::Yeti_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 3:
+					g_pSoundManager->Play_Sound(L"Yeti_Atk_Voice3.ogg", CSoundManager::Yeti_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 4:
+					g_pSoundManager->Play_Sound(L"Yeti_Atk_Voice4.ogg", CSoundManager::Yeti_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 5:
+					g_pSoundManager->Play_Sound(L"Yeti_Atk_Voice5.ogg", CSoundManager::Yeti_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 6:
+					g_pSoundManager->Play_Sound(L"Yeti_Atk_Voice6.ogg", CSoundManager::Yeti_Voice, CSoundManager::Effect_Sound);
+					break;
+				}
 			}
 		}
 		else if (1.033f <= AniTime)
@@ -1510,6 +2188,35 @@ void CYeti::Play_RollingSlash()
 				m_bEventTrigger[9] = true;
 				m_vecAttackCol[0]->Set_Enabled(true);
 				m_tObjParam.bSuperArmor = true;
+
+				g_pSoundManager->Stop_Sound(CSoundManager::Yeti_Voice);
+
+				m_iRandom = CALC::Random_Num(0, 6);
+
+				switch (m_iRandom)
+				{
+				case 0:
+					g_pSoundManager->Play_Sound(L"Yeti_Atk_Voice0.ogg", CSoundManager::Yeti_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 1:
+					g_pSoundManager->Play_Sound(L"Yeti_Atk_Voice1.ogg", CSoundManager::Yeti_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 2:
+					g_pSoundManager->Play_Sound(L"Yeti_Atk_Voice2.ogg", CSoundManager::Yeti_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 3:
+					g_pSoundManager->Play_Sound(L"Yeti_Atk_Voice3.ogg", CSoundManager::Yeti_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 4:
+					g_pSoundManager->Play_Sound(L"Yeti_Atk_Voice4.ogg", CSoundManager::Yeti_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 5:
+					g_pSoundManager->Play_Sound(L"Yeti_Atk_Voice5.ogg", CSoundManager::Yeti_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 6:
+					g_pSoundManager->Play_Sound(L"Yeti_Atk_Voice6.ogg", CSoundManager::Yeti_Voice, CSoundManager::Effect_Sound);
+					break;
+				}
 			}
 		}
 
@@ -1568,6 +2275,42 @@ void CYeti::Play_Rush()
 				m_tObjParam.bSuperArmor = true;
 			}
 		}
+		else if (0.3f <= AniTime)
+		{
+			if (false == m_bEventTrigger[3])
+			{
+				m_bEventTrigger[3] = true;
+
+				g_pSoundManager->Stop_Sound(CSoundManager::Yeti_Voice);
+
+				m_iRandom = CALC::Random_Num(0, 6);
+
+				switch (m_iRandom)
+				{
+				case 0:
+					g_pSoundManager->Play_Sound(L"Yeti_Atk_Voice0.ogg", CSoundManager::Yeti_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 1:
+					g_pSoundManager->Play_Sound(L"Yeti_Atk_Voice1.ogg", CSoundManager::Yeti_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 2:
+					g_pSoundManager->Play_Sound(L"Yeti_Atk_Voice2.ogg", CSoundManager::Yeti_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 3:
+					g_pSoundManager->Play_Sound(L"Yeti_Atk_Voice3.ogg", CSoundManager::Yeti_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 4:
+					g_pSoundManager->Play_Sound(L"Yeti_Atk_Voice4.ogg", CSoundManager::Yeti_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 5:
+					g_pSoundManager->Play_Sound(L"Yeti_Atk_Voice5.ogg", CSoundManager::Yeti_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 6:
+					g_pSoundManager->Play_Sound(L"Yeti_Atk_Voice6.ogg", CSoundManager::Yeti_Voice, CSoundManager::Effect_Sound);
+					break;
+				}
+			}
+		}
 
 		if (0.533f < AniTime && 1.300f > AniTime)
 		{
@@ -1620,6 +2363,42 @@ void CYeti::Play_Combo_RLRL_Shoulder()
 				m_tObjParam.bSuperArmor = true;
 			}
 		}
+		else if (4.2f <= AniTime)
+		{
+			if (false == m_bEventTrigger[16])
+			{
+				m_bEventTrigger[16] = true;
+
+				g_pSoundManager->Stop_Sound(CSoundManager::Yeti_Voice);
+
+				m_iRandom = CALC::Random_Num(0, 6);
+
+				switch (m_iRandom)
+				{
+				case 0:
+					g_pSoundManager->Play_Sound(L"Yeti_Atk_Voice0.ogg", CSoundManager::Yeti_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 1:
+					g_pSoundManager->Play_Sound(L"Yeti_Atk_Voice1.ogg", CSoundManager::Yeti_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 2:
+					g_pSoundManager->Play_Sound(L"Yeti_Atk_Voice2.ogg", CSoundManager::Yeti_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 3:
+					g_pSoundManager->Play_Sound(L"Yeti_Atk_Voice3.ogg", CSoundManager::Yeti_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 4:
+					g_pSoundManager->Play_Sound(L"Yeti_Atk_Voice4.ogg", CSoundManager::Yeti_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 5:
+					g_pSoundManager->Play_Sound(L"Yeti_Atk_Voice5.ogg", CSoundManager::Yeti_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 6:
+					g_pSoundManager->Play_Sound(L"Yeti_Atk_Voice6.ogg", CSoundManager::Yeti_Voice, CSoundManager::Effect_Sound);
+					break;
+				}
+			}
+		}
 		else if (3.700f <= AniTime)
 		{
 			if (false == m_bEventTrigger[2])
@@ -1636,6 +2415,42 @@ void CYeti::Play_Combo_RLRL_Shoulder()
 				m_bEventTrigger[3] = true;
 				m_vecAttackCol[2]->Set_Enabled(true);
 				m_tObjParam.bSuperArmor = true;
+			}
+		}
+		else if (3.3f <= AniTime)
+		{
+			if (false == m_bEventTrigger[17])
+			{
+				m_bEventTrigger[17] = true;
+
+				g_pSoundManager->Stop_Sound(CSoundManager::Yeti_Voice);
+
+				m_iRandom = CALC::Random_Num(0, 6);
+
+				switch (m_iRandom)
+				{
+				case 0:
+					g_pSoundManager->Play_Sound(L"Yeti_Atk_Voice0.ogg", CSoundManager::Yeti_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 1:
+					g_pSoundManager->Play_Sound(L"Yeti_Atk_Voice1.ogg", CSoundManager::Yeti_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 2:
+					g_pSoundManager->Play_Sound(L"Yeti_Atk_Voice2.ogg", CSoundManager::Yeti_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 3:
+					g_pSoundManager->Play_Sound(L"Yeti_Atk_Voice3.ogg", CSoundManager::Yeti_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 4:
+					g_pSoundManager->Play_Sound(L"Yeti_Atk_Voice4.ogg", CSoundManager::Yeti_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 5:
+					g_pSoundManager->Play_Sound(L"Yeti_Atk_Voice5.ogg", CSoundManager::Yeti_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 6:
+					g_pSoundManager->Play_Sound(L"Yeti_Atk_Voice6.ogg", CSoundManager::Yeti_Voice, CSoundManager::Effect_Sound);
+					break;
+				}
 			}
 		}
 		else if (2.800f <= AniTime)
@@ -1656,6 +2471,42 @@ void CYeti::Play_Combo_RLRL_Shoulder()
 				m_tObjParam.bSuperArmor = true;
 			}
 		}
+		else if (2.3f <= AniTime)
+		{
+			if (false == m_bEventTrigger[18])
+			{
+				m_bEventTrigger[18] = true;
+
+				g_pSoundManager->Stop_Sound(CSoundManager::Yeti_Voice);
+
+				m_iRandom = CALC::Random_Num(0, 6);
+
+				switch (m_iRandom)
+				{
+				case 0:
+					g_pSoundManager->Play_Sound(L"Yeti_Atk_Voice0.ogg", CSoundManager::Yeti_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 1:
+					g_pSoundManager->Play_Sound(L"Yeti_Atk_Voice1.ogg", CSoundManager::Yeti_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 2:
+					g_pSoundManager->Play_Sound(L"Yeti_Atk_Voice2.ogg", CSoundManager::Yeti_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 3:
+					g_pSoundManager->Play_Sound(L"Yeti_Atk_Voice3.ogg", CSoundManager::Yeti_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 4:
+					g_pSoundManager->Play_Sound(L"Yeti_Atk_Voice4.ogg", CSoundManager::Yeti_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 5:
+					g_pSoundManager->Play_Sound(L"Yeti_Atk_Voice5.ogg", CSoundManager::Yeti_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 6:
+					g_pSoundManager->Play_Sound(L"Yeti_Atk_Voice6.ogg", CSoundManager::Yeti_Voice, CSoundManager::Effect_Sound);
+					break;
+				}
+			}
+		}
 		else if (1.967f <= AniTime)
 		{
 			if (false == m_bEventTrigger[6])
@@ -1672,6 +2523,42 @@ void CYeti::Play_Combo_RLRL_Shoulder()
 				m_bEventTrigger[7] = true;
 				m_vecAttackCol[2]->Set_Enabled(true);
 				m_tObjParam.bSuperArmor = true;
+			}
+		}
+		else if (1.3f <= AniTime)
+		{
+			if (false == m_bEventTrigger[19])
+			{
+				m_bEventTrigger[19] = true;
+
+				g_pSoundManager->Stop_Sound(CSoundManager::Yeti_Voice);
+
+				m_iRandom = CALC::Random_Num(0, 6);
+
+				switch (m_iRandom)
+				{
+				case 0:
+					g_pSoundManager->Play_Sound(L"Yeti_Atk_Voice0.ogg", CSoundManager::Yeti_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 1:
+					g_pSoundManager->Play_Sound(L"Yeti_Atk_Voice1.ogg", CSoundManager::Yeti_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 2:
+					g_pSoundManager->Play_Sound(L"Yeti_Atk_Voice2.ogg", CSoundManager::Yeti_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 3:
+					g_pSoundManager->Play_Sound(L"Yeti_Atk_Voice3.ogg", CSoundManager::Yeti_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 4:
+					g_pSoundManager->Play_Sound(L"Yeti_Atk_Voice4.ogg", CSoundManager::Yeti_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 5:
+					g_pSoundManager->Play_Sound(L"Yeti_Atk_Voice5.ogg", CSoundManager::Yeti_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 6:
+					g_pSoundManager->Play_Sound(L"Yeti_Atk_Voice6.ogg", CSoundManager::Yeti_Voice, CSoundManager::Effect_Sound);
+					break;
+				}
 			}
 		}
 
@@ -1769,6 +2656,42 @@ void CYeti::Play_Combo_RLRL_Shoulder()
 				m_tObjParam.bSuperArmor = true;
 			}
 		}
+		else if (0.5f <= AniTime)
+		{
+			if (false == m_bEventTrigger[20])
+			{
+				m_bEventTrigger[20] = true;
+
+				g_pSoundManager->Stop_Sound(CSoundManager::Yeti_Voice);
+
+				m_iRandom = CALC::Random_Num(0, 6);
+
+				switch (m_iRandom)
+				{
+				case 0:
+					g_pSoundManager->Play_Sound(L"Yeti_Atk_Voice0.ogg", CSoundManager::Yeti_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 1:
+					g_pSoundManager->Play_Sound(L"Yeti_Atk_Voice1.ogg", CSoundManager::Yeti_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 2:
+					g_pSoundManager->Play_Sound(L"Yeti_Atk_Voice2.ogg", CSoundManager::Yeti_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 3:
+					g_pSoundManager->Play_Sound(L"Yeti_Atk_Voice3.ogg", CSoundManager::Yeti_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 4:
+					g_pSoundManager->Play_Sound(L"Yeti_Atk_Voice4.ogg", CSoundManager::Yeti_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 5:
+					g_pSoundManager->Play_Sound(L"Yeti_Atk_Voice5.ogg", CSoundManager::Yeti_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 6:
+					g_pSoundManager->Play_Sound(L"Yeti_Atk_Voice6.ogg", CSoundManager::Yeti_Voice, CSoundManager::Effect_Sound);
+					break;
+				}
+			}
+		}
 
 		if (0.400f < AniTime && 0.967f > AniTime)
 		{
@@ -1842,6 +2765,42 @@ void CYeti::Play_Combo_RLRL_Smash()
 				m_tObjParam.bSuperArmor = true;
 			}
 		}
+		else if (4.3f <= AniTime)
+		{
+			if (false == m_bEventTrigger[16])
+			{
+				m_bEventTrigger[16] = true;
+
+				g_pSoundManager->Stop_Sound(CSoundManager::Yeti_Voice);
+
+				m_iRandom = CALC::Random_Num(0, 6);
+
+				switch (m_iRandom)
+				{
+				case 0:
+					g_pSoundManager->Play_Sound(L"Yeti_Atk_Voice0.ogg", CSoundManager::Yeti_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 1:
+					g_pSoundManager->Play_Sound(L"Yeti_Atk_Voice1.ogg", CSoundManager::Yeti_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 2:
+					g_pSoundManager->Play_Sound(L"Yeti_Atk_Voice2.ogg", CSoundManager::Yeti_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 3:
+					g_pSoundManager->Play_Sound(L"Yeti_Atk_Voice3.ogg", CSoundManager::Yeti_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 4:
+					g_pSoundManager->Play_Sound(L"Yeti_Atk_Voice4.ogg", CSoundManager::Yeti_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 5:
+					g_pSoundManager->Play_Sound(L"Yeti_Atk_Voice5.ogg", CSoundManager::Yeti_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 6:
+					g_pSoundManager->Play_Sound(L"Yeti_Atk_Voice6.ogg", CSoundManager::Yeti_Voice, CSoundManager::Effect_Sound);
+					break;
+				}
+			}
+		}
 		else if (3.700f <= AniTime)
 		{
 			if (false == m_bEventTrigger[2])
@@ -1858,6 +2817,42 @@ void CYeti::Play_Combo_RLRL_Smash()
 				m_bEventTrigger[3] = true;
 				m_vecAttackCol[2]->Set_Enabled(true);
 				m_tObjParam.bSuperArmor = true;
+			}
+		}
+		else if (3.4f <= AniTime)
+		{
+			if (false == m_bEventTrigger[17])
+			{
+				m_bEventTrigger[17] = true;
+
+				g_pSoundManager->Stop_Sound(CSoundManager::Yeti_Voice);
+
+				m_iRandom = CALC::Random_Num(0, 6);
+
+				switch (m_iRandom)
+				{
+				case 0:
+					g_pSoundManager->Play_Sound(L"Yeti_Atk_Voice0.ogg", CSoundManager::Yeti_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 1:
+					g_pSoundManager->Play_Sound(L"Yeti_Atk_Voice1.ogg", CSoundManager::Yeti_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 2:
+					g_pSoundManager->Play_Sound(L"Yeti_Atk_Voice2.ogg", CSoundManager::Yeti_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 3:
+					g_pSoundManager->Play_Sound(L"Yeti_Atk_Voice3.ogg", CSoundManager::Yeti_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 4:
+					g_pSoundManager->Play_Sound(L"Yeti_Atk_Voice4.ogg", CSoundManager::Yeti_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 5:
+					g_pSoundManager->Play_Sound(L"Yeti_Atk_Voice5.ogg", CSoundManager::Yeti_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 6:
+					g_pSoundManager->Play_Sound(L"Yeti_Atk_Voice6.ogg", CSoundManager::Yeti_Voice, CSoundManager::Effect_Sound);
+					break;
+				}
 			}
 		}
 		else if (2.800f <= AniTime)
@@ -1878,6 +2873,42 @@ void CYeti::Play_Combo_RLRL_Smash()
 				m_tObjParam.bSuperArmor = true;
 			}
 		}
+		else if (2.4f <= AniTime)
+		{
+			if (false == m_bEventTrigger[18])
+			{
+				m_bEventTrigger[18] = true;
+
+				g_pSoundManager->Stop_Sound(CSoundManager::Yeti_Voice);
+
+				m_iRandom = CALC::Random_Num(0, 6);
+
+				switch (m_iRandom)
+				{
+				case 0:
+					g_pSoundManager->Play_Sound(L"Yeti_Atk_Voice0.ogg", CSoundManager::Yeti_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 1:
+					g_pSoundManager->Play_Sound(L"Yeti_Atk_Voice1.ogg", CSoundManager::Yeti_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 2:
+					g_pSoundManager->Play_Sound(L"Yeti_Atk_Voice2.ogg", CSoundManager::Yeti_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 3:
+					g_pSoundManager->Play_Sound(L"Yeti_Atk_Voice3.ogg", CSoundManager::Yeti_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 4:
+					g_pSoundManager->Play_Sound(L"Yeti_Atk_Voice4.ogg", CSoundManager::Yeti_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 5:
+					g_pSoundManager->Play_Sound(L"Yeti_Atk_Voice5.ogg", CSoundManager::Yeti_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 6:
+					g_pSoundManager->Play_Sound(L"Yeti_Atk_Voice6.ogg", CSoundManager::Yeti_Voice, CSoundManager::Effect_Sound);
+					break;
+				}
+			}
+		}
 		else if (1.967f <= AniTime)
 		{
 			if (false == m_bEventTrigger[6])
@@ -1894,6 +2925,42 @@ void CYeti::Play_Combo_RLRL_Smash()
 				m_bEventTrigger[7] = true;
 				m_vecAttackCol[2]->Set_Enabled(true);
 				m_tObjParam.bSuperArmor = true;
+			}
+		}
+		else if (1.4f <= AniTime)
+		{
+			if (false == m_bEventTrigger[19])
+			{
+				m_bEventTrigger[19] = true;
+
+				g_pSoundManager->Stop_Sound(CSoundManager::Yeti_Voice);
+
+				m_iRandom = CALC::Random_Num(0, 6);
+
+				switch (m_iRandom)
+				{
+				case 0:
+					g_pSoundManager->Play_Sound(L"Yeti_Atk_Voice0.ogg", CSoundManager::Yeti_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 1:
+					g_pSoundManager->Play_Sound(L"Yeti_Atk_Voice1.ogg", CSoundManager::Yeti_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 2:
+					g_pSoundManager->Play_Sound(L"Yeti_Atk_Voice2.ogg", CSoundManager::Yeti_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 3:
+					g_pSoundManager->Play_Sound(L"Yeti_Atk_Voice3.ogg", CSoundManager::Yeti_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 4:
+					g_pSoundManager->Play_Sound(L"Yeti_Atk_Voice4.ogg", CSoundManager::Yeti_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 5:
+					g_pSoundManager->Play_Sound(L"Yeti_Atk_Voice5.ogg", CSoundManager::Yeti_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 6:
+					g_pSoundManager->Play_Sound(L"Yeti_Atk_Voice6.ogg", CSoundManager::Yeti_Voice, CSoundManager::Effect_Sound);
+					break;
+				}
 			}
 		}
 
@@ -1991,6 +3058,42 @@ void CYeti::Play_Combo_RLRL_Smash()
 				m_tObjParam.bSuperArmor = true;
 			}
 		}
+		else if (2.3f <= AniTime)
+		{
+			if (false == m_bEventTrigger[20])
+			{
+				m_bEventTrigger[20] = true;
+
+				g_pSoundManager->Stop_Sound(CSoundManager::Yeti_Voice);
+
+				m_iRandom = CALC::Random_Num(0, 6);
+
+				switch (m_iRandom)
+				{
+				case 0:
+					g_pSoundManager->Play_Sound(L"Yeti_Atk_Voice0.ogg", CSoundManager::Yeti_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 1:
+					g_pSoundManager->Play_Sound(L"Yeti_Atk_Voice1.ogg", CSoundManager::Yeti_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 2:
+					g_pSoundManager->Play_Sound(L"Yeti_Atk_Voice2.ogg", CSoundManager::Yeti_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 3:
+					g_pSoundManager->Play_Sound(L"Yeti_Atk_Voice3.ogg", CSoundManager::Yeti_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 4:
+					g_pSoundManager->Play_Sound(L"Yeti_Atk_Voice4.ogg", CSoundManager::Yeti_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 5:
+					g_pSoundManager->Play_Sound(L"Yeti_Atk_Voice5.ogg", CSoundManager::Yeti_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 6:
+					g_pSoundManager->Play_Sound(L"Yeti_Atk_Voice6.ogg", CSoundManager::Yeti_Voice, CSoundManager::Effect_Sound);
+					break;
+				}
+			}
+		}
 
 		if (1.033f < AniTime && 2.633f > AniTime)
 		{
@@ -2064,6 +3167,42 @@ void CYeti::Play_Combo_RLRL_Swing()
 				m_tObjParam.bSuperArmor = true;
 			}
 		}
+		else if (4.3f <= AniTime)
+		{
+			if (false == m_bEventTrigger[16])
+			{
+				m_bEventTrigger[16] = true;
+
+				g_pSoundManager->Stop_Sound(CSoundManager::Yeti_Voice);
+
+				m_iRandom = CALC::Random_Num(0, 6);
+
+				switch (m_iRandom)
+				{
+				case 0:
+					g_pSoundManager->Play_Sound(L"Yeti_Atk_Voice0.ogg", CSoundManager::Yeti_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 1:
+					g_pSoundManager->Play_Sound(L"Yeti_Atk_Voice1.ogg", CSoundManager::Yeti_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 2:
+					g_pSoundManager->Play_Sound(L"Yeti_Atk_Voice2.ogg", CSoundManager::Yeti_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 3:
+					g_pSoundManager->Play_Sound(L"Yeti_Atk_Voice3.ogg", CSoundManager::Yeti_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 4:
+					g_pSoundManager->Play_Sound(L"Yeti_Atk_Voice4.ogg", CSoundManager::Yeti_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 5:
+					g_pSoundManager->Play_Sound(L"Yeti_Atk_Voice5.ogg", CSoundManager::Yeti_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 6:
+					g_pSoundManager->Play_Sound(L"Yeti_Atk_Voice6.ogg", CSoundManager::Yeti_Voice, CSoundManager::Effect_Sound);
+					break;
+				}
+			}
+		}
 		else if (3.700f <= AniTime)
 		{
 			if (false == m_bEventTrigger[2])
@@ -2080,6 +3219,42 @@ void CYeti::Play_Combo_RLRL_Swing()
 				m_bEventTrigger[3] = true;
 				m_vecAttackCol[2]->Set_Enabled(true);
 				m_tObjParam.bSuperArmor = true;
+			}
+		}
+		else if (3.4f <= AniTime)
+		{
+			if (false == m_bEventTrigger[17])
+			{
+				m_bEventTrigger[17] = true;
+
+				g_pSoundManager->Stop_Sound(CSoundManager::Yeti_Voice);
+
+				m_iRandom = CALC::Random_Num(0, 6);
+
+				switch (m_iRandom)
+				{
+				case 0:
+					g_pSoundManager->Play_Sound(L"Yeti_Atk_Voice0.ogg", CSoundManager::Yeti_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 1:
+					g_pSoundManager->Play_Sound(L"Yeti_Atk_Voice1.ogg", CSoundManager::Yeti_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 2:
+					g_pSoundManager->Play_Sound(L"Yeti_Atk_Voice2.ogg", CSoundManager::Yeti_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 3:
+					g_pSoundManager->Play_Sound(L"Yeti_Atk_Voice3.ogg", CSoundManager::Yeti_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 4:
+					g_pSoundManager->Play_Sound(L"Yeti_Atk_Voice4.ogg", CSoundManager::Yeti_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 5:
+					g_pSoundManager->Play_Sound(L"Yeti_Atk_Voice5.ogg", CSoundManager::Yeti_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 6:
+					g_pSoundManager->Play_Sound(L"Yeti_Atk_Voice6.ogg", CSoundManager::Yeti_Voice, CSoundManager::Effect_Sound);
+					break;
+				}
 			}
 		}
 		else if (2.800f <= AniTime)
@@ -2100,6 +3275,42 @@ void CYeti::Play_Combo_RLRL_Swing()
 				m_tObjParam.bSuperArmor = true;
 			}
 		}
+		else if (2.4f <= AniTime)
+		{
+			if (false == m_bEventTrigger[18])
+			{
+				m_bEventTrigger[18] = true;
+
+				g_pSoundManager->Stop_Sound(CSoundManager::Yeti_Voice);
+
+				m_iRandom = CALC::Random_Num(0, 6);
+
+				switch (m_iRandom)
+				{
+				case 0:
+					g_pSoundManager->Play_Sound(L"Yeti_Atk_Voice0.ogg", CSoundManager::Yeti_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 1:
+					g_pSoundManager->Play_Sound(L"Yeti_Atk_Voice1.ogg", CSoundManager::Yeti_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 2:
+					g_pSoundManager->Play_Sound(L"Yeti_Atk_Voice2.ogg", CSoundManager::Yeti_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 3:
+					g_pSoundManager->Play_Sound(L"Yeti_Atk_Voice3.ogg", CSoundManager::Yeti_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 4:
+					g_pSoundManager->Play_Sound(L"Yeti_Atk_Voice4.ogg", CSoundManager::Yeti_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 5:
+					g_pSoundManager->Play_Sound(L"Yeti_Atk_Voice5.ogg", CSoundManager::Yeti_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 6:
+					g_pSoundManager->Play_Sound(L"Yeti_Atk_Voice6.ogg", CSoundManager::Yeti_Voice, CSoundManager::Effect_Sound);
+					break;
+				}
+			}
+		}
 		else if (1.967f <= AniTime)
 		{
 			if (false == m_bEventTrigger[6])
@@ -2116,6 +3327,42 @@ void CYeti::Play_Combo_RLRL_Swing()
 				m_bEventTrigger[7] = true;
 				m_vecAttackCol[2]->Set_Enabled(true);
 				m_tObjParam.bSuperArmor = true;
+			}
+		}
+		else if (1.4f <= AniTime)
+		{
+			if (false == m_bEventTrigger[19])
+			{
+				m_bEventTrigger[19] = true;
+
+				g_pSoundManager->Stop_Sound(CSoundManager::Yeti_Voice);
+
+				m_iRandom = CALC::Random_Num(0, 6);
+
+				switch (m_iRandom)
+				{
+				case 0:
+					g_pSoundManager->Play_Sound(L"Yeti_Atk_Voice0.ogg", CSoundManager::Yeti_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 1:
+					g_pSoundManager->Play_Sound(L"Yeti_Atk_Voice1.ogg", CSoundManager::Yeti_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 2:
+					g_pSoundManager->Play_Sound(L"Yeti_Atk_Voice2.ogg", CSoundManager::Yeti_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 3:
+					g_pSoundManager->Play_Sound(L"Yeti_Atk_Voice3.ogg", CSoundManager::Yeti_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 4:
+					g_pSoundManager->Play_Sound(L"Yeti_Atk_Voice4.ogg", CSoundManager::Yeti_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 5:
+					g_pSoundManager->Play_Sound(L"Yeti_Atk_Voice5.ogg", CSoundManager::Yeti_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 6:
+					g_pSoundManager->Play_Sound(L"Yeti_Atk_Voice6.ogg", CSoundManager::Yeti_Voice, CSoundManager::Effect_Sound);
+					break;
+				}
 			}
 		}
 
@@ -2213,6 +3460,42 @@ void CYeti::Play_Combo_RLRL_Swing()
 				m_tObjParam.bSuperArmor = true;
 			}
 		}
+		else if (1.5f <= AniTime)
+		{
+			if (false == m_bEventTrigger[20])
+			{
+				m_bEventTrigger[20] = true;
+
+				g_pSoundManager->Stop_Sound(CSoundManager::Yeti_Voice);
+
+				m_iRandom = CALC::Random_Num(0, 6);
+
+				switch (m_iRandom)
+				{
+				case 0:
+					g_pSoundManager->Play_Sound(L"Yeti_Atk_Voice0.ogg", CSoundManager::Yeti_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 1:
+					g_pSoundManager->Play_Sound(L"Yeti_Atk_Voice1.ogg", CSoundManager::Yeti_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 2:
+					g_pSoundManager->Play_Sound(L"Yeti_Atk_Voice2.ogg", CSoundManager::Yeti_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 3:
+					g_pSoundManager->Play_Sound(L"Yeti_Atk_Voice3.ogg", CSoundManager::Yeti_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 4:
+					g_pSoundManager->Play_Sound(L"Yeti_Atk_Voice4.ogg", CSoundManager::Yeti_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 5:
+					g_pSoundManager->Play_Sound(L"Yeti_Atk_Voice5.ogg", CSoundManager::Yeti_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 6:
+					g_pSoundManager->Play_Sound(L"Yeti_Atk_Voice6.ogg", CSoundManager::Yeti_Voice, CSoundManager::Effect_Sound);
+					break;
+				}
+			}
+		}
 
 		if (1.267f < AniTime && 1.667f > AniTime)
 		{
@@ -2255,41 +3538,49 @@ void CYeti::Play_Combo_RLRL_Swing()
 
 void CYeti::Play_Idle()
 {
-	if (true == m_bInRecognitionRange)
+	if (nullptr != m_pAggroTarget)
 	{
-		m_bIsIdle = false;
+		if (true == m_bInRecognitionRange)
+		{
+			m_bIsIdle = false;
 
-		if (true == m_tObjParam.bCanAttack)
-		{
-			m_eState = YETI_ANI::NF_Threat_Loop;
-			if (nullptr != m_pAggroTarget)
-				Function_RotateBody(m_pAggroTarget);
-		}
-		else
-		{
-			if (nullptr == m_pAggroTarget)
+			if (true == m_tObjParam.bCanAttack)
 			{
-				Function_Find_Target();
-
-				if (nullptr == m_pAggroTarget)
-				{
-					Function_ResetAfterAtk();
-					m_fCoolDownMax = 0.f;
-					m_fCoolDownCur = 0.f;
-					m_bIsIdle = true;
-
-					m_eFirstCategory = MONSTER_STATE_TYPE::IDLE;
-					m_eState = YETI_ANI::Idle;
-
-					return;
-				}
-				else
+				m_eState = YETI_ANI::NF_Threat_Loop;
+				if (nullptr != m_pAggroTarget)
 					Function_RotateBody(m_pAggroTarget);
 			}
 			else
-				Function_RotateBody(m_pAggroTarget);
+			{
+				if (nullptr == m_pAggroTarget)
+				{
+					Function_Find_Target();
 
-			m_eState = YETI_ANI::NF_Threat_Loop;
+					if (nullptr == m_pAggroTarget)
+					{
+						Function_ResetAfterAtk();
+						m_fCoolDownMax = 0.f;
+						m_fCoolDownCur = 0.f;
+						m_bIsIdle = true;
+
+						m_eFirstCategory = MONSTER_STATE_TYPE::IDLE;
+						m_eState = YETI_ANI::Idle;
+
+						return;
+					}
+					else
+						Function_RotateBody(m_pAggroTarget);
+				}
+				else
+					Function_RotateBody(m_pAggroTarget);
+
+				m_eState = YETI_ANI::NF_Threat_Loop;
+			}
+		}
+		else
+		{
+			m_bIsIdle = true;
+			m_eState = YETI_ANI::Idle;
 		}
 	}
 	else
@@ -2477,6 +3768,27 @@ void CYeti::Play_Hit()
 		}
 		else if (m_pMeshCom->Is_Finish_Animation(0.2f))
 		{
+			if (false == m_bEventTrigger[0])
+			{
+				m_bEventTrigger[0] = true;
+
+				g_pSoundManager->Stop_Sound(CSoundManager::Yeti_Voice);
+
+				m_iRandom = CALC::Random_Num(0, 2);
+
+				switch (m_iRandom)
+				{
+				case 0:
+					g_pSoundManager->Play_Sound(L"Yeti_Hit0.ogg", CSoundManager::Yeti_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 1:
+					g_pSoundManager->Play_Sound(L"Yeti_Hit1.ogg", CSoundManager::Yeti_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 2:
+					g_pSoundManager->Play_Sound(L"Yeti_Hit2.ogg", CSoundManager::Yeti_Voice, CSoundManager::Effect_Sound);
+					break;
+				}
+			}
 			if (false == m_tObjParam.bCanHit)
 			{
 				m_tObjParam.bCanHit = true;
@@ -2515,21 +3827,44 @@ void CYeti::Play_Dead()
 			m_bEnable = false;
 			m_dAniPlayMul = 0;
 		}
-
-		if (5.733f < AniTime && 6.467f > AniTime)
+		else if (5.433f <= AniTime)
 		{
 			if (false == m_bEventTrigger[0])
 			{
 				m_bEventTrigger[0] = true;
-				m_fSkillMoveSpeed_Cur = 1.f;
-				m_fSkillMoveAccel_Cur = 0.f;
-				m_fSkillMoveMultiply = 0.1f;
-			}
 
-			Function_Movement(m_fSkillMoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_Z));
-			Function_DecreMoveMent(m_fSkillMoveMultiply);
+				Start_Dissolve(0.7f, false, true, 0.0f);
+				m_fDeadEffect_Delay = 0.f;
+
+				CObjectPool_Manager::Get_Instance()->Create_Object(L"GameObject_Haze", (void*)&CHaze::HAZE_INFO(100.f, m_pTransformCom->Get_Pos(), 0.f));
+			}
 		}
-		else if (1.567f < AniTime && 1.900f > AniTime)
+		else if (5.f <= AniTime)
+		{
+			if (false == m_bEventTrigger[3])
+			{
+				m_bEventTrigger[3] = true;
+
+				g_pSoundManager->Stop_Sound(CSoundManager::Yeti_Voice);
+
+				m_iRandom = CALC::Random_Num(0, 2);
+
+				switch (m_iRandom)
+				{
+				case 0:
+					g_pSoundManager->Play_Sound(L"Yeti_Death0.ogg", CSoundManager::Yeti_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 1:
+					g_pSoundManager->Play_Sound(L"Yeti_Death1.ogg", CSoundManager::Yeti_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 2:
+					g_pSoundManager->Play_Sound(L"Yeti_Death2.ogg", CSoundManager::Yeti_Voice, CSoundManager::Effect_Sound);
+					break;
+				}
+			}
+		}
+
+		if (5.733f < AniTime && 6.467f > AniTime)
 		{
 			if (false == m_bEventTrigger[1])
 			{
@@ -2542,19 +3877,18 @@ void CYeti::Play_Dead()
 			Function_Movement(m_fSkillMoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_Z));
 			Function_DecreMoveMent(m_fSkillMoveMultiply);
 		}
-
-		if (5.433f < AniTime)
+		else if (1.567f < AniTime && 1.900f > AniTime)
 		{
 			if (false == m_bEventTrigger[2])
 			{
 				m_bEventTrigger[2] = true;
-
-				Start_Dissolve(0.7f, false, true, 0.0f);
-				m_fDeadEffect_Delay = 0.f;
-
-				CObjectPool_Manager::Get_Instance()->Create_Object(L"GameObject_Haze", (void*)&CHaze::HAZE_INFO(100.f, m_pTransformCom->Get_Pos(), 0.f));
+				m_fSkillMoveSpeed_Cur = 1.f;
+				m_fSkillMoveAccel_Cur = 0.f;
+				m_fSkillMoveMultiply = 0.1f;
 			}
 
+			Function_Movement(m_fSkillMoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_Z));
+			Function_DecreMoveMent(m_fSkillMoveMultiply);
 		}
 	}
 

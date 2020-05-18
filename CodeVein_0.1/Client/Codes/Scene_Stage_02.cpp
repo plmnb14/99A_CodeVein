@@ -120,7 +120,7 @@ HRESULT CScene_Stage_02::Ready_LightDesc()
 	LightDesc.Ambient = D3DXCOLOR(0.1f, 0.1f, 0.1f, 1.f);
 	LightDesc.Specular = LightDesc.Diffuse;
 	// In.WorldSpace
-	_v3 vLightDir = _v3(100.f, -50.f, 0.f);
+	_v3 vLightDir = _v3(0.f, -100.f, 100.f);
 
 	V3_NORMAL_SELF(&vLightDir);
 

@@ -6,6 +6,7 @@
 
 BEGIN(Client)
 
+class CPickUp_ItemUI;
 class CGet_ItemUI final : public CUI
 {
 private:
@@ -27,10 +28,12 @@ private:
 	void	SetUp_State(_double TimeDelta);
 
 public:
-	_bool	Get_Click_Check() { return m_bCheck_Click; }
 	_uint	Get_Cound_Pickuptiem() { return m_iCount_PickUpitem; }
 	_float	Get_EndTimer() { return m_fEndTimer; }
 
+	_bool	Get_Show_ItemName() { return m_bShow_GetItemName; }
+
+public:
 	void	Set_EndTimer(_double TimeDelta) { m_fEndTimer += (_float)TimeDelta; }
 	void	Set_ItemTarget(CGameObject* pGameObject) { m_pTarget = pGameObject; }
 
@@ -51,14 +54,14 @@ private:
 	_uint		m_iUINumber = 0;
 	_uint		m_iCount_PickUpitem = 0;
 
+	_uint		m_iPickUp_ItemNumber = 4;
+
 private:
 	CTransform*				m_pTransformCom = nullptr;
 	CRenderer*				m_pRendererCom = nullptr;
 	CTexture*				m_pTextureCom = nullptr;
 	CShader*				m_pShaderCom = nullptr;
 	CBuffer_RcTex*			m_pBufferCom = nullptr;
-
-
 
 public:
 	static CGet_ItemUI*		Create(_Device pGraphic_Device);

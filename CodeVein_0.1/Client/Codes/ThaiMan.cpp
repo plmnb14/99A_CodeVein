@@ -397,14 +397,15 @@ void CThaiMan::Check_Dist()
 		MONSTER_STATE_TYPE::DEAD == m_eFirstCategory)
 		return;
 
-	if (true == m_bIsCombo ||
+	Function_Find_Target();
+
+	if (true == m_bIsIdle ||
+		true == m_bIsCombo ||
 		true == m_bIsMoveAround ||
 		true == m_tObjParam.bIsAttack ||
 		true == m_tObjParam.bIsDodge ||
 		true == m_tObjParam.bIsHit)
 		return;
-
-	Function_Find_Target();
 
 	if (nullptr == m_pAggroTarget)
 	{
@@ -412,24 +413,30 @@ void CThaiMan::Check_Dist()
 
 		m_eFirstCategory = MONSTER_STATE_TYPE::IDLE;
 
-		if (false == m_bIsIdle)
+		if (true == m_bCanIdle)
 		{
+			m_bCanIdle = false;
+
 			switch (CALC::Random_Num(MONSTER_IDLE_TYPE::IDLE_IDLE, MONSTER_IDLE_TYPE::IDLE_STAND))
 			{
 			case MONSTER_IDLE_TYPE::IDLE_IDLE:
 				m_eSecondCategory_IDLE = MONSTER_IDLE_TYPE::IDLE_IDLE;
+				m_eState = THAIMAN_ANI::Idle;
 				break;
 			case MONSTER_IDLE_TYPE::IDLE_CROUCH:
 			case MONSTER_IDLE_TYPE::IDLE_EAT:
 				m_eSecondCategory_IDLE = MONSTER_IDLE_TYPE::IDLE_CROUCH;
+				m_eState = THAIMAN_ANI::NF_Crouch;
 				break;
 			case MONSTER_IDLE_TYPE::IDLE_LURK:
 			case MONSTER_IDLE_TYPE::IDLE_SCRATCH:
 				m_eSecondCategory_IDLE = MONSTER_IDLE_TYPE::IDLE_SCRATCH;
+				m_eState = THAIMAN_ANI::NF_Scratch;
 				break;
 			case MONSTER_IDLE_TYPE::IDLE_SIT:
 			case MONSTER_IDLE_TYPE::IDLE_STAND:
 				m_eSecondCategory_IDLE = MONSTER_IDLE_TYPE::IDLE_SIT;
+				m_eState = THAIMAN_ANI::NF_Sit;
 				break;
 			}
 		}
@@ -481,18 +488,22 @@ void CThaiMan::Check_Dist()
 				{
 				case MONSTER_IDLE_TYPE::IDLE_IDLE:
 					m_eSecondCategory_IDLE = MONSTER_IDLE_TYPE::IDLE_IDLE;
+					m_eState = THAIMAN_ANI::Idle;
 					break;
 				case MONSTER_IDLE_TYPE::IDLE_CROUCH:
 				case MONSTER_IDLE_TYPE::IDLE_EAT:
 					m_eSecondCategory_IDLE = MONSTER_IDLE_TYPE::IDLE_CROUCH;
+					m_eState = THAIMAN_ANI::NF_Crouch;
 					break;
 				case MONSTER_IDLE_TYPE::IDLE_LURK:
 				case MONSTER_IDLE_TYPE::IDLE_SCRATCH:
 					m_eSecondCategory_IDLE = MONSTER_IDLE_TYPE::IDLE_SCRATCH;
+					m_eState = THAIMAN_ANI::NF_Scratch;
 					break;
 				case MONSTER_IDLE_TYPE::IDLE_SIT:
 				case MONSTER_IDLE_TYPE::IDLE_STAND:
 					m_eSecondCategory_IDLE = MONSTER_IDLE_TYPE::IDLE_SIT;
+					m_eState = THAIMAN_ANI::NF_Sit;
 					break;
 				}
 			}
@@ -705,6 +716,42 @@ void CThaiMan::Play_RDiagonal()
 				m_tObjParam.bSuperArmor = true;
 			}
 		}
+		else if (1.5f <= AniTime)
+		{
+			if (false == m_bEventTrigger[3])
+			{
+				m_bEventTrigger[3] = true;
+
+				g_pSoundManager->Stop_Sound(CSoundManager::ThaiMan_Voice);
+
+				m_iRandom = CALC::Random_Num(0, 6);
+
+				switch (m_iRandom)
+				{
+				case 0:
+					g_pSoundManager->Play_Sound(L"ThaiMan_Atk_Voice0.ogg", CSoundManager::ThaiMan_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 1:
+					g_pSoundManager->Play_Sound(L"ThaiMan_Atk_Voice1.ogg", CSoundManager::ThaiMan_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 2:
+					g_pSoundManager->Play_Sound(L"ThaiMan_Atk_Voice2.ogg", CSoundManager::ThaiMan_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 3:
+					g_pSoundManager->Play_Sound(L"ThaiMan_Atk_Voice3.ogg", CSoundManager::ThaiMan_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 4:
+					g_pSoundManager->Play_Sound(L"ThaiMan_Atk_Voice4.ogg", CSoundManager::ThaiMan_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 5:
+					g_pSoundManager->Play_Sound(L"ThaiMan_Atk_Voice5.ogg", CSoundManager::ThaiMan_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 6:
+					g_pSoundManager->Play_Sound(L"ThaiMan_Atk_Voice6.ogg", CSoundManager::ThaiMan_Voice, CSoundManager::Effect_Sound);
+					break;
+				}
+			}
+		}
 
 		if (1.700f < AniTime && 2.067f > AniTime)
 		{
@@ -802,6 +849,42 @@ void CThaiMan::Play_L()
 				m_bEventTrigger[1] = true;
 				m_vecAttackCol[0]->Set_Enabled(true);
 				m_tObjParam.bSuperArmor = true;
+			}
+		}
+		else if (1.f <= AniTime)
+		{
+			if (false == m_bEventTrigger[3])
+			{
+				m_bEventTrigger[3] = true;
+
+				g_pSoundManager->Stop_Sound(CSoundManager::ThaiMan_Voice);
+
+				m_iRandom = CALC::Random_Num(0, 6);
+
+				switch (m_iRandom)
+				{
+				case 0:
+					g_pSoundManager->Play_Sound(L"ThaiMan_Atk_Voice0.ogg", CSoundManager::ThaiMan_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 1:
+					g_pSoundManager->Play_Sound(L"ThaiMan_Atk_Voice1.ogg", CSoundManager::ThaiMan_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 2:
+					g_pSoundManager->Play_Sound(L"ThaiMan_Atk_Voice2.ogg", CSoundManager::ThaiMan_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 3:
+					g_pSoundManager->Play_Sound(L"ThaiMan_Atk_Voice3.ogg", CSoundManager::ThaiMan_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 4:
+					g_pSoundManager->Play_Sound(L"ThaiMan_Atk_Voice4.ogg", CSoundManager::ThaiMan_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 5:
+					g_pSoundManager->Play_Sound(L"ThaiMan_Atk_Voice5.ogg", CSoundManager::ThaiMan_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 6:
+					g_pSoundManager->Play_Sound(L"ThaiMan_Atk_Voice6.ogg", CSoundManager::ThaiMan_Voice, CSoundManager::Effect_Sound);
+					break;
+				}
 			}
 		}
 
@@ -903,6 +986,42 @@ void CThaiMan::Play_BackDumpling()
 				m_tObjParam.bSuperArmor = true;
 			}
 		}
+		else if (1.f <= AniTime)
+		{
+			if (false == m_bEventTrigger[3])
+			{
+				m_bEventTrigger[3] = true;
+
+				g_pSoundManager->Stop_Sound(CSoundManager::ThaiMan_Voice);
+
+				m_iRandom = CALC::Random_Num(0, 6);
+
+				switch (m_iRandom)
+				{
+				case 0:
+					g_pSoundManager->Play_Sound(L"ThaiMan_Atk_Voice0.ogg", CSoundManager::ThaiMan_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 1:
+					g_pSoundManager->Play_Sound(L"ThaiMan_Atk_Voice1.ogg", CSoundManager::ThaiMan_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 2:
+					g_pSoundManager->Play_Sound(L"ThaiMan_Atk_Voice2.ogg", CSoundManager::ThaiMan_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 3:
+					g_pSoundManager->Play_Sound(L"ThaiMan_Atk_Voice3.ogg", CSoundManager::ThaiMan_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 4:
+					g_pSoundManager->Play_Sound(L"ThaiMan_Atk_Voice4.ogg", CSoundManager::ThaiMan_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 5:
+					g_pSoundManager->Play_Sound(L"ThaiMan_Atk_Voice5.ogg", CSoundManager::ThaiMan_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 6:
+					g_pSoundManager->Play_Sound(L"ThaiMan_Atk_Voice6.ogg", CSoundManager::ThaiMan_Voice, CSoundManager::Effect_Sound);
+					break;
+				}
+			}
+		}
 
 		if (1.300f < AniTime && 1.933f > AniTime)
 		{
@@ -957,6 +1076,42 @@ void CThaiMan::Play_DropKick()
 				m_bEventTrigger[1] = true;
 				m_vecAttackCol[3]->Set_Enabled(true);
 				m_tObjParam.bSuperArmor = true;
+			}
+		}
+		else if (2.f <= AniTime)
+		{
+			if (false == m_bEventTrigger[4])
+			{
+				m_bEventTrigger[4] = true;
+
+				g_pSoundManager->Stop_Sound(CSoundManager::ThaiMan_Voice);
+
+				m_iRandom = CALC::Random_Num(0, 6);
+
+				switch (m_iRandom)
+				{
+				case 0:
+					g_pSoundManager->Play_Sound(L"ThaiMan_Atk_Voice0.ogg", CSoundManager::ThaiMan_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 1:
+					g_pSoundManager->Play_Sound(L"ThaiMan_Atk_Voice1.ogg", CSoundManager::ThaiMan_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 2:
+					g_pSoundManager->Play_Sound(L"ThaiMan_Atk_Voice2.ogg", CSoundManager::ThaiMan_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 3:
+					g_pSoundManager->Play_Sound(L"ThaiMan_Atk_Voice3.ogg", CSoundManager::ThaiMan_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 4:
+					g_pSoundManager->Play_Sound(L"ThaiMan_Atk_Voice4.ogg", CSoundManager::ThaiMan_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 5:
+					g_pSoundManager->Play_Sound(L"ThaiMan_Atk_Voice5.ogg", CSoundManager::ThaiMan_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 6:
+					g_pSoundManager->Play_Sound(L"ThaiMan_Atk_Voice6.ogg", CSoundManager::ThaiMan_Voice, CSoundManager::Effect_Sound);
+					break;
+				}
 			}
 		}
 
@@ -1028,6 +1183,42 @@ void CThaiMan::Play_LkBk()
 				m_tObjParam.bSuperArmor = true;
 			}
 		}
+		else if (1.8f <= AniTime)
+		{
+			if (false == m_bEventTrigger[6])
+			{
+				m_bEventTrigger[6] = true;
+
+				g_pSoundManager->Stop_Sound(CSoundManager::ThaiMan_Voice);
+
+				m_iRandom = CALC::Random_Num(0, 6);
+
+				switch (m_iRandom)
+				{
+				case 0:
+					g_pSoundManager->Play_Sound(L"ThaiMan_Atk_Voice0.ogg", CSoundManager::ThaiMan_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 1:
+					g_pSoundManager->Play_Sound(L"ThaiMan_Atk_Voice1.ogg", CSoundManager::ThaiMan_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 2:
+					g_pSoundManager->Play_Sound(L"ThaiMan_Atk_Voice2.ogg", CSoundManager::ThaiMan_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 3:
+					g_pSoundManager->Play_Sound(L"ThaiMan_Atk_Voice3.ogg", CSoundManager::ThaiMan_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 4:
+					g_pSoundManager->Play_Sound(L"ThaiMan_Atk_Voice4.ogg", CSoundManager::ThaiMan_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 5:
+					g_pSoundManager->Play_Sound(L"ThaiMan_Atk_Voice5.ogg", CSoundManager::ThaiMan_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 6:
+					g_pSoundManager->Play_Sound(L"ThaiMan_Atk_Voice6.ogg", CSoundManager::ThaiMan_Voice, CSoundManager::Effect_Sound);
+					break;
+				}
+			}
+		}
 		else if (1.067f <= AniTime)
 		{
 			if (false == m_bEventTrigger[2])
@@ -1044,6 +1235,42 @@ void CThaiMan::Play_LkBk()
 				m_bEventTrigger[3] = true;
 				m_vecAttackCol[2]->Set_Enabled(true);
 				m_tObjParam.bSuperArmor = true;
+			}
+		}
+		else if (0.5f <= AniTime)
+		{
+			if (false == m_bEventTrigger[7])
+			{
+				m_bEventTrigger[7] = true;
+
+				g_pSoundManager->Stop_Sound(CSoundManager::ThaiMan_Voice);
+
+				m_iRandom = CALC::Random_Num(0, 6);
+
+				switch (m_iRandom)
+				{
+				case 0:
+					g_pSoundManager->Play_Sound(L"ThaiMan_Atk_Voice0.ogg", CSoundManager::ThaiMan_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 1:
+					g_pSoundManager->Play_Sound(L"ThaiMan_Atk_Voice1.ogg", CSoundManager::ThaiMan_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 2:
+					g_pSoundManager->Play_Sound(L"ThaiMan_Atk_Voice2.ogg", CSoundManager::ThaiMan_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 3:
+					g_pSoundManager->Play_Sound(L"ThaiMan_Atk_Voice3.ogg", CSoundManager::ThaiMan_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 4:
+					g_pSoundManager->Play_Sound(L"ThaiMan_Atk_Voice4.ogg", CSoundManager::ThaiMan_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 5:
+					g_pSoundManager->Play_Sound(L"ThaiMan_Atk_Voice5.ogg", CSoundManager::ThaiMan_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 6:
+					g_pSoundManager->Play_Sound(L"ThaiMan_Atk_Voice6.ogg", CSoundManager::ThaiMan_Voice, CSoundManager::Effect_Sound);
+					break;
+				}
 			}
 		}
 
@@ -1201,6 +1428,42 @@ void CThaiMan::Play_Capoeira()
 				m_tObjParam.bSuperArmor = true;
 			}
 		}
+		else if (0.8f <= AniTime)
+		{
+			if (false == m_bEventTrigger[5])
+			{
+				m_bEventTrigger[5] = true;
+
+				g_pSoundManager->Stop_Sound(CSoundManager::ThaiMan_Voice);
+
+				m_iRandom = CALC::Random_Num(0, 6);
+
+				switch (m_iRandom)
+				{
+				case 0:
+					g_pSoundManager->Play_Sound(L"ThaiMan_Atk_Voice0.ogg", CSoundManager::ThaiMan_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 1:
+					g_pSoundManager->Play_Sound(L"ThaiMan_Atk_Voice1.ogg", CSoundManager::ThaiMan_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 2:
+					g_pSoundManager->Play_Sound(L"ThaiMan_Atk_Voice2.ogg", CSoundManager::ThaiMan_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 3:
+					g_pSoundManager->Play_Sound(L"ThaiMan_Atk_Voice3.ogg", CSoundManager::ThaiMan_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 4:
+					g_pSoundManager->Play_Sound(L"ThaiMan_Atk_Voice4.ogg", CSoundManager::ThaiMan_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 5:
+					g_pSoundManager->Play_Sound(L"ThaiMan_Atk_Voice5.ogg", CSoundManager::ThaiMan_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 6:
+					g_pSoundManager->Play_Sound(L"ThaiMan_Atk_Voice6.ogg", CSoundManager::ThaiMan_Voice, CSoundManager::Effect_Sound);
+					break;
+				}
+			}
+		}
 		else if (0.900f <= AniTime)
 		{
 			if (false == m_bEventTrigger[2])
@@ -1217,6 +1480,42 @@ void CThaiMan::Play_Capoeira()
 				m_bEventTrigger[3] = true;
 				m_vecAttackCol[2]->Set_Enabled(true);
 				m_tObjParam.bSuperArmor = true;
+			}
+		}
+		else if (0.2f <= AniTime)
+		{
+			if (false == m_bEventTrigger[6])
+			{
+				m_bEventTrigger[6] = true;
+
+				g_pSoundManager->Stop_Sound(CSoundManager::ThaiMan_Voice);
+
+				m_iRandom = CALC::Random_Num(0, 6);
+
+				switch (m_iRandom)
+				{
+				case 0:
+					g_pSoundManager->Play_Sound(L"ThaiMan_Atk_Voice0.ogg", CSoundManager::ThaiMan_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 1:
+					g_pSoundManager->Play_Sound(L"ThaiMan_Atk_Voice1.ogg", CSoundManager::ThaiMan_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 2:
+					g_pSoundManager->Play_Sound(L"ThaiMan_Atk_Voice2.ogg", CSoundManager::ThaiMan_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 3:
+					g_pSoundManager->Play_Sound(L"ThaiMan_Atk_Voice3.ogg", CSoundManager::ThaiMan_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 4:
+					g_pSoundManager->Play_Sound(L"ThaiMan_Atk_Voice4.ogg", CSoundManager::ThaiMan_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 5:
+					g_pSoundManager->Play_Sound(L"ThaiMan_Atk_Voice5.ogg", CSoundManager::ThaiMan_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 6:
+					g_pSoundManager->Play_Sound(L"ThaiMan_Atk_Voice6.ogg", CSoundManager::ThaiMan_Voice, CSoundManager::Effect_Sound);
+					break;
+				}
 			}
 		}
 
@@ -1275,6 +1574,42 @@ void CThaiMan::Play_RDigonalLUpperRAccel()
 				m_tObjParam.bSuperArmor = true;
 			}
 		}
+		else if (4.3f <= AniTime)
+		{
+			if (false == m_bEventTrigger[9])
+			{
+				m_bEventTrigger[9] = true;
+
+				g_pSoundManager->Stop_Sound(CSoundManager::ThaiMan_Voice);
+
+				m_iRandom = CALC::Random_Num(0, 6);
+
+				switch (m_iRandom)
+				{
+				case 0:
+					g_pSoundManager->Play_Sound(L"ThaiMan_Atk_Voice0.ogg", CSoundManager::ThaiMan_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 1:
+					g_pSoundManager->Play_Sound(L"ThaiMan_Atk_Voice1.ogg", CSoundManager::ThaiMan_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 2:
+					g_pSoundManager->Play_Sound(L"ThaiMan_Atk_Voice2.ogg", CSoundManager::ThaiMan_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 3:
+					g_pSoundManager->Play_Sound(L"ThaiMan_Atk_Voice3.ogg", CSoundManager::ThaiMan_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 4:
+					g_pSoundManager->Play_Sound(L"ThaiMan_Atk_Voice4.ogg", CSoundManager::ThaiMan_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 5:
+					g_pSoundManager->Play_Sound(L"ThaiMan_Atk_Voice5.ogg", CSoundManager::ThaiMan_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 6:
+					g_pSoundManager->Play_Sound(L"ThaiMan_Atk_Voice6.ogg", CSoundManager::ThaiMan_Voice, CSoundManager::Effect_Sound);
+					break;
+				}
+			}
+		}
 		else if (3.267f <= AniTime)
 		{
 			if (false == m_bEventTrigger[2])
@@ -1293,6 +1628,42 @@ void CThaiMan::Play_RDigonalLUpperRAccel()
 				m_tObjParam.bSuperArmor = true;
 			}
 		}
+		else if (2.8f <= AniTime)
+		{
+			if (false == m_bEventTrigger[10])
+			{
+				m_bEventTrigger[10] = true;
+
+				g_pSoundManager->Stop_Sound(CSoundManager::ThaiMan_Voice);
+
+				m_iRandom = CALC::Random_Num(0, 6);
+
+				switch (m_iRandom)
+				{
+				case 0:
+					g_pSoundManager->Play_Sound(L"ThaiMan_Atk_Voice0.ogg", CSoundManager::ThaiMan_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 1:
+					g_pSoundManager->Play_Sound(L"ThaiMan_Atk_Voice1.ogg", CSoundManager::ThaiMan_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 2:
+					g_pSoundManager->Play_Sound(L"ThaiMan_Atk_Voice2.ogg", CSoundManager::ThaiMan_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 3:
+					g_pSoundManager->Play_Sound(L"ThaiMan_Atk_Voice3.ogg", CSoundManager::ThaiMan_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 4:
+					g_pSoundManager->Play_Sound(L"ThaiMan_Atk_Voice4.ogg", CSoundManager::ThaiMan_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 5:
+					g_pSoundManager->Play_Sound(L"ThaiMan_Atk_Voice5.ogg", CSoundManager::ThaiMan_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 6:
+					g_pSoundManager->Play_Sound(L"ThaiMan_Atk_Voice6.ogg", CSoundManager::ThaiMan_Voice, CSoundManager::Effect_Sound);
+					break;
+				}
+			}
+		}
 		else if (1.700f <= AniTime)
 		{
 			if (false == m_bEventTrigger[4])
@@ -1309,6 +1680,42 @@ void CThaiMan::Play_RDigonalLUpperRAccel()
 				m_bEventTrigger[5] = true;
 				m_vecAttackCol[1]->Set_Enabled(true);
 				m_tObjParam.bSuperArmor = true;
+			}
+		}
+		else if (1.2f <= AniTime)
+		{
+			if (false == m_bEventTrigger[11])
+			{
+				m_bEventTrigger[11] = true;
+
+				g_pSoundManager->Stop_Sound(CSoundManager::ThaiMan_Voice);
+
+				m_iRandom = CALC::Random_Num(0, 6);
+
+				switch (m_iRandom)
+				{
+				case 0:
+					g_pSoundManager->Play_Sound(L"ThaiMan_Atk_Voice0.ogg", CSoundManager::ThaiMan_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 1:
+					g_pSoundManager->Play_Sound(L"ThaiMan_Atk_Voice1.ogg", CSoundManager::ThaiMan_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 2:
+					g_pSoundManager->Play_Sound(L"ThaiMan_Atk_Voice2.ogg", CSoundManager::ThaiMan_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 3:
+					g_pSoundManager->Play_Sound(L"ThaiMan_Atk_Voice3.ogg", CSoundManager::ThaiMan_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 4:
+					g_pSoundManager->Play_Sound(L"ThaiMan_Atk_Voice4.ogg", CSoundManager::ThaiMan_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 5:
+					g_pSoundManager->Play_Sound(L"ThaiMan_Atk_Voice5.ogg", CSoundManager::ThaiMan_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 6:
+					g_pSoundManager->Play_Sound(L"ThaiMan_Atk_Voice6.ogg", CSoundManager::ThaiMan_Voice, CSoundManager::Effect_Sound);
+					break;
+				}
 			}
 		}
 
@@ -1522,6 +1929,42 @@ void CThaiMan::Play_RkBkFk()
 				m_tObjParam.bSuperArmor = true;
 			}
 		}
+		else if (3.3f <= AniTime)
+		{
+			if (false == m_bEventTrigger[9])
+			{
+				m_bEventTrigger[9] = true;
+
+				g_pSoundManager->Stop_Sound(CSoundManager::ThaiMan_Voice);
+
+				m_iRandom = CALC::Random_Num(0, 6);
+
+				switch (m_iRandom)
+				{
+				case 0:
+					g_pSoundManager->Play_Sound(L"ThaiMan_Atk_Voice0.ogg", CSoundManager::ThaiMan_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 1:
+					g_pSoundManager->Play_Sound(L"ThaiMan_Atk_Voice1.ogg", CSoundManager::ThaiMan_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 2:
+					g_pSoundManager->Play_Sound(L"ThaiMan_Atk_Voice2.ogg", CSoundManager::ThaiMan_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 3:
+					g_pSoundManager->Play_Sound(L"ThaiMan_Atk_Voice3.ogg", CSoundManager::ThaiMan_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 4:
+					g_pSoundManager->Play_Sound(L"ThaiMan_Atk_Voice4.ogg", CSoundManager::ThaiMan_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 5:
+					g_pSoundManager->Play_Sound(L"ThaiMan_Atk_Voice5.ogg", CSoundManager::ThaiMan_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 6:
+					g_pSoundManager->Play_Sound(L"ThaiMan_Atk_Voice6.ogg", CSoundManager::ThaiMan_Voice, CSoundManager::Effect_Sound);
+					break;
+				}
+			}
+		}
 		else if (2.600f <= AniTime)
 		{
 			if (false == m_bEventTrigger[2])
@@ -1540,6 +1983,42 @@ void CThaiMan::Play_RkBkFk()
 				m_tObjParam.bSuperArmor = true;
 			}
 		}
+		else if (2.f <= AniTime)
+		{
+			if (false == m_bEventTrigger[10])
+			{
+				m_bEventTrigger[10] = true;
+
+				g_pSoundManager->Stop_Sound(CSoundManager::ThaiMan_Voice);
+
+				m_iRandom = CALC::Random_Num(0, 6);
+
+				switch (m_iRandom)
+				{
+				case 0:
+					g_pSoundManager->Play_Sound(L"ThaiMan_Atk_Voice0.ogg", CSoundManager::ThaiMan_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 1:
+					g_pSoundManager->Play_Sound(L"ThaiMan_Atk_Voice1.ogg", CSoundManager::ThaiMan_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 2:
+					g_pSoundManager->Play_Sound(L"ThaiMan_Atk_Voice2.ogg", CSoundManager::ThaiMan_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 3:
+					g_pSoundManager->Play_Sound(L"ThaiMan_Atk_Voice3.ogg", CSoundManager::ThaiMan_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 4:
+					g_pSoundManager->Play_Sound(L"ThaiMan_Atk_Voice4.ogg", CSoundManager::ThaiMan_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 5:
+					g_pSoundManager->Play_Sound(L"ThaiMan_Atk_Voice5.ogg", CSoundManager::ThaiMan_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 6:
+					g_pSoundManager->Play_Sound(L"ThaiMan_Atk_Voice6.ogg", CSoundManager::ThaiMan_Voice, CSoundManager::Effect_Sound);
+					break;
+				}
+			}
+		}
 		else if (1.200f <= AniTime)
 		{
 			if (false == m_bEventTrigger[4])
@@ -1556,6 +2035,42 @@ void CThaiMan::Play_RkBkFk()
 				m_bEventTrigger[5] = true;
 				m_vecAttackCol[3]->Set_Enabled(true);
 				m_tObjParam.bSuperArmor = true;
+			}
+		}
+		else if (0.8f <= AniTime)
+		{
+			if (false == m_bEventTrigger[11])
+			{
+				m_bEventTrigger[11] = true;
+
+				g_pSoundManager->Stop_Sound(CSoundManager::ThaiMan_Voice);
+
+				m_iRandom = CALC::Random_Num(0, 6);
+
+				switch (m_iRandom)
+				{
+				case 0:
+					g_pSoundManager->Play_Sound(L"ThaiMan_Atk_Voice0.ogg", CSoundManager::ThaiMan_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 1:
+					g_pSoundManager->Play_Sound(L"ThaiMan_Atk_Voice1.ogg", CSoundManager::ThaiMan_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 2:
+					g_pSoundManager->Play_Sound(L"ThaiMan_Atk_Voice2.ogg", CSoundManager::ThaiMan_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 3:
+					g_pSoundManager->Play_Sound(L"ThaiMan_Atk_Voice3.ogg", CSoundManager::ThaiMan_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 4:
+					g_pSoundManager->Play_Sound(L"ThaiMan_Atk_Voice4.ogg", CSoundManager::ThaiMan_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 5:
+					g_pSoundManager->Play_Sound(L"ThaiMan_Atk_Voice5.ogg", CSoundManager::ThaiMan_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 6:
+					g_pSoundManager->Play_Sound(L"ThaiMan_Atk_Voice6.ogg", CSoundManager::ThaiMan_Voice, CSoundManager::Effect_Sound);
+					break;
+				}
 			}
 		}
 
@@ -1769,6 +2284,42 @@ void CThaiMan::Play_RDigonalRRScrewRchop()
 				m_tObjParam.bSuperArmor = true;
 			}
 		}
+		else if (4.1f <= AniTime)
+		{
+			if (false == m_bEventTrigger[11])
+			{
+				m_bEventTrigger[11] = true;
+
+				g_pSoundManager->Stop_Sound(CSoundManager::ThaiMan_Voice);
+
+				m_iRandom = CALC::Random_Num(0, 6);
+
+				switch (m_iRandom)
+				{
+				case 0:
+					g_pSoundManager->Play_Sound(L"ThaiMan_Atk_Voice0.ogg", CSoundManager::ThaiMan_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 1:
+					g_pSoundManager->Play_Sound(L"ThaiMan_Atk_Voice1.ogg", CSoundManager::ThaiMan_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 2:
+					g_pSoundManager->Play_Sound(L"ThaiMan_Atk_Voice2.ogg", CSoundManager::ThaiMan_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 3:
+					g_pSoundManager->Play_Sound(L"ThaiMan_Atk_Voice3.ogg", CSoundManager::ThaiMan_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 4:
+					g_pSoundManager->Play_Sound(L"ThaiMan_Atk_Voice4.ogg", CSoundManager::ThaiMan_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 5:
+					g_pSoundManager->Play_Sound(L"ThaiMan_Atk_Voice5.ogg", CSoundManager::ThaiMan_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 6:
+					g_pSoundManager->Play_Sound(L"ThaiMan_Atk_Voice6.ogg", CSoundManager::ThaiMan_Voice, CSoundManager::Effect_Sound);
+					break;
+				}
+			}
+		}
 		else if (3.467f <= AniTime)
 		{
 			if (false == m_bEventTrigger[2])
@@ -1785,6 +2336,42 @@ void CThaiMan::Play_RDigonalRRScrewRchop()
 				m_bEventTrigger[3] = true;
 				m_vecAttackCol[1]->Set_Enabled(true);
 				m_tObjParam.bSuperArmor = true;
+			}
+		}
+		else if (3.f <= AniTime)
+		{
+			if (false == m_bEventTrigger[12])
+			{
+				m_bEventTrigger[12] = true;
+
+				g_pSoundManager->Stop_Sound(CSoundManager::ThaiMan_Voice);
+
+				m_iRandom = CALC::Random_Num(0, 6);
+
+				switch (m_iRandom)
+				{
+				case 0:
+					g_pSoundManager->Play_Sound(L"ThaiMan_Atk_Voice0.ogg", CSoundManager::ThaiMan_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 1:
+					g_pSoundManager->Play_Sound(L"ThaiMan_Atk_Voice1.ogg", CSoundManager::ThaiMan_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 2:
+					g_pSoundManager->Play_Sound(L"ThaiMan_Atk_Voice2.ogg", CSoundManager::ThaiMan_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 3:
+					g_pSoundManager->Play_Sound(L"ThaiMan_Atk_Voice3.ogg", CSoundManager::ThaiMan_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 4:
+					g_pSoundManager->Play_Sound(L"ThaiMan_Atk_Voice4.ogg", CSoundManager::ThaiMan_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 5:
+					g_pSoundManager->Play_Sound(L"ThaiMan_Atk_Voice5.ogg", CSoundManager::ThaiMan_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 6:
+					g_pSoundManager->Play_Sound(L"ThaiMan_Atk_Voice6.ogg", CSoundManager::ThaiMan_Voice, CSoundManager::Effect_Sound);
+					break;
+				}
 			}
 		}
 		else if (1.800f <= AniTime)
@@ -1805,6 +2392,42 @@ void CThaiMan::Play_RDigonalRRScrewRchop()
 				m_tObjParam.bSuperArmor = true;
 			}
 		}
+		else if (1.5f <= AniTime)
+		{
+			if (false == m_bEventTrigger[13])
+			{
+				m_bEventTrigger[13] = true;
+
+				g_pSoundManager->Stop_Sound(CSoundManager::ThaiMan_Voice);
+
+				m_iRandom = CALC::Random_Num(0, 6);
+
+				switch (m_iRandom)
+				{
+				case 0:
+					g_pSoundManager->Play_Sound(L"ThaiMan_Atk_Voice0.ogg", CSoundManager::ThaiMan_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 1:
+					g_pSoundManager->Play_Sound(L"ThaiMan_Atk_Voice1.ogg", CSoundManager::ThaiMan_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 2:
+					g_pSoundManager->Play_Sound(L"ThaiMan_Atk_Voice2.ogg", CSoundManager::ThaiMan_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 3:
+					g_pSoundManager->Play_Sound(L"ThaiMan_Atk_Voice3.ogg", CSoundManager::ThaiMan_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 4:
+					g_pSoundManager->Play_Sound(L"ThaiMan_Atk_Voice4.ogg", CSoundManager::ThaiMan_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 5:
+					g_pSoundManager->Play_Sound(L"ThaiMan_Atk_Voice5.ogg", CSoundManager::ThaiMan_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 6:
+					g_pSoundManager->Play_Sound(L"ThaiMan_Atk_Voice6.ogg", CSoundManager::ThaiMan_Voice, CSoundManager::Effect_Sound);
+					break;
+				}
+			}
+		}
 		else if (1.133f <= AniTime)
 		{
 			if (false == m_bEventTrigger[6])
@@ -1821,6 +2444,42 @@ void CThaiMan::Play_RDigonalRRScrewRchop()
 				m_bEventTrigger[7] = true;
 				m_vecAttackCol[1]->Set_Enabled(true);
 				m_tObjParam.bSuperArmor = true;
+			}
+		}
+		else if (0.5f <= AniTime)
+		{
+			if (false == m_bEventTrigger[14])
+			{
+				m_bEventTrigger[14] = true;
+
+				g_pSoundManager->Stop_Sound(CSoundManager::ThaiMan_Voice);
+
+				m_iRandom = CALC::Random_Num(0, 6);
+
+				switch (m_iRandom)
+				{
+				case 0:
+					g_pSoundManager->Play_Sound(L"ThaiMan_Atk_Voice0.ogg", CSoundManager::ThaiMan_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 1:
+					g_pSoundManager->Play_Sound(L"ThaiMan_Atk_Voice1.ogg", CSoundManager::ThaiMan_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 2:
+					g_pSoundManager->Play_Sound(L"ThaiMan_Atk_Voice2.ogg", CSoundManager::ThaiMan_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 3:
+					g_pSoundManager->Play_Sound(L"ThaiMan_Atk_Voice3.ogg", CSoundManager::ThaiMan_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 4:
+					g_pSoundManager->Play_Sound(L"ThaiMan_Atk_Voice4.ogg", CSoundManager::ThaiMan_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 5:
+					g_pSoundManager->Play_Sound(L"ThaiMan_Atk_Voice5.ogg", CSoundManager::ThaiMan_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 6:
+					g_pSoundManager->Play_Sound(L"ThaiMan_Atk_Voice6.ogg", CSoundManager::ThaiMan_Voice, CSoundManager::Effect_Sound);
+					break;
+				}
 			}
 		}
 
@@ -2002,60 +2661,68 @@ void CThaiMan::Play_Idle()
 	switch (m_eSecondCategory_IDLE)
 	{
 	case MONSTER_IDLE_TYPE::IDLE_IDLE:
-		if (true == m_bInRecognitionRange)
+		if (nullptr != m_pAggroTarget)
 		{
-			m_bIsIdle = false;
-
-			if (true == m_tObjParam.bCanAttack)
+			if (true == m_bInRecognitionRange)
 			{
-				m_eState = THAIMAN_ANI::Idle;
-			}
-			else
-			{
+				m_bIsIdle = false;
 
-				if (nullptr == m_pAggroTarget)
+				if (true == m_tObjParam.bCanAttack)
 				{
-					Function_Find_Target();
+					m_eState = THAIMAN_ANI::Idle;
+				}
+				else
+				{
 
 					if (nullptr == m_pAggroTarget)
 					{
-						Function_ResetAfterAtk();
-						m_fCoolDownMax = 0.f;
-						m_fCoolDownCur = 0.f;
-						m_eFirstCategory = MONSTER_STATE_TYPE::IDLE;
+						Function_Find_Target();
 
-						if (false == m_bIsIdle)
+						if (nullptr == m_pAggroTarget)
 						{
-							switch (CALC::Random_Num(MONSTER_IDLE_TYPE::IDLE_IDLE, MONSTER_IDLE_TYPE::IDLE_STAND))
+							Function_ResetAfterAtk();
+							m_fCoolDownMax = 0.f;
+							m_fCoolDownCur = 0.f;
+							m_eFirstCategory = MONSTER_STATE_TYPE::IDLE;
+
+							if (false == m_bIsIdle)
 							{
-							case MONSTER_IDLE_TYPE::IDLE_IDLE:
-								m_eSecondCategory_IDLE = MONSTER_IDLE_TYPE::IDLE_IDLE;
-								break;
-							case MONSTER_IDLE_TYPE::IDLE_CROUCH:
-							case MONSTER_IDLE_TYPE::IDLE_EAT:
-								m_eSecondCategory_IDLE = MONSTER_IDLE_TYPE::IDLE_CROUCH;
-								break;
-							case MONSTER_IDLE_TYPE::IDLE_SIT:
-							case MONSTER_IDLE_TYPE::IDLE_LURK:
-								m_eSecondCategory_IDLE = MONSTER_IDLE_TYPE::IDLE_SIT;
-								break;
-							case MONSTER_IDLE_TYPE::IDLE_STAND:
-							case MONSTER_IDLE_TYPE::IDLE_SCRATCH:
-								m_eSecondCategory_IDLE = MONSTER_IDLE_TYPE::IDLE_STAND;
-								break;
+								switch (CALC::Random_Num(MONSTER_IDLE_TYPE::IDLE_IDLE, MONSTER_IDLE_TYPE::IDLE_STAND))
+								{
+								case MONSTER_IDLE_TYPE::IDLE_IDLE:
+									m_eSecondCategory_IDLE = MONSTER_IDLE_TYPE::IDLE_IDLE;
+									break;
+								case MONSTER_IDLE_TYPE::IDLE_CROUCH:
+								case MONSTER_IDLE_TYPE::IDLE_EAT:
+									m_eSecondCategory_IDLE = MONSTER_IDLE_TYPE::IDLE_CROUCH;
+									break;
+								case MONSTER_IDLE_TYPE::IDLE_SIT:
+								case MONSTER_IDLE_TYPE::IDLE_LURK:
+									m_eSecondCategory_IDLE = MONSTER_IDLE_TYPE::IDLE_SIT;
+									break;
+								case MONSTER_IDLE_TYPE::IDLE_STAND:
+								case MONSTER_IDLE_TYPE::IDLE_SCRATCH:
+									m_eSecondCategory_IDLE = MONSTER_IDLE_TYPE::IDLE_STAND;
+									break;
+								}
 							}
+
+							Play_Idle();
+
+							return;
 						}
-
-						Play_Idle();
-
-						return;
+						else
+							Function_RotateBody(m_pAggroTarget);
 					}
 					else
 						Function_RotateBody(m_pAggroTarget);
-				}
-				else
-					Function_RotateBody(m_pAggroTarget);
 
+					m_eState = THAIMAN_ANI::Idle;
+				}
+			}
+			else
+			{
+				m_bIsIdle = true;
 				m_eState = THAIMAN_ANI::Idle;
 			}
 		}
@@ -2067,23 +2734,31 @@ void CThaiMan::Play_Idle()
 		break;
 
 	case MONSTER_IDLE_TYPE::IDLE_SIT:
-		if (true == m_bInRecognitionRange)
+		if (nullptr != m_pAggroTarget)
 		{
-			if (THAIMAN_ANI::NF_Sit == m_eState)
+			if (true == m_bInRecognitionRange)
+			{
+				if (THAIMAN_ANI::NF_Sit == m_eState)
+				{
+					m_bIsIdle = true;
+
+					if (m_pMeshCom->Is_Finish_Animation(0.5f))
+						m_eState = THAIMAN_ANI::NF_Sit_End;
+				}
+				else if (THAIMAN_ANI::NF_Sit_End == m_eState)
+				{
+					if (m_pMeshCom->Is_Finish_Animation(0.95f))
+					{
+						m_bCanIdle = true;
+						m_bIsIdle = false;
+						m_eState = THAIMAN_ANI::Idle;
+					}
+				}
+			}
+			else
 			{
 				m_bIsIdle = true;
-
-				if (m_pMeshCom->Is_Finish_Animation(0.5f))
-					m_eState = THAIMAN_ANI::NF_Sit_End;
-			}
-			else if (THAIMAN_ANI::NF_Sit_End == m_eState)
-			{
-				if (m_pMeshCom->Is_Finish_Animation(0.95f))
-				{
-					m_bCanIdle = true;
-					m_bIsIdle = false;
-					m_eState = THAIMAN_ANI::Idle;
-				}
+				m_eState = THAIMAN_ANI::NF_Sit;
 			}
 		}
 		else
@@ -2094,56 +2769,72 @@ void CThaiMan::Play_Idle()
 		break;
 
 	case MONSTER_IDLE_TYPE::IDLE_SCRATCH:
-		if (true == m_bInRecognitionRange)
+		if (nullptr != m_pAggroTarget)
 		{
-			if (THAIMAN_ANI::NF_Sit == m_eState)
+			if (true == m_bInRecognitionRange)
+			{
+				if (THAIMAN_ANI::NF_Scratch == m_eState)
+				{
+					m_bIsIdle = true;
+
+					if (m_pMeshCom->Is_Finish_Animation(0.5f))
+						m_eState = THAIMAN_ANI::NF_Scratch_End;
+				}
+				else if (THAIMAN_ANI::NF_Scratch_End == m_eState)
+				{
+					if (m_pMeshCom->Is_Finish_Animation(0.95f))
+					{
+						m_bCanIdle = true;
+						m_bIsIdle = false;
+						m_eState = THAIMAN_ANI::Idle;
+					}
+				}
+			}
+			else
 			{
 				m_bIsIdle = true;
-
-				if (m_pMeshCom->Is_Finish_Animation(0.5f))
-					m_eState = THAIMAN_ANI::NF_Sit_End;
-			}
-			else if (THAIMAN_ANI::NF_Sit_End == m_eState)
-			{
-				if (m_pMeshCom->Is_Finish_Animation(0.95f))
-				{
-					m_bCanIdle = true;
-					m_bIsIdle = false;
-					m_eState = THAIMAN_ANI::Idle;
-				}
+				m_eState = THAIMAN_ANI::NF_Scratch;
 			}
 		}
 		else
 		{
 			m_bIsIdle = true;
-			m_eState = THAIMAN_ANI::NF_Sit;
+			m_eState = THAIMAN_ANI::NF_Scratch;
 		}
 		break;
 
 	case MONSTER_IDLE_TYPE::IDLE_CROUCH:
-		if (true == m_bInRecognitionRange)
+		if (nullptr != m_pAggroTarget)
 		{
-			if (THAIMAN_ANI::NF_Sit == m_eState)
+			if (true == m_bInRecognitionRange)
+			{
+				if (THAIMAN_ANI::NF_Crouch == m_eState)
+				{
+					m_bIsIdle = true;
+
+					if (m_pMeshCom->Is_Finish_Animation(0.5f))
+						m_eState = THAIMAN_ANI::NF_Crouch_End;
+				}
+				else if (THAIMAN_ANI::NF_Crouch_End == m_eState)
+				{
+					if (m_pMeshCom->Is_Finish_Animation(0.95f))
+					{
+						m_bCanIdle = true;
+						m_bIsIdle = false;
+						m_eState = THAIMAN_ANI::Idle;
+					}
+				}
+			}
+			else
 			{
 				m_bIsIdle = true;
-
-				if (m_pMeshCom->Is_Finish_Animation(0.5f))
-					m_eState = THAIMAN_ANI::NF_Sit_End;
-			}
-			else if (THAIMAN_ANI::NF_Sit_End == m_eState)
-			{
-				if (m_pMeshCom->Is_Finish_Animation(0.95f))
-				{
-					m_bCanIdle = true;
-					m_bIsIdle = false;
-					m_eState = THAIMAN_ANI::Idle;
-				}
+				m_eState = THAIMAN_ANI::NF_Crouch;
 			}
 		}
 		else
 		{
 			m_bIsIdle = true;
-			m_eState = THAIMAN_ANI::NF_Sit;
+			m_eState = THAIMAN_ANI::NF_Crouch;
 		}
 		break;
 	}
@@ -2399,11 +3090,9 @@ void CThaiMan::Play_Hit()
 		case FBLR::FRONTLEFT:
 			m_eState = THAIMAN_ANI::Dmg_W_FL;
 			break;
-		case FBLR::RIGHT:
 		case FBLR::FRONTRIGHT:
 			m_eState = THAIMAN_ANI::Dmg_W_FR;
 			break;
-		case FBLR::LEFT:
 		case FBLR::BACKLEFT:
 			m_eState = THAIMAN_ANI::Dmg_W_BL;
 			break;
@@ -2427,6 +3116,31 @@ void CThaiMan::Play_Hit()
 		}
 		else if (m_pMeshCom->Is_Finish_Animation(0.2f))
 		{
+			if (false == m_bEventTrigger[0])
+			{
+				m_bEventTrigger[0] = true;
+
+				g_pSoundManager->Stop_Sound(CSoundManager::ThaiMan_Voice);
+
+				m_iRandom = CALC::Random_Num(0, 3);
+
+				switch (m_iRandom)
+				{
+				case 0:
+					g_pSoundManager->Play_Sound(L"ThaiMan_Hit0.ogg", CSoundManager::ThaiMan_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 1:
+					g_pSoundManager->Play_Sound(L"ThaiMan_Hit1.ogg", CSoundManager::ThaiMan_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 2:
+					g_pSoundManager->Play_Sound(L"ThaiMan_Hit2.ogg", CSoundManager::ThaiMan_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 3:
+					g_pSoundManager->Play_Sound(L"ThaiMan_Hit3.ogg", CSoundManager::ThaiMan_Voice, CSoundManager::Effect_Sound);
+					break;
+				}
+			}
+
 			if (false == m_tObjParam.bCanHit)
 			{
 				m_tObjParam.bCanHit = true;
@@ -2492,6 +3206,30 @@ void CThaiMan::Play_Dead()
 					CObjectPool_Manager::Get_Instance()->Create_Object(L"GameObject_Haze", (void*)&CHaze::HAZE_INFO(100.f, m_pTransformCom->Get_Pos(), 0.f));
 				}
 			}
+			else if (3.f <= AniTime)
+			{
+				if (false == m_bEventTrigger[1])
+				{
+					m_bEventTrigger[1] = true;
+
+					g_pSoundManager->Stop_Sound(CSoundManager::ThaiMan_Voice);
+
+					m_iRandom = CALC::Random_Num(0, 2);
+
+					switch (m_iRandom)
+					{
+					case 0:
+						g_pSoundManager->Play_Sound(L"ThaiMan_Death0.ogg", CSoundManager::ThaiMan_Voice, CSoundManager::Effect_Sound);
+						break;
+					case 1:
+						g_pSoundManager->Play_Sound(L"ThaiMan_Death1.ogg", CSoundManager::ThaiMan_Voice, CSoundManager::Effect_Sound);
+						break;
+					case 2:
+						g_pSoundManager->Play_Sound(L"ThaiMan_Death2.ogg", CSoundManager::ThaiMan_Voice, CSoundManager::Effect_Sound);
+						break;
+					}
+				}
+			}
 			break;
 
 		case THAIMAN_ANI::Death_F:
@@ -2512,6 +3250,30 @@ void CThaiMan::Play_Dead()
 					CObjectPool_Manager::Get_Instance()->Create_Object(L"GameObject_Haze", (void*)&CHaze::HAZE_INFO(100.f, m_pTransformCom->Get_Pos(), 0.f));
 				}
 			}
+			else if (2.8f <= AniTime)
+			{
+				if (false == m_bEventTrigger[1])
+				{
+					m_bEventTrigger[1] = true;
+
+					g_pSoundManager->Stop_Sound(CSoundManager::ThaiMan_Voice);
+
+					m_iRandom = CALC::Random_Num(0, 2);
+
+					switch (m_iRandom)
+					{
+					case 0:
+						g_pSoundManager->Play_Sound(L"ThaiMan_Death0.ogg", CSoundManager::ThaiMan_Voice, CSoundManager::Effect_Sound);
+						break;
+					case 1:
+						g_pSoundManager->Play_Sound(L"ThaiMan_Death1.ogg", CSoundManager::ThaiMan_Voice, CSoundManager::Effect_Sound);
+						break;
+					case 2:
+						g_pSoundManager->Play_Sound(L"ThaiMan_Death2.ogg", CSoundManager::ThaiMan_Voice, CSoundManager::Effect_Sound);
+						break;
+					}
+				}
+			}
 			break;
 
 		case THAIMAN_ANI::Death_B:
@@ -2530,6 +3292,30 @@ void CThaiMan::Play_Dead()
 					m_fDeadEffect_Delay = 0.f;
 
 					CObjectPool_Manager::Get_Instance()->Create_Object(L"GameObject_Haze", (void*)&CHaze::HAZE_INFO(100.f, m_pTransformCom->Get_Pos(), 0.f));
+				}
+			}
+			else if (2.3f <= AniTime)
+			{
+				if (false == m_bEventTrigger[1])
+				{
+					m_bEventTrigger[1] = true;
+
+					g_pSoundManager->Stop_Sound(CSoundManager::ThaiMan_Voice);
+
+					m_iRandom = CALC::Random_Num(0, 2);
+
+					switch (m_iRandom)
+					{
+					case 0:
+						g_pSoundManager->Play_Sound(L"ThaiMan_Death0.ogg", CSoundManager::ThaiMan_Voice, CSoundManager::Effect_Sound);
+						break;
+					case 1:
+						g_pSoundManager->Play_Sound(L"ThaiMan_Death1.ogg", CSoundManager::ThaiMan_Voice, CSoundManager::Effect_Sound);
+						break;
+					case 2:
+						g_pSoundManager->Play_Sound(L"ThaiMan_Death2.ogg", CSoundManager::ThaiMan_Voice, CSoundManager::Effect_Sound);
+						break;
+					}
 				}
 			}
 			break;

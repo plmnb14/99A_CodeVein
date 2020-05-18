@@ -65,6 +65,30 @@ void CFileInfo::Create_Mesh_PathInfo(Extract_Mesh _eExtract_Mesh)
 		break;
 	}
 
+	case Extract_Costume_Dynamic:
+	{
+		cout << "Extracting Costume Dynamic Path . . ." << endl;
+		cout << "=============================================================" << endl;
+
+		lstrcpy(szStaticPath, L"..\\..\\Client\\Resources\\Mesh\\");
+		lstrcat(szStaticPath, L"Costume_Dynamic");
+
+		bDynamic = true;
+
+		break;
+	}
+
+	case Extract_Costume_Static:
+	{
+		cout << "Extracting Costume Static Path . . ." << endl;
+		cout << "=============================================================" << endl;
+
+		lstrcpy(szStaticPath, L"..\\..\\Client\\Resources\\Mesh\\");
+		lstrcat(szStaticPath, L"Costume_Static");
+
+		break;
+	}
+
 	case Extract_NPC:
 	{
 		cout << "Extracting NPC Mesh Path . . ." << endl;
@@ -225,6 +249,18 @@ void CFileInfo::Save_Mesh_PathInfo(list<MESH_INFO*>& rPathInfoLst, Extract_Mesh 
 	case Extract_Dynamic_Essential:
 	{
 		lstrcpy(szDataPath, L"../../Data/Load_MeshData/Mesh_Essential_Dynamic_Path.dat");
+		break;
+	}
+
+	case Extract_Costume_Static:
+	{
+		lstrcpy(szDataPath, L"../../Data/Load_MeshData/Mesh_Costume_Static_Path.dat");
+		break;
+	}
+
+	case Extract_Costume_Dynamic:
+	{
+		lstrcpy(szDataPath, L"../../Data/Load_MeshData/Mesh_Costume_Dynamic_Path.dat");
 		break;
 	}
 

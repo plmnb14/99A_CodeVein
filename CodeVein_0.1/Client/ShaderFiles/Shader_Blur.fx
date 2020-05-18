@@ -106,7 +106,7 @@ PS_OUT PS_MOTIONBLUR(PS_MOTIONBLUR_IN In)
 	
 	float HeightValue = tex2D(HeightSampler, In.vTexUV).x;
 
-	Out.vNormal = vector(0, 0, 0, 0);
+	Out.vNormal = vector(0.f, 0.f, 0.f, 0.f);
 	Out.vBloomPower = vector(g_fBloomPower,0,0,0);
 
 	if (!g_bDecalTarget)
@@ -140,7 +140,7 @@ PS_OUT PS_MOTIONBLUR_Height(PS_MOTIONBLUR_IN In)
 
 	float HeightValue = tex2D(HeightSampler, In.vTexUV).x;
 
-	Out.vNormal = vector(1.f, 1.f, 0.f, 1.f);
+	Out.vNormal = vector(1.f, 0.f, 1.f, 1.f);
 	Out.vBloomPower = vector(g_fBloomPower, 0, 0, 0);
 
 	if (!g_bDecalTarget)
@@ -172,7 +172,7 @@ PS_OUT PS_MOTIONBLUR_HeightSkin(PS_MOTIONBLUR_IN In)
 	if (!g_bMotionBlur)
 		Out.vVelocity.w = 0;
 
-	Out.vNormal = vector(1.f, 0.f, 0, 1.f);
+	Out.vNormal = vector(1.f, 0.f, 0.f, 1.f);
 	Out.vBloomPower = vector(g_fBloomPower, 0, 0, 0);
 
 	if (!g_bDecalTarget)
@@ -204,7 +204,7 @@ PS_OUT PS_MOTIONBLUR_Alpha(PS_MOTIONBLUR_IN In)
 	if (!g_bMotionBlur)
 		Out.vVelocity.w = 0;
 
-	Out.vNormal = vector(0.f, 0.f, 0.f, 0.f);
+	Out.vNormal = vector(1.f, 0.f, 1.f, 1.f);
 	Out.vBloomPower = vector(g_fBloomPower, 0, 0, 0);
 
 	if (!g_bDecalTarget)

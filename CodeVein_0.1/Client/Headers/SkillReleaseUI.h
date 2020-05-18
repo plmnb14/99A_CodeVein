@@ -30,6 +30,7 @@ private:
 	void	SetUp_Default();
 	void	Click_SkillSlot();
 	void	Reset_Select();
+	void	Click_BloodSkillSlot_Sound(_uint iIdx);
 
 public:
 	void	Compare_Data();

@@ -17,7 +17,7 @@ public:
 	virtual HRESULT Ready_GameObject(void* pArg);
 	virtual _int Update_GameObject(_double TimeDelta);
 	virtual _int Late_Update_GameObject(_double TimeDelta);
-	virtual HRESULT Render_GameObject();
+	virtual HRESULT Render_GameObject_Instancing_SetPass(CShader* pShader);
 
 private:
 	_v3					m_vDir = _v3(0.f, 0.f, 0.f);

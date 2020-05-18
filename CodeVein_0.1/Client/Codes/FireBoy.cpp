@@ -26,6 +26,7 @@ HRESULT CFireBoy::Ready_GameObject(void * pArg)
 	Ready_Weapon();
 	Ready_BoneMatrix();
 	Ready_Collider();
+	Ready_Sound();
 
 	m_tObjParam.bCanHit = true;
 	m_tObjParam.fHp_Cur = 10000.f;
@@ -56,6 +57,17 @@ HRESULT CFireBoy::Ready_GameObject(void * pArg)
 
 	pBlackBoard->Set_Value(L"Show", true);
 	pBlackBoard->Set_Value(L"Show_Near", true);
+
+	//소리 제어 변수
+	pBlackBoard->Set_Value(L"SFX_01_Tag", 0);
+	pBlackBoard->Set_Value(L"SFX_01_Play", false);
+	pBlackBoard->Set_Value(L"SFX_01_Stop", false);
+	pBlackBoard->Set_Value(L"SFX_02_Tag", 0);
+	pBlackBoard->Set_Value(L"SFX_02_Play", false);
+	pBlackBoard->Set_Value(L"SFX_02_Stop", false);
+	pBlackBoard->Set_Value(L"Voice_Tag", 0);
+	pBlackBoard->Set_Value(L"Voice_Play", false);
+	pBlackBoard->Set_Value(L"Voice_Stop", false);
 
 	CBT_Selector* Start_Sel = Node_Selector("행동 시작");
 	//CBT_Sequence* Start_Sel = Node_Sequence("행동 시작");	//테스트
@@ -371,11 +383,7 @@ HRESULT CFireBoy::Render_GameObject_SetPass(CShader * pShader, _int iPass, _bool
 
 		for (_uint j = 0; j < iNumSubSet; ++j)
 		{
-			_int tmpPass = m_pMeshCom->Get_MaterialPass(i, j);
-
 			pShader->Begin_Pass(iPass);
-			pShader->Commit_Changes();
-
 			pShader->Commit_Changes();
 
 			m_pMeshCom->Render_Mesh(i, j);
@@ -401,7 +409,13 @@ CBT_Composite_Node * CFireBoy::Arm_Attack()
 	CBT_Sequence* SubSeq = Node_Sequence("이동");
 	CBT_RotationDir* Rotation0 = Node_RotationDir("돌기", L"Player_Pos", 0.1);
 	CBT_Wait* Wait0 = Node_Wait("대기0", 0.183, 0);
+	CBT_SetValue* VoiceStop = Node_BOOL_SetValue("목소리 재생", L"Voice_Stop", true);
+	CBT_SetValue* VoicePlay = Node_BOOL_SetValue("목소리 재생", L"Voice_Play", true);
+	CBT_SetValue* VoiceTag = Node_INT_SetValue("목소리 이름 설정", L"Voice_Tag", 11);
 	CBT_MoveDirectly* Move0 = Node_MoveDirectly_Rush("이동0", L"Monster_Speed", L"Monster_Dir", 3.f, 0.417f, 0);
+	CBT_SetValue* Sound1Stop = Node_BOOL_SetValue("소리1 재생", L"SFX_01_Stop", true);
+	CBT_SetValue* Sound1Play = Node_BOOL_SetValue("소리1 재생", L"SFX_01_Play", true);
+	CBT_SetValue* Sound1Tag = Node_INT_SetValue("소리1 이름 설정", L"SFX_01_Tag", 6);
 
 	CBT_CreateEffect* Effect0 = Node_CreateEffect_Finite("바닥 먼지", L"FireBoy_ArmAttack_FloorDust", L"Bone_LeftForeArm"	, 0.76, 3, 0, 0);
 	CBT_CreateEffect* Effect1 = Node_CreateEffect_Finite("공중 먼지", L"FireBoy_ArmAttack_Dust", L"Bone_LeftForeArm"		, 0.8, 1, 0, 0);
@@ -416,6 +430,12 @@ CBT_Composite_Node * CFireBoy::Arm_Attack()
 	Root_Parallel->Set_Sub_Child(SubSeq);
 	SubSeq->Add_Child(Rotation0);
 	SubSeq->Add_Child(Wait0);
+	SubSeq->Add_Child(VoiceStop);
+	SubSeq->Add_Child(VoicePlay);
+	SubSeq->Add_Child(VoiceTag);
+	SubSeq->Add_Child(Sound1Stop);
+	SubSeq->Add_Child(Sound1Play);
+	SubSeq->Add_Child(Sound1Tag);
 	SubSeq->Add_Child(Move0);
 
 
@@ -439,6 +459,12 @@ CBT_Composite_Node * CFireBoy::Gun_Attack()
 	CBT_RotationDir* Rotation0 = Node_RotationDir("돌기", L"Player_Pos", 0.1);
 	CBT_Wait* Wait0 = Node_Wait("대기0", 0.116, 0);
 	CBT_MoveDirectly* Move0 = Node_MoveDirectly_Rush("이동0", L"Monster_Speed", L"Monster_Dir", 3.f, 0.767, 0);
+	CBT_SetValue* VoiceStop = Node_BOOL_SetValue("목소리 재생", L"Voice_Stop", true);
+	CBT_SetValue* VoicePlay = Node_BOOL_SetValue("목소리 재생", L"Voice_Play", true);
+	CBT_SetValue* VoiceTag = Node_INT_SetValue("목소리 이름 설정", L"Voice_Tag", 11);
+	CBT_SetValue* Sound1Stop = Node_BOOL_SetValue("소리1 재생", L"SFX_01_Stop", true);
+	CBT_SetValue* Sound1Play = Node_BOOL_SetValue("소리1 재생", L"SFX_01_Play", true);
+	CBT_SetValue* Sound1Tag = Node_INT_SetValue("소리1 이름 설정", L"SFX_01_Tag", 6);
 	CBT_Wait* Wait1 = Node_Wait("대기1", 0.847, 0);
 	CBT_MoveDirectly* Move1 = Node_MoveDirectly_Rush("이동1", L"Monster_Speed", L"Monster_Dir", 0.6f, 0.17, 0);
 
@@ -450,6 +476,12 @@ CBT_Composite_Node * CFireBoy::Gun_Attack()
 	SubSeq->Add_Child(Rotation0);
 	SubSeq->Add_Child(Wait0);
 	SubSeq->Add_Child(Move0);
+	SubSeq->Add_Child(VoiceStop);
+	SubSeq->Add_Child(VoicePlay);
+	SubSeq->Add_Child(VoiceTag);
+	SubSeq->Add_Child(Sound1Stop);
+	SubSeq->Add_Child(Sound1Play);
+	SubSeq->Add_Child(Sound1Tag);
 	SubSeq->Add_Child(Wait1);
 	SubSeq->Add_Child(Move1);
 
@@ -473,6 +505,12 @@ CBT_Composite_Node * CFireBoy::Fire_Tornado()
 	CBT_Sequence* SubSeq = Node_Sequence("이동");
 	CBT_RotationDir* Rotation0 = Node_RotationDir("방향 추적", L"Player_Pos", 0.2);
 	CBT_Wait* Wait0 = Node_Wait("대기0", 0.1, 0);
+	CBT_SetValue* VoiceStop = Node_BOOL_SetValue("목소리 재생", L"Voice_Stop", true);
+	CBT_SetValue* VoicePlay = Node_BOOL_SetValue("목소리 재생", L"Voice_Play", true);
+	CBT_SetValue* VoiceTag = Node_INT_SetValue("목소리 이름 설정", L"Voice_Tag", 12);
+	CBT_SetValue* Sound1Stop = Node_BOOL_SetValue("소리1 재생", L"SFX_01_Stop", true);
+	CBT_SetValue* Sound1Play = Node_BOOL_SetValue("소리1 재생", L"SFX_01_Play", true);
+	CBT_SetValue* Sound1Tag = Node_INT_SetValue("소리1 이름 설정", L"SFX_01_Tag", 5);
 	CBT_MoveDirectly* Move0 = Node_MoveDirectly_Rush("이동0", L"Monster_Speed", L"Monster_Dir", 2.5f, 0.233, 0);
 	CBT_Wait* Wait1 = Node_Wait("대기1", 1.85, 0);
 	CBT_MoveDirectly* Move1 = Node_MoveDirectly_Rush("이동1", L"Monster_Speed", L"Monster_Dir", 0.7f, 0.3, 0);
@@ -514,6 +552,12 @@ CBT_Composite_Node * CFireBoy::Fire_Tornado()
 	Root_Parallel->Set_Sub_Child(SubSeq);
 	SubSeq->Add_Child(Rotation0);
 	SubSeq->Add_Child(Wait0);
+	SubSeq->Add_Child(VoiceStop);
+	SubSeq->Add_Child(VoicePlay);
+	SubSeq->Add_Child(VoiceTag);
+	SubSeq->Add_Child(Sound1Stop);
+	SubSeq->Add_Child(Sound1Play);
+	SubSeq->Add_Child(Sound1Tag);
 	SubSeq->Add_Child(Move0);
 	SubSeq->Add_Child(Wait1);
 	SubSeq->Add_Child(Move1);
@@ -533,6 +577,9 @@ CBT_Composite_Node * CFireBoy::Back_Dash()
 	CBT_Play_Ani* Show_Ani0 = Node_Ani("기본", 0, 0.0f);
 
 	CBT_Sequence* SubSeq = Node_Sequence("이동");
+	CBT_SetValue* Sound1Stop = Node_BOOL_SetValue("소리1 재생", L"SFX_01_Stop", true);
+	CBT_SetValue* Sound1Play = Node_BOOL_SetValue("소리1 재생", L"SFX_01_Play", true);
+	CBT_SetValue* Sound1Tag = Node_INT_SetValue("소리1 이름 설정", L"SFX_01_Tag", 0);
 	CBT_MoveDirectly* Move0 = Node_MoveDirectly_Rush("이동0", L"Monster_Speed", L"Monster_Dir", -5.f, 0.333, 0);
 	CBT_MoveDirectly* Move1 = Node_MoveDirectly_Rush("이동1", L"Monster_Speed", L"Monster_Dir", -7.f, 0.433, 0);
 	CBT_MoveDirectly* Move2 = Node_MoveDirectly_Rush("이동2", L"Monster_Speed", L"Monster_Dir", -3.f, 0.517, 0);
@@ -542,6 +589,9 @@ CBT_Composite_Node * CFireBoy::Back_Dash()
 	MainSeq->Add_Child(Show_Ani0);
 
 	Root_Parallel->Set_Sub_Child(SubSeq);
+	SubSeq->Add_Child(Sound1Stop);
+	SubSeq->Add_Child(Sound1Play);
+	SubSeq->Add_Child(Sound1Tag);
 	SubSeq->Add_Child(Move0);
 	SubSeq->Add_Child(Move1);
 	SubSeq->Add_Child(Move2);
@@ -559,6 +609,9 @@ CBT_Composite_Node * CFireBoy::Fire_Tracking()
 
 	CBT_Sequence* SubSeq = Node_Sequence("이동");
 	CBT_Wait* Wait0 = Node_Wait("대기0", 0.883, 0);
+	CBT_SetValue* Sound1Stop = Node_BOOL_SetValue("소리1 재생", L"SFX_01_Stop", true);
+	CBT_SetValue* Sound1Play = Node_BOOL_SetValue("소리1 재생", L"SFX_01_Play", true);
+	CBT_SetValue* Sound1Tag = Node_INT_SetValue("소리1 이름 설정", L"SFX_01_Tag", 4);
 	CBT_ChaseDir* ChaseDir0 = Node_ChaseDir("방향 추적", L"Player_Pos", 2.467, 0);
 
 	CBT_CreateEffect* Effect0 = Node_CreateEffect_Finite("총기 입구 이펙트", L"FireBoy_FireBullet_GunEff", L"Bone_Muzzle", 1.0, 70, 0, 0);
@@ -571,6 +624,9 @@ CBT_Composite_Node * CFireBoy::Fire_Tracking()
 
 	Root_Parallel->Set_Sub_Child(SubSeq);
 	SubSeq->Add_Child(Wait0);
+	SubSeq->Add_Child(Sound1Stop);
+	SubSeq->Add_Child(Sound1Play);
+	SubSeq->Add_Child(Sound1Tag);
 	SubSeq->Add_Child(ChaseDir0);
 
 
@@ -593,6 +649,9 @@ CBT_Composite_Node * CFireBoy::Fire_Cone()
 
 	CBT_Sequence* SubSeq = Node_Sequence("이동");
 	CBT_Wait* Wait0 = Node_Wait("대기0", 1.166, 0);
+	CBT_SetValue* Sound1Stop = Node_BOOL_SetValue("소리1 재생", L"SFX_01_Stop", true);
+	CBT_SetValue* Sound1Play = Node_BOOL_SetValue("소리1 재생", L"SFX_01_Play", true);
+	CBT_SetValue* Sound1Tag = Node_INT_SetValue("소리1 이름 설정", L"SFX_01_Tag", 4);
 	CBT_ChaseDir* ChaseDir0 = Node_ChaseDir("방향 추적", L"Player_Pos", 4.05, 0);
 
 	CBT_CreateEffect* Effect0 = Node_CreateEffect_Finite("총기 입구 이펙트", L"FireBoy_FireBullet_GunEff", L"Bone_Muzzle", 1.0, 210, 0, 0);
@@ -605,6 +664,9 @@ CBT_Composite_Node * CFireBoy::Fire_Cone()
 
 	Root_Parallel->Set_Sub_Child(SubSeq);
 	SubSeq->Add_Child(Wait0);
+	SubSeq->Add_Child(Sound1Stop);
+	SubSeq->Add_Child(Sound1Play);
+	SubSeq->Add_Child(Sound1Tag);
 	SubSeq->Add_Child(ChaseDir0);
 
 
@@ -627,6 +689,9 @@ CBT_Composite_Node * CFireBoy::Fire_BigSphere()
 	CBT_Wait* Wait0 = Node_Wait("대기0", 0.283, 0);
 	CBT_MoveDirectly* Move0 = Node_MoveDirectly_Rush("이동0", L"Monster_Speed", L"Monster_Dir", 1.f, 0.35, 0);
 	CBT_RotationDir* Rotation0 = Node_RotationDir("방향 추적", L"Player_Pos", 0.183);
+	CBT_SetValue* Sound1Stop = Node_BOOL_SetValue("소리1 재생", L"SFX_01_Stop", true);
+	CBT_SetValue* Sound1Play = Node_BOOL_SetValue("소리1 재생", L"SFX_01_Play", true);
+	CBT_SetValue* Sound1Tag = Node_INT_SetValue("소리1 이름 설정", L"SFX_01_Tag", 3);
 	CBT_Wait* Wait1 = Node_Wait("대기1", 0.884, 0);
 	CBT_MoveDirectly* Move1 = Node_MoveDirectly_Rush("이동0", L"Monster_Speed", L"Monster_Dir", -1.f, 0.35, 0);
 
@@ -644,6 +709,9 @@ CBT_Composite_Node * CFireBoy::Fire_BigSphere()
 	SubSeq->Add_Child(Wait0);
 	SubSeq->Add_Child(Move0);
 	SubSeq->Add_Child(Rotation0);
+	SubSeq->Add_Child(Sound1Stop);
+	SubSeq->Add_Child(Sound1Play);
+	SubSeq->Add_Child(Sound1Tag);
 	SubSeq->Add_Child(Wait1);
 	SubSeq->Add_Child(Move1);
 
@@ -666,6 +734,9 @@ CBT_Composite_Node * CFireBoy::Fire_Ground()
 	CBT_RotationDir* Rotation0 = Node_RotationDir("방향 추적", L"Player_Pos", 0.2);
 	CBT_Wait* Wait0 = Node_Wait("대기0", 0.733, 0);
 	CBT_MoveDirectly* Move0 = Node_MoveDirectly_Rush("이동0", L"Monster_Speed", L"Monster_Dir", 4.f, 0.233, 0);
+	CBT_SetValue* Sound1Stop = Node_BOOL_SetValue("소리1 재생", L"SFX_01_Stop", true);
+	CBT_SetValue* Sound1Play = Node_BOOL_SetValue("소리1 재생", L"SFX_01_Play", true);
+	CBT_SetValue* Sound1Tag = Node_INT_SetValue("소리1 이름 설정", L"SFX_01_Tag", 2);
 	CBT_Wait* Wait1 = Node_Wait("대기1", 0.984, 0);
 	CBT_MoveDirectly* Move1 = Node_MoveDirectly_Rush("이동1", L"Monster_Speed", L"Monster_Dir", -4.f, 0.233, 0);
 
@@ -681,6 +752,9 @@ CBT_Composite_Node * CFireBoy::Fire_Ground()
 	SubSeq->Add_Child(Rotation0);
 	SubSeq->Add_Child(Wait0);
 	SubSeq->Add_Child(Move0);
+	SubSeq->Add_Child(Sound1Stop);
+	SubSeq->Add_Child(Sound1Play);
+	SubSeq->Add_Child(Sound1Tag);
 	SubSeq->Add_Child(Wait1);
 	SubSeq->Add_Child(Move1);
 
@@ -954,6 +1028,54 @@ HRESULT CFireBoy::Update_Value_Of_BB()
 
 
 
+	// 사운드
+	// SFX_01
+	if (true == m_pAIControllerCom->Get_BoolValue(L"SFX_01_Stop"))	// 멈춤
+	{
+		m_pAIControllerCom->Set_Value_Of_BlackBoard(L"SFX_01_Stop", false);
+
+		g_pSoundManager->Stop_Sound(CSoundManager::CHANNELID::FireBoy_SFX_01);
+	}
+
+	if (true == m_pAIControllerCom->Get_BoolValue(L"SFX_01_Play"))	// 재생
+	{
+		m_pAIControllerCom->Set_Value_Of_BlackBoard(L"SFX_01_Play", false);
+
+		g_pSoundManager->Play_Sound(const_cast<TCHAR*>(m_mapSound[m_pAIControllerCom->Get_IntValue(L"SFX_01_Tag")]), CSoundManager::CHANNELID::FireBoy_SFX_01, CSoundManager::SOUND::Effect_Sound);
+	}
+
+	// SFX_02
+	if (true == m_pAIControllerCom->Get_BoolValue(L"SFX_02_Stop"))	// 멈춤
+	{
+		m_pAIControllerCom->Set_Value_Of_BlackBoard(L"SFX_02_Stop", false);
+
+		g_pSoundManager->Stop_Sound(CSoundManager::CHANNELID::FireBoy_SFX_02);
+	}
+
+	if (true == m_pAIControllerCom->Get_BoolValue(L"SFX_02_Play"))	// 재생
+	{
+		m_pAIControllerCom->Set_Value_Of_BlackBoard(L"SFX_02_Play", false);
+
+		g_pSoundManager->Play_Sound(const_cast<TCHAR*>(m_mapSound[m_pAIControllerCom->Get_IntValue(L"SFX_02_Tag")]), CSoundManager::CHANNELID::FireBoy_SFX_02, CSoundManager::SOUND::Effect_Sound);
+	}
+
+	// Voice
+	if (true == m_pAIControllerCom->Get_BoolValue(L"Voice_Stop"))	// 멈춤
+	{
+		m_pAIControllerCom->Set_Value_Of_BlackBoard(L"Voice_Stop", false);
+
+		g_pSoundManager->Stop_Sound(CSoundManager::CHANNELID::FireBoy_Voice);
+	}
+
+	if (true == m_pAIControllerCom->Get_BoolValue(L"Voice_Play"))	// 재생
+	{
+		m_pAIControllerCom->Set_Value_Of_BlackBoard(L"Voice_Play", false);
+
+		g_pSoundManager->Play_Sound(const_cast<TCHAR*>(m_mapSound[m_pAIControllerCom->Get_IntValue(L"Voice_Tag")]), CSoundManager::CHANNELID::FireBoy_Voice, CSoundManager::SOUND::Effect_Sound);
+	}
+
+
+
 	// 1. 포신으로 때리기 Collider 좌표,  팔이 순식간에 지나가서 충돌이 잘 안되므로 콜라이더 반짝 등장으로 충돌할 것임.
 	_mat matSelf = m_pTransformCom->Get_WorldMat();
 	_v3 vSelfPos = *(_v3*)matSelf.m[3];
@@ -1109,6 +1231,10 @@ void CFireBoy::Check_PhyCollider()
 			{
 				if (0.7 >= (m_tObjParam.fHp_Cur / m_tObjParam.fHp_Max))
 				{
+					g_pSoundManager->Stop_Sound(CSoundManager::CHANNELID::FireBoy_Voice);
+					g_pSoundManager->Play_Sound(const_cast<TCHAR*>(L"Los_BossDown_01_gate_m.ogg"), CSoundManager::CHANNELID::FireBoy_Voice, CSoundManager::SOUND::Effect_Sound);
+
+
 					m_bDown_Start = true;
 
 					m_tObjParam.bDown = true;
@@ -1124,6 +1250,9 @@ void CFireBoy::Check_PhyCollider()
 		}
 		else
 		{
+			g_pSoundManager->Stop_Sound(CSoundManager::CHANNELID::FireBoy_Voice);
+			g_pSoundManager->Play_Sound(const_cast<TCHAR*>(L"Los_BossDead_01_gate_m.ogg"), CSoundManager::CHANNELID::FireBoy_Voice, CSoundManager::SOUND::Effect_Sound);
+
 			m_pMeshCom->SetUp_Animation(Ani_Death);	// 죽음처리 시작
 			Start_Dissolve(0.4f, false, true, 4.2f);
 			CParticleMgr::Get_Instance()->Create_BossDeadParticle_Effect(m_pTransformCom->Get_Pos() + _v3(0.f, 1.3f, 0.f), 3.9f, 0.5f);
@@ -1366,7 +1495,7 @@ HRESULT CFireBoy::SetUp_ConstantTable(CShader* pShader)
 
 HRESULT CFireBoy::Ready_Weapon()
 {
-	return E_NOTIMPL;
+	return NOERROR;
 }
 
 HRESULT CFireBoy::Ready_BoneMatrix()
@@ -1498,6 +1627,23 @@ HRESULT CFireBoy::Ready_NF(void * pArg)
 	//===================================================================
 
 
+	return S_OK;
+}
+
+HRESULT CFireBoy::Ready_Sound()
+{
+	m_mapSound.emplace(0, L"SE_GATE_KEEPER_MAN_MOVE_001.ogg");
+	m_mapSound.emplace(1, L"SE_GATE_WOMAN_KETUGI_ATTACK_FIRE_002.ogg");
+	m_mapSound.emplace(2, L"SE_GATE_KEEPER_MAN_FLAME_RADIATION_000.ogg");
+	m_mapSound.emplace(3, L"SE_GATE_KEEPER_MAN_KETSUGI_IMPACT_FIRE_002.ogg");
+	m_mapSound.emplace(4, L"SE_GATE_KEEPER_MAN_KETSUGI_IMPACT_FIRE_006.ogg");
+	m_mapSound.emplace(5, L"SE_GATE_KEEPER_MAN_KETSUGI_IMPACT_FIRE_000.ogg");
+	m_mapSound.emplace(6, L"SE_GATE_KEEPER_MAN_ATTACK_IMPACT_000.ogg");
+
+	
+	m_mapSound.emplace(10, L"Los_AttackFlame03_01_gate_m.ogg");
+	m_mapSound.emplace(11, L"Los_AttackTackle01_01_gate_m.ogg");
+	
 	return S_OK;
 }
 

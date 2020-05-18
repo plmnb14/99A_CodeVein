@@ -123,7 +123,7 @@ _int CDarkGroundBullet::Late_Update_GameObject(_double TimeDelta)
 	return NOERROR;
 }
 
-HRESULT CDarkGroundBullet::Render_GameObject()
+HRESULT CDarkGroundBullet::Render_GameObject_Instancing_SetPass(CShader * pShader)
 {
 	Update_Collider();
 	Draw_Collider();

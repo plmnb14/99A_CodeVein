@@ -32,6 +32,7 @@ HRESULT CMouseUI::Ready_GameObject(void * pArg)
 	m_fViewZ = -3.f;
 
 	ShowCursor(FALSE);
+	m_bIsActive = true;
 
 	return NOERROR;
 }
@@ -66,6 +67,9 @@ _int CMouseUI::Late_Update_GameObject(_double TimeDelta)
 
 HRESULT CMouseUI::Render_GameObject()
 {
+	if (!m_bIsActive)
+		return NOERROR;
+
 	if (nullptr == m_pShaderCom ||
 		nullptr == m_pBufferCom)
 		return E_FAIL;

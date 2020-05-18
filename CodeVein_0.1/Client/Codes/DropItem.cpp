@@ -27,6 +27,9 @@ HRESULT CDropItem::Ready_GameObject(void * pArg)
 	m_pEffect->Set_Desc(V3_NULL, m_pTransform);
 	m_pEffect->Reset_Init();
 
+	m_pGet_ItemUI = static_cast<CGet_ItemUI*>(g_pManagement->Clone_GameObject_Return(L"GameObject_Get_ItemUI", pArg));
+	m_pGet_ItemUI->Ready_GameObject(NULL);
+
 	return S_OK;
 }
 
@@ -43,16 +46,13 @@ _int CDropItem::Update_GameObject(_double TimeDelta)
 	//상호작용 대상과 충돌 여부 체크
 	Check_Dist();
 
-	//if(true == m_bCanGetItem)
-	//{
-	//	"줍는다" UI 발동
-	//}
+
 
 	//0.05초마다 이펙트효과 발생
 	if (m_fTempEffectLimitTime > 0.05f)
 	{
 		m_fTempEffectLimitTime = 0.f;
-		cout << "아이템 생성된 효과 발생" << endl;
+		//cout << "아이템 생성된 효과 발생" << endl;
 		switch (m_eItemGrade)
 		{
 		case ITEM_GRADE_NORMAL:
@@ -92,78 +92,310 @@ _int CDropItem::Update_GameObject(_double TimeDelta)
 		m_bEnable = false;
 		m_pEffect->Set_Dead();
 
-		return DEAD_OBJ;
+		//return DEAD_OBJ;
 	}
 	//2.제한 시간 이내
 	else
 	{
-		if (true == m_bCanGetItem)
+		//if (true == m_bCanGetItem)
+		//{
+		//	m_bCanGetItem = false;
+
+		//	//"줍는다" 관련 변수가 참인 경우도 포함할것
+		//	//섬광이펙트,파티클이펙트 등등 획득한 티를 내주고
+		//	//획득 ui를 보여줘야함 ("획득")
+		//	//인벤으로 저장
+
+		//	//아이템 등급
+		//	switch (m_eItemGrade)
+		//	{
+		//	case ITEM_GRADE_NORMAL:
+		//		break;
+		//	case ITEM_GRADE_RARE:
+		//		break;
+		//	case ITEM_GRADE_UNIQUE:
+		//		break;
+		//	case ITEM_GRADE_LEGEND:
+		//		break;
+		//	}
+		//}
+
+		if (true == m_pGet_ItemUI->Get_Show_ItemName())
 		{
+			CItem_Manager* pItem_Mgr = CItem_Manager::Get_Instance();
+			CWeapon* pWeapon = static_cast<CWeapon*>(g_pManagement->Clone_GameObject_Return(L"GameObject_Weapon", NULL));
+
+			if (!pWeapon)
+				return E_FAIL;
+
+			CPickUp_ItemUI* pPickUp = static_cast<CPickUp_ItemUI*>(g_pManagement->Clone_GameObject_Return(L"GameObject_PickUP_ItemUI", nullptr));
+			g_pManagement->Add_GameOject_ToLayer_NoClone(pPickUp, SCENE_MORTAL, L"Layer_PickUp_ItemUI", nullptr);
+
+			pPickUp->Update_GameObject(TimeDelta);
+			pPickUp->Set_Active(true);
+
+			switch (m_eItem_NameType)
+			{
+				case NAMETYPE_WpnAll_Gun_Bayonet:
+				{
+					CUI_Manager::Get_Instance()->Get_Weapon_Inven()->Add_Weapon(pWeapon->Get_WeaponParam(Wpn_Gun));
+					m_iRenderIndex = 0;
+					pItem_Mgr->Set_PickUp_Number(m_iRenderIndex);
+					m_bCanGetItem = true;
+					// 이렇게 하면 안 되는구나ㅜㅜ 이거랑 비슷하게 하면 될 것 같고
+					// 내일 어떻게 접근해야 하는지 좀 생각해보자
+					//pPickUp->Get_vecDropItem().push_back(m_iRenderIndex);
+					break;
+				}
+				case NAMETYPE_WpnAll_Gun_ReverTardor:
+				{
+					//CUI_Manager::Get_Instance()->Get_Weapon_Inven()->Add_Weapon(pWeapon->Get_WeaponParam(Wpn));
+					m_iRenderIndex = 1;
+					pItem_Mgr->Set_PickUp_Number(m_iRenderIndex);
+					m_bCanGetItem = true;
+					break;
+				}
+				case NAMETYPE_WpnAll_Gun_Nakil:
+				{
+					CUI_Manager::Get_Instance()->Get_Weapon_Inven()->Add_Weapon(pWeapon->Get_WeaponParam(Wpn_Gun_Military));
+					m_iRenderIndex = 2;
+					pItem_Mgr->Set_PickUp_Number(m_iRenderIndex);
+					m_bCanGetItem = true;
+					break;
+				}
+				case NAMETYPE_WpnAll_Gun_DarkBayonet:
+				{
+					//CUI_Manager::Get_Instance()->Get_Weapon_Inven()->Add_Weapon(pWeapon->Get_WeaponParam(Wpn_Gun_Black));
+					m_iRenderIndex = 3;
+					pItem_Mgr->Set_PickUp_Number(m_iRenderIndex);
+					m_bCanGetItem = true;
+					break;
+				}
+				case NAMETYPE_WpnAll_Halberd_SolidPiercer:
+				{
+					//CUI_Manager::Get_Instance()->Get_Weapon_Inven()->Add_Weapon(pWeapon->Get_WeaponParam(Wpn_));
+					m_iRenderIndex = 4;
+					pItem_Mgr->Set_PickUp_Number(m_iRenderIndex);
+					m_bCanGetItem = true;
+					break;
+				}
+				case NAMETYPE_WpnAll_Halberd_Black:
+				{
+					CUI_Manager::Get_Instance()->Get_Weapon_Inven()->Add_Weapon(pWeapon->Get_WeaponParam(Wpn_Halberd_Black));
+					m_iRenderIndex = 5;
+					pItem_Mgr->Set_PickUp_Number(m_iRenderIndex);
+					m_bCanGetItem = true;
+					break;
+				}
+				case NAMETYPE_WpnAll_Halberd_DarkBodish:
+				{
+					//CUI_Manager::Get_Instance()->Get_Weapon_Inven()->Add_Weapon(pWeapon->Get_WeaponParam(Wpn_Hal));
+					m_iRenderIndex = 6;
+					pItem_Mgr->Set_PickUp_Number(m_iRenderIndex);
+					m_bCanGetItem = true;
+					break;
+				}
+				case NAMETYPE_WpnAll_Halberd_Nakil:
+				{
+					CUI_Manager::Get_Instance()->Get_Weapon_Inven()->Add_Weapon(pWeapon->Get_WeaponParam(Wpn_Halberd_Military));
+					m_iRenderIndex = 7;
+					pItem_Mgr->Set_PickUp_Number(m_iRenderIndex);
+					m_bCanGetItem = true;
+					break;
+				}
+				case NAMETYPE_WpnAll_Hammer_ImperseAnker:
+				{
+					//CUI_Manager::Get_Instance()->Get_Weapon_Inven()->Add_Weapon(pWeapon->Get_WeaponParam(Wpn_));
+					m_iRenderIndex = 8;
+					pItem_Mgr->Set_PickUp_Number(m_iRenderIndex);
+					m_bCanGetItem = true;
+					break;
+				}
+				case NAMETYPE_WpnAll_Hammer_Black:
+				{
+					CUI_Manager::Get_Instance()->Get_Weapon_Inven()->Add_Weapon(pWeapon->Get_WeaponParam(Wpn_Hammer_Black));
+					m_iRenderIndex = 9;
+					pItem_Mgr->Set_PickUp_Number(m_iRenderIndex);
+					m_bCanGetItem = true;
+					break;
+				}
+				case NAMETYPE_WpnAll_Hammer_DarkHeavyAxe:
+				{
+					//CUI_Manager::Get_Instance()->Get_Weapon_Inven()->Add_Weapon(pWeapon->Get_WeaponParam(Wpn_Hammer));
+					m_iRenderIndex = 10;
+					pItem_Mgr->Set_PickUp_Number(m_iRenderIndex);
+					m_bCanGetItem = true;
+					break;
+				}
+				case NAMETYPE_WpnAll_Hammer_Nakil:
+				{
+					CUI_Manager::Get_Instance()->Get_Weapon_Inven()->Add_Weapon(pWeapon->Get_WeaponParam(Wpn_Hammer_Military));
+					m_iRenderIndex = 11;
+					pItem_Mgr->Set_PickUp_Number(m_iRenderIndex);
+					m_bCanGetItem = true;
+					break;
+				}
+				case NAMETYPE_WpnAll_LSword_Tsubai:
+				{
+					//CUI_Manager::Get_Instance()->Get_Weapon_Inven()->Add_Weapon(pWeapon->Get_WeaponParam(Wpn_LSword_));
+					m_iRenderIndex = 12;
+					pItem_Mgr->Set_PickUp_Number(m_iRenderIndex);
+					m_bCanGetItem = true;
+					break;
+				}
+				case NAMETYPE_WpnAll_LSword_Black:
+				{
+					CUI_Manager::Get_Instance()->Get_Weapon_Inven()->Add_Weapon(pWeapon->Get_WeaponParam(Wpn_LSword_Black));
+					m_iRenderIndex = 13;
+					pItem_Mgr->Set_PickUp_Number(m_iRenderIndex);
+					m_bCanGetItem = true;
+					break;
+				}
+				case NAMETYPE_WpnAll_LSword_Nakil:
+				{
+					CUI_Manager::Get_Instance()->Get_Weapon_Inven()->Add_Weapon(pWeapon->Get_WeaponParam(Wpn_LSword_Military));
+					m_iRenderIndex = 14;
+					pItem_Mgr->Set_PickUp_Number(m_iRenderIndex);
+					m_bCanGetItem = true;
+					break;
+				}
+				case NAMETYPE_WpnAll_LSword_DarkTsubai:
+				{
+					//CUI_Manager::Get_Instance()->Get_Weapon_Inven()->Add_Weapon(pWeapon->Get_WeaponParam(Wpn_LSword_));
+					m_iRenderIndex = 15;
+					pItem_Mgr->Set_PickUp_Number(m_iRenderIndex);
+					m_bCanGetItem = true;
+					break;
+				}
+				case NAMETYPE_WpnAll_SSword_Red:
+				{
+					CUI_Manager::Get_Instance()->Get_Weapon_Inven()->Add_Weapon(pWeapon->Get_WeaponParam(Wpn_SSword));
+					m_iRenderIndex = 16;
+					pItem_Mgr->Set_PickUp_Number(m_iRenderIndex);
+					m_bCanGetItem = true;
+					break;
+				}
+				case NAMETYPE_WpnAll_SSword_Executioner:
+				{
+					//CUI_Manager::Get_Instance()->Get_Weapon_Inven()->Add_Weapon(pWeapon->Get_WeaponParam(Wpn_SSword_));
+					m_iRenderIndex = 17;
+					pItem_Mgr->Set_PickUp_Number(m_iRenderIndex);
+					m_bCanGetItem = true;
+					break;
+				}
+				case NAMETYPE_WpnAll_SSword_Nakil:
+				{
+					m_iRenderIndex = 18;
+					pItem_Mgr->Set_PickUp_Number(m_iRenderIndex);
+					m_bCanGetItem = true;
+					break;
+				}
+				case NAMETYPE_WpnAll_SSword_DarkBrodeSword:
+				{
+					CUI_Manager::Get_Instance()->Get_Weapon_Inven()->Add_Weapon(pWeapon->Get_WeaponParam(Wpn_SSword_Black));
+					m_iRenderIndex = 19;
+					pItem_Mgr->Set_PickUp_Number(m_iRenderIndex);
+					m_bCanGetItem = true;
+					break;
+				}
+				case NAMETYPE_Expend_MaximumUp:
+				{
+					CUI_Manager::Get_Instance()->Get_Expendables_Inven()->Add_Expendables(CExpendables::EXPEND_TYPE::Expend_MaximumUp);
+					m_iRenderIndex = 20;
+					pItem_Mgr->Set_PickUp_Number(m_iRenderIndex);
+					m_bCanGetItem = true;
+					break;
+				}
+				case NAMETYPE_Expend_Hp:
+				{
+					CUI_Manager::Get_Instance()->Get_Expendables_Inven()->Add_Expendables(CExpendables::EXPEND_TYPE::Expend_Hp);
+					m_iRenderIndex = 21;
+					pItem_Mgr->Set_PickUp_Number(m_iRenderIndex);
+					m_bCanGetItem = true;
+					break;
+				}
+				case NAMETYPE_Expend_Return:
+				{
+					CUI_Manager::Get_Instance()->Get_Expendables_Inven()->Add_Expendables(CExpendables::EXPEND_TYPE::Expend_Return);
+					m_iRenderIndex = 22;
+					pItem_Mgr->Set_PickUp_Number(m_iRenderIndex);
+					m_bCanGetItem = true;
+					break;
+				}
+				case NAMETYPE_Expend_Blood:
+				{
+					CUI_Manager::Get_Instance()->Get_Expendables_Inven()->Add_Expendables(CExpendables::EXPEND_TYPE::Expend_Blood);
+					m_iRenderIndex = 23;
+					pItem_Mgr->Set_PickUp_Number(m_iRenderIndex);
+					break;
+				}
+				case NAMETYPE_Expend_Cheet:
+				{
+					CUI_Manager::Get_Instance()->Get_Expendables_Inven()->Add_Expendables(CExpendables::EXPEND_TYPE::Expend_Cheet);
+					m_iRenderIndex = 24;
+					pItem_Mgr->Set_PickUp_Number(m_iRenderIndex);
+					m_bCanGetItem = true;
+					break;
+				}
+				case NAMETYPE_Expend_SuperArmor:
+				{
+					CUI_Manager::Get_Instance()->Get_Expendables_Inven()->Add_Expendables(CExpendables::EXPEND_TYPE::Expend_SuperArmor);
+					m_iRenderIndex = 25;
+					pItem_Mgr->Set_PickUp_Number(m_iRenderIndex);
+					m_bCanGetItem = true;
+					break;
+				}
+				case NAMETYPE_Queen_Steel:
+				{
+					CUI_Manager::Get_Instance()->Get_Material_Inven()->Add_MultiMaterial(CMaterial::MATERIAL_TYPE::Queen_Steel, 1);
+					m_iRenderIndex = 26;
+					pItem_Mgr->Set_PickUp_Number(m_iRenderIndex);
+					m_bCanGetItem = true;
+					break;
+				}
+				case NAMETYPE_Queen_Titanium:
+				{
+					CUI_Manager::Get_Instance()->Get_Material_Inven()->Add_MultiMaterial(CMaterial::MATERIAL_TYPE::Queen_Titanium, 1);
+					m_iRenderIndex = 27;
+					pItem_Mgr->Set_PickUp_Number(m_iRenderIndex);
+					m_bCanGetItem = true;
+					break;
+				}
+				case NAMETYPE_Queen_Tungsten:
+				{
+					CUI_Manager::Get_Instance()->Get_Material_Inven()->Add_MultiMaterial(CMaterial::MATERIAL_TYPE::Queen_Tungsten, 1);
+					m_iRenderIndex = 28;
+					pItem_Mgr->Set_PickUp_Number(m_iRenderIndex);
+					m_bCanGetItem = true;
+					break;
+				}
+				case NAMETYPE_End:
+				{
+					m_bCanGetItem = false;
+					break;
+				}
+			}
+		}
+		else
 			m_bCanGetItem = false;
 
-			//"줍는다" 관련 변수가 참인 경우도 포함할것
-			//섬광이펙트,파티클이펙트 등등 획득한 티를 내주고
-			//획득 ui를 보여줘야함 ("획득")
-			//인벤으로 저장
-
-			//아이템 등급
-			switch (m_eItemGrade)
+			if (true == m_bCanGetItem)
 			{
-			case ITEM_GRADE_NORMAL:
-				break;
-			case ITEM_GRADE_RARE:
-				break;
-			case ITEM_GRADE_UNIQUE:
-				break;
-			case ITEM_GRADE_LEGEND:
-				break;
+				m_bEnable = false;
+				m_bCanGetItem = false;
+				return DEAD_OBJ;
 			}
-			//아이템 종류
-			switch (m_eItemType)
-			{
-			case ITEM_MATERIAL:
-				CUI_Manager::Get_Instance()->Get_Material_Inven()->Add_Material(m_eMaterialType);
-				break;
-			case ITEM_EXPENDABLES:
-				CUI_Manager::Get_Instance()->Get_Expendables_Inven()->Add_Expendables(m_eExpendablesType);
-				break;
-			case ITEM_WEAPON:
-				//CUI_Manager::Get_Instance()->Get_Weapon_Inven()->Add_Weapon();
-				break;
-			case ITEM_PET:
-				CUI_Manager::Get_Instance()->Get_Pet_Inven()->Add_Pet(m_ePetType);
-				break;
-			}
-			//"줍는다" 관련 변수가 참인 경우도 포함할것
-			//섬광이펙트,파티클이펙트 등등 획득한 티를 내주고
-			//획득 ui를 보여줘야함 ("줍는다")
-			//인벤으로 저장
-			//switch (m_eItemType)
-			//{
-			//case ITEM_TYPE::ITEM_MATERIAL:
-			//	CUI_Manager::Get_Instance()->Get_Material_Inven()->Add_Material(m_eMaterialType);
-			//	break;
-			//case ITEM_TYPE::ITEM_EXPENDABLES:
-			//	CUI_Manager::Get_Instance()->Get_Expendables_Inven()->Add_Expendables(m_eExpendablesType);
-			//	break;
-			//case ITEM_TYPE::ITEM_WEAPON:
-			//	CUI_Manager::Get_Instance()->Get_Weapon_Inven()->Add_Weapon(); //무기타입을 받아서 해당아이템이 추가되게끔 -> 이제WPN_PARAM 구조체로 받아야!!
-			//	break;
-			//case ITEM_TYPE::ITEM_PET:
-			//	CUI_Manager::Get_Instance()->Get_Pet_Inven()->Add_Pet(m_ePetType);
-			//	break;
-			//}
+	}
+	
 
-			//g_pManagement->Create_Effect(L"Bullet_DeadFlash", m_pTransform->Get_Pos(), nullptr);
-			//g_pManagement->Create_Effect(L"Bullet_DeadSmoke_Base", m_pTransform->Get_Pos(), nullptr);
-			//g_pManagement->Create_Effect(L"Bullet_DeadSmoke_Black", m_pTransform->Get_Pos(), nullptr);
-			m_bEnable = false;
-
-			return DEAD_OBJ;
-		}
+	if (true == m_bCheck_Start_GetItemUI && nullptr != m_pGet_ItemUI)
+	{
+		m_pGet_ItemUI->Update_GameObject(TimeDelta);
+		// 이미지가 바뀌었을 때 m_bCanGetItem = true;
 	}
 
-	return NO_EVENT;
+
+	return S_OK;
 }
 
 _int CDropItem::Late_Update_GameObject(_double TimeDelta)
@@ -182,7 +414,10 @@ _int CDropItem::Late_Update_GameObject(_double TimeDelta)
 			return E_FAIL;
 	}
 
-	return NO_EVENT;
+	if (nullptr != m_pGet_ItemUI)
+		m_pGet_ItemUI->Late_Update_GameObject(TimeDelta);
+
+	return S_OK;
 }
 
 HRESULT CDropItem::Render_GameObject()
@@ -193,6 +428,9 @@ HRESULT CDropItem::Render_GameObject()
 void CDropItem::Check_Dist()
 {
 	_float fDist;
+	// 펫은 자동으로 획득되게 해야 하기 때문에 m_bCheck_Start_GetItemUI를 사용하지 않는다.
+	
+
 	//p가 접근, 행동o, 제한 시간 이내라면 불값 참
 	//p가 접근, 행동o, 제한 시간 초과라면 불값 거짓
 
@@ -215,14 +453,17 @@ void CDropItem::Check_Dist()
 
 		if (m_fCanGetDist >= fDist)
 		{
-			m_bCanGetItem = true;
+			m_bCheck_Start_GetItemUI = true;
 			return;
 		}
 		else
-			m_bCanGetItem = false;
+		{
+			m_bCheck_Start_GetItemUI = false;
+		}
+			
 	}
 
-	for (auto& Pet_iter : listPet)
+	/*for (auto& Pet_iter : listPet)
 	{
 		if (true == Pet_iter->Get_Dead())
 			continue;
@@ -240,9 +481,7 @@ void CDropItem::Check_Dist()
 		}
 		else
 			m_bCanGetItem = false;
-	}
-
-	return;
+	}*/
 }
 
 void CDropItem::Check_PosY()
@@ -276,7 +515,7 @@ HRESULT CDropItem::Ready_Status(void* _pArg)
 	{
 		m_eItemType = ITEM_TYPE::ITEM_MATERIAL;
 		m_eItemGrade = ITEM_GRADE_TYPE::ITEM_GRADE_NORMAL;
-
+		m_eItem_NameType = ITEM_NAMETYPE::NAMETYPE_WpnAll_Gun_Bayonet;
 		m_eMaterialType = CMaterial::MATERIAL_TYPE::Queen_Steel;
 
 		m_pTransform->Set_Pos(_v3{ 1.f, 0.f, 1.f });
@@ -300,9 +539,11 @@ HRESULT CDropItem::Ready_Status(void* _pArg)
 			break;
 		case ITEM_TYPE::ITEM_PET:
 			m_ePetType = info.ePetType;
+			
 		}
 
 		m_eItemGrade = info.eItemGradeType;
+		m_eItem_NameType = info.eItem_NameType;
 		m_dCanGetItemLimitTimeMax = info.dCanGetLimitTimeMax;
 		m_pTransform->Set_Pos(info.vBirthPos);
 	}
@@ -351,11 +592,14 @@ void CDropItem::Free()
 
 	IF_NOT_NULL(m_pTrailEffect)
 		m_pTrailEffect->Set_Dead();
-
+	if(nullptr != m_pGet_ItemUI)
+		Safe_Release(m_pGet_ItemUI);
 	Safe_Release(m_pTransform);
 	Safe_Release(m_pRenderer);
 
 	CGameObject::Free();
+
+	
 
 	return;
 }

@@ -32,6 +32,7 @@ private:
 	_float m_fPlayerHP = 0.f;
 	_float m_fTotalHP = 0.f;
 	_float m_fPercentage = 0.f;
+	_v2		m_vecNoiseDir;
 
 private:
 	CTransform*				m_pTransformCom = nullptr;
