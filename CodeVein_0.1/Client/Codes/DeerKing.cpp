@@ -12,12 +12,14 @@ CDeerKing::CDeerKing(LPDIRECT3DDEVICE9 pGraphic_Device)
 }
 
 CDeerKing::CDeerKing(const CDeerKing & rhs)
-	: CMonster(rhs)
+	: CMonster(rhs), m_pCloth(rhs.m_pCloth)
 {
 }
 
 HRESULT CDeerKing::Ready_GameObject_Prototype()
 {
+	Ready_Cloth();
+
 	return S_OK;
 }
 
@@ -31,7 +33,6 @@ HRESULT CDeerKing::Ready_GameObject(void * pArg)
 	Ready_BoneMatrix();
 	Ready_Collider();
 	Ready_Sound();
-	//Ready_Cloth();
 
 	m_tObjParam.bCanHit = true;
 	m_tObjParam.fHp_Cur = 10000.f;
@@ -102,6 +103,8 @@ HRESULT CDeerKing::Ready_GameObject(void * pArg)
 
 _int CDeerKing::Update_GameObject(_double TimeDelta)
 {
+	m_pCloth->putToSleep();
+
 	if (false == m_bEnable)
 		return NO_EVENT;
 
@@ -114,7 +117,10 @@ _int CDeerKing::Update_GameObject(_double TimeDelta)
 
 	// 죽었을 경우
 	if (m_bIsDead)
+	{
 		m_bEnable = false;
+		g_pPhysx->Get_Scene()->removeActor(*m_pCloth);
+	}
 
 	// 죽음 애니메이션
 	if (m_bReadyDead)
@@ -172,6 +178,9 @@ _int CDeerKing::Update_GameObject(_double TimeDelta)
 	//====================================================================================================
 	m_bInFrustum = m_pOptimizationCom->Check_InFrustumforObject(&m_pTransformCom->Get_Pos(), 2.f);
 	//====================================================================================================
+
+	if (nullptr != m_pCloth)
+		Update_Cloth();
 
 	return NOERROR;
 }
@@ -2125,8 +2134,8 @@ void CDeerKing::Check_PhyCollider()
 		else
 		{
 			m_pMeshCom->SetUp_Animation(Ani_Death);	// 죽음처리 시작
-			Start_Dissolve(0.7f, false, true, 6.9f);
-			m_pShield->Start_Dissolve(0.7f, false, false, 6.9f);
+			Start_Dissolve(0.55f, false, true, 7.2f);
+			m_pShield->Start_Dissolve(0.55f, false, false, 7.2f);
 			
 			CParticleMgr::Get_Instance()->Create_BossDeadParticle_Effect(m_pTransformCom->Get_Pos() + _v3(0.f, 1.3f, 0.f), 6.2f, 0.5f);
 			//g_pManagement->Create_Effect_Delay(L"Boss_Dead_Particle"					, 5.2f, _v3(0.f, 1.3f, 0.f), m_pTransformCom);
@@ -2541,36 +2550,80 @@ HRESULT CDeerKing::Ready_Sound()
 
 HRESULT CDeerKing::Ready_Cloth()
 {
-	//PxScene& scene = *g_pPhysx->Get_Scene();
-	//PxPhysics& physics = *g_pPhysx->Get_Physics();
+	PxScene& scene = *g_pPhysx->Get_Scene();
+	PxPhysics& physics = *g_pPhysx->Get_Physics();
 
-	//PxSceneWriteLock scopedLock(scene);
+	PxSceneWriteLock scopedLock(scene);
 
-	//vector<PxVec4> vertices;
-	//vector<PxU16> primitives;
-	//PxClothMeshDesc meshDesc = CreateMesh(m_pMeshCom->Get_MeshContainer()[0]->pOriginalMesh, 1.f, PxQuat(PxIdentity), PxVec3(0, 0, 0), vertices, primitives);
+	// 컴포넌트 잠깐 가져올 것임.
+	CMesh_Dynamic* pMesh_Dynamic = static_cast<CMesh_Dynamic*>(CManagement::Get_Instance()->Clone_Component(SCENE_STATIC, L"Mesh_DeerKing"));
 
-	//if (!meshDesc.isValid())
-	//	MSG_BOX(" PxCloth : Failed to Craete Mesh");
+	if (nullptr == pMesh_Dynamic)
+	{
+		MSG_BOX("CDeerKing Ready_Cloth : Failed To Get DeerKingMesh");
+		return E_FAIL;
+	}
 
-	//for (PxU32 i = 32979; i < 32979 + 829; i++)
-	//{
-	//	if (vertices[i].y < 2.9f)
-	//		vertices[i].w = 0.2f;
-	//}
-	//for (PxU32 i = 33892; i < 33892 + 829; i++)
-	//{
-	//	if (vertices[i].y < 2.9f)
-	//		vertices[i].w = 0.2f;
-	//}
+	vector<PxVec4> vertices;
+	vector<PxU16> primitives;
+	PxClothMeshDesc meshDesc = CreateMesh(pMesh_Dynamic->Get_MeshContainer()[0]->pOriginalMesh, 1.f, PxQuat(PxIdentity), PxVec3(0, 0, 0), vertices, primitives);
 
-	//m_pCloth = g_pClothManager->CreateQuadifier(meshDesc);
+	if (!meshDesc.isValid())
+		MSG_BOX(" PxCloth : Failed to Craete Mesh");
 
-	//scene.addActor(*m_pCloth);
+	for (PxU32 i = 32979; i < 32979 + 829; i++)
+	{
+		if (vertices[i].y < 2.9f)
+			vertices[i].w = 0.2f;
+	}
+	for (PxU32 i = 33892; i < 33892 + 829; i++)
+	{
+		if (vertices[i].y < 2.9f)
+			vertices[i].w = 0.2f;
+	}
 
-	//g_pClothManager->Set_Cloth_Default(m_pCloth);
+	m_pCloth = g_pClothManager->CreateQuadifier(meshDesc);
 
-	//m_pCloth->putToSleep();
+	scene.addActor(*m_pCloth);
+
+	// set solver settings
+	m_pCloth->setSolverFrequency(120);
+
+	// damp global particle velocity to 90% every 0.1 seconds
+	m_pCloth->setDampingCoefficient(PxVec3(0.4f)); // damp local particle velocity
+	m_pCloth->setLinearDragCoefficient(PxVec3(0.4f)); // transfer frame velocity
+	m_pCloth->setAngularDragCoefficient(PxVec3(0.4f)); // transfer frame rotation
+
+													 // reduce impact of frame acceleration
+													 // x, z: cloth swings out less when walking in a circle
+													 // y: cloth responds less to jump acceleration
+	m_pCloth->setLinearInertiaScale(PxVec3(0.4f, 0.4f, 0.4f));
+
+	// leave impact of frame torque at default
+	//m_pCloth->setAngularInertiaScale(PxVec3(1.0f));
+	m_pCloth->setAngularInertiaScale(PxVec3(0.2f));
+
+	// reduce centrifugal force of rotating frame
+	m_pCloth->setCentrifugalInertiaScale(PxVec3(0.3f));
+
+	m_pCloth->setInertiaScale(0.5f);
+
+	const bool useCustomConfig = true;
+
+	// custom fiber configuration
+	if (useCustomConfig)
+	{
+		PxClothStretchConfig stretchConfig;
+		stretchConfig.stiffness = 1.0f;
+
+		m_pCloth->setStretchConfig(PxClothFabricPhaseType::eVERTICAL, PxClothStretchConfig(0.8f));
+		m_pCloth->setStretchConfig(PxClothFabricPhaseType::eHORIZONTAL, PxClothStretchConfig(0.6f));
+		m_pCloth->setStretchConfig(PxClothFabricPhaseType::eSHEARING, PxClothStretchConfig(0.5f));
+		m_pCloth->setStretchConfig(PxClothFabricPhaseType::eBENDING, PxClothStretchConfig(0.5f));
+		m_pCloth->setTetherConfig(PxClothTetherConfig(1.0f));
+	}
+
+	m_pCloth->putToSleep();
 
 	return S_OK;
 }
@@ -2698,6 +2751,24 @@ void CDeerKing::Change_Vertex()
 	}
 
 	pMesh->UnlockVertexBuffer();
+}
+
+void CDeerKing::Update_Cloth()
+{
+	PxSceneWriteLock scopedLock(*g_pPhysx->Get_Scene());
+
+	D3DXQUATERNION quater;
+	D3DXVECTOR3 vMonsterPos;
+	D3DXMatrixDecompose(&D3DXVECTOR3(), &quater, &vMonsterPos, &m_pTransformCom->Get_WorldMat());
+
+	PxTransform rootPose = PxTransform(PxVec3(vMonsterPos.x, vMonsterPos.y, vMonsterPos.z), *(PxQuat*)&quater);
+
+	m_pCloth->setTargetPose(rootPose);
+
+	PxReal strength = 20.0f;
+	PxVec3 offset(PxReal(CALC::Random_Num_Double(-1, 1)), PxReal(CALC::Random_Num_Double(-1, 1)), PxReal(CALC::Random_Num_Double(-1, 1)));
+	PxVec3 windAcceleration = strength * offset;
+	m_pCloth->setExternalAcceleration(windAcceleration);
 }
 
 CDeerKing * CDeerKing::Create(LPDIRECT3DDEVICE9 pGraphic_Device)

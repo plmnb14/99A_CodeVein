@@ -229,6 +229,8 @@ private:
 
 	void Change_Vertex();
 
+	void Update_Cloth();
+
 public:
 	static CDeerKing* Create(LPDIRECT3DDEVICE9 pGraphic_Device);
 	virtual CGameObject* Clone_GameObject(void* pArg);
