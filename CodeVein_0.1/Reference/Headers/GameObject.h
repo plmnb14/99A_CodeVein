@@ -129,6 +129,9 @@ public:
 	vector<CCollider*>&		Get_PhysicColVector() { return m_vecPhysicCol; };	// 충돌 체크용 콜라이더 벡터
 	vector<CCollider*>&		Get_AtkColVector() { return m_vecAttackCol; };		// 공격용 콜라이더 벡터
 
+public:
+	virtual void Calulate_MeshContainerSize(void* _pMesh , _bool _bIsDynamic);
+
 protected:
 	vector<CCollider*>		m_vecPhysicCol;		// 충돌 체크용 콜라이더 벡터
 	vector<CCollider*>		m_vecAttackCol;		// 공격용 콜라이더 벡터
@@ -172,6 +175,10 @@ protected:
 
 protected:
 	_bool			m_bInFrustum = false;	// 절두체 내부임?
+
+protected:
+	_ulong			m_dwMeshContainer = 0;
+	_ulong*			m_arrSubsetCnt = nullptr;
 
 protected:
 	map<const _tchar*, CComponent*>			m_pmapComponents;

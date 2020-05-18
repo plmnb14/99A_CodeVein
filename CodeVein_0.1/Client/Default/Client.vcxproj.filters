@@ -433,15 +433,6 @@
     <Filter Include="02.GameObject\Stage\0%29 Player\01%29 Costume">
       <UniqueIdentifier>{fb9e8e53-a817-46da-b751-1fe5abd1c284}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02.GameObject\Stage\0%29 Player\01%29 Costume\[1] Hair">
-      <UniqueIdentifier>{7f462560-9057-4fa4-ac19-b1a9f293ab64}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObject\Stage\0%29 Player\01%29 Costume\[2] Outer">
-      <UniqueIdentifier>{554d7a5c-d8fa-46d4-9db4-34f13afd960b}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObject\Stage\0%29 Player\01%29 Costume\[3] Accessory">
-      <UniqueIdentifier>{a9416921-45fb-498f-978c-3e12343dcd6f}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02.GameObject\Stage\5%29 UI\UI\04. HazeUI">
       <UniqueIdentifier>{b43ab97b-58b5-48ec-bf6c-e7cb04438b4a}</UniqueIdentifier>
     </Filter>
@@ -537,6 +528,21 @@
     </Filter>
     <Filter Include="02.GameObject\Stage\5%29 UI\UI\17. WeaponShopUI\ShopActionFailedPopup">
       <UniqueIdentifier>{fb48775f-5ad6-495d-b848-d4a07f0be4b3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Stage\0%29 Player\01%29 Costume\[3] Hair">
+      <UniqueIdentifier>{7f462560-9057-4fa4-ac19-b1a9f293ab64}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Stage\0%29 Player\01%29 Costume\[1] Head">
+      <UniqueIdentifier>{dcd41aa6-5167-46bf-af7c-ff8f3653a67f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Stage\0%29 Player\01%29 Costume\[2] Body">
+      <UniqueIdentifier>{045c3905-5b4f-43e1-835b-73a3cfd2f179}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Stage\0%29 Player\01%29 Costume\[4] Outer">
+      <UniqueIdentifier>{554d7a5c-d8fa-46d4-9db4-34f13afd960b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Stage\0%29 Player\01%29 Costume\[5] Mask">
+      <UniqueIdentifier>{a9416921-45fb-498f-978c-3e12343dcd6f}</UniqueIdentifier>
     </Filter>
     <Filter Include="02.GameObject\Stage\5%29 UI\UI\18. GeneralStoreUI%28잡화점%29\02. GeneralStoreBuyUI\BuyOptions">
       <UniqueIdentifier>{aa9ae945-c50e-428b-80c8-86d9854a412e}</UniqueIdentifier>
@@ -1075,13 +1081,10 @@
       <Filter>94.StageAgent</Filter>
     </ClInclude>
     <ClInclude Include="..\Headers\Costume_Hair.h">
-      <Filter>02.GameObject\Stage\0%29 Player\01%29 Costume\[1] Hair</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Headers\Costume_Accessory.h">
-      <Filter>02.GameObject\Stage\0%29 Player\01%29 Costume\[3] Accessory</Filter>
+      <Filter>02.GameObject\Stage\0%29 Player\01%29 Costume\[3] Hair</Filter>
     </ClInclude>
     <ClInclude Include="..\Headers\Costume_Outer.h">
-      <Filter>02.GameObject\Stage\0%29 Player\01%29 Costume\[2] Outer</Filter>
+      <Filter>02.GameObject\Stage\0%29 Player\01%29 Costume\[4] Outer</Filter>
     </ClInclude>
     <ClInclude Include="..\Headers\HazeUI.h">
       <Filter>02.GameObject\Stage\5%29 UI\UI\04. HazeUI</Filter>
@@ -1181,6 +1184,15 @@
     </ClInclude>
     <ClInclude Include="..\Headers\ShopActionFailedPopup.h">
       <Filter>02.GameObject\Stage\5%29 UI\UI\17. WeaponShopUI\ShopActionFailedPopup</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\Costume_Mask.h">
+      <Filter>02.GameObject\Stage\0%29 Player\01%29 Costume\[5] Mask</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\Costume_Body.h">
+      <Filter>02.GameObject\Stage\0%29 Player\01%29 Costume\[2] Body</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\Costume_Head.h">
+      <Filter>02.GameObject\Stage\0%29 Player\01%29 Costume\[1] Head</Filter>
     </ClInclude>
     <ClInclude Include="..\Headers\BuyOptionUI.h">
       <Filter>02.GameObject\Stage\5%29 UI\UI\18. GeneralStoreUI%28잡화점%29\02. GeneralStoreBuyUI\BuyOptions</Filter>
@@ -1698,13 +1710,10 @@
       <Filter>94.StageAgent</Filter>
     </ClCompile>
     <ClCompile Include="..\Codes\Costume_Hair.cpp">
-      <Filter>02.GameObject\Stage\0%29 Player\01%29 Costume\[1] Hair</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Codes\Costume_Accessory.cpp">
-      <Filter>02.GameObject\Stage\0%29 Player\01%29 Costume\[3] Accessory</Filter>
+      <Filter>02.GameObject\Stage\0%29 Player\01%29 Costume\[3] Hair</Filter>
     </ClCompile>
     <ClCompile Include="..\Codes\Costume_Outer.cpp">
-      <Filter>02.GameObject\Stage\0%29 Player\01%29 Costume\[2] Outer</Filter>
+      <Filter>02.GameObject\Stage\0%29 Player\01%29 Costume\[4] Outer</Filter>
     </ClCompile>
     <ClCompile Include="..\Codes\HazeUI.cpp">
       <Filter>02.GameObject\Stage\5%29 UI\UI\04. HazeUI</Filter>
@@ -1804,6 +1813,15 @@
     </ClCompile>
     <ClCompile Include="..\Codes\ShopActionFailedPopup.cpp">
       <Filter>02.GameObject\Stage\5%29 UI\UI\17. WeaponShopUI\ShopActionFailedPopup</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\Costume_Mask.cpp">
+      <Filter>02.GameObject\Stage\0%29 Player\01%29 Costume\[5] Mask</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\Costume_Body.cpp">
+      <Filter>02.GameObject\Stage\0%29 Player\01%29 Costume\[2] Body</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\Costume_Head.cpp">
+      <Filter>02.GameObject\Stage\0%29 Player\01%29 Costume\[1] Head</Filter>
     </ClCompile>
     <ClCompile Include="..\Codes\BuyOptionUI.cpp">
       <Filter>02.GameObject\Stage\5%29 UI\UI\18. GeneralStoreUI%28잡화점%29\02. GeneralStoreBuyUI\BuyOptions</Filter>

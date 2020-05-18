@@ -37,24 +37,28 @@ HRESULT CScene_Stage_Base::Ready_Scene()
 
 	g_pManagement->LoadCreateObject_FromPath(m_pGraphic_Device, L"Object_Stage_00.dat");
 
-	// 잭
-	// 나중에 NPC로 교체
-	//g_pManagement->Add_GameObject_ToLayer(L"GameObject_Colleague", SCENE_STAGE, L"Layer_Colleague", &CNPC_Yakumo::NPC_INFO(_v3(-3.46f, -1.37f, -4.294f), D3DXToRadian(90.f)));
-
-	// 야쿠모
-	g_pManagement->Add_GameObject_ToLayer(L"GameObject_NPC_Yakumo", SCENE_STAGE, L"Layer_NPC", &CNPC_Yakumo::NPC_INFO(_v3(-4.46f, -1.37f, -5.294f), D3DXToRadian(90.f)));
-
-	// NPC 1
-	g_pManagement->Add_GameObject_ToLayer(L"GameObject_NPC_Yakumo", SCENE_STAGE, L"Layer_NPC", &CNPC_Yakumo::NPC_INFO(_v3(-10.5f, -1.37f, -14.3f), D3DXToRadian(45.f)));
-
-	// NPC 2
-	g_pManagement->Add_GameObject_ToLayer(L"GameObject_NPC_Yakumo", SCENE_STAGE, L"Layer_NPC", &CNPC_Yakumo::NPC_INFO(_v3(6.283f, -1.37f, -14.75f), D3DXToRadian(-45.f)));
+	//// 야쿠모
+	//g_pManagement->Add_GameObject_ToLayer(L"GameObject_NPC_Yakumo", SCENE_STAGE, L"Layer_NPC", &CNPC_Yakumo::NPC_INFO(_v3(-4.46f, -1.37f, -5.294f), D3DXToRadian(90.f)));
+	//
+	//// NPC 1
+	//g_pManagement->Add_GameObject_ToLayer(L"GameObject_NPC_Yakumo", SCENE_STAGE, L"Layer_NPC", &CNPC_Yakumo::NPC_INFO(_v3(-10.5f, -1.37f, -14.3f), D3DXToRadian(45.f)));
+	//
+	//// NPC 2
+	//g_pManagement->Add_GameObject_ToLayer(L"GameObject_NPC_Yakumo", SCENE_STAGE, L"Layer_NPC", &CNPC_Yakumo::NPC_INFO(_v3(6.283f, -1.37f, -14.75f), D3DXToRadian(-45.f)));
 
 	return S_OK;
 }
 
 _int CScene_Stage_Base::Update_Scene(_double TimeDelta)
 {
+	//====================================================================================================
+	// 만약에 하나의 사운드를 계속해서 재생하고 싶다면
+	// Update 문이나, 순회가능한 곳에 Play 해둔다면 Loop 재생이 가능함.
+	// 단, Update 가 끊기거나 접근이 불가능하면 해당 곡의 Lifetime 이 끝나면 멈춤
+	//====================================================================================================
+	//g_pSoundManager->Play_Sound(L"Gwan_Cchak.wav", CSoundManager::Background_01, CSoundManager::BGM_Sound);
+	//====================================================================================================
+
 	CUI_Manager::Get_Instance()->Update_UI();
 
 	return NO_EVENT;

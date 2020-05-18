@@ -51,7 +51,7 @@ HRESULT CScene_Title::Ready_Scene()
 
 _int CScene_Title::Update_Scene(_double TimeDelta)
 {
-	CUI_Manager::Get_Instance()->Update_UI();
+	//CUI_Manager::Get_Instance()->Update_UI();
 
 	if (true == m_pLoading->Get_Finish())
 	{

@@ -52,8 +52,8 @@ HRESULT CScene_Stage_Training::Ready_Scene()
 
 _int CScene_Stage_Training::Update_Scene(_double TimeDelta)
 {
-	CUI_Manager::Get_Instance()->Update_UI();
-	
+	//CUI_Manager::Get_Instance()->Update_UI();
+
 	//Create_Fog(TimeDelta);
 	//Create_Snow(TimeDelta);
 
@@ -117,18 +117,12 @@ HRESULT CScene_Stage_Training::Ready_Layer_Enemies()
 	//if (FAILED(g_pManagement->Add_GameObject_ToLayer(L"GameObject_Pickup_Item", SCENE_STAGE, L"Layer_PickUPUI")))
 	//	return E_FAIL;
 
-	//// Test Item
-	//pInstance = g_pManagement->Clone_GameObject_Return(L"GameObject_DropItem",
-	//	&CDropItem::ITEM_STATUS(ITEM_GRADE_TYPE::ITEM_GRADE_UNIQUE, ITEM_NAMETYPE::NAMETYPE_Queen_Steel, _v3(5.f, 0.f, 5.f), 5000.f));
-	//g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Item", nullptr);
-
-	//pInstance = g_pManagement->Clone_GameObject_Return(L"GameObject_DropItem",
-	//	&CDropItem::ITEM_STATUS(ITEM_GRADE_TYPE::ITEM_GRADE_UNIQUE, ITEM_NAMETYPE::NAMETYPE_Queen_Titanium, _v3(10.f, 0.f, 10.f), 5000.f));
-	//g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Item", nullptr);
-
-	// ±èÀç±¸
-	//pInstance = g_pManagement->Clone_GameObject_Return(L"GameObject_Colleague", 
-	//	&CPlayer_Colleague::JACK_INFO(_v3(10.f, 0.f, 5.f), 0.f, 0));
+	//// ±èÀç±¸
+	//pInstance = g_pManagement->Clone_GameObject_Return(L"GameObject_Colleague", nullptr);
+	///*TARGET_TO_TRANS(pInstance)->Set_Pos(_v3(5.f, 0.f, 5.f));*/
+	//TARGET_TO_NAV(pInstance)->Reset_NaviMesh();
+	//TARGET_TO_NAV(pInstance)->Ready_NaviMesh(m_pGraphic_Device, L"Navmesh_Training.dat");
+	//TARGET_TO_NAV(pInstance)->Check_OnNavMesh(_v3(0.f, 0.f, 0.f));
 	//g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Colleague", nullptr);
 
 	// ¾ßÄí¸ð
@@ -140,7 +134,7 @@ HRESULT CScene_Stage_Training::Ready_Layer_Enemies()
 	//		true, _v3(8.f, 0.f, -8.f), V3_NULL, 0));
 	//g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Monster", nullptr);
 
-	//// ÅäÅÛ
+	// ÅäÅÛ
 	//pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_Cocoon",
 	//	&CMonster::MONSTER_STATUS(CMonster::MONSTER_COLOR_TYPE::COLOR_NONE, WEAPON_STATE::WEAPON_None,
 	//		true, _v3(-5.f, 0.f, -5.f), V3_NULL, 0));
@@ -391,7 +385,7 @@ HRESULT CScene_Stage_Training::Ready_LightDesc()
 	NEW_LIGHT		LightDesc;
 	ZeroMemory(&LightDesc, sizeof(NEW_LIGHT));
 
-	_v3 vLightPos = _v3(5.f, -8.f, -5.f);
+	_v3 vLightPos = _v3(50.f, -100.f, 0.f);
 	V3_NORMAL_SELF(&vLightPos);
 
 	LightDesc.Type = D3DLIGHT_DIRECTIONAL;

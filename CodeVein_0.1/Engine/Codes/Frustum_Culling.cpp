@@ -16,7 +16,7 @@ HRESULT CFrustum_Culling::Ready_Component()
 	return S_OK;
 }
 
-_bool CFrustum_Culling::Check_InFrustumObj(const _v3* pPos, const _float& fRadius , CQuadTree* pQuadTree)
+_bool CFrustum_Culling::Check_InFrustumObj(const _v3* pPos, const _float& fRadius)
 {
 	Ready_Frustum();
 
@@ -50,10 +50,6 @@ _bool CFrustum_Culling::Check_InFrustumObj(const _v3* pPos, const _float& fRadiu
 	// z-
 	D3DXPlaneFromPoints(&m_Plane[5], &m_vPoint[0], &m_vPoint[1], &m_vPoint[2]);
 
-	if (nullptr != pQuadTree)
-	{
-		//pQuadTree->Check_QuadTree_Frustum_Object(this, pVtxPos, pIndex, pTriCnt);
-	}
 
 	return Check_InFrustum(pPos , fRadius);
 }
@@ -69,6 +65,13 @@ _bool CFrustum_Culling::Check_InFrustum(const _v3* pPos, const _float fRadius)
 		if (fDistance > fRadius)
 			return false;
 	}
+
+	return true;
+}
+
+_bool CFrustum_Culling::Check_InFrustum_Advenced(const _v3 * _Pos, const _float fRadius)
+{
+	_float fDist = 0.f;
 
 	return true;
 }
