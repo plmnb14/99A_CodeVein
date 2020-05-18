@@ -30,7 +30,7 @@ public:
 	HRESULT Ready_Essential_Prototype_GameObject();
 	HRESULT Ready_Layer_Logo(const _tchar* pLayerTag);
 	HRESULT Ready_Layer_Custom(const _tchar* pLayerTag);
-
+	HRESULT Late_Init();
 private:
 	virtual void Update_DebugStage_Console();
 
@@ -42,6 +42,7 @@ private:
 	CLogoBtn*			m_pLogoBtn = nullptr;
 	CLoadingScreen*		m_pLoadingScreen = nullptr;
 	_bool				m_bIsChangeStage = false;
+	_bool				m_bLateInit = false;
 	COrthoEffect*		m_pGlitterEffect_0 = nullptr;
 	COrthoEffect*		m_pGlitterEffect_1 = nullptr;
 	COrthoEffect*		m_pTitleBG = nullptr;

@@ -44,6 +44,7 @@ HRESULT CScene_Logo::Ready_Scene()
 
 _int CScene_Logo::Update_Scene(_double TimeDelta)
 {
+	Late_Init();
 	Logo_KeyInput();
 
 	if (true == m_pLoading->Get_Finish())
@@ -165,23 +166,6 @@ HRESULT CScene_Logo::Ready_Layer_Logo(const _tchar * pLayerTag)
 	if (FAILED(g_pManagement->Add_GameOject_ToLayer_NoClone(pMouseUI, SCENE_STATIC, L"Layer_MouseUI", nullptr)))
 		return E_FAIL;
 
-	if (FAILED(g_pManagement->Add_GameObject_ToLayer(L"GameObject_LogoBackGround", SCENE_LOGO, L"Layer_LogoBackGround")))
-		return E_FAIL;
-	if (FAILED(g_pManagement->Add_GameObject_ToLayer(L"GameObject_LogoButton", SCENE_LOGO, L"Layer_LogoButton")))
-		return E_FAIL;
-
-	m_pLogoBtn = static_cast<CLogoBtn*>(g_pManagement->Get_GameObjectBack(L"Layer_LogoButton", SCENE_LOGO));
-	Safe_AddRef(m_pLogoBtn);
-
-	if (FAILED(g_pManagement->Add_GameObject_ToLayer(L"GameObject_LoadingScreen", SCENE_STATIC, L"Layer_LoadingScreen")))
-		return E_FAIL;
-	m_pLoadingScreen = static_cast<CLoadingScreen*>(g_pManagement->Get_GameObjectBack(L"Layer_LoadingScreen", SCENE_STATIC));
-	m_pLoadingScreen->Set_FadeSpeed(0.6f);
-
-	m_pTitleBG = static_cast<COrthoEffect*>(CParticleMgr::Get_Instance()->Create_EffectReturn(L"Ortho_Title_BG"));
-	m_pTitleBG->Set_Desc(_v3(0, 0, 0), nullptr);
-	m_pTitleBG->Reset_Init();
-	
 	m_pGlitterEffect_0 = static_cast<COrthoEffect*>(CParticleMgr::Get_Instance()->Create_EffectReturn(L"Ortho_Title_Glitter_0"));
 	m_pGlitterEffect_0->Set_Desc(_v3(0, 0, 0), nullptr);
 	m_pGlitterEffect_0->Set_UV_Speed(0.03f, 0.f);
@@ -239,6 +223,32 @@ HRESULT CScene_Logo::Ready_Layer_Custom(const _tchar* pLayerTag)
 	if (FAILED(g_pManagement->Add_GameOject_ToLayer_NoClone(pCustomInven, SCENE_LOGO, pLayerTag, nullptr)))
 		return E_FAIL;
 
+
+	return S_OK;
+}
+
+HRESULT CScene_Logo::Late_Init()
+{
+	if (m_bLateInit)
+		return S_OK;
+	m_bLateInit = true;
+
+	if (FAILED(g_pManagement->Add_GameObject_ToLayer(L"GameObject_LoadingScreen", SCENE_STATIC, L"Layer_LoadingScreen")))
+		return E_FAIL;
+	m_pLoadingScreen = static_cast<CLoadingScreen*>(g_pManagement->Get_GameObjectBack(L"Layer_LoadingScreen", SCENE_STATIC));
+	m_pLoadingScreen->Set_FadeSpeed(0.6f);
+
+	if (FAILED(g_pManagement->Add_GameObject_ToLayer(L"GameObject_LogoBackGround", SCENE_LOGO, L"Layer_LogoBackGround")))
+		return E_FAIL;
+	if (FAILED(g_pManagement->Add_GameObject_ToLayer(L"GameObject_LogoButton", SCENE_LOGO, L"Layer_LogoButton")))
+		return E_FAIL;
+
+	m_pLogoBtn = static_cast<CLogoBtn*>(g_pManagement->Get_GameObjectBack(L"Layer_LogoButton", SCENE_LOGO));
+	Safe_AddRef(m_pLogoBtn);
+
+	m_pTitleBG = static_cast<COrthoEffect*>(CParticleMgr::Get_Instance()->Create_EffectReturn(L"Ortho_Title_BG"));
+	m_pTitleBG->Set_Desc(_v3(0, 0, 0), nullptr);
+	m_pTitleBG->Reset_Init();
 
 	return S_OK;
 }
