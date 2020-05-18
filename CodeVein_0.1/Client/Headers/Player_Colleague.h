@@ -109,6 +109,14 @@ public:
 public:
 	_float	Get_CollHP() { return m_tObjParam.fHp_Cur; }
 
+public:
+	void	Set_Length(_float Length) { m_fAll_Length = Length; }
+
+public:
+	void	Calling_Colleague(_bool _Calling_Colleague);
+
+	void	Check_Navi();
+
 private:
 	HRESULT Add_Component(void* pArg);
 	HRESULT	SetUp_Default();
@@ -119,8 +127,7 @@ private:
 	HRESULT	Ready_Collider();
 	HRESULT	Ready_Weapon();
 
-private:
-	void	Set_Length(_float Length) { m_fAll_Length = Length; }
+
 
 private:
 	void	Update_Collider();
@@ -133,8 +140,6 @@ private:
 	void	Check_MyHit();
 
 	void	Set_AniEvent();
-
-	void	Check_Navi();
 
 private:
 	void	Colleague_Movement(_float fSpeed, _v3 vDir);

@@ -30,9 +30,6 @@ HRESULT CDropItem::Ready_GameObject(void * pArg)
 	m_pGet_ItemUI = static_cast<CGet_ItemUI*>(g_pManagement->Clone_GameObject_Return(L"GameObject_Get_ItemUI", pArg));
 	m_pGet_ItemUI->Ready_GameObject(NULL);
 
-	//m_pPickUp_ItemUI = static_cast<CPickUp_ItemUI*>(g_pManagement->Clone_GameObject_Return(L"GameObject_PickUp_ItemUI", pArg));
-	//m_pPickUp_ItemUI->Ready_GameObject(NULL);
-
 	return S_OK;
 }
 

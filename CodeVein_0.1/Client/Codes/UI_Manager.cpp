@@ -163,6 +163,9 @@ HRESULT CUI_Manager::Add_UI_Prototype(_Device pDevice)
 
 	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_PickUP_ItemUI", CPickUp_ItemUI::Create(pDevice))))
 		return E_FAIL;
+
+	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_Calling_Colleague", CCalling_Colleague::Create(pDevice))))
+		return E_FAIL;
 	
 
 	//=======================================================
@@ -315,6 +318,10 @@ HRESULT CUI_Manager::SetUp_UILayer()
 	////////////Get Item UI
 	m_pPickUp_ItemUI = static_cast<CPickUp_ItemUI*>(g_pManagement->Clone_GameObject_Return(L"GameObject_PickUP_ItemUI", nullptr));
 	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pPickUp_ItemUI, SCENE_MORTAL, L"Layer_PickUp_ItemUI", nullptr);
+
+	// 동료 활성화/비활성화 UI
+	m_pCalling_Colleague = static_cast<CCalling_Colleague*>(g_pManagement->Clone_GameObject_Return(L"GameObject_Calling_Colleague", nullptr));
+	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pCalling_Colleague, SCENE_MORTAL, L"Layer_Calling_ColleagueUI", nullptr);
 
 
 	

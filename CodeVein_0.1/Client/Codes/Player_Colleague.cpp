@@ -10,7 +10,7 @@
 #include "ObjectPool_Manager.h"
 #include "Haze.h"
 
-#include "Item_Manager.h"
+#include "UI_Manager.h"
 
 
 CPlayer_Colleague::CPlayer_Colleague(LPDIRECT3DDEVICE9 pGraphic_Device)
@@ -53,6 +53,8 @@ HRESULT CPlayer_Colleague::Ready_GameObject(void * pArg)
 	m_pBattleAgentCom->Set_RimAlpha(0.25f);
 	m_pBattleAgentCom->Set_RimValue(7.f);
 
+	m_bEnable = true;
+
 
 	m_pCollJack = static_cast<CColleague_Jack*>(g_pManagement->Clone_GameObject_Return(L"GameObject_Colleague_Jack", pArg));
 	m_pCollJack->Set_Target(this);
@@ -65,8 +67,8 @@ HRESULT CPlayer_Colleague::Ready_GameObject(void * pArg)
 
 _int CPlayer_Colleague::Update_GameObject(_double TimeDelta)
 {
-	/*if (false == m_bEnable)
-		return E_FAIL;*/
+	if (false == m_bEnable)
+		return NOERROR;
 
 
 	//====================================================================================================
@@ -101,12 +103,6 @@ _int CPlayer_Colleague::Update_GameObject(_double TimeDelta)
 	if (0 >= m_tObjParam.fHp_Cur && 0 > m_iMyHeal_Count)
 		m_eMovetype = CPlayer_Colleague::Coll_Dead;
 
-	//if (m_eMovetype == CPlayer_Colleague::Coll_Dead)
-	//{
-	//	g_pSoundManager->Stop_Sound(CSoundManager::Jack_Voice);
-	//	g_pSoundManager->Play_Sound(L"Jack_Death.ogg", CSoundManager::Jack_Voice, CSoundManager::Voice_Sound);
-	//}
-
 	if (false == m_bStage_LetsGo && m_eMovetype == CPlayer_Colleague::Coll_Move)
 	{
 		m_bStage_LetsGo = true;
@@ -114,6 +110,12 @@ _int CPlayer_Colleague::Update_GameObject(_double TimeDelta)
 		g_pSoundManager->Play_Sound(L"Jack_Let_Go.ogg", CSoundManager::Jack_Voice, CSoundManager::Voice_Sound);
 	}
 
+	//CUI_Manager* pUI_Manager = CUI_Manager::Get_Instance();
+	//if (true == pUI_Manager->Get_Get_ItemUI()->Get_Show_ItemName())
+	//{
+	//	g_pSoundManager->Stop_Sound(CSoundManager::Jack_Voice);
+	//	g_pSoundManager->Play_Sound(L"Nice_Item.ogg", CSoundManager::Jack_Voice, CSoundManager::Voice_Sound);
+	//}
 		
 
 	if ((10.f >= m_tObjParam.fHp_Cur && 0 <= m_iMyHeal_Count) &&
@@ -175,8 +177,8 @@ _int CPlayer_Colleague::Update_GameObject(_double TimeDelta)
 
 _int CPlayer_Colleague::Late_Update_GameObject(_double TimeDelta)
 {
-	/*if (false == m_bEnable)
-	return NO_EVENT;*/
+	if (false == m_bEnable)
+	return NOERROR;
 
 	IF_NULL_VALUE_RETURN(m_pRendererCom, E_FAIL);
 
@@ -221,6 +223,9 @@ HRESULT CPlayer_Colleague::Render_GameObject()
 	IF_NULL_VALUE_RETURN(m_pDynamicMesh, E_FAIL);
 
 	m_pDynamicMesh->Play_Animation(DELTA_60 * m_dPlayAni_Time);
+
+	if (false == m_bEnable)
+		return NOERROR;
 
 	if (m_bInFrustum)
 	{
@@ -3201,6 +3206,19 @@ void CPlayer_Colleague::Function_FBRL()
 			m_eFBLR = Coll_FBLR::Coll_Back;
 		else if (-180.f <= fAngle && -90.f > fAngle)
 			m_eFBLR = Coll_FBLR::Coll_Back;
+	}
+}
+
+void CPlayer_Colleague::Calling_Colleague(_bool _Calling_Colleague)
+{
+	if (true == _Calling_Colleague)
+	{
+		// 동료 소환
+
+	}
+	else
+	{
+		// 소환 해제
 	}
 }
 

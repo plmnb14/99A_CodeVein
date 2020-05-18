@@ -54,5 +54,18 @@ enum ITEM_NAMETYPE
 	NAMETYPE_Queen_Titanium,
 	NAMETYPE_Queen_Tungsten,
 
+	// 블러드코드
+	NAMETYPE_BloodCode_Artemis,
+	NAMETYPE_BloodCode_Assassin,
+	NAMETYPE_BloodCode_DarkKnight,
+	NAMETYPE_BloodCode_Queen,
+	NAMETYPE_BloodCode_Berserker,
+	NAMETYPE_BloodCode_Hephaestus,
+	NAMETYPE_BloodCode_Fighter,
+	NAMETYPE_BloodCode_Heimdal,
+	NAMETYPE_BloodCode_Hermes,
+	NAMETYPE_BloodCode_Atlas,
+	NAMETYPE_BloodCode_Prometheus,
+
 	NAMETYPE_End
 };

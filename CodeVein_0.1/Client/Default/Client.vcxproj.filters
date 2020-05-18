@@ -421,9 +421,6 @@
     <Filter Include="02.GameObject\Stage\9%29 Player_Colleague\Colleague Bullet\Heal Bullet">
       <UniqueIdentifier>{b84dff3e-d563-4cc5-bc33-692582cf11b8}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02.GameObject\Stage\5%29 UI\UI\15. Colleague UI\Colleague Jack">
-      <UniqueIdentifier>{1256d69f-6532-4f43-93af-fc4859017616}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02.GameObject\Stage\3%29 Effect\Effect_FireFlower">
       <UniqueIdentifier>{e3f3b1d2-c8df-469c-b4a2-7ebc9b7ebbc1}</UniqueIdentifier>
     </Filter>
@@ -552,6 +549,15 @@
     </Filter>
     <Filter Include="02.GameObject\Stage\5%29 UI\UI\19.NPC_InteractionUI">
       <UniqueIdentifier>{2daaaef8-fa47-4495-9b69-26032a063b5f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Stage\5%29 UI\UI\15. Colleague UI\00. Base_Colleague">
+      <UniqueIdentifier>{4d703d90-b4cc-4d4a-b54e-77f6bd367b9d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Stage\5%29 UI\UI\15. Colleague UI\01. Colleague Jack">
+      <UniqueIdentifier>{1256d69f-6532-4f43-93af-fc4859017616}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Stage\5%29 UI\UI\15. Colleague UI\02. Calling_Colleague">
+      <UniqueIdentifier>{9fbf4ba7-29f6-4035-b2af-46743d057ed1}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -975,14 +981,11 @@
     <ClInclude Include="..\Headers\Pet_Slot.h">
       <Filter>02.GameObject\Stage\5%29 UI\UI\03.Inven_UI\01.Slot\11.PetSlot</Filter>
     </ClInclude>
-    <ClInclude Include="..\Headers\Colleague_UI.h">
-      <Filter>02.GameObject\Stage\5%29 UI\UI\15. Colleague UI</Filter>
-    </ClInclude>
     <ClInclude Include="..\Headers\Colleague_Bullet.h">
       <Filter>02.GameObject\Stage\9%29 Player_Colleague\Colleague Bullet\Att Bullet</Filter>
     </ClInclude>
     <ClInclude Include="..\Headers\Colleague_Jack.h">
-      <Filter>02.GameObject\Stage\5%29 UI\UI\15. Colleague UI\Colleague Jack</Filter>
+      <Filter>02.GameObject\Stage\5%29 UI\UI\15. Colleague UI\01. Colleague Jack</Filter>
     </ClInclude>
     <ClInclude Include="..\Headers\CollBullet_Heal.h">
       <Filter>02.GameObject\Stage\9%29 Player_Colleague\Colleague Bullet\Heal Bullet</Filter>
@@ -1175,6 +1178,12 @@
     </ClInclude>
     <ClInclude Include="..\Headers\NPC_InteractionUI.h">
       <Filter>02.GameObject\Stage\5%29 UI\UI\19.NPC_InteractionUI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\Colleague_UI.h">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\15. Colleague UI\00. Base_Colleague</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\Calling_Colleague.h">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\15. Colleague UI\02. Calling_Colleague</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -1586,14 +1595,11 @@
     <ClCompile Include="..\Codes\Pet_Slot.cpp">
       <Filter>02.GameObject\Stage\5%29 UI\UI\03.Inven_UI\01.Slot\11.PetSlot</Filter>
     </ClCompile>
-    <ClCompile Include="..\Codes\Colleague_UI.cpp">
-      <Filter>02.GameObject\Stage\5%29 UI\UI\15. Colleague UI</Filter>
-    </ClCompile>
     <ClCompile Include="..\Codes\Colleague_Bullet.cpp">
       <Filter>02.GameObject\Stage\9%29 Player_Colleague\Colleague Bullet\Att Bullet</Filter>
     </ClCompile>
     <ClCompile Include="..\Codes\Colleague_Jack.cpp">
-      <Filter>02.GameObject\Stage\5%29 UI\UI\15. Colleague UI\Colleague Jack</Filter>
+      <Filter>02.GameObject\Stage\5%29 UI\UI\15. Colleague UI\01. Colleague Jack</Filter>
     </ClCompile>
     <ClCompile Include="..\Codes\CollBullet_Heal.cpp">
       <Filter>02.GameObject\Stage\9%29 Player_Colleague\Colleague Bullet\Heal Bullet</Filter>
@@ -1783,6 +1789,12 @@
     </ClCompile>
     <ClCompile Include="..\Codes\NPC_InteractionUI.cpp">
       <Filter>02.GameObject\Stage\5%29 UI\UI\19.NPC_InteractionUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\Colleague_UI.cpp">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\15. Colleague UI\00. Base_Colleague</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\Calling_Colleague.cpp">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\15. Colleague UI\02. Calling_Colleague</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
