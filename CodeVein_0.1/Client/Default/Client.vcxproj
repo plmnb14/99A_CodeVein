@@ -210,6 +210,8 @@
     <ClInclude Include="..\Headers\ExplainMaterialUI.h" />
     <ClInclude Include="..\Headers\ExplainWeaponUI.h" />
     <ClInclude Include="..\Headers\ExpendBuyUI.h" />
+    <ClInclude Include="..\Headers\GeneralStoreNPCUI.h" />
+    <ClInclude Include="..\Headers\GeneralStoreOption.h" />
     <ClInclude Include="..\Headers\MaterialBuyUI.h" />
     <ClInclude Include="..\Headers\MaterialCollectionUI.h" />
     <ClInclude Include="..\Headers\MaterialOptionUI.h" />
@@ -414,6 +416,8 @@
     <ClCompile Include="..\Codes\ExplainMaterialUI.cpp" />
     <ClCompile Include="..\Codes\ExplainWeaponUI.cpp" />
     <ClCompile Include="..\Codes\ExpendBuyUI.cpp" />
+    <ClCompile Include="..\Codes\GeneralStoreNPCUI.cpp" />
+    <ClCompile Include="..\Codes\GeneralStoreOption.cpp" />
     <ClCompile Include="..\Codes\MaterialBuyUI.cpp" />
     <ClCompile Include="..\Codes\MaterialCollectionUI.cpp" />
     <ClCompile Include="..\Codes\MaterialOptionUI.cpp" />

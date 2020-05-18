@@ -220,6 +220,12 @@ HRESULT CUI_Manager::Add_UI_Prototype(_Device pDevice)
 		return E_FAIL;
 	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_ShopItemIcon", CShopItemIcon::Create(pDevice))))
 		return E_FAIL;
+	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_GeneralStoreOption", CGeneralStoreOption::Create(pDevice))))
+		return E_FAIL;
+
+	// ===================================================================================
+	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_GeneralStoreNPCUI", CGeneralStoreNPCUI::Create(pDevice))))
+		return E_FAIL;
 
 	return NOERROR;
 }
@@ -318,6 +324,9 @@ HRESULT CUI_Manager::SetUp_UILayer()
 	m_pGeneralStoreUI = static_cast<CGeneralStoreUI*>(g_pManagement->Clone_GameObject_Return(L"GameObject_GeneralStoreUI", nullptr));
 	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pGeneralStoreUI, SCENE_MORTAL, L"Layer_PlayerUI", nullptr);
 
+	// ¿‚»≠¡° NPC UI
+	///m_pGeneralStoreNPCUI = static_cast<CGeneralStoreNPCUI*>(g_pManagement->Clone_GameObject_Return(L"GameObject_GeneralStoreNPCUI", nullptr));
+	//g_pManagement->Add_GameOject_ToLayer_NoClone(m_pGeneralStoreNPCUI, SCENE_MORTAL, L"Layer_PlayerUI", nullptr);
 	//////////////////////////////////// ∆Í UI /////////////////////////////////////////////////////////////////////
 	// ∆Í ¿Œ∫•≈‰∏Æ
 	m_pPet_Inven = static_cast<CPet_Inven*>(g_pManagement->Clone_GameObject_Return(L"GameObject_PetInven", nullptr));

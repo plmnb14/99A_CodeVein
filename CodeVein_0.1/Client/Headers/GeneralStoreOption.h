@@ -4,21 +4,23 @@
 #include "UI.h"
 
 BEGIN(Client)
-class CBloodCodeSlot final : public CUI
+class CGeneralStoreOption final : public CUI
 {
+public:
+	enum OPTION_TYPE
+	{
+		OPTION_PURCHASE,
+		OPTION_BYE,
+		OPTION_END
+	};
 private:
-	explicit CBloodCodeSlot(_Device pDevice);
-	explicit CBloodCodeSlot(const CBloodCodeSlot& rhs);
-	virtual ~CBloodCodeSlot() = default;
+	explicit CGeneralStoreOption(_Device pDevice);
+	explicit CGeneralStoreOption(const CGeneralStoreOption& rhs);
+	virtual ~CGeneralStoreOption() = default;
 
 public:
-	BloodCode_ID Get_CodeID() { return m_eID; }
-	_bool Get_Release() { return m_bIsRelease; }
-
-public:
-	void Set_CodeID(BloodCode_ID eID) { m_eID = eID; }
+	void Set_OptionType(OPTION_TYPE eType) { m_eOptionType = eType; }
 	void Set_Select(_bool bIsSelect) { m_bIsSelect = bIsSelect; }
-	void Set_Release(_bool bIsRelease) { m_bIsRelease = bIsRelease; }
 
 public:
 	virtual HRESULT Ready_GameObject_Prototype();
@@ -30,9 +32,7 @@ public:
 private:
 	HRESULT Add_Component();
 	HRESULT SetUp_ConstantTable(_uint iIndex);
-	void SetUp_Default();
-	void SetUp_BloodCodeIdx();
-	
+
 private:
 	CTransform*				m_pTransformCom = nullptr;
 	CRenderer*				m_pRendererCom = nullptr;
@@ -42,15 +42,12 @@ private:
 	CCollider*				m_pCollider = nullptr;
 
 private:
-	BloodCode_ID			m_eID = BloodCode_End;
-	_bool					m_bIsSelect = false;
-	_float					m_fAlpha = 0.f;
-	_bool					m_bIsRelease = false;
+	_bool m_bIsSelect = false;
+	OPTION_TYPE			m_eOptionType = OPTION_END;
 
 public:
-	static CBloodCodeSlot*		Create(_Device pGraphic_Device);
+	static CGeneralStoreOption*	Create(_Device pGraphic_Device);
 	virtual CGameObject*		Clone_GameObject(void* pArg);
 	virtual void				Free();
 };
-
 END
