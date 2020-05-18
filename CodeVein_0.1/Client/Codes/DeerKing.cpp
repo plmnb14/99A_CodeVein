@@ -2,6 +2,9 @@
 #include "..\Headers\DeerKing.h"
 #include "..\Headers\Weapon.h"
 #include "..\Headers\BossHP.h"
+#include "ClothManager.h"
+
+using namespace physx;
 
 CDeerKing::CDeerKing(LPDIRECT3DDEVICE9 pGraphic_Device)
 	: CMonster(pGraphic_Device)
@@ -28,6 +31,7 @@ HRESULT CDeerKing::Ready_GameObject(void * pArg)
 	Ready_BoneMatrix();
 	Ready_Collider();
 	Ready_Sound();
+	//Ready_Cloth();
 
 	m_tObjParam.bCanHit = true;
 	m_tObjParam.fHp_Cur = 10000.f;
@@ -276,6 +280,9 @@ HRESULT CDeerKing::Render_GameObject_Instancing_SetPass(CShader * pShader)
 	if (nullptr == pShader ||
 		nullptr == m_pMeshCom)
 		return E_FAIL;
+
+	if (nullptr != m_pCloth)
+		Change_Vertex();
 
 	m_pMeshCom->Play_Animation(DELTA_60 * m_dAniPlayMul);
 
@@ -2534,6 +2541,167 @@ HRESULT CDeerKing::Ready_Sound()
 	m_mapSound.emplace(10, L"SE_BOSSGUY_BARK_ATTACK_002.ogg");
 	
 	return S_OK;
+}
+
+HRESULT CDeerKing::Ready_Cloth()
+{
+	//PxScene& scene = *g_pPhysx->Get_Scene();
+	//PxPhysics& physics = *g_pPhysx->Get_Physics();
+
+	//PxSceneWriteLock scopedLock(scene);
+
+	//vector<PxVec4> vertices;
+	//vector<PxU16> primitives;
+	//PxClothMeshDesc meshDesc = CreateMesh(m_pMeshCom->Get_MeshContainer()[0]->pOriginalMesh, 1.f, PxQuat(PxIdentity), PxVec3(0, 0, 0), vertices, primitives);
+
+	//if (!meshDesc.isValid())
+	//	MSG_BOX(" PxCloth : Failed to Craete Mesh");
+
+	//for (PxU32 i = 32979; i < 32979 + 829; i++)
+	//{
+	//	if (vertices[i].y < 2.9f)
+	//		vertices[i].w = 0.2f;
+	//}
+	//for (PxU32 i = 33892; i < 33892 + 829; i++)
+	//{
+	//	if (vertices[i].y < 2.9f)
+	//		vertices[i].w = 0.2f;
+	//}
+
+	//m_pCloth = g_pClothManager->CreateQuadifier(meshDesc);
+
+	//scene.addActor(*m_pCloth);
+
+	//g_pClothManager->Set_Cloth_Default(m_pCloth);
+
+	//m_pCloth->putToSleep();
+
+	return S_OK;
+}
+
+physx::PxClothMeshDesc CDeerKing::CreateMesh(LPD3DXMESH pMesh, physx::PxReal scale, physx::PxQuat rot, physx::PxVec3 offset, vector<physx::PxVec4>& vertices, vector<physx::PxU16>& indices)
+{
+	if (nullptr == pMesh)
+	{
+		MSG_BOX("CCloth : n_pMesh is Nullptr");
+		return PxClothMeshDesc();
+	}
+
+	/*
+	Attribld	1
+	FaceStart	51146
+	FaceCount	1344
+	VertexStart	32979
+	VertexCount	829
+
+	Attribld	3
+	FaceStart	52570
+	FaceCount	1344
+	VertexStart	33892
+	VertexCount	829
+
+	흔들릴 버텍스 총 수 : 34721 - 32979 = 1742  
+	흔들릴 삼각형 총 수 : 53914 - 51146 = 2768
+	*/
+
+	_ulong numVertices = pMesh->GetNumVertices();
+	_ulong numTriangles = pMesh->GetNumFaces();
+
+	vertices.resize(numVertices);
+	indices.resize(numTriangles * 3);
+
+	vector<PxVec3> verticesTemp;
+	verticesTemp.resize(numVertices);
+
+	////////////////////////////////////////////////////
+	// 버텍스 포지션 정보를 vec3 에서 vec4로 바꿔서 저장
+	//IDirect3DVertexBuffer9* pVB = nullptr;
+	_byte*		pVertices = nullptr;
+
+	//m_pMesh->GetVertexBuffer(&pVB);
+	//pVB->Lock(0, 0, (void**)&pVertices, 0);
+	pMesh->LockVertexBuffer(0, (void**)&pVertices);
+
+	_ulong dwStride = pMesh->GetNumBytesPerVertex();
+
+	for (_ulong i = 0; i < numVertices; ++i)
+	{
+		PxVec3 vTemp = *(PxVec3*)(pVertices + (i * dwStride));
+		verticesTemp[i] = vTemp;
+	}
+
+	PxVec3 *vSrc = (PxVec3*)&(*verticesTemp.begin());
+	PxVec4 *vDest = &(*vertices.begin());
+	for (_ulong i = 0; i < numVertices; i++, vDest++, vSrc++)
+	{
+		*vDest = PxVec4(scale * rot.rotate(*vSrc) + offset, 0.f);
+	}
+
+	//pVB->Unlock();
+	pMesh->UnlockVertexBuffer();
+
+	/////////////////////////////////////////////////////
+	// 인덱스 정보 저장
+	_byte *	pIndex = nullptr;
+
+	pMesh->LockIndexBuffer(0, (void**)&pIndex);
+	//pMesh->GetIndexBuffer(&m_pIB);
+	//m_pIB->Lock(0, 0, (void**)&pIndex, 0);
+
+	for (_ulong i = 0; i < numTriangles * 3; ++i)
+	{
+		indices[i] = *((PxU16*)pIndex + i);
+	}
+
+	pMesh->UnlockIndexBuffer();
+
+
+	PxClothMeshDesc meshDesc;
+
+	// convert vertex array to PxBoundedData (desc.points)
+	meshDesc.points.data = &(*vertices.begin());
+	meshDesc.points.count = static_cast<PxU32>(numVertices);
+	meshDesc.points.stride = sizeof(PxVec4);
+
+	meshDesc.invMasses.data = &vertices.begin()->w;
+	meshDesc.invMasses.count = static_cast<PxU32>(numVertices);
+	meshDesc.invMasses.stride = sizeof(PxVec4);
+
+	// convert face index array to PxBoundedData (desc.triangles)
+	meshDesc.triangles.data = &(*indices.begin());
+	meshDesc.triangles.count = static_cast<PxU32>(numTriangles);
+	meshDesc.triangles.stride = sizeof(PxU16) * 3; // <- stride per triangle
+												   //meshDesc.triangles.stride = sizeof(PxU32) * 3; // <- stride per triangle
+
+	meshDesc.flags = PxMeshFlag::e16_BIT_INDICES;
+
+	return meshDesc;
+}
+
+void CDeerKing::Change_Vertex()
+{
+	physx::PxSceneWriteLock scopedLock(*g_pPhysx->Get_Scene());
+
+	physx::PxClothFabric* pFabric = m_pCloth->getFabric();
+	physx::PxClothParticleData* pData = m_pCloth->lockParticleData();
+
+	LPD3DXMESH	pMesh = m_pMeshCom->Get_MeshContainer()[0]->pOriginalMesh;
+	//LPD3DXMESH	pMesh = m_pDynamicMesh->Get_MeshContainer()[0]->MeshData.pMesh;
+	_ulong dwStride = pMesh->GetNumBytesPerVertex();
+
+	_byte* pVertices = nullptr;
+
+	pMesh->LockVertexBuffer(0, (void**)&pVertices);
+
+
+	_ulong adsfas = _ulong(pFabric->getNbParticles());
+
+	for (_ulong i = 0; i < _ulong(pFabric->getNbParticles()); ++i)
+	{
+		*(_v3*)(pVertices + (i * dwStride)) = *(_v3*)(pData->particles + i);
+	}
+
+	pMesh->UnlockVertexBuffer();
 }
 
 CDeerKing * CDeerKing::Create(LPDIRECT3DDEVICE9 pGraphic_Device)

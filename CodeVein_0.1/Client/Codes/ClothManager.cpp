@@ -141,6 +141,9 @@ void CClothManager::Clear_Collider(physx::PxCloth* pCloth)
 {
 	Reset_CurRadius();
 
+	if (nullptr == pCloth)
+		return;
+
 	for (_uint i = 0; i < pCloth->getNbCollisionSpheres(); ++i)
 		pCloth->removeCollisionSphere(i);
 
@@ -750,13 +753,6 @@ void CClothManager::Update_Cloth_ColPos(physx::PxCloth * pCloth)
 	// 드레이프 충돌 구
 	if (pCloth == m_pCloth_Dynamic[Drape_01])
 	{
-
-	}
-
-	// 건틀릿 충돌 구
-	else if (pCloth == m_pCloth_Dynamic[Gauntlet_01] ||
-		pCloth == m_pCloth_Dynamic[Gauntlet_03])
-	{
 		if (0 == pCloth->getNbCollisionSpheres())
 		{
 			vector<PxClothCollisionSphere> vecSpheres;
@@ -765,15 +761,13 @@ void CClothManager::Update_Cloth_ColPos(physx::PxCloth * pCloth)
 			_v3 vHip = *(_v3*)(&(m_pPlayerFrame[Hips]->CombinedTransformationMatrix.m[3]));
 			vecSpheres[0] = (PxClothCollisionSphere(*(PxVec3*)(&vHip), m_fCurRadius[Hips]));
 
-			_v3 vLeftForeArm = *(_v3*)(&(m_pPlayerFrame[LeftForeArm]->CombinedTransformationMatrix.m[3]));
-			vecSpheres[1] = (PxClothCollisionSphere(*(PxVec3*)(&vLeftForeArm), m_fCurRadius[LeftForeArm]));
+			_v3 vLeftUpLeg = *(_v3*)(&(m_pPlayerFrame[LeftUpLeg]->CombinedTransformationMatrix.m[3]));
+			vecSpheres[1] = (PxClothCollisionSphere(*(PxVec3*)(&vLeftUpLeg), m_fCurRadius[LeftUpLeg]));
 
-			_v3 vLeftHand = *(_v3*)(&(m_pPlayerFrame[LeftHand]->CombinedTransformationMatrix.m[3]));
-			vecSpheres[2] = (PxClothCollisionSphere(*(PxVec3*)(&vLeftHand), m_fCurRadius[LeftHand]));
+			_v3 vRightUpLeg = *(_v3*)(&(m_pPlayerFrame[RightUpLeg]->CombinedTransformationMatrix.m[3]));
+			vecSpheres[2] = (PxClothCollisionSphere(*(PxVec3*)(&vRightUpLeg), m_fCurRadius[RightUpLeg]));
 
 			pCloth->setCollisionSpheres(&vecSpheres.front(), (PxU32)vecSpheres.size());
-
-			pCloth->addCollisionCapsule(1, 2);
 		}
 
 		vector<PxClothCollisionSphere> vecSpheres;
@@ -784,16 +778,57 @@ void CClothManager::Update_Cloth_ColPos(physx::PxCloth * pCloth)
 		vecSpheres[0].pos = *(PxVec3*)(&m_pPlayerFrame[Hips]->CombinedTransformationMatrix.m[3]);
 		vecSpheres[0].radius = m_fCurRadius[Hips];
 
-		vecSpheres[1].pos = *(PxVec3*)(&m_pPlayerFrame[LeftForeArm]->CombinedTransformationMatrix.m[3]);
-		vecSpheres[1].radius = m_fCurRadius[LeftForeArm];
+		vecSpheres[1].pos = *(PxVec3*)(&m_pPlayerFrame[LeftUpLeg]->CombinedTransformationMatrix.m[3]);
+		vecSpheres[1].radius = m_fCurRadius[LeftUpLeg];
 
-		vecSpheres[2].pos = *(PxVec3*)(&m_pPlayerFrame[LeftHand]->CombinedTransformationMatrix.m[3]);
-		vecSpheres[2].radius = m_fCurRadius[LeftHand];
+		vecSpheres[2].pos = *(PxVec3*)(&m_pPlayerFrame[RightUpLeg]->CombinedTransformationMatrix.m[3]);
+		vecSpheres[2].radius = m_fCurRadius[RightUpLeg];
 
 		pCloth->setCollisionSpheres(&vecSpheres.front(), (PxU32)vecSpheres.size());
 	}
+
+	//// 건틀릿 충돌 구
+	//else if (pCloth == m_pCloth_Dynamic[Gauntlet_01] ||
+	//	pCloth == m_pCloth_Dynamic[Gauntlet_03])
+	//{
+	//	if (0 == pCloth->getNbCollisionSpheres())
+	//	{
+	//		vector<PxClothCollisionSphere> vecSpheres;
+	//		vecSpheres.resize(3);
+
+	//		_v3 vHip = *(_v3*)(&(m_pPlayerFrame[Hips]->CombinedTransformationMatrix.m[3]));
+	//		vecSpheres[0] = (PxClothCollisionSphere(*(PxVec3*)(&vHip), m_fCurRadius[Hips]));
+
+	//		_v3 vLeftForeArm = *(_v3*)(&(m_pPlayerFrame[LeftForeArm]->CombinedTransformationMatrix.m[3]));
+	//		vecSpheres[1] = (PxClothCollisionSphere(*(PxVec3*)(&vLeftForeArm), m_fCurRadius[LeftForeArm]));
+
+	//		_v3 vLeftHand = *(_v3*)(&(m_pPlayerFrame[LeftHand]->CombinedTransformationMatrix.m[3]));
+	//		vecSpheres[2] = (PxClothCollisionSphere(*(PxVec3*)(&vLeftHand), m_fCurRadius[LeftHand]));
+
+	//		pCloth->setCollisionSpheres(&vecSpheres.front(), (PxU32)vecSpheres.size());
+
+	//		pCloth->addCollisionCapsule(1, 2);
+	//	}
+
+	//	vector<PxClothCollisionSphere> vecSpheres;
+	//	vecSpheres.resize(3);
+
+	//	pCloth->getCollisionData(&vecSpheres.front(), 0, 0, 0, 0);
+
+	//	vecSpheres[0].pos = *(PxVec3*)(&m_pPlayerFrame[Hips]->CombinedTransformationMatrix.m[3]);
+	//	vecSpheres[0].radius = m_fCurRadius[Hips];
+
+	//	vecSpheres[1].pos = *(PxVec3*)(&m_pPlayerFrame[LeftForeArm]->CombinedTransformationMatrix.m[3]);
+	//	vecSpheres[1].radius = m_fCurRadius[LeftForeArm];
+
+	//	vecSpheres[2].pos = *(PxVec3*)(&m_pPlayerFrame[LeftHand]->CombinedTransformationMatrix.m[3]);
+	//	vecSpheres[2].radius = m_fCurRadius[LeftHand];
+
+	//	pCloth->setCollisionSpheres(&vecSpheres.front(), (PxU32)vecSpheres.size());
+	//}
 	// 롱코트 충돌 구
 	else if (pCloth == m_pCloth_Dynamic[LongCoat_01] ||
+		pCloth == m_pCloth_Dynamic[LongCoat_02] ||
 		pCloth == m_pCloth_Dynamic[LongCoat_03])
 	{
 		if (0 == pCloth->getNbCollisionSpheres())

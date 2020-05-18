@@ -192,6 +192,8 @@ private:
 private:
 	map<_int, const TCHAR*>	m_mapSound;
 
+private:
+	physx::PxCloth*	m_pCloth = nullptr;
 
 private:
 	HRESULT Update_Bone_Of_BlackBoard();
@@ -219,6 +221,13 @@ private:
 	HRESULT Ready_Collider();
 	HRESULT Ready_NF(void* pArg);
 	HRESULT Ready_Sound();
+
+private:
+	HRESULT Ready_Cloth();
+	physx::PxClothMeshDesc CreateMesh(LPD3DXMESH pMesh, physx::PxReal scale, physx::PxQuat rot, physx::PxVec3 offset,
+		vector<physx::PxVec4>& vertices, vector<physx::PxU16>& indices);
+
+	void Change_Vertex();
 
 public:
 	static CDeerKing* Create(LPDIRECT3DDEVICE9 pGraphic_Device);
