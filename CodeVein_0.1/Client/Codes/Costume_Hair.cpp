@@ -385,11 +385,6 @@ HRESULT CCostume_Hair::Render_GameObject_Instancing_SetPass(CShader * pShader)
 		if (m_bDissolve)
 			m_iPass = 3;
 
-		if (m_iPass == 7)
-		{
-			cout << "7¹ø" << endl;
-		}
-
 		//bOnToonRimLight = true;
 		//pShader->Set_Value("g_bToonRimLight", &bOnToonRimLight, sizeof(_bool));
 

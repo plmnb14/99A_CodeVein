@@ -1310,7 +1310,7 @@ _uint CLoading::Loading_Title()
 	g_pManagement->LoadMesh_FromPath(m_pGraphicDev, L"../../Data/Load_MeshData/Mesh_Dynamic_Path.dat");
 	
 	//cout << "NPC 불러오는 중 . . ." << endl;
-	//g_pManagement->LoadMesh_FromPath(m_pGraphicDev, L"../../Data/Load_MeshData/Mesh_NPC_Path.dat");
+	g_pManagement->LoadMesh_FromPath(m_pGraphicDev, L"../../Data/Load_MeshData/Mesh_NPC_Path.dat");
 	//============================================================================================================
 	// 무기 불러오는 중
 	//============================================================================================================

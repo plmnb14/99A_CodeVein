@@ -4,6 +4,7 @@
 #include "GameObject.h"
 #include "Management.h"
 #include "CameraMgr.h"
+#include "ScriptManager.h"
 
 #include "UI_Manager.h"
 
@@ -13,9 +14,7 @@
 
 BEGIN(Client)
 
-class CCostume_Mask;
-class CCostume_Head;
-class CCostume_Body;
+class CLockOn_UI;
 class CCostume_Outer;
 class CCostume_Hair;
 class CStageAgent;
@@ -122,6 +121,9 @@ private:
 	CGameObject*			m_pCunterTarget = nullptr;
 
 private:
+	CLockOn_UI*				m_pLockOn_UI = nullptr;
+
+private:
 	CTransform*				m_pTransform = nullptr;
 	CRenderer*				m_pRenderer = nullptr;
 	CShader*				m_pShader = nullptr;
@@ -145,6 +147,7 @@ private:
 private:
 	CUI_Manager*			m_pUIManager = nullptr;
 	CCameraMgr*				m_pCamManager = nullptr;
+	CScriptManager*			m_pScriptManager = nullptr;
 
 private:
 	vector<CCollider*>		m_vecPhsycColl;
@@ -417,6 +420,9 @@ public:
 	virtual void Active_UI_StageSelect(_bool _bResetUI = false);	// 스테이지 선택
 	virtual void Active_UI_NPC(_bool _bResetUI = false);			// NPC 와의 대화
 	virtual void Active_UI_BloodCode(_bool _bResetUI = false);			// NPC 와의 대화
+
+public:
+	virtual void Active_UI_LockOn(_bool _bResetUI = false);
 
 public:
 	static	CPlayer* Create(_Device pGraphic_Device);

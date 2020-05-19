@@ -175,6 +175,8 @@ HRESULT CUI_Manager::Add_UI_Prototype(_Device pDevice)
 	//=======================================================
 	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_FontNum", CUI_FontNum::Create(pDevice))))
 		return E_FAIL;
+	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_LockOn_UI", CLockOn_UI::Create(pDevice))))
+		return E_FAIL;
 	//=======================================================
 
 	// ================== ∆Í ¿Œ∫•≈‰∏Æ ==================

@@ -107,6 +107,8 @@
 #include "PickUp_ItemUI.h"
 #include "Calling_Colleague.h"
 
+#include "LockOn_UI.h"
+
 BEGIN(Client)
 
 class CUI_Manager final : public CBase

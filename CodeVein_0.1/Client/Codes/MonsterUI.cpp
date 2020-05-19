@@ -160,7 +160,7 @@ HRESULT CMonsterUI::Render_GameObject()
 
 	if (m_fMonsterHp > 0)	// HP 변경이 있거나 플레이어가 락온했거나
 	{
-		m_pGraphic_Dev->SetRenderState(D3DRS_CULLMODE, D3DCULL_NONE);
+		//m_pGraphic_Dev->SetRenderState(D3DRS_CULLMODE, D3DCULL_NONE);
 
 		m_pShaderCom->Begin_Shader();
 

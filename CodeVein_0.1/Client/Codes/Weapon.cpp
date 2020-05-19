@@ -175,7 +175,7 @@ HRESULT CWeapon::Render_GameObject_Instancing_SetPass(CShader * pShader)
 		pShader->End_Pass();
 	}
 
-	Draw_Collider();
+	//Draw_Collider();
 
 	return NOERROR;
 }
@@ -202,10 +202,6 @@ HRESULT CWeapon::Render_GameObject_SetPass(CShader* pShader, _int iPass, _bool _
 	//============================================================================================
 	if (_bIsForMotionBlur)
 	{
-		if (FAILED(pShader->Set_Value("g_matView", &ViewMatrix, sizeof(_mat))))
-			return E_FAIL;
-		if (FAILED(pShader->Set_Value("g_matProj", &ProjMatrix, sizeof(_mat))))
-			return E_FAIL;
 		if (FAILED(pShader->Set_Value("g_matLastWVP", &m_matLastWVP, sizeof(_mat))))
 			return E_FAIL;
 
@@ -258,6 +254,9 @@ HRESULT CWeapon::Render_GameObject_SetPass(CShader* pShader, _int iPass, _bool _
 
 void CWeapon::OnCollisionEnter()
 {
+	if (false == m_tObjParam.bCanAttack)
+		return;
+
 	Update_Collider();
 
 	// =============================================================================================
@@ -1144,7 +1143,7 @@ HRESULT CWeapon::SetUp_ConstantTable(CShader* pShader)
 	//=============================================================================================
 	// 쉐이더 재질정보 수치 입력
 	//=============================================================================================
-	_float	fEmissivePower = 3.f;	// 이미시브 : 높을 수록, 자체 발광이 강해짐.
+	_float	fEmissivePower = 5.f;	// 이미시브 : 높을 수록, 자체 발광이 강해짐.
 	_float	fSpecularPower = 5.f;	// 메탈니스 : 높을 수록, 정반사가 강해짐.
 	_float	fRoughnessPower = 0.5f;	// 러프니스 : 높을 수록, 빛 산란이 적어짐(빛이 응집됨).
 	_float	fRimLightPower = 0.f;	// 림		: 높을 수록 빛이 퍼짐(림라이트의 범위가 넓어지고 , 밀집도가 낮아짐).
@@ -1155,8 +1154,6 @@ HRESULT CWeapon::SetUp_ConstantTable(CShader* pShader)
 	if (FAILED(pShader->Set_Value("g_fSpecularPower", &fSpecularPower, sizeof(_float))))
 		return E_FAIL;
 	if (FAILED(pShader->Set_Value("g_fRoughnessPower", &fRoughnessPower, sizeof(_float))))
-		return E_FAIL;
-	if (FAILED(pShader->Set_Value("g_fRimAlpha", &fRimLightPower, sizeof(_float))))
 		return E_FAIL;
 	if (FAILED(pShader->Set_Value("g_fMinSpecular", &fMinSpecular, sizeof(_float))))
 		return E_FAIL;

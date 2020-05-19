@@ -10,6 +10,8 @@
 #include "Costume_Hair.h"
 #include "Costume_Outer.h"
 
+#include "LockOn_UI.h"
+
 float g_OriginCamPos = 3.f;
 
 CPlayer::CPlayer(LPDIRECT3DDEVICE9 pGraphic_Device)
@@ -75,6 +77,12 @@ HRESULT CPlayer::Ready_GameObject(void * pArg)
 
 	m_pOuter->Change_OuterMesh(CClothManager::Gauntlet_01);
 
+
+	m_pLockOn_UI = (CLockOn_UI*)g_pManagement->Clone_GameObject_Return(L"GameObject_LockOn_UI", nullptr);
+
+	m_pScriptManager = CScriptManager::Get_Instance();
+	Safe_AddRef(m_pScriptManager);
+
 	return NOERROR;
 }
 
@@ -89,7 +97,7 @@ _int CPlayer::Update_GameObject(_double TimeDelta)
 		if (m_lDebugValue >= 4)
 			m_lDebugValue = 0;
 
-		cout << m_lDebugValue << endl;
+		//cout << m_lDebugValue << endl;
 
 		Change_PlayerBody((PLAYER_BODY)m_lDebugValue);
 	}
@@ -130,7 +138,7 @@ _int CPlayer::Update_GameObject(_double TimeDelta)
 
 	m_pNavMesh->Goto_Next_Subset(m_pTransform->Get_Pos(), nullptr);
 
-	CScriptManager::Get_Instance()->Update_ScriptMgr(TimeDelta, m_pNavMesh->Get_SubSetIndex(), m_pNavMesh->Get_CellIndex());
+	m_pScriptManager->Update_ScriptMgr(TimeDelta, m_pNavMesh->Get_SubSetIndex(), m_pNavMesh->Get_CellIndex());
 
 	return NO_EVENT;
 }
@@ -774,7 +782,7 @@ void CPlayer::Parameter_Movement()
 	if (false == m_bOnAttack)
 		fAngle = (m_pTarget != nullptr ?
 			D3DXToDegree(m_pTransform->Chase_Target_Angle(&TARGET_TO_TRANS(m_pTarget)->Get_Pos())) :
-			CCameraMgr::Get_Instance()->Get_XAngle());
+			m_pCamManager->Get_XAngle());
 
 	else
 		fAngle = D3DXToDegree(m_pTransform->Get_Angle().y);
@@ -828,12 +836,17 @@ void CPlayer::Parameter_Aiming()
 		{
 			if (m_pTarget->Get_Target_Hp() <= 0.f)
 			{
+				m_pTarget = nullptr;
 				m_bHaveAimingTarget = false;
 				m_bOnAiming = false;
 
-				CCameraMgr::Get_Instance()->Set_AimingTarget(nullptr);
-				CCameraMgr::Get_Instance()->Set_OnAimingTarget(false);
-				CCameraMgr::Get_Instance()->Set_LockAngleX(D3DXToDegree(m_pTransform->Get_Angle(AXIS_Y)));
+				m_pCamManager->Set_AimingTarget(nullptr);
+				m_pCamManager->Set_OnAimingTarget(false);
+				m_pCamManager->Set_LockAngleX(D3DXToDegree(m_pTransform->Get_Angle(AXIS_Y)));
+
+				//==========================================================================
+				Active_UI_LockOn(true);
+				//==========================================================================
 
 				return;
 			}
@@ -841,8 +854,13 @@ void CPlayer::Parameter_Aiming()
 
 		Target_AimChasing();
 
-		if(nullptr != m_pTarget)
+		if (nullptr != m_pTarget)
+		{
 			m_pTransform->Set_Angle(AXIS_Y, m_pTransform->Chase_Target_Angle(&TARGET_TO_TRANS(m_pTarget)->Get_Pos()));
+
+			// 디졸브 쓸라면 수정
+			m_pLockOn_UI->Update_GameObject(0);
+		}
 	}
 
 	else if (false == m_bOnAiming)
@@ -852,8 +870,12 @@ void CPlayer::Parameter_Aiming()
 			m_pTarget = nullptr;
 			m_bHaveAimingTarget = false;
 
-			CCameraMgr::Get_Instance()->Set_AimingTarget(m_pTarget);
-			CCameraMgr::Get_Instance()->Set_OnAimingTarget(false);
+			m_pCamManager->Set_AimingTarget(m_pTarget);
+			m_pCamManager->Set_OnAimingTarget(false);
+
+			//==========================================================================
+			Active_UI_LockOn(true);
+			//==========================================================================
 		}
 	}
 }
@@ -1371,6 +1393,11 @@ void CPlayer::Target_AimChasing()
 			m_pTransform->Set_Angle(AXIS_Y, m_pTransform->Chase_Target_Angle(&pTargetTransPos));
 
 			m_bOnAiming = true;
+
+			//==========================================================================
+			Active_UI_LockOn();
+			//==========================================================================
+
 			return;
 		}
 	}
@@ -1417,9 +1444,18 @@ void CPlayer::Target_AimChasing()
 			m_pTransform->Set_Angle(AXIS_Y, m_pTransform->Chase_Target_Angle(&pTargetTransPos));
 
 			m_bOnAiming = true;
+
+			//==========================================================================
+			Active_UI_LockOn();
+			//==========================================================================
+
 			return;
 		}
 	}
+
+	//==========================================================================
+	Active_UI_LockOn(true);
+	//==========================================================================
 
 	m_bOnAiming = false;
 	m_pCamManager->Set_OnAimingTarget(false);
@@ -1431,7 +1467,7 @@ void CPlayer::KeyInput()
 {
 	// 디버그 할때만 사용됩니다.
 	//=====================================================================
-	if (CCameraMgr::Get_Instance()->Get_CamView() == TOOL_VIEW)
+	if (m_pCamManager->Get_CamView() == TOOL_VIEW)
 		return;
 	//=====================================================================
 
@@ -1453,8 +1489,6 @@ void CPlayer::KeyInput()
 	if (m_eActState == ACT_Dead)
 		return;
 
-	cout << "키를 눌러 주세요" << endl;
-
 	KeyDown();
 	KeyUp();
 }
@@ -1470,8 +1504,6 @@ void CPlayer::KeyDown()
 	{
 		if (false == m_bStopMovementKeyInput)
 		{
-			cout << "오냐" << endl;
-
 			// 이동관련
 			Key_Movement_Down();
 
@@ -1741,7 +1773,7 @@ void CPlayer::Key_Special()
 
 		if (false == m_bOnAiming)
 		{
-			CCameraMgr::Get_Instance()->Set_LockAngleX(D3DXToDegree(m_pTransform->Get_Angle(AXIS_Y)));
+			m_pCamManager->Set_LockAngleX(D3DXToDegree(m_pTransform->Get_Angle(AXIS_Y)));
 		}
 	}
 }
@@ -3437,7 +3469,7 @@ void CPlayer::Play_Dodge()
 			return;
 		}
 
-		else if (m_pDynamicMesh->Is_Finish_Animation_Lower(0.25f))
+		else if (m_pDynamicMesh->Is_Finish_Animation_Lower(0.3f))
 		{
 			m_bCanDodge = true;
 			m_bStopMovementKeyInput = false;
@@ -3767,28 +3799,28 @@ void CPlayer::Play_Hit()
 		}
 
 		m_eAnim_Upper =
-			(iHitDir == 0 ? Cmn_Damage_01_B : 
-				iHitDir == 1 ? Cmn_Damage_01_F :
+			(iHitDir == 0 ? Cmn_Damage_01_F : 
+				iHitDir == 1 ? Cmn_Damage_01_B :
 				iHitDir == 2 ? Cmn_Damage_01_R : Cmn_Damage_01_L);
 
 		//m_eAnim_Upper =
-		//	(iHitDir == 0 ? Cmn_Hit02_B :
-		//		iHitDir == 1 ? Cmn_Hit02_F :
+		//	(iHitDir == 0 ? Cmn_Hit02_F :
+		//		iHitDir == 1 ? Cmn_Hit02_B :
 		//		iHitDir == 2 ? Cmn_Hit02_R : Cmn_Hit02_L);
 
 		//m_eAnim_Upper =
-		//	(iHitDir == 0 ? Cmn_Hit03_B :
-		//		iHitDir == 1 ? Cmn_Hit03_F :
+		//	(iHitDir == 0 ? Cmn_Hit03_F :
+		//		iHitDir == 1 ? Cmn_Hit03_B :
 		//		iHitDir == 2 ? Cmn_Hit03_R : Cmn_Hit03_L);
 
 		//m_eAnim_Upper =
-		//	(iHitDir == 0 ? Cmn_Hit04_B :
-		//		iHitDir == 1 ? Cmn_Hit04_F :
+		//	(iHitDir == 0 ? Cmn_Hit04_F :
+		//		iHitDir == 1 ? Cmn_Hit04_B :
 		//		iHitDir == 2 ? Cmn_Hit04_R : Cmn_Hit04_L);
 
 		//m_eAnim_Upper =
-		//	(iHitDir == 0 ? Cmn_HitBlow_B :
-		//		iHitDir == 1 ? Cmn_HitBlow_F :
+		//	(iHitDir == 0 ? Cmn_HitBlow_F :
+		//		iHitDir == 1 ? Cmn_HitBlow_B :
 		//		iHitDir == 2 ? Cmn_HitBlow_R : Cmn_HitBlow_L);
 
 		// 임시 다운 테스트용
@@ -5082,8 +5114,8 @@ void CPlayer::Play_BloodSuckCount()
 
 	else if (true == m_bOnBloodSuck)
 	{
-		if (m_tObjParam.bIsCounter)
-			cout << "카운터에효" << endl;
+		//if (m_tObjParam.bIsCounter)
+		//	cout << "카운터에효" << endl;
 
 		_double dAniTime = m_pDynamicMesh->Get_TrackInfo().Position;
 
@@ -10920,6 +10952,31 @@ void CPlayer::Active_UI_BloodCode(_bool _bResetUI)
 	m_pCamManager->Set_MidDistance(2.5f);
 }
 
+void CPlayer::Active_UI_LockOn(_bool _bResetUI)
+{
+	if (false == _bResetUI)
+	{
+		CMesh_Dynamic*	pMeshDynamic = static_cast<Engine::CMesh_Dynamic*>((m_pTarget)->Get_Component(L"Com_Mesh"));
+		CTransform*		pTtransform = TARGET_TO_TRANS(m_pTarget);
+
+		LPCSTR tmpChar = "Hips";
+
+		D3DXFRAME_DERIVED*	pFamre = (D3DXFRAME_DERIVED*)pMeshDynamic->Get_BonInfo(tmpChar, 0);
+		_mat* matBone = &pFamre->CombinedTransformationMatrix;
+		_mat* matTarget = &pTtransform->Get_WorldMat();
+
+		m_pLockOn_UI->Set_Enable(true);
+		m_pLockOn_UI->Set_Bonmatrix(matBone);
+		m_pLockOn_UI->Set_TargetWorldmatrix(matTarget);
+	}
+
+	else
+	{
+		m_pLockOn_UI->Set_Enable(false);
+		m_pLockOn_UI->Reset_TargetMatrix();
+	}
+}
+
 HRESULT CPlayer::Add_Component()
 {
 	// For.Com_Transform
@@ -11369,6 +11426,8 @@ void CPlayer::Free()
 	m_vecActiveSkillInfo.shrink_to_fit();
 	m_vecActiveSkillInfo.clear();
 
+	Safe_Release(m_pLockOn_UI);
+
 	Safe_Release(m_pDrainWeapon);
 	Safe_Release(m_pCollider);
 	Safe_Release(m_pTransform);
@@ -11381,6 +11440,7 @@ void CPlayer::Free()
 	Safe_Release(m_pUIManager);
 	Safe_Release(m_pCamManager);
 	Safe_Release(m_pStageAgent);
+	Safe_Release(m_pScriptManager);
 
 	m_pCunterTarget = nullptr;
 

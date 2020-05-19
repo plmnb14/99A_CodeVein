@@ -245,10 +245,6 @@ HRESULT CNPC_Yakumo::Render_GameObject_SetPass(CShader * pShader, _int iPass, _b
 	//============================================================================================
 	if (_bIsForMotionBlur)
 	{
-		if (FAILED(pShader->Set_Value("g_matView", &ViewMatrix, sizeof(_mat))))
-			return E_FAIL;
-		if (FAILED(pShader->Set_Value("g_matProj", &ProjMatrix, sizeof(_mat))))
-			return E_FAIL;
 		if (FAILED(pShader->Set_Value("g_matLastWVP", &m_matLastWVP, sizeof(_mat))))
 			return E_FAIL;
 
@@ -632,14 +628,6 @@ void CNPC_Yakumo::Free()
 	Safe_Release(m_pOptimizationCom);
 
 	CGameObject::Free();
-
-	Safe_Release(m_pOptimizationCom);
-	Safe_Release(m_pBattleAgentCom);
-	Safe_Release(m_pColliderCom);
-	Safe_Release(m_pTransformCom);
-	Safe_Release(m_pMeshCom);
-	Safe_Release(m_pShaderCom);
-	Safe_Release(m_pRendererCom);
 
 	return;
 }

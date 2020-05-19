@@ -54,8 +54,8 @@ _int CRenderObject::Update_GameObject(_double _TimeDelta)
 		CGameObject::Update_GameObject(_TimeDelta);
 	}
 
-	if (m_bOnTool)
-		Update_Collider();
+	//if (m_bOnTool)
+	//	Update_Collider();
 
 	return S_OK;
 }
