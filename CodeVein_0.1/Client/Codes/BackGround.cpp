@@ -38,6 +38,9 @@ HRESULT CBackGround::Ready_GameObject(void * pArg)
 
 _int CBackGround::Update_GameObject(_double TimeDelta)
 {
+	if (!m_bIsActive)
+		return S_OK;
+
 	CUI::Update_GameObject(TimeDelta);
 
 	m_pRendererCom->Add_RenderList(RENDER_UI, this);

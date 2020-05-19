@@ -27,19 +27,22 @@ HRESULT CScene_Logo::Ready_Scene()
 	if (FAILED(Ready_Layer_Logo(L"Layer_LogoUI")))
 		return E_FAIL;
 
-	//if (FAILED(Ready_Layer_Custom(L"Layer_CustomUI")))
-	//	return E_FAIL;
-	
+	Ready_BGM();
+
 	m_pLoading = CLoading::Create(m_pGraphic_Device, SCENE_TITLE);
 	if (nullptr == m_pLoading)
 		return E_FAIL;
 	
+	m_fStartTime = 8.15f;
+
 	return S_OK;
 }
 
 _int CScene_Logo::Update_Scene(_double TimeDelta)
 {
-	//Late_Init();
+	Late_Init(TimeDelta);
+	Check_Active(TimeDelta);
+
 	Logo_KeyInput();
 
 	if (true == m_pLoading->Get_Finish())
@@ -166,8 +169,11 @@ HRESULT CScene_Logo::Ready_Layer_Logo(const _tchar * pLayerTag)
 	m_pLoadingScreen = static_cast<CLoadingScreen*>(g_pManagement->Get_GameObjectBack(L"Layer_LoadingScreen", SCENE_STATIC));
 	m_pLoadingScreen->Set_FadeSpeed(0.6f);
 
-	if (FAILED(g_pManagement->Add_GameObject_ToLayer(L"GameObject_LogoBackGround", SCENE_LOGO, L"Layer_LogoBackGround")))
+	m_pBackgroundLogo = static_cast<CBackGround*>(g_pManagement->Clone_GameObject_Return(L"GameObject_LogoBackGround", nullptr));
+	m_pBackgroundLogo->Set_Active(false);
+	if (FAILED(g_pManagement->Add_GameOject_ToLayer_NoClone(m_pBackgroundLogo, SCENE_LOGO, L"Layer_LogoBackGround", nullptr)))
 		return E_FAIL;
+
 	if (FAILED(g_pManagement->Add_GameObject_ToLayer(L"GameObject_LogoButton", SCENE_LOGO, L"Layer_LogoButton")))
 		return E_FAIL;
 
@@ -177,23 +183,21 @@ HRESULT CScene_Logo::Ready_Layer_Logo(const _tchar * pLayerTag)
 	m_pTitleBG = static_cast<COrthoEffect*>(CParticleMgr::Get_Instance()->Create_EffectReturn(L"Ortho_Title_BG"));
 	m_pTitleBG->Set_Desc(_v3(0, 0, 0), nullptr);
 	m_pTitleBG->Reset_Init();
+	m_pTitleBG->Set_Active(false);
 
 	m_pGlitterEffect_0 = static_cast<COrthoEffect*>(CParticleMgr::Get_Instance()->Create_EffectReturn(L"Ortho_Title_Glitter_0"));
 	m_pGlitterEffect_0->Set_Desc(_v3(0, 0, 0), nullptr);
 	m_pGlitterEffect_0->Set_UV_Speed(0.03f, 0.f);
 	m_pGlitterEffect_0->Set_Mask(L"Tex_Ortho_Title", 6);
 	m_pGlitterEffect_0->Reset_Init();
-	
+	m_pGlitterEffect_0->Set_Active(false);
+
 	m_pGlitterEffect_1 = static_cast<COrthoEffect*>(CParticleMgr::Get_Instance()->Create_EffectReturn(L"Ortho_Title_Glitter_1"));
 	m_pGlitterEffect_1->Set_Desc(_v3(0, 0, 0), nullptr);
 	m_pGlitterEffect_1->Set_UV_Speed(0.04f, 0.06f);
 	m_pGlitterEffect_1->Set_Mask(L"Tex_Ortho_Title", 6);
 	m_pGlitterEffect_1->Reset_Init();
-	
-	COrthoEffect* pEff = static_cast<COrthoEffect*>(CParticleMgr::Get_Instance()->Create_EffectReturn(L"Ortho_Title_WhiteFadeout"));
-	pEff->Set_Desc(_v3(0, 0, 0), nullptr);
-	pEff->Set_UI_Layer();
-	pEff->Reset_Init();
+	m_pGlitterEffect_1->Set_Active(false);
 
 	//CParticleMgr::Get_Instance()->Create_TitleEffect(L"Ortho_Title_WhiteFadeout");
 	//CParticleMgr::Get_Instance()->Create_Effect(L"Ortho_Title_ShadowLine");
@@ -203,14 +207,31 @@ HRESULT CScene_Logo::Ready_Layer_Logo(const _tchar * pLayerTag)
 	return S_OK;
 }
 
-HRESULT CScene_Logo::Late_Init()
+HRESULT CScene_Logo::Ready_BGM()
+{
+	g_pSoundManager->Load_Directory_SouneFile_W(L"BGM");
+
+	g_pSoundManager->Stop_Sound(CSoundManager::Background_01);
+	g_pSoundManager->Play_Sound(L"07_Main.ogg", CSoundManager::Background_01, CSoundManager::BGM_Sound);
+
+	return S_OK;
+}
+
+HRESULT CScene_Logo::Late_Init(_double TimeDelta)
 {
 	if (m_bLateInit)
 		return S_OK;
 
+	m_fDelay += _float(TimeDelta);
+	if (m_fDelay < m_fStartTime)
+		return S_OK;
+
 	m_bLateInit = true;
 
-	
+	COrthoEffect* pEff = static_cast<COrthoEffect*>(CParticleMgr::Get_Instance()->Create_EffectReturn(L"Ortho_Title_WhiteFadeout"));
+	pEff->Set_Desc(_v3(0, 0, 0), nullptr);
+	pEff->Set_UI_Layer();
+	pEff->Reset_Init();
 
 	return S_OK;
 }
@@ -252,6 +273,18 @@ void CScene_Logo::Update_DebugStage_Console()
 	cout << "[9] # 릴리즈 모드 # ";
 	cout << (g_bReleaseMode ? "true" : "false") << endl;
 	cout << "-------------------------------------------------------------------------------" << endl;
+}
+
+void CScene_Logo::Check_Active(_double TimeDelta)
+{
+	m_fDelay += _float(TimeDelta);
+	if (m_fDelay < m_fStartTime  + 0.1f)
+		return;
+
+	m_pBackgroundLogo->Set_Active(true);
+	m_pTitleBG->Set_Active(true);
+	m_pGlitterEffect_0->Set_Active(true);
+	m_pGlitterEffect_1->Set_Active(true);
 }
 
 void CScene_Logo::Logo_KeyInput()

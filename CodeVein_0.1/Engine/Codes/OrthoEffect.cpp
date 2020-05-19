@@ -58,6 +58,11 @@ void COrthoEffect::Set_ViewZ(_float fViewZ)
 	m_fViewZ = fViewZ;
 }
 
+void COrthoEffect::Set_Active(_bool bActive)
+{
+	m_bIsActive = bActive;
+}
+
 HRESULT COrthoEffect::SetUp_ConstantTable_Instance(CShader* pShader)
 {
 	_float fMaskIndex = 0.f;
@@ -224,6 +229,9 @@ HRESULT COrthoEffect::Render_GameObject()
 
 HRESULT COrthoEffect::Render_GameObject_SetShader(CShader* pShader)
 {
+	if (!m_bIsActive)
+		return S_OK;
+
 	if (nullptr == pShader ||
 		nullptr == m_pBufferCom)
 		return E_FAIL;
