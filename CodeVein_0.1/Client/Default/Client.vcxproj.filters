@@ -613,8 +613,8 @@
     <Filter Include="02.GameObject\Stage\5%29 UI\UI\20. Custom\CategoryElem\SliderBar">
       <UniqueIdentifier>{6836337d-342b-458c-b424-5c5028fce301}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02.GameObject\Stage\5%29 UI\UI\06. Get_ItemUI\PickUp_ItemUIManager">
-      <UniqueIdentifier>{7c611b47-b977-4b75-868c-ae615bf87891}</UniqueIdentifier>
+    <Filter Include="02.GameObject\Stage\0%29 Player\03%29 HitCheckUI">
+      <UniqueIdentifier>{574b934b-ae5a-4f6b-9e15-0bd599ad1957}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -1284,6 +1284,9 @@
     <ClInclude Include="..\Headers\CustomSliderBar.h">
       <Filter>02.GameObject\Stage\5%29 UI\UI\20. Custom\CategoryElem\SliderBar</Filter>
     </ClInclude>
+    <ClInclude Include="..\Headers\HitCheckUI.h">
+      <Filter>02.GameObject\Stage\0%29 Player\03%29 HitCheckUI</Filter>
+    </ClInclude>
     <ClInclude Include="..\Headers\GeneralStoreOption.h">
       <Filter>02.GameObject\Stage\5%29 UI\UI\18. GeneralStoreUI%28잡화점%29\04. GeneralStoreNPCUI</Filter>
     </ClInclude>
@@ -1295,9 +1298,6 @@
     </ClInclude>
     <ClInclude Include="..\Headers\Calling_Colleague.h">
       <Filter>02.GameObject\Stage\5%29 UI\UI\15. Colleague UI\02. Calling_Colleague</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Headers\PickUp_ItemUIManager.h">
-      <Filter>02.GameObject\Stage\5%29 UI\UI\06. Get_ItemUI\PickUp_ItemUIManager</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -1952,6 +1952,9 @@
     <ClCompile Include="..\Codes\CustomSliderBar.cpp">
       <Filter>02.GameObject\Stage\5%29 UI\UI\20. Custom\CategoryElem\SliderBar</Filter>
     </ClCompile>
+    <ClCompile Include="..\Codes\HitCheckUI.cpp">
+      <Filter>02.GameObject\Stage\0%29 Player\03%29 HitCheckUI</Filter>
+    </ClCompile>
     <ClCompile Include="..\Codes\GeneralStoreOption.cpp">
       <Filter>02.GameObject\Stage\5%29 UI\UI\18. GeneralStoreUI%28잡화점%29\04. GeneralStoreNPCUI</Filter>
     </ClCompile>
@@ -1963,9 +1966,6 @@
     </ClCompile>
     <ClCompile Include="..\Codes\Calling_Colleague.cpp">
       <Filter>02.GameObject\Stage\5%29 UI\UI\15. Colleague UI\02. Calling_Colleague</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Codes\PickUp_ItemUIManager.cpp">
-      <Filter>02.GameObject\Stage\5%29 UI\UI\06. Get_ItemUI\PickUp_ItemUIManager</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

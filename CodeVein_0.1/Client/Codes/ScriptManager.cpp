@@ -50,6 +50,7 @@ void CScriptManager::Update_ScriptMgr(_double _dDeltaTime, _ulong _dwSubsetIdx, 
 			{
 				m_fTimer = 0.f;
 				m_fTimer = false;
+				m_bTimer = false;
 
 				CUI_Manager::Get_Instance()->Set_BossUI_Active(true);
 			}
