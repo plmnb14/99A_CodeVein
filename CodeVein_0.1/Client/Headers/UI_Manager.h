@@ -104,8 +104,10 @@
 #include "BuyOptionUI.h"
 #include "PurchaseFailUI.h"
 
+#include "Get_ItemUI.h"
 #include "PickUp_ItemUI.h"
 #include "Calling_Colleague.h"
+#include "PickUp_ItemUIManager.h"
 
 BEGIN(Client)
 
@@ -157,6 +159,8 @@ public:
 
 	// 아이템 획득 UI
 	CPickUp_ItemUI*			Get_PickUp_ItemUI() { return m_pPickUp_ItemUI; }
+	CPickUp_ItemUIManager*	Get_PickUP_ItemUIMgr() { return m_pPickUP_ItemUIMgr; }
+	//CGet_ItemUI*			Get_Get_ItemUI() { return m_pGet_ItemUI; }
 
 	// 동료 활성화/비활성화 UI
 	CCalling_Colleague*		Get_Calling_Colleague() { return m_pCalling_Colleague; }
@@ -195,6 +199,8 @@ private:
 
 	// 아이템 획득 UI
 	CPickUp_ItemUI*			m_pPickUp_ItemUI = nullptr;
+	CPickUp_ItemUIManager*	m_pPickUP_ItemUIMgr = nullptr;
+	//CGet_ItemUI*			m_pGet_ItemUI = nullptr;
 
 	// 동료 활성/비활성화 UI
 	CCalling_Colleague*		m_pCalling_Colleague = nullptr;

@@ -583,6 +583,9 @@
     <Filter Include="02.GameObject\Stage\5%29 UI\UI\15. Colleague UI\02. Calling_Colleague">
       <UniqueIdentifier>{9fbf4ba7-29f6-4035-b2af-46743d057ed1}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObject\Stage\5%29 UI\UI\06. Get_ItemUI\PickUp_ItemManager">
+      <UniqueIdentifier>{7d992195-167a-4a28-baf8-b8bbd91c9e43}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -1227,6 +1230,9 @@
     <ClInclude Include="..\Headers\Calling_Colleague.h">
       <Filter>02.GameObject\Stage\5%29 UI\UI\15. Colleague UI\02. Calling_Colleague</Filter>
     </ClInclude>
+    <ClInclude Include="..\Headers\PickUp_ItemUIManager.h">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\06. Get_ItemUI\PickUp_ItemManager</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -1855,6 +1861,9 @@
     </ClCompile>
     <ClCompile Include="..\Codes\Calling_Colleague.cpp">
       <Filter>02.GameObject\Stage\5%29 UI\UI\15. Colleague UI\02. Calling_Colleague</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\PickUp_ItemUIManager.cpp">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\06. Get_ItemUI\PickUp_ItemManager</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
