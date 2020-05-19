@@ -44,7 +44,7 @@ HRESULT CQueensKnight::Ready_GameObject(void * pArg)
 		return E_FAIL;
 
 	CBlackBoard* pBlackBoard = CBlackBoard::Create();
-	CBehaviorTree* pBehaviorTree = CBehaviorTree::Create(true);	//인자에 true 주면 콘솔창에 디버깅정보 뜸, default = false
+	CBehaviorTree* pBehaviorTree = CBehaviorTree::Create();	//인자에 true 주면 콘솔창에 디버깅정보 뜸, default = false
 
 	m_pAIControllerCom->Set_BeHaviorTree(pBehaviorTree);
 	m_pAIControllerCom->Set_BlackBoard(pBlackBoard);
@@ -91,7 +91,7 @@ HRESULT CQueensKnight::Ready_GameObject(void * pArg)
 
 	// 패턴 확인용,  각 패턴 함수를 아래에 넣으면 재생됨
 
-	//Start_Sel->Add_Child(Shield_Attack());
+	//Start_Sel->Add_Child(LeakField());
 
 	//CBT_RotationDir* Rotation0 = Node_RotationDir("돌기", L"Player_Pos", 0.2);
 	//Start_Sel->Add_Child(Rotation0);
@@ -119,7 +119,7 @@ _int CQueensKnight::Update_GameObject(_double TimeDelta)
 
 	if ( true == m_pAIControllerCom->Get_BoolValue(L"PushCol"))
 		Push_Collider();
-
+	
 	CGameObject::Update_GameObject(TimeDelta);
 
 	// 죽었을 경우
@@ -2216,6 +2216,8 @@ void CQueensKnight::Down()
 		m_tObjParam.bIsHit = true;
 		m_tObjParam.bCanHit = true;
 
+		m_dHitTime = 0;	// 피격가능 타임 초기화
+
 		if (true == m_bDown_LoopAni)
 		{
 			m_pMeshCom->Reset_OldIndx();	//루프 애니 초기화
@@ -2537,7 +2539,7 @@ void CQueensKnight::Check_PhyCollider()
 
 		m_dHitTime = 0;	// 피격가능 타임 초기화
 
-		m_bFight = true;		// 싸움 시작
+		//m_bFight = true;		// 싸움 시작
 
 		if (m_tObjParam.fHp_Cur > 0.f)
 		{

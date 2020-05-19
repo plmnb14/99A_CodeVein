@@ -343,8 +343,9 @@ HRESULT CPlayer::Render_GameObject_Instancing_SetPass(CShader * pShader)
 	m_pDynamicMesh->Play_Animation_LeftArm(dDeltaTime * m_fAnimMutiply);
 
 	// 머리 위치 업데이트
-	m_pHair->Update_GameObject(dDeltaTime * m_fAnimMutiply, (m_bOnSkill || m_bOnDodge));
-	m_pOuter->Update_GameObject(dDeltaTime * m_fAnimMutiply, (m_bOnSkill || m_bOnDodge));
+
+	m_pHair->Update_GameObject(dDeltaTime * m_fAnimMutiply, (m_eActState != ACT_Idle) && (m_eActState != ACT_Walk) && (m_eActState != ACT_Run) && (m_eActState != ACT_Dash) && (m_eActState != ACT_MoveDelay));
+	m_pOuter->Update_GameObject(dDeltaTime * m_fAnimMutiply, (m_eActState != ACT_Idle) && (m_eActState != ACT_Walk) && (m_eActState != ACT_Run) && (m_eActState != ACT_Dash) && (m_eActState != ACT_MoveDelay));
 
 	m_pHead[m_eHeadType]->Update_GameObject(dDeltaTime);
 	m_pMask[m_eMaskType]->Update_GameObject(dDeltaTime);

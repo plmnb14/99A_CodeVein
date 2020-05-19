@@ -44,8 +44,8 @@ private:
 public:
 	HRESULT Ready_ClothManager();
 
-	HRESULT Update_Cloth_Static(Cloth_Static eTag, _bool bCanCol);
-	HRESULT Update_Cloth_Dynamic(Cloth_Dynamic eTag, _bool bCanCol);
+	HRESULT Update_Cloth_Static(Cloth_Static eTag, _bool bClearCol);
+	HRESULT Update_Cloth_Dynamic(Cloth_Dynamic eTag, _bool bClearCol);
 
 public:
 	physx::PxCloth* Get_Cloth_Static(Cloth_Static eStatic);

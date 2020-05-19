@@ -115,8 +115,8 @@ public:
 private:
 	ACTOR_INFO				m_tInfo = {};
 	ACT_STATE				m_eActState = ACT_Summon;
-	WEAPON_STATE			m_eMainWpnState = WEAPON_Hammer;
-	WEAPON_STATE			m_eSubWpnState = WEAPON_Hammer;
+	WEAPON_STATE			m_eMainWpnState = WEAPON_SSword;
+	WEAPON_STATE			m_eSubWpnState = WEAPON_SSword;
 	DRAIN_STATE				m_eDrainState = DRAIN_END;
 	ACTIVE_WEAPON_SLOT		m_eActiveSlot = WPN_SLOT_A;
 

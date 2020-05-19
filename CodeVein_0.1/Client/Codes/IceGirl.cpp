@@ -1972,6 +1972,8 @@ void CIceGirl::Down()
 		m_tObjParam.bIsHit = true;
 		m_tObjParam.bCanHit = true;
 
+		m_dHitTime = 0;	// 피격가능 타임 초기화
+
 		if (true == m_bDown_LoopAni)
 		{
 			m_pMeshCom->Reset_OldIndx();	//루프 애니 초기화
@@ -2191,6 +2193,12 @@ HRESULT CIceGirl::Update_NF()
 	{
 		m_pMeshCom->SetUp_Animation(Ani_Appearance_End);
 
+		if (m_pMeshCom->Is_Finish_Animation(0.5f))
+		{
+			g_pSoundManager->Stop_Sound(CSoundManager::CHANNELID::IceGirl_Voice);
+			g_pSoundManager->Play_Sound(const_cast<TCHAR*>(L"Los_Changed02_01_gate_f.ogg"), CSoundManager::CHANNELID::IceGirl_Voice, CSoundManager::SOUND::Effect_Sound);
+		}
+
 		if (m_pMeshCom->Is_Finish_Animation(0.95f))
 		{
 			m_pMeshCom->SetUp_Animation(Ani_Appearance);
@@ -2242,7 +2250,7 @@ void CIceGirl::Check_PhyCollider()
 
 		m_dHitTime = 0;	// 피격가능 타임 초기화
 
-		m_bFight = true;		// 싸움 시작
+		//m_bFight = true;		// 싸움 시작
 
 		if (m_tObjParam.fHp_Cur > 0.f)
 		{

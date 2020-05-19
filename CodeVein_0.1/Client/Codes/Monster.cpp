@@ -192,63 +192,61 @@ void CMonster::Check_DropItem()
 	switch (m_iRandom)
 	{
 	case 0:
-		pItem = g_pManagement->Clone_GameObject_Return(L"GameObject_DropItem",
+		CObjectPool_Manager::Get_Instance()->Create_Object(L"GameObject_DropItem", 
 			&CDropItem::ITEM_STATUS(ITEM_TYPE::ITEM_PET, ITEM_GRADE_TYPE::ITEM_GRADE_NORMAL, CPet::PET_TYPE::PET_POISONBUTTERFLY,
-				m_pTransformCom->Get_Pos(), 12.f));
+			m_pTransformCom->Get_Pos(), 120.f));
 		break;
 	case 1:
-		pItem = g_pManagement->Clone_GameObject_Return(L"GameObject_DropItem",
+		CObjectPool_Manager::Get_Instance()->Create_Object(L"GameObject_DropItem",
 			&CDropItem::ITEM_STATUS(ITEM_TYPE::ITEM_PET, ITEM_GRADE_TYPE::ITEM_GRADE_NORMAL, CPet::PET_TYPE::PET_POISONBUTTERFLY,
-				m_pTransformCom->Get_Pos(), 12.f));
+				m_pTransformCom->Get_Pos(), 120.f));
 		break;
 	case 2:
-		pItem = g_pManagement->Clone_GameObject_Return(L"GameObject_DropItem",
+		CObjectPool_Manager::Get_Instance()->Create_Object(L"GameObject_DropItem",
 			&CDropItem::ITEM_STATUS(ITEM_TYPE::ITEM_PET, ITEM_GRADE_TYPE::ITEM_GRADE_NORMAL, CPet::PET_TYPE::PET_POISONBUTTERFLY,
-				m_pTransformCom->Get_Pos(), 12.f));
+				m_pTransformCom->Get_Pos(), 120.f));
 		break;
 	case 3:
-		pItem = g_pManagement->Clone_GameObject_Return(L"GameObject_DropItem",
+		CObjectPool_Manager::Get_Instance()->Create_Object(L"GameObject_DropItem",
 			&CDropItem::ITEM_STATUS(ITEM_TYPE::ITEM_PET, ITEM_GRADE_TYPE::ITEM_GRADE_NORMAL, CPet::PET_TYPE::PET_POISONBUTTERFLY,
-				m_pTransformCom->Get_Pos(), 12.f));
+				m_pTransformCom->Get_Pos(), 120.f));
 		break;
 	case 4:
-		pItem = g_pManagement->Clone_GameObject_Return(L"GameObject_DropItem",
+		CObjectPool_Manager::Get_Instance()->Create_Object(L"GameObject_DropItem",
 			&CDropItem::ITEM_STATUS(ITEM_TYPE::ITEM_PET, ITEM_GRADE_TYPE::ITEM_GRADE_NORMAL, CPet::PET_TYPE::PET_POISONBUTTERFLY,
-				m_pTransformCom->Get_Pos(), 12.f));
+				m_pTransformCom->Get_Pos(), 120.f));
 		break;
 	case 5:
-		pItem = g_pManagement->Clone_GameObject_Return(L"GameObject_DropItem",
+		CObjectPool_Manager::Get_Instance()->Create_Object(L"GameObject_DropItem",
 			&CDropItem::ITEM_STATUS(ITEM_TYPE::ITEM_PET, ITEM_GRADE_TYPE::ITEM_GRADE_NORMAL, CPet::PET_TYPE::PET_POISONBUTTERFLY,
-				m_pTransformCom->Get_Pos(), 12.f));
+				m_pTransformCom->Get_Pos(), 120.f));
 		break;
 	case 6:
-		pItem = g_pManagement->Clone_GameObject_Return(L"GameObject_DropItem",
+		CObjectPool_Manager::Get_Instance()->Create_Object(L"GameObject_DropItem",
 			&CDropItem::ITEM_STATUS(ITEM_TYPE::ITEM_PET, ITEM_GRADE_TYPE::ITEM_GRADE_NORMAL, CPet::PET_TYPE::PET_POISONBUTTERFLY,
-				m_pTransformCom->Get_Pos(), 12.f));
+				m_pTransformCom->Get_Pos(), 120.f));
 		break;
 	case 7:
-		pItem = g_pManagement->Clone_GameObject_Return(L"GameObject_DropItem",
+		CObjectPool_Manager::Get_Instance()->Create_Object(L"GameObject_DropItem",
 			&CDropItem::ITEM_STATUS(ITEM_TYPE::ITEM_PET, ITEM_GRADE_TYPE::ITEM_GRADE_NORMAL, CPet::PET_TYPE::PET_POISONBUTTERFLY,
-				m_pTransformCom->Get_Pos(), 12.f));
+				m_pTransformCom->Get_Pos(), 120.f));
 		break;
 	case 8:
-		pItem = g_pManagement->Clone_GameObject_Return(L"GameObject_DropItem",
+		CObjectPool_Manager::Get_Instance()->Create_Object(L"GameObject_DropItem",
 			&CDropItem::ITEM_STATUS(ITEM_TYPE::ITEM_PET, ITEM_GRADE_TYPE::ITEM_GRADE_NORMAL, CPet::PET_TYPE::PET_POISONBUTTERFLY,
-				m_pTransformCom->Get_Pos(), 12.f));
+				m_pTransformCom->Get_Pos(), 120.f));
 		break;
 	case 9:
-		pItem = g_pManagement->Clone_GameObject_Return(L"GameObject_DropItem",
+		CObjectPool_Manager::Get_Instance()->Create_Object(L"GameObject_DropItem",
 			&CDropItem::ITEM_STATUS(ITEM_TYPE::ITEM_PET, ITEM_GRADE_TYPE::ITEM_GRADE_NORMAL, CPet::PET_TYPE::PET_POISONBUTTERFLY,
-				m_pTransformCom->Get_Pos(), 12.f));
+				m_pTransformCom->Get_Pos(), 120.f));
 		break;
 	case 10:
-		pItem = g_pManagement->Clone_GameObject_Return(L"GameObject_DropItem",
+		CObjectPool_Manager::Get_Instance()->Create_Object(L"GameObject_DropItem",
 			&CDropItem::ITEM_STATUS(ITEM_TYPE::ITEM_PET, ITEM_GRADE_TYPE::ITEM_GRADE_NORMAL, CPet::PET_TYPE::PET_POISONBUTTERFLY,
-				m_pTransformCom->Get_Pos(), 12.f));
+				m_pTransformCom->Get_Pos(), 120.f));
 		break;
 	}
-
-	g_pManagement->Add_GameOject_ToLayer_NoClone(pItem, SCENE_STAGE, L"Layer_Item", nullptr);
 
 	return;
 }

@@ -33,6 +33,10 @@ private:
 	_double				m_dTimeDelta = 0;
 
 private:
+	_double				m_dCurColTime = 0;		// 충돌 중인 시간
+	_bool				m_bColCheck = false;	// 충돌 중인지 확인
+
+private:
 	_bool				m_bPlayerFriendly = false;		// 플레이어 껀지
 
 
