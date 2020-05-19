@@ -31,6 +31,7 @@ public:
 
 public:
 	void	Set_Check_Play_BossnameUI(_bool Check_Bossname) { m_bCheck_Play_BossnameUI = Check_Bossname; }
+	void	Set_BossName(BOSS_NAME eBossName) { m_eBossName = eBossName; }
 
 private:
 	_bool		m_bCheck_MassageStart = false;
@@ -57,6 +58,7 @@ private:
 	_float		m_fNow_BarSize = 0.f;
 	_float		m_fBarPercentage = 0.f;
 	_float		m_fTextPercentage = 0.f;
+	BOSS_NAME	m_eBossName = BossName_End;
 
 private:
 	CTransform*				m_pTransformCom = nullptr;

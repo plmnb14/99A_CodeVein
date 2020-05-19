@@ -244,5 +244,16 @@ enum ARMOR_TYPE
 	ARMOR_Gauntlet,
 	ARMOR_LongCoat,
 	ARMOR_Muffler,
+	ARMOR_Drape,
 	ARMOR_End
+};
+
+enum BOSS_NAME
+{
+	Poison_Butterfly,	// 만개하는 독나비
+	Deer_King,			// 사슴왕
+	Fire_Boy,			// 화염포의 종자
+	Ice_Girl,			// 얼음검의 종자
+	Queens_Knight,		// 여왕의 기사 . 재림
+	BossName_End
 };

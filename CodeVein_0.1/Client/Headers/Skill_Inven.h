@@ -36,6 +36,8 @@ private:
 	void					Reset_Select_Slot();
 	void					Regist_Slot_Sound(_uint iIdx);
 	void					UnRegist_Slot_Sound(_uint iIdx);
+	void					SetUp_SlotPos();
+	void					SetUp_SubUI_Active(_bool bIsActive);
 
 public:
 	void Add_Skill_Data(Skill_ID eSkillID);
@@ -52,7 +54,8 @@ private:
 	_uint					m_iRegistIdx = 0;
 	vector<Skill_ID>		m_vecData;
 	CInventory_Icon*		m_pExitIcon = nullptr;
-	CExplainSkillUI*				m_pExplainUI = nullptr;
+	CExplainSkillUI*		m_pExplainUI = nullptr;
+	_bool					m_bIsSubActive = false;
 
 public:
 	static CSkill_Inven*		Create(_Device pGraphic_Device);

@@ -38,7 +38,7 @@ public:
 
 public:
 	virtual _int	Update_GameObject(_double TimeDelta);
-	_int	Update_GameObject(_double TimeDelta, _bool bSkill);
+	_int	Update_GameObject(_double TimeDelta, _bool bClearCol);
 	virtual _int	Late_Update_GameObject(_double TimeDelta);
 	virtual HRESULT Render_GameObject();
 	virtual HRESULT Render_GameObject_Instancing_SetPass(CShader* pShader);

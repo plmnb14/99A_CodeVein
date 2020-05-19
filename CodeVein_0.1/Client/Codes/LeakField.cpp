@@ -55,7 +55,9 @@ HRESULT CLeakField::Ready_GameObject(void * pArg)
 	m_pTransformCom->Set_Scale(_v3(1.f, 1.f, 1.f));
 
 	m_tObjParam.bCanAttack = true;
-	m_tObjParam.fDamage = 20.f;
+	m_tObjParam.fDamage = 1.f;	// 초당 없어질 마나
+
+	m_dCurColTime = 0;
 
 	return NOERROR;
 }
@@ -67,12 +69,40 @@ _int CLeakField::Update_GameObject(_double TimeDelta)
 	if (m_bDead)
 		return DEAD_OBJ;
 
+	m_bColCheck = false;	// 최초에 충돌변수 false 시켜줌.
+
 	m_pTransformCom->Add_Pos(_float(m_fSpeed * TimeDelta), *D3DXVec3Normalize(&_v3(), &_v3(m_pTarget_Transform->Get_Pos() - m_pTransformCom->Get_Pos())));
-	// 충돌처리는 이펙트 넣고 나서 할 것임.
-	OnCollisionEnter();
+
+	OnCollisionEnter();		// 플레이어와 충돌했다면 m_bColCheck를 ture 시켜줄 것임.
 	m_dTimeDelta = TimeDelta;
 
 	m_dCurTime += TimeDelta;
+
+	if (m_bColCheck)
+	{
+		m_dCurColTime += TimeDelta;
+
+		// 충돌이 1초이상 되었다면 
+		if (m_dCurColTime >= 1.f)
+		{
+			CGameObject* pPlayer = g_pManagement->Get_GameObjectList(L"Layer_Player", SCENE_MORTAL).back();
+
+			_short pPlayer_Mana = pPlayer->Get_Target_Mana_Cur();
+
+			if (pPlayer_Mana > 0)
+			{
+				if (pPlayer_Mana < 2)
+					pPlayer->Set_Target_Mana_Cur(0);
+				else
+					pPlayer->Add_Target_Mana(-2);
+
+			}
+
+			m_dCurColTime = 0;
+		}
+	}
+	else
+		m_dCurColTime = 0;
 
 	// 시간 초과
 	if (m_dCurTime > m_dLifeTime)
@@ -154,7 +184,7 @@ void CLeakField::OnCollisionEnter()
 	else
 	{
 		OnCollisionEvent(g_pManagement->Get_GameObjectList(L"Layer_Player", SCENE_MORTAL));
-		OnCollisionEvent(g_pManagement->Get_GameObjectList(L"Layer_Colleague", SCENE_STAGE));
+		//OnCollisionEvent(g_pManagement->Get_GameObjectList(L"Layer_Colleague", SCENE_STAGE));
 	}
 
 	// =============================================================================================
@@ -193,16 +223,7 @@ void CLeakField::OnCollisionEvent(list<CGameObject*> plistGameObject)
 						continue;
 					}
 
-					if (false == iter->Get_Target_IsDodge())
-					{
-						//iter->Set_Target_CanHit(false);
-
-						//// 타겟이 피격 가능하다면
-						//if (iter->Get_Target_IsHit())
-						//	iter->Set_HitAgain(true);
-
-						iter->Add_Target_Hp(_float(-m_tObjParam.fDamage * m_dTimeDelta));
-					}
+					m_bColCheck = true;	// 플레이어와 충돌 중임.
 
 					break;
 

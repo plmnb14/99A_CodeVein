@@ -34,6 +34,8 @@ HRESULT CMassageUI::Ready_GameObject(void * pArg)
 
 	m_fNow_BarSize = 0.f;
 
+	m_eBossName = Poison_Butterfly;
+	m_iIndex = 3;
 	return S_OK;
 }
 
@@ -65,6 +67,24 @@ _int CMassageUI::Late_Update_GameObject(_double TimeDelta)
 	/*m_matWorld._41 = m_fPosX - WINCX * 0.5f;
 	m_matWorld._42 = -m_fPosY + WINCY * 0.5f;*/
 
+	switch (m_eBossName)
+	{
+	case BOSS_NAME::Poison_Butterfly:
+		m_iIndex = 3;
+		break;
+	case BOSS_NAME::Deer_King:
+		m_iIndex = 4;
+		break;
+	case BOSS_NAME::Fire_Boy:
+		m_iIndex = 5;
+		break;
+	case BOSS_NAME::Ice_Girl:
+		m_iIndex = 6;
+		break;
+	case BOSS_NAME::Queens_Knight:
+		m_iIndex = 7;
+		break;
+	}
 	return S_OK;
 }
 
@@ -132,9 +152,15 @@ HRESULT CMassageUI::Render_GameObject()
 			{
 			}
 				*/
+	_uint iIndex = 0;
 	for (_uint i = 0; i < 4; ++i)
 	{
-		if (FAILED(m_pTextureCom->SetUp_OnShader("g_DiffuseTexture", m_pShaderCom, i)))
+		if (3 == i)
+			iIndex = m_iIndex;
+		else
+			iIndex = i;
+
+		if (FAILED(m_pTextureCom->SetUp_OnShader("g_DiffuseTexture", m_pShaderCom, iIndex)))
 			return E_FAIL;
 
 		m_pShaderCom->Commit_Changes();

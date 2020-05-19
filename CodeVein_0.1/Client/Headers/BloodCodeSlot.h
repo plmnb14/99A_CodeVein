@@ -13,9 +13,12 @@ private:
 
 public:
 	BloodCode_ID Get_CodeID() { return m_eID; }
+	_bool Get_Release() { return m_bIsRelease; }
+
 public:
 	void Set_CodeID(BloodCode_ID eID) { m_eID = eID; }
 	void Set_Select(_bool bIsSelect) { m_bIsSelect = bIsSelect; }
+	void Set_Release(_bool bIsRelease) { m_bIsRelease = bIsRelease; }
 
 public:
 	virtual HRESULT Ready_GameObject_Prototype();
@@ -42,6 +45,7 @@ private:
 	BloodCode_ID			m_eID = BloodCode_End;
 	_bool					m_bIsSelect = false;
 	_float					m_fAlpha = 0.f;
+	_bool					m_bIsRelease = false;
 
 public:
 	static CBloodCodeSlot*		Create(_Device pGraphic_Device);

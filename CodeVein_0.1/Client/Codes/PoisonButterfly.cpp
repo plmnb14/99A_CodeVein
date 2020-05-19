@@ -1312,6 +1312,8 @@ void CPoisonButterfly::Down()
 		m_tObjParam.bIsHit = true;
 		m_tObjParam.bCanHit = true;
 
+		m_dHitTime = 0;	// 피격가능 타임 초기화
+
 		if (true == m_bDown_LoopAni)
 		{
 			m_pMeshCom->Reset_OldIndx();	//루프 애니 초기화
@@ -1575,7 +1577,7 @@ void CPoisonButterfly::Check_PhyCollider()
 		//m_bAIController = false;
 
 		m_tObjParam.bIsHit = true;
-		m_tObjParam.bCanHit = true;
+		m_tObjParam.bCanHit = true;		//일정시간 후에 true
 
 		m_dHitTime = 0;	// 피격가능 타임 초기화
 
@@ -1646,6 +1648,7 @@ void CPoisonButterfly::Check_PhyCollider()
 		if (m_dHitTime > 0.5)
 		{
 			m_tObjParam.bIsHit = false;		// 재충돌 가능
+			//m_tObjParam.bCanHit = true;
 		}
 	}
 }
