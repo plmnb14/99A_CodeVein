@@ -9,6 +9,7 @@
 #include "LoadingBar.h"
 #include "CursorEffect.h"
 #include "MouseUI.h"
+#include "LoadingScripts.h"
 
 #include "OrthoEffect.h"
 
@@ -47,6 +48,7 @@ _int CScene_Logo::Update_Scene(_double TimeDelta)
 
 	if (true == m_pLoading->Get_Finish())
 	{
+		m_pLoadingScripts->Set_Enable(false);
 		m_pLogoBtn->Set_Active(true);
 
 		if (g_pInput_Device->Key_Down(DIK_SPACE))
@@ -56,6 +58,11 @@ _int CScene_Logo::Update_Scene(_double TimeDelta)
 		if (m_pLoadingScreen->Get_Load())
 			m_bIsChangeStage = true;
 	}
+	else
+	{
+		m_pLoadingScripts->Set_UI_Index(m_pLoading->Get_LoadingCnt());
+	}
+
 		
 	if (true == m_pLoading->Get_Finish() && m_bIsChangeStage)
 	{
@@ -98,6 +105,7 @@ CScene_Logo * CScene_Logo::Create(LPDIRECT3DDEVICE9 pGraphic_Device)
 
 void CScene_Logo::Free()
 {
+	//Safe_Release(m_pLoadingScripts);
 	Safe_Release(m_pLogoBtn);
 	Safe_Release(m_pLoading);
 
@@ -135,7 +143,7 @@ HRESULT CScene_Logo::Ready_Layer_Logo(const _tchar * pLayerTag)
 	CParticleMgr::Get_Instance()->Ready_TitleEffect();
 
 
-	if (FAILED(g_pManagement->Add_Prototype(SCENE_STATIC, L"DefaultTex_LogoBackGround", CTexture::Create(m_pGraphic_Device, CTexture::TYPE_GENERAL, L"../Resources/Texture/DefaultUI/LogoBack/LogoBack%d.dds", 5))))
+	if (FAILED(g_pManagement->Add_Prototype(SCENE_STATIC, L"DefaultTex_LogoBackGround", CTexture::Create(m_pGraphic_Device, CTexture::TYPE_GENERAL, L"../Resources/Texture/DefaultUI/LogoBack/LogoBack%d.dds", 7))))
 		return E_FAIL;
 	if (FAILED(g_pManagement->Add_Prototype(SCENE_STATIC, L"DefaultTex_LogoButton", CTexture::Create(m_pGraphic_Device, CTexture::TYPE_GENERAL, L"../Resources/Texture/DefaultUI/Button/Button%d.dds", 1))))
 		return E_FAIL;
@@ -147,6 +155,8 @@ HRESULT CScene_Logo::Ready_Layer_Logo(const _tchar * pLayerTag)
 		return E_FAIL;
 	if (FAILED(g_pManagement->Add_Prototype(SCENE_STATIC, L"DefaultTex_MouseUI", CTexture::Create(m_pGraphic_Device, CTexture::TYPE_GENERAL, L"../Resources/Texture/DefaultUI/MouseUI/MouseUI%d.dds", 1))))
 		return E_FAIL;
+	if (FAILED(g_pManagement->Add_Prototype(SCENE_STATIC, L"DefaultTex_LoadingScripts", CTexture::Create(m_pGraphic_Device, CTexture::TYPE_GENERAL, L"../Resources/Texture/DefaultUI/LoadingScripts/LoadingScripts%d.dds", 16))))
+		return E_FAIL; 
 
 	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_LoadingBar", CLoadingBar::Create(m_pGraphic_Device))))
 		return E_FAIL;
@@ -160,6 +170,17 @@ HRESULT CScene_Logo::Ready_Layer_Logo(const _tchar * pLayerTag)
 		return E_FAIL;
 	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_MouseUI", CMouseUI::Create(m_pGraphic_Device))))
 		return E_FAIL;
+	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_LoadingScripts", CLoadingScripts::Create(m_pGraphic_Device))))
+		return E_FAIL;
+
+
+	//=========================================================================================================================================================
+	m_pLoadingScripts = static_cast<CLoadingScripts*>(g_pManagement->Clone_GameObject_Return(L"GameObject_LoadingScripts", nullptr));
+	m_pLoadingScripts->Set_Enable(false);
+	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pLoadingScripts, SCENE_LOGO, L"Layer_LoadingScripts", nullptr);
+	//=========================================================================================================================================================
+
+
 	CMouseUI* pMouseUI = static_cast<CMouseUI*>(g_pManagement->Clone_GameObject_Return(L"GameObject_MouseUI", nullptr));
 	if (FAILED(g_pManagement->Add_GameOject_ToLayer_NoClone(pMouseUI, SCENE_STATIC, L"Layer_MouseUI", nullptr)))
 		return E_FAIL;
@@ -232,6 +253,10 @@ HRESULT CScene_Logo::Late_Init(_double TimeDelta)
 	pEff->Set_Desc(_v3(0, 0, 0), nullptr);
 	pEff->Set_UI_Layer();
 	pEff->Reset_Init();
+
+	m_pLoadingScripts->Set_Enable(true);
+
+	cout << "»·¥y" << endl;
 
 	return S_OK;
 }

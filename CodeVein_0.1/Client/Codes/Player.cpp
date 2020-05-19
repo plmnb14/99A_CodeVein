@@ -125,6 +125,8 @@ HRESULT CPlayer::Ready_GameObject(void * pArg)
 	Safe_AddRef(m_pScriptManager);
 
 	m_pScreenCornerEffect = (CHitCheckUI*)g_pManagement->Clone_GameObject_Return(L"GameObject_HitCheckUI", nullptr);
+	m_pScreenCornerFade = (CFadeCornerUI*)g_pManagement->Clone_GameObject_Return(L"GameObject_FadeCornerUI", nullptr);
+	m_pScreenCornerFade->Set_Enable(true);
 
 	return NOERROR;
 }
@@ -133,6 +135,8 @@ _int CPlayer::Update_GameObject(_double TimeDelta)
 {
 	if (false == m_bEnable)
 		return NO_EVENT;
+
+	m_pScreenCornerFade->Update_GameObject(TimeDelta);
 
 	if (g_pInput_Device->Key_Down(DIK_N))
 	{
@@ -902,6 +906,10 @@ void CPlayer::Parameter_Aiming()
 
 		if (nullptr != m_pTarget)
 		{
+			cout << "나의 x 좌표 : " << m_pTransform->Get_Pos().x << endl;
+			cout << "나의 y 좌표 : " << m_pTransform->Get_Pos().y << endl;
+			cout << "나의 z 좌표 : " << m_pTransform->Get_Pos().z << endl;
+
 			m_pTransform->Set_Angle(AXIS_Y, m_pTransform->Chase_Target_Angle(&TARGET_TO_TRANS(m_pTarget)->Get_Pos()));
 
 			// 디졸브 쓸라면 수정
@@ -1655,10 +1663,30 @@ void CPlayer::Key_Movement_Down()
 		if (true == m_bOnAttack)
 			return;
 
+		// 두 상태가 아니라면, 일단 키가 눌리면 상태가 바뀜.
 		if (false == m_bChangeWeapon && false == m_bOnBuff)
 		{
 			m_eActState = (m_bSprint ? ACT_Dash : ACT_Run);
-			
+		}
+
+		else
+		{
+			if (m_tInfo.fMoveSpeed_Max * 0.25f > m_tInfo.fMoveSpeed_Cur)
+			{
+				m_tInfo.fMoveSpeed_Cur += 0.1f + m_tInfo.fMoveAccel_Cur * m_tInfo.fMoveAccel_Cur * DELTA_60;
+				m_tInfo.fMoveAccel_Cur += DELTA_60;
+			}
+
+			else
+			{
+				m_tInfo.fMoveSpeed_Cur = m_tInfo.fMoveSpeed_Max * 0.25f;
+			}
+
+			return;
+		}
+
+		if (false == m_bOnAiming)
+		{
 			_float fMaxSpeedMultiply = m_eActState == ACT_Run ? 1.f : 1.2f;
 
 			if (m_tInfo.fMoveSpeed_Max * fMaxSpeedMultiply > m_tInfo.fMoveSpeed_Cur)
@@ -1675,10 +1703,10 @@ void CPlayer::Key_Movement_Down()
 
 		else if (true == m_bOnAiming)
 		{
-			_float tmpSpeedValue = 0.75f;
+			_float tmpSpeedValue = 0.8f;
 
 			if (m_bMove[MOVE_Back])
-				tmpSpeedValue = 0.33f;
+				tmpSpeedValue = 0.6f;
 
 			if (m_tInfo.fMoveSpeed_Max * tmpSpeedValue > m_tInfo.fMoveSpeed_Cur)
 			{
@@ -1689,20 +1717,6 @@ void CPlayer::Key_Movement_Down()
 			else
 			{
 				m_tInfo.fMoveSpeed_Cur = m_tInfo.fMoveSpeed_Max * tmpSpeedValue;
-			}
-		}
-
-		else
-		{
-			if (m_tInfo.fMoveSpeed_Max * 0.25f > m_tInfo.fMoveSpeed_Cur)
-			{
-				m_tInfo.fMoveSpeed_Cur += 0.1f + m_tInfo.fMoveAccel_Cur * m_tInfo.fMoveAccel_Cur * DELTA_60;
-				m_tInfo.fMoveAccel_Cur += DELTA_60;
-			}
-
-			else
-			{
-				m_tInfo.fMoveSpeed_Cur = m_tInfo.fMoveSpeed_Max * 0.25f;
 			}
 		}
 	}
@@ -2876,28 +2890,32 @@ void CPlayer::Play_MoveDelay()
 
 	else if (true == m_bOnMoveDelay)
 	{
-		_v3 vDelayDir = WORLD_LOOK; 
-		
-		vDelayDir =
-			m_eAnim_Lower == Cmn_Run_F_End_L ? m_pTransform->Get_Axis(AXIS_Z) :
-			m_eAnim_Lower == Cmn_Run_FL_End ? *D3DXVec3Normalize(&vDelayDir , &(m_pTransform->Get_Axis(AXIS_Z) - m_pTransform->Get_Axis(AXIS_X))):
-			m_eAnim_Lower == Cmn_Run_FR_End ? *D3DXVec3Normalize(&vDelayDir, &(m_pTransform->Get_Axis(AXIS_Z) + m_pTransform->Get_Axis(AXIS_X))) :
-			m_eAnim_Lower == Cmn_Run_L_LEnd ? -m_pTransform->Get_Axis(AXIS_X) :
-			m_eAnim_Lower == Cmn_Run_R_End ? m_pTransform->Get_Axis(AXIS_X) :
-			m_eAnim_Lower == Cmn_Run_B_End ? -m_pTransform->Get_Axis(AXIS_Z) :
-			m_eAnim_Lower == Cmn_Run_BL_End ? *D3DXVec3Normalize(&vDelayDir, &(-m_pTransform->Get_Axis(AXIS_Z) - m_pTransform->Get_Axis(AXIS_X))) :
-			m_eAnim_Lower == Cmn_Run_BR_End ? *D3DXVec3Normalize(&vDelayDir, &(-m_pTransform->Get_Axis(AXIS_Z) + m_pTransform->Get_Axis(AXIS_X))) : 
-			m_pTransform->Get_Axis(AXIS_Z);
-
-		Decre_Skill_Movement(m_fSkillMoveMultiply);
-		Skill_Movement(m_fSkillMoveSpeed_Cur, vDelayDir);
-
 		if (m_pDynamicMesh->Is_Finish_Animation_Lower(0.8f))
 		{
 			m_eActState = ACT_Idle;
 
 			m_bOnMoveDelay = false;
 		}
+
+		cout << m_eAnim_Lower << endl;
+
+		_v3 vDelayDir = WORLD_LOOK; 
+		
+		vDelayDir =
+			m_eAnim_Lower == Cmn_Run_F_End_L ? m_pTransform->Get_Axis(AXIS_Z) :
+			m_eAnim_Lower == Cmn_Run_FL_End ? m_pTransform->Get_Axis(AXIS_Z) - m_pTransform->Get_Axis(AXIS_X):
+			m_eAnim_Lower == Cmn_Run_FR_End ? m_pTransform->Get_Axis(AXIS_Z) + m_pTransform->Get_Axis(AXIS_X) :
+			m_eAnim_Lower == Cmn_Run_L_LEnd ? -m_pTransform->Get_Axis(AXIS_X) :
+			m_eAnim_Lower == Cmn_Run_R_End ? m_pTransform->Get_Axis(AXIS_X) :
+			m_eAnim_Lower == Cmn_Run_B_End ? -m_pTransform->Get_Axis(AXIS_Z) :
+			m_eAnim_Lower == Cmn_Run_BL_End ? -m_pTransform->Get_Axis(AXIS_Z) - m_pTransform->Get_Axis(AXIS_X) :
+			m_eAnim_Lower == Cmn_Run_BR_End ? -m_pTransform->Get_Axis(AXIS_Z) + m_pTransform->Get_Axis(AXIS_X) : 
+			m_pTransform->Get_Axis(AXIS_Z);
+
+		V3_NORMAL_SELF(&vDelayDir);
+
+		Decre_Skill_Movement(m_fSkillMoveMultiply);
+		Skill_Movement(m_fSkillMoveSpeed_Cur, vDelayDir);
 	}
 }
 
@@ -3418,7 +3436,7 @@ void CPlayer::Play_Dodge()
 
 	else
 	{
-		_v3 vDir;
+		_v3 vDir = WORLD_LOOK;
 
 		if (true == m_bOnAiming)
 		{
@@ -3489,7 +3507,10 @@ void CPlayer::Play_Dodge()
 			}
 
 			else
+			{
 				m_bDodgeBack = true;
+				vDir = -WORLD_LOOK;
+			}
 		}
 
 		else if (false == m_bOnAiming)
@@ -10918,6 +10939,9 @@ void CPlayer::Skill_Movement(_float _fspeed, _v3 _vDir)
 	_v3 tmpLook;
 	_float fSpeed = _fspeed;
 
+	if (fSpeed <= 0.f)
+		fSpeed = 0.f;
+
 	tmpLook = _vDir;
 	D3DXVec3Normalize(&tmpLook, &tmpLook);
 
@@ -11591,6 +11615,7 @@ void CPlayer::Free()
 	m_vecActiveSkillInfo.clear();
 
 	Safe_Release(m_pLockOn_UI);
+	Safe_Release(m_pScreenCornerFade);
 
 	Safe_Release(m_pDrainWeapon);
 	Safe_Release(m_pCollider);

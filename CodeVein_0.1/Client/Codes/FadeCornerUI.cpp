@@ -1,24 +1,24 @@
 #include "stdafx.h"
-#include "HitCheckUI.h"
+#include "FadeCornerUI.h"
 
-CHitCheckUI::CHitCheckUI(_Device pGraphic_Device)
+CFadeCornerUI::CFadeCornerUI(_Device pGraphic_Device)
 	: CUI(pGraphic_Device)
 {
 }
 
-CHitCheckUI::CHitCheckUI(const CHitCheckUI & rhs)
+CFadeCornerUI::CFadeCornerUI(const CFadeCornerUI & rhs)
 	: CUI(rhs)
 {
 }
 
-HRESULT CHitCheckUI::Ready_GameObject_Prototype()
+HRESULT CFadeCornerUI::Ready_GameObject_Prototype()
 {
 	CUI::Ready_GameObject_Prototype();
 
 	return NOERROR;
 }
 
-HRESULT CHitCheckUI::Ready_GameObject(void * pArg)
+HRESULT CFadeCornerUI::Ready_GameObject(void * pArg)
 {
 	if (FAILED(Add_Component()))
 		return E_FAIL;
@@ -34,7 +34,7 @@ HRESULT CHitCheckUI::Ready_GameObject(void * pArg)
 	return NOERROR;
 }
 
-_int CHitCheckUI::Update_GameObject(_double TimeDelta)
+_int CFadeCornerUI::Update_GameObject(_double TimeDelta)
 {
 	if (false == m_bEnable)
 		return NO_EVENT;
@@ -65,19 +65,19 @@ _int CHitCheckUI::Update_GameObject(_double TimeDelta)
 
 	m_matWorld._11 = m_fSizeX;
 	m_matWorld._22 = m_fSizeY;
-	m_matWorld._33 = 1.f;
+	m_matWorld._33 = 0.1f;
 	m_matWorld._41 = m_fPosX - WINCX * 0.5f;
 	m_matWorld._42 = -m_fPosY + WINCY * 0.5f;
 
 	return NO_EVENT;
 }
 
-_int CHitCheckUI::Late_Update_GameObject(_double TimeDelta)
+_int CFadeCornerUI::Late_Update_GameObject(_double TimeDelta)
 {
 	return NO_EVENT;
 }
 
-HRESULT CHitCheckUI::Render_GameObject()
+HRESULT CFadeCornerUI::Render_GameObject()
 {
 	if (nullptr == m_pShaderCom ||
 		nullptr == m_pBufferCom)
@@ -89,12 +89,12 @@ HRESULT CHitCheckUI::Render_GameObject()
 	g_pManagement->Set_Transform(D3DTS_PROJECTION, m_matProj);
 
 
-	if (FAILED(SetUp_ConstantTable(0)))
+	if (FAILED(SetUp_ConstantTable(2)))
 		return E_FAIL;
 
 	m_pShaderCom->Begin_Shader();
 
-	m_pShaderCom->Begin_Pass(12);
+	m_pShaderCom->Begin_Pass(13);
 
 	m_pBufferCom->Render_VIBuffer();
 
@@ -102,12 +102,10 @@ HRESULT CHitCheckUI::Render_GameObject()
 
 	m_pShaderCom->End_Shader();
 
-	cout << " 졸라 잘 나오긴해!!" << endl;
-
 	return NOERROR;
 }
 
-HRESULT CHitCheckUI::Add_Component()
+HRESULT CFadeCornerUI::Add_Component()
 {
 	// For.Com_Transform
 	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Transform", L"Com_Transform", (CComponent**)&m_pTransformCom)))
@@ -118,7 +116,7 @@ HRESULT CHitCheckUI::Add_Component()
 		return E_FAIL;
 
 	// For.Com_Texture
-	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Tex_Ortho_Blood", L"Com_Texture", (CComponent**)&m_pTextureCom)))
+	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Tex_Black_Corner", L"Com_Texture", (CComponent**)&m_pTextureCom)))
 		return E_FAIL;
 
 	// For.Com_Shader
@@ -132,7 +130,7 @@ HRESULT CHitCheckUI::Add_Component()
 	return NOERROR;
 }
 
-HRESULT CHitCheckUI::SetUp_ConstantTable(_uint iIndex)
+HRESULT CFadeCornerUI::SetUp_ConstantTable(_uint iIndex)
 {
 	if (nullptr == m_pShaderCom)
 		return E_FAIL;
@@ -152,33 +150,33 @@ HRESULT CHitCheckUI::SetUp_ConstantTable(_uint iIndex)
 	return NOERROR;
 }
 
-CHitCheckUI * CHitCheckUI::Create(_Device pGraphic_Device)
+CFadeCornerUI * CFadeCornerUI::Create(_Device pGraphic_Device)
 {
-	CHitCheckUI* pInstance = new CHitCheckUI(pGraphic_Device);
+	CFadeCornerUI* pInstance = new CFadeCornerUI(pGraphic_Device);
 
 	if (FAILED(pInstance->Ready_GameObject_Prototype()))
 	{
-		MSG_BOX("CHitCheckUI Creating Fail");
+		MSG_BOX("CFadeCornerUI Creating Fail");
 		Safe_Release(pInstance);
 	}
 
 	return pInstance;
 }
 
-CGameObject * CHitCheckUI::Clone_GameObject(void * pArg)
+CGameObject * CFadeCornerUI::Clone_GameObject(void * pArg)
 {
-	CHitCheckUI* pInstance = new CHitCheckUI(*this);
+	CFadeCornerUI* pInstance = new CFadeCornerUI(*this);
 
 	if (FAILED(pInstance->Ready_GameObject(pArg)))
 	{
-		MSG_BOX("Failed To Cloned CHitCheckUI");
+		MSG_BOX("Failed To Cloned CFadeCornerUI");
 		Safe_Release(pInstance);
 	}
 
 	return pInstance;
 }
 
-void CHitCheckUI::Free()
+void CFadeCornerUI::Free()
 {
 	Safe_Release(m_pTransformCom);
 	Safe_Release(m_pBufferCom);

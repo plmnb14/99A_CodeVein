@@ -32,6 +32,8 @@ HRESULT CScene_Title::Ready_Scene()
 {
 	system("cls");
 
+	//g_pSoundManager->Stop_Sound(CSoundManager::Background_01);
+
 	if (FAILED(Ready_Prototype_GameObject()))
 		return E_FAIL;
 
@@ -51,7 +53,7 @@ HRESULT CScene_Title::Ready_Scene()
 
 _int CScene_Title::Update_Scene(_double TimeDelta)
 {
-	//CUI_Manager::Get_Instance()->Update_UI();
+	CUI_Manager::Get_Instance()->Update_UI();
 
 	if (true == m_pLoading->Get_Finish())
 	{

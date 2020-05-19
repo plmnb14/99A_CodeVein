@@ -15,6 +15,7 @@
 #include "OrthoEffect.h"
 
 #include "HitCheckUI.h"
+#include "FadeCornerUI.h"
 
 BEGIN(Client)
 
@@ -166,6 +167,7 @@ private:
 	COrthoEffect*			m_pScreenFadeEffect = nullptr;
 
 	CHitCheckUI*			m_pScreenCornerEffect = nullptr;
+	CFadeCornerUI*			m_pScreenCornerFade = nullptr;
 
 private:
 	vector<CCollider*>		m_vecPhsycColl;
