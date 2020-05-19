@@ -32,6 +32,8 @@ private:
 	void					Regist_Armor(CArmor_Slot* pArmorSlot);
 	void					UnRegist_Armor(CArmor_Slot* pArmorSlot);
 	void					Reset_SelectSlot();
+	void					SetUp_SlotPos();
+	void					SetUp_SubUI_Active(_bool bIsActive);
 
 public:
 	void					Add_Armor(ARMOR_PARAM tArmorParam);
@@ -46,6 +48,7 @@ private:
 	vector<CArmor_Slot*>	m_vecArmorSlot;
 	ARMOR_PARAM				m_tRegistParam;
 	CExplainArmorUI*		m_pExplainUI = nullptr;
+	_bool					m_bIsSubActive = false;
 
 public:
 	static CArmor_Inven*	Create(_Device pGraphic_Device);

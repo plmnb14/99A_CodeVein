@@ -46,6 +46,7 @@ private:
 	void					SetUp_Default();
 	void					Click_Icon();
 	void					SkillSlot_Touch_Sound(_uint i);
+	void					SetUp_SubUI_Active(_bool bIsActive);
 
 private:
 	CBuffer_RcTex*			m_pBufferCom = nullptr;
@@ -64,6 +65,7 @@ private:
 	BloodCode_ID			m_ePlayerBloodCode = BloodCode_End;
 	vector<CSkillSlot*>		m_vecSkillIcon;
 	CNoticeUI*				m_pNoticeUI = nullptr;
+	_bool					m_bIsSubActive = false;
 
 public:
 	static CTotal_Inven*	Create(_Device pGraphic_Device);

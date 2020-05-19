@@ -56,7 +56,7 @@ _int CGeneralStoreNPCUI::Update_GameObject(_double TimeDelta)
 
 	_v3 vLook = pTargetTrans->Get_Axis(AXIS_Z);
 	_v3 vRight = pTargetTrans->Get_Axis(AXIS_X);
-
+	
 	// x 축 방향벡터
 	V3_NORMAL_SELF(&vLook);
 	V3_NORMAL_SELF(&vRight);

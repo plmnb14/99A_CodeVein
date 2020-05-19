@@ -44,6 +44,9 @@ HRESULT CSkill_Inven::Ready_GameObject(void * pArg)
 	{
 		Add_Skill_Data(Skill_ID(i));
 	}
+
+	SetUp_SlotPos();
+
 	return NOERROR;
 }
 
@@ -54,20 +57,31 @@ _int CSkill_Inven::Update_GameObject(_double TimeDelta)
 
 	D3DXMatrixOrthoLH(&m_matProj, WINCX, WINCY, 0.f, 1.0f);
 
-	_uint iIdx = 0;
-	for (auto& iter : m_vecSlot)
-	{
-		iter->Set_UI_Pos(m_fPosX - 100.f + 50.f * (iIdx % 5), m_fPosY - 150.f + 50.f * (iIdx / 5));
-		iter->Set_Active(m_bIsActive);
-		iIdx++;
-	}
-	m_pExitIcon->Set_Active(m_bIsActive);
 	Click_SubUI();
-	Search_Regist_Skill();
+	//Search_Regist_Skill();
 
-	m_pExplainUI->Set_Active(m_bIsActive);
+	if (m_bIsActive && !m_bIsSubActive)
+	{
+		SetUp_SubUI_Active(true);
+		Search_Regist_Skill();
+		m_bIsSubActive = true;
+	}
+	else if (!m_bIsActive && m_bIsSubActive)
+	{
+		SetUp_SubUI_Active(false);
 
-	if (!m_bIsActive)
+		for (auto& iter : m_vecSlot)
+		{
+			iter->Set_Regist(false);
+			iter->Set_Select(false);
+		}
+
+		m_pExplainUI->Set_Type(SkillID_End);
+
+		m_bIsSubActive = false;
+	}
+
+	/*if (!m_bIsActive)
 	{
 		for (auto& iter : m_vecSlot)
 		{
@@ -76,7 +90,7 @@ _int CSkill_Inven::Update_GameObject(_double TimeDelta)
 		}
 
 		m_pExplainUI->Set_Type(SkillID_End);
-	}
+	}*/
 
 	return NO_EVENT;
 }
@@ -270,6 +284,29 @@ void CSkill_Inven::UnRegist_Slot_Sound(_uint iIdx)
 	g_pSoundManager->Play_Sound(L"UI_CommonClick.wav", CSoundManager::CHANNELID(iChnnel), CSoundManager::Ambient_Sound);
 }
 
+void CSkill_Inven::SetUp_SlotPos()
+{
+	_uint iIdx = 0;
+	for (auto& iter : m_vecSlot)
+	{
+		iter->Set_UI_Pos(m_fPosX - 100.f + 50.f * (iIdx % 5), m_fPosY - 150.f + 50.f * (iIdx / 5));
+		iIdx++;
+	}
+}
+
+void CSkill_Inven::SetUp_SubUI_Active(_bool bIsActive)
+{
+	_uint iIdx = 0;
+	for (auto& iter : m_vecSlot)
+	{
+
+		iter->Set_Active(bIsActive);
+		iIdx++;
+	}
+	m_pExitIcon->Set_Active(bIsActive);
+	m_pExplainUI->Set_Active(bIsActive);
+}
+
 void CSkill_Inven::Add_Skill_Data(Skill_ID eSkillID)
 {
 	CSkillSlot* pSlot = static_cast<CSkillSlot*>(g_pManagement->Clone_GameObject_Return(L"GameObject_SkillSlot", nullptr));
@@ -279,6 +316,8 @@ void CSkill_Inven::Add_Skill_Data(Skill_ID eSkillID)
 	g_pManagement->Add_GameOject_ToLayer_NoClone(pSlot, SCENE_MORTAL, L"Layer_PlayerUI", nullptr);
 	m_vecSlot.push_back(pSlot);
 	m_vecData.push_back(eSkillID);
+
+	SetUp_SlotPos();
 }
 
 CSkill_Inven * CSkill_Inven::Create(_Device pGraphic_Device)
