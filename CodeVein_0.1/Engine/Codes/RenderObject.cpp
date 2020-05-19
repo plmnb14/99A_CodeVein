@@ -43,7 +43,8 @@ _int CRenderObject::Update_GameObject(_double _TimeDelta)
 	if (nullptr == m_pOptimization)
 		return NO_EVENT;
 
-	m_bInFrustum = m_pOptimization->Check_InFrustumforObject(&m_pTransform->Get_Pos(), 10.f);
+	_float fFrustumRadius = m_bAdvencedCull ? 30.f : 10.f;
+	m_bInFrustum = m_pOptimization->Check_InFrustumforObject(&m_pTransform->Get_Pos(), fFrustumRadius);
 
 	if (false == m_bUpdated)
 	{
@@ -349,10 +350,10 @@ void CRenderObject::Set_RenderGroup(RENDERID _eGroup)
 
 void CRenderObject::SetUp_IndividualShaderValue()
 {
-	m_tPBRInfo.fEmissivePower = 1.f;
-	m_tPBRInfo.fSpecularPower = 0.f;
-	m_tPBRInfo.fRoughnessPower = 0.f;
-	m_tPBRInfo.fMinSpecular = 0.f;
+	m_tPBRInfo.fEmissivePower = 5.f;
+	m_tPBRInfo.fSpecularPower = 1.f;
+	m_tPBRInfo.fRoughnessPower = 1.f;
+	m_tPBRInfo.fMinSpecular = 0.1f;
 	m_tPBRInfo.fID_R = 1.f;
 	m_tPBRInfo.fID_G = 0.5f;
 	m_tPBRInfo.fID_B = 0.1f;
@@ -502,6 +503,10 @@ HRESULT CRenderObject::Ready_GameObject(void * pAvg)
 
 	SetUp_IndividualShaderValue();
 
+	Check_Stage_01();
+	Check_Stage_02();
+	Check_Stage_03();
+
 	return S_OK;
 }
 
@@ -534,4 +539,38 @@ HRESULT CRenderObject::Add_Components(_tchar * szMeshName)
 	lstrcpy(m_szName, szMeshName);
 
 	return S_OK;
+}
+
+void CRenderObject::Check_Stage_01()
+{
+	if (!lstrcmp(L"Mesh_Building_C", m_szName))
+	{
+		m_bAdvencedCull = true;
+	}
+
+	if (!lstrcmp(L"Mesh_Building_D", m_szName))
+	{
+		m_bAdvencedCull = true;
+	}
+
+	if (!lstrcmp(L"Mesh_Building_E", m_szName))
+	{
+		m_bAdvencedCull = true;
+	}
+}
+
+void CRenderObject::Check_Stage_02()
+{
+	if (!lstrcmp(L"Mesh_SM_MERGED_SplineGaia88", m_szName))
+	{
+		m_bAdvencedCull = true;
+	}
+}
+
+void CRenderObject::Check_Stage_03()
+{
+	if (!lstrcmp(L"Mesh_SM_TowerSenRL2Top_st07a1", m_szName))
+	{
+		m_bAdvencedCull = true;
+	}
 }

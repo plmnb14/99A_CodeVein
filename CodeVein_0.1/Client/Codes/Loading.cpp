@@ -1303,13 +1303,13 @@ _uint CLoading::Loading_Title()
 	cout << "Costume Dynamic Mesh 불러오는 중 . . ." << endl;
 	g_pManagement->LoadMesh_FromPath(m_pGraphicDev, L"../../Data/Load_MeshData/Mesh_Costume_Dynamic_Path.dat");
 
-	//cout << " 옷 생성 중 . . ." << endl;
-	//g_pClothManager->Ready_ClothManager();
+	cout << " Costume Cloth Making . . ." << endl;
+	g_pClothManager->Ready_ClothManager();
 
 	cout << "DynamicMesh 불러오는 중 . . ." << endl;
 	g_pManagement->LoadMesh_FromPath(m_pGraphicDev, L"../../Data/Load_MeshData/Mesh_Dynamic_Path.dat");
 	
-	//cout << "NPC 불러오는 중 . . ." << endl;
+	cout << "NPC 불러오는 중 . . ." << endl;
 	g_pManagement->LoadMesh_FromPath(m_pGraphicDev, L"../../Data/Load_MeshData/Mesh_NPC_Path.dat");
 	//============================================================================================================
 	// 무기 불러오는 중
@@ -1395,18 +1395,10 @@ _uint CLoading::Loading_Title()
 	//g_pSoundManager->Load_Directory_SouneFile_W(L"Effect");
 	//g_pSoundManager->Load_Directory_SouneFile_W(L"Effect/Effect_Fire");
 	g_pSoundManager->Load_Directory_SouneFile_W(L"Effect");
-	g_pSoundManager->Load_Directory_SouneFile_W(L"UI");
+	g_pSoundManager->Load_Directory_SouneFile_W(L"UI/UI_Inven");
 	g_pSoundManager->Load_Directory_SouneFile_W(L"UI/UI_WeaponShop");
 	g_pSoundManager->Load_Directory_SouneFile_W(L"NPC/Yakumo");
 	g_pSoundManager->Load_Directory_SouneFile_W(L"Boss_Genji");
-
-	//============================================================================================================
-	// 옷
-	//============================================================================================================
-	//cout << " 옷 생성 중 . . ." << endl;
-	//g_pClothManager->Ready_ClothManager();
-	//============================================================================================================
-
 	m_bFinish = true;
 
 	system("cls");

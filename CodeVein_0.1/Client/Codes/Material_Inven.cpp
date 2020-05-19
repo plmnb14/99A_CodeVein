@@ -73,20 +73,18 @@ _int CMaterial_Inven::Update_GameObject(_double TimeDelta)
 
 	D3DXMatrixOrthoLH(&m_matProj, WINCX, WINCY, 0.f, 1.0f);
 
-	Click_Inven();
-
-	for (auto& pSlot : m_vecMaterialSlot)
-		pSlot->Set_Active(m_bIsActive);
-
-	_uint iIdx = 0;
-	for (auto& vector_iter : m_vecMaterialSlot)
+	if (m_bIsActive && !m_bIsSubActive)
 	{
-		vector_iter->Set_UI_Pos(m_fPosX - 100.f + 52.f * (iIdx % 5), m_fPosY - 150.f + 52.f * (iIdx / 5));
-		iIdx++;
+		SetUp_SubUI_Active(true);
+		m_bIsSubActive = true;
 	}
-	
-	if (m_pExplainUI)
-		m_pExplainUI->Set_Active(m_bIsActive);
+	else if (!m_bIsActive && m_bIsSubActive)
+	{
+		SetUp_SubUI_Active(false);
+		m_bIsSubActive = false;
+	}
+
+	Click_Inven();
 	
 	return NO_EVENT;
 }
@@ -114,12 +112,7 @@ HRESULT CMaterial_Inven::Render_GameObject()
 		nullptr == m_pBufferCom)
 		return E_FAIL;
 
-
 	g_pManagement->Set_Transform(D3DTS_WORLD, m_matWorld);
-
-	m_matOldView = g_pManagement->Get_Transform(D3DTS_VIEW);
-	m_matOldProj = g_pManagement->Get_Transform(D3DTS_PROJECTION);
-
 	g_pManagement->Set_Transform(D3DTS_VIEW, m_matView);
 	g_pManagement->Set_Transform(D3DTS_PROJECTION, m_matProj);
 
@@ -130,17 +123,11 @@ HRESULT CMaterial_Inven::Render_GameObject()
 
 	m_pShaderCom->Begin_Pass(1);
 
-	// 버퍼를 렌더링한다.
-	// (인덱스버퍼(012023)에 보관하고있는 인덱스를 가진 정점을 그리낟.)
-	// 삼각형 두개를 그리낟.각각의 삼각형마다 정점세개, 각각의 정점을 버텍스 셰이더의 인자로 던진다.
 	m_pBufferCom->Render_VIBuffer();
 
 	m_pShaderCom->End_Pass();
 
 	m_pShaderCom->End_Shader();
-
-	g_pManagement->Set_Transform(D3DTS_VIEW, m_matOldView);
-	g_pManagement->Set_Transform(D3DTS_PROJECTION, m_matOldProj);
 
 	return NOERROR;
 }
@@ -210,6 +197,8 @@ void CMaterial_Inven::Load_Materials(CMaterial * pMaterial, _uint iIndex)
 		m_vecMaterialSlot[iIndex]->Input_Item(pMaterial);
 	else
 		Load_Materials(pMaterial, iIndex + 1);
+
+	SetUp_SlotPos();
 }
 
 void CMaterial_Inven::Click_Inven()
@@ -253,6 +242,27 @@ void CMaterial_Inven::Add_Slot()
 	g_pManagement->Add_GameOject_ToLayer_NoClone(pSlot, SCENE_MORTAL, L"Layer_PlayerUI", nullptr);
 	pSlot->Set_UI_Size(50.f, 50.f);
 	m_vecMaterialSlot.push_back(pSlot);
+
+	SetUp_SlotPos();
+}
+
+void CMaterial_Inven::SetUp_SlotPos()
+{
+	_uint iIdx = 0;
+	for (auto& vector_iter : m_vecMaterialSlot)
+	{
+		vector_iter->Set_UI_Pos(m_fPosX - 100.f + 52.f * (iIdx % 5), m_fPosY - 150.f + 52.f * (iIdx / 5));
+		vector_iter->Set_ViewZ(m_fViewZ - 0.1f);
+		iIdx++;
+	}
+}
+
+void CMaterial_Inven::SetUp_SubUI_Active(_bool bIsActive)
+{
+	for (auto& pSlot : m_vecMaterialSlot)
+		pSlot->Set_Active(bIsActive);
+
+	m_pExplainUI->Set_Active(bIsActive);
 }
 
 void CMaterial_Inven::Add_Material(CMaterial::MATERIAL_TYPE eType)
@@ -273,6 +283,8 @@ void CMaterial_Inven::Add_Material(CMaterial::MATERIAL_TYPE eType)
 	pMaterial->Set_Type(eType);
 
 	Load_Materials(pMaterial, 0);
+
+	SetUp_SlotPos();
 }
 
 
@@ -281,6 +293,8 @@ void CMaterial_Inven::Add_MultiMaterial(CMaterial::MATERIAL_TYPE eType, _uint iC
 {
 	LOOP(_int(iCnt))
 		Add_Material(eType);
+
+	SetUp_SlotPos();
 }
 
 void CMaterial_Inven::Sell_Material(_uint iDelete)
@@ -312,6 +326,7 @@ void CMaterial_Inven::Sell_Material(_uint iDelete)
 		++idx;
 	}
 	
+	SetUp_SlotPos();
 }
 
 CMaterial_Inven * CMaterial_Inven::Create(_Device pGraphic_Device)
