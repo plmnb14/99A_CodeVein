@@ -18,7 +18,6 @@ CDeerKing::CDeerKing(const CDeerKing & rhs)
 
 HRESULT CDeerKing::Ready_GameObject_Prototype()
 {
-	Ready_Cloth();
 
 	return S_OK;
 }
@@ -32,6 +31,7 @@ HRESULT CDeerKing::Ready_GameObject(void * pArg)
 	Ready_Weapon();
 	Ready_BoneMatrix();
 	Ready_Collider();
+	Ready_Cloth();
 	Ready_Sound();
 
 	m_tObjParam.bCanHit = true;
@@ -2552,6 +2552,8 @@ HRESULT CDeerKing::Ready_Cloth()
 {
 	PxScene& scene = *g_pPhysx->Get_Scene();
 	PxPhysics& physics = *g_pPhysx->Get_Physics();
+
+	scene.fetchResults(true);
 
 	PxSceneWriteLock scopedLock(scene);
 
