@@ -23,15 +23,9 @@ HRESULT CPet::Render_GameObject_SetPass(CShader * pShader, _int iPass)
 
 void CPet::Check_CollisionEvent()
 {
-	Check_CollisionPush();
 	Check_CollisionHit(g_pManagement->Get_GameObjectList(L"Layer_Boss", SCENE_STAGE));
 	Check_CollisionHit(g_pManagement->Get_GameObjectList(L"Layer_Monster", SCENE_STAGE));
 
-	return;
-}
-
-void CPet::Check_CollisionPush()
-{
 	return;
 }
 
@@ -496,6 +490,9 @@ void CPet::Function_Find_Target()
 
 void CPet::Function_ResetAfterAtk()
 {
+	m_fCoolDownCur = 0.f;
+	m_fCoolDownMax = 0.f;
+
 	m_tObjParam.bCanHit = true;
 	m_tObjParam.bIsHit = false;
 
@@ -584,6 +581,7 @@ void CPet::Function_Check_Navi()
 {
 	Function_ResetAfterAtk();
 	m_bEnable = true;
+	m_bCanSummon = false;
 
 	_tchar szNavData[STR_128] = L"";
 
@@ -596,13 +594,10 @@ void CPet::Function_Check_Navi()
 	//player 오른쪽으로 2.f만큼 소환될것임
 	CTransform* pPlayerTransform = TARGET_TO_TRANS(m_pPlayer);
 	m_pTransform->Set_Pos(pPlayerTransform->Get_Pos() + pPlayerTransform->Get_Axis(AXIS_X) * 2.f);
-	m_pTransform->Set_Scale(_v3{ 0.25f, 0.25f, 0.25f });
 
 	m_pNavMesh->Set_Index(-1);
 	m_pNavMesh->Ready_NaviMesh(m_pGraphic_Dev, szNavData);
 	m_pNavMesh->Check_OnNavMesh(m_pTransform->Get_Pos());
-
-	Play_Deformation();
 
 	return;
 }

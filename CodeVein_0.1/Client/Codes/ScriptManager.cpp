@@ -993,13 +993,57 @@ void CScriptManager::Ready_Stage01_DynamicObject()
 
 void CScriptManager::Ready_Stage02_DynamicObject()
 {
+	m_vecObjectPool.reserve(20);
+	_v3 vPos[20] =
+	{
+		//Subset0 TriggerIdx6 ¿ø¼þÀÌ, ÅäÅÛ, ÇåÅÍ(Ã¢), °ÕÁö(°Ë¹æ), °ÕÁö(ÃÑ)
+		_v3(52.63f, -7.45f, -109.401f),
+	};
+
+	CGameObject* pInstance = nullptr;
+	_uint		iIndex = 0;
+
+	// ================================================================================================================
+	//Subset0 TriggerIdx6 ¿ø¼þÀÌ, ÅäÅÛ, ÇåÅÍ(Ã¢), °ÕÁö(°Ë¹æ), °ÕÁö(ÃÑ)
+	{
+		//¿ø¼þÀÌ
+		pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_Monkey",
+			&CMonster::MONSTER_STATUS(CMonster::MONSTER_COLOR_TYPE::COLOR_NONE, WEAPON_STATE::WEAPON_None,
+				true, _v3(vPos[iIndex].x, vPos[iIndex].y, vPos[iIndex].z), _v3(0.f, 0.f/*D3DXToRadian(vPos[iIndex].w)*/, 0.f), 3));
+		pInstance->Set_Enable(false);
+		m_vecObjectPool.push_back(pInstance);
+		Safe_AddRef(pInstance);
+		g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Monster", nullptr);
+		++iIndex;
+
+		pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_IceGirl", &CIceGirl::INFO(70.f, 20.f, 2.f, true,
+			_v3(vPos[iIndex].x, vPos[iIndex].y, vPos[iIndex].z), _v3(0.f, D3DXToRadian(180.f), 0.f), 3));
+		pInstance->Set_Enable(false);
+		m_vecObjectPool.push_back(pInstance);
+		Safe_AddRef(pInstance);
+		g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Monster", nullptr);
+		++iIndex;
+	}
+
+	_ulong dwIndex = 0;
+
+	for (auto& iter : m_vecObjectPool)
+	{
+		iter->Set_Enable(false);
+		TARGET_TO_TRANS(iter)->Set_Pos(vPos[dwIndex]);
+		TARGET_TO_NAV(iter)->Ready_NaviMesh(m_pGraphicDev, L"Navmesh_Stage_03.dat");
+
+		g_pManagement->Add_GameOject_ToLayer_NoClone(iter, SCENE_STAGE, L"Layer_Monster", nullptr);
+
+		++dwIndex;
+	}
 }
 
 void CScriptManager::Ready_Stage03_DynamicObject()
 {
-	m_vecObjectPool.reserve(20);
+	m_vecObjectPool.reserve(19);
 
-	_v3 vPos[20] =
+	_v3 vPos[19] =
 	{
 		//Subset0 TriggerIdx6 ¿ø¼þÀÌ, ÅäÅÛ, ÇåÅÍ(Ã¢), °ÕÁö(°Ë¹æ), °ÕÁö(ÃÑ)
 		_v3(52.63f, -7.45f, -109.401f),
@@ -1049,7 +1093,7 @@ void CScriptManager::Ready_Stage03_DynamicObject()
 	CGameObject* pInstance = nullptr;
 	_uint		iIndex = 0;
 
-	//=======================================================================
+	// ================================================================================================================
 	//Subset0 TriggerIdx6 ¿ø¼þÀÌ, ÅäÅÛ, ÇåÅÍ(Ã¢), °ÕÁö(°Ë¹æ), °ÕÁö(ÃÑ)
 	{
 		//¿ø¼þÀÌ
@@ -1102,7 +1146,7 @@ void CScriptManager::Ready_Stage03_DynamicObject()
 		++iIndex;
 	}
 
-	//=======================================================================
+	// ================================================================================================================
 	//Subset0 TriggerIdx51 ¾ßÂ÷¸Ç, ÇåÅÍ(ÃÑ), ÇåÅÍ(ÃÑ)
 	{
 		//¾ßÂ÷¸Ç
@@ -1136,7 +1180,7 @@ void CScriptManager::Ready_Stage03_DynamicObject()
 		++iIndex;
 	}
 
-	//=======================================================================
+	 // ================================================================================================================
 	//Subset1 TriggerIdx35 ÅäÅÛ, ÅäÅÛ, ¿ø¼þÀÌ, ÇåÅÍ(¸ÁÄ¡), ÇåÅÍ(´ë°Ë)
 	{
 		// ÅäÅÛ
@@ -1188,7 +1232,7 @@ void CScriptManager::Ready_Stage03_DynamicObject()
 		++iIndex;
 	}
 
-	//=======================================================================
+	 // ================================================================================================================
 	//Subset2 TriggerIdx24 ¿ø¼þÀÌ, ¿ø¼þÀÌ, ¾ßÂ÷¸Ç, ÇåÅÍ(°Ë)
 	{
 		//¿ø¼þÀÌ
@@ -1233,7 +1277,7 @@ void CScriptManager::Ready_Stage03_DynamicObject()
 	}
 
 	// ¼­ºê¼Â 4 - 2¸¶¸® ( ¾óÀ½º¸½º 1 , ºÒº¸½º 1 )
-	//=======================================================================
+	 // ================================================================================================================
 	{
 		pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_IceGirl", &CIceGirl::INFO(70.f, 20.f, 2.f, true,
 			_v3(vPos[iIndex].x, vPos[iIndex].y, vPos[iIndex].z), _v3(0.f, D3DXToRadian(180.f), 0.f), 3));
@@ -1282,67 +1326,171 @@ void CScriptManager::Ready_Stage03_DynamicObject()
 
 void CScriptManager::Ready_Stage04_DynamicObject()
 {
-	m_vecObjectPool.reserve(6);
+	m_vecObjectPool.reserve(8);
 
-	_v3 vPos[6] =
+	_v3 vPos[8] =
 	{
-		// °¡¿îµ¥ 4¸¶¸® , ¾ð´ö 1¸¶¸®
-		_v3(8.834f, -3.9f, 73.108f),
-		_v3(9.218f, -3.9f, 82.427f),
-		_v3(-11.670f, -3.9f, 85.848f),
-		_v3(-11.915f, -3.9f, 68.994f),
-		_v3(-17.021f, 2.1f, 133.317f),
-		// =========================================
-		// º¸½º 1¸¶¸®
-		_v3(-2.71f, -0.1f, -26.031f)
+		//SubsetÃ³À½ºÎÅÍ TriggerIdx ÅäÅÛx2
+		_v3(26.516f, -3.883f, 75.362f),
+		_v3(21.919f, -3.883f, 79.166f),
+
+		//Subset0 TriggerIdx46 µûÀÌ¸Ç, ÅäÅÛx4
+		_v3(-1.625f, -3.883f, 77.897f),
+		_v3(-8.819f, -3.883f, 70.1f),
+		_v3(-9.208f, -3.883f, 85.404f),
+		_v3(6.937f, -3.883f, 69.14f),
+		_v3(7.177f, -3.883f, 85.947f),
+
+		//Subset1 TriggerIdx114 ¿©¿Õ±â»ç
+		_v3(-1.469f, 0.1f, -3.486f),
+
+		//// °¡¿îµ¥ 4¸¶¸® , ¾ð´ö 1¸¶¸®
+		//_v3(8.834f, -3.9f, 73.108f),
+		//_v3(9.218f, -3.9f, 82.427f),
+		//_v3(-11.670f, -3.9f, 85.848f),
+		//_v3(-11.915f, -3.9f, 68.994f),
+		//_v3(-17.021f, 2.1f, 133.317f),
+		//// =========================================
+		//// º¸½º 1¸¶¸®
+		//_v3(-2.71f, -0.1f, -26.031f)
 	};
 
 	CGameObject* pInstance = nullptr;
+	_uint		iIndex = 0;
 
-	//=======================================================================
-	// 4 ¸¶¸® + ¾ð´ö 1¸¶¸®
-
+	// // ================================================================================================================
+	//SubsetÃ³À½ºÎÅÍ TriggerIdx ÅäÅÛx2
 	{
-		pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_Hunter", &CMonster::MONSTER_STATUS(CMonster::MONSTER_COLOR_TYPE::BLACK, WEAPON_STATE::WEAPON_Halberd));
-		TARGET_TO_NAV(pInstance)->Set_SubsetIndex(1);
-		TARGET_TO_NAV(pInstance)->Set_Index(46);
+		//ÅäÅÛ
+		pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_Cocoon",
+			&CMonster::MONSTER_STATUS(CMonster::MONSTER_COLOR_TYPE::COLOR_NONE, WEAPON_STATE::WEAPON_None,
+				true, _v3(vPos[iIndex].x, vPos[iIndex].y, vPos[iIndex].z), V3_NULL, 3));
+		pInstance->Set_Enable(false);
 		m_vecObjectPool.push_back(pInstance);
 		Safe_AddRef(pInstance);
+		g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Monster", nullptr);
+		++iIndex;
 
-		pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_Hunter", &CMonster::MONSTER_STATUS(CMonster::MONSTER_COLOR_TYPE::BLACK, WEAPON_STATE::WEAPON_Halberd));
-		TARGET_TO_NAV(pInstance)->Set_SubsetIndex(1);
-		TARGET_TO_NAV(pInstance)->Set_Index(33);
+		//ÅäÅÛ
+		pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_Cocoon",
+			&CMonster::MONSTER_STATUS(CMonster::MONSTER_COLOR_TYPE::COLOR_NONE, WEAPON_STATE::WEAPON_None,
+				true, _v3(vPos[iIndex].x, vPos[iIndex].y, vPos[iIndex].z), V3_NULL, 3));
+		pInstance->Set_Enable(false);
 		m_vecObjectPool.push_back(pInstance);
 		Safe_AddRef(pInstance);
-
-		pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_Hunter", &CMonster::MONSTER_STATUS(CMonster::MONSTER_COLOR_TYPE::BLACK, WEAPON_STATE::WEAPON_Halberd));
-		TARGET_TO_NAV(pInstance)->Set_SubsetIndex(1);
-		TARGET_TO_NAV(pInstance)->Set_Index(76);
-		m_vecObjectPool.push_back(pInstance);
-		Safe_AddRef(pInstance);
-
-		pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_Hunter", &CMonster::MONSTER_STATUS(CMonster::MONSTER_COLOR_TYPE::BLACK, WEAPON_STATE::WEAPON_Halberd));
-		TARGET_TO_NAV(pInstance)->Set_SubsetIndex(1);
-		TARGET_TO_NAV(pInstance)->Set_Index(66);
-		m_vecObjectPool.push_back(pInstance);
-		Safe_AddRef(pInstance);
-
-		pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_Hunter", &CMonster::MONSTER_STATUS(CMonster::MONSTER_COLOR_TYPE::BLACK, WEAPON_STATE::WEAPON_Halberd));
-		TARGET_TO_NAV(pInstance)->Set_SubsetIndex(1);
-		TARGET_TO_NAV(pInstance)->Set_Index(88);
-		m_vecObjectPool.push_back(pInstance);
-		Safe_AddRef(pInstance);
+		g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Monster", nullptr);
+		++iIndex;
 	}
 
-	//=======================================================================
-	// º¸½º 1¸¶¸®
+	// // ================================================================================================================
+	//Subset0 TriggerIdx46 µûÀÌ¸Ç, ÅäÅÛx4
 	{
-		pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_QueensKnight", &CQueensKnight::INFO(45.f, 20.f, 2.f));
-		TARGET_TO_NAV(pInstance)->Set_SubsetIndex(2);
-		TARGET_TO_NAV(pInstance)->Set_Index(10);
+		//µûÀÌ¸Ç
+		pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_ThaiMan",
+			&CMonster::MONSTER_STATUS(CMonster::MONSTER_COLOR_TYPE::COLOR_NONE, WEAPON_STATE::WEAPON_None,
+				true, _v3(vPos[iIndex].x, vPos[iIndex].y, vPos[iIndex].z), _v3(0.f, 0.f/*D3DXToRadian(vPos[iIndex].w)*/, 0.f), 4));
+		pInstance->Set_Enable(false);
 		m_vecObjectPool.push_back(pInstance);
 		Safe_AddRef(pInstance);
+		g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Monster", nullptr);
+		++iIndex;
+
+		//ÅäÅÛ
+		pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_Cocoon",
+			&CMonster::MONSTER_STATUS(CMonster::MONSTER_COLOR_TYPE::COLOR_NONE, WEAPON_STATE::WEAPON_None,
+				true, _v3(vPos[iIndex].x, vPos[iIndex].y, vPos[iIndex].z), V3_NULL, 4));
+		pInstance->Set_Enable(false);
+		m_vecObjectPool.push_back(pInstance);
+		Safe_AddRef(pInstance);
+		g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Monster", nullptr);
+		++iIndex;
+
+		//ÅäÅÛ
+		pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_Cocoon",
+			&CMonster::MONSTER_STATUS(CMonster::MONSTER_COLOR_TYPE::COLOR_NONE, WEAPON_STATE::WEAPON_None,
+				true, _v3(vPos[iIndex].x, vPos[iIndex].y, vPos[iIndex].z), V3_NULL, 4));
+		pInstance->Set_Enable(false);
+		m_vecObjectPool.push_back(pInstance);
+		Safe_AddRef(pInstance);
+		g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Monster", nullptr);
+		++iIndex;
+
+		//ÅäÅÛ
+		pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_Cocoon",
+			&CMonster::MONSTER_STATUS(CMonster::MONSTER_COLOR_TYPE::COLOR_NONE, WEAPON_STATE::WEAPON_None,
+				true, _v3(vPos[iIndex].x, vPos[iIndex].y, vPos[iIndex].z), V3_NULL, 4));
+		pInstance->Set_Enable(false);
+		m_vecObjectPool.push_back(pInstance);
+		Safe_AddRef(pInstance);
+		g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Monster", nullptr);
+		++iIndex;
+
+		//ÅäÅÛ
+		pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_Cocoon",
+			&CMonster::MONSTER_STATUS(CMonster::MONSTER_COLOR_TYPE::COLOR_NONE, WEAPON_STATE::WEAPON_None,
+				true, _v3(vPos[iIndex].x, vPos[iIndex].y, vPos[iIndex].z), V3_NULL, 4));
+		pInstance->Set_Enable(false);
+		m_vecObjectPool.push_back(pInstance);
+		Safe_AddRef(pInstance);
+		g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Monster", nullptr);
+		++iIndex;
+
 	}
+
+	// // ================================================================================================================
+	//Subset1 TriggerIdx114 ¿©¿Õ±â»ç
+	{
+		pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_QueensKnight", &CIceGirl::INFO(45.f, 20.f, 2.f, true,
+			_v3(vPos[iIndex].x, vPos[iIndex].y, vPos[iIndex].z), _v3(0.f, 0.f/*D3DXToRadian(180.f)*/, 0.f), 4));
+		pInstance->Set_Enable(false);
+		m_vecObjectPool.push_back(pInstance);
+		Safe_AddRef(pInstance);
+		g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Monster", nullptr);
+		++iIndex;
+	}
+
+	// // ================================================================================================================
+	//// 4 ¸¶¸® + ¾ð´ö 1¸¶¸®
+	//{
+	//	pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_Hunter", &CMonster::MONSTER_STATUS(CMonster::MONSTER_COLOR_TYPE::BLACK, WEAPON_STATE::WEAPON_Halberd));
+	//	TARGET_TO_NAV(pInstance)->Set_SubsetIndex(1);
+	//	TARGET_TO_NAV(pInstance)->Set_Index(46);
+	//	m_vecObjectPool.push_back(pInstance);
+	//	Safe_AddRef(pInstance);
+
+	//	pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_Hunter", &CMonster::MONSTER_STATUS(CMonster::MONSTER_COLOR_TYPE::BLACK, WEAPON_STATE::WEAPON_Halberd));
+	//	TARGET_TO_NAV(pInstance)->Set_SubsetIndex(1);
+	//	TARGET_TO_NAV(pInstance)->Set_Index(33);
+	//	m_vecObjectPool.push_back(pInstance);
+	//	Safe_AddRef(pInstance);
+
+	//	pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_Hunter", &CMonster::MONSTER_STATUS(CMonster::MONSTER_COLOR_TYPE::BLACK, WEAPON_STATE::WEAPON_Halberd));
+	//	TARGET_TO_NAV(pInstance)->Set_SubsetIndex(1);
+	//	TARGET_TO_NAV(pInstance)->Set_Index(76);
+	//	m_vecObjectPool.push_back(pInstance);
+	//	Safe_AddRef(pInstance);
+
+	//	pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_Hunter", &CMonster::MONSTER_STATUS(CMonster::MONSTER_COLOR_TYPE::BLACK, WEAPON_STATE::WEAPON_Halberd));
+	//	TARGET_TO_NAV(pInstance)->Set_SubsetIndex(1);
+	//	TARGET_TO_NAV(pInstance)->Set_Index(66);
+	//	m_vecObjectPool.push_back(pInstance);
+	//	Safe_AddRef(pInstance);
+
+	//	pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_Hunter", &CMonster::MONSTER_STATUS(CMonster::MONSTER_COLOR_TYPE::BLACK, WEAPON_STATE::WEAPON_Halberd));
+	//	TARGET_TO_NAV(pInstance)->Set_SubsetIndex(1);
+	//	TARGET_TO_NAV(pInstance)->Set_Index(88);
+	//	m_vecObjectPool.push_back(pInstance);
+	//	Safe_AddRef(pInstance);
+	//}
+	// // ================================================================================================================
+	//// º¸½º 1¸¶¸®
+	//{
+	//	pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_QueensKnight", &CQueensKnight::INFO(45.f, 20.f, 2.f));
+	//	TARGET_TO_NAV(pInstance)->Set_SubsetIndex(2);
+	//	TARGET_TO_NAV(pInstance)->Set_Index(10);
+	//	m_vecObjectPool.push_back(pInstance);
+	//	Safe_AddRef(pInstance);
+	//}
 
 	_ulong dwIndex = 0;
 

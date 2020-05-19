@@ -394,9 +394,6 @@
     <Filter Include="02.GameObject\Stage\5%29 UI\UI\13. BloodCodeMenuUI\01. SkillReleaseUI\SkillReleaseUI">
       <UniqueIdentifier>{5baab775-370b-4520-8364-36515fc23027}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02.GameObject\Stage\10%29 Pet\01.PoisonButterFly">
-      <UniqueIdentifier>{2f0b99ca-05de-474b-a3f2-deaf4be55682}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02.GameObject\Stage\5%29 UI\UI\03.Inven_UI\00.Inventory\08. Pet_Inven">
       <UniqueIdentifier>{a7a0f26e-f1c3-4bbe-a84d-2ece8c87140c}</UniqueIdentifier>
     </Filter>
@@ -432,9 +429,6 @@
     </Filter>
     <Filter Include="02.GameObject\Stage\0%29 Player\01%29 Costume">
       <UniqueIdentifier>{fb9e8e53-a817-46da-b751-1fe5abd1c284}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObject\Stage\5%29 UI\UI\04. HazeUI">
-      <UniqueIdentifier>{b43ab97b-58b5-48ec-bf6c-e7cb04438b4a}</UniqueIdentifier>
     </Filter>
     <Filter Include="02.GameObject\Stage\5%29 UI\UI\99.Public\MouseUI">
       <UniqueIdentifier>{2bfceb16-1374-4a01-9881-b5af3154309b}</UniqueIdentifier>
@@ -603,6 +597,12 @@
     </Filter>
     <Filter Include="02.GameObject\Stage\5%29 UI\UI\20. Custom\CategoryElem\SliderBar">
       <UniqueIdentifier>{6836337d-342b-458c-b424-5c5028fce301}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Stage\10%29 Pet\01.Pet_PoisonButterFly">
+      <UniqueIdentifier>{2f0b99ca-05de-474b-a3f2-deaf4be55682}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Stage\5%29 UI\UI\04.HazeUI">
+      <UniqueIdentifier>{b43ab97b-58b5-48ec-bf6c-e7cb04438b4a}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -949,7 +949,7 @@
       <Filter>02.GameObject\Stage\Physx</Filter>
     </ClInclude>
     <ClInclude Include="..\Headers\Pet_PoisonButterFly.h">
-      <Filter>02.GameObject\Stage\10%29 Pet\01.PoisonButterFly</Filter>
+      <Filter>02.GameObject\Stage\10%29 Pet\01.Pet_PoisonButterFly</Filter>
     </ClInclude>
     <ClInclude Include="..\Headers\BloodSkillCursor.h">
       <Filter>02.GameObject\Stage\5%29 UI\UI\13. BloodCodeMenuUI\01. SkillReleaseUI\BloodSkillCursor</Filter>
@@ -1111,7 +1111,7 @@
       <Filter>02.GameObject\Stage\0%29 Player\01%29 Costume\[4] Outer</Filter>
     </ClInclude>
     <ClInclude Include="..\Headers\HazeUI.h">
-      <Filter>02.GameObject\Stage\5%29 UI\UI\04. HazeUI</Filter>
+      <Filter>02.GameObject\Stage\5%29 UI\UI\04.HazeUI</Filter>
     </ClInclude>
     <ClInclude Include="..\Headers\MouseUI.h">
       <Filter>02.GameObject\Stage\5%29 UI\UI\99.Public\MouseUI</Filter>
@@ -1599,7 +1599,7 @@
       <Filter>02.GameObject\Stage\Physx</Filter>
     </ClCompile>
     <ClCompile Include="..\Codes\Pet_PoisonButterFly.cpp">
-      <Filter>02.GameObject\Stage\10%29 Pet\01.PoisonButterFly</Filter>
+      <Filter>02.GameObject\Stage\10%29 Pet\01.Pet_PoisonButterFly</Filter>
     </ClCompile>
     <ClCompile Include="..\Codes\BloodSkillCursor.cpp">
       <Filter>02.GameObject\Stage\5%29 UI\UI\13. BloodCodeMenuUI\01. SkillReleaseUI\BloodSkillCursor</Filter>
@@ -1755,7 +1755,7 @@
       <Filter>02.GameObject\Stage\0%29 Player\01%29 Costume\[4] Outer</Filter>
     </ClCompile>
     <ClCompile Include="..\Codes\HazeUI.cpp">
-      <Filter>02.GameObject\Stage\5%29 UI\UI\04. HazeUI</Filter>
+      <Filter>02.GameObject\Stage\5%29 UI\UI\04.HazeUI</Filter>
     </ClCompile>
     <ClCompile Include="..\Codes\MouseUI.cpp">
       <Filter>02.GameObject\Stage\5%29 UI\UI\99.Public\MouseUI</Filter>

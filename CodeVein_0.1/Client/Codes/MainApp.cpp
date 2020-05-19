@@ -116,8 +116,8 @@ HRESULT CMainApp::Ready_Default_Setting(CGraphic_Device::WINMODE eMode, _ushort 
 
 	g_pSoundManager->Load_Directory_SouneFile_W(L"BGM");
 
-	g_pSoundManager->Stop_Sound(CSoundManager::Background_01);
-	g_pSoundManager->Play_Sound(L"07_Main.ogg", CSoundManager::Background_01, CSoundManager::BGM_Sound); 
+	//g_pSoundManager->Stop_Sound(CSoundManager::Background_01);
+	//g_pSoundManager->Play_Sound(L"07_Main.ogg", CSoundManager::Background_01, CSoundManager::BGM_Sound); 
 
 	return S_OK;
 }
