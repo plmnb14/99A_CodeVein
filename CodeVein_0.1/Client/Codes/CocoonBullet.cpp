@@ -193,10 +193,13 @@ void CCocoonBullet::Check_CollisionHit(list<CGameObject*> plistGameObject)
 						continue;
 					}
 
-					iter->Set_Target_CanHit(false);
-					iter->Add_Target_Hp(-m_tObjParam.fDamage);
+					if (false == iter->Get_Target_IsDodge())
+					{
+						iter->Set_Target_CanHit(false);
+						iter->Add_Target_Hp(-m_tObjParam.fDamage);
 
-					m_dCurTime = 100;	// 바로 사망시키기 위해서 현재시간 100줬음
+						m_dCurTime = 100;	// 바로 사망시키기 위해서 현재시간 100줬음
+					}
 
 					break;
 

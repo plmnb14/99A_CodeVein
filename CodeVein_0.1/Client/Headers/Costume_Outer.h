@@ -41,6 +41,16 @@ public:
 	virtual HRESULT Render_GameObject_Instancing_SetPass(CShader* pShader);
 	virtual HRESULT Render_GameObject_SetPass(CShader * pShader, _int iPass, _bool _bIsForMotionBlur = false);
 
+public:
+	virtual void Set_LowerAnimation(_ulong _dwAnimIdx, _bool _bOffLerp);
+	virtual void Set_UpperAnimation(_ulong _dwAnimIdx, _bool _bOffLerp);
+	virtual void Set_LeftArmAnimation(_ulong _dwAnimIdx, _bool _bOffLerp);
+	virtual void Set_RightArmAnimation(_ulong _dwAnimIdx, _bool _bOffLerp);
+
+	virtual void Set_AnimMultiply(_float _float) { m_fAnimMultiply = _float; };
+
+	virtual void Reset_OldAniIdx(_ulong _dwNumber);
+
 private:
 	virtual HRESULT Ready_GameObject_Prototype();
 	virtual HRESULT Ready_GameObject(void* pArg);

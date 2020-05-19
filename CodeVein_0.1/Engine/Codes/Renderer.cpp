@@ -33,7 +33,7 @@ HRESULT CRenderer::Ready_Component_Prototype()
 	if (nullptr == m_pTarget_Manager)
 		return E_FAIL;
 
-	m_vShadowLightPos = _v3(-50.f, 100.f, 0.f);
+	m_vShadowLightPos = _v3(-50.f, 50, 0.f);
 
 	D3DVIEWPORT9		ViewPort;
 	m_pGraphic_Dev->GetViewport(&ViewPort);
