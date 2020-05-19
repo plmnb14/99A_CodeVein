@@ -622,6 +622,9 @@
     <Filter Include="02.GameObject\Logo\LoadingScripts">
       <UniqueIdentifier>{fad94808-a810-4f0e-9e27-8cb866ff4b43}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObject\Stage\5%29 UI\UI\06. Get_ItemUI\PickUp_ItemUIManager">
+      <UniqueIdentifier>{32244477-327c-4e89-80ba-b6f69a399ca0}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -1311,6 +1314,9 @@
     <ClInclude Include="..\Headers\LoadingScripts.h">
       <Filter>02.GameObject\Logo\LoadingScripts</Filter>
     </ClInclude>
+    <ClInclude Include="..\Headers\PickUp_ItemUIManager.h">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\06. Get_ItemUI\PickUp_ItemUIManager</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -1984,6 +1990,9 @@
     </ClCompile>
     <ClCompile Include="..\Codes\LoadingScripts.cpp">
       <Filter>02.GameObject\Logo\LoadingScripts</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\PickUp_ItemUIManager.cpp">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\06. Get_ItemUI\PickUp_ItemUIManager</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
