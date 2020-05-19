@@ -134,7 +134,7 @@ HRESULT CScene_Stage_Training::Ready_Layer_Enemies()
 	//TARGET_TO_NAV(pInstance)->Check_OnNavMesh(_v3(0.f, 0.f, 0.f));
 	//g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Colleague", nullptr);
 
-	// ¾ßÄí¸ð
+	//// ¾ßÄí¸ð
 	//g_pManagement->Add_GameObject_ToLayer(L"GameObject_NPC_Yakumo", SCENE_STAGE, L"Layer_NPC", &CNPC_Yakumo::NPC_INFO(_v3(-4.46f, 0.f, -5.294f), D3DXToRadian(90.f)));
 
 	//// ÅäÅÛ
@@ -265,7 +265,7 @@ HRESULT CScene_Stage_Training::Ready_Layer_Enemies()
 	//		true, _v3(8.f, 0.f, -5.f), V3_NULL, 0));
 	//g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Boss", nullptr);
 
-	//// »ç½¿¿Õ
+	// »ç½¿¿Õ
 	//pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_DeerKing",
 	//	&CDeerKing::INFO(10.f, 5.f, 2.f,
 	//		true, _v3(8.f, 0.f, -8.f), V3_NULL, 0));

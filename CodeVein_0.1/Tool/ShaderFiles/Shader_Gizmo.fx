@@ -94,7 +94,7 @@ technique Default_Technique
 	// 2
 	pass AlphaBlending
 	{
-		cullmode = none;
+		cullmode = ccw;
 
 		AlphaBlendEnable = true;
 		SrcBlend = SrcAlpha;

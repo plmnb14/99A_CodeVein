@@ -565,6 +565,12 @@
     <Filter Include="02.GameObject\Stage\5%29 UI\UI\19.NPC_InteractionUI">
       <UniqueIdentifier>{2daaaef8-fa47-4495-9b69-26032a063b5f}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObject\Stage\5%29 UI\UI\18. GeneralStoreUI%28잡화점%29\03. GeneralStoreUI">
+      <UniqueIdentifier>{3a2c1501-5d10-4d73-a80e-521f00e56c6d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Stage\5%29 UI\UI\18. GeneralStoreUI%28잡화점%29\04. GeneralStoreNPCUI">
+      <UniqueIdentifier>{816b7119-c148-4d21-abca-90bbb087d246}</UniqueIdentifier>
+    </Filter>
     <Filter Include="02.GameObject\Stage\2%29 Monster\Yeti\YetiTrap">
       <UniqueIdentifier>{528e16d8-34c1-40cd-a3f5-e6cd73494f2b}</UniqueIdentifier>
     </Filter>
@@ -576,6 +582,9 @@
     </Filter>
     <Filter Include="02.GameObject\Stage\5%29 UI\UI\15. Colleague UI\02. Calling_Colleague">
       <UniqueIdentifier>{9fbf4ba7-29f6-4035-b2af-46743d057ed1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Stage\0%29 Player\02%29 LockOn_UI">
+      <UniqueIdentifier>{dd35c9d4-c094-4098-bae5-031eab46532d}</UniqueIdentifier>
     </Filter>
     <Filter Include="02.GameObject\Stage\5%29 UI\UI\20. Custom">
       <UniqueIdentifier>{bff12a33-ab9c-445f-847a-7e4474b70c8f}</UniqueIdentifier>
@@ -603,6 +612,9 @@
     </Filter>
     <Filter Include="02.GameObject\Stage\5%29 UI\UI\04.HazeUI">
       <UniqueIdentifier>{b43ab97b-58b5-48ec-bf6c-e7cb04438b4a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Stage\0%29 Player\03%29 HitCheckUI">
+      <UniqueIdentifier>{574b934b-ae5a-4f6b-9e15-0bd599ad1957}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -1155,9 +1167,6 @@
     <ClInclude Include="..\Headers\Material_InfoUI.h">
       <Filter>02.GameObject\Stage\5%29 UI\UI\18. GeneralStoreUI%28잡화점%29\01. MaterialCollection\Material_InfoUI</Filter>
     </ClInclude>
-    <ClInclude Include="..\Headers\GeneralStoreUI.h">
-      <Filter>02.GameObject\Stage\5%29 UI\UI\18. GeneralStoreUI%28잡화점%29</Filter>
-    </ClInclude>
     <ClInclude Include="..\Headers\ExpendOptionUI.h">
       <Filter>02.GameObject\Stage\5%29 UI\UI\18. GeneralStoreUI%28잡화점%29\00. ExpendCollection\ExpendOption</Filter>
     </ClInclude>
@@ -1239,6 +1248,15 @@
     <ClInclude Include="..\Headers\NPC_InteractionUI.h">
       <Filter>02.GameObject\Stage\5%29 UI\UI\19.NPC_InteractionUI</Filter>
     </ClInclude>
+    <ClInclude Include="..\Headers\GeneralStoreUI.h">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\18. GeneralStoreUI%28잡화점%29\03. GeneralStoreUI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\GeneralStoreNPCUI.h">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\18. GeneralStoreUI%28잡화점%29\04. GeneralStoreNPCUI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\GeneralStoreOption.h">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\18. GeneralStoreUI%28잡화점%29\04. GeneralStoreNPCUI</Filter>
+    </ClInclude>
     <ClInclude Include="..\Headers\CustomInven.h">
       <Filter>02.GameObject\Stage\5%29 UI\UI\20. Custom\CategoryElem\Inven</Filter>
     </ClInclude>
@@ -1260,8 +1278,26 @@
     <ClInclude Include="..\Headers\Calling_Colleague.h">
       <Filter>02.GameObject\Stage\5%29 UI\UI\15. Colleague UI\02. Calling_Colleague</Filter>
     </ClInclude>
+    <ClInclude Include="..\Headers\LockOn_UI.h">
+      <Filter>02.GameObject\Stage\0%29 Player\02%29 LockOn_UI</Filter>
+    </ClInclude>
     <ClInclude Include="..\Headers\CustomSliderBar.h">
       <Filter>02.GameObject\Stage\5%29 UI\UI\20. Custom\CategoryElem\SliderBar</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\HitCheckUI.h">
+      <Filter>02.GameObject\Stage\0%29 Player\03%29 HitCheckUI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\GeneralStoreOption.h">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\18. GeneralStoreUI%28잡화점%29\04. GeneralStoreNPCUI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\YetiTrap.h">
+      <Filter>02.GameObject\Stage\2%29 Monster\Yeti\YetiTrap</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\Colleague_UI.h">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\15. Colleague UI\00. Base_Colleague</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\Calling_Colleague.h">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\15. Colleague UI\02. Calling_Colleague</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -1799,9 +1835,6 @@
     <ClCompile Include="..\Codes\Material_InfoUI.cpp">
       <Filter>02.GameObject\Stage\5%29 UI\UI\18. GeneralStoreUI%28잡화점%29\01. MaterialCollection\Material_InfoUI</Filter>
     </ClCompile>
-    <ClCompile Include="..\Codes\GeneralStoreUI.cpp">
-      <Filter>02.GameObject\Stage\5%29 UI\UI\18. GeneralStoreUI%28잡화점%29</Filter>
-    </ClCompile>
     <ClCompile Include="..\Codes\ExpendOptionUI.cpp">
       <Filter>02.GameObject\Stage\5%29 UI\UI\18. GeneralStoreUI%28잡화점%29\00. ExpendCollection\ExpendOption</Filter>
     </ClCompile>
@@ -1883,6 +1916,15 @@
     <ClCompile Include="..\Codes\NPC_InteractionUI.cpp">
       <Filter>02.GameObject\Stage\5%29 UI\UI\19.NPC_InteractionUI</Filter>
     </ClCompile>
+    <ClCompile Include="..\Codes\GeneralStoreUI.cpp">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\18. GeneralStoreUI%28잡화점%29\03. GeneralStoreUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\GeneralStoreNPCUI.cpp">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\18. GeneralStoreUI%28잡화점%29\04. GeneralStoreNPCUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\GeneralStoreOption.cpp">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\18. GeneralStoreUI%28잡화점%29\04. GeneralStoreNPCUI</Filter>
+    </ClCompile>
     <ClCompile Include="..\Codes\CustomInven.cpp">
       <Filter>02.GameObject\Stage\5%29 UI\UI\20. Custom\CategoryElem\Inven</Filter>
     </ClCompile>
@@ -1904,8 +1946,26 @@
     <ClCompile Include="..\Codes\Calling_Colleague.cpp">
       <Filter>02.GameObject\Stage\5%29 UI\UI\15. Colleague UI\02. Calling_Colleague</Filter>
     </ClCompile>
+    <ClCompile Include="..\Codes\LockOn_UI.cpp">
+      <Filter>02.GameObject\Stage\0%29 Player\02%29 LockOn_UI</Filter>
+    </ClCompile>
     <ClCompile Include="..\Codes\CustomSliderBar.cpp">
       <Filter>02.GameObject\Stage\5%29 UI\UI\20. Custom\CategoryElem\SliderBar</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\HitCheckUI.cpp">
+      <Filter>02.GameObject\Stage\0%29 Player\03%29 HitCheckUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\GeneralStoreOption.cpp">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\18. GeneralStoreUI%28잡화점%29\04. GeneralStoreNPCUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\YetiTrap.cpp">
+      <Filter>02.GameObject\Stage\2%29 Monster\Yeti\YetiTrap</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\Colleague_UI.cpp">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\15. Colleague UI\00. Base_Colleague</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\Calling_Colleague.cpp">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\15. Colleague UI\02. Calling_Colleague</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

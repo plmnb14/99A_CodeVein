@@ -35,7 +35,7 @@ HRESULT CSwordShieldGenji::Ready_GameObject(void * pArg)
 	m_tObjParam.bCanCounter = true;			// 반격가능성
 	m_tObjParam.bCanExecution = true;		// 처형
 	m_tObjParam.bCanHit = true;
-	m_tObjParam.fHp_Cur = 100.f;
+	m_tObjParam.fHp_Cur = 9999;
 	m_tObjParam.fHp_Max = m_tObjParam.fHp_Cur;
 
 	m_pTransformCom->Set_Scale(_v3(1.f, 1.f, 1.f));

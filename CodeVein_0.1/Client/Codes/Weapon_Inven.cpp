@@ -84,19 +84,20 @@ _int CWeapon_Inven::Update_GameObject(_double TimeDelta)
 
 	D3DXMatrixOrthoLH(&m_matProj, WINCX, WINCY, 0.f, 1.0f);
 
-	Click_Inven();
-	
-	_uint iIdx = 0;
-	for (auto& pWeaponSlot : m_vecWeaponSlot)
+	if (m_bIsActive && !m_bIsSubActive)
 	{
-		pWeaponSlot->Set_Active(m_bIsActive);
-		pWeaponSlot->Set_UI_Pos(m_fPosX - 100.f + 52.f * (iIdx % 5), m_fPosY - 150.f + 52.f * (iIdx / 5));
-		pWeaponSlot->Set_ViewZ(m_fViewZ - 0.1f);
-		iIdx++;
+		SetUp_SubUI_Active(true);
+		m_bIsSubActive = true;
+	}
+	else if (!m_bIsActive && m_bIsSubActive)
+	{
+		SetUp_SubUI_Active(false);
+		m_bIsSubActive = false;
 	}
 
+	Click_Inven();
 	
-	m_pExplainUI->Set_Active(m_bIsActive);
+	
 	
 	return NO_EVENT;
 }
@@ -125,10 +126,6 @@ HRESULT CWeapon_Inven::Render_GameObject()
 		return E_FAIL;
 
 	g_pManagement->Set_Transform(D3DTS_WORLD, m_matWorld);
-
-	m_matOldView = g_pManagement->Get_Transform(D3DTS_VIEW);
-	m_matOldProj = g_pManagement->Get_Transform(D3DTS_PROJECTION);
-
 	g_pManagement->Set_Transform(D3DTS_VIEW, m_matView);
 	g_pManagement->Set_Transform(D3DTS_PROJECTION, m_matProj);
 
@@ -145,8 +142,6 @@ HRESULT CWeapon_Inven::Render_GameObject()
 
 	m_pShaderCom->End_Shader();
 
-	g_pManagement->Set_Transform(D3DTS_VIEW, m_matOldView);
-	g_pManagement->Set_Transform(D3DTS_PROJECTION, m_matOldProj);
 
 	return NOERROR;
 }
@@ -646,6 +641,29 @@ void CWeapon_Inven::SetUp_Default()
 	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pExplainUI, SCENE_MORTAL, L"Layer_PlayerUI", nullptr);
 }
 
+void CWeapon_Inven::SetUp_SlotPos()
+{
+	_uint iIdx = 0;
+	for (auto& pWeaponSlot : m_vecWeaponSlot)
+	{		
+		pWeaponSlot->Set_UI_Pos(m_fPosX - 100.f + 52.f * (iIdx % 5), m_fPosY - 150.f + 52.f * (iIdx / 5));
+		pWeaponSlot->Set_ViewZ(m_fViewZ - 0.1f);
+		iIdx++;
+	}
+}
+
+void CWeapon_Inven::SetUp_SubUI_Active(_bool bIsActive)
+{
+	_uint iIdx = 0;
+	for (auto& pWeaponSlot : m_vecWeaponSlot)
+	{
+		pWeaponSlot->Set_Active(bIsActive);
+		iIdx++;
+	}
+
+	m_pExplainUI->Set_Active(bIsActive);
+}
+
 void CWeapon_Inven::Late_Init()
 {
 	if (m_bLateInit)
@@ -668,13 +686,7 @@ void CWeapon_Inven::Add_Weapon(WPN_PARAM tAddWpnParam)
 	g_pManagement->Add_GameOject_ToLayer_NoClone(pSlot, SCENE_MORTAL, L"Layer_PlayerUI", nullptr);	
 	m_vecWeaponSlot.push_back(pSlot);
 
-	// 슬롯 생성시 위치 조정
-	for (_uint i = 0; i < m_vecWeaponSlot.size(); ++i)
-	{
-		m_vecWeaponSlot[i]->Set_Active(m_bIsActive);
-		m_vecWeaponSlot[i]->Set_ViewZ(m_fViewZ - 0.1f);
-		m_vecWeaponSlot[i]->Set_UI_Pos(m_fPosX - 103.f + 52.f * (i % 5), m_fPosY - 140.f + 52.f * (i / 5));
-	}
+	SetUp_SlotPos();
 }
 
 void CWeapon_Inven::Sell_Weapon()
@@ -691,6 +703,8 @@ void CWeapon_Inven::Sell_Weapon()
 		}
 		++idx;
 	}
+
+	SetUp_SlotPos();
 }
 
 CWeapon_Inven * CWeapon_Inven::Create(_Device pGraphic_Device)

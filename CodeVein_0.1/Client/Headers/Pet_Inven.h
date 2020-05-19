@@ -33,6 +33,8 @@ private:
 	HRESULT					Add_Component();
 	HRESULT					SetUp_Default();
 	HRESULT					SetUp_ConstantTable();
+	void					SetUp_SlotPos();
+	void					SetUp_SubUI_Active(_bool bIsActive);
 
 public:
 	static CPet_Inven*		Create(_Device pGraphic_Device);
@@ -46,6 +48,7 @@ private:
 	CTexture*				m_pTexture = nullptr;
 	CShader*				m_pShader = nullptr;
 
+	_bool					m_bIsSubActive = false;
 	CInventory_Icon*		m_pExitIcon = nullptr;
 	CInventory_Icon*		m_pSummonsBtn = nullptr;
 

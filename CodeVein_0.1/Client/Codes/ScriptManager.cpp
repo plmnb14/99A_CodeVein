@@ -50,6 +50,7 @@ void CScriptManager::Update_ScriptMgr(_double _dDeltaTime, _ulong _dwSubsetIdx, 
 			{
 				m_fTimer = 0.f;
 				m_fTimer = false;
+				m_bTimer = false;
 
 				CUI_Manager::Get_Instance()->Set_BossUI_Active(true);
 			}
@@ -75,19 +76,19 @@ void CScriptManager::Update_ScriptEvent()
 
 	case Script_Stage02:
 	{
-		Stage_02_Scripts();
+		//Stage_02_Scripts();
 		break;
 	}
 
 	case Script_Stage03:
 	{
-		Stage_03_Scripts();
+		//Stage_03_Scripts();
 		break;
 	}
 
 	case Script_Stage04:
 	{
-		Stage_04_Scripts();
+		//Stage_04_Scripts();
 		break;
 	}
 
@@ -156,19 +157,19 @@ void CScriptManager::Ready_Script_DynamicObject(_ulong _dwStageIdx)
 
 	case Script_Stage02:
 	{
-		Ready_Stage02_DynamicObject();
+		//Ready_Stage02_DynamicObject();
 		break;
 	}
 
 	case Script_Stage03:
 	{
-		Ready_Stage03_DynamicObject();
+		//Ready_Stage03_DynamicObject();
 		break;
 	}
 
 	case Script_Stage04:
 	{
-		Ready_Stage04_DynamicObject();
+		//Ready_Stage04_DynamicObject();
 		break;
 	}
 

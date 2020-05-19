@@ -11,6 +11,7 @@ class CWeapon_Inven;
 class CArmor_Inven;
 class CInventory_Icon;
 class CTotal_Inven;
+class CUI_Manager;
 class CInventory final : public CUI
 {
 private:
@@ -28,21 +29,11 @@ public:
 	virtual HRESULT			Ready_GameObject_Prototype();
 	virtual HRESULT			Ready_GameObject(void* pArg);
 	virtual _int			Update_GameObject(_double TimeDelta);
-	virtual _int			Late_Update_GameObject(_double TimeDelta);
-	virtual HRESULT			Render_GameObject();
 
 private:
-	HRESULT					Add_Component();
-	HRESULT					SetUp_ConstantTable();
 	void					SetUp_Default();
 	void					Click_Icon();
-
-private:
-	CBuffer_RcTex*			m_pBufferCom = nullptr;
-	CTransform*				m_pTransformCom = nullptr;
-	CRenderer*				m_pRendererCom = nullptr;
-	CTexture*				m_pTextureCom = nullptr;
-	CShader*				m_pShaderCom = nullptr;
+	void					SetUp_SubUI_Active(_bool bIsActive);
 
 private:
 	CQuickSlot*				m_pQuickSlot = nullptr;
@@ -54,7 +45,8 @@ private:
 	vector<CInventory_Icon*> m_vecIcon;
 	CInventory_Icon*		m_pClickIcon = nullptr;
 	_bool					m_bIsDetail = false;
-	
+	_bool					m_bIsSubActive = false;
+	CUI_Manager*			m_pUIManager = nullptr;
 
 public:
 	static CInventory*		Create(_Device pGraphic_Device);

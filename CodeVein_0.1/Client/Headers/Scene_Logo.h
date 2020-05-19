@@ -9,6 +9,7 @@
 BEGIN(Client)
 class CLogoBtn;
 class CLoadingScreen;
+class CBackGround;
 class CScene_Logo final : public CScene
 {
 public:
@@ -29,9 +30,12 @@ public:
 public:
 	HRESULT Ready_Essential_Prototype_GameObject();
 	HRESULT Ready_Layer_Logo(const _tchar* pLayerTag);
-	HRESULT Late_Init();
+	HRESULT Ready_BGM();
 private:
 	virtual void Update_DebugStage_Console();
+
+	HRESULT Late_Init(_double TimeDelta);
+	void	Check_Active(_double TimeDelta);
 
 private:
 	Engine::EFFECT_INFO * Read_EffectData(const _tchar * szPath);
@@ -40,8 +44,13 @@ private:
 	CLoading*			m_pLoading = nullptr;
 	CLogoBtn*			m_pLogoBtn = nullptr;
 	CLoadingScreen*		m_pLoadingScreen = nullptr;
+	CBackGround*		m_pBackgroundLogo = nullptr;
+
 	_bool				m_bIsChangeStage = false;
 	_bool				m_bLateInit = false;
+	
+	_float				m_fDelay = 0.f;
+	_float				m_fStartTime = 0.f;
 	COrthoEffect*		m_pGlitterEffect_0 = nullptr;
 	COrthoEffect*		m_pGlitterEffect_1 = nullptr;
 	COrthoEffect*		m_pTitleBG = nullptr;

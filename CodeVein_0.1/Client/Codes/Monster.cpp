@@ -185,7 +185,7 @@ void CMonster::Check_DropItem()
 {
 	CGameObject* pItem = nullptr;
 
-	m_iRandom = CALC::Random_Num(0, 10);
+	m_iRandom = CALC::Random_Num(0, 8);
 
 	switch (m_iRandom)
 	{
@@ -217,8 +217,6 @@ void CMonster::Check_DropItem()
 		pItem = g_pManagement->Clone_GameObject_Return(L"GameObject_DropItem", &CDropItem::ITEM_STATUS(ITEM_GRADE_TYPE::ITEM_GRADE_NORMAL, ITEM_NAMETYPE::NAMETYPE_Queen_Tungsten, m_pTransformCom->Get_Pos(), 12.f));
 		break;
 	}
-
-	g_pManagement->Add_GameOject_ToLayer_NoClone(pItem, SCENE_STAGE, L"Layer_Item", nullptr);
 
 	return;
 }

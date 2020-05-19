@@ -266,7 +266,7 @@ _int CCostume_Hair::Update_GameObject(_double TimeDelta)
 	return NO_EVENT;
 }
 
-_int CCostume_Hair::Update_GameObject(_double TimeDelta, _bool bCanCol)
+_int CCostume_Hair::Update_GameObject(_double TimeDelta, _bool bClearCol)
 {
 	if (false == m_bEnable)
 		return NO_EVENT;
@@ -287,7 +287,7 @@ _int CCostume_Hair::Update_GameObject(_double TimeDelta, _bool bCanCol)
 	}
 
 	if(g_pClothManager->Is_Valid_Static(m_eHairType))
-		g_pClothManager->Update_Cloth_Static(m_eHairType, bCanCol);
+		g_pClothManager->Update_Cloth_Static(m_eHairType, bClearCol);
 
 	return NO_EVENT;
 }
@@ -393,11 +393,6 @@ HRESULT CCostume_Hair::Render_GameObject_Instancing_SetPass(CShader * pShader)
 
 		if (m_bDissolve)
 			m_iPass = 3;
-
-		if (m_iPass == 7)
-		{
-			cout << "7¹ø" << endl;
-		}
 
 		//bOnToonRimLight = true;
 		//pShader->Set_Value("g_bToonRimLight", &bOnToonRimLight, sizeof(_bool));

@@ -33,6 +33,7 @@ HRESULT CPet_Inven::Ready_GameObject(void* pArg)
 	Add_Pet(CPet::PET_TYPE::PET_DEERKING);
 	Add_Pet(CPet::PET_TYPE::PET_POISONBUTTERFLY);
 
+	SetUp_SlotPos(); // 슬롯 위치 설정
 	return S_OK;
 }
 
@@ -44,16 +45,16 @@ _int CPet_Inven::Update_GameObject(_double TimeDelta)
 
 	D3DXMatrixOrthoLH(&m_matProj, WINCX, WINCY, 0.f, 1.0f);
 
-	_uint iIdx = 0;
-	for (auto& vector_iter : m_vecPetSlot)
+	if (m_bIsActive && !m_bIsSubActive)
 	{
-		vector_iter->Set_UI_Pos(m_fPosX - 100.f + 52.f * (iIdx % 5), m_fPosY - 150.f + 52.f * (iIdx / 5));
-		vector_iter->Set_Active(m_bIsActive);
-		iIdx++;
+		SetUp_SubUI_Active(true);
+		m_bIsSubActive = true;
 	}
-
-	m_pExitIcon->Set_Active(m_bIsActive);
-	m_pSummonsBtn->Set_Active(m_bIsActive);
+	else if (!m_bIsActive && m_bIsSubActive)
+	{
+		SetUp_SubUI_Active(false);
+		m_bIsSubActive = false;
+	}
 
 	Click_Inven();
 
@@ -352,13 +353,39 @@ HRESULT CPet_Inven::SetUp_ConstantTable()
 	return S_OK;
 }
 
-void CPet_Inven::Add_Pet(CPet::PET_TYPE ePetType)
+void CPet_Inven::SetUp_SlotPos()
+{
+	_uint iIdx = 0;
+	for (auto& vector_iter : m_vecPetSlot)
+	{
+		vector_iter->Set_UI_Pos(m_fPosX - 100.f + 52.f * (iIdx % 5), m_fPosY - 150.f + 52.f * (iIdx / 5));
+		vector_iter->Set_ViewZ(m_fViewZ - 0.1f);
+		iIdx++;
+	}
+}
+
+void CPet_Inven::SetUp_SubUI_Active(_bool bIsActive)
+{
+	_uint iIdx = 0;
+	for (auto& vector_iter : m_vecPetSlot)
+	{
+		vector_iter->Set_Active(bIsActive);
+		iIdx++;
+	}
+
+	m_pExitIcon->Set_Active(bIsActive);
+	m_pSummonsBtn->Set_Active(bIsActive);
+}
+
+void CPet_Inven::Add_Pet(CPet::PET_TYPE ePetType, CPet::PET_GRADE_TYPE ePetGrade)
 {
 	CPet_Slot* pPetSlot = static_cast<CPet_Slot*>(g_pManagement->Clone_GameObject_Return(L"GameObject_PetSlot", nullptr));
 	pPetSlot->Set_PetType(ePetType);
 	pPetSlot->Set_UI_Size(50.f, 50.f);
 	g_pManagement->Add_GameOject_ToLayer_NoClone(pPetSlot, SCENE_MORTAL, L"Layer_PetUI", nullptr);
 	m_vecPetSlot.push_back(pPetSlot);
+
+	SetUp_SlotPos();
 }
 
 CPet_Inven* CPet_Inven::Create(_Device pGraphic_Device)

@@ -113,7 +113,7 @@ HRESULT CPlayerHP::Render_GameObject()
 		{
 			m_fSizeX = 300.f;
 			m_fSizeY = 32.f;
-			iIndex = 4;
+			iIndex = 5;
 			iPass = 10;
 		}
 		else if (3 == i)
@@ -257,7 +257,7 @@ void CPlayerHP::SetUp_State(_double TimeDelta)
 	// Texture UV Èå¸£´Â ¼Óµµ
 	m_fSpeed += -0.2f * _float(TimeDelta);
 
-	m_vecNoiseDir += -0.1f * _float(TimeDelta) * V2_ONE;
+	m_vecNoiseDir += -0.08f * _float(TimeDelta) * V2_ONE;
 
 	m_fPercentage = m_fPlayerHP / m_fTotalHP;
 }

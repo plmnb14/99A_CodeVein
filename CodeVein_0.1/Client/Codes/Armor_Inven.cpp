@@ -55,18 +55,15 @@ _int CArmor_Inven::Update_GameObject(_double TimeDelta)
 
 	D3DXMatrixOrthoLH(&m_matProj, WINCX, WINCY, 0.f, 1.0f);
 
-	for (auto& pSlot : m_vecArmorSlot)
+	if (m_bIsActive && !m_bIsSubActive)
 	{
-		pSlot->Set_ViewZ(m_fViewZ - 0.1f);
-		pSlot->Set_Active(m_bIsActive);
+		SetUp_SubUI_Active(true);
+		m_bIsSubActive = true;
 	}
-	m_pExplainUI->Set_Active(m_bIsActive);
-
-	_uint iIdx = 0;
-	for (auto& vector_iter : m_vecArmorSlot)
+	else if (!m_bIsActive && m_bIsSubActive)
 	{
-		vector_iter->Set_UI_Pos(m_fPosX - 100.f + 52.f * (iIdx % 5), m_fPosY - 150.f + 52.f * (iIdx / 5));
-		iIdx++;
+		SetUp_SubUI_Active(false);
+		m_bIsSubActive = false;
 	}
 
 	Click_Inven();
@@ -185,18 +182,6 @@ void CArmor_Inven::Click_Inven()
 
 	for (auto& pSlot : m_vecArmorSlot)
 	{
-		// if (pSlot->Pt_InRect())
-		//{
-		//	m_pExplainUI->Set_ArmorParam(pSlot->Get_ArmorParam());
-
-		//	/*if (g_pInput_Device->Get_DIMouseState(CInput_Device::DIM_LB) &&
-		//		!pSlot->Get_Select())
-		//		Regist_Armor(pSlot);
-		//	if (g_pInput_Device->Get_DIMouseState(CInput_Device::DIM_RB) &&
-		//		pSlot->Get_Select())
-		//		UnRegist_Armor(pSlot);*/
-		//	
-		//}
 		if (pSlot->Pt_InRect() && g_pInput_Device->Get_DIMouseState(CInput_Device::DIM_LB))
 		{
 			Reset_SelectSlot();
@@ -255,6 +240,27 @@ void CArmor_Inven::Reset_SelectSlot()
 		iter->Set_Select(false);
 }
 
+void CArmor_Inven::SetUp_SlotPos()
+{
+	_uint iIdx = 0;
+	for (auto& vector_iter : m_vecArmorSlot)
+	{
+		vector_iter->Set_UI_Pos(m_fPosX - 100.f + 52.f * (iIdx % 5), m_fPosY - 150.f + 52.f * (iIdx / 5));
+		vector_iter->Set_ViewZ(m_fViewZ - 0.1f);
+		iIdx++;
+	}
+
+}
+
+void CArmor_Inven::SetUp_SubUI_Active(_bool bIsActive)
+{
+	for (auto& pSlot : m_vecArmorSlot)
+	{
+		pSlot->Set_Active(bIsActive);
+	}
+	m_pExplainUI->Set_Active(bIsActive);
+}
+
 void CArmor_Inven::Late_Init()
 {
 	if (m_bLateInit)
@@ -293,6 +299,8 @@ void CArmor_Inven::Add_Armor(ARMOR_PARAM tArmorParam)
 		m_vecArmorSlot[i]->Set_ViewZ(m_fViewZ - 0.1f);
 		m_vecArmorSlot[i]->Set_UI_Pos(m_fPosX - 103.f + 52.f * (i % 5), m_fPosY - 140.f + 52.f * (i / 5));
 	}
+
+	SetUp_SlotPos();
 }
 
 void CArmor_Inven::Sell_Armor()
@@ -309,6 +317,8 @@ void CArmor_Inven::Sell_Armor()
 		}
 		++idx;
 	}
+
+	SetUp_SlotPos();
 }
 
 CArmor_Inven * CArmor_Inven::Create(_Device pGraphic_Device)
