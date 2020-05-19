@@ -26,6 +26,7 @@ public:
 	_bool Get_Detail() { return m_bIsDetail; }
 	BloodCode_ID Get_PlayerBloodCode() { return m_ePlayerBloodCode; }
 	Skill_ID Get_Registration_Skill(_uint iNum);
+	WEAPON_DATA Get_Registration_Weapon(_uint iNum);
 
 public:
 	void Set_Detail(_bool bIsDetail) { m_bIsDetail = bIsDetail; }

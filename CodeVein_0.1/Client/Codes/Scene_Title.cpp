@@ -15,6 +15,8 @@
 #include "LogoBtn.h"
 #include "Player.h"
 
+#include "Player_Colleague.h"
+
 #include "UI_Manager.h"
 #include "LoadingScreen.h"
 #include "LoadingBar.h"
@@ -49,7 +51,7 @@ HRESULT CScene_Title::Ready_Scene()
 
 _int CScene_Title::Update_Scene(_double TimeDelta)
 {
-	CUI_Manager::Get_Instance()->Update_UI();
+	//CUI_Manager::Get_Instance()->Update_UI();
 
 	if (true == m_pLoading->Get_Finish())
 	{
@@ -196,6 +198,9 @@ HRESULT CScene_Title::Ready_Player()
 	//========================================================================================
 
 	if (FAILED(g_pManagement->Add_Layer(SCENE_MORTAL, L"Layer_Player")))
+		return E_FAIL;
+
+	if (FAILED(g_pManagement->Add_Layer(SCENE_STAGE, L"Layer_Colleague")))
 		return E_FAIL;
 
 	if (FAILED(g_pManagement->Add_Layer(SCENE_STAGE, L"Layer_Monster")))

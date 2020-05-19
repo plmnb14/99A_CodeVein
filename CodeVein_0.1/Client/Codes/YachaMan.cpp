@@ -4999,19 +4999,12 @@ HRESULT CYachaMan::SetUp_ConstantTable(CShader* pShader)
 	//=============================================================================================
 	// 기본 메트릭스
 	//=============================================================================================
-
 	if (FAILED(pShader->Set_Value("g_matWorld", &m_pTransformCom->Get_WorldMat(), sizeof(_mat))))
-		return E_FAIL;
-	if (FAILED(pShader->Set_Value("g_matView", &ViewMatrix, sizeof(_mat))))
-		return E_FAIL;
-	if (FAILED(pShader->Set_Value("g_matProj", &ProjMatrix, sizeof(_mat))))
 		return E_FAIL;
 
 	//=============================================================================================
 	// 디졸브용 상수
 	//=============================================================================================
-	if (FAILED(g_pDissolveTexture->SetUp_OnShader("g_FXTexture", pShader)))
-		return E_FAIL;
 	if (FAILED(pShader->Set_Value("g_fFxAlpha", &m_fFXAlpha, sizeof(_float))))
 		return E_FAIL;
 
@@ -5052,65 +5045,61 @@ HRESULT CYachaMan::SetUp_ConstantTable(CShader* pShader)
 
 HRESULT CYachaMan::Ready_Status(void * pArg)
 {
-	if (nullptr != pArg)
+	if (nullptr == pArg)
 	{
-		MONSTER_STATUS Info = *(MONSTER_STATUS*)pArg;
-		m_pBattleAgentCom->Set_RimAlpha(0.5f);
-		m_pBattleAgentCom->Set_RimValue(8.f);
-		m_pBattleAgentCom->Set_OriginRimAlpha(0.5f);
-		m_pBattleAgentCom->Set_OriginRimValue(8.f);
+		MSG_BOX("Create CYachaMan pArgument nullptr Failed");
+		return E_FAIL;
+	}
 
-		if (true == Info.bSpawnOnTrigger)
-		{
-			_tchar szNavData[STR_128] = L"";
+	MONSTER_STATUS Info = *(MONSTER_STATUS*)pArg;
 
-			lstrcpy(szNavData, (
-				Info.sStageIdx == 0 ? L"Navmesh_Training.dat" :
-				Info.sStageIdx == 1 ? L"Navmesh_Stage_01.dat" :
-				Info.sStageIdx == 2 ? L"Navmesh_Stage_02.dat" :
-				Info.sStageIdx == 3 ? L"Navmesh_Stage_03.dat" : L"Navmesh_Stage_04.dat"));
+	m_pBattleAgentCom->Set_RimAlpha(0.5f);
+	m_pBattleAgentCom->Set_RimValue(8.f);
+	m_pBattleAgentCom->Set_OriginRimAlpha(0.5f);
+	m_pBattleAgentCom->Set_OriginRimValue(8.f);
 
-			m_pNavMeshCom->Set_Index(-1);
-			m_pNavMeshCom->Ready_NaviMesh(m_pGraphic_Dev, szNavData);
-			m_pNavMeshCom->Check_OnNavMesh(Info.vPos);
-			m_pTransformCom->Set_Pos(Info.vPos);
-			m_pTransformCom->Set_Angle(Info.vAngle);
+	if (true == Info.bSpawnOnTrigger)
+	{
+		_tchar szNavData[STR_128] = L"";
 
-			//m_pNavMeshCom->Set_SubsetIndex(Info.sSubSetIdx);
-			//m_pNavMeshCom->Set_Index(Info.sCellIdx);
-		}
+		lstrcpy(szNavData, (
+			Info.sStageIdx == 0 ? L"Navmesh_Training.dat" :
+			Info.sStageIdx == 1 ? L"Navmesh_Stage_01.dat" :
+			Info.sStageIdx == 2 ? L"Navmesh_Stage_02.dat" :
+			Info.sStageIdx == 3 ? L"Navmesh_Stage_03.dat" : L"Navmesh_Stage_04.dat"));
 
-		if (MONSTER_COLOR_TYPE::RED == Info.eMonsterColor)
-		{
-			m_eMonsterColor = Info.eMonsterColor;
-			m_tObjParam.fDamage = -850.f;
-			m_tObjParam.fHp_Max = 2100.f;
-			m_tObjParam.fArmor_Max = 10.f;
+		m_pNavMeshCom->Set_Index(-1);
+		m_pNavMeshCom->Ready_NaviMesh(m_pGraphic_Dev, szNavData);
+		m_pNavMeshCom->Check_OnNavMesh(Info.vPos);
+		m_pTransformCom->Set_Pos(Info.vPos);
+		m_pTransformCom->Set_Angle(Info.vAngle);
+	}
 
-			m_fRecognitionRange = 15.f;
-			m_fShotRange = 10.f;
-			m_fAtkRange = 5.f;
-			m_fPersonalRange = 2.f;
-			m_iDodgeCountMax = 5;
-		}
-		else
-		{
-			m_eMonsterColor = MONSTER_COLOR_TYPE::BLACK;
-			m_tObjParam.fDamage = -750.f;
-			m_tObjParam.fHp_Max = 1800.f;
-			m_tObjParam.fArmor_Max = 10.f;
+	if (MONSTER_COLOR_TYPE::RED == Info.eMonsterColor)
+	{
+		m_eMonsterColor = Info.eMonsterColor;
+		m_tObjParam.fDamage = -850.f;
+		m_tObjParam.fHp_Max = 2100.f;
+		m_tObjParam.fArmor_Max = 10.f;
 
-			m_fRecognitionRange = 15.f;
-			m_fShotRange = 10.f;
-			m_fAtkRange = 5.f;
-			m_fPersonalRange = 2.f;
-			m_iDodgeCountMax = 5;
-		}
+		m_fRecognitionRange = 15.f;
+		m_fShotRange = 10.f;
+		m_fAtkRange = 5.f;
+		m_fPersonalRange = 2.f;
+		m_iDodgeCountMax = 5;
 	}
 	else
 	{
-		MSG_BOX("Create Monster pArgument == nullptr Failed");
-		return E_FAIL;
+		m_eMonsterColor = MONSTER_COLOR_TYPE::BLACK;
+		m_tObjParam.fDamage = -750.f;
+		m_tObjParam.fHp_Max = 1800.f;
+		m_tObjParam.fArmor_Max = 10.f;
+
+		m_fRecognitionRange = 15.f;
+		m_fShotRange = 10.f;
+		m_fAtkRange = 5.f;
+		m_fPersonalRange = 2.f;
+		m_iDodgeCountMax = 5;
 	}
 
 	m_eFirstCategory = MONSTER_STATE_TYPE::IDLE;

@@ -4,6 +4,7 @@
 
 #include "Base.h"
 #include "Client_Defines.h"
+#include "YetiTrap.h"
 
 namespace Engine
 {
@@ -44,6 +45,7 @@ public:
 
 private:
 	vector<CGameObject*>	m_vecObjectPool;
+	vector<CYetiTrap*>		m_vecTrapPool;
 
 private:
 	SCRIPT_SCENE	m_eStageIdx = Script_Stage_End;
@@ -107,6 +109,7 @@ public:
 	virtual void Free();
 
 public:
+	void Check_YetiTrap();
 };
 
 END

@@ -13,7 +13,30 @@ class CColleague_Jack;
 class CPlayer_Colleague final : public CGameObject
 {
 public:
-	// 차후 Attack에 스킬을 추가할 시 enum으로 나눠줘야 함
+	typedef struct tagInitInfo
+	{
+		tagInitInfo(_v3 vPos, _float fYAngle, _ushort StageIdx)
+			: vPos(vPos), fYAngle(fYAngle), sStageIdx(g_eSceneID_Cur)
+		{}
+
+		_v3			vPos = {};
+		_float		fYAngle = 0.f;
+		_ushort		sStageIdx = 0;
+	}JACK_INFO;
+
+public:
+	typedef struct tagMoveOptionReset
+	{
+		tagMoveOptionReset(SCENEID _eSceneID, Teleport_ID _eTeleportID)
+			: eSceneID(_eSceneID), eTeleportID(_eTeleportID)
+		{}
+
+		Teleport_ID eTeleportID = TeleportID_End;
+		SCENEID eSceneID = SCENE_END;
+
+	}TELEPORT_RESET;
+
+public:
 	enum Colleague_Type { Coll_Idle, Coll_Move, Coll_Guard, Coll_Attack, Coll_Hit, Coll_Dodge, Coll_Heal, Coll_Dead, Coll_Start };
 	enum Coll_Movement { Move_Walk, Move_BackWalk, Move_Run, Move_BackRun };
 	enum Coll_IdleMoment { Idle_Waiting, Idle_Guard };
@@ -30,7 +53,7 @@ public:
 	enum Coll_FBLR { Coll_Front, Coll_Back, Coll_FrontRight, Coll_BackRight, Coll_BackLeft, Coll_FrontLeft };
 
 private:
-	enum Bonematrix_Type { Bone_Range, Bone_Body, Bone_Head, Bone_LHand, Bone_End };
+	enum Bonematrix_Type { Bone_Range, Bone_Body, Bone_Head, Bone_LHand, Bone_RHand, Bone_End };
 
 private:
 	enum Colleague_Ani
@@ -80,22 +103,31 @@ public:
 	virtual _int	Late_Update_GameObject(_double TimeDelta);
 	virtual HRESULT LateInit_GameObject();
 	virtual HRESULT Render_GameObject();
+	virtual HRESULT Render_GameObject_Instancing_SetPass(CShader* pShader);
+	virtual HRESULT Render_GameObject_SetPass(CShader* pShader, _int iPass, _bool _bIsForMotionBlur = false);
 
 public:
 	_float	Get_CollHP() { return m_tObjParam.fHp_Cur; }
 
+public:
+	void	Set_Length(_float Length) { m_fAll_Length = Length; }
+
+public:
+	void	Calling_Colleague(_bool _Calling_Colleague);
+
+	void	Check_Navi();
+
 private:
-	HRESULT Add_Component();
+	HRESULT Add_Component(void* pArg);
 	HRESULT	SetUp_Default();
-	HRESULT SetUp_ConstantTable();
+	HRESULT SetUp_ConstantTable(CShader * pShader);
 
 private:
 	HRESULT	Ready_BoneMatrix();
 	HRESULT	Ready_Collider();
 	HRESULT	Ready_Weapon();
 
-private:
-	void	Set_Length(_float Length) { m_fAll_Length = Length; }
+
 
 private:
 	void	Update_Collider();
@@ -172,8 +204,8 @@ private:
 
 	void	Function_FBRL();
 
-private:
-	void Teleport_ResetOptions(_int eSceneID, _int eTeleportID);
+public:
+	void Teleport_ResetOptions(void * pArg/*_int eSceneID, _int eTeleportID*/);
 
 private:
 	CTransform*				m_pTransformCom = nullptr;
@@ -182,6 +214,7 @@ private:
 	CMesh_Dynamic*			m_pDynamicMesh = nullptr;
 	CNavMesh*				m_pNavMesh = nullptr;
 	CCollider*				m_pCollider = nullptr;
+	COptimization*			m_pOptimizationCom = nullptr;
 
 	CWeapon*				m_pSword = nullptr;
 	CTransform*				m_pTargetTransformCom = nullptr;
@@ -190,6 +223,8 @@ private:
 	CColleague_Jack*		m_pCollJack = nullptr;
 
 	CGameObject*			m_pObject_Mon = nullptr;
+
+	CBattleAgent*			m_pBattleAgentCom = nullptr;
 
 private:
 	Colleague_Type			m_eMovetype;
@@ -222,7 +257,7 @@ private:
 	_uint	m_iDodgeCount = 0;
 	_uint	m_iDodgeCountMax = 5;
 
-	_uint	m_iMyHeal_Count = 4;
+	_int	m_iMyHeal_Count = 4;
 
 
 	_float	m_fSpeed = 0.f;
@@ -294,7 +329,13 @@ private:
 	_bool	m_bCheck_StartGame = false;
 	_bool	m_bCheck_SEndGame = false;
 
-	_bool	m_bTestBool = false;
+	_bool	m_bLimit_Heailng = false;
+
+	_bool	m_bStage_LetsGo = false;
+	_bool	m_bJack_Death = false;
+	_bool	m_bCheck_Be_Careful = false;
+
+	_bool	m_bCheck_Skil_Voice = false;
 
 
 private: // For Effect

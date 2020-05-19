@@ -33,7 +33,7 @@ HRESULT CRenderer::Ready_Component_Prototype()
 	if (nullptr == m_pTarget_Manager)
 		return E_FAIL;
 
-	m_vShadowLightPos = _v3(-100.f, 50.f, 0.f);
+	m_vShadowLightPos = _v3(-50.f, 50, 0.f);
 
 	D3DVIEWPORT9		ViewPort;
 	m_pGraphic_Dev->GetViewport(&ViewPort);
@@ -58,7 +58,7 @@ HRESULT CRenderer::Ready_Component_Prototype()
 	if (FAILED(m_pTarget_Manager->Add_Render_Target(m_pGraphic_Dev, L"Target_Velocity", ViewPort.Width, ViewPort.Height, D3DFMT_A32B32G32R32F, D3DXCOLOR(0.0f, 0.0f, 0.0f, 0.f))))
 		return E_FAIL;
 	// Target_NormalForRim
-	if (FAILED(m_pTarget_Manager->Add_Render_Target(m_pGraphic_Dev, L"Target_RimNormal", ViewPort.Width, ViewPort.Height, D3DFMT_A16B16G16R16F, D3DXCOLOR(0.0f, 1.0f, 0.0f, 1.f))))
+	if (FAILED(m_pTarget_Manager->Add_Render_Target(m_pGraphic_Dev, L"Target_SkinShading", ViewPort.Width, ViewPort.Height, D3DFMT_A16B16G16R16F, D3DXCOLOR(0.0f, 0.0f, 0.0f, 1.f))))
 		return E_FAIL;
 	// Target_BloomPower
 	if (FAILED(m_pTarget_Manager->Add_Render_Target(m_pGraphic_Dev, L"Target_BloomPower", ViewPort.Width, ViewPort.Height, D3DFMT_A8R8G8B8, D3DXCOLOR(0.0f, 0.0f, 0.0f, 0.f))))
@@ -99,6 +99,10 @@ HRESULT CRenderer::Ready_Component_Prototype()
 
 	// Target_Blend
 	if (FAILED(m_pTarget_Manager->Add_Render_Target(m_pGraphic_Dev, L"Target_Blend", ViewPort.Width, ViewPort.Height, D3DFMT_A32B32G32R32F, D3DXCOLOR(0.f, 0.f, 0.f, 0.f))))
+		return E_FAIL;
+
+	// Target_GodRay
+	if (FAILED(m_pTarget_Manager->Add_Render_Target(m_pGraphic_Dev, L"Target_GodRay", ViewPort.Width, ViewPort.Height, D3DFMT_A8R8G8B8, D3DXCOLOR(0.f, 0.f, 0.f, 0.f))))
 		return E_FAIL;
 
 	// Target_Blur
@@ -152,7 +156,7 @@ HRESULT CRenderer::Ready_Component_Prototype()
 
 	if (FAILED(m_pTarget_Manager->Add_MRT(L"MRT_Velocity", L"Target_Velocity")))
 		return E_FAIL;
-	if (FAILED(m_pTarget_Manager->Add_MRT(L"MRT_Velocity", L"Target_RimNormal")))
+	if (FAILED(m_pTarget_Manager->Add_MRT(L"MRT_Velocity", L"Target_SkinShading")))
 		return E_FAIL;
 	if (FAILED(m_pTarget_Manager->Add_MRT(L"MRT_Velocity", L"Target_BloomPower")))
 		return E_FAIL;
@@ -304,7 +308,7 @@ HRESULT CRenderer::Ready_Component_Prototype()
 		return E_FAIL;
 
 	// For.Target_RimNormal`s Debug Buffer ==  툰 쉐이딩
-	if (FAILED(m_pTarget_Manager->Ready_Debug_Buffer(L"Target_RimNormal", fTargetSize, fTargetSize * 2, fTargetSize, fTargetSize)))
+	if (FAILED(m_pTarget_Manager->Ready_Debug_Buffer(L"Target_SkinShading", fTargetSize, fTargetSize * 2, fTargetSize, fTargetSize)))
 		return E_FAIL;
 
 	//=====================================================================================================================
@@ -370,8 +374,13 @@ HRESULT CRenderer::Ready_Component_Prototype()
 	// For.Target_BlurDOF`s Debug Buffer
 	if (FAILED(m_pTarget_Manager->Ready_Debug_Buffer(L"Target_BlurDOF", fTargetSize * 5, fTargetSize * 3, fTargetSize, fTargetSize)))
 		return E_FAIL;
-#endif
+	
+	//=====================================================================================================================
 
+	// For.Target_GodRay`s Debug Buffer
+	if (FAILED(m_pTarget_Manager->Ready_Debug_Buffer(L"Target_GodRay", fTargetSize * 6, 0, fTargetSize, fTargetSize)))
+		return E_FAIL;
+#endif
 
 	return NOERROR;
 }
@@ -414,6 +423,10 @@ HRESULT CRenderer::Draw_RenderList()
 	// 노멀타겟과 빛정보를 이용하여 셰이드타겟에 값을 그리낟.
 	if (FAILED(Render_LightAcc()))
 		return E_FAIL;
+	
+	//// GodRay
+	//if (FAILED(Render_GodRay()))
+	//	return E_FAIL;
 
 	// 디퓨즈, 셰이드 두 타겟을 혼합하여 백버퍼에 찍는다.
 	// With Skybox(priority), With Alpha
@@ -482,6 +495,7 @@ HRESULT CRenderer::Draw_RenderList()
 		m_pTarget_Manager->Render_Debug_Buffer(L"MRT_SSAO_Blur");
 		m_pTarget_Manager->Render_Debug_Buffer_Single(L"Target_BlurDOF");
 		m_pTarget_Manager->Render_Debug_Buffer_Single(L"Target_DecalDepth");
+		m_pTarget_Manager->Render_Debug_Buffer_Single(L"Target_GodRay");
 		
 		m_pGraphic_Dev->SetTexture(0, nullptr);
 	}
@@ -567,24 +581,24 @@ HRESULT CRenderer::Render_NonAlpha()
 	if (nullptr == m_pTarget_Manager)
 		return E_FAIL;
 
-	// 백버퍼를 뺀다. 
-	// 디퓨즈타겟과 노멀타겟을 장치에 셋한다. == MRT_Deferred를 비긴한다.
-
 	if (FAILED(m_pTarget_Manager->Begin_MRT(L"MRT_Deferred")))
 		return E_FAIL;
 
-	m_pShader_RenderMesh->Begin_Shader();
+	CManagement* pManagement = CManagement::Get_Instance();
+	Safe_AddRef(pManagement);
 
 	_mat matView, matProj;
-	CManagement* pManagement = CManagement::Get_Instance();
 
 	matView = pManagement->Get_Transform(D3DTS_VIEW);
 	matProj = pManagement->Get_Transform(D3DTS_PROJECTION);
+
+	m_pShader_RenderMesh->Begin_Shader();
 
 	if (FAILED(m_pShader_RenderMesh->Set_Value("g_matView", &matView, sizeof(_mat))))
 		return E_FAIL;
 	if (FAILED(m_pShader_RenderMesh->Set_Value("g_matProj", &matProj, sizeof(_mat))))
 		return E_FAIL;
+
 	if (FAILED(m_pDissolveTexture->SetUp_OnShader("g_FXTexture", m_pShader_RenderMesh)))
 		return E_FAIL;
 
@@ -597,6 +611,7 @@ HRESULT CRenderer::Render_NonAlpha()
 				Safe_Release(pGameObject);
 				return E_FAIL;
 			}
+
 			Safe_Release(pGameObject);
 		}
 	}
@@ -605,10 +620,10 @@ HRESULT CRenderer::Render_NonAlpha()
 
 	m_RenderList[RENDER_NONALPHA].clear();
 
-
-
 	if (FAILED(m_pTarget_Manager->End_MRT(L"MRT_Deferred")))
 		return E_FAIL;
+
+	Safe_Release(pManagement);
 
 	return NOERROR;
 }
@@ -670,6 +685,9 @@ HRESULT CRenderer::Render_Shadow()
 	_float fOffsetX = 0.5f + (0.5f / 1280);
 	_float fOffsetY = 0.5f + (0.5f / 720);
 
+	//_float fOffsetX = 0.5f + (0.5f / g_sShadow_X);
+	//_float fOffsetY = 0.5f + (0.5f / g_sShadow_Y);
+
 	_mat matScaleBias;
 	D3DXMatrixIdentity(&matScaleBias);
 
@@ -691,6 +709,9 @@ HRESULT CRenderer::Render_Shadow()
 
 	_v3 vLightPos = vCamPos + m_vShadowLightPos;
 	_v3 vLookAt = vCamPos;
+
+	CALC::Generate_ViewMat(&matView, &vLightPos, &vLookAt, &WORLD_UP);
+	CALC::Generate_ProjMat_Ortho(&matProj, &g_fShadow_X, &g_fShadow_Y, &g_fNear, &g_fFar);
 
 	D3DXMatrixLookAtLH(&matView, &vLightPos, &vLookAt, &WORLD_UP);
 	D3DXMatrixOrthoLH(&matProj, g_fShadow_X, g_fShadow_Y, g_fNear, g_fFar);
@@ -737,11 +758,23 @@ HRESULT CRenderer::Render_MotionBlurTarget()
 	if (FAILED(m_pTarget_Manager->Begin_MRT(L"MRT_Velocity")))
 		return E_FAIL;
 
+	CManagement* pManagement = CManagement::Get_Instance();
+	Safe_AddRef(pManagement);
+
+	_mat matView, matProj;
+
+	matView = pManagement->Get_Transform(D3DTS_VIEW);
+	matProj = pManagement->Get_Transform(D3DTS_PROJECTION);
+
 	m_pShader_Blur->Begin_Shader();
+
+	if (FAILED(m_pShader_Blur->Set_Value("g_matView", &matView, sizeof(_mat))))
+		return E_FAIL;
+	if (FAILED(m_pShader_Blur->Set_Value("g_matProj", &matProj, sizeof(_mat))))
+		return E_FAIL;
 
 	for (auto& pGameObject : m_RenderList[RENDER_MOTIONBLURTARGET])
 	{
-
 		if (nullptr != pGameObject)
 		{
 			if (FAILED(pGameObject->Render_GameObject_SetPass(m_pShader_Blur, 0, true)))
@@ -761,6 +794,8 @@ HRESULT CRenderer::Render_MotionBlurTarget()
 	if (FAILED(m_pTarget_Manager->End_MRT(L"MRT_Velocity")))
 		return E_FAIL;
 
+	Safe_Release(pManagement);
+
 	return NOERROR;
 }
 
@@ -770,6 +805,17 @@ HRESULT CRenderer::Render_Distortion()
 		return E_FAIL;
 
 	m_pShader_Effect->Begin_Shader();
+
+	_mat matView, matProj;
+
+	matView = CManagement::Get_Instance()->Get_Transform(D3DTS_VIEW);
+	matProj = CManagement::Get_Instance()->Get_Transform(D3DTS_PROJECTION);
+
+
+	if (FAILED(m_pShader_Effect->Set_Value("g_matView", &matView, sizeof(_mat))))
+		return E_FAIL;
+	if (FAILED(m_pShader_Effect->Set_Value("g_matProj", &matProj, sizeof(_mat))))
+		return E_FAIL;
 
 	for (auto& pGameObject : m_RenderList[RENDER_DISTORTION])
 	{
@@ -799,13 +845,13 @@ HRESULT CRenderer::Render_Alpha()
 	if (nullptr == m_pTarget_Manager)
 		return E_FAIL;
 
-	_mat matView, matProj;
-	CManagement* pManagement = CManagement::Get_Instance();
-
-	matView = pManagement->Get_Transform(D3DTS_VIEW);
-	matProj = pManagement->Get_Transform(D3DTS_PROJECTION);
-
 	m_pShader_Trail->Begin_Shader();
+
+	_mat matView, matProj;
+
+	matView = CManagement::Get_Instance()->Get_Transform(D3DTS_VIEW);
+	matProj = CManagement::Get_Instance()->Get_Transform(D3DTS_PROJECTION);
+
 
 	if (FAILED(m_pShader_Trail->Set_Value("g_matView", &matView, sizeof(_mat))))
 		return E_FAIL;
@@ -1090,6 +1136,8 @@ HRESULT CRenderer::Render_SSAO()
 		return E_FAIL;
 	if (FAILED(m_pShader_SSAO->Set_Texture("g_NormalTexture", m_pTarget_Manager->Get_Texture(L"Target_Normal"))))
 		return E_FAIL;
+	if (FAILED(m_pShader_SSAO->Set_Texture("g_SkinTexture", m_pTarget_Manager->Get_Texture(L"Target_SkinShading"))))
+		return E_FAIL;
 	//
 
 	CPipeLine*		pPipeLine = CPipeLine::Get_Instance();
@@ -1159,7 +1207,7 @@ HRESULT CRenderer::Render_LightAcc()
 	m_pShader_LightAcc->Set_Texture("g_NormalTexture", m_pTarget_Manager->Get_Texture(L"Target_Normal"));
 	m_pShader_LightAcc->Set_Texture("g_DepthTexture", m_pTarget_Manager->Get_Texture(L"Target_Depth"));
 	m_pShader_LightAcc->Set_Texture("g_ShadowMapTexture", m_pTarget_Manager->Get_Texture(L"Target_Shadow"));
-	m_pShader_LightAcc->Set_Texture("g_RimNormalTexture", m_pTarget_Manager->Get_Texture(L"Target_RimNormal"));
+	m_pShader_LightAcc->Set_Texture("g_RimNormalTexture", m_pTarget_Manager->Get_Texture(L"Target_SkinShading"));
 	
 	m_pShader_LightAcc->Set_Value("g_matProjInv", &pPipeLine->Get_Transform_Inverse(D3DTS_PROJECTION), sizeof(_mat));
 	m_pShader_LightAcc->Set_Value("g_matViewInv", &pPipeLine->Get_Transform_Inverse(D3DTS_VIEW), sizeof(_mat));
@@ -1241,6 +1289,16 @@ HRESULT CRenderer::Render_Blend()
 	m_pShader_Blend->End_Pass();
 	m_pShader_Blend->End_Shader();
 
+	////GodRay Test
+	//m_pShader_Blend->Begin_Shader();
+	//m_pShader_Blend->Begin_Pass(5);
+	//if (FAILED(m_pShader_Blend->Set_Texture("g_DiffuseTexture", m_pTarget_Manager->Get_Texture(L"Target_GodRay"))))
+	//	return E_FAIL;
+	//m_pShader_Blend->Commit_Changes();
+	//m_pViewPortBuffer->Render_VIBuffer();
+	//m_pShader_Blend->End_Pass();
+	//m_pShader_Blend->End_Shader();
+
 	// Alpha
 	if (FAILED(Render_Alpha()))
 		return E_FAIL;
@@ -1250,6 +1308,52 @@ HRESULT CRenderer::Render_Blend()
 		return E_FAIL;
 
 	if (FAILED(m_pTarget_Manager->End_MRT(L"MRT_Blend")))
+		return E_FAIL;
+
+	return NOERROR;
+}
+
+HRESULT CRenderer::Render_GodRay()
+{
+	if (nullptr == m_pViewPortBuffer ||
+		nullptr == m_pShader_Blend)
+		return E_FAIL;
+
+	if (FAILED(m_pShader_Blend->Set_Texture("g_DiffuseTexture", m_pTarget_Manager->Get_Texture(L"Target_Depth"))))
+		return E_FAIL;
+
+	//_v3 vCamPos = CManagement::Get_Instance()->Get_CamPosition();
+	//_v3 vLightPos = vCamPos + m_vShadowLightPos;
+
+	m_pShader_Shadow->Set_Value("g_ScreenLightPos", &m_vShadowLightPos, sizeof(_v3));
+
+	_mat ViewMatrix = CManagement::Get_Instance()->Get_Transform(D3DTS_VIEW);
+	_mat ProjMatrix = CManagement::Get_Instance()->Get_Transform(D3DTS_PROJECTION);
+
+	_mat matWVP = ViewMatrix * ProjMatrix;
+	m_pShader_Shadow->Set_Value("g_matWVP", &matWVP, sizeof(_mat));
+
+	float decay = 0.96815f;
+	float exposure = 0.2f;
+	float density = 0.926f;
+	float weight = 0.58767f;
+	_v4 vParam = _v4(density, decay, weight, exposure);
+	m_pShader_Shadow->Set_Value("g_LightShaftValue", &vParam, sizeof(_v4));
+	
+	
+	if (FAILED(m_pTarget_Manager->Begin_Render_Target(L"Target_GodRay")))
+		return E_FAIL;
+
+	// 장치에 백버퍼가 셋팅되어있다.	
+	m_pShader_Blend->Begin_Shader();
+	m_pShader_Blend->Begin_Pass(9);
+
+	m_pViewPortBuffer->Render_VIBuffer();
+
+	m_pShader_Blend->End_Pass();
+	m_pShader_Blend->End_Shader();
+
+	if (FAILED(m_pTarget_Manager->End_Render_Target(L"Target_GodRay")))
 		return E_FAIL;
 
 	return NOERROR;

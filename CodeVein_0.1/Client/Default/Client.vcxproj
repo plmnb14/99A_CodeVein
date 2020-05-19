@@ -185,6 +185,7 @@
     <ClInclude Include="..\Headers\BossHP.h" />
     <ClInclude Include="..\Headers\BossNameUI.h" />
     <ClInclude Include="..\Headers\BuyOptionUI.h" />
+    <ClInclude Include="..\Headers\Calling_Colleague.h" />
     <ClInclude Include="..\Headers\Client_Defines.h" />
     <ClInclude Include="..\Headers\Cloth.h" />
     <ClInclude Include="..\Headers\ClothDynamic.h" />
@@ -202,6 +203,13 @@
     <ClInclude Include="..\Headers\ColdBeamSmall.h" />
     <ClInclude Include="..\Headers\ColdBeamBig.h" />
     <ClInclude Include="..\Headers\ColdBeamMiddle.h" />
+    <ClInclude Include="..\Headers\CustomCategory.h" />
+    <ClInclude Include="..\Headers\CustomCategoryOption.h" />
+    <ClInclude Include="..\Headers\CustomInven.h" />
+    <ClInclude Include="..\Headers\CustomSliderBar.h" />
+    <ClInclude Include="..\Headers\CustomSlot.h" />
+    <ClInclude Include="..\Headers\Costume_Body.h" />
+    <ClInclude Include="..\Headers\Costume_Head.h" />
     <ClInclude Include="..\Headers\ExpendCollectionUI.h" />
     <ClInclude Include="..\Headers\ExpendOptionUI.h" />
     <ClInclude Include="..\Headers\Expend_InfoUI.h" />
@@ -212,6 +220,7 @@
     <ClInclude Include="..\Headers\ExpendBuyUI.h" />
     <ClInclude Include="..\Headers\GeneralStoreNPCUI.h" />
     <ClInclude Include="..\Headers\GeneralStoreOption.h" />
+    <ClInclude Include="..\Headers\LockOn_UI.h" />
     <ClInclude Include="..\Headers\MaterialBuyUI.h" />
     <ClInclude Include="..\Headers\MaterialCollectionUI.h" />
     <ClInclude Include="..\Headers\MaterialOptionUI.h" />
@@ -222,7 +231,7 @@
     <ClInclude Include="..\Headers\Pet_DeerKing.h" />
     <ClInclude Include="..\Headers\PurchaseFailUI.h" />
     <ClInclude Include="..\Headers\ScriptUI.h" />
-    <ClInclude Include="..\Headers\Costume_Accessory.h" />
+    <ClInclude Include="..\Headers\Costume_Mask.h" />
     <ClInclude Include="..\Headers\Costume_Hair.h" />
     <ClInclude Include="..\Headers\Costume_Outer.h" />
     <ClInclude Include="..\Headers\CursorEffect.h" />
@@ -368,6 +377,7 @@
     <ClInclude Include="..\Headers\YachaMan.h" />
     <ClInclude Include="..\Headers\Yeti.h" />
     <ClInclude Include="..\Headers\YetiBullet.h" />
+    <ClInclude Include="..\Headers\YetiTrap.h" />
     <ClInclude Include="Client.h" />
     <ClInclude Include="Client_Item_Enum.h" />
     <ClInclude Include="Resource.h" />
@@ -392,6 +402,7 @@
     <ClCompile Include="..\Codes\BossHP.cpp" />
     <ClCompile Include="..\Codes\BossNameUI.cpp" />
     <ClCompile Include="..\Codes\BuyOptionUI.cpp" />
+    <ClCompile Include="..\Codes\Calling_Colleague.cpp" />
     <ClCompile Include="..\Codes\Cloth.cpp" />
     <ClCompile Include="..\Codes\ClothDynamic.cpp" />
     <ClCompile Include="..\Codes\ClothManager.cpp" />
@@ -408,6 +419,13 @@
     <ClCompile Include="..\Codes\ColdBeamSmall.cpp" />
     <ClCompile Include="..\Codes\ColdBeamBig.cpp" />
     <ClCompile Include="..\Codes\ColdBeamMiddle.cpp" />
+    <ClCompile Include="..\Codes\CustomCategory.cpp" />
+    <ClCompile Include="..\Codes\CustomCategoryOption.cpp" />
+    <ClCompile Include="..\Codes\CustomInven.cpp" />
+    <ClCompile Include="..\Codes\CustomSliderBar.cpp" />
+    <ClCompile Include="..\Codes\CustomSlot.cpp" />
+    <ClCompile Include="..\Codes\Costume_Body.cpp" />
+    <ClCompile Include="..\Codes\Costume_Head.cpp" />
     <ClCompile Include="..\Codes\ExpendCollectionUI.cpp" />
     <ClCompile Include="..\Codes\ExpendOptionUI.cpp" />
     <ClCompile Include="..\Codes\Expend_InfoUI.cpp" />
@@ -418,6 +436,7 @@
     <ClCompile Include="..\Codes\ExpendBuyUI.cpp" />
     <ClCompile Include="..\Codes\GeneralStoreNPCUI.cpp" />
     <ClCompile Include="..\Codes\GeneralStoreOption.cpp" />
+    <ClCompile Include="..\Codes\LockOn_UI.cpp" />
     <ClCompile Include="..\Codes\MaterialBuyUI.cpp" />
     <ClCompile Include="..\Codes\MaterialCollectionUI.cpp" />
     <ClCompile Include="..\Codes\MaterialOptionUI.cpp" />
@@ -428,7 +447,7 @@
     <ClCompile Include="..\Codes\Pet_DeerKing.cpp" />
     <ClCompile Include="..\Codes\PurchaseFailUI.cpp" />
     <ClCompile Include="..\Codes\ScriptUI.cpp" />
-    <ClCompile Include="..\Codes\Costume_Accessory.cpp" />
+    <ClCompile Include="..\Codes\Costume_Mask.cpp" />
     <ClCompile Include="..\Codes\Costume_Hair.cpp" />
     <ClCompile Include="..\Codes\Costume_Outer.cpp" />
     <ClCompile Include="..\Codes\CursorEffect.cpp" />
@@ -573,6 +592,7 @@
     <ClCompile Include="..\Codes\YachaMan.cpp" />
     <ClCompile Include="..\Codes\Yeti.cpp" />
     <ClCompile Include="..\Codes\YetiBullet.cpp" />
+    <ClCompile Include="..\Codes\YetiTrap.cpp" />
     <ClCompile Include="Client.cpp" />
     <ClCompile Include="SkillIcon.cpp" />
     <ClCompile Include="stdafx.cpp">

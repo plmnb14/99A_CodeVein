@@ -18,6 +18,7 @@ public:
 	virtual HRESULT Ready_Scene();
 	virtual _int Update_Scene(_double TimeDelta);
 	virtual HRESULT Render_Scene();
+	HRESULT Ready_Layer_Custom(const _tchar* pLayerTag);
 
 public:
 	virtual HRESULT Ready_Player();

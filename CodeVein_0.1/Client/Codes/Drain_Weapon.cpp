@@ -167,9 +167,6 @@ HRESULT CDrain_Weapon::Render_GameObject_SetPass(CShader * pShader, _int iPass)
 	{
 		_uint iNumSubSet = (_uint)m_pMesh_Dynamic->Get_NumMaterials(i);
 
-		// 메시를 뼈에 붙인다.
-		//m_pMesh_Dynamic->Update_SkinnedMesh(i);
-
 		for (_uint j = 0; j < iNumSubSet; ++j)
 		{
 			m_iPass = m_pMesh_Dynamic->Get_MaterialPass(i, j);

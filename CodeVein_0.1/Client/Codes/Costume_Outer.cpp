@@ -12,6 +12,11 @@ CCostume_Outer::CCostume_Outer(const CCostume_Outer& rhs)
 {
 }
 
+void CCostume_Outer::Reset_OldAniIdx(_ulong _dwNumber)
+{
+	m_pDynamicMesh->Reset_OldIndx(1);
+}
+
 HRESULT CCostume_Outer::Ready_GameObject_Prototype()
 {
 	return S_OK;
@@ -34,6 +39,11 @@ HRESULT CCostume_Outer::Ready_GameObject(void * pArg)
 	if (FAILED(Setup_Default()))
 		return E_FAIL;
 
+	m_pBattleAgent->Set_OriginRimAlpha(0.f);
+	m_pBattleAgent->Set_OriginRimValue(7.f);
+	m_pBattleAgent->Set_RimAlpha(0.f);
+	m_pBattleAgent->Set_RimValue(7.f);
+
 	return S_OK;
 }
 
@@ -52,7 +62,7 @@ HRESULT CCostume_Outer::Add_Components()
 		return E_FAIL;
 
 	// for.Com_Mesh
-	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Mesh_Player", L"Com_MeshDynamic", (CComponent**)&m_pDynamicMesh)))
+	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Mesh_Drape_01", L"Com_MeshDynamic", (CComponent**)&m_pDynamicMesh)))
 		return E_FAIL;
 
 	// for.Com_BattleAgent
@@ -76,25 +86,15 @@ HRESULT CCostume_Outer::SetUp_ConstantTable(CShader* pShader)
 	if (nullptr == pShader)
 		return E_FAIL;
 
-	_mat		ViewMatrix = g_pManagement->Get_Transform(D3DTS_VIEW);
-	_mat		ProjMatrix = g_pManagement->Get_Transform(D3DTS_PROJECTION);
-
 	//=============================================================================================
 	// 기본 메트릭스
 	//=============================================================================================
 
 	if (FAILED(pShader->Set_Value("g_matWorld", &m_pTransform->Get_WorldMat(), sizeof(_mat))))
 		return E_FAIL;
-	if (FAILED(pShader->Set_Value("g_matView", &ViewMatrix, sizeof(_mat))))
-		return E_FAIL;
-	if (FAILED(pShader->Set_Value("g_matProj", &ProjMatrix, sizeof(_mat))))
-		return E_FAIL;
-
 	//=============================================================================================
 	// 디졸브용 상수
 	//=============================================================================================
-	if (FAILED(g_pDissolveTexture->SetUp_OnShader("g_FXTexture", pShader)))
-		return E_FAIL;
 	if (FAILED(pShader->Set_Value("g_fFxAlpha", &m_fFXAlpha, sizeof(_float))))
 		return E_FAIL;
 
@@ -152,7 +152,7 @@ void CCostume_Outer::Change_OuterMesh(CClothManager::Cloth_Dynamic _eOuterType)
 	{
 	case CClothManager::None:
 	{
-		lstrcpy(szMeshName, L"Mesh_Player");
+		lstrcpy(szMeshName, L"Mesh_Drape_01");
 		m_eOuterType = CClothManager::Cloth_Dynamic::None;
 		break;
 	}
@@ -183,7 +183,7 @@ void CCostume_Outer::Change_OuterMesh(CClothManager::Cloth_Dynamic _eOuterType)
 	}
 	case CClothManager::LongCoat_02:
 	{
-		lstrcpy(szMeshName, L"Mesh_LongCoat_01");
+		lstrcpy(szMeshName, L"Mesh_LongCoat_02");
 		m_eOuterType = CClothManager::LongCoat_02;
 		break;
 	}
@@ -420,14 +420,12 @@ HRESULT CCostume_Outer::Render_GameObject_Instancing_SetPass(CShader * pShader)
 	if (m_eOuterType != CClothManager::Cloth_Dynamic::None)
 		Change_Vertex();
 
-	//m_pDynamicMesh->SetUp_Animation(0);
+	m_pDynamicMesh->Play_Animation_Lower(g_pTimer_Manager->Get_DeltaTime(L"Timer_Fps_60") * m_fAnimMultiply);
+	m_pDynamicMesh->Play_Animation_Upper(g_pTimer_Manager->Get_DeltaTime(L"Timer_Fps_60") * m_fAnimMultiply);
+	m_pDynamicMesh->Play_Animation_RightArm(g_pTimer_Manager->Get_DeltaTime(L"Timer_Fps_60") * m_fAnimMultiply, false);
+	m_pDynamicMesh->Play_Animation_LeftArm(g_pTimer_Manager->Get_DeltaTime(L"Timer_Fps_60") * m_fAnimMultiply);
 
-	//m_pDynamicMesh->Play_Animation_Lower(g_pTimer_Manager->Get_DeltaTime(L"Timer_Fps_60") * m_fAnimMultiply);
-	//m_pDynamicMesh->Play_Animation_Upper(g_pTimer_Manager->Get_DeltaTime(L"Timer_Fps_60") * m_fAnimMultiply);
-	//m_pDynamicMesh->Play_Animation_RightArm(g_pTimer_Manager->Get_DeltaTime(L"Timer_Fps_60") * m_fAnimMultiply, false);
-	//m_pDynamicMesh->Play_Animation_LeftArm(g_pTimer_Manager->Get_DeltaTime(L"Timer_Fps_60") * m_fAnimMultiply);
-
-	m_pDynamicMesh->Play_Animation(g_pTimer_Manager->Get_DeltaTime(L"Timer_Fps_60") * m_fAnimMultiply);
+	//m_pDynamicMesh->Play_Animation(g_pTimer_Manager->Get_DeltaTime(L"Timer_Fps_60") * m_fAnimMultiply);
 
 	if (m_tObjParam.bInvisible)
 		return S_OK;
@@ -457,14 +455,6 @@ HRESULT CCostume_Outer::Render_GameObject_Instancing_SetPass(CShader * pShader)
 
 			pShader->Set_DynamicTexture_Auto(m_pDynamicMesh, i, j);
 
-			if (13 == m_iPass)
-			{
-				_float fSpec = 0.1f;
-
-				if (FAILED(pShader->Set_Value("g_fSpecularPower", &fSpec, sizeof(_float))))
-					return E_FAIL;
-			}
-
 			pShader->Commit_Changes();
 
 			m_pDynamicMesh->Render_Mesh(i, j);
@@ -472,9 +462,6 @@ HRESULT CCostume_Outer::Render_GameObject_Instancing_SetPass(CShader * pShader)
 			pShader->End_Pass();
 		}
 	}
-
-	// 버텍스 교체
-	//Change_Vertex();
 
 	return S_OK;
 }
@@ -546,8 +533,6 @@ HRESULT CCostume_Outer::Render_GameObject_SetPass(CShader * pShader, _int iPass,
 
 		for (_uint j = 0; j < iNumSubSet; ++j)
 		{
-			_int tmpPass = m_pDynamicMesh->Get_MaterialPass(i, j);
-
 			pShader->Begin_Pass(iPass);
 
 			pShader->Commit_Changes();
@@ -561,6 +546,29 @@ HRESULT CCostume_Outer::Render_GameObject_SetPass(CShader * pShader, _int iPass,
 	//============================================================================================
 
 	return S_OK;
+}
+
+void CCostume_Outer::Set_LowerAnimation(_ulong _dwAnimIdx, _bool _bOffLerp)
+{
+	m_pDynamicMesh->SetUp_Animation_Lower(_dwAnimIdx, _bOffLerp);
+}
+
+void CCostume_Outer::Set_UpperAnimation(_ulong _dwAnimIdx, _bool _bOffLerp)
+{
+	m_pDynamicMesh->SetUp_Animation_Upper(_dwAnimIdx, _bOffLerp);
+
+}
+
+void CCostume_Outer::Set_LeftArmAnimation(_ulong _dwAnimIdx, _bool _bOffLerp)
+{
+	m_pDynamicMesh->SetUp_Animation_LeftArm(_dwAnimIdx, _bOffLerp);
+
+}
+
+void CCostume_Outer::Set_RightArmAnimation(_ulong _dwAnimIdx, _bool _bOffLerp)
+{
+	m_pDynamicMesh->SetUp_Animation_RightArm(_dwAnimIdx, _bOffLerp);
+
 }
 
 CCostume_Outer * CCostume_Outer::Create(_Device pGraphicDev)

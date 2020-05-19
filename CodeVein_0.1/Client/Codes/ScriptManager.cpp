@@ -14,6 +14,8 @@
 #include "Hunter.h"
 #include "Monkey.h"
 #include "Cocoon.h"
+
+#include "Yeti.h"
 // =================================
 #include "QueensKnight.h"
 #include "PoisonButterfly.h"
@@ -73,19 +75,19 @@ void CScriptManager::Update_ScriptEvent()
 
 	case Script_Stage02:
 	{
-		Stage_02_Scripts();
+		//Stage_02_Scripts();
 		break;
 	}
 
 	case Script_Stage03:
 	{
-		Stage_03_Scripts();
+		//Stage_03_Scripts();
 		break;
 	}
 
 	case Script_Stage04:
 	{
-		Stage_04_Scripts();
+		//Stage_04_Scripts();
 		break;
 	}
 
@@ -154,19 +156,19 @@ void CScriptManager::Ready_Script_DynamicObject(_ulong _dwStageIdx)
 
 	case Script_Stage02:
 	{
-		Ready_Stage02_DynamicObject();
+		//Ready_Stage02_DynamicObject();
 		break;
 	}
 
 	case Script_Stage03:
 	{
-		Ready_Stage03_DynamicObject();
+		//Ready_Stage03_DynamicObject();
 		break;
 	}
 
 	case Script_Stage04:
 	{
-		Ready_Stage04_DynamicObject();
+		//Ready_Stage04_DynamicObject();
 		break;
 	}
 
@@ -1249,4 +1251,20 @@ void CScriptManager::Free()
 	}
 
 	Safe_Release(m_pGraphicDev);
+}
+
+void CScriptManager::Check_YetiTrap()
+{
+	for (auto& vector_iter : m_vecTrapPool)
+	{
+		if(false == vector_iter->Get_Enable())
+			continue;
+
+		if(false == vector_iter->Get_SummonYeti())
+			continue;
+
+		m_vecObjectPool[vector_iter->Get_YetiIndex()]->Set_Enable(true);
+	}
+
+	return;
 }

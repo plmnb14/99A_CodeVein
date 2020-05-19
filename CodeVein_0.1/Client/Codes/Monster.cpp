@@ -634,6 +634,9 @@ void CMonster::Function_Find_Target()
 
 void CMonster::Function_ResetAfterAtk()
 {
+	m_fCoolDownMax = 0.f;
+	m_fCoolDownCur = 0.f;
+
 	m_tObjParam.bCanHit = true;
 	m_tObjParam.bIsHit = false;
 

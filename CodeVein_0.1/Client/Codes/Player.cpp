@@ -10,6 +10,8 @@
 #include "Costume_Hair.h"
 #include "Costume_Outer.h"
 
+#include "LockOn_UI.h"
+
 float g_OriginCamPos = 3.f;
 
 CPlayer::CPlayer(LPDIRECT3DDEVICE9 pGraphic_Device)
@@ -21,6 +23,47 @@ CPlayer::CPlayer(const CPlayer & rhs)
 	: CGameObject(rhs)
 {
 
+}
+
+void CPlayer::Set_WeaponSlot(ACTIVE_WEAPON_SLOT eType, WEAPON_DATA eData)
+{
+	if (WEAPON_DATA::WPN_DATA_End == eData)
+	{
+		if (m_pWeapon[eType])
+			Safe_Release(m_pWeapon[eType]);
+
+		m_bWeaponActive[eType] = false;
+		m_bWeaponActive[!eType] = true;
+		m_eActiveSlot = (ACTIVE_WEAPON_SLOT)(!eType);
+
+		Change_Weapon();
+
+		return;
+	}
+
+	if (m_pWeapon[eType])
+		Safe_Release(m_pWeapon[eType]);
+
+	LPCSTR tmpChar = "RightHandAttach";
+	_mat   matAttach;
+
+	D3DXFRAME_DERIVED*	pFrame = (D3DXFRAME_DERIVED*)m_pDynamicMesh->Get_BonInfo(tmpChar, 2);
+
+	m_pWeapon[eType] = static_cast<CWeapon*>(g_pManagement->Clone_GameObject_Return(L"GameObject_Weapon", NULL));
+	m_pWeapon[eType]->Change_WeaponData(eData);
+	m_pWeapon[eType]->Set_Friendly(true);
+	m_pWeapon[eType]->Set_AttachBoneMartix(&pFrame->CombinedTransformationMatrix);
+	m_pWeapon[eType]->Set_ParentMatrix(&m_pTransform->Get_WorldMat());
+	//m_bWeaponActive[eType] = true;
+
+}
+
+void CPlayer::Set_ArmorSlot(ARMOR_All_DATA eType)
+{
+	//if (m_pOuter->Get_OuterType() + 1 == eType)
+	//	return;
+
+	m_pOuter->Change_OuterMesh(CClothManager::Cloth_Dynamic(eType + 1));
 }
 
 HRESULT CPlayer::Ready_GameObject_Prototype()
@@ -43,10 +86,18 @@ HRESULT CPlayer::Ready_GameObject(void * pArg)
 
 	Ready_Skills();
 
+	Ready_Masks();
+	Ready_Heads();
+
 	m_pBattleAgent->Set_OriginRimAlpha(0.25f);
 	m_pBattleAgent->Set_OriginRimValue(7.f);
 	m_pBattleAgent->Set_RimAlpha(0.25f);
 	m_pBattleAgent->Set_RimValue(7.f);
+
+	//m_pBattleAgent->Set_OriginRimAlpha(1.f);
+	//m_pBattleAgent->Set_OriginRimValue(2.f);
+	//m_pBattleAgent->Set_RimAlpha(1.f);
+	//m_pBattleAgent->Set_RimValue(2.f);
 
 	m_pUIManager = CUI_Manager::Get_Instance();
 	Safe_AddRef(m_pUIManager);
@@ -59,10 +110,19 @@ HRESULT CPlayer::Ready_GameObject(void * pArg)
 
 	m_tObjParam.sMana_Cur = 100;
 
+	m_pHair = (CCostume_Hair*)g_pManagement->Clone_GameObject_Return(L"GameObject_Costume_Hair", 
+		&CCostume_Hair::_INFO(&m_pTransform->Get_WorldMat(), m_matBones[Bone_Head], _v4(1.f, 0.f, 0.f, 1.f)));
+
+	m_pOuter = (CCostume_Outer*)g_pManagement->Clone_GameObject_Return(L"GameObject_Costume_Outer", 
+		&CCostume_Outer::_INFO(&m_pTransform->Get_WorldMat(), m_matBones[Bone_Head], _v4(0.f, 0.f, 0.f, 0.f), nullptr));
+
+	m_pOuter->Change_OuterMesh(CClothManager::Gauntlet_01);
 
 
-	m_pHair = (CCostume_Hair*)g_pManagement->Clone_GameObject_Return(L"GameObject_Costume_Hair", &CCostume_Hair::_INFO(&m_pTransform->Get_WorldMat(), m_matBones[Bone_Head], _v4(0.f, 0.f, 0.f, 0.f)));
-	m_pOuter = (CCostume_Outer*)g_pManagement->Clone_GameObject_Return(L"GameObject_Costume_Outer", &CCostume_Outer::_INFO(&m_pTransform->Get_WorldMat(), m_matBones[Bone_Head], _v4(0.f, 0.f, 0.f, 0.f), nullptr));
+	m_pLockOn_UI = (CLockOn_UI*)g_pManagement->Clone_GameObject_Return(L"GameObject_LockOn_UI", nullptr);
+
+	m_pScriptManager = CScriptManager::Get_Instance();
+	Safe_AddRef(m_pScriptManager);
 
 	return NOERROR;
 }
@@ -71,6 +131,17 @@ _int CPlayer::Update_GameObject(_double TimeDelta)
 {
 	if (false == m_bEnable)
 		return NO_EVENT;
+
+	if (g_pInput_Device->Key_Down(DIK_N))
+	{
+		m_lDebugValue += 1;
+		if (m_lDebugValue >= 4)
+			m_lDebugValue = 0;
+
+		//cout << m_lDebugValue << endl;
+
+		Change_PlayerBody((PLAYER_BODY)m_lDebugValue);
+	}
 
 	if (g_pInput_Device->Key_Down(DIK_Y))
 	{
@@ -84,11 +155,8 @@ _int CPlayer::Update_GameObject(_double TimeDelta)
 
 	}
 
+	// 머리 위치 업데이트
 	CGameObject::Update_GameObject(TimeDelta);
-
-	// 플레이에 랜더에서 업데이트 해줬음.
-	//m_pHair->Update_GameObject(TimeDelta, m_bOnSkill);
-	//m_pOuter->Update_GameObject(TimeDelta, m_bOnSkill);
 
 	KeyInput();
 
@@ -102,6 +170,28 @@ _int CPlayer::Update_GameObject(_double TimeDelta)
 
 	Check_Mistletoe();
 
+
+	IF_NOT_NULL(m_pWeapon[m_eActiveSlot])
+		m_pWeapon[m_eActiveSlot]->Update_GameObject(TimeDelta);
+
+	IF_NOT_NULL(m_pDrainWeapon)
+		m_pDrainWeapon->Update_GameObject(TimeDelta);
+
+	m_pNavMesh->Goto_Next_Subset(m_pTransform->Get_Pos(), nullptr);
+
+	m_pScriptManager->Update_ScriptMgr(TimeDelta, m_pNavMesh->Get_SubSetIndex(), m_pNavMesh->Get_CellIndex());
+
+	return NO_EVENT;
+}
+
+_int CPlayer::Late_Update_GameObject(_double TimeDelta)
+{
+	if (false == m_bEnable)
+		return NO_EVENT;
+
+	if (nullptr == m_pRenderer ||
+		nullptr == m_pDynamicMesh)
+		return E_FAIL;
 
 
 	if (!m_tObjParam.bInvisible)
@@ -128,42 +218,24 @@ _int CPlayer::Update_GameObject(_double TimeDelta)
 		}
 	}
 
-	IF_NOT_NULL(m_pWeapon[m_eActiveSlot])
-		m_pWeapon[m_eActiveSlot]->Update_GameObject(TimeDelta);
-
-	IF_NOT_NULL(m_pDrainWeapon)
-		m_pDrainWeapon->Update_GameObject(TimeDelta);
-
-	m_pNavMesh->Goto_Next_Subset(m_pTransform->Get_Pos(), nullptr);
-
-	CScriptManager::Get_Instance()->Update_ScriptMgr(TimeDelta, m_pNavMesh->Get_SubSetIndex(), m_pNavMesh->Get_CellIndex());
-
-	return NO_EVENT;
-}
-
-_int CPlayer::Late_Update_GameObject(_double TimeDelta)
-{
-	if (false == m_bEnable)
-		return NO_EVENT;
-
-	if (nullptr == m_pRenderer ||
-		nullptr == m_pDynamicMesh)
-		return E_FAIL;
-
-	Reset_BloodSuck_Options();
-	//Reset_Attack_Bool();
-	
+	Reset_BloodSuck_Options();	
 
 	m_pHair->Late_Update_GameObject(TimeDelta);
 	m_pOuter->Late_Update_GameObject(TimeDelta);
 
+	m_pHead[m_eHeadType]->Late_Update_GameObject(TimeDelta);
+	m_pMask[m_eMaskType]->Late_Update_GameObject(TimeDelta);
+
 	m_pDynamicMesh->SetUp_Animation_Lower(m_eAnim_Lower , m_bOffLerp);
 	m_pDynamicMesh->SetUp_Animation_Upper(m_eAnim_Upper , m_bOffLerp);
 	m_pDynamicMesh->SetUp_Animation_RightArm(m_eAnim_RightArm , m_bOffLerp);
-	m_pDynamicMesh->SetUp_Animation_LeftArm(m_eAnim_RightArm, m_bOffLerp);
+	m_pDynamicMesh->SetUp_Animation_LeftArm(m_eAnim_LeftArm, m_bOffLerp);
 
-	// Outer 애니 세팅.
-	m_pOuter->SetUp_Animation(m_eAnim_Upper, m_bOffLerp);
+	m_pOuter->Set_AnimMultiply(m_fAnimMutiply);
+	m_pOuter->Set_LowerAnimation(m_eAnim_Lower, m_bOffLerp);
+	m_pOuter->Set_UpperAnimation(m_eAnim_Upper, m_bOffLerp);
+	m_pOuter->Set_LeftArmAnimation(m_eAnim_LeftArm, m_bOffLerp);
+	m_pOuter->Set_RightArmAnimation(m_eAnim_RightArm, m_bOffLerp);
 
 	IF_NOT_NULL(m_pWeapon[m_eActiveSlot])
 		m_pWeapon[m_eActiveSlot]->Late_Update_GameObject(TimeDelta);
@@ -251,13 +323,6 @@ HRESULT CPlayer::Render_GameObject()
 
 	Draw_Collider();
 
-
-	IF_NOT_NULL(m_pNavMesh)
-	{
-		//if (true == m_bEnable)
-		//	m_pNavMesh->Render_NaviMesh();
-	}
-
 	return NOERROR;
 }
 
@@ -270,15 +335,19 @@ HRESULT CPlayer::Render_GameObject_Instancing_SetPass(CShader * pShader)
 		nullptr == m_pDynamicMesh)
 		return E_FAIL;
 
-	m_pDynamicMesh->Play_Animation_Lower(g_pTimer_Manager->Get_DeltaTime(L"Timer_Fps_60") * m_fAnimMutiply);
-	m_pDynamicMesh->Play_Animation_Upper(g_pTimer_Manager->Get_DeltaTime(L"Timer_Fps_60") * m_fAnimMutiply);
-	m_pDynamicMesh->Play_Animation_RightArm(g_pTimer_Manager->Get_DeltaTime(L"Timer_Fps_60") * m_fAnimMutiply, false);
-	m_pDynamicMesh->Play_Animation_LeftArm(g_pTimer_Manager->Get_DeltaTime(L"Timer_Fps_60") * m_fAnimMutiply);
+	_double dDeltaTime = g_pTimer_Manager->Get_DeltaTime(L"Timer_Fps_60");
+
+	m_pDynamicMesh->Play_Animation_Lower(dDeltaTime * m_fAnimMutiply);
+	m_pDynamicMesh->Play_Animation_Upper(dDeltaTime * m_fAnimMutiply);
+	m_pDynamicMesh->Play_Animation_RightArm(dDeltaTime * m_fAnimMutiply, false);
+	m_pDynamicMesh->Play_Animation_LeftArm(dDeltaTime * m_fAnimMutiply);
 
 	// 머리 위치 업데이트
-	m_pHair->Update_GameObject(g_pTimer_Manager->Get_DeltaTime(L"Timer_Fps_60") * m_fAnimMutiply, (m_bOnSkill || m_bOnDodge));
-	m_pOuter->Update_GameObject(g_pTimer_Manager->Get_DeltaTime(L"Timer_Fps_60") * m_fAnimMutiply, (m_bOnSkill || m_bOnDodge));
+	m_pHair->Update_GameObject(dDeltaTime * m_fAnimMutiply, (m_bOnSkill || m_bOnDodge));
+	m_pOuter->Update_GameObject(dDeltaTime * m_fAnimMutiply, (m_bOnSkill || m_bOnDodge));
 
+	m_pHead[m_eHeadType]->Update_GameObject(dDeltaTime);
+	m_pMask[m_eMaskType]->Update_GameObject(dDeltaTime);
 
 	if (m_tObjParam.bInvisible)
 		return S_OK;
@@ -288,17 +357,13 @@ HRESULT CPlayer::Render_GameObject_Instancing_SetPass(CShader * pShader)
 
 
 	_uint iNumMeshContainer = _uint(m_pDynamicMesh->Get_NumMeshContainer());
-	// 메쉬 컨테이너는 3개
+
+	_bool bOnToonRimLight = true;
 
 	for (_uint i = 0; i < _uint(iNumMeshContainer); ++i)
 	{
-		if (i == 1)
-			continue;
-
 		_uint iNumSubSet = (_uint)m_pDynamicMesh->Get_NumMaterials(i);
-		// 서브셋은 5개
 
-		// 메시를 뼈에 붙인다.
 		m_pDynamicMesh->Update_SkinnedMesh(i);
 
 		for (_uint j = 0; j < iNumSubSet; ++j)
@@ -308,17 +373,30 @@ HRESULT CPlayer::Render_GameObject_Instancing_SetPass(CShader * pShader)
 			if (m_bDissolve)
 				m_iPass = 3;
 
+			else if (m_iPass == 13)
+			{
+				bOnToonRimLight = true;
+
+				_float fRimValue = 1.5f;
+				_float fRimAlpha = 1.f;
+
+				pShader->Set_Value("g_bToonRimLight", &bOnToonRimLight, sizeof(_bool));
+
+				pShader->Set_Value("g_fRimAlpha", &fRimAlpha, sizeof(_float));
+				pShader->Set_Value("g_fRimPower", &fRimValue, sizeof(_float));
+			}
+
+			else
+			{
+				bOnToonRimLight = false;
+				pShader->Set_Value("g_bToonRimLight", &bOnToonRimLight, sizeof(_bool));
+
+				m_pBattleAgent->Update_RimParam_OnShader(pShader);
+			}
+
 			pShader->Begin_Pass(m_iPass);
 
 			pShader->Set_DynamicTexture_Auto(m_pDynamicMesh, i, j);
-
-			if (13 == m_iPass)
-			{
-				_float fSpec = 0.1f;
-
-				if (FAILED(pShader->Set_Value("g_fSpecularPower", &fSpec, sizeof(_float))))
-					return E_FAIL;
-			}
 
 			pShader->Commit_Changes();
 
@@ -328,13 +406,12 @@ HRESULT CPlayer::Render_GameObject_Instancing_SetPass(CShader * pShader)
 		}
 	}
 
-	Draw_Collider();
+	bOnToonRimLight = false;
+	pShader->Set_Value("g_bToonRimLight", &bOnToonRimLight, sizeof(_bool));
 
-	IF_NOT_NULL(m_pNavMesh)
-	{
-		//if (true == m_bEnable)
-		//	m_pNavMesh->Render_NaviMesh();
-	}
+#ifdef _DEBUG
+	//Draw_Collider();
+#endif
 
 	return NOERROR;
 }
@@ -364,10 +441,6 @@ HRESULT CPlayer::Render_GameObject_SetPass(CShader* pShader, _int iPass, _bool _
 	//============================================================================================
 	if (_bIsForMotionBlur)
 	{
-		if (FAILED(pShader->Set_Value("g_matView", &ViewMatrix, sizeof(_mat))))
-			return E_FAIL;
-		if (FAILED(pShader->Set_Value("g_matProj", &ProjMatrix, sizeof(_mat))))
-			return E_FAIL;
 		if (FAILED(pShader->Set_Value("g_matLastWVP", &m_matLastWVP, sizeof(_mat))))
 			return E_FAIL;
 
@@ -376,10 +449,12 @@ HRESULT CPlayer::Render_GameObject_SetPass(CShader* pShader, _int iPass, _bool _
 		_bool bMotionBlur = true;
 		if (FAILED(pShader->Set_Bool("g_bMotionBlur", bMotionBlur)))
 			return E_FAIL;
+
 		_bool bDecalTarget = false;
 		if (FAILED(pShader->Set_Bool("g_bDecalTarget", bDecalTarget)))
 			return E_FAIL;
-		_float fBloomPower = 0.f;
+
+		_float fBloomPower = 10.f;
 		if (FAILED(pShader->Set_Value("g_fBloomPower", &fBloomPower, sizeof(_float))))
 			return E_FAIL;
 	}
@@ -410,29 +485,14 @@ HRESULT CPlayer::Render_GameObject_SetPass(CShader* pShader, _int iPass, _bool _
 
 			if (_bIsForMotionBlur)
 			{
-				if (15 == tmpPass)
+				if (13 == tmpPass)
 				{
-					pShader->Begin_Pass(3);
-				}
-
-				else if (13 == tmpPass || 14 == tmpPass)
-				{
+					// 피부
 					pShader->Begin_Pass(1);
-				}
-
-				else if (19 == tmpPass)
-				{
-					// 얼굴
-					pShader->Set_Texture("g_HeightTexture", m_pDynamicMesh->Get_MeshTexture(i, j, MESHTEXTURE::TYPE_HEIGHT_MAP));
-					pShader->Begin_Pass(2);
 				}
 
 				else
 				{
-					if (7 == tmpPass)
-					{
-					}
-
 					pShader->Begin_Pass(iPass);
 				}
 			}
@@ -453,6 +513,12 @@ HRESULT CPlayer::Render_GameObject_SetPass(CShader* pShader, _int iPass, _bool _
 	//============================================================================================
 
 	return S_OK;
+}
+
+void CPlayer::Reset_OldAnimations()
+{
+	m_pDynamicMesh->Reset_OldIndx(1);
+	m_pOuter->Reset_OldAniIdx(1);
 }
 
 void CPlayer::Teleport_ResetOptions(_int _eSceneID, _int _eTeleportID)
@@ -751,13 +817,13 @@ void CPlayer::Parameter_Movement()
 
 	_float fMoveSpeed = m_tInfo.fMoveSpeed_Cur * DELTA_60;
 	_float fRadian = 0.f;
-	_float fRecover = 720.f;
+	_float fRecover = 1440.f;
 	_float fAngle = 0.f;
 		
 	if (false == m_bOnAttack)
 		fAngle = (m_pTarget != nullptr ?
 			D3DXToDegree(m_pTransform->Chase_Target_Angle(&TARGET_TO_TRANS(m_pTarget)->Get_Pos())) :
-			CCameraMgr::Get_Instance()->Get_XAngle());
+			m_pCamManager->Get_XAngle());
 
 	else
 		fAngle = D3DXToDegree(m_pTransform->Get_Angle().y);
@@ -811,12 +877,17 @@ void CPlayer::Parameter_Aiming()
 		{
 			if (m_pTarget->Get_Target_Hp() <= 0.f)
 			{
+				m_pTarget = nullptr;
 				m_bHaveAimingTarget = false;
 				m_bOnAiming = false;
 
-				CCameraMgr::Get_Instance()->Set_AimingTarget(nullptr);
-				CCameraMgr::Get_Instance()->Set_OnAimingTarget(false);
-				CCameraMgr::Get_Instance()->Set_LockAngleX(D3DXToDegree(m_pTransform->Get_Angle(AXIS_Y)));
+				m_pCamManager->Set_AimingTarget(nullptr);
+				m_pCamManager->Set_OnAimingTarget(false);
+				m_pCamManager->Set_LockAngleX(D3DXToDegree(m_pTransform->Get_Angle(AXIS_Y)));
+
+				//==========================================================================
+				Active_UI_LockOn(true);
+				//==========================================================================
 
 				return;
 			}
@@ -824,8 +895,13 @@ void CPlayer::Parameter_Aiming()
 
 		Target_AimChasing();
 
-		if(nullptr != m_pTarget)
+		if (nullptr != m_pTarget)
+		{
 			m_pTransform->Set_Angle(AXIS_Y, m_pTransform->Chase_Target_Angle(&TARGET_TO_TRANS(m_pTarget)->Get_Pos()));
+
+			// 디졸브 쓸라면 수정
+			m_pLockOn_UI->Update_GameObject(0);
+		}
 	}
 
 	else if (false == m_bOnAiming)
@@ -835,8 +911,12 @@ void CPlayer::Parameter_Aiming()
 			m_pTarget = nullptr;
 			m_bHaveAimingTarget = false;
 
-			CCameraMgr::Get_Instance()->Set_AimingTarget(m_pTarget);
-			CCameraMgr::Get_Instance()->Set_OnAimingTarget(false);
+			m_pCamManager->Set_AimingTarget(m_pTarget);
+			m_pCamManager->Set_OnAimingTarget(false);
+
+			//==========================================================================
+			Active_UI_LockOn(true);
+			//==========================================================================
 		}
 	}
 }
@@ -880,7 +960,7 @@ void CPlayer::Parameter_HitCheck()
 				m_tObjParam.bHitAgain = false;
 				m_tObjParam.bIsHit = false;
 
-				m_pDynamicMesh->Reset_OldIndx(3);
+				Reset_OldAnimations();
 			}
 		}
 	}
@@ -925,8 +1005,7 @@ void CPlayer::Parameter_CheckActiveSkill()
 
 void CPlayer::Parameter_CheckActiveWeapon()
 {
-	//m_pUIManager->Get_Weapon_Inven()->Get_UseWeaponState(WPN_SLOT_A);
-	//m_pUIManager->Get_Weapon_Inven()->Get_UseWeaponState(WPN_SLOT_B);
+	
 }
 
 void CPlayer::Movement_Aiming(_float _fAngle, _float _fMovespeed)
@@ -1115,7 +1194,7 @@ void CPlayer::Movement_NonAiming(_float _fRecover, _float _fAngle, _float _fRadi
 
 	else if (m_bMove[MOVE_Left])
 	{
-		if (m_fAngle_Recover < -270)
+		if (m_fAngle_Recover < -270.f)
 		{
 			m_fAngle_Recover += _fRecover * DELTA_60;
 
@@ -1125,7 +1204,7 @@ void CPlayer::Movement_NonAiming(_float _fRecover, _float _fAngle, _float _fRadi
 			}
 		}
 
-		else if (m_fAngle_Recover <= 0)
+		else if (m_fAngle_Recover <= 0.f)
 		{
 			m_fAngle_Recover -= _fRecover * DELTA_60;
 
@@ -1135,7 +1214,7 @@ void CPlayer::Movement_NonAiming(_float _fRecover, _float _fAngle, _float _fRadi
 			}
 		}
 
-		else if (m_fAngle_Recover > 90)
+		else if (m_fAngle_Recover > 90.f)
 		{
 			m_fAngle_Recover += _fRecover * DELTA_60;
 
@@ -1145,7 +1224,7 @@ void CPlayer::Movement_NonAiming(_float _fRecover, _float _fAngle, _float _fRadi
 			}
 		}
 
-		else if (m_fAngle_Recover > 0)
+		else if (m_fAngle_Recover > 0.f)
 		{
 			m_fAngle_Recover -= _fRecover * DELTA_60;
 
@@ -1161,7 +1240,7 @@ void CPlayer::Movement_NonAiming(_float _fRecover, _float _fAngle, _float _fRadi
 		else if (true == m_bOnAttack)
 			_fRadian = D3DXToRadian(_fAngle);
 
-		m_pTransform->Set_Angle({ 0, _fRadian, 0 });
+		m_pTransform->Set_Angle({ 0.f, _fRadian, 0.f });
 
 		_v3 tmpLook = m_pTransform->Get_Axis(AXIS_Z);
 		D3DXVec3Normalize(&tmpLook, &tmpLook);
@@ -1312,9 +1391,6 @@ void CPlayer::Target_AimChasing()
 	if (m_bHaveAimingTarget)
 		return;
 
-	if (m_bOnAiming)
-		return;
-
 	if (false == g_pManagement->Get_GameObjectList(L"Layer_Boss", SCENE_STAGE).empty())
 	{
 		_float fOldLength = 9999.f;
@@ -1322,7 +1398,7 @@ void CPlayer::Target_AimChasing()
 
 		_v3 pTargetTransPos = V3_NULL;
 
-		for (auto& iter : g_pManagement->Get_GameObjectList(L"Layer_Monster", SCENE_STAGE))
+		for (auto& iter : g_pManagement->Get_GameObjectList(L"Layer_Boss", SCENE_STAGE))
 		{
 			if (false == iter->Get_Enable())
 				continue;
@@ -1341,14 +1417,14 @@ void CPlayer::Target_AimChasing()
 			if (fOldLength > fLength)
 				fOldLength = fLength;
 
-			m_bHaveAimingTarget = true;
-
 			pOldTarget = iter;
 		}
 
 
 		if (nullptr != pOldTarget)
 		{
+			m_bHaveAimingTarget = true;
+
 			m_pTarget = pOldTarget;
 
 			m_pCamManager->Set_AimingTarget(m_pTarget);
@@ -1357,11 +1433,14 @@ void CPlayer::Target_AimChasing()
 			m_pTransform->Set_Angle(AXIS_Y, m_pTransform->Chase_Target_Angle(&pTargetTransPos));
 
 			m_bOnAiming = true;
+
+			//==========================================================================
+			Active_UI_LockOn();
+			//==========================================================================
+
+			return;
 		}
 	}
-
-	if (m_bOnAiming)
-		return;
 
 	if (false == g_pManagement->Get_GameObjectList(L"Layer_Monster", SCENE_STAGE).empty())
 	{
@@ -1389,14 +1468,14 @@ void CPlayer::Target_AimChasing()
 			if (fOldLength > fLength)
 				fOldLength = fLength;
 
-			m_bHaveAimingTarget = true;
-
 			pOldTarget = iter;
 		}
 
 
 		if (nullptr != pOldTarget)
 		{
+			m_bHaveAimingTarget = true;
+
 			m_pTarget = pOldTarget;
 
 			m_pCamManager->Set_AimingTarget(m_pTarget);
@@ -1405,8 +1484,18 @@ void CPlayer::Target_AimChasing()
 			m_pTransform->Set_Angle(AXIS_Y, m_pTransform->Chase_Target_Angle(&pTargetTransPos));
 
 			m_bOnAiming = true;
+
+			//==========================================================================
+			Active_UI_LockOn();
+			//==========================================================================
+
+			return;
 		}
 	}
+
+	//==========================================================================
+	Active_UI_LockOn(true);
+	//==========================================================================
 
 	m_bOnAiming = false;
 	m_pCamManager->Set_OnAimingTarget(false);
@@ -1418,7 +1507,7 @@ void CPlayer::KeyInput()
 {
 	// 디버그 할때만 사용됩니다.
 	//=====================================================================
-	if (CCameraMgr::Get_Instance()->Get_CamView() == TOOL_VIEW)
+	if (m_pCamManager->Get_CamView() == TOOL_VIEW)
 		return;
 	//=====================================================================
 
@@ -1710,7 +1799,7 @@ void CPlayer::Key_Special()
 		{
 			m_bOnDodge = false;
 
-			m_pDynamicMesh->Reset_OldIndx(1);
+			Reset_OldAnimations();
 
 			m_eActState = ACT_Dodge;
 
@@ -1724,7 +1813,7 @@ void CPlayer::Key_Special()
 
 		if (false == m_bOnAiming)
 		{
-			CCameraMgr::Get_Instance()->Set_LockAngleX(D3DXToDegree(m_pTransform->Get_Angle(AXIS_Y)));
+			m_pCamManager->Set_LockAngleX(D3DXToDegree(m_pTransform->Get_Angle(AXIS_Y)));
 		}
 	}
 }
@@ -1906,17 +1995,17 @@ void CPlayer::Key_Skill()
 		Reset_BattleState();
 
 		m_tObjParam.sMana_Cur -= (_short)m_arrSkillInfo[0].dwSkillCost;
-		m_eAnim_Lower = (P_ANI)m_arrSkillInfo[0].dwAnimationIdx;
+		m_eAnim_Lower = (P_NEWANI)m_arrSkillInfo[0].dwAnimationIdx;
 		m_eActState = ACT_Skill;
 
 		//===================================================================================================================
 		//m_eActState = ACT_Skill0
 		//
 		//if (true == m_bOneHand)
-		//	m_eAnim_Lower = P_ANI(m_vecFullSkillInfo[0]->dwAnimationIdx);
+		//	m_eAnim_Lower = P_NEWANI(m_vecFullSkillInfo[0]->dwAnimationIdx);
 		//
 		//else if (false == m_bOneHand)
-		//	m_eAnim_Lower = P_ANI(m_vecFullSkillInfo[4]->dwAnimationIdx);
+		//	m_eAnim_Lower = P_NEWANI(m_vecFullSkillInfo[4]->dwAnimationIdx);
 		//===================================================================================================================
 	}
 
@@ -1935,16 +2024,16 @@ void CPlayer::Key_Skill()
 		Reset_BattleState();
 
 		m_tObjParam.sMana_Cur -= (_short)m_arrSkillInfo[1].dwSkillCost;
-		m_eAnim_Lower = (P_ANI)m_arrSkillInfo[1].dwAnimationIdx;
+		m_eAnim_Lower = (P_NEWANI)m_arrSkillInfo[1].dwAnimationIdx;
 		m_eActState = ACT_Skill;
 
 		//m_eActState = ACT_Skill;
 		//
 		//if (true == m_bOneHand)
-		//	m_eAnim_Lower = P_ANI(m_vecFullSkillInfo[1]->dwAnimationIdx);
+		//	m_eAnim_Lower = P_NEWANI(m_vecFullSkillInfo[1]->dwAnimationIdx);
 		//
 		//else if (false == m_bOneHand)
-		//	m_eAnim_Lower = P_ANI(m_vecFullSkillInfo[5]->dwAnimationIdx);
+		//	m_eAnim_Lower = P_NEWANI(m_vecFullSkillInfo[5]->dwAnimationIdx);
 		//
 		//_v3 vEffPos = _v3(0.f, 1.5f, 0.f) + m_pTransform->Get_Axis(AXIS_Z) * 1.5f;
 	}
@@ -1964,16 +2053,16 @@ void CPlayer::Key_Skill()
 		Reset_BattleState();
 
 		m_tObjParam.sMana_Cur -= (_short)m_arrSkillInfo[2].dwSkillCost;
-		m_eAnim_Lower = (P_ANI)m_arrSkillInfo[2].dwAnimationIdx;
+		m_eAnim_Lower = (P_NEWANI)m_arrSkillInfo[2].dwAnimationIdx;
 		m_eActState = ACT_Skill;
 
 		//m_eActState = ACT_Skill;
 		//
 		//if(true == m_bOneHand)
-		//	m_eAnim_Lower = P_ANI(m_vecFullSkillInfo[2]->dwAnimationIdx);
+		//	m_eAnim_Lower = P_NEWANI(m_vecFullSkillInfo[2]->dwAnimationIdx);
 		//
 		//else if (false == m_bOneHand)
-		//	m_eAnim_Lower = P_ANI(m_vecFullSkillInfo[6]->dwAnimationIdx);
+		//	m_eAnim_Lower = P_NEWANI(m_vecFullSkillInfo[6]->dwAnimationIdx);
 
 		Reset_BattleState();
 	}
@@ -1993,16 +2082,16 @@ void CPlayer::Key_Skill()
 		Reset_BattleState();
 
 		m_tObjParam.sMana_Cur -= (_short)m_arrSkillInfo[3].dwSkillCost;
-		m_eAnim_Lower = (P_ANI)m_arrSkillInfo[3].dwAnimationIdx;
+		m_eAnim_Lower = (P_NEWANI)m_arrSkillInfo[3].dwAnimationIdx;
 		m_eActState = ACT_Skill;
 
 		//m_eActState = ACT_Skill;
 		//
 		//if (true == m_bOneHand)
-		//	m_eAnim_Lower = P_ANI(m_vecFullSkillInfo[3]->dwAnimationIdx);
+		//	m_eAnim_Lower = P_NEWANI(m_vecFullSkillInfo[3]->dwAnimationIdx);
 		//
 		//else if (false == m_bOneHand)
-		//	m_eAnim_Lower = P_ANI(m_vecFullSkillInfo[7]->dwAnimationIdx);
+		//	m_eAnim_Lower = P_NEWANI(m_vecFullSkillInfo[7]->dwAnimationIdx);
 	}
 
 	// 5번 스킬
@@ -2020,7 +2109,7 @@ void CPlayer::Key_Skill()
 		Reset_BattleState();
 
 		m_tObjParam.sMana_Cur -= (_short)m_arrSkillInfo[4].dwSkillCost;
-		m_eAnim_Lower = (P_ANI)m_arrSkillInfo[4].dwAnimationIdx;
+		m_eAnim_Lower = (P_NEWANI)m_arrSkillInfo[4].dwAnimationIdx;
 		m_eActState = ACT_Skill;
 	}
 
@@ -2040,7 +2129,7 @@ void CPlayer::Key_Skill()
 		Reset_BattleState();
 
 		m_tObjParam.sMana_Cur -= (_short)m_arrSkillInfo[5].dwSkillCost;
-		m_eAnim_Lower = (P_ANI)m_arrSkillInfo[5].dwAnimationIdx;
+		m_eAnim_Lower = (P_NEWANI)m_arrSkillInfo[5].dwAnimationIdx;
 		m_eActState = ACT_Skill;
 	}
 
@@ -2060,7 +2149,7 @@ void CPlayer::Key_Skill()
 		Reset_BattleState();
 
 		m_tObjParam.sMana_Cur -= (_short)m_arrSkillInfo[6].dwSkillCost;
-		m_eAnim_Lower = (P_ANI)m_arrSkillInfo[6].dwAnimationIdx;
+		m_eAnim_Lower = (P_NEWANI)m_arrSkillInfo[6].dwAnimationIdx;
 		m_eActState = ACT_Skill;
 	}
 
@@ -2079,7 +2168,7 @@ void CPlayer::Key_Skill()
 		Reset_BattleState();
 
 		m_tObjParam.sMana_Cur -= (_short)m_arrSkillInfo[7].dwSkillCost;
-		m_eAnim_Lower = (P_ANI)m_arrSkillInfo[7].dwAnimationIdx;
+		m_eAnim_Lower = (P_NEWANI)m_arrSkillInfo[7].dwAnimationIdx;
 		m_eActState = ACT_Skill;
 	}
 
@@ -2091,7 +2180,7 @@ void CPlayer::Key_Skill()
 	//
 	//	m_eActState = ACT_Buff;
 	//
-	//	m_eAnim_Lower = P_ANI(m_vecFullSkillInfo[8]->dwAnimationIdx);
+	//	m_eAnim_Lower = P_NEWANI(m_vecFullSkillInfo[8]->dwAnimationIdx);
 	//
 	//	LPCSTR tmpChar = "Head"; // 왼손 뼈로 바꿔야함
 	//	D3DXFRAME_DERIVED*	pFamre = (D3DXFRAME_DERIVED*)m_pDynamicMesh->Get_BonInfo(tmpChar, 1);
@@ -2196,6 +2285,7 @@ void CPlayer::Key_UI_n_Utiliy(_bool _bActiveUI)
 				m_pUIManager->Get_StatusUI()->Set_Active(false);
 
 				Parameter_CheckActiveSkill();
+				Parameter_CheckActiveWeapon();
 			}
 
 			else
@@ -2402,34 +2492,36 @@ void CPlayer::Play_Idle()
 
 	case WEAPON_LSword:
 	{
-		m_eAnim_Lower = Lsword_Idle_Loop;
+		m_eAnim_Lower = LSword_BlendIdle;
 		break;
 	}
 
 	case WEAPON_Hammer:
 	{
-		m_eAnim_Lower = Hammer_Idle_Loop;
+		m_eAnim_Lower = Hammer_BlendIdle;
 		break;
 	}
 
 	case WEAPON_Halberd:
 	{
-		m_eAnim_Lower = Halverd_Idle_Loop;
+		m_eAnim_Lower = Halberd_BlendIdle;
 		break;
 	}
 	case WEAPON_Gun:
 	{
-		m_eAnim_Lower = Gun_Idle_Loop;
+		m_eAnim_Lower = Gun_BlendIdle;
 		break;
 	}
 	}
 
 	m_eAnim_Upper = m_eAnim_Lower;
 	m_eAnim_RightArm = m_eAnim_Lower;
+	m_eAnim_LeftArm = m_eAnim_Lower;
 }
 
 void CPlayer::Play_Run()
 {
+	// 에임 중이 아닐 경우 : 전방으로 달림
 	if (false == m_bOnAiming)
 	{
 		switch (m_eMainWpnState)
@@ -2471,115 +2563,79 @@ void CPlayer::Play_Run()
 		}
 	}
 
+	// 에임 중일 경우 : 키 입력에 따른 방향
 	else if (true == m_bOnAiming)
 	{
-		switch (m_eMainWpnState)
+		if (m_bMove[MOVE_Front])
 		{
-		case WEAPON_None:
-		{
-			if (m_bMove[MOVE_Front])
+			if (m_bMove[MOVE_Left])
 			{
-				if (m_bMove[MOVE_Left])
-				{
-					m_eAnim_Lower = Cmn_Run_FL_L;
-				}
-
-				else if (m_bMove[MOVE_Right])
-				{
-					m_eAnim_Lower = Cmn_Run_FR;
-				}
-
-				else
-				{
-					m_eAnim_Lower = Cmn_Run_F;
-				}
-			}
-
-			else if (m_bMove[MOVE_Back])
-			{
-				if (m_bMove[MOVE_Left])
-				{
-					m_eAnim_Lower = Cmn_Run_FL_L;
-				}
-
-				else if (m_bMove[MOVE_Right])
-				{
-					m_eAnim_Lower = Cmn_Run_FR;
-				}
-
-				else
-				{
-					m_eAnim_Lower = Cmn_Run_B;
-				}
-			}
-
-			else if (m_bMove[MOVE_Left])
-			{
-				if (m_bMove[MOVE_Front])
-				{
-					m_eAnim_Lower = Cmn_Run_FL_L;
-				}
-
-				else if (m_bMove[MOVE_Back])
-				{
-					m_eAnim_Lower = Cmn_Run_BL;
-				}
-
-				else
-				{
-					m_eAnim_Lower = Cmn_Run_L;
-				}
+				m_eAnim_Lower = Cmn_Run_FL;
 			}
 
 			else if (m_bMove[MOVE_Right])
 			{
-				if (m_bMove[MOVE_Front])
-				{
-					m_eAnim_Lower = Cmn_Run_FR;
-				}
-
-				else if (m_bMove[MOVE_Back])
-				{
-					m_eAnim_Lower = Cmn_Run_BR_L;
-				}
-
-				else
-				{
-					m_eAnim_Lower = Cmn_Run_R;
-				}
+				m_eAnim_Lower = Cmn_Run_FR;
 			}
 
-			break;
+			else
+			{
+				m_eAnim_Lower = Cmn_Run_F;
+			}
 		}
 
-		case WEAPON_SSword:
+		else if (m_bMove[MOVE_Back])
 		{
-			m_eAnim_Lower = Cmn_Run_F;
-			break;
+			if (m_bMove[MOVE_Left])
+			{
+				m_eAnim_Lower = Cmn_Run_FL;
+			}
+
+			else if (m_bMove[MOVE_Right])
+			{
+				m_eAnim_Lower = Cmn_Run_FR;
+			}
+
+			else
+			{
+				m_eAnim_Lower = Cmn_Run_B;
+			}
 		}
 
-		case WEAPON_LSword:
+		else if (m_bMove[MOVE_Left])
 		{
-			m_eAnim_Lower = Cmn_Run_F;
-			break;
+			if (m_bMove[MOVE_Front])
+			{
+				m_eAnim_Lower = Cmn_Run_FL;
+			}
+
+			else if (m_bMove[MOVE_Back])
+			{
+				m_eAnim_Lower = Cmn_Run_BL;
+			}
+
+			else
+			{
+				m_eAnim_Lower = Cmn_Run_L;
+			}
 		}
 
-		case WEAPON_Hammer:
+		else if (m_bMove[MOVE_Right])
 		{
-			m_eAnim_Lower = Cmn_Run_F;
-			break;
-		}
+			if (m_bMove[MOVE_Front])
+			{
+				m_eAnim_Lower = Cmn_Run_FR;
+			}
 
-		case WEAPON_Halberd:
-		{
-			m_eAnim_Lower = Cmn_Run_F;
-			break;
-		}
-		case WEAPON_Gun:
-		{
-			m_eAnim_Lower = Cmn_Run_F;
-			break;
-		}
+			else if (m_bMove[MOVE_Back])
+			{
+				m_eAnim_Lower = Cmn_Run_BR;
+			}
+
+			else
+			{
+				m_eAnim_Lower = Cmn_Run_R;
+			}
 		}
 	}
 
@@ -2588,14 +2644,14 @@ void CPlayer::Play_Run()
 		m_eAnim_Upper = m_eAnim_Lower;
 
 		m_eAnim_RightArm =
-			(m_eMainWpnState == WEAPON_Hammer ? Hammer_Blend_Run :
-				m_eMainWpnState == WEAPON_Gun ? Gun_Blend_Run :
-				m_eMainWpnState == WEAPON_Halberd ? Halverd_Run_Blend :
-				m_eMainWpnState == WEAPON_LSword ? Lsword_Blend_Run : m_eAnim_Lower);
+			(m_eMainWpnState == WEAPON_Hammer ? Hammer_BlendRun :
+				m_eMainWpnState == WEAPON_Gun ? Gun_BlendRun :
+				m_eMainWpnState == WEAPON_Halberd ? Halberd_BlendRun :
+				m_eMainWpnState == WEAPON_LSword ? Lsword_BlendRun : m_eAnim_Lower);
 
-		m_eAnim_LeftArm = (
-			m_eMainWpnState == WEAPON_Gun ? Gun_Blend_Run :
-			m_eMainWpnState == WEAPON_Halberd ? Halverd_Run_Blend : m_eAnim_Lower);
+		m_eAnim_LeftArm = 
+			(m_eMainWpnState == WEAPON_Gun ? Gun_BlendRun :
+			m_eMainWpnState == WEAPON_Halberd ? Halberd_BlendRun : m_eAnim_Lower);
 	}
 
 	g_pManagement->Create_Effect_Offset(L"Player_FootSmoke", 0.5f, m_pTransform->Get_Pos());
@@ -2603,57 +2659,100 @@ void CPlayer::Play_Run()
 
 void CPlayer::Play_Dash()
 {
-	switch (m_eMainWpnState)
-	{
-	case WEAPON_None:
-	{
+	// 에임 중이 아닐 경우 : 전방으로 달림
+	if(false == m_bOnAiming)
 		m_eAnim_Lower = Cmn_Dash;
-		break;
+
+	// 에임 중일 경우 : 키 입력에 따른 방향
+	else if (true == m_bOnAiming)
+	{
+		if (m_bMove[MOVE_Front])
+		{
+			if (m_bMove[MOVE_Left])
+			{
+				m_eAnim_Lower = Cmn_Run_FL;
+			}
+
+			else if (m_bMove[MOVE_Right])
+			{
+				m_eAnim_Lower = Cmn_Run_FR;
+			}
+
+			else
+			{
+				m_eAnim_Lower = Cmn_Run_F;
+			}
+		}
+
+		else if (m_bMove[MOVE_Back])
+		{
+			if (m_bMove[MOVE_Left])
+			{
+				m_eAnim_Lower = Cmn_Run_FL;
+			}
+
+			else if (m_bMove[MOVE_Right])
+			{
+				m_eAnim_Lower = Cmn_Run_FR;
+			}
+
+			else
+			{
+				m_eAnim_Lower = Cmn_Run_B;
+			}
+		}
+
+		else if (m_bMove[MOVE_Left])
+		{
+			if (m_bMove[MOVE_Front])
+			{
+				m_eAnim_Lower = Cmn_Run_FL;
+			}
+
+			else if (m_bMove[MOVE_Back])
+			{
+				m_eAnim_Lower = Cmn_Run_BL;
+			}
+
+			else
+			{
+				m_eAnim_Lower = Cmn_Run_L;
+			}
+		}
+
+		else if (m_bMove[MOVE_Right])
+		{
+			if (m_bMove[MOVE_Front])
+			{
+				m_eAnim_Lower = Cmn_Run_FR;
+			}
+
+			else if (m_bMove[MOVE_Back])
+			{
+				m_eAnim_Lower = Cmn_Run_BR;
+			}
+
+			else
+			{
+				m_eAnim_Lower = Cmn_Run_R;
+			}
+		}
 	}
 
-	case WEAPON_SSword:
-	{
-		m_eAnim_Lower = Cmn_Dash;
-		break;
-	}
-
-	case WEAPON_LSword:
-	{
-		m_eAnim_Lower = Cmn_Dash;
-		break;
-	}
-
-	case WEAPON_Hammer:
-	{
-		m_eAnim_Lower = Cmn_Dash;
-		break;
-	}
-
-	case WEAPON_Halberd:
-	{
-		m_eAnim_Lower = Cmn_Dash;
-		break;
-	}
-	case WEAPON_Gun:
-	{
-		m_eAnim_Lower = Cmn_Dash;
-		break;
-	}
-	}
 
 	if (false == m_bChangeWeapon)
 	{
 		m_eAnim_Upper = m_eAnim_Lower;
 
 		m_eAnim_RightArm =
-			(m_eMainWpnState == WEAPON_Hammer ? Hammer_Blend_Dash :
-				m_eMainWpnState == WEAPON_Gun ? Gun_Blend_Dash :
-				m_eMainWpnState == WEAPON_Halberd ? Halverd_Dash_Blend :
-				m_eMainWpnState == WEAPON_LSword ? Lsword_Blend_Dash : m_eAnim_Lower);
+			(m_eMainWpnState == WEAPON_Hammer ? Hammer_BlendDash :
+				m_eMainWpnState == WEAPON_Gun ? Gun_BlendDash :
+				m_eMainWpnState == WEAPON_Halberd ? Halberd_BlendDash :
+				m_eMainWpnState == WEAPON_LSword ? Lsword_BlendDash : m_eAnim_Lower);
 
 		m_eAnim_LeftArm = (
-			m_eMainWpnState == WEAPON_Gun ? Gun_Blend_Dash :
-			m_eMainWpnState == WEAPON_Halberd ? Halverd_Dash_Blend : m_eAnim_Lower);
+			m_eMainWpnState == WEAPON_Gun ? Gun_BlendDash :
+			m_eMainWpnState == WEAPON_Halberd ? Halberd_BlendDash : m_eAnim_Lower);
 	}
 
 	g_pManagement->Create_Effect_Offset(L"Player_FootSmoke", 0.35f, m_pTransform->Get_Pos());
@@ -2671,12 +2770,12 @@ void CPlayer::Play_MoveDelay()
 			{
 				if (m_bMove[MOVE_Left])
 				{
-					m_eAnim_Lower = Cmn_Run_FL_L_End;
+					m_eAnim_Lower = Cmn_Run_FL_End;
 				}
 
 				else if (m_bMove[MOVE_Right])
 				{
-					m_eAnim_Lower = Cmn_Run_FR_End_L;
+					m_eAnim_Lower = Cmn_Run_FR_End;
 				}
 
 				else
@@ -2689,17 +2788,17 @@ void CPlayer::Play_MoveDelay()
 			{
 				if (m_bMove[MOVE_Left])
 				{
-					m_eAnim_Lower = Cmn_Run_FL_L_End;
+					m_eAnim_Lower = Cmn_Run_FL_End;
 				}
 
 				else if (m_bMove[MOVE_Right])
 				{
-					m_eAnim_Lower = Cmn_Run_FR_End_L;
+					m_eAnim_Lower = Cmn_Run_FR_End;
 				}
 
 				else
 				{
-					m_eAnim_Lower = Cmn_Run_B_End_L;
+					m_eAnim_Lower = Cmn_Run_B_End;
 				}
 			}
 
@@ -2707,17 +2806,17 @@ void CPlayer::Play_MoveDelay()
 			{
 				if (m_bMove[MOVE_Front])
 				{
-					m_eAnim_Lower = Cmn_Run_FL_L_End;
+					m_eAnim_Lower = Cmn_Run_FL_End;
 				}
 
 				else if (m_bMove[MOVE_Back])
 				{
-					m_eAnim_Lower = Cmn_Run_BL_End_R;
+					m_eAnim_Lower = Cmn_Run_BL_End;
 				}
 
 				else
 				{
-					m_eAnim_Lower = Cmn_Run_L_End_L;
+					m_eAnim_Lower = Cmn_Run_L_LEnd;
 				}
 			}
 
@@ -2725,17 +2824,17 @@ void CPlayer::Play_MoveDelay()
 			{
 				if (m_bMove[MOVE_Front])
 				{
-					m_eAnim_Lower = Cmn_Run_FR_End_L;
+					m_eAnim_Lower = Cmn_Run_FR_End;
 				}
 
 				else if (m_bMove[MOVE_Back])
 				{
-					m_eAnim_Lower = Cmn_Run_BR_End_L;
+					m_eAnim_Lower = Cmn_Run_BR_End;
 				}
 
 				else
 				{
-					m_eAnim_Lower = Cmn_Run_R_End_L;
+					m_eAnim_Lower = Cmn_Run_R_End;
 				}
 			}
 		}
@@ -2751,15 +2850,15 @@ void CPlayer::Play_MoveDelay()
 		if (m_bOneHand)
 		{
 			m_eAnim_LeftArm = m_eAnim_RightArm =
-				(m_eMainWpnState == WEAPON_Gun ? Gun_Blend_Walk :
-					m_eMainWpnState == WEAPON_Halberd ? Halverd_Walk_Blend: m_eAnim_Lower);
+				(m_eMainWpnState == WEAPON_Gun ? Gun_BlendWalk :
+					m_eMainWpnState == WEAPON_Halberd ? Halberd_BlendWalk: m_eAnim_Lower);
 		}
 		// 양손 일때
 		else
 		{
 			m_eAnim_LeftArm = m_eAnim_RightArm =
 				(m_eMainWpnState == WEAPON_Hammer ? 
-					Hammer_Blend_Walk : Lsword_Blend_Walk);
+					Hammer_BlendWalk : Lsword_BlendWalk);
 		}
 
 		m_fSkillMoveAccel_Cur = 0.f;
@@ -2769,8 +2868,21 @@ void CPlayer::Play_MoveDelay()
 
 	else if (true == m_bOnMoveDelay)
 	{
+		_v3 vDelayDir = WORLD_LOOK; 
+		
+		vDelayDir =
+			m_eAnim_Lower == Cmn_Run_F_End_L ? m_pTransform->Get_Axis(AXIS_Z) :
+			m_eAnim_Lower == Cmn_Run_FL_End ? *D3DXVec3Normalize(&vDelayDir , &(m_pTransform->Get_Axis(AXIS_Z) - m_pTransform->Get_Axis(AXIS_X))):
+			m_eAnim_Lower == Cmn_Run_FR_End ? *D3DXVec3Normalize(&vDelayDir, &(m_pTransform->Get_Axis(AXIS_Z) + m_pTransform->Get_Axis(AXIS_X))) :
+			m_eAnim_Lower == Cmn_Run_L_LEnd ? -m_pTransform->Get_Axis(AXIS_X) :
+			m_eAnim_Lower == Cmn_Run_R_End ? m_pTransform->Get_Axis(AXIS_X) :
+			m_eAnim_Lower == Cmn_Run_B_End ? -m_pTransform->Get_Axis(AXIS_Z) :
+			m_eAnim_Lower == Cmn_Run_BL_End ? *D3DXVec3Normalize(&vDelayDir, &(-m_pTransform->Get_Axis(AXIS_Z) - m_pTransform->Get_Axis(AXIS_X))) :
+			m_eAnim_Lower == Cmn_Run_BR_End ? *D3DXVec3Normalize(&vDelayDir, &(-m_pTransform->Get_Axis(AXIS_Z) + m_pTransform->Get_Axis(AXIS_X))) : 
+			m_pTransform->Get_Axis(AXIS_Z);
+
 		Decre_Skill_Movement(m_fSkillMoveMultiply);
-		Skill_Movement(m_fSkillMoveSpeed_Cur, m_pTransform->Get_Axis(AXIS_Z));
+		Skill_Movement(m_fSkillMoveSpeed_Cur, vDelayDir);
 
 		if (m_pDynamicMesh->Is_Finish_Animation_Lower(0.8f))
 		{
@@ -2787,592 +2899,510 @@ void CPlayer::Play_Dodge()
 	{
 		m_bDodgeBack = false;
 
-		switch (m_eMainWpnState)
+		g_pManagement->Create_AutoFindEffect(L"Player_SpaceBar_StepParticle", 1.f, m_pTransform, _v3(0.f, 1.f, 0.f));
+		g_pManagement->Create_Effect(L"Player_FootSmoke_Jump", m_pTransform->Get_Pos());
+		g_pManagement->Create_Effect(L"Player_FootSmoke_DodgeBack", V3_NULL, m_pTransform);
+
+		if (true == m_bOnAiming)
 		{
-		case WEAPON_None:
-		{
-			if (m_bMove[MOVE_Front] || m_bMove[MOVE_Back] || m_bMove[MOVE_Right] || m_bMove[MOVE_Left])
+			switch (m_eMainWpnState)
 			{
-				m_bDodgeBack = false;
-
-				if (false == m_bOnAiming)
-				{
-					m_eAnim_Lower = Cmn_RealLightDodge_F;
-					g_pManagement->Create_AutoFindEffect(L"Player_SpaceBar_StepParticle", 1.f, m_pTransform, _v3(0.f, 1.f, 0.f));
-					break;
-				}
-
-				if (m_bMove[MOVE_Front])
-				{
-					if (m_bMove[MOVE_Left])
-					{
-						m_eAnim_Lower = Cmn_RealLightDodge_FL;
-					}
-
-					else if (m_bMove[MOVE_Right])
-					{
-						m_eAnim_Lower = Cmn_RealLightDodge_FR;
-					}
-
-					else
-					{
-						m_eAnim_Lower = Cmn_RealLightDodge_F;
-					}
-				}
-
-				else if (m_bMove[MOVE_Back])
-				{
-					if (m_bMove[MOVE_Left])
-					{
-						m_eAnim_Lower = Cmn_RealLightDodge_BL;
-					}
-
-					else if (m_bMove[MOVE_Right])
-					{
-						m_eAnim_Lower = Cmn_RealLightDodge_BR;
-					}
-
-					else
-					{
-						m_eAnim_Lower = Cmn_RealLightDodge_B;
-					}
-				}
-
-				else if (m_bMove[MOVE_Left])
+			case WEAPON_None:
+			case WEAPON_SSword:
+			{
+				if (m_bMove[MOVE_Front] || m_bMove[MOVE_Back] || m_bMove[MOVE_Right] || m_bMove[MOVE_Left])
 				{
 					if (m_bMove[MOVE_Front])
 					{
-						m_eAnim_Lower = Cmn_RealLightDodge_FL;
+						if (m_bMove[MOVE_Left])
+						{
+							m_eAnim_Lower = Ssword_Dodge_FL;
+						}
+
+						else if (m_bMove[MOVE_Right])
+						{
+							m_eAnim_Lower = Ssword_Dodge_FR;
+						}
+
+						else
+						{
+							m_eAnim_Lower = Ssword_Dodge_F;
+						}
 					}
 
 					else if (m_bMove[MOVE_Back])
 					{
-						m_eAnim_Lower = Cmn_RealLightDodge_BL;
+						if (m_bMove[MOVE_Left])
+						{
+							m_eAnim_Lower = Ssword_Dodge_BL;
+						}
+
+						else if (m_bMove[MOVE_Right])
+						{
+							m_eAnim_Lower = Ssword_Dodge_BR;
+						}
+
+						else
+						{
+							m_eAnim_Lower = Ssword_Dodge_B;
+						}
 					}
 
-					else
+					else if (m_bMove[MOVE_Left])
 					{
-						m_eAnim_Lower = Cmn_RealLightDodge_L;
+						if (m_bMove[MOVE_Front])
+						{
+							m_eAnim_Lower = Ssword_Dodge_FL;
+						}
+
+						else if (m_bMove[MOVE_Back])
+						{
+							m_eAnim_Lower = Ssword_Dodge_BL;
+						}
+
+						else
+						{
+							m_eAnim_Lower = Ssword_Dodge_L;
+						}
+					}
+
+					else if (m_bMove[MOVE_Right])
+					{
+						if (m_bMove[MOVE_Front])
+						{
+							m_eAnim_Lower = Ssword_Dodge_FR;
+						}
+
+						else if (m_bMove[MOVE_Back])
+						{
+							m_eAnim_Lower = Ssword_Dodge_BR;
+						}
+
+						else
+						{
+							m_eAnim_Lower = Ssword_Dodge_R;
+						}
 					}
 				}
+				else
+				{
+					m_bDodgeBack = true;
+					m_eAnim_Lower = Ssword_Dodge_B;
+				}
 
-				else if (m_bMove[MOVE_Right])
+				break;
+			}
+
+			case WEAPON_LSword:
+			{
+				if (m_bMove[MOVE_Front] || m_bMove[MOVE_Back] || m_bMove[MOVE_Right] || m_bMove[MOVE_Left])
 				{
 					if (m_bMove[MOVE_Front])
 					{
-						m_eAnim_Lower = Cmn_RealLightDodge_FR;
+						if (m_bMove[MOVE_Left])
+						{
+							m_eAnim_Lower = Lsword_Dodge_FL;
+						}
+
+						else if (m_bMove[MOVE_Right])
+						{
+							m_eAnim_Lower = Lsword_Dodge_FR;
+						}
+
+						else
+						{
+							m_eAnim_Lower = Lsword_Dodge_F;
+						}
 					}
 
 					else if (m_bMove[MOVE_Back])
 					{
-						m_eAnim_Lower = Cmn_RealLightDodge_BR;
+						if (m_bMove[MOVE_Left])
+						{
+							m_eAnim_Lower = Lsword_Dodge_BL;
+						}
+
+						else if (m_bMove[MOVE_Right])
+						{
+							m_eAnim_Lower = Lsword_Dodge_BR;
+						}
+
+						else
+						{
+							m_eAnim_Lower = Lsword_Dodge_B;
+						}
 					}
 
-					else
+					else if (m_bMove[MOVE_Left])
 					{
-						m_eAnim_Lower = Cmn_RealLightDodge_R;
+						if (m_bMove[MOVE_Front])
+						{
+							m_eAnim_Lower = Lsword_Dodge_FL;
+						}
+
+						else if (m_bMove[MOVE_Back])
+						{
+							m_eAnim_Lower = Lsword_Dodge_BL;
+						}
+
+						else
+						{
+							m_eAnim_Lower = Lsword_Dodge_L;
+						}
+					}
+
+					else if (m_bMove[MOVE_Right])
+					{
+						if (m_bMove[MOVE_Front])
+						{
+							m_eAnim_Lower = Lsword_Dodge_FR;
+						}
+
+						else if (m_bMove[MOVE_Back])
+						{
+							m_eAnim_Lower = Lsword_Dodge_BR;
+						}
+
+						else
+						{
+							m_eAnim_Lower = Lsword_Dodge_R;
+						}
+					}
+
+				}
+				else
+				{
+					m_bDodgeBack = true;
+					m_eAnim_Lower = Lsword_Dodge_B;
+				}
+				break;
+			}
+
+			case WEAPON_Hammer:
+			{
+				if (m_bMove[MOVE_Front] || m_bMove[MOVE_Back] || m_bMove[MOVE_Right] || m_bMove[MOVE_Left])
+				{
+					if (m_bMove[MOVE_Front])
+					{
+						if (m_bMove[MOVE_Left])
+						{
+							m_eAnim_Lower = Hammer_Dodge_FL;
+						}
+
+						else if (m_bMove[MOVE_Right])
+						{
+							m_eAnim_Lower = Hammer_Dodge_FR;
+						}
+
+						else
+						{
+							m_eAnim_Lower = Hammer_Dodge_F;
+						}
+					}
+
+					else if (m_bMove[MOVE_Back])
+					{
+						if (m_bMove[MOVE_Left])
+						{
+							m_eAnim_Lower = Hammer_Dodge_BL;
+						}
+
+						else if (m_bMove[MOVE_Right])
+						{
+							m_eAnim_Lower = Hammer_Dodge_BR;
+						}
+
+						else
+						{
+							m_eAnim_Lower = Hammer_Dodge_B;
+						}
+					}
+
+					else if (m_bMove[MOVE_Left])
+					{
+						if (m_bMove[MOVE_Front])
+						{
+							m_eAnim_Lower = Hammer_Dodge_FL;
+						}
+
+						else if (m_bMove[MOVE_Back])
+						{
+							m_eAnim_Lower = Hammer_Dodge_BL;
+						}
+
+						else
+						{
+							m_eAnim_Lower = Hammer_Dodge_L;
+						}
+					}
+
+					else if (m_bMove[MOVE_Right])
+					{
+						if (m_bMove[MOVE_Front])
+						{
+							m_eAnim_Lower = Hammer_Dodge_FR;
+						}
+
+						else if (m_bMove[MOVE_Back])
+						{
+							m_eAnim_Lower = Hammer_Dodge_BR;
+						}
+
+						else
+						{
+							m_eAnim_Lower = Hammer_Dodge_R;
+						}
 					}
 				}
-			}
-			else
-			{
-				m_bDodgeBack = true;
-				m_eAnim_Lower = Cmn_RealLightDodge_B;
-				g_pManagement->Create_Effect(L"Player_FootSmoke_Jump", m_pTransform->Get_Pos());
-				g_pManagement->Create_Effect(L"Player_FootSmoke_DodgeBack", V3_NULL, m_pTransform);
+
+				else
+				{
+					m_bDodgeBack = true;
+					m_eAnim_Lower = Hammer_Dodge_B;
+				}
+				break;
 			}
 
-			break;
+			case WEAPON_Halberd:
+			{
+				if (m_bMove[MOVE_Front] || m_bMove[MOVE_Back] || m_bMove[MOVE_Right] || m_bMove[MOVE_Left])
+				{
+					if (m_bMove[MOVE_Front])
+					{
+						if (m_bMove[MOVE_Left])
+						{
+							m_eAnim_Lower = Halberd_Dodge_F;
+						}
+
+						else if (m_bMove[MOVE_Right])
+						{
+							m_eAnim_Lower = Halberd_Dodge_FR;
+						}
+
+						else
+						{
+							m_eAnim_Lower = Halberd_Dodge_FL;
+						}
+					}
+
+					else if (m_bMove[MOVE_Back])
+					{
+						if (m_bMove[MOVE_Left])
+						{
+							m_eAnim_Lower = Halberd_Dodge_BL;
+						}
+
+						else if (m_bMove[MOVE_Right])
+						{
+							m_eAnim_Lower = Halberd_Dodge_BR;
+						}
+
+						else
+						{
+							m_eAnim_Lower = Halberd_Dodge_B;
+						}
+					}
+
+					else if (m_bMove[MOVE_Left])
+					{
+						if (m_bMove[MOVE_Front])
+						{
+							m_eAnim_Lower = Halberd_Dodge_FL;
+						}
+
+						else if (m_bMove[MOVE_Back])
+						{
+							m_eAnim_Lower = Halberd_Dodge_BL;
+						}
+
+						else
+						{
+							m_eAnim_Lower = Halberd_Dodge_L;
+						}
+					}
+
+					else if (m_bMove[MOVE_Right])
+					{
+						if (m_bMove[MOVE_Front])
+						{
+							m_eAnim_Lower = Halberd_Dodge_FR;
+						}
+
+						else if (m_bMove[MOVE_Back])
+						{
+							m_eAnim_Lower = Halberd_Dodge_BR;
+						}
+
+						else
+						{
+							m_eAnim_Lower = Halberd_Dodge_R;
+						}
+					}
+				}
+
+				else
+				{
+					m_bDodgeBack = true;
+					m_eAnim_Lower = Halberd_Dodge_B;
+				}
+				break;
+			}
+
+			case WEAPON_Gun:
+			{
+				if (m_bMove[MOVE_Front] || m_bMove[MOVE_Back] || m_bMove[MOVE_Right] || m_bMove[MOVE_Left])
+				{
+					m_bDodgeBack = false;
+
+					if (false == m_bOnAiming)
+					{
+						m_eAnim_Lower = Gun_Dodge_F;
+						break;
+					}
+
+					if (m_bMove[MOVE_Front])
+					{
+						if (m_bMove[MOVE_Left])
+						{
+							m_eAnim_Lower = Gun_Dodge_FL;
+						}
+
+						else if (m_bMove[MOVE_Right])
+						{
+							m_eAnim_Lower = Gun_Dodge_FR;
+						}
+
+						else
+						{
+							m_eAnim_Lower = Gun_Dodge_F;
+						}
+					}
+
+					else if (m_bMove[MOVE_Back])
+					{
+						if (m_bMove[MOVE_Left])
+						{
+							m_eAnim_Lower = Gun_Dodge_BL;
+						}
+
+						else if (m_bMove[MOVE_Right])
+						{
+							m_eAnim_Lower = Gun_Dodge_BR;
+						}
+
+						else
+						{
+							m_eAnim_Lower = Gun_Dodge_B;
+						}
+					}
+
+					else if (m_bMove[MOVE_Left])
+					{
+						if (m_bMove[MOVE_Front])
+						{
+							m_eAnim_Lower = Gun_Dodge_FL;
+						}
+
+						else if (m_bMove[MOVE_Back])
+						{
+							m_eAnim_Lower = Gun_Dodge_BL;
+						}
+
+						else
+						{
+							m_eAnim_Lower = Gun_Dodge_L;
+						}
+					}
+
+					else if (m_bMove[MOVE_Right])
+					{
+						if (m_bMove[MOVE_Front])
+						{
+							m_eAnim_Lower = Gun_Dodge_FR;
+						}
+
+						else if (m_bMove[MOVE_Back])
+						{
+							m_eAnim_Lower = Gun_Dodge_BR;
+						}
+
+						else
+						{
+							m_eAnim_Lower = Gun_Dodge_R;
+						}
+					}
+				}
+
+				else
+				{
+					m_bDodgeBack = true;
+					m_eAnim_Lower = Gun_Dodge_B;
+				}
+				break;
+			}
+			}
 		}
 
-		case WEAPON_SSword:
+		else if (false == m_bOnAiming)
 		{
-			if (m_bMove[MOVE_Front] || m_bMove[MOVE_Back] || m_bMove[MOVE_Right] || m_bMove[MOVE_Left])
-			{
-				m_bDodgeBack = false;
+			// 만약 에이밍 중이 아니라면,
 
-				if (false == m_bOnAiming)
-				{
-					m_eAnim_Lower = Cmn_RealLightDodge_F;
-					break;
-				}
-
-				if (m_bMove[MOVE_Front])
-				{
-					if (m_bMove[MOVE_Left])
-					{
-						m_eAnim_Lower = Cmn_RealLightDodge_FL;
-					}
-
-					else if (m_bMove[MOVE_Right])
-					{
-						m_eAnim_Lower = Cmn_RealLightDodge_FR;
-					}
-
-					else
-					{
-						m_eAnim_Lower = Cmn_RealLightDodge_F;
-					}
-				}
-
-				else if (m_bMove[MOVE_Back])
-				{
-					if (m_bMove[MOVE_Left])
-					{
-						m_eAnim_Lower = Cmn_RealLightDodge_BL;
-					}
-
-					else if (m_bMove[MOVE_Right])
-					{
-						m_eAnim_Lower = Cmn_RealLightDodge_BR;
-					}
-
-					else
-					{
-						m_eAnim_Lower = Cmn_RealLightDodge_B;
-					}
-				}
-
-				else if (m_bMove[MOVE_Left])
-				{
-					if (m_bMove[MOVE_Front])
-					{
-						m_eAnim_Lower = Cmn_RealLightDodge_FL;
-					}
-
-					else if (m_bMove[MOVE_Back])
-					{
-						m_eAnim_Lower = Cmn_RealLightDodge_BL;
-					}
-
-					else
-					{
-						m_eAnim_Lower = Cmn_RealLightDodge_L;
-					}
-				}
-
-				else if (m_bMove[MOVE_Right])
-				{
-					if (m_bMove[MOVE_Front])
-					{
-						m_eAnim_Lower = Cmn_RealLightDodge_FR;
-					}
-
-					else if (m_bMove[MOVE_Back])
-					{
-						m_eAnim_Lower = Cmn_RealLightDodge_BR;
-					}
-
-					else
-					{
-						m_eAnim_Lower = Cmn_RealLightDodge_R;
-					}
-				}
-
-			}
-			else
+			// 아무 방향키도 누르지 않을 시,
+			if (!m_bMove[MOVE_Front] && !m_bMove[MOVE_Back] && !m_bMove[MOVE_Right] && !m_bMove[MOVE_Left])
 			{
 				m_bDodgeBack = true;
-				m_eAnim_Lower = Cmn_RealLightDodge_B;
-				g_pManagement->Create_Effect(L"Player_FootSmoke_Jump", m_pTransform->Get_Pos());
-				g_pManagement->Create_Effect(L"Player_FootSmoke_DodgeBack", V3_NULL, m_pTransform);
+
+				m_eAnim_Lower =
+					m_eMainWpnState == WEAPON_SSword ? Ssword_Dodge_B :
+					m_eMainWpnState == WEAPON_LSword ? Lsword_Dodge_B :
+					m_eMainWpnState == WEAPON_Halberd ? Halberd_Dodge_B :
+					m_eMainWpnState == WEAPON_Gun ? Gun_Dodge_B : Hammer_Dodge_B;
 			}
-			break;
-		}
 
-		case WEAPON_LSword:
-		{
-			if (m_bMove[MOVE_Front] || m_bMove[MOVE_Back] || m_bMove[MOVE_Right] || m_bMove[MOVE_Left])
-			{
-				m_bDodgeBack = false;
-
-				if (false == m_bOnAiming)
-				{
-					m_eAnim_Lower = Lsword_Dodge_F;
-					break;
-				}
-
-				if (m_bMove[MOVE_Front])
-				{
-					if (m_bMove[MOVE_Left])
-					{
-						m_eAnim_Lower = Lsword_Dodge_FL;
-					}
-
-					else if (m_bMove[MOVE_Right])
-					{
-						m_eAnim_Lower = Lsword_Dodge_FR;
-					}
-
-					else
-					{
-						m_eAnim_Lower = Lsword_Dodge_F;
-					}
-				}
-
-				else if (m_bMove[MOVE_Back])
-				{
-					if (m_bMove[MOVE_Left])
-					{
-						m_eAnim_Lower = Lsword_Dodge_BL;
-					}
-
-					else if (m_bMove[MOVE_Right])
-					{
-						m_eAnim_Lower = Lsword_Dodge_BR;
-					}
-
-					else
-					{
-						m_eAnim_Lower = Lsword_Dodge_B;
-					}
-				}
-
-				else if (m_bMove[MOVE_Left])
-				{
-					if (m_bMove[MOVE_Front])
-					{
-						m_eAnim_Lower = Lsword_Dodge_FL;
-					}
-
-					else if (m_bMove[MOVE_Back])
-					{
-						m_eAnim_Lower = Lsword_Dodge_BL;
-					}
-
-					else
-					{
-						m_eAnim_Lower = Lsword_Dodge_L;
-					}
-				}
-
-				else if (m_bMove[MOVE_Right])
-				{
-					if (m_bMove[MOVE_Front])
-					{
-						m_eAnim_Lower = Lsword_Dodge_FR;
-					}
-
-					else if (m_bMove[MOVE_Back])
-					{
-						m_eAnim_Lower = Lsword_Dodge_BR;
-					}
-
-					else
-					{
-						m_eAnim_Lower = Lsword_Dodge_R;
-					}
-				}
-
-			}
-			else
+			else if (!m_bMove[MOVE_Front] && m_bMove[MOVE_Back] && !m_bMove[MOVE_Right] && !m_bMove[MOVE_Left])
 			{
 				m_bDodgeBack = true;
-				m_eAnim_Lower = Lsword_Dodge_B;
-			}
-			break;
-		}
 
-		case WEAPON_Hammer:
-		{
-			if (m_bMove[MOVE_Front] || m_bMove[MOVE_Back] || m_bMove[MOVE_Right] || m_bMove[MOVE_Left])
-			{
-				m_bDodgeBack = false;
-
-				if (false == m_bOnAiming)
-				{
-					m_eAnim_Lower = Hammer_Dodge_F;
-					break;
-				}
-
-				if (m_bMove[MOVE_Front])
-				{
-					if (m_bMove[MOVE_Left])
-					{
-						m_eAnim_Lower = Hammer_Dodge_FL;
-					}
-
-					else if (m_bMove[MOVE_Right])
-					{
-						m_eAnim_Lower = Hammer_Dodge_FR;
-					}
-
-					else
-					{
-						m_eAnim_Lower = Hammer_Dodge_F;
-					}
-				}
-
-				else if (m_bMove[MOVE_Back])
-				{
-					if (m_bMove[MOVE_Left])
-					{
-						m_eAnim_Lower = Hammer_Dodge_BL;
-					}
-
-					else if (m_bMove[MOVE_Right])
-					{
-						m_eAnim_Lower = Hammer_Dodge_BR;
-					}
-
-					else
-					{
-						m_eAnim_Lower = Hammer_Dodge_B;
-					}
-				}
-
-				else if (m_bMove[MOVE_Left])
-				{
-					if (m_bMove[MOVE_Front])
-					{
-						m_eAnim_Lower = Hammer_Dodge_FL;
-					}
-
-					else if (m_bMove[MOVE_Back])
-					{
-						m_eAnim_Lower = Hammer_Dodge_BL;
-					}
-
-					else
-					{
-						m_eAnim_Lower = Hammer_Dodge_L;
-					}
-				}
-
-				else if (m_bMove[MOVE_Right])
-				{
-					if (m_bMove[MOVE_Front])
-					{
-						m_eAnim_Lower = Hammer_Dodge_FR;
-					}
-
-					else if (m_bMove[MOVE_Back])
-					{
-						m_eAnim_Lower = Hammer_Dodge_BR;
-					}
-
-					else
-					{
-						m_eAnim_Lower = Hammer_Dodge_R;
-					}
-				}
-			}
-
-			else
-			{
-				m_bDodgeBack = true;
-				m_eAnim_Lower = Hammer_Dodge_B;
-			}
-			break;
-		}
-
-		case WEAPON_Halberd:
-		{
-			if (m_bMove[MOVE_Front] || m_bMove[MOVE_Back] || m_bMove[MOVE_Right] || m_bMove[MOVE_Left])
-			{
-				m_bDodgeBack = false;
-
-				if (false == m_bOnAiming)
-				{
-					m_eAnim_Lower = Halverd_Dodge_F;
-					break;
-				}
-
-				if (m_bMove[MOVE_Front])
-				{
-					if (m_bMove[MOVE_Left])
-					{
-						m_eAnim_Lower = Halverd_Dodge_LF;
-					}
-
-					else if (m_bMove[MOVE_Right])
-					{
-						m_eAnim_Lower = Halverd_Dodge_RF;
-					}
-
-					else
-					{
-						m_eAnim_Lower = Halverd_Dodge_F;
-					}
-				}
-
-				else if (m_bMove[MOVE_Back])
-				{
-					if (m_bMove[MOVE_Left])
-					{
-						m_eAnim_Lower = Halverd_Dodge_LB;
-					}
-
-					else if (m_bMove[MOVE_Right])
-					{
-						m_eAnim_Lower = Halverd_Dodge_RB;
-					}
-
-					else
-					{
-						m_eAnim_Lower = Halverd_Dodge_B;
-					}
-				}
-
-				else if (m_bMove[MOVE_Left])
-				{
-					if (m_bMove[MOVE_Front])
-					{
-						m_eAnim_Lower = Halverd_Dodge_LF;
-					}
-
-					else if (m_bMove[MOVE_Back])
-					{
-						m_eAnim_Lower = Halverd_Dodge_LB;
-					}
-
-					else
-					{
-						m_eAnim_Lower = Halverd_Dodge_L;
-					}
-				}
-
-				else if (m_bMove[MOVE_Right])
-				{
-					if (m_bMove[MOVE_Front])
-					{
-						m_eAnim_Lower = Halverd_Dodge_RF;
-					}
-
-					else if (m_bMove[MOVE_Back])
-					{
-						m_eAnim_Lower = Halverd_Dodge_RB;
-					}
-
-					else
-					{
-						m_eAnim_Lower = Halverd_Dodge_R;
-					}
-				}
-			}
-
-			else
-			{
-				m_bDodgeBack = true;
-				m_eAnim_Lower = Halverd_Dodge_B;
-			}
-			break;
-		}
-
-		case WEAPON_Gun:
-		{
-			if (m_bMove[MOVE_Front] || m_bMove[MOVE_Back] || m_bMove[MOVE_Right] || m_bMove[MOVE_Left])
-			{
-				m_bDodgeBack = false;
-
-				if (false == m_bOnAiming)
-				{
-					m_eAnim_Lower = Gun_DodgeRoll_F;
-					break;
-				}
-
-				if (m_bMove[MOVE_Front])
-				{
-					if (m_bMove[MOVE_Left])
-					{
-						m_eAnim_Lower = Gun_DodgeRoll_FL;
-					}
-
-					else if (m_bMove[MOVE_Right])
-					{
-						m_eAnim_Lower = Gun_DodgeRoll_FR;
-					}
-
-					else
-					{
-						m_eAnim_Lower = Gun_DodgeRoll_F;
-					}
-				}
-
-				else if (m_bMove[MOVE_Back])
-				{
-					if (m_bMove[MOVE_Left])
-					{
-						m_eAnim_Lower = Gun_DodgeRoll_BL;
-					}
-
-					else if (m_bMove[MOVE_Right])
-					{
-						m_eAnim_Lower = Gun_DodgeRoll_BR;
-					}
-
-					else
-					{
-						m_eAnim_Lower = Gun_DodgeRoll_B;
-					}
-				}
-
-				else if (m_bMove[MOVE_Left])
-				{
-					if (m_bMove[MOVE_Front])
-					{
-						m_eAnim_Lower = Gun_DodgeRoll_FL;
-					}
-
-					else if (m_bMove[MOVE_Back])
-					{
-						m_eAnim_Lower = Gun_DodgeRoll_BL;
-					}
-
-					else
-					{
-						m_eAnim_Lower = Gun_DodgeRoll_L;
-					}
-				}
-
-				else if (m_bMove[MOVE_Right])
-				{
-					if (m_bMove[MOVE_Front])
-					{
-						m_eAnim_Lower = Gun_DodgeRoll_FR;
-					}
-
-					else if (m_bMove[MOVE_Back])
-					{
-						m_eAnim_Lower = Gun_DodgeRoll_BR;
-					}
-
-					else
-					{
-						m_eAnim_Lower = Gun_DodgeRoll_R;
-					}
-				}
+				m_eAnim_Lower =
+					m_eMainWpnState == WEAPON_SSword ? Ssword_Dodge_B :
+					m_eMainWpnState == WEAPON_LSword ? Lsword_Dodge_B :
+					m_eMainWpnState == WEAPON_Halberd ? Halberd_Dodge_B :
+					m_eMainWpnState == WEAPON_Gun ? Gun_Dodge_B : Hammer_Dodge_B;
 			}
 
 			else
 			{
-				m_bDodgeBack = true;
-				m_eAnim_Lower = Gun_DodgeRoll_B;
+				m_eAnim_Lower =
+					m_eMainWpnState == WEAPON_SSword ? Ssword_Dodge_F :
+					m_eMainWpnState == WEAPON_LSword ? Lsword_Dodge_F :
+					m_eMainWpnState == WEAPON_Halberd ? Halberd_Dodge_F :
+					m_eMainWpnState == WEAPON_Gun ? Gun_Dodge_F : Hammer_Dodge_F;
 			}
-			break;
-		}
 		}
 
 		m_eAnim_Upper = m_eAnim_Lower;
 		m_eAnim_RightArm = m_eAnim_Lower;
+		m_eAnim_LeftArm = m_eAnim_Lower;
 
 		m_tObjParam.bIsDodge = true;
 		m_bOnDodge = true;
 		m_bCanDodge = false;
 		m_bStopMovementKeyInput = true;
 
+		m_fSkillMoveMultiply = 1.f;
+
 		m_fSkillMoveSpeed_Cur =
 			(m_eMainWpnState == WEAPON_LSword ? 12.f :
 				m_eMainWpnState == WEAPON_Hammer ? 12.f :
 				m_eMainWpnState == WEAPON_Halberd ? 12.f :
-				m_eMainWpnState == WEAPON_SSword ? 12.f :
+				m_eMainWpnState == WEAPON_SSword ? 15.f :
 				m_eMainWpnState == WEAPON_Gun ? 12.f : 15.f);
 
 		m_fSkillMoveMultiply =
 			(m_eMainWpnState == WEAPON_LSword ? 0.8f :
 				m_eMainWpnState == WEAPON_Hammer ? 0.8f :
 				m_eMainWpnState == WEAPON_Halberd ? 0.8f :
-				m_eMainWpnState == WEAPON_SSword ? 2.3f :
+				m_eMainWpnState == WEAPON_SSword ? 1.2f :
 				m_eMainWpnState == WEAPON_Gun ? 0.6f : 1.2f);
 
 		m_fSkillMoveAccel_Cur = 0.f;
@@ -3480,7 +3510,7 @@ void CPlayer::Play_Dodge()
 			return;
 		}
 
-		else if (m_pDynamicMesh->Is_Finish_Animation_Lower(0.25f))
+		else if (m_pDynamicMesh->Is_Finish_Animation_Lower(0.3f))
 		{
 			m_bCanDodge = true;
 			m_bStopMovementKeyInput = false;
@@ -3488,7 +3518,7 @@ void CPlayer::Play_Dodge()
 
 		switch (m_eAnim_Lower)
 		{
-		case Cmn_RealLightDodge_F:
+		case Ssword_Dodge_F:
 		{
 			if (m_pDynamicMesh->Get_TrackInfo().Position >= 1.1f && m_pDynamicMesh->Get_TrackInfo().Position < 2.f)
 			{
@@ -3538,7 +3568,7 @@ void CPlayer::Play_Dodge()
 			return;
 		}
 
-		case Cmn_RealLightDodge_B:
+		case Ssword_Dodge_B:
 		{
 			if (m_pDynamicMesh->Get_TrackInfo().Position >= 2.333f && m_pDynamicMesh->Get_TrackInfo().Position < 2.867f)
 			{
@@ -3709,6 +3739,7 @@ void CPlayer::Play_HeavyAtk()
 
 		m_eAnim_Upper = m_eAnim_Lower;
 		m_eAnim_RightArm = m_eAnim_Lower;
+		m_eAnim_LeftArm = m_eAnim_Lower;
 
 		m_bOnAttack = true;
 	}
@@ -3779,7 +3810,7 @@ void CPlayer::Play_Buff()
 
 		else
 		{
-			m_eAnim_Lower = Cmn_UseEnchant;
+			m_eAnim_Lower = Cmn_UseItemEnchant;
 			m_eAnim_Upper = m_eAnim_Lower;
 		}
 
@@ -3809,28 +3840,28 @@ void CPlayer::Play_Hit()
 		}
 
 		m_eAnim_Upper =
-			(iHitDir == 0 ? Cmn_Hit01_B : 
-				iHitDir == 1 ? Cmn_Hit01_F : 
-				iHitDir == 2 ? Cmn_Hit01_R : Cmn_Hit01_L);
+			(iHitDir == 0 ? Cmn_Damage_01_F : 
+				iHitDir == 1 ? Cmn_Damage_01_B :
+				iHitDir == 2 ? Cmn_Damage_01_R : Cmn_Damage_01_L);
 
 		//m_eAnim_Upper =
-		//	(iHitDir == 0 ? Cmn_Hit02_B :
-		//		iHitDir == 1 ? Cmn_Hit02_F :
+		//	(iHitDir == 0 ? Cmn_Hit02_F :
+		//		iHitDir == 1 ? Cmn_Hit02_B :
 		//		iHitDir == 2 ? Cmn_Hit02_R : Cmn_Hit02_L);
 
 		//m_eAnim_Upper =
-		//	(iHitDir == 0 ? Cmn_Hit03_B :
-		//		iHitDir == 1 ? Cmn_Hit03_F :
+		//	(iHitDir == 0 ? Cmn_Hit03_F :
+		//		iHitDir == 1 ? Cmn_Hit03_B :
 		//		iHitDir == 2 ? Cmn_Hit03_R : Cmn_Hit03_L);
 
 		//m_eAnim_Upper =
-		//	(iHitDir == 0 ? Cmn_Hit04_B :
-		//		iHitDir == 1 ? Cmn_Hit04_F :
+		//	(iHitDir == 0 ? Cmn_Hit04_F :
+		//		iHitDir == 1 ? Cmn_Hit04_B :
 		//		iHitDir == 2 ? Cmn_Hit04_R : Cmn_Hit04_L);
 
 		//m_eAnim_Upper =
-		//	(iHitDir == 0 ? Cmn_HitBlow_B :
-		//		iHitDir == 1 ? Cmn_HitBlow_F :
+		//	(iHitDir == 0 ? Cmn_HitBlow_F :
+		//		iHitDir == 1 ? Cmn_HitBlow_B :
 		//		iHitDir == 2 ? Cmn_HitBlow_R : Cmn_HitBlow_L);
 
 		// 임시 다운 테스트용
@@ -3851,8 +3882,8 @@ void CPlayer::Play_Hit()
 	{
 		_double dAniTime = m_pDynamicMesh->Get_TrackInfo().Position;
 
-		if (m_eAnim_Upper == Cmn_HitBlow_F || m_eAnim_Upper == Cmn_HitBlow_B ||
-			m_eAnim_Upper == Cmn_HitBlow_R || m_eAnim_Upper == Cmn_HitBlow_L)
+		if (m_eAnim_Upper == Cmn_Damage_Blow_F || m_eAnim_Upper == Cmn_Damage_Blow_B ||
+			m_eAnim_Upper == Cmn_Damage_Blow_R || m_eAnim_Upper == Cmn_Damage_Blow_L)
 		{
 			if (m_pDynamicMesh->Is_Finish_Animation_Lower(0.9f))
 			{
@@ -3865,10 +3896,10 @@ void CPlayer::Play_Hit()
 
 				m_bOffLerp = true;
 
-				if (m_eAnim_Upper == Cmn_HitBlow_R)
+				if (m_eAnim_Upper == Cmn_Damage_Blow_R)
 					m_pTransform->Add_Angle(AXIS_Y, -90.f);
 
-				else if (m_eAnim_Upper == Cmn_HitBlow_L)
+				else if (m_eAnim_Upper == Cmn_Damage_Blow_L)
 					m_pTransform->Add_Angle(AXIS_Y, 90.f);
 
 				m_pTransform->Update_Component();
@@ -3881,10 +3912,10 @@ void CPlayer::Play_Hit()
 		{
 			_bool	bBlow = false;
 
-			bBlow = (m_eAnim_Upper == Cmn_HitBlow_F ? true :
-				m_eAnim_Upper == Cmn_HitBlow_B ? true :
-				m_eAnim_Upper == Cmn_HitBlow_R ? true :
-				m_eAnim_Upper == Cmn_HitBlow_L ? true : false);
+			bBlow = (m_eAnim_Upper == Cmn_Damage_Blow_F ? true :
+				m_eAnim_Upper == Cmn_Damage_Blow_B ? true :
+				m_eAnim_Upper == Cmn_Damage_Blow_R ? true :
+				m_eAnim_Upper == Cmn_Damage_Blow_L ? true : false);
 
 			m_eActState = (true == bBlow ? ACT_Down : ACT_Idle);
 
@@ -3906,7 +3937,7 @@ void CPlayer::Play_Hit()
 
 		switch (m_eAnim_Upper)
 		{
-		case Cmn_Hit01_F:
+		case Cmn_Damage_01_F:
 		{
 			if (dAniTime >= 1.867 && dAniTime < 2.367)
 			{
@@ -3941,7 +3972,7 @@ void CPlayer::Play_Hit()
 			break;
 		}
 
-		case Cmn_Hit01_B:
+		case Cmn_Damage_01_B:
 		{
 			if (dAniTime >= 0.967f && dAniTime < 2.f)
 			{
@@ -3976,8 +4007,8 @@ void CPlayer::Play_Hit()
 			break;
 		}
 
-		case Cmn_Hit01_L:
-		case Cmn_Hit01_R:
+		case Cmn_Damage_01_L:
+		case Cmn_Damage_01_R:
 		{
 			if (dAniTime >= 1.2 && dAniTime < 2.333)
 			{
@@ -4014,7 +4045,7 @@ void CPlayer::Play_Hit()
 		
 		//=======================================================================================
 
-		case Cmn_Hit02_F:
+		case Cmn_Damage_02_F:
 		{
 			if (dAniTime >= 2.833 && dAniTime < 3.767)
 			{
@@ -4064,7 +4095,7 @@ void CPlayer::Play_Hit()
 			break;
 		}
 
-		case Cmn_Hit02_B:
+		case Cmn_Damage_02_B:
 		{
 			if (dAniTime >= 2.067 && dAniTime < 3.6)
 			{
@@ -4099,7 +4130,7 @@ void CPlayer::Play_Hit()
 			break;
 		}
 
-		case Cmn_Hit02_L:
+		case Cmn_Damage_02_L:
 		{
 			if (dAniTime >= 2.700 && dAniTime < 3.467)
 			{
@@ -4149,7 +4180,7 @@ void CPlayer::Play_Hit()
 			break;
 		}
 
-		case Cmn_Hit02_R:
+		case Cmn_Damage_02_R:
 		{
 			if (dAniTime >= 3.167 && dAniTime < 3.8)
 			{
@@ -4201,7 +4232,7 @@ void CPlayer::Play_Hit()
 
 		//=======================================================================================
 
-		case Cmn_Hit03_F:
+		case Cmn_Damage_03_F:
 		{
 			if (dAniTime >= 1.733 && dAniTime < 3.733)
 			{
@@ -4236,7 +4267,7 @@ void CPlayer::Play_Hit()
 			break;
 		}
 
-		case Cmn_Hit03_B:
+		case Cmn_Damage_03_B:
 		{
 			if (dAniTime >= 2.300 && dAniTime < 3.6)
 			{
@@ -4271,7 +4302,7 @@ void CPlayer::Play_Hit()
 			break;
 		}
 
-		case Cmn_Hit03_L:
+		case Cmn_Damage_03_L:
 		{
 			if (dAniTime >= 3.667 && dAniTime < 4.367)
 			{
@@ -4321,7 +4352,7 @@ void CPlayer::Play_Hit()
 			break;
 		}
 
-		case Cmn_Hit03_R:
+		case Cmn_Damage_03_R:
 		{
 			if (dAniTime >= 3.0 && dAniTime < 4.033)
 			{
@@ -4373,7 +4404,7 @@ void CPlayer::Play_Hit()
 
 		//=======================================================================================
 
-		case Cmn_Hit04_F:
+		case Cmn_Damage_04_F:
 		{
 			if (dAniTime >= 1.167 && dAniTime < 2.933)
 			{
@@ -4423,7 +4454,7 @@ void CPlayer::Play_Hit()
 			break;
 		}
 
-		case Cmn_Hit04_B:
+		case Cmn_Damage_04_B:
 		{
 			if (dAniTime >= 1.833 && dAniTime < 2.233)
 			{
@@ -4458,7 +4489,7 @@ void CPlayer::Play_Hit()
 			break;
 		}
 
-		case Cmn_Hit04_L:
+		case Cmn_Damage_04_L:
 		{
 			if (dAniTime >= 1.233 && dAniTime < 2.233)
 			{
@@ -4493,7 +4524,7 @@ void CPlayer::Play_Hit()
 			break;
 		}
 
-		case Cmn_Hit04_R:
+		case Cmn_Damage_04_R:
 		{
 			if (dAniTime >= 0.0 && dAniTime < 1.233)
 			{
@@ -4515,7 +4546,7 @@ void CPlayer::Play_Hit()
 
 		//=======================================================================================
 
-		case Cmn_HitBlow_F:
+		case Cmn_Damage_Blow_F:
 		{
 			if (false == m_bEventTrigger[0])
 			{
@@ -4532,7 +4563,7 @@ void CPlayer::Play_Hit()
 			break;
 		}
 
-		case Cmn_HitBlow_B:
+		case Cmn_Damage_Blow_B:
 		{
 			if (false == m_bEventTrigger[0])
 			{
@@ -4549,7 +4580,7 @@ void CPlayer::Play_Hit()
 			break;
 		}
 
-		case Cmn_HitBlow_L:
+		case Cmn_Damage_Blow_L:
 		{
 			if (false == m_bEventTrigger[0])
 			{
@@ -4566,7 +4597,7 @@ void CPlayer::Play_Hit()
 			break;
 		}
 
-		case Cmn_HitBlow_R:
+		case Cmn_Damage_Blow_R:
 		{
 			if (false == m_bEventTrigger[0])
 			{
@@ -4605,7 +4636,7 @@ void CPlayer::Play_Dead()
 		{
 			if (m_pDynamicMesh->Is_Finish_Animation_Lower(0.95f))
 			{
-				m_eAnim_Upper = Cmn_Dying_End;
+				m_eAnim_Upper = Cmn_Dying_Death;
 				m_eAnim_Lower = m_eAnim_Upper;
 				m_eAnim_RightArm = m_eAnim_Upper;
 				m_eAnim_LeftArm = m_eAnim_RightArm;
@@ -4614,7 +4645,7 @@ void CPlayer::Play_Dead()
 			}
 		}
 
-		else if (m_eAnim_Upper == Cmn_Dying_End)
+		else if (m_eAnim_Upper == Cmn_Dying_Death)
 		{
 			if (m_pDynamicMesh->Is_Finish_Animation_Lower(0.98f))
 			{
@@ -4634,6 +4665,7 @@ void CPlayer::Play_WeaponChange()
 		m_eAnim_Upper = Cmn_WeaponChange;
 		m_eAnim_Lower = m_eAnim_Upper;
 		m_eAnim_RightArm = m_eAnim_Upper;
+		m_eAnim_LeftArm = m_eAnim_Lower;
 
 		m_fAnimMutiply = 1.f;
 	}
@@ -4650,11 +4682,13 @@ void CPlayer::Play_WeaponChange()
 
 		if (m_pDynamicMesh->Is_Finish_Animation_Upper(0.95f))
 		{
-			m_eActiveSlot =
-				(m_eActiveSlot == WPN_SLOT_A ? WPN_SLOT_B :
-					m_eActiveSlot == WPN_SLOT_B ? WPN_SLOT_C :
-					m_eActiveSlot == WPN_SLOT_C ? WPN_SLOT_D :
-					m_eActiveSlot == WPN_SLOT_D ? WPN_SLOT_E : WPN_SLOT_A);
+			//m_eActiveSlot =
+			//	(m_eActiveSlot == WPN_SLOT_A ? WPN_SLOT_B :
+			//		m_eActiveSlot == WPN_SLOT_B ? WPN_SLOT_C :
+			//		m_eActiveSlot == WPN_SLOT_C ? WPN_SLOT_D :
+			//		m_eActiveSlot == WPN_SLOT_D ? WPN_SLOT_E : WPN_SLOT_A);
+
+			m_eActiveSlot = (m_eActiveSlot == WPN_SLOT_A) ? WPN_SLOT_B : WPN_SLOT_A;
 
 			m_eMainWpnState = m_pWeapon[m_eActiveSlot]->Get_WeaponType();
 
@@ -4703,7 +4737,7 @@ void CPlayer::Play_PickUp()
 		m_bOnPickUp = true;
 		m_bStopMovementKeyInput = true;
 
-		m_eAnim_Upper = Cmn_PickItem;
+		m_eAnim_Upper = Cmn_PickItemStand;
 		m_eAnim_Lower = m_eAnim_Upper;
 		m_eAnim_RightArm = m_eAnim_Upper;
 		m_eAnim_LeftArm = m_eAnim_Upper;
@@ -4747,7 +4781,7 @@ void CPlayer::Play_Down()
 
 		//m_pTransform->Update_Component();
 
-		m_eAnim_Upper = m_eAnim_Upper == Cmn_HitBlow_F ? Cmn_Down_01 : Cmn_Down_02;
+		m_eAnim_Upper = m_eAnim_Upper == Cmn_Damage_Blow_F ? Cmn_Down_F_Loop : Cmn_Down_B_Loop;
 		m_eAnim_Lower = m_eAnim_Upper;
 		m_eAnim_RightArm = m_eAnim_Upper;
 		m_eAnim_LeftArm = m_eAnim_Upper;
@@ -4760,11 +4794,11 @@ void CPlayer::Play_Down()
 		switch (m_eAnim_Upper)
 		{
 			//앞으로 자빠져욤
-		case Cmn_Down_01:
+		case Cmn_Down_F_Loop:
 		{
 			if (m_pDynamicMesh->Is_Finish_Animation(0.85f))
 			{
-				m_eAnim_Upper = Cmn_Down_01_End;
+				m_eAnim_Upper = Cmn_Down_F_End;
 				m_eAnim_Lower = m_eAnim_Upper;
 				m_eAnim_RightArm = m_eAnim_Upper;
 				m_eAnim_LeftArm = m_eAnim_Upper;
@@ -4776,13 +4810,13 @@ void CPlayer::Play_Down()
 		}
 
 		// 뒤로 자빠져욤
-		case Cmn_Down_02:
+		case Cmn_Down_B_Loop:
 		{
 			m_fAnimMutiply = 1.f;
 
 			if (m_pDynamicMesh->Is_Finish_Animation(0.9f))
 			{
-				m_eAnim_Upper = Cmn_Down_02_End;
+				m_eAnim_Upper = Cmn_Down_B_End;
 				m_eAnim_Lower = m_eAnim_Upper;
 				m_eAnim_RightArm = m_eAnim_Upper;
 				m_eAnim_LeftArm = m_eAnim_Upper;
@@ -4798,7 +4832,7 @@ void CPlayer::Play_Down()
 		}
 
 		//앞으로 자빠졌다가 일어나요
-		case Cmn_Down_01_End:
+		case Cmn_Down_F_End:
 		{
 			if (m_pDynamicMesh->Is_Finish_Animation(0.85f))
 			{
@@ -4822,7 +4856,7 @@ void CPlayer::Play_Down()
 		}
 
 		// 뒤로 자빠졌다가 일어나요
-		case Cmn_Down_02_End:
+		case Cmn_Down_B_End:
 		{
 			if (m_pDynamicMesh->Is_Finish_Animation(0.85f))
 			{
@@ -4854,16 +4888,19 @@ void CPlayer::Play_Summon()
 	{
 		m_bOnSummon = true;
 
-		m_eAnim_Upper = Cmn_GameStart;
+		m_eAnim_Upper = Cmn_CheckPoint_End;
 		m_eAnim_Lower = m_eAnim_Upper;
 		m_eAnim_RightArm = m_eAnim_Upper;
 		m_eAnim_LeftArm = m_eAnim_Upper;
 
 		Reset_BattleState();
 
-		Start_Dissolve(0.15f, true, false);
+		Start_Dissolve(0.3f, true, false);
 
-		m_fAnimMutiply = 0.5f;
+		m_pOuter->Start_Dissolve(0.3f, true, false);
+		m_pHair->Start_Dissolve(0.3f, true, false);
+		m_pMask[m_eMaskType]->Start_Dissolve(0.3f, true, false);
+		m_pHead[m_eHeadType]->Start_Dissolve(0.3f, true, false);
 	}
 
 	else if (true == m_bOnSummon)
@@ -4890,9 +4927,10 @@ void CPlayer::Play_BloodSuck()
 	{
 		m_bOnBloodSuck = true;
 
-		m_eAnim_Upper = LongCoat_ChargeSuck_Start;
+		m_eAnim_Upper = LongCoat_Charge_Start;
 		m_eAnim_Lower = m_eAnim_Upper;
 		m_eAnim_RightArm = m_eAnim_Upper;
+		m_eAnim_LeftArm = m_eAnim_Lower;
 
 		Reset_BattleState();
 
@@ -4929,9 +4967,10 @@ void CPlayer::Play_BloodSuck()
 		{
 			if (m_pDynamicMesh->Is_Finish_Animation_Lower(0.95f))
 			{
-				m_eAnim_Upper = LongCoat_ChargeSuck_End;
+				m_eAnim_Upper = LongCoat_Charge_End;
 				m_eAnim_Lower = m_eAnim_Upper;
 				m_eAnim_RightArm = m_eAnim_Upper;
+				m_eAnim_LeftArm = m_eAnim_Lower;
 
 				m_bOnChargeSuck = true;
 
@@ -4965,9 +5004,10 @@ void CPlayer::Play_BloodSuck()
 			{
 				if (m_pDynamicMesh->Get_TrackInfo().Position >= 3.f)
 				{
-					m_eAnim_Upper = LongCoat_ChargeSuck_End;
+					m_eAnim_Upper = LongCoat_Charge_End;
 					m_eAnim_Lower = m_eAnim_Upper;
 					m_eAnim_RightArm = m_eAnim_Upper;
+					m_eAnim_LeftArm = m_eAnim_Lower;
 
 					m_bOnChargeSuck = true;
 
@@ -5104,6 +5144,7 @@ void CPlayer::Play_BloodSuckCount()
 		m_eAnim_Upper = LongCoat_Parry;
 		m_eAnim_Lower = m_eAnim_Upper;
 		m_eAnim_RightArm = m_eAnim_Upper;
+		m_eAnim_LeftArm = m_eAnim_Lower;
 
 		IF_NOT_NULL(m_pDrainWeapon)
 		{
@@ -5116,8 +5157,8 @@ void CPlayer::Play_BloodSuckCount()
 
 	else if (true == m_bOnBloodSuck)
 	{
-		if (m_tObjParam.bIsCounter)
-			cout << "카운터에효" << endl;
+		//if (m_tObjParam.bIsCounter)
+		//	cout << "카운터에효" << endl;
 
 		_double dAniTime = m_pDynamicMesh->Get_TrackInfo().Position;
 
@@ -5254,7 +5295,7 @@ void CPlayer::Play_BloodSuckCombo()
 	{
 		m_bOnBloodSuck = true;
 
-		m_eAnim_Upper = LongCoat_ComboSuck;
+		m_eAnim_Upper = LongCoat_Combo;
 		m_eAnim_Lower = m_eAnim_Upper;
 		m_eAnim_RightArm = m_eAnim_Upper;
 		m_eAnim_LeftArm = m_eAnim_Upper;
@@ -5302,7 +5343,7 @@ void CPlayer::Play_BloodSuckExecution()
 		//m_bCanExecution = false;
 
 		// 2번은 컷씬 아닌 처형
-		m_eAnim_Upper = LongCoat_SpecialSuck_02;
+		m_eAnim_Upper = LongCoat_Exicution;
 		m_eAnim_Lower = m_eAnim_Upper;
 		m_eAnim_RightArm = m_eAnim_Upper;
 		m_eAnim_LeftArm = m_eAnim_Upper;
@@ -5397,7 +5438,7 @@ void CPlayer::Play_Skills()
 	{
 		switch (m_eAnim_Lower)
 		{
-		case Renketsu_StrongAtk_01:
+		case Renketsu_01:
 		{
 			if (m_pDynamicMesh->Is_Finish_Animation_Lower(0.9f))
 			{
@@ -5513,6 +5554,9 @@ void CPlayer::Play_Skills()
 					for (_int i = 0; i < 10; i++)
 						g_pManagement->Create_Effect_Delay(L"Player_Skill_RedOnion", 0.f, m_pTransform->Get_Pos());
 
+					g_pSoundManager->Stop_Sound(CSoundManager::Player_SFX_02);
+					g_pSoundManager->Play_Sound(L"SE_PLAYER_JUMP002.ogg", CSoundManager::Player_SFX_02, CSoundManager::Effect_Sound);
+
 				}
 
 				Skill_Movement(m_fSkillMoveSpeed_Cur, m_pTransform->Get_Axis(AXIS_Z));
@@ -5541,6 +5585,22 @@ void CPlayer::Play_Skills()
 					g_pManagement->Create_ParticleEffect_Delay(L"Player_Skill_SplitAssert_LaserAfter_Smoke", 0.3f, 0.f, vPlayerPos + vEffGroundPos, nullptr);
 
 					SHAKE_CAM_lv4
+
+					g_pSoundManager->Stop_Sound(CSoundManager::Player_SFX_03);
+					g_pSoundManager->Play_Sound(L"SE_WEAPON_HIT_009.ogg", CSoundManager::Player_SFX_03, CSoundManager::Effect_Sound);
+					g_pSoundManager->Stop_Sound(CSoundManager::Player_SFX_01);
+					g_pSoundManager->Play_Sound(L"SE_WEAPON_IMPACT_001.ogg", CSoundManager::Player_SFX_01, CSoundManager::Effect_Sound);
+				}
+			}
+
+			else if (m_pDynamicMesh->Get_TrackInfo().Position >= 3.5f)
+			{
+				if (m_bEventTrigger[10] == false)
+				{
+					m_bEventTrigger[10] = true;
+
+					g_pSoundManager->Stop_Sound(CSoundManager::Player_SFX_02);
+					g_pSoundManager->Play_Sound(L"SE_BLACK_KNIGHT_JUMP_001.ogg", CSoundManager::Player_SFX_02, CSoundManager::Effect_Sound);
 				}
 			}
 
@@ -5556,12 +5616,15 @@ void CPlayer::Play_Skills()
 					CParticleMgr::Get_Instance()->Create_Skill_Start_Effect(m_pTransform->Get_Pos(), vEffPos);
 					g_pManagement->Create_ParticleEffect_Delay(L"Player_Skill_RedParticle_Explosion", 0.15f, 1.f, m_pTransform->Get_Pos(), m_pTransform);
 					g_pManagement->Create_Effect_Delay(L"Player_Skill_BloodConeMesh_Explosion", 1.f, m_pTransform->Get_Pos());
+
+					g_pSoundManager->Stop_Sound(CSoundManager::Player_SFX_01);
+					g_pSoundManager->Play_Sound(L"SE_DIGGING_GROUND_000.ogg", CSoundManager::Player_SFX_01, CSoundManager::Effect_Sound);
 				}
 			}
 
 			break;
 		}
-		case Renketsu_StrongAtk_02:
+		case Renketsu_02:
 		{
 			_v3 vEffPos = _v3(0.f, 1.5f, 0.f) + m_pTransform->Get_Axis(AXIS_Z) * 1.5f;
 
@@ -5622,6 +5685,9 @@ void CPlayer::Play_Skills()
 					g_pManagement->Create_Effect_Delay(L"Hit_Slash_2", 0.f, vEffPos, m_pTransform);
 					g_pManagement->Create_Effect_Delay(L"Hit_Slash_3", 0.f, vEffPos, m_pTransform);
 					g_pManagement->Create_Effect_Delay(L"Hit_Slash_Particle_0", 0.f, vEffPos, m_pTransform);
+
+					g_pSoundManager->Stop_Sound(CSoundManager::Player_SFX_04);
+					g_pSoundManager->Play_Sound(L"SE_BLACK_KNIGHT_WIND_CUT_002.ogg", CSoundManager::Player_SFX_04, CSoundManager::Effect_Sound);
 				}
 			}
 
@@ -5661,6 +5727,9 @@ void CPlayer::Play_Skills()
 					g_pManagement->Create_Effect_Delay(L"Hit_Slash_3", 0.f, vEffPos, m_pTransform);
 					g_pManagement->Create_Effect_Delay(L"Hit_Slash_Particle_0", 0.f, vEffPos, m_pTransform);
 					g_pManagement->Create_Effect_Delay(L"Player_Skill_RedParticle_Explosion", 0.f, vEffPos, m_pTransform);
+
+					g_pSoundManager->Stop_Sound(CSoundManager::Player_SFX_02);
+					g_pSoundManager->Play_Sound(L"SE_BLACK_KNIGHT_WIND_CUT_000.ogg", CSoundManager::Player_SFX_02, CSoundManager::Effect_Sound);
 				}
 			}
 
@@ -5705,6 +5774,9 @@ void CPlayer::Play_Skills()
 					m_tObjParam.bCanHit = true;
 
 					g_pManagement->Create_Effect_Delay(L"Player_Skill_Distortion_Circle", 0.f, vEffPos_Dis, m_pTransform);
+
+					g_pSoundManager->Stop_Sound(CSoundManager::Player_SFX_03);
+					g_pSoundManager->Play_Sound(L"SE_BLACK_KNIGHT_JUMP_000.ogg", CSoundManager::Player_SFX_03, CSoundManager::Effect_Sound);
 				}
 			}
 
@@ -5732,6 +5804,9 @@ void CPlayer::Play_Skills()
 					//m_tObjParam.bCanHit = false;
 
 					g_pManagement->Create_Effect_Delay(L"Player_Skill_Distortion_Circle", 0.f, vEffPos_Dis, m_pTransform);
+
+					g_pSoundManager->Stop_Sound(CSoundManager::Player_SFX_01);
+					g_pSoundManager->Play_Sound(L"SE_QUEENS_KNIGHTS_WARP_001.ogg", CSoundManager::Player_SFX_01, CSoundManager::Effect_Sound);
 				}
 
 				Skill_Movement(m_fSkillMoveSpeed_Cur, m_pTransform->Get_Axis(AXIS_Z));
@@ -5751,7 +5826,7 @@ void CPlayer::Play_Skills()
 
 			break;
 		}
-		case Renketsu_StrongAtk_03:
+		case Renketsu_03:
 		{
 			_v3 vEffPos = _v3(0.f, 1.5f, 0.f) + m_pTransform->Get_Axis(AXIS_Z) * 2.3f;
 			_v3 vEffWindPos = _v3(0.f, 1.5f, 0.f);
@@ -5805,6 +5880,11 @@ void CPlayer::Play_Skills()
 					g_pManagement->Create_Effect_Delay(L"Hit_Slash_Particle_0", 0.f, vEffPos + _v3(0, 0.3f, 0.f), m_pTransform);
 					g_pManagement->Create_Effect_Delay(L"Player_Skill_RedParticle_Explosion", 0.f, vEffPos + _v3(0, 0.3f, 0.f), m_pTransform);
 					g_pManagement->Create_Effect_Delay(L"Player_Skill_WindMesh", 0.f, vEffWindPos + _v3(0, 0.3f, 0.f), m_pTransform, _v3(0.f, vPlayerAngleDeg.y, -65.f));
+
+					g_pSoundManager->Stop_Sound(CSoundManager::Player_SFX_02);
+					g_pSoundManager->Play_Sound(L"SE_BLACK_KNIGHT_SWING_005.ogg", CSoundManager::Player_SFX_02, CSoundManager::Effect_Sound);
+					g_pSoundManager->Stop_Sound(CSoundManager::Player_SFX_01);
+					g_pSoundManager->Play_Sound(L"SE_BLACK_KNIGHT_WIND_CUT_000.ogg", CSoundManager::Player_SFX_01, CSoundManager::Effect_Sound);
 				}
 			}
 
@@ -5841,6 +5921,11 @@ void CPlayer::Play_Skills()
 					g_pManagement->Create_Effect_Delay(L"Hit_Slash_3", 0.f, vEffPos + _v3(0, 0.4f, 0.f), m_pTransform);
 					g_pManagement->Create_Effect_Delay(L"Hit_Slash_Particle_0", 0.f, vEffPos + _v3(0, 0.4f, 0.f), m_pTransform);
 					g_pManagement->Create_Effect_Delay(L"Player_Skill_RedParticle_Explosion", 0.f, vEffPos + _v3(0, 0.4f, 0.f), m_pTransform);
+
+					g_pSoundManager->Stop_Sound(CSoundManager::Player_SFX_03);
+					g_pSoundManager->Play_Sound(L"SE_BLACK_KNIGHT_SWING_002.ogg", CSoundManager::Player_SFX_03, CSoundManager::Effect_Sound);
+					g_pSoundManager->Stop_Sound(CSoundManager::Player_SFX_04);
+					g_pSoundManager->Play_Sound(L"SE_BLACK_KNIGHT_WIND_CUT_002.ogg", CSoundManager::Player_SFX_01, CSoundManager::Effect_Sound);
 				}
 			}
 
@@ -5877,6 +5962,11 @@ void CPlayer::Play_Skills()
 					g_pManagement->Create_Effect_Delay(L"Hit_Slash_3", 0.f, vEffPos + _v3(0, 0.4f, 0.f), m_pTransform);
 					g_pManagement->Create_Effect_Delay(L"Hit_Slash_Particle_0", 0.f, vEffPos + _v3(0, 0.4f, 0.f), m_pTransform);
 					g_pManagement->Create_Effect_Delay(L"Player_Skill_RedParticle_Explosion", 0.f, vEffPos + _v3(0, 0.4f, 0.f), m_pTransform);
+
+					g_pSoundManager->Stop_Sound(CSoundManager::Player_SFX_02);
+					g_pSoundManager->Play_Sound(L"SE_BLACK_KNIGHT_SWING_001.ogg", CSoundManager::Player_SFX_02, CSoundManager::Effect_Sound);
+					g_pSoundManager->Stop_Sound(CSoundManager::Player_SFX_01);
+					g_pSoundManager->Play_Sound(L"SE_BLACK_KNIGHT_WIND_CUT_001.ogg", CSoundManager::Player_SFX_01, CSoundManager::Effect_Sound);
 				}
 			}
 
@@ -5915,6 +6005,11 @@ void CPlayer::Play_Skills()
 					g_pManagement->Create_Effect_Delay(L"Hit_Slash_3", 0.f, vEffPos, m_pTransform);
 					g_pManagement->Create_Effect_Delay(L"Hit_Slash_Particle_0", 0.f, vEffPos, m_pTransform);
 					g_pManagement->Create_Effect_Delay(L"Player_Skill_RedParticle_Explosion", 0.f, vEffPos + _v3(0, 0.4f, 0.f), m_pTransform);
+
+					g_pSoundManager->Stop_Sound(CSoundManager::Player_SFX_03);
+					g_pSoundManager->Play_Sound(L"SE_BLACK_KNIGHT_SWING_000.ogg", CSoundManager::Player_SFX_03, CSoundManager::Effect_Sound);
+					g_pSoundManager->Stop_Sound(CSoundManager::Player_SFX_04);
+					g_pSoundManager->Play_Sound(L"SE_BLACK_KNIGHT_WIND_CUT_000.ogg", CSoundManager::Player_SFX_01, CSoundManager::Effect_Sound);
 				}
 			}
 
@@ -5941,6 +6036,9 @@ void CPlayer::Play_Skills()
 
 					_v3 vDir = *D3DXVec3Normalize(&_v3(), &-m_pTransform->Get_Axis(AXIS_Z));
 					g_pManagement->Create_Effect(L"Player_Skill_WindTornadeMesh", m_pTransform->Get_Pos() + vEffPos, nullptr, vDir, vPlayerAngleDeg);
+
+					g_pSoundManager->Stop_Sound(CSoundManager::Player_SFX_02);
+					g_pSoundManager->Play_Sound(L"SE_BLACK_KNIGHT_JUMP_000.ogg", CSoundManager::Player_SFX_02, CSoundManager::Effect_Sound);
 				}
 			}
 			else if (m_pDynamicMesh->Get_TrackInfo().Position <= 0.1f)
@@ -5951,6 +6049,9 @@ void CPlayer::Play_Skills()
 
 					_v3 vEffPos = m_pTransform->Get_Pos() + _v3(0.f, 1.3f, 0.f);
 					CParticleMgr::Get_Instance()->Create_Skill_Start_Effect(m_pTransform->Get_Pos(), vEffPos);
+
+					g_pSoundManager->Stop_Sound(CSoundManager::Player_SFX_01);
+					g_pSoundManager->Play_Sound(L"SE_DIGGING_GROUND_000.ogg", CSoundManager::Player_SFX_01, CSoundManager::Effect_Sound);
 				}
 			}
 
@@ -5971,7 +6072,7 @@ void CPlayer::Play_Skills()
 
 			break;
 		}
-		case Renketsu_StrongAtk_12:
+		case Renketsu_12:
 		{
 			if (m_pDynamicMesh->Is_Finish_Animation_Lower(0.9f))
 			{
@@ -6087,6 +6188,8 @@ void CPlayer::Play_Skills()
 					g_pManagement->Create_Effect_Delay(L"Hit_Slash_Particle_0", 0.f, vEffPos, m_pTransform);
 					g_pManagement->Create_ParticleEffect_Delay(L"Player_Skill_RedParticle_Explosion", 0.1f, 0.f, vEffPos, m_pTransform);
 
+					g_pSoundManager->Stop_Sound(CSoundManager::Player_SFX_01);
+					g_pSoundManager->Play_Sound(L"SE_WEAPON_IMPACT_001.ogg", CSoundManager::Player_SFX_01, CSoundManager::Effect_Sound);
 					SHAKE_CAM_lv2;
 				}
 			}
@@ -6098,6 +6201,9 @@ void CPlayer::Play_Skills()
 					m_bEventTrigger[8] = true;
 
 					g_pManagement->Create_Effect_Delay(L"Player_Skill_WindMesh", 0.f, m_pTransform->Get_Pos() + _v3(0, 0.5f, 0.f), nullptr);
+
+					g_pSoundManager->Stop_Sound(CSoundManager::Player_SFX_02);
+					g_pSoundManager->Play_Sound(L"SE_BLACK_KNIGHT_SWING_005.ogg", CSoundManager::Player_SFX_02, CSoundManager::Effect_Sound);
 				}
 			}
 
@@ -6110,13 +6216,16 @@ void CPlayer::Play_Skills()
 					_v3 vEffPos = m_pTransform->Get_Pos() + _v3(0.f, 1.3f, 0.f);
 					CParticleMgr::Get_Instance()->Create_Skill_Start_Effect(V3_NULL, vEffPos, m_pTransform);
 					g_pManagement->Create_ParticleEffect_Delay(L"Player_Skill_DarkSmokeAura"	, 0.5f	, 0.f	, _v3(0, 1.1f, 0.f), m_pTransform);
+
+					g_pSoundManager->Stop_Sound(CSoundManager::Player_SFX_01);
+					g_pSoundManager->Play_Sound(L"SE_DIGGING_GROUND_000.ogg", CSoundManager::Player_SFX_01, CSoundManager::Effect_Sound);
 				}
 			}
 
 			break;
 		}
 
-		case Renketsu_StrongAtk_05:
+		case Renketsu_05:
 		{
 			//==========================================================================================================================
 			// 메인 이벤트
@@ -6235,6 +6344,11 @@ void CPlayer::Play_Skills()
 					g_pManagement->Create_Effect_Delay(L"Player_Skill_WindMesh", 0.1f, vEffWindPos + _v3(0.f, -0.3f, 0.f), m_pTransform, _v3(0.f, vPlayerAngleDeg.y, 0.f));
 					g_pManagement->Create_Effect_Delay(L"Player_Skill_WindMesh", 0.2f, vEffWindPos + _v3(0.f, -0.f, 0.f), m_pTransform, _v3(0.f, vPlayerAngleDeg.y, 0.f));
 					g_pManagement->Create_Effect_Delay(L"Player_Skill_BloodConeMesh", 0.1f, V3_NULL, m_pTransform);
+
+					g_pSoundManager->Stop_Sound(CSoundManager::Player_SFX_01);
+					g_pSoundManager->Play_Sound(L"SE_BLACK_KNIGHT_SWING_002.ogg", CSoundManager::Player_SFX_01, CSoundManager::Effect_Sound);
+					g_pSoundManager->Stop_Sound(CSoundManager::Player_SFX_02);
+					g_pSoundManager->Play_Sound(L"SE_WEAPON_IMPACT_001.ogg", CSoundManager::Player_SFX_02, CSoundManager::Effect_Sound);
 				}
 			}
 			else if (m_pDynamicMesh->Get_TrackInfo().Position >= 2.067f)
@@ -6246,6 +6360,9 @@ void CPlayer::Play_Skills()
 					g_pManagement->Create_Effect_Delay(L"Player_Skill_WindMesh", 0.f, vEffWindPos, m_pTransform, _v3(0.f, vPlayerAngleDeg.y, -45.f));
 					g_pManagement->Create_Effect_Delay(L"Player_Skill_WindMesh", 0.1f, vEffWindPos, m_pTransform, _v3(0.f, vPlayerAngleDeg.y, -45.f));
 					g_pManagement->Create_Effect_Delay(L"Player_Skill_WindMesh", 0.2f, vEffWindPos, m_pTransform, _v3(0.f, vPlayerAngleDeg.y, -45.f));
+
+					g_pSoundManager->Stop_Sound(CSoundManager::Player_SFX_03);
+					g_pSoundManager->Play_Sound(L"SE_BLACK_KNIGHT_SWING_001.ogg", CSoundManager::Player_SFX_03, CSoundManager::Effect_Sound);
 				}
 			}
 			else if (m_pDynamicMesh->Get_TrackInfo().Position >= 1.1f)
@@ -6257,6 +6374,9 @@ void CPlayer::Play_Skills()
 					g_pManagement->Create_Effect_Delay(L"Player_Skill_WindMesh", 0.f, vEffWindPos, m_pTransform, _v3(-10.f, vPlayerAngleDeg.y, 0.f));
 					g_pManagement->Create_Effect_Delay(L"Player_Skill_WindMesh", 0.1f, vEffWindPos, m_pTransform, _v3(-10.f, vPlayerAngleDeg.y, 0.f));
 					g_pManagement->Create_Effect_Delay(L"Player_Skill_WindMesh", 0.2f, vEffWindPos, m_pTransform, _v3(-10.f, vPlayerAngleDeg.y, 0.f));
+
+					g_pSoundManager->Stop_Sound(CSoundManager::Player_SFX_02);
+					g_pSoundManager->Play_Sound(L"SE_BLACK_KNIGHT_SWING_000.ogg", CSoundManager::Player_SFX_02, CSoundManager::Effect_Sound);
 				}
 			}
 			else if (m_pDynamicMesh->Get_TrackInfo().Position >= 0.1f)
@@ -6266,6 +6386,9 @@ void CPlayer::Play_Skills()
 					m_bEventTrigger[13] = true;
 
 					CParticleMgr::Get_Instance()->Create_Skill_Start_Effect(V3_NULL, V3_NULL, m_pTransform);
+
+					g_pSoundManager->Stop_Sound(CSoundManager::Player_SFX_01);
+					g_pSoundManager->Play_Sound(L"SE_DIGGING_GROUND_000.ogg", CSoundManager::Player_SFX_01, CSoundManager::Effect_Sound);
 				}
 			}
 
@@ -6350,7 +6473,7 @@ void CPlayer::Play_Skills()
 
 			break;
 		}
-		case Renketsu_StrongAtk_06:
+		case Renketsu_06:
 		{
 			//==========================================================================================================================
 			// 메인 이벤트
@@ -6457,6 +6580,11 @@ void CPlayer::Play_Skills()
 					g_pManagement->Create_Effect_Delay(L"Player_Skill_RedParticle_Explosion"			, 0.f			, vPlayerPos + vEffGroundPos, nullptr);
 					g_pManagement->Create_Effect_Delay(L"Player_Skill_SplitAssert_LaserAfter_RingLine"	, 0.f			, vPlayerPos + vEffGroundPos, nullptr);
 					g_pManagement->Create_ParticleEffect_Delay(L"Player_Skill_SplitAssert_LaserAfter_Smoke", 0.3f, 0.f	, vPlayerPos + vEffGroundPos, nullptr);
+
+					g_pSoundManager->Stop_Sound(CSoundManager::Player_SFX_03);
+					g_pSoundManager->Play_Sound(L"SE_WEAPON_HIT_009.ogg", CSoundManager::Player_SFX_03, CSoundManager::Effect_Sound);
+					g_pSoundManager->Stop_Sound(CSoundManager::Player_SFX_01);
+					g_pSoundManager->Play_Sound(L"SE_WEAPON_IMPACT_000.ogg", CSoundManager::Player_SFX_01, CSoundManager::Effect_Sound);
 				}
 			}
 
@@ -6472,6 +6600,11 @@ void CPlayer::Play_Skills()
 					g_pManagement->Create_Effect(L"Player_Skill_Rush_WhiteParticle_LaserBefore"	, vPlayerPos + vEffGroundPos, nullptr, m_pTransform->Get_Axis(AXIS_Y));
 					g_pManagement->Create_Effect_Delay(L"Player_Skill_WindMesh", 0.1f	, vEffWindPos + _v3(0, 0.3f, 0.f), m_pTransform, _v3(-30.f, vPlayerAngleDeg.y, 30.f));
 					g_pManagement->Create_Effect_Delay(L"Player_Skill_WindMesh", 0.15f	, vEffWindPos + _v3(0, 0.3f, 0.f), m_pTransform, _v3(30.f, vPlayerAngleDeg.y, 30.f));
+
+					g_pSoundManager->Stop_Sound(CSoundManager::Player_SFX_03);
+					g_pSoundManager->Play_Sound(L"SE_BLACK_KNIGHT_WIND_CUT_000.ogg", CSoundManager::Player_SFX_03, CSoundManager::Effect_Sound);
+					g_pSoundManager->Stop_Sound(CSoundManager::Player_SFX_01);
+					g_pSoundManager->Play_Sound(L"SE_BLACK_KNIGHT_SWING_000.ogg", CSoundManager::Player_SFX_01, CSoundManager::Effect_Sound);
 				}
 			}
 
@@ -6487,6 +6620,9 @@ void CPlayer::Play_Skills()
 					g_pManagement->Create_Effect_Delay(L"Player_Skill_WindMesh", 0.36f	, vPlayerPos + vEffWindPos + _v3(0, -0.3f, 0.f) + m_pTransform->Get_Axis(AXIS_Z) * 2.2f, nullptr, _v3(-90.f, vPlayerAngleDeg.y, 0.f));
 					g_pManagement->Create_Effect_Delay(L"Player_Skill_WindMesh", 0.45f	, vPlayerPos + vEffWindPos + _v3(0, -0.3f, 0.f) + m_pTransform->Get_Axis(AXIS_Z) * 3.2f, nullptr, _v3(-90.f, vPlayerAngleDeg.y, 0.f));
 					g_pManagement->Create_Effect_Delay(L"Player_Skill_WindMesh", 0.5f	, vPlayerPos + vEffWindPos + _v3(0, -0.3f, 0.f) + m_pTransform->Get_Axis(AXIS_Z) * 3.8f, nullptr, _v3(-90.f, vPlayerAngleDeg.y, 0.f));
+
+					g_pSoundManager->Stop_Sound(CSoundManager::Player_SFX_02);
+					g_pSoundManager->Play_Sound(L"SE_BLACK_KNIGHT_MAGIC_SWORD_IMPACT_003.ogg", CSoundManager::Player_SFX_02, CSoundManager::Effect_Sound);
 				}
 			}
 
@@ -6498,6 +6634,9 @@ void CPlayer::Play_Skills()
 
 					_v3 vEffPos = m_pTransform->Get_Pos() + _v3(0.f, 1.3f, 0.f);
 					CParticleMgr::Get_Instance()->Create_Skill_Start_Effect(V3_NULL, vEffPos, m_pTransform);
+
+					g_pSoundManager->Stop_Sound(CSoundManager::Player_SFX_01);
+					g_pSoundManager->Play_Sound(L"SE_DIGGING_GROUND_000.ogg", CSoundManager::Player_SFX_01, CSoundManager::Effect_Sound);
 				}
 			}
 
@@ -6597,7 +6736,7 @@ void CPlayer::Play_Skills()
 
 			break;
 		}
-		case Renketsu_StrongAtk_11:
+		case Renketsu_11:
 		{
 			//==========================================================================================================================
 			// 메인 이벤트
@@ -6695,6 +6834,9 @@ void CPlayer::Play_Skills()
 					g_pManagement->Create_Effect_Delay(L"Player_Skill_Torment_Wind_R", 0.11f, vEffWindPos, m_pTransform, _v3(0.f, vPlayerAngleDeg.y, 10.f));
 					g_pManagement->Create_Effect_Delay(L"Player_Skill_Torment_Wind_Distortion_L", 0.10f, vEffWindPos, m_pTransform, _v3(0.f, vPlayerAngleDeg.y, -10.f));
 					g_pManagement->Create_Effect_Delay(L"Player_Skill_Torment_Wind_Distortion_R", 0.11f, vEffWindPos, m_pTransform, _v3(0.f, vPlayerAngleDeg.y, 10.f));
+
+					g_pSoundManager->Stop_Sound(CSoundManager::Player_SFX_03);
+					g_pSoundManager->Play_Sound(L"SE_BLACK_KNIGHT_SWING_005.ogg", CSoundManager::Player_SFX_03, CSoundManager::Effect_Sound);
 				}
 			}
 
@@ -6706,6 +6848,9 @@ void CPlayer::Play_Skills()
 
 					g_pManagement->Create_Effect_Delay(L"Player_Skill_WindMesh", 0.10f, vEffWindPos , m_pTransform, _v3(10.f, vPlayerAngleDeg.y, 10.f));
 					g_pManagement->Create_Effect_Delay(L"Player_Skill_WindMesh", 0.15f, vEffWindPos , m_pTransform, _v3(10.f, vPlayerAngleDeg.y, 10.f));
+
+					g_pSoundManager->Stop_Sound(CSoundManager::Player_SFX_02);
+					g_pSoundManager->Play_Sound(L"SE_BLACK_KNIGHT_SWING_002.ogg", CSoundManager::Player_SFX_02, CSoundManager::Effect_Sound);
 				}
 			}
 
@@ -6717,6 +6862,9 @@ void CPlayer::Play_Skills()
 
 					_v3 vEffPos = m_pTransform->Get_Pos() + _v3(0.f, 1.3f, 0.f);
 					CParticleMgr::Get_Instance()->Create_Skill_Start_Effect(V3_NULL, vEffPos, m_pTransform);
+
+					g_pSoundManager->Stop_Sound(CSoundManager::Player_SFX_01);
+					g_pSoundManager->Play_Sound(L"SE_DIGGING_GROUND_000.ogg", CSoundManager::Player_SFX_01, CSoundManager::Effect_Sound);
 				}
 			}
 
@@ -6862,7 +7010,7 @@ void CPlayer::Play_Ssword_WeakAtk()
 	{
 		if (m_bSprint)
 		{
-			m_eAnim_Lower = Ssword_DownAtk_01;
+			m_eAnim_Lower = Ssword_Down_01;
 
 			m_fSkillMoveSpeed_Cur = 20.f;
 			m_fSkillMoveAccel_Cur = 0.f;
@@ -6870,7 +7018,7 @@ void CPlayer::Play_Ssword_WeakAtk()
 		}
 		else
 		{
-			m_eAnim_Lower = Player_Anim(Ssword_WeakAtk_01 + (m_sWeakAtkCnt - 1));
+			m_eAnim_Lower = P_NEWANI(Ssword_WeakAtk_01 + (m_sWeakAtkCnt - 1));
 
 			m_fSkillMoveSpeed_Cur = (m_sWeakAtkCnt == 3 ? 8.5f :
 									m_sWeakAtkCnt == 4 ? 7.5f : 5.5f);
@@ -6892,7 +7040,7 @@ void CPlayer::Play_Ssword_WeakAtk()
 	{
 		switch (m_eAnim_Lower)
 		{
-		case Ssword_DownAtk_01:
+		case Ssword_Down_01:
 		{
 			if (m_pDynamicMesh->Is_Finish_Animation_Lower(0.9f))
 			{
@@ -7287,7 +7435,7 @@ void CPlayer::Play_Ssword_HeavyAtk()
 			m_fSkillMoveAccel_Cur = 0.f;
 			m_fSkillMoveSpeed_Cur = 11.f;
 
-			m_eAnim_Lower = Ssword_SpecialLaunch;
+			m_eAnim_Lower = Ssword_Down_02;
 		}
 		else
 		{
@@ -7317,20 +7465,21 @@ void CPlayer::Play_Ssword_HeavyAtk()
 
 			if (m_pDynamicMesh->Is_Finish_Animation_Lower(0.65f))
 			{
-				m_eAnim_Lower = (m_fChargeTimer_Cur > 0.2f ? Ssword_Charge_Attack_01_B : Ssword_Charge_Attack_01_A);
+				m_eAnim_Lower = (m_fChargeTimer_Cur > 0.2f ? Ssword_HeavyAtk_02 : Ssword_HeavyAtk_01);
 				m_eAnim_Upper = m_eAnim_Lower;
 				m_eAnim_RightArm = m_eAnim_Lower;
+				m_eAnim_LeftArm = m_eAnim_Lower;
 
 				m_fChargeTimer_Cur = 0.f;
 
 				m_fSkillMoveAccel_Cur = 0.f;
-				m_fSkillMoveSpeed_Cur = (m_eAnim_Lower == Ssword_Charge_Attack_01_B ? 12.f : 8.f);
+				m_fSkillMoveSpeed_Cur = (m_eAnim_Lower == Ssword_HeavyAtk_02 ? 12.f : 8.f);
 
 				m_fSkillMoveMultiply = 1.f;
 			}
 			break;
 		}
-		case Ssword_Charge_Attack_01_B:
+		case Ssword_HeavyAtk_02:
 		{
 			if (m_pDynamicMesh->Is_Finish_Animation_Lower(0.9f))
 			{
@@ -7400,7 +7549,7 @@ void CPlayer::Play_Ssword_HeavyAtk()
 			break;
 		}
 
-		case Ssword_Charge_Attack_01_A:
+		case Ssword_HeavyAtk_01:
 		{
 			if (m_pDynamicMesh->Is_Finish_Animation_Lower(0.9f))
 			{
@@ -7462,7 +7611,7 @@ void CPlayer::Play_Ssword_HeavyAtk()
 			break;
 		}
 
-		case Ssword_SpecialLaunch:
+		case Ssword_Down_02:
 		{
 			if (m_pDynamicMesh->Is_Finish_Animation_Lower(0.9f))
 			{
@@ -7570,7 +7719,7 @@ void CPlayer::Play_Gun_WeakAtk()
 		}
 		else
 		{
-			m_eAnim_Lower = Player_Anim(Gun_WeakAtk_01 + (m_sWeakAtkCnt - 1));
+			m_eAnim_Lower = P_NEWANI(Gun_WeakAtk_01 + (m_sWeakAtkCnt - 1));
 
 			m_fSkillMoveSpeed_Cur = (
 				m_sWeakAtkCnt == 1 ? 6.f :
@@ -7589,6 +7738,7 @@ void CPlayer::Play_Gun_WeakAtk()
 
 		m_eAnim_Upper = m_eAnim_Lower;
 		m_eAnim_RightArm = m_eAnim_Lower;
+		m_eAnim_LeftArm = m_eAnim_Lower;
 	}
 
 	else if (true == m_bOnAttack)
@@ -8069,7 +8219,7 @@ void CPlayer::Play_Gun_HeavyAtk()
 
 			else
 			{
-				m_eAnim_Lower = Gun_HeavyAtk_03_A;
+				m_eAnim_Lower = Gun_HeavyAtk_01;
 			}
 		}
 		else
@@ -8088,13 +8238,14 @@ void CPlayer::Play_Gun_HeavyAtk()
 		{
 			if (m_pDynamicMesh->Is_Finish_Animation_Lower(0.65f))
 			{
-				m_eAnim_Lower = (m_fChargeTimer_Cur > 0.2f ? Gun_Charge_Attack_01_B : Gun_Charge_Attack_01_A);
+				m_eAnim_Lower = (m_fChargeTimer_Cur > 0.2f ? Gun_HeavyAtk_02 : Gun_HeavyAtk_01);
 				m_eAnim_Upper = m_eAnim_Lower;
 				m_eAnim_RightArm = m_eAnim_Lower;
+				m_eAnim_LeftArm = m_eAnim_Lower;
 
 				m_fChargeTimer_Cur = 0.f;
 
-				m_fSkillMoveAccel_Cur = (m_eAnim_Lower == Gun_HeavyAtk_01_B ? 3.f : 1.8f);
+				m_fSkillMoveAccel_Cur = (m_eAnim_Lower == Gun_HeavyAtk_02 ? 3.f : 1.8f);
 				m_fSkillMoveSpeed_Cur = 0.f;
 
 				m_fSkillMoveMultiply = 1.f;
@@ -8102,7 +8253,7 @@ void CPlayer::Play_Gun_HeavyAtk()
 			break;
 		}
 
-		case Gun_Charge_Attack_01_A:
+		case Gun_HeavyAtk_01:
 		{
 			Decre_Skill_Movement(m_fSkillMoveMultiply);
 			Skill_Movement(m_fSkillMoveSpeed_Cur, -m_pTransform->Get_Axis(AXIS_Z));
@@ -8116,7 +8267,7 @@ void CPlayer::Play_Gun_HeavyAtk()
 			break;
 		}
 
-		case Gun_Charge_Attack_01_B:
+		case Gun_HeavyAtk_02:
 		{
 			Decre_Skill_Movement(m_fSkillMoveMultiply);
 			Skill_Movement(m_fSkillMoveSpeed_Cur, -m_pTransform->Get_Axis(AXIS_Z));
@@ -8130,58 +8281,58 @@ void CPlayer::Play_Gun_HeavyAtk()
 			break;
 		}
 
-		case Gun_HeavyAtk_03_A:
-		{
-			if (m_pDynamicMesh->Is_Finish_Animation_Lower(0.9f))
-			{
-				Reset_BattleState();
-
-				m_eActState = ACT_Idle;
-			}
-
-			else if (m_pDynamicMesh->Get_TrackInfo().Position >= 1.0f)
-			{
-				if (m_bEventTrigger[1] == false)
-				{
-					m_bEventTrigger[1] = true;
-
-					// 이펙트 생성
-				}
-			}
-
-
-			if (m_pDynamicMesh->Get_TrackInfo().Position >= 2.467f && m_pDynamicMesh->Get_TrackInfo().Position < 3.8f)
-			{
-				if (m_bEventTrigger[0] == false)
-				{
-					m_bEventTrigger[0] = true;
-
-					m_fSkillMoveAccel_Cur = 0.f;
-					m_fSkillMoveSpeed_Cur = 0.1f;
-					m_fSkillMoveMultiply = 0.0f;
-				}
-
-				Decre_Skill_Movement(m_fSkillMoveMultiply);
-				Skill_Movement(m_fSkillMoveSpeed_Cur, m_pTransform->Get_Axis(AXIS_Z));
-			}
-
-			else if (m_pDynamicMesh->Get_TrackInfo().Position >= 0.2f && m_pDynamicMesh->Get_TrackInfo().Position < 0.8f)
-			{
-				if (m_bEventTrigger[0] == false)
-				{
-					m_bEventTrigger[0] = true;
-
-					m_fSkillMoveAccel_Cur = 0.f;
-					m_fSkillMoveSpeed_Cur = 0.15f;
-					m_fSkillMoveMultiply = 0.0f;
-				}
-
-				Decre_Skill_Movement(m_fSkillMoveMultiply);
-				Skill_Movement(m_fSkillMoveSpeed_Cur, -m_pTransform->Get_Axis(AXIS_Z));
-			}
-
-			break;
-		}
+		//case Gun_HeavyAtk_03_A:
+		//{
+		//	if (m_pDynamicMesh->Is_Finish_Animation_Lower(0.9f))
+		//	{
+		//		Reset_BattleState();
+		//
+		//		m_eActState = ACT_Idle;
+		//	}
+		//
+		//	else if (m_pDynamicMesh->Get_TrackInfo().Position >= 1.0f)
+		//	{
+		//		if (m_bEventTrigger[1] == false)
+		//		{
+		//			m_bEventTrigger[1] = true;
+		//
+		//			// 이펙트 생성
+		//		}
+		//	}
+		//
+		//
+		//	if (m_pDynamicMesh->Get_TrackInfo().Position >= 2.467f && m_pDynamicMesh->Get_TrackInfo().Position < 3.8f)
+		//	{
+		//		if (m_bEventTrigger[0] == false)
+		//		{
+		//			m_bEventTrigger[0] = true;
+		//
+		//			m_fSkillMoveAccel_Cur = 0.f;
+		//			m_fSkillMoveSpeed_Cur = 0.1f;
+		//			m_fSkillMoveMultiply = 0.0f;
+		//		}
+		//
+		//		Decre_Skill_Movement(m_fSkillMoveMultiply);
+		//		Skill_Movement(m_fSkillMoveSpeed_Cur, m_pTransform->Get_Axis(AXIS_Z));
+		//	}
+		//
+		//	else if (m_pDynamicMesh->Get_TrackInfo().Position >= 0.2f && m_pDynamicMesh->Get_TrackInfo().Position < 0.8f)
+		//	{
+		//		if (m_bEventTrigger[0] == false)
+		//		{
+		//			m_bEventTrigger[0] = true;
+		//
+		//			m_fSkillMoveAccel_Cur = 0.f;
+		//			m_fSkillMoveSpeed_Cur = 0.15f;
+		//			m_fSkillMoveMultiply = 0.0f;
+		//		}
+		//
+		//		Decre_Skill_Movement(m_fSkillMoveMultiply);
+		//		Skill_Movement(m_fSkillMoveSpeed_Cur, -m_pTransform->Get_Axis(AXIS_Z));
+		//	}
+		//
+		//	break;
+		//}
 		}
 	}
 }
@@ -8204,12 +8355,12 @@ void CPlayer::Play_Halverd_WeakAtk()
 		{
 			if (m_bCanSprintAtk)
 			{
-				m_eAnim_Lower = Halverd_SpecialDown_03;
+				m_eAnim_Lower = Halberd_DownAtk_03;
 			}
 
 			else
 			{
-				m_eAnim_Lower = Halverd_SpecialLaunch;
+				m_eAnim_Lower = Halberd_SpecialLaunch;
 
 				m_fSkillMoveMultiply = 0.1f;
 				m_fSkillMoveSpeed_Cur = 3.5f;
@@ -8221,22 +8372,22 @@ void CPlayer::Play_Halverd_WeakAtk()
 		{
 			if (m_sWeakAtkCnt == 1)
 			{
-				m_eAnim_Lower = Halverd_WeakAtk_06;
+				m_eAnim_Lower = Halberd_WeakAtk_06;
 			}
 
 			else if (m_sWeakAtkCnt == 2)
 			{
-				m_eAnim_Lower = Halverd_WeakAtk_07;
+				m_eAnim_Lower = Halberd_WeakAtk_07;
 			}
 
 			else if (m_sWeakAtkCnt == 3)
 			{
-				m_eAnim_Lower = Halverd_WeakAtk_03;
+				m_eAnim_Lower = Halberd_WeakAtk_03;
 			}
 
 			else if (m_sWeakAtkCnt == 4)
 			{
-				m_eAnim_Lower = Halverd_WeakAtk_08;
+				m_eAnim_Lower = Halberd_WeakAtk_08;
 			}
 		}
 
@@ -8244,13 +8395,14 @@ void CPlayer::Play_Halverd_WeakAtk()
 
 		m_eAnim_Upper = m_eAnim_Lower;
 		m_eAnim_RightArm = m_eAnim_Lower;
+		m_eAnim_LeftArm = m_eAnim_Lower;
 	}
 
 	else if (true == m_bOnAttack)
 	{
 		switch (m_eAnim_Lower)
 		{
-		case Halverd_SpecialLaunch:
+		case Halberd_SpecialLaunch:
 		{
 			if (m_pDynamicMesh->Is_Finish_Animation_Lower(0.9f))
 			{
@@ -8322,7 +8474,7 @@ void CPlayer::Play_Halverd_WeakAtk()
 
 		}
 
-		case Halverd_SpecialDown_03:
+		case Halberd_DownAtk_03:
 		{
 			if (m_pDynamicMesh->Is_Finish_Animation_Lower(0.9f))
 			{
@@ -8422,7 +8574,7 @@ void CPlayer::Play_Halverd_WeakAtk()
 
 		}
 
-		case Halverd_WeakAtk_06 :
+		case Halberd_WeakAtk_06 :
 		{
 			if (m_pDynamicMesh->Is_Finish_Animation_Lower(0.9f))
 			{
@@ -8498,7 +8650,7 @@ void CPlayer::Play_Halverd_WeakAtk()
 
 		}
 
-		case Halverd_WeakAtk_07 :
+		case Halberd_WeakAtk_07:
 		{
 			if (m_pDynamicMesh->Is_Finish_Animation_Lower(0.9f))
 			{
@@ -8559,7 +8711,7 @@ void CPlayer::Play_Halverd_WeakAtk()
 
 		}
 
-		case Halverd_WeakAtk_08 :
+		case Halberd_WeakAtk_08:
 		{
 			if (m_pDynamicMesh->Is_Finish_Animation_Lower(0.9f))
 			{
@@ -8635,7 +8787,7 @@ void CPlayer::Play_Halverd_WeakAtk()
 
 		}
 
-		case Halverd_WeakAtk_03 :
+		case Halberd_WeakAtk_03:
 		{
 			if (m_pDynamicMesh->Is_Finish_Animation_Lower(0.9f))
 			{
@@ -8710,18 +8862,18 @@ void CPlayer::Play_Halverd_HeavyAtk()
 		{
 			if (m_bCanSprintAtk)
 			{
-				m_eAnim_Lower = Halverd_SpecialDown_03;
+				m_eAnim_Lower = Halberd_DownAtk_03;
 			}
 
 			else
 			{
-				m_eAnim_Lower = Halverd_SpecialDown_02;
+				m_eAnim_Lower = Halberd_DownAtk_02;
 			}
 		}
 
 		else
 		{
-			m_eAnim_Lower = Halverd_HeavyAtk_06_A;
+			m_eAnim_Lower = Halberd_HeavyAtk_06;
 		}
 
 		m_bOnAttack = true;
@@ -8735,7 +8887,7 @@ void CPlayer::Play_Halverd_HeavyAtk()
 	{
 		switch (m_eAnim_Lower)
 		{
-		case Halverd_HeavyAtk_06_A:
+		case Halberd_HeavyAtk_06:
 		{
 			if (m_pDynamicMesh->Is_Finish_Animation_Lower(0.9f))
 			{
@@ -8845,7 +8997,7 @@ void CPlayer::Play_Halverd_HeavyAtk()
 
 		}
 
-		case Halverd_SpecialDown_02:
+		case Halberd_DownAtk_02:
 		{
 			if (m_pDynamicMesh->Is_Finish_Animation_Lower(0.9f))
 			{
@@ -8940,7 +9092,7 @@ void CPlayer::Play_Hammer_WeakAtk()
 			}
 			else
 			{
-				m_eAnim_Lower = Hammer_Down_02;
+				m_eAnim_Lower = Hammer_WeakAtk_Down_02;
 
 				m_fSkillMoveMultiply = 0.1f;
 				m_fSkillMoveSpeed_Cur = 3.5f;
@@ -8983,13 +9135,14 @@ void CPlayer::Play_Hammer_WeakAtk()
 
 		m_eAnim_Upper = m_eAnim_Lower;
 		m_eAnim_RightArm = m_eAnim_Lower;
+		m_eAnim_LeftArm = m_eAnim_Lower;
 	}
 
 	else if (true == m_bOnAttack)
 	{
 		switch (m_eAnim_Lower)
 		{
-		case Hammer_Down_02:
+		case Hammer_WeakAtk_Down_02:
 		{
 			if (m_pDynamicMesh->Is_Finish_Animation_Lower(0.9f))
 			{
@@ -9278,7 +9431,7 @@ void CPlayer::Play_Hammer_HeavyAtk()
 				m_fSkillMoveAccel_Cur = 0.f;
 				m_fSkillMoveSpeed_Cur = 7.f;
 
-				m_eAnim_Lower = Hammer_Down_01;
+				m_eAnim_Lower = Hammer_WeakAtk_Down_01;
 			}
 		}
 
@@ -9289,7 +9442,7 @@ void CPlayer::Play_Hammer_HeavyAtk()
 			m_fSkillMoveAccel_Cur = 0.f;
 			m_fSkillMoveSpeed_Cur = 4.f;
 
-			m_eAnim_Lower = Hammer_HeavyAtk_04_B;
+			m_eAnim_Lower = Hammer_HeavyAtk_02;
 		}
 
 	}
@@ -9297,7 +9450,7 @@ void CPlayer::Play_Hammer_HeavyAtk()
 	{
 		switch (m_eAnim_Lower)
 		{
-		case Hammer_HeavyAtk_04_B:
+		case Hammer_HeavyAtk_02:
 		{
 			if (m_pDynamicMesh->Is_Finish_Animation_Lower(0.9f))
 			{
@@ -9306,7 +9459,7 @@ void CPlayer::Play_Hammer_HeavyAtk()
 				m_eActState = ACT_Idle;
 			}
 
-			else if (m_pDynamicMesh->Get_TrackInfo().Position >= 6.4f)
+			else if (m_pDynamicMesh->Get_TrackInfo().Position >= 5.6f)
 			{
 				if (m_bEventTrigger[11] == false)
 				{
@@ -9316,7 +9469,7 @@ void CPlayer::Play_Hammer_HeavyAtk()
 				}
 			}
 
-			else if (m_pDynamicMesh->Get_TrackInfo().Position >= 6.2f)
+			else if (m_pDynamicMesh->Get_TrackInfo().Position >= 5.5f)
 			{
 				if (m_bEventTrigger[10] == false)
 				{
@@ -9330,7 +9483,7 @@ void CPlayer::Play_Hammer_HeavyAtk()
 				}
 			}
 
-			else if (m_pDynamicMesh->Get_TrackInfo().Position >= 6.f)
+			else if (m_pDynamicMesh->Get_TrackInfo().Position >= 5.2f)
 			{
 				if (m_bEventTrigger[9] == false)
 				{
@@ -9341,7 +9494,7 @@ void CPlayer::Play_Hammer_HeavyAtk()
 				}
 			}
 
-			else if (m_pDynamicMesh->Get_TrackInfo().Position >= 4.633f)
+			else if (m_pDynamicMesh->Get_TrackInfo().Position >= 3.833f)
 			{
 				if (m_bEventTrigger[8] == false)
 				{
@@ -9355,7 +9508,7 @@ void CPlayer::Play_Hammer_HeavyAtk()
 				}
 			}
 
-			else if (m_pDynamicMesh->Get_TrackInfo().Position >= 4.443f)
+			else if (m_pDynamicMesh->Get_TrackInfo().Position >= 3.143f)
 			{
 				if (m_bEventTrigger[7] == false)
 				{
@@ -9366,7 +9519,7 @@ void CPlayer::Play_Hammer_HeavyAtk()
 				}
 			}
 
-			else if (m_pDynamicMesh->Get_TrackInfo().Position >= 3.4f)
+			else if (m_pDynamicMesh->Get_TrackInfo().Position >= 2.6f)
 			{
 				if (m_bEventTrigger[6] == false)
 				{
@@ -9380,7 +9533,7 @@ void CPlayer::Play_Hammer_HeavyAtk()
 				}
 			}
 
-			else if (m_pDynamicMesh->Get_TrackInfo().Position >= 3.2f)
+			else if (m_pDynamicMesh->Get_TrackInfo().Position >= 2.4f)
 			{
 				if (m_bEventTrigger[5] == false)
 				{
@@ -9391,7 +9544,7 @@ void CPlayer::Play_Hammer_HeavyAtk()
 				}
 			}
 
-			else if (m_pDynamicMesh->Get_TrackInfo().Position >= 2.867f)
+			else if (m_pDynamicMesh->Get_TrackInfo().Position >= 2.067f)
 			{
 				if (m_bEventTrigger[4] == false)
 				{
@@ -9402,7 +9555,7 @@ void CPlayer::Play_Hammer_HeavyAtk()
 			}
 
 
-			if (m_pDynamicMesh->Get_TrackInfo().Position >= 8.5f)
+			if (m_pDynamicMesh->Get_TrackInfo().Position >= 8.2f)
 			{
 				if (m_bEventTrigger[1] == false)
 				{
@@ -9418,7 +9571,7 @@ void CPlayer::Play_Hammer_HeavyAtk()
 				Skill_Movement(m_fSkillMoveSpeed_Cur, -m_pTransform->Get_Axis(AXIS_Z));
 			}
 
-			else if (m_pDynamicMesh->Get_TrackInfo().Position >= 5.5f && m_pDynamicMesh->Get_TrackInfo().Position < 6.35f)
+			else if (m_pDynamicMesh->Get_TrackInfo().Position >= 5.2f && m_pDynamicMesh->Get_TrackInfo().Position < 6.05f)
 			{
 				if (m_bEventTrigger[0] == false)
 				{
@@ -9434,7 +9587,7 @@ void CPlayer::Play_Hammer_HeavyAtk()
 				Skill_Movement(m_fSkillMoveSpeed_Cur, m_pTransform->Get_Axis(AXIS_Z));
 			}
 
-			else if (m_pDynamicMesh->Get_TrackInfo().Position >= 3.6f && m_pDynamicMesh->Get_TrackInfo().Position < 5.f)
+			else if (m_pDynamicMesh->Get_TrackInfo().Position >= 3.3f && m_pDynamicMesh->Get_TrackInfo().Position < 4.7f)
 			{
 				Decre_Skill_Movement(m_fSkillMoveMultiply);
 				Skill_Movement(m_fSkillMoveSpeed_Cur, m_pTransform->Get_Axis(AXIS_Z));
@@ -9442,7 +9595,7 @@ void CPlayer::Play_Hammer_HeavyAtk()
 			break;
 		}
 
-		case Hammer_Down_01:
+		case Hammer_WeakAtk_Down_01:
 		{
 			if (m_pDynamicMesh->Is_Finish_Animation_Lower(0.9f))
 			{
@@ -9451,7 +9604,7 @@ void CPlayer::Play_Hammer_HeavyAtk()
 				m_eActState = ACT_Idle;
 			}
 
-			else if (m_pDynamicMesh->Get_TrackInfo().Position >= 3.4f)
+			else if (m_pDynamicMesh->Get_TrackInfo().Position >= 3.2f)
 			{
 				if (m_bEventTrigger[7] == false)
 				{
@@ -9461,7 +9614,7 @@ void CPlayer::Play_Hammer_HeavyAtk()
 				}
 			}
 
-			else if (m_pDynamicMesh->Get_TrackInfo().Position >= 3.2f)
+			else if (m_pDynamicMesh->Get_TrackInfo().Position >= 3.0f)
 			{
 				if (m_bEventTrigger[6] == false)
 				{
@@ -9475,7 +9628,7 @@ void CPlayer::Play_Hammer_HeavyAtk()
 				}
 			}
 
-			else if (m_pDynamicMesh->Get_TrackInfo().Position >= 2.267f)
+			else if (m_pDynamicMesh->Get_TrackInfo().Position >= 2.067f)
 			{
 				if (m_bEventTrigger[5] == false)
 				{
@@ -9486,7 +9639,7 @@ void CPlayer::Play_Hammer_HeavyAtk()
 				}
 			}
 
-			else if (m_pDynamicMesh->Get_TrackInfo().Position >= 1.967f)
+			else if (m_pDynamicMesh->Get_TrackInfo().Position >= 1.767f)
 			{
 				if (m_bEventTrigger[4] == false)
 				{
@@ -9497,7 +9650,7 @@ void CPlayer::Play_Hammer_HeavyAtk()
 			}
 
 
-			if (m_pDynamicMesh->Get_TrackInfo().Position >= 1.45f)
+			if (m_pDynamicMesh->Get_TrackInfo().Position >= 1.25f)
 			{
 				Decre_Skill_Movement(m_fSkillMoveMultiply);
 				Skill_Movement(m_fSkillMoveSpeed_Cur, m_pTransform->Get_Axis(AXIS_Z));
@@ -9508,7 +9661,7 @@ void CPlayer::Play_Hammer_HeavyAtk()
 				}
 			}
 
-			else if (m_pDynamicMesh->Get_TrackInfo().Position >= 1.35f)
+			else if (m_pDynamicMesh->Get_TrackInfo().Position >= 1.15f)
 			{
 				if (m_fAnimMutiply > 0.5f)
 				{
@@ -9649,12 +9802,12 @@ void CPlayer::Play_Lsword_WeakAtk()
 		{
 			if (m_bCanSprintAtk)
 			{
-				m_eAnim_Lower = Lsword_WeakAtk_04;
+				m_eAnim_Lower = LSword_WeakAtk_04;
 			}
 
 			else
 			{
-				m_eAnim_Lower = Lsword_DownAtk_01;
+				m_eAnim_Lower = Ssword_Down_01;
 			}
 		}
 
@@ -9662,17 +9815,17 @@ void CPlayer::Play_Lsword_WeakAtk()
 		{
 			if (m_sWeakAtkCnt == 1)
 			{
-				m_eAnim_Lower = Lsword_WeakAtk_01;
+				m_eAnim_Lower = LSword_WeakAtk_01;
 			}
 
 			else if (m_sWeakAtkCnt == 2)
 			{
-				m_eAnim_Lower = Lsword_WeakAtk_02;
+				m_eAnim_Lower = LSword_WeakAtk_02;
 			}
 
 			else if (m_sWeakAtkCnt == 3)
 			{
-				m_eAnim_Lower = Lsword_WeakAtk_03;
+				m_eAnim_Lower = LSword_WeakAtk_03;
 			}
 		}
 
@@ -9680,13 +9833,14 @@ void CPlayer::Play_Lsword_WeakAtk()
 
 		m_eAnim_Upper = m_eAnim_Lower;
 		m_eAnim_RightArm = m_eAnim_Lower;
+		m_eAnim_LeftArm = m_eAnim_Lower;
 	}
 
 	else if (true == m_bOnAttack)
 	{
 		switch (m_eAnim_Lower)
 		{
-		case Lsword_DownAtk_01:
+		case Ssword_Down_01:
 		{
 			if (m_pDynamicMesh->Is_Finish_Animation_Lower(0.9f))
 			{
@@ -9772,7 +9926,7 @@ void CPlayer::Play_Lsword_WeakAtk()
 
 		}
 
-		case Lsword_WeakAtk_01:
+		case LSword_WeakAtk_01:
 		{
 			if (m_pDynamicMesh->Is_Finish_Animation_Lower(0.9f))
 			{
@@ -9860,7 +10014,7 @@ void CPlayer::Play_Lsword_WeakAtk()
 
 		}
 
-		case Lsword_WeakAtk_02:
+		case LSword_WeakAtk_02:
 		{
 			if (m_pDynamicMesh->Is_Finish_Animation_Lower(0.9f))
 			{
@@ -9944,7 +10098,7 @@ void CPlayer::Play_Lsword_WeakAtk()
 			break;
 		}
 
-		case Lsword_WeakAtk_03:
+		case LSword_WeakAtk_03:
 		{
 			if (m_pDynamicMesh->Is_Finish_Animation_Lower(0.9f))
 			{
@@ -10028,7 +10182,7 @@ void CPlayer::Play_Lsword_WeakAtk()
 			break;
 		}
 
-		case Lsword_WeakAtk_04:
+		case LSword_WeakAtk_04:
 		{
 			Play_Lsword_DashAtk();
 			break;
@@ -10045,14 +10199,14 @@ void CPlayer::Play_Lsword_HeavyAtk()
 		{
 			if (m_bCanSprintAtk)
 			{
-				m_eAnim_Lower = Lsword_WeakAtk_04;
+				m_eAnim_Lower = LSword_WeakAtk_04;
 			}
 			else
-				m_eAnim_Lower = Lsword_DownAtk_Launch;
+				m_eAnim_Lower = Lsword_SpecialLaunch;
 		}
 		else
 		{
-			m_eAnim_Lower = Lsword_HeavyAtk_05_A;
+			m_eAnim_Lower = Lsword_HeavyAtk_02;
 		}
 
 		m_eAnim_Upper = m_eAnim_Lower;
@@ -10073,21 +10227,22 @@ void CPlayer::Play_Lsword_HeavyAtk()
 
 			if (m_pDynamicMesh->Is_Finish_Animation_Lower(0.65f))
 			{
-				m_eAnim_Lower = (m_fChargeTimer_Cur > 0.2f ? Ssword_Charge_Attack_01_B : Ssword_Charge_Attack_01_A);
+				m_eAnim_Lower = (m_fChargeTimer_Cur > 0.2f ? Lsword_HeavyAtk_02 : Lsword_HeavyAtk_01);
 				m_eAnim_Upper = m_eAnim_Lower;
 				m_eAnim_RightArm = m_eAnim_Lower;
+				m_eAnim_LeftArm = m_eAnim_Lower;
 
 				m_fChargeTimer_Cur = 0.f;
 
 				m_fSkillMoveAccel_Cur = 0.f;
-				m_fSkillMoveSpeed_Cur = (m_eAnim_Lower == Ssword_Charge_Attack_01_B ? 12.f : 8.f);
+				m_fSkillMoveSpeed_Cur = (m_eAnim_Lower == Lsword_HeavyAtk_02 ? 12.f : 8.f);
 
 				m_fSkillMoveMultiply = 1.f;
 			}
 			break;
 		}
 
-		case Lsword_DownAtk_Launch:
+		case Lsword_SpecialLaunch:
 		{
 			if (m_pDynamicMesh->Is_Finish_Animation_Lower(0.9f))
 			{
@@ -10172,7 +10327,7 @@ void CPlayer::Play_Lsword_HeavyAtk()
 			break;
 		}
 
-		case Lsword_HeavyAtk_05_A:
+		case Lsword_HeavyAtk_02:
 		{
 			if (m_pDynamicMesh->Is_Finish_Animation_Lower(0.9f))
 			{
@@ -10257,7 +10412,7 @@ void CPlayer::Play_Lsword_HeavyAtk()
 			break;
 		}
 
-		case Lsword_WeakAtk_04:
+		case LSword_WeakAtk_04:
 		{
 			Play_Lsword_DashAtk();
 			break;
@@ -10338,6 +10493,84 @@ void CPlayer::Play_Lsword_DashAtk()
 	}
 }
 
+void CPlayer::Ready_Bodys()
+{
+	m_pBody[CCostume_Body::Chara_Body_01] = static_cast<CCostume_Body*>(g_pManagement->Clone_GameObject_Return(L"GameObject_Costume_Body",
+		&CCostume_Body::_INFO(&m_pTransform->Get_WorldMat(), nullptr, _v4(1.f, 1.f, 1.f, 1.f), this, CCostume_Body::Chara_Body_01)));
+
+	m_pBody[CCostume_Body::Chara_Body_01] = static_cast<CCostume_Body*>(g_pManagement->Clone_GameObject_Return(L"GameObject_Costume_Body",
+		&CCostume_Body::_INFO(&m_pTransform->Get_WorldMat(), nullptr, _v4(1.f, 1.f, 1.f, 1.f), this, CCostume_Body::Chara_Body_02)));
+
+	m_pBody[CCostume_Body::Chara_Body_01] = static_cast<CCostume_Body*>(g_pManagement->Clone_GameObject_Return(L"GameObject_Costume_Body",
+		&CCostume_Body::_INFO(&m_pTransform->Get_WorldMat(), nullptr, _v4(1.f, 1.f, 1.f, 1.f), this, CCostume_Body::Chara_Body_03)));
+
+	m_pBody[CCostume_Body::Chara_Body_01] = static_cast<CCostume_Body*>(g_pManagement->Clone_GameObject_Return(L"GameObject_Costume_Body",
+		&CCostume_Body::_INFO(&m_pTransform->Get_WorldMat(), nullptr, _v4(1.f, 1.f, 1.f, 1.f), this, CCostume_Body::Chara_Body_04)));
+}
+
+void CPlayer::Ready_Heads()
+{
+	m_pHead[CCostume_Head::Chara_Head_01] = static_cast<CCostume_Head*>(g_pManagement->Clone_GameObject_Return(L"GameObject_Costume_Head",
+		&CCostume_Head::_INFO(&m_pTransform->Get_WorldMat(), m_matBones[Bone_Head], _v4(1.f, 1.f, 1.f, 1.f), this, CCostume_Head::Chara_Head_01)));
+
+	m_pHead[CCostume_Head::Chara_Head_02] = static_cast<CCostume_Head*>(g_pManagement->Clone_GameObject_Return(L"GameObject_Costume_Head",
+		&CCostume_Head::_INFO(&m_pTransform->Get_WorldMat(), m_matBones[Bone_Head], _v4(1.f, 1.f, 1.f, 1.f), this, CCostume_Head::Chara_Head_02)));
+
+	m_pHead[CCostume_Head::Chara_Head_03] = static_cast<CCostume_Head*>(g_pManagement->Clone_GameObject_Return(L"GameObject_Costume_Head",
+		&CCostume_Head::_INFO(&m_pTransform->Get_WorldMat(), m_matBones[Bone_Head], _v4(1.f, 1.f, 1.f, 1.f), this, CCostume_Head::Chara_Head_03)));
+
+	m_pHead[CCostume_Head::Chara_Head_04] = static_cast<CCostume_Head*>(g_pManagement->Clone_GameObject_Return(L"GameObject_Costume_Head",
+		&CCostume_Head::_INFO(&m_pTransform->Get_WorldMat(), m_matBones[Bone_Head], _v4(1.f, 1.f, 1.f, 1.f), this, CCostume_Head::Chara_Head_04)));
+
+	m_pHead[CCostume_Head::Chara_Head_05] = static_cast<CCostume_Head*>(g_pManagement->Clone_GameObject_Return(L"GameObject_Costume_Head",
+		&CCostume_Head::_INFO(&m_pTransform->Get_WorldMat(), m_matBones[Bone_Head], _v4(1.f, 1.f, 1.f, 1.f), this, CCostume_Head::Chara_Head_05)));
+
+	m_pHead[CCostume_Head::Chara_Head_06] = static_cast<CCostume_Head*>(g_pManagement->Clone_GameObject_Return(L"GameObject_Costume_Head",
+		&CCostume_Head::_INFO(&m_pTransform->Get_WorldMat(), m_matBones[Bone_Head], _v4(1.f, 1.f, 1.f, 1.f), this, CCostume_Head::Chara_Head_06)));
+
+	m_pHead[CCostume_Head::Chara_Head_07] = static_cast<CCostume_Head*>(g_pManagement->Clone_GameObject_Return(L"GameObject_Costume_Head",
+		&CCostume_Head::_INFO(&m_pTransform->Get_WorldMat(), m_matBones[Bone_Head], _v4(1.f, 1.f, 1.f, 1.f), this, CCostume_Head::Chara_Head_07)));
+
+	m_pHead[CCostume_Head::Chara_Head_08] = static_cast<CCostume_Head*>(g_pManagement->Clone_GameObject_Return(L"GameObject_Costume_Head",
+		&CCostume_Head::_INFO(&m_pTransform->Get_WorldMat(), m_matBones[Bone_Head], _v4(1.f, 1.f, 1.f, 1.f), this, CCostume_Head::Chara_Head_08)));
+
+	m_pHead[CCostume_Head::Chara_Head_09] = static_cast<CCostume_Head*>(g_pManagement->Clone_GameObject_Return(L"GameObject_Costume_Head",
+		&CCostume_Head::_INFO(&m_pTransform->Get_WorldMat(), m_matBones[Bone_Head], _v4(1.f, 1.f, 1.f, 1.f), this, CCostume_Head::Chara_Head_09)));
+
+	m_pHead[CCostume_Head::Chara_Head_10] = static_cast<CCostume_Head*>(g_pManagement->Clone_GameObject_Return(L"GameObject_Costume_Head",
+		&CCostume_Head::_INFO(&m_pTransform->Get_WorldMat(), m_matBones[Bone_Head], _v4(1.f, 1.f, 1.f, 1.f), this, CCostume_Head::Chara_Head_10)));
+}
+
+void CPlayer::Ready_Masks()
+{
+	m_pMask[CCostume_Mask::Mask_06] = static_cast<CCostume_Mask*>(g_pManagement->Clone_GameObject_Return(L"GameObject_Costume_Mask",
+		&CCostume_Mask::_INFO(&m_pTransform->Get_WorldMat(), m_matBones[Bone_Head], _v4(1.f, 1.f, 1.f, 1.f), CCostume_Mask::Mask_06)));
+
+	m_pMask[CCostume_Mask::Mask_07] = static_cast<CCostume_Mask*>(g_pManagement->Clone_GameObject_Return(L"GameObject_Costume_Mask",
+		&CCostume_Mask::_INFO(&m_pTransform->Get_WorldMat(), m_matBones[Bone_Head], _v4(1.f, 1.f, 1.f, 1.f), CCostume_Mask::Mask_07)));
+
+	m_pMask[CCostume_Mask::Mask_08] = static_cast<CCostume_Mask*>(g_pManagement->Clone_GameObject_Return(L"GameObject_Costume_Mask",
+		&CCostume_Mask::_INFO(&m_pTransform->Get_WorldMat(), m_matBones[Bone_Head], _v4(1.f, 1.f, 1.f, 1.f), CCostume_Mask::Mask_08)));
+
+	m_pMask[CCostume_Mask::Mask_10] = static_cast<CCostume_Mask*>(g_pManagement->Clone_GameObject_Return(L"GameObject_Costume_Mask",
+		&CCostume_Mask::_INFO(&m_pTransform->Get_WorldMat(), m_matBones[Bone_Head], _v4(1.f, 1.f, 1.f, 1.f), CCostume_Mask::Mask_10)));
+
+	m_pMask[CCostume_Mask::Mask_11] = static_cast<CCostume_Mask*>(g_pManagement->Clone_GameObject_Return(L"GameObject_Costume_Mask",
+		&CCostume_Mask::_INFO(&m_pTransform->Get_WorldMat(), m_matBones[Bone_Head], _v4(1.f, 1.f, 1.f, 1.f), CCostume_Mask::Mask_11)));
+
+	m_pMask[CCostume_Mask::Mask_Drape] = static_cast<CCostume_Mask*>(g_pManagement->Clone_GameObject_Return(L"GameObject_Costume_Mask",
+		&CCostume_Mask::_INFO(&m_pTransform->Get_WorldMat(), m_matBones[Bone_Head], _v4(1.f, 1.f, 1.f, 1.f), CCostume_Mask::Mask_Drape)));
+
+	m_pMask[CCostume_Mask::Mask_Stinger] = static_cast<CCostume_Mask*>(g_pManagement->Clone_GameObject_Return(L"GameObject_Costume_Mask",
+		&CCostume_Mask::_INFO(&m_pTransform->Get_WorldMat(), m_matBones[Bone_Head], _v4(1.f, 1.f, 1.f, 1.f), CCostume_Mask::Mask_Stinger)));
+
+	m_pMask[CCostume_Mask::Mask_Gauntlet] = static_cast<CCostume_Mask*>(g_pManagement->Clone_GameObject_Return(L"GameObject_Costume_Mask",
+		&CCostume_Mask::_INFO(&m_pTransform->Get_WorldMat(), m_matBones[Bone_Head], _v4(1.f, 1.f, 1.f, 1.f), CCostume_Mask::Mask_Gauntlet)));
+
+	m_pMask[CCostume_Mask::Mask_Ivy] = static_cast<CCostume_Mask*>(g_pManagement->Clone_GameObject_Return(L"GameObject_Costume_Mask",
+		&CCostume_Mask::_INFO(&m_pTransform->Get_WorldMat(), m_matBones[Bone_Head], _v4(1.f, 1.f, 1.f, 1.f),  CCostume_Mask::Mask_Ivy)));
+}
+
 void CPlayer::Ready_Weapon()
 {
 	LPCSTR tmpChar = "RightHandAttach";
@@ -10345,17 +10578,19 @@ void CPlayer::Ready_Weapon()
 
 	D3DXFRAME_DERIVED*	pFamre = (D3DXFRAME_DERIVED*)m_pDynamicMesh->Get_BonInfo(tmpChar, 2);
 
+	m_matHandBone = &pFamre->CombinedTransformationMatrix;
+
 	m_pWeapon[WPN_SLOT_A] = static_cast<CWeapon*>(g_pManagement->Clone_GameObject_Return(L"GameObject_Weapon", NULL));
-	m_pWeapon[WPN_SLOT_A]->Change_WeaponData(Wpn_SSword);
+	m_pWeapon[WPN_SLOT_A]->Change_WeaponData(Wpn_Hammer);
 	m_pWeapon[WPN_SLOT_A]->Set_Friendly(true);
-	m_pWeapon[WPN_SLOT_A]->Set_AttachBoneMartix(&pFamre->CombinedTransformationMatrix);
+	m_pWeapon[WPN_SLOT_A]->Set_AttachBoneMartix(m_matHandBone);
 	m_pWeapon[WPN_SLOT_A]->Set_ParentMatrix(&m_pTransform->Get_WorldMat());
 
-	m_pWeapon[WPN_SLOT_B] = static_cast<CWeapon*>(g_pManagement->Clone_GameObject_Return(L"GameObject_Weapon", NULL));
-	m_pWeapon[WPN_SLOT_B]->Change_WeaponData(Wpn_Hammer);
-	m_pWeapon[WPN_SLOT_B]->Set_AttachBoneMartix(&pFamre->CombinedTransformationMatrix);
-	m_pWeapon[WPN_SLOT_B]->Set_ParentMatrix(&m_pTransform->Get_WorldMat());
-	m_pWeapon[WPN_SLOT_B]->Set_Friendly(true);
+	//m_pWeapon[WPN_SLOT_B] = static_cast<CWeapon*>(g_pManagement->Clone_GameObject_Return(L"GameObject_Weapon", NULL));
+	//m_pWeapon[WPN_SLOT_B]->Change_WeaponData(Wpn_Hammer);
+	//m_pWeapon[WPN_SLOT_B]->Set_AttachBoneMartix(&pFamre->CombinedTransformationMatrix);
+	//m_pWeapon[WPN_SLOT_B]->Set_ParentMatrix(&m_pTransform->Get_WorldMat());
+	//m_pWeapon[WPN_SLOT_B]->Set_Friendly(true);
 
 	m_bWeaponActive[WPN_SLOT_A] = true;
 	m_bWeaponActive[WPN_SLOT_B] = false;
@@ -10397,6 +10632,8 @@ void CPlayer::Ready_DrainWeapon()
 	_mat   matAttach;
 
 	D3DXFRAME_DERIVED*	pFamre = (D3DXFRAME_DERIVED*)m_pDynamicMesh->Get_BonInfo(tmpChar, 0);
+
+	m_matTailBone = &pFamre->CombinedTransformationMatrix;
 
 	m_pDrainWeapon = static_cast<CDrain_Weapon*>(g_pManagement->Clone_GameObject_Return(L"GameObject_DrainWeapon", NULL));
 	m_pDrainWeapon->Set_ParentMatrix(&m_pTransform->Get_WorldMat());
@@ -10475,7 +10712,7 @@ void CPlayer::Ready_Skills()
 
 	// 1 - 스플릿 어비스
 	pSkillInfo->bOneHand = true;
-	pSkillInfo->dwAnimationIdx = Renketsu_StrongAtk_01;
+	pSkillInfo->dwAnimationIdx = Renketsu_01;
 	pSkillInfo->eCurSkillIdx = Skill_OneHand_Active_01;
 	pSkillInfo->dwSkillCost = 2; 
 
@@ -10489,7 +10726,7 @@ void CPlayer::Ready_Skills()
 
 	// 2 - 팬텀 어썰트
 	pSkillInfo->bOneHand = true;
-	pSkillInfo->dwAnimationIdx = Renketsu_StrongAtk_02;
+	pSkillInfo->dwAnimationIdx = Renketsu_02;
 	pSkillInfo->eCurSkillIdx = Skill_OneHand_Active_02;
 	pSkillInfo->dwSkillCost = 2;
 
@@ -10503,7 +10740,7 @@ void CPlayer::Ready_Skills()
 
 	// 3 - 블러드 서큘러
 	pSkillInfo->bOneHand = true;
-	pSkillInfo->dwAnimationIdx = Renketsu_StrongAtk_03;
+	pSkillInfo->dwAnimationIdx = Renketsu_03;
 	pSkillInfo->eCurSkillIdx = Skill_OneHand_Active_03;
 	pSkillInfo->dwSkillCost = 2;
 
@@ -10517,7 +10754,7 @@ void CPlayer::Ready_Skills()
 
 	// 4 - 쉐도우 어썰트
 	pSkillInfo->bOneHand = true;
-	pSkillInfo->dwAnimationIdx = Renketsu_StrongAtk_12;
+	pSkillInfo->dwAnimationIdx = Renketsu_12;
 	pSkillInfo->eCurSkillIdx = Skill_OneHand_Active_04;
 	pSkillInfo->dwSkillCost = 2;
 
@@ -10531,7 +10768,7 @@ void CPlayer::Ready_Skills()
 
 	// 5 - 리전 피니쉬
 	pSkillInfo->bOneHand = true;
-	pSkillInfo->dwAnimationIdx = Renketsu_StrongAtk_04;
+	pSkillInfo->dwAnimationIdx = Renketsu_04;
 	pSkillInfo->eCurSkillIdx = Skill_TwoHand_Active_01;
 	pSkillInfo->dwSkillCost = 2;
 
@@ -10545,7 +10782,7 @@ void CPlayer::Ready_Skills()
 	
 	// 6 - 삼멸살
 	pSkillInfo->bOneHand = true;
-	pSkillInfo->dwAnimationIdx = Renketsu_StrongAtk_05;
+	pSkillInfo->dwAnimationIdx = Renketsu_05;
 	pSkillInfo->eCurSkillIdx = Skill_TwoHand_Active_02;
 	pSkillInfo->dwSkillCost = 2;
 
@@ -10559,7 +10796,7 @@ void CPlayer::Ready_Skills()
 
 	// 7 - 강룡복호
 	pSkillInfo->bOneHand = true;
-	pSkillInfo->dwAnimationIdx = Renketsu_StrongAtk_06;
+	pSkillInfo->dwAnimationIdx = Renketsu_06;
 	pSkillInfo->eCurSkillIdx = Skill_TwoHand_Active_03;
 	pSkillInfo->dwSkillCost = 2;
 
@@ -10573,7 +10810,7 @@ void CPlayer::Ready_Skills()
 
 	// 8 - 토먼트 블레이드
 	pSkillInfo->bOneHand = true;
-	pSkillInfo->dwAnimationIdx = Renketsu_StrongAtk_11;
+	pSkillInfo->dwAnimationIdx = Renketsu_11;
 	pSkillInfo->eCurSkillIdx = Skill_TwoHand_Active_04;
 	pSkillInfo->dwSkillCost = 2;
 
@@ -10588,7 +10825,7 @@ void CPlayer::Ready_Skills()
 
 	// 9 - 창 스킬
 	pSkillInfo->bOneHand = true;
-	pSkillInfo->dwAnimationIdx = Halverd_Skill_Heavy_01;
+	pSkillInfo->dwAnimationIdx = Renketsu_Spear;
 	pSkillInfo->eCurSkillIdx = Skill_Halverd_Single;
 	pSkillInfo->dwSkillCost = 2;
 
@@ -10603,7 +10840,7 @@ void CPlayer::Ready_Skills()
 
 	// 10 - 총검 스킬
 	pSkillInfo->bOneHand = true;
-	pSkillInfo->dwAnimationIdx = Halverd_Skill_Heavy_01;
+	pSkillInfo->dwAnimationIdx = Renketsu_Gun;
 	pSkillInfo->eCurSkillIdx = Skill_Gun_Single;
 	pSkillInfo->dwSkillCost = 2;
 
@@ -10706,14 +10943,14 @@ void CPlayer::Change_Weapon()
 	// 무기가 없으면 교체 못함
 	IF_NULL_RETURN(m_pWeapon[WPN_SLOT_B]);
 
-	// 무기가 없으면 교체 못함
-	IF_NULL_RETURN(m_pWeapon[WPN_SLOT_C]);
-
-	// 무기가 없으면 교체 못함
-	IF_NULL_RETURN(m_pWeapon[WPN_SLOT_D]);
-
-	// 무기가 없으면 교체 못함
-	IF_NULL_RETURN(m_pWeapon[WPN_SLOT_E]);
+	//// 무기가 없으면 교체 못함
+	//IF_NULL_RETURN(m_pWeapon[WPN_SLOT_C]);
+	//
+	//// 무기가 없으면 교체 못함
+	//IF_NULL_RETURN(m_pWeapon[WPN_SLOT_D]);
+	//
+	//// 무기가 없으면 교체 못함
+	//IF_NULL_RETURN(m_pWeapon[WPN_SLOT_E]);
 
 
 	if (m_eActState == ACT_WeaponChange)
@@ -10865,6 +11102,31 @@ void CPlayer::Active_UI_BloodCode(_bool _bResetUI)
 	m_pCamManager->Set_MidDistance(2.5f);
 }
 
+void CPlayer::Active_UI_LockOn(_bool _bResetUI)
+{
+	if (false == _bResetUI)
+	{
+		CMesh_Dynamic*	pMeshDynamic = static_cast<Engine::CMesh_Dynamic*>((m_pTarget)->Get_Component(L"Com_Mesh"));
+		CTransform*		pTtransform = TARGET_TO_TRANS(m_pTarget);
+
+		LPCSTR tmpChar = "Hips";
+
+		D3DXFRAME_DERIVED*	pFamre = (D3DXFRAME_DERIVED*)pMeshDynamic->Get_BonInfo(tmpChar, 0);
+		_mat* matBone = &pFamre->CombinedTransformationMatrix;
+		_mat* matTarget = &pTtransform->Get_WorldMat();
+
+		m_pLockOn_UI->Set_Enable(true);
+		m_pLockOn_UI->Set_Bonmatrix(matBone);
+		m_pLockOn_UI->Set_TargetWorldmatrix(matTarget);
+	}
+
+	else
+	{
+		m_pLockOn_UI->Set_Enable(false);
+		m_pLockOn_UI->Reset_TargetMatrix();
+	}
+}
+
 HRESULT CPlayer::Add_Component()
 {
 	// For.Com_Transform
@@ -10880,7 +11142,7 @@ HRESULT CPlayer::Add_Component()
 		return E_FAIL;
 
 	// for.Com_Mesh
-	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Mesh_Player", L"Com_MeshDynamic", (CComponent**)&m_pDynamicMesh)))
+	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Mesh_BodyInner_01", L"Com_MeshDynamic", (CComponent**)&m_pDynamicMesh)))
 		return E_FAIL;
 
 	// for.Com_NavMesh
@@ -10915,7 +11177,7 @@ HRESULT CPlayer::SetUp_Default()
 	m_pTransform->Set_Scale(V3_ONE);
 
 	// Mesh
-	m_pDynamicMesh->SetUp_Animation(Cmn_Idle);
+	m_pDynamicMesh->SetUp_Animation_Lower(Cmn_Idle);
 
 	// Info
 	m_tInfo.fMoveAccel_Cur = 0.f;
@@ -10948,6 +11210,11 @@ HRESULT CPlayer::SetUp_ConstantTable(CShader* pShader)
 	if (nullptr == pShader)
 		return E_FAIL;
 
+	//_v3 vLightPos = _v3(50.f, -100.f, 0.f);
+	//V3_NORMAL_SELF(&vLightPos);
+
+	//if (FAILED(pShader->Set_Value("g_vLightDir", &vLightPos, sizeof(_mat))))
+	//	return E_FAIL;
 	//=============================================================================================
 	// 기본 메트릭스
 	//=============================================================================================
@@ -10987,8 +11254,6 @@ HRESULT CPlayer::SetUp_ConstantTable(CShader* pShader)
 	if (FAILED(pShader->Set_Value("g_fID_B_Power", &fID_B, sizeof(_float))))
 		return E_FAIL;
 	//=============================================================================================
-
-	m_pBattleAgent->Update_RimParam_OnShader(pShader);
 
 	return NOERROR;
 }
@@ -11053,6 +11318,11 @@ void CPlayer::Reset_BattleState()
 	m_tObjParam.bIsAttack = false;
 	m_tObjParam.bCanHit = true;
 	m_tObjParam.bIsHit = false;
+
+	m_tObjParam.bCanDodge = true;
+	m_tObjParam.bIsDodge = false;
+	m_bOnDodge = false;
+	m_bCanDodge = true;
 
 	m_sWeakAtkCnt = 0;
 	m_sHeavyAtkCnt = 0;
@@ -11205,6 +11475,57 @@ _bool CPlayer::Check_CunterTarget()
 	return false;
 }
 
+void CPlayer::Change_PlayerBody(PLAYER_BODY _eBodyType)
+{
+	if (_eBodyType == m_ePlayerBody)
+		return;
+
+	m_ePlayerBody = _eBodyType;
+
+	_tchar szBodyName[STR_128] = L"";
+
+	lstrcpy(szBodyName, 
+		(m_ePlayerBody == Player_Body_01 ? L"Mesh_BodyInner_01" :
+			m_ePlayerBody == Player_Body_02 ? L"Mesh_BodyInner_02" :
+			m_ePlayerBody == Player_Body_03 ? L"Mesh_BodyInner_03" : L"Mesh_BodyInner_04"
+		));
+
+	// 컴포넌트에 있는 매쉬 찾아서
+	auto& iter = m_pmapComponents.find(L"Com_MeshDynamic");
+	Safe_Release(iter->second);
+
+	// Static 멤버변수는 처음에 Clone 할때 AddRef 해준다., 
+	Safe_Release(m_pDynamicMesh);
+
+	// Release 한 컴포넌트에 새로이 Clone 받음.
+	iter->second = m_pDynamicMesh = static_cast<CMesh_Dynamic*>(CManagement::Get_Instance()->Clone_Component(SCENE_STATIC, szBodyName));
+	Safe_AddRef(iter->second);
+
+	Ready_BoneMatrix();
+
+	LPCSTR tmpChar = "RightHandAttach";
+
+	D3DXFRAME_DERIVED*	pFamre = (D3DXFRAME_DERIVED*)m_pDynamicMesh->Get_BonInfo(tmpChar, 2);
+
+	m_matHandBone = &pFamre->CombinedTransformationMatrix;
+
+	tmpChar = "Hips";
+
+	pFamre = (D3DXFRAME_DERIVED*)m_pDynamicMesh->Get_BonInfo(tmpChar, 0);
+
+	m_matTailBone = &pFamre->CombinedTransformationMatrix;
+
+	m_pHair->Set_AttachBoneMartix(m_matBones[Bone_Head]);
+	m_pHead[m_eHeadType]->Set_AttachBoneMartix(m_matBones[Bone_Head]);
+	m_pMask[m_eMaskType]->Set_AttachBoneMartix(m_matBones[Bone_Head]);
+	m_pWeapon[m_eActiveSlot]->Set_AttachBoneMartix(m_matHandBone);
+	m_pDrainWeapon->Set_AttachBoneMartix(m_matTailBone);
+}
+
+void CPlayer::Update_OuterAnim()
+{
+}
+
 CPlayer * CPlayer::Create(_Device pGraphic_Device)
 {
 	CPlayer*	pInstance = new CPlayer(pGraphic_Device);
@@ -11255,6 +11576,8 @@ void CPlayer::Free()
 	m_vecActiveSkillInfo.shrink_to_fit();
 	m_vecActiveSkillInfo.clear();
 
+	Safe_Release(m_pLockOn_UI);
+
 	Safe_Release(m_pDrainWeapon);
 	Safe_Release(m_pCollider);
 	Safe_Release(m_pTransform);
@@ -11267,6 +11590,7 @@ void CPlayer::Free()
 	Safe_Release(m_pUIManager);
 	Safe_Release(m_pCamManager);
 	Safe_Release(m_pStageAgent);
+	Safe_Release(m_pScriptManager);
 
 	m_pCunterTarget = nullptr;
 
@@ -11276,7 +11600,16 @@ void CPlayer::Free()
 	}
 
 	Safe_Release(m_pHair);
-	Safe_Release(m_pOuter);
+	//Safe_Release(m_pOuter);
+
+	for (auto& iter : m_pMask)
+		Safe_Release(iter);
+
+	for (auto& iter : m_pBody)
+		Safe_Release(iter);
+
+	for (auto& iter : m_pHead)
+		Safe_Release(iter);
 
 	CGameObject::Free();
 }

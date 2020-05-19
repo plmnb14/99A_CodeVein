@@ -82,7 +82,18 @@ HRESULT CMesh_Dynamic::Ready_Component_Prototype(const _tchar * pFilePath, const
 
 	SetUp_CombinedTransformationMatricesPointer(m_pRootFrame, 0);
 
-	if (!lstrcmp(pFileName, L"Player.X"))
+	if (!lstrcmp(pFileName, L"BodyInner_01.X") || 
+		!lstrcmp(pFileName, L"BodyInner_02.X") || 
+		!lstrcmp(pFileName, L"BodyInner_03.X") || 
+		!lstrcmp(pFileName, L"BodyInner_04.X") ||
+		!lstrcmp(pFileName, L"Drape_01.X") ||
+		!lstrcmp(pFileName, L"Gauntlet_01.X") || 
+		!lstrcmp(pFileName, L"Gauntlet_03.X") || 
+		!lstrcmp(pFileName, L"LongCoat_01.X") || 
+		!lstrcmp(pFileName, L"LongCoat_02.X") || 
+		!lstrcmp(pFileName, L"LongCoat_03.X") ||
+		!lstrcmp(pFileName, L"Muffler_01.X") || 
+		!lstrcmp(pFileName, L"Muffler_02.X"))
 	{
 		m_bIsSeperate = true;
 
