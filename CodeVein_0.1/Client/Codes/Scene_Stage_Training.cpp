@@ -3,6 +3,7 @@
 
 #include "CameraMgr.h"
 #include "Effect.h"
+#include "OrthoEffect.h"
 #include "UI.h"
 #include "UI_Manager.h"
 #include "BossHP.h"
@@ -136,10 +137,10 @@ HRESULT CScene_Stage_Training::Ready_Layer_Enemies()
 	//g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Colleague", nullptr);
 
 	// ¾ßÄí¸ð
-	g_pManagement->Add_GameObject_ToLayer(L"GameObject_NPC_Yakumo", SCENE_STAGE, L"Layer_NPC", &CNPC_Yakumo::NPC_INFO(_v3(-4.46f, 0.f, -5.294f), D3DXToRadian(90.f)));
+	//g_pManagement->Add_GameObject_ToLayer(L"GameObject_NPC_Yakumo", SCENE_STAGE, L"Layer_NPC", &CNPC_Yakumo::NPC_INFO(_v3(-4.46f, 0.f, -5.294f), D3DXToRadian(90.f)));
 
 	// ¿äÄí¸ð
-	g_pManagement->Add_GameObject_ToLayer(L"GameObject_NPC_Yokumo", SCENE_STAGE, L"Layer_NPC", &CNPC_Yokumo::NPC_INFO(_v3(-1.46f, 0.f, -1.294f), D3DXToRadian(90.f)));
+	//g_pManagement->Add_GameObject_ToLayer(L"GameObject_NPC_Yokumo", SCENE_STAGE, L"Layer_NPC", &CNPC_Yokumo::NPC_INFO(_v3(-1.46f, 0.f, -1.294f), D3DXToRadian(90.f)));
 
 	//// ÅäÅÛ
 	//pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_Cocoon",
@@ -305,7 +306,6 @@ HRESULT CScene_Stage_Training::Ready_Layer_Environment()
 	//pInstance = g_pManagement->Clone_GameObject_Return(L"Cloth_Static", &CClothStatic::INFO(CClothStatic::ClothStatic_Name::Hair_Long));
 	//g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Cloth", nullptr);
 
-
 	return S_OK;
 }
 
@@ -320,6 +320,8 @@ HRESULT CScene_Stage_Training::Ready_Layer_Custom(const _tchar * pLayerTag)
 	if (FAILED(g_pManagement->Add_Prototype(SCENE_STATIC, L"DefaultTex_Custom_Face", CTexture::Create(m_pGraphic_Device, CTexture::TYPE_GENERAL, L"../Resources/Texture/DefaultUI/Customize/Custom_Face/Custom_Face_%d.dds", 10))))
 		return E_FAIL;
 	if (FAILED(g_pManagement->Add_Prototype(SCENE_STATIC, L"DefaultTex_Custom_ToxicGuard", CTexture::Create(m_pGraphic_Device, CTexture::TYPE_GENERAL, L"../Resources/Texture/DefaultUI/Customize/Custom_ToxicGuard/Custom_ToxicGuard_%d.dds", 10))))
+		return E_FAIL;
+	if (FAILED(g_pManagement->Add_Prototype(SCENE_STATIC, L"DefaultTex_Custom_Inner", CTexture::Create(m_pGraphic_Device, CTexture::TYPE_GENERAL, L"../Resources/Texture/DefaultUI/Customize/Custom_Inner/Custom_Inner_%d.dds", 4))))
 		return E_FAIL;
 
 	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_CustomInven", CCustomInven::Create(m_pGraphic_Device))))

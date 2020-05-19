@@ -39,6 +39,7 @@ HRESULT CScene_Stage_Base::Ready_Scene()
 	CRenderer* pRenderer = static_cast<CRenderer*>(CManagement::Get_Instance()->Clone_Component(SCENE_STATIC, L"Renderer"));
 	pRenderer->Fog_On(true);
 	pRenderer->Set_FogDestiny(0.01f);
+	pRenderer->Set_UseLinearFog(true);
 	Safe_Release(pRenderer);
 
 	g_pSoundManager->Stop_Sound(CSoundManager::Ambient_01);
@@ -100,6 +101,8 @@ HRESULT CScene_Stage_Base::Ready_Layer_Custom(const _tchar * pLayerTag)
 	if (FAILED(g_pManagement->Add_Prototype(SCENE_STATIC, L"DefaultTex_Custom_Face", CTexture::Create(m_pGraphic_Device, CTexture::TYPE_GENERAL, L"../Resources/Texture/DefaultUI/Customize/Custom_Face/Custom_Face_%d.dds", 10))))
 		return E_FAIL;
 	if (FAILED(g_pManagement->Add_Prototype(SCENE_STATIC, L"DefaultTex_Custom_ToxicGuard", CTexture::Create(m_pGraphic_Device, CTexture::TYPE_GENERAL, L"../Resources/Texture/DefaultUI/Customize/Custom_ToxicGuard/Custom_ToxicGuard_%d.dds", 10))))
+		return E_FAIL;
+	if (FAILED(g_pManagement->Add_Prototype(SCENE_STATIC, L"DefaultTex_Custom_Inner", CTexture::Create(m_pGraphic_Device, CTexture::TYPE_GENERAL, L"../Resources/Texture/DefaultUI/Customize/Custom_Inner/Custom_Inner_%d.dds", 4))))
 		return E_FAIL;
 
 	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_CustomInven", CCustomInven::Create(m_pGraphic_Device))))

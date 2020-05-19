@@ -112,6 +112,9 @@ _int CHaze::Late_Update_GameObject(_double TimeDelta)
 	if (nullptr == m_pRendererCom)
 		return E_FAIL;
 
+	if (m_fDelay > 0.f)
+		return NO_EVENT;
+
 	if (FAILED(m_pRendererCom->Add_RenderList(RENDER_NONALPHA, this)))
 		return E_FAIL;
 

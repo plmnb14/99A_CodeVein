@@ -2659,6 +2659,13 @@ void CPlayer::Play_Run()
 	}
 
 	g_pManagement->Create_Effect_Offset(L"Player_FootSmoke", 0.5f, m_pTransform->Get_Pos());
+
+	if (SCENE_STAGE_02 == g_eSceneID_Cur)
+	{
+		g_pManagement->Create_Effect_Offset(L"Player_FootSmoke_Snow", 0.5f, m_pTransform->Get_Pos());
+		g_pManagement->Create_Effect_Offset(L"Player_FootSmoke_SnowChunk", 0.5f, m_pTransform->Get_Pos());
+		g_pManagement->Create_Effect_Offset(L"Player_FootSmoke_SnowUp", 0.5f, m_pTransform->Get_Pos());
+	}
 }
 
 void CPlayer::Play_Dash()

@@ -32,7 +32,11 @@ HRESULT CScene_Stage_02::Ready_Scene()
 	CRenderer* pRenderer = static_cast<CRenderer*>(CManagement::Get_Instance()->Clone_Component(SCENE_STATIC, L"Renderer"));
 	pRenderer->Fog_On(true);
 	pRenderer->Set_FogDestiny(0.04f);
+	pRenderer->Set_UseLinearFog(false);
 	Safe_Release(pRenderer);
+
+	g_pSoundManager->Stop_Sound(CSoundManager::Ambient_01);
+	g_pSoundManager->Play_Sound(L"BGM_MT_SNOW.ogg", CSoundManager::Ambient_01, CSoundManager::Ambient_Sound);
 
 	g_pManagement->LoadCreateObject_FromPath(m_pGraphic_Device, L"Object_Stage_02.dat");
 
@@ -110,18 +114,17 @@ HRESULT CScene_Stage_02::Ready_Layer_Environment(const _tchar* pLayerTag)
 	if (FAILED(g_pManagement->Add_GameObject_ToLayer(L"GameObject_BossMassageUI", SCENE_STAGE, L"Layer_BossMassageUI")))
 		return E_FAIL;
 
-	g_pManagement->Create_Effect(L"FloorPlane_Black", _v3(0.f, -6.f, 0.f));
-
+	//g_pManagement->Create_Effect(L"FloorPlane_Black", _v3(0.f, -6.f, 0.f));
 
 	m_pSnowEffect_0 = static_cast<COrthoEffect*>(CParticleMgr::Get_Instance()->Create_EffectReturn(L"Snow_Ortho_0"));
 	m_pSnowEffect_0->Set_Desc(_v3(0, 0, 0), nullptr);
-	m_pSnowEffect_0->Set_UV_Speed(1.f, 0.8f);
+	m_pSnowEffect_0->Set_UV_Speed(0.5f, -0.8f);
 	m_pSnowEffect_0->Reset_Init();
 	m_pSnowEffect_0->Set_Active(true);
 
 	m_pSnowEffect_1 = static_cast<COrthoEffect*>(CParticleMgr::Get_Instance()->Create_EffectReturn(L"Snow_Ortho_1"));
 	m_pSnowEffect_1->Set_Desc(_v3(0, 0, 0), nullptr);
-	m_pSnowEffect_1->Set_UV_Speed(0.85f, -0.7f);
+	m_pSnowEffect_1->Set_UV_Speed(0.75f, -0.9f);
 	m_pSnowEffect_1->Reset_Init();
 	m_pSnowEffect_1->Set_Active(true);
 

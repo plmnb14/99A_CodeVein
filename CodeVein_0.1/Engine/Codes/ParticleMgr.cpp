@@ -20,6 +20,9 @@ HRESULT CParticleMgr::Ready_ParticleManager_Essential()
 	Input_Pool(L"ItemGet_Particle", 100);
 
 	Input_Pool(L"Player_FootSmoke", 50);
+	Input_Pool(L"Player_FootSmoke_Snow", 50);
+	Input_Pool(L"Player_FootSmoke_SnowChunk", 50);
+	Input_Pool(L"Player_FootSmoke_SnowUp", 50);
 	Input_Pool(L"Player_FootSmoke_Jump", 30);
 	Input_Pool(L"Player_FootSmoke_DodgeBack", 90);
 	Input_Pool(L"Player_SpaceBar_StepParticle", 500);

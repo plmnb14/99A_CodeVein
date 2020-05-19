@@ -194,8 +194,43 @@ PS_OUT PS_MAIN(PS_IN In)
 	fog.x = 500 / (500 - 0.1);
 	fog.y = -1 / (500 - 0.1);
 	
-	//// 선형 Fog
-	//vector vFog = fog.x + PixelCameraZ * fog.y;
+	// 선형 Fog
+	vector vFog = fog.x + PixelCameraZ * fog.y;
+
+	Out.vColor = vFog * Out.vColor + (1 - vFog) * fogColor;
+
+	return Out;
+}
+
+PS_OUT PS_FOG_EXP(PS_IN In)
+{
+	PS_OUT			Out = (PS_OUT)0;
+
+	vector	vDiffuse = tex2D(DiffuseSampler, In.vTexUV);
+	vector	vEmissive = tex2D(EmissiveSampler, In.vTexUV);
+	vector	vShade = tex2D(ShadeSampler, In.vTexUV);
+	vector	vSpecular = tex2D(SpecularSampler, In.vTexUV);
+	vector	vSSAO = tex2D(SSAOSampler, In.vTexUV);
+
+	float AO = vSpecular.a;
+	vSpecular.a = 0.f;
+
+	float3 vFinalShade = vShade.r * vSSAO.r * AO;
+
+	Out.vColor = ((vDiffuse + vSpecular) * float4(vFinalShade, 1.f)) + vEmissive;
+
+	// ==================================================
+	// FOG  =============================================
+	vector	vDepth = tex2D(DepthSampler, In.vTexUV);
+
+	if (0 == vDepth.x || 0 == g_FogDestiny)
+		return Out;
+
+	float PixelCameraZ = vDepth.y * 500.f;
+	vector fogColor = tex2D(FogColorSampler, In.vTexUV);// vector(0.3, 0.3, 0.3, 1.0);
+	float2 fog;
+	fog.x = 500 / (500 - 0.1);
+	fog.y = -1 / (500 - 0.1);
 
 	//  지수 Fog
 	vector vFog = 1 / exp(pow(PixelCameraZ * g_FogDestiny, 2));
@@ -786,6 +821,21 @@ technique Default_Technique
 		minfilter[0] = point;
 		magfilter[0] = point;
 	}
-	
+
+	pass Blend_FogExp // 14
+	{
+		ZWriteEnable = false;
+
+		AlphatestEnable = true;
+		AlphaRef = 0;
+		AlphaFunc = Greater;
+
+		VertexShader = NULL;
+		PixelShader = compile ps_3_0 PS_FOG_EXP();
+
+		minfilter[0] = point;
+		magfilter[0] = point;
+	}
+
 }
 

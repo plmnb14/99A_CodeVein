@@ -62,7 +62,7 @@ _int CCustomCategory::Update_GameObject(_double TimeDelta)
 	CUI::Update_GameObject(TimeDelta);
 	m_fPosX = WINCX * 0.1f;
 
-	LOOP(4)
+	LOOP(5)
 	{
 		TARGET_TO_TRANS(m_vecOption[i])->Set_Scale(_v3(1.f, 1.f, 1.f));
 		TARGET_TO_TRANS(m_vecOption[i])->Set_At(m_pTransformCom->Get_At());
@@ -70,7 +70,10 @@ _int CCustomCategory::Update_GameObject(_double TimeDelta)
 		m_vecOption[i]->Set_UI_Pos(Get_UI_Pos().x, Get_UI_Pos().y + 76.f + (i * 40.f));
 		m_vecOption[i]->Set_UI_Size(256.f, 60.f);
 		m_vecOption[i]->Set_ViewZ(m_fViewZ - 0.01f);
-		m_vecOption[i]->Set_UI_Index(i + 1);
+		_int iIdx = i + 1;
+		if (i == 4)
+			iIdx = 12;
+		m_vecOption[i]->Set_UI_Index(iIdx);
 		m_vecOption[i]->Set_Active(m_bIsActive);
 	}
 
@@ -222,7 +225,7 @@ void CCustomCategory::Change_Texture(const _tchar * _Name)
 void CCustomCategory::SetUp_Default()
 {
 	CCustomCategoryOption* pInstance = nullptr;
-	LOOP(4)
+	LOOP(5)
 	{
 		pInstance = static_cast<CCustomCategoryOption*>(g_pManagement->Clone_GameObject_Return(L"GameObject_CustomCategoryOption", nullptr));
 		g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_PREPARE_ALL, L"Layer_CustomUI", nullptr);

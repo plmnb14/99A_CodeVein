@@ -1306,10 +1306,13 @@ HRESULT CRenderer::Render_Blend()
 	if (FAILED(Render_Priority()))
 		return E_FAIL;
 
+	_int iPass = 0;
+	if (!m_bUseLinearFog)
+		iPass = 14;
 
 	// 장치에 백버퍼가 셋팅되어있다.	
 	m_pShader_Blend->Begin_Shader();
-	m_pShader_Blend->Begin_Pass(0);
+	m_pShader_Blend->Begin_Pass(iPass);
 
 	m_pViewPortBuffer->Render_VIBuffer();
 

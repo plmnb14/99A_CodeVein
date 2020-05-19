@@ -16,6 +16,7 @@ public:
 		TYPE_FACE,
 		TYPE_EYE,
 		TYPE_MASK,
+		TYPE_INNER,
 		TYPE_END
 	};
 
@@ -60,6 +61,7 @@ private:
 	vector<CCustomSlot*>	m_vecFaceSlot;
 	vector<CCustomSlot*>	m_vecEyeSlot;
 	vector<CCustomSlot*>	m_vecMaskSlot;
+	vector<CCustomSlot*>	m_vecInnerSlot;
 
 	CCustomSliderBar*		m_pHairSlider[4];
 

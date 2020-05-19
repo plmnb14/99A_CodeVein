@@ -96,6 +96,9 @@ public:
 	CCostume_Mask* Get_Costume_Mask() { return m_pMask[m_eMaskType]; }
 
 public:
+	void Set_PlayerBody(PLAYER_BODY _eBodyType) { Change_PlayerBody(_eBodyType); }
+
+public:
 	void Set_WeaponSlot(ACTIVE_WEAPON_SLOT eType, WEAPON_DATA eData);
 	void Set_ArmorSlot(ARMOR_All_DATA eType);
 public:

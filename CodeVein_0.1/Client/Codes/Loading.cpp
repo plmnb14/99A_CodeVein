@@ -848,6 +848,12 @@ HRESULT CLoading::Ready_Effect(void)
 
 	if (FAILED(Add_EffectPrototype(L"Player_FootSmoke")))
 		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"Player_FootSmoke_Snow")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"Player_FootSmoke_SnowChunk")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"Player_FootSmoke_SnowUp")))
+		return E_FAIL;
 	if (FAILED(Add_EffectPrototype(L"Player_FootSmoke_Jump")))
 		return E_FAIL;
 	if (FAILED(Add_EffectPrototype(L"Player_FootSmoke_DodgeBack")))
@@ -1310,8 +1316,8 @@ _uint CLoading::Loading_Title()
 	cout << "DynamicMesh 불러오는 중 . . ." << endl;
 	g_pManagement->LoadMesh_FromPath(m_pGraphicDev, L"../../Data/Load_MeshData/Mesh_Dynamic_Path.dat");
 	
-	cout << "NPC 불러오는 중 . . ." << endl;
-	g_pManagement->LoadMesh_FromPath(m_pGraphicDev, L"../../Data/Load_MeshData/Mesh_NPC_Path.dat");
+	//cout << "NPC 불러오는 중 . . ." << endl;
+	//g_pManagement->LoadMesh_FromPath(m_pGraphicDev, L"../../Data/Load_MeshData/Mesh_NPC_Path.dat");
 	//============================================================================================================
 	// 무기 불러오는 중
 	//============================================================================================================
