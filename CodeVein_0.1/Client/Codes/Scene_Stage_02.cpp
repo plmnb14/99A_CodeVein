@@ -31,7 +31,7 @@ HRESULT CScene_Stage_02::Ready_Scene()
 
 	CRenderer* pRenderer = static_cast<CRenderer*>(CManagement::Get_Instance()->Clone_Component(SCENE_STATIC, L"Renderer"));
 	pRenderer->Fog_On(true);
-	pRenderer->Set_FogDestiny(0.02f);
+	pRenderer->Set_FogDestiny(0.04f);
 	Safe_Release(pRenderer);
 
 	g_pManagement->LoadCreateObject_FromPath(m_pGraphic_Device, L"Object_Stage_02.dat");
@@ -110,7 +110,20 @@ HRESULT CScene_Stage_02::Ready_Layer_Environment(const _tchar* pLayerTag)
 	if (FAILED(g_pManagement->Add_GameObject_ToLayer(L"GameObject_BossMassageUI", SCENE_STAGE, L"Layer_BossMassageUI")))
 		return E_FAIL;
 
-	g_pManagement->Create_Effect(L"FloorPlane_Black", _v3(0.f, -2.f, 0.f));
+	g_pManagement->Create_Effect(L"FloorPlane_Black", _v3(0.f, -6.f, 0.f));
+
+
+	m_pSnowEffect_0 = static_cast<COrthoEffect*>(CParticleMgr::Get_Instance()->Create_EffectReturn(L"Snow_Ortho_0"));
+	m_pSnowEffect_0->Set_Desc(_v3(0, 0, 0), nullptr);
+	m_pSnowEffect_0->Set_UV_Speed(1.f, 0.8f);
+	m_pSnowEffect_0->Reset_Init();
+	m_pSnowEffect_0->Set_Active(true);
+
+	m_pSnowEffect_1 = static_cast<COrthoEffect*>(CParticleMgr::Get_Instance()->Create_EffectReturn(L"Snow_Ortho_1"));
+	m_pSnowEffect_1->Set_Desc(_v3(0, 0, 0), nullptr);
+	m_pSnowEffect_1->Set_UV_Speed(0.85f, -0.7f);
+	m_pSnowEffect_1->Reset_Init();
+	m_pSnowEffect_1->Set_Active(true);
 
 	return S_OK;
 }
@@ -156,10 +169,10 @@ void CScene_Stage_02::Create_Fog(_double TimeDelta)
 	if (m_fMapFogDelay > FOG_OFFSET)
 	{
 		m_fMapFogDelay = 0.f;
-		g_pManagement->Create_Effect(L"MapFog_0", _v3(0.f, -26.f, 0.f));
+		g_pManagement->Create_Effect(L"MapFog_0", _v3(0.f, -4.f, 0.f));
 	}
 
-	g_pManagement->Create_Effect_Offset(L"MapFog_0", 7.f, _v3(0.f, -23.f, 0.f));
+	g_pManagement->Create_Effect_Offset(L"MapFog_0", 7.f, _v3(0.f, -3.f, 0.f));
 }
 
 void CScene_Stage_02::Create_Dust(_double TimeDelta)
@@ -219,6 +232,8 @@ CScene_Stage_02 * CScene_Stage_02::Create(LPDIRECT3DDEVICE9 pGraphic_Device, _bo
 void CScene_Stage_02::Free()
 {
 	//Safe_Release(m_pNavMesh);
+	m_pSnowEffect_0->Set_Dead();
+	m_pSnowEffect_1->Set_Dead();
 
 	CScene::Free();
 }

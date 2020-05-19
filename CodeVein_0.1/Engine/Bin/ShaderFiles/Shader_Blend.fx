@@ -194,8 +194,11 @@ PS_OUT PS_MAIN(PS_IN In)
 	fog.x = 500 / (500 - 0.1);
 	fog.y = -1 / (500 - 0.1);
 	
-	// 선형 Fog
-	vector vFog = fog.x + PixelCameraZ * fog.y;
+	//// 선형 Fog
+	//vector vFog = fog.x + PixelCameraZ * fog.y;
+
+	//  지수 Fog
+	vector vFog = 1 / exp(pow(PixelCameraZ * g_FogDestiny, 2));
 
 	Out.vColor = vFog * Out.vColor + (1 - vFog) * fogColor;
 
@@ -271,8 +274,8 @@ PS_OUT PS_BLUR(PS_IN In)
 
 	vector	vDiffuse = tex2D(DiffuseSampler, In.vTexUV);
 
-	//Out.vColor = vDiffuse;
-	//return Out;
+	Out.vColor = vDiffuse;
+	return Out;
 
 	float4 color = 0;
 	float2 samp = In.vTexUV;

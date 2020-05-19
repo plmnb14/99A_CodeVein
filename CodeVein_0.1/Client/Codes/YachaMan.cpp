@@ -4880,7 +4880,7 @@ void CYachaMan::Play_Dead()
 			{
 				if (false == m_bEventTrigger[0])
 				{
-					m_bEventTrigger[1] = true;
+					m_bEventTrigger[0] = true;
 					Start_Dissolve(0.7f, false, true);
 					m_pWeapon->Start_Dissolve(0.5f, false, true);
 

@@ -285,7 +285,7 @@ HRESULT CRenderer::Ready_Component_Prototype()
 	m_pGraphic_Dev->SetRenderState(D3DRS_CULLMODE, D3DCULL_CCW);
 
 
-#ifdef _DEBUG
+//#ifdef _DEBUG
 
 	//=====================================================================================================================
 
@@ -402,7 +402,7 @@ HRESULT CRenderer::Ready_Component_Prototype()
 	// For.Target_GodRay`s Debug Buffer
 	if (FAILED(m_pTarget_Manager->Ready_Debug_Buffer(L"Target_GodRay", fTargetSize * 7, 0, fTargetSize, fTargetSize)))
 		return E_FAIL;
-#endif
+//#endif
 
 	return NOERROR;
 }
@@ -521,7 +521,9 @@ HRESULT CRenderer::Draw_RenderList()
 		m_pTarget_Manager->Render_Debug_Buffer(L"MRT_SSAO_Blur");
 		m_pTarget_Manager->Render_Debug_Buffer_Single(L"Target_BlurDOF");
 		m_pTarget_Manager->Render_Debug_Buffer_Single(L"Target_DecalDepth");
-		m_pTarget_Manager->Render_Debug_Buffer_Single(L"Target_GodRay");
+		//m_pTarget_Manager->Render_Debug_Buffer_Single(L"Target_GodRay");
+		m_pTarget_Manager->Render_Debug_Buffer_Single(L"Target_DistortionAfter");
+		m_pTarget_Manager->Render_Debug_Buffer_Single(L"Target_DOFAfter");
 		
 		m_pGraphic_Dev->SetTexture(0, nullptr);
 	}
@@ -538,7 +540,7 @@ void CRenderer::DOF_On(_bool bOn)
 	if (m_bDOF)
 	{
 		m_fFocus = 0.5f;
-		m_fRange = 0.08f;
+		m_fRange = 0.065f;
 	}
 	else
 	{
@@ -1422,13 +1424,11 @@ HRESULT CRenderer::Render_Blur()
 	// Blur H ==================================================
 	if (FAILED(m_pShader_Blend->Set_Texture("g_DiffuseTexture", m_pTarget_Manager->Get_Texture(L"Target_Bloom"))))
 		return E_FAIL;
-	if (FAILED(m_pShader_Blend->Set_Texture("g_SSAOTexture", m_pTarget_Manager->Get_Texture(L"Target_SSAO"))))
-		return E_FAIL;
 
 	m_pTarget_Manager->Begin_Render_Target(L"Target_BlurH");
 
 	m_pShader_Blend->Begin_Shader();
-	m_pShader_Blend->Begin_Pass(2);
+	m_pShader_Blend->Begin_Pass(7);
 
 	m_pViewPortBuffer->Render_VIBuffer();
 
@@ -1483,7 +1483,7 @@ HRESULT CRenderer::Render_Blur()
 	if (FAILED(m_pShader_Blend->Set_Texture("g_DiffuseTexture", m_pTarget_Manager->Get_Texture(L"Target_BlurV"))))
 		return E_FAIL;
 	m_pShader_Blend->Begin_Shader();
-	m_pShader_Blend->Begin_Pass(2);
+	m_pShader_Blend->Begin_Pass(5);
 
 	m_pViewPortBuffer->Render_VIBuffer();
 
@@ -1619,7 +1619,7 @@ HRESULT CRenderer::Render_BlurDOF()
 	m_pTarget_Manager->Begin_Render_Target(L"Target_BlurH");
 
 	m_pShader_Blend->Begin_Shader();
-	m_pShader_Blend->Begin_Pass(2);
+	m_pShader_Blend->Begin_Pass(7);
 
 	m_pViewPortBuffer->Render_VIBuffer();
 
@@ -1674,7 +1674,7 @@ HRESULT CRenderer::Render_BlurDOF()
 		return E_FAIL;
 
 	m_pShader_Blend->Begin_Shader();
-	m_pShader_Blend->Begin_Pass(2);
+	m_pShader_Blend->Begin_Pass(7);
 
 	m_pViewPortBuffer->Render_VIBuffer();
 
