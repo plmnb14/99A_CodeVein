@@ -361,6 +361,7 @@ void CThaiMan::Check_Hit()
 					{
 						if (true == m_tObjParam.bHitAgain)
 						{
+							m_bEventTrigger[0] = false;
 							m_eFirstCategory = MONSTER_STATE_TYPE::HIT;
 							m_tObjParam.bHitAgain = false;
 							m_pMeshCom->Reset_OldIndx();
@@ -397,25 +398,24 @@ void CThaiMan::Check_Dist()
 		MONSTER_STATE_TYPE::DEAD == m_eFirstCategory)
 		return;
 
-	Function_Find_Target();
-
-	if (true == m_bIsIdle ||
-		true == m_bIsCombo ||
+	if (true == m_bIsCombo ||
 		true == m_bIsMoveAround ||
 		true == m_tObjParam.bIsAttack ||
 		true == m_tObjParam.bIsDodge ||
 		true == m_tObjParam.bIsHit)
 		return;
 
+	Function_Find_Target();
+
 	if (nullptr == m_pAggroTarget)
 	{
-		Function_ResetAfterAtk();
-
-		m_eFirstCategory = MONSTER_STATE_TYPE::IDLE;
-
-		if (true == m_bCanIdle)
+		if (MONSTER_STATE_TYPE::IDLE == m_eFirstCategory)
+			return;
+		else
 		{
-			m_bCanIdle = false;
+			Function_ResetAfterAtk();
+
+			m_eFirstCategory = MONSTER_STATE_TYPE::IDLE;
 
 			switch (CALC::Random_Num(MONSTER_IDLE_TYPE::IDLE_IDLE, MONSTER_IDLE_TYPE::IDLE_STAND))
 			{
@@ -439,9 +439,9 @@ void CThaiMan::Check_Dist()
 				m_eState = THAIMAN_ANI::NF_Sit;
 				break;
 			}
-		}
 
-		return;
+			return;
+		}
 	}
 	else
 	{
@@ -3106,13 +3106,14 @@ void CThaiMan::Play_Hit()
 	{
 		if (m_pMeshCom->Is_Finish_Animation(0.95f))
 		{
-			m_tObjParam.bCanHit = true;
-			m_tObjParam.bIsHit = false;
+			Function_ResetAfterAtk();
 
 			m_bCanCoolDown = true;
 			m_fCoolDownMax = 0.5f;
 
 			m_eFirstCategory = MONSTER_STATE_TYPE::IDLE;
+
+			return;
 		}
 		else if (m_pMeshCom->Is_Finish_Animation(0.2f))
 		{
@@ -3194,19 +3195,7 @@ void CThaiMan::Play_Dead()
 				m_bEnable = false;
 				m_dAniPlayMul = 0;
 			}
-			else if (3.233f <= AniTime)
-			{
-				if (false == m_bEventTrigger[0])
-				{
-					m_bEventTrigger[0] = true;
-
-					Start_Dissolve(0.7f, false, true);
-					m_fDeadEffect_Delay = 0.f;
-
-					CObjectPool_Manager::Get_Instance()->Create_Object(L"GameObject_Haze", (void*)&CHaze::HAZE_INFO(100.f, m_pTransformCom->Get_Pos(), 0.f));
-				}
-			}
-			else if (3.f <= AniTime)
+			else if (m_pMeshCom->Is_Finish_Animation(0.2f))
 			{
 				if (false == m_bEventTrigger[1])
 				{
@@ -3230,6 +3219,18 @@ void CThaiMan::Play_Dead()
 					}
 				}
 			}
+			else if (3.233f <= AniTime)
+			{
+				if (false == m_bEventTrigger[0])
+				{
+					m_bEventTrigger[0] = true;
+
+					Start_Dissolve(0.7f, false, true);
+					m_fDeadEffect_Delay = 0.f;
+
+					CObjectPool_Manager::Get_Instance()->Create_Object(L"GameObject_Haze", (void*)&CHaze::HAZE_INFO(100.f, m_pTransformCom->Get_Pos(), 0.f));
+				}
+			}
 			break;
 
 		case THAIMAN_ANI::Death_F:
@@ -3237,6 +3238,30 @@ void CThaiMan::Play_Dead()
 			{
 				m_bEnable = false;
 				m_dAniPlayMul = 0;
+			}
+			else if (m_pMeshCom->Is_Finish_Animation(0.2f))
+			{
+				if (false == m_bEventTrigger[1])
+				{
+					m_bEventTrigger[1] = true;
+
+					g_pSoundManager->Stop_Sound(CSoundManager::ThaiMan_Voice);
+
+					m_iRandom = CALC::Random_Num(0, 2);
+
+					switch (m_iRandom)
+					{
+					case 0:
+						g_pSoundManager->Play_Sound(L"ThaiMan_Death0.ogg", CSoundManager::ThaiMan_Voice, CSoundManager::Effect_Sound);
+						break;
+					case 1:
+						g_pSoundManager->Play_Sound(L"ThaiMan_Death1.ogg", CSoundManager::ThaiMan_Voice, CSoundManager::Effect_Sound);
+						break;
+					case 2:
+						g_pSoundManager->Play_Sound(L"ThaiMan_Death2.ogg", CSoundManager::ThaiMan_Voice, CSoundManager::Effect_Sound);
+						break;
+					}
+				}
 			}
 			else if (3.167f <= AniTime)
 			{
@@ -3250,7 +3275,15 @@ void CThaiMan::Play_Dead()
 					CObjectPool_Manager::Get_Instance()->Create_Object(L"GameObject_Haze", (void*)&CHaze::HAZE_INFO(100.f, m_pTransformCom->Get_Pos(), 0.f));
 				}
 			}
-			else if (2.8f <= AniTime)
+			break;
+
+		case THAIMAN_ANI::Death_B:
+			if (m_pMeshCom->Is_Finish_Animation(0.95f))
+			{
+				m_bEnable = false;
+				m_dAniPlayMul = 0;
+			}
+			else if (m_pMeshCom->Is_Finish_Animation(0.2f))
 			{
 				if (false == m_bEventTrigger[1])
 				{
@@ -3273,14 +3306,6 @@ void CThaiMan::Play_Dead()
 						break;
 					}
 				}
-			}
-			break;
-
-		case THAIMAN_ANI::Death_B:
-			if (m_pMeshCom->Is_Finish_Animation(0.95f))
-			{
-				m_bEnable = false;
-				m_dAniPlayMul = 0;
 			}
 			else if (2.867f <= AniTime)
 			{
@@ -3292,30 +3317,6 @@ void CThaiMan::Play_Dead()
 					m_fDeadEffect_Delay = 0.f;
 
 					CObjectPool_Manager::Get_Instance()->Create_Object(L"GameObject_Haze", (void*)&CHaze::HAZE_INFO(100.f, m_pTransformCom->Get_Pos(), 0.f));
-				}
-			}
-			else if (2.3f <= AniTime)
-			{
-				if (false == m_bEventTrigger[1])
-				{
-					m_bEventTrigger[1] = true;
-
-					g_pSoundManager->Stop_Sound(CSoundManager::ThaiMan_Voice);
-
-					m_iRandom = CALC::Random_Num(0, 2);
-
-					switch (m_iRandom)
-					{
-					case 0:
-						g_pSoundManager->Play_Sound(L"ThaiMan_Death0.ogg", CSoundManager::ThaiMan_Voice, CSoundManager::Effect_Sound);
-						break;
-					case 1:
-						g_pSoundManager->Play_Sound(L"ThaiMan_Death1.ogg", CSoundManager::ThaiMan_Voice, CSoundManager::Effect_Sound);
-						break;
-					case 2:
-						g_pSoundManager->Play_Sound(L"ThaiMan_Death2.ogg", CSoundManager::ThaiMan_Voice, CSoundManager::Effect_Sound);
-						break;
-					}
 				}
 			}
 			break;

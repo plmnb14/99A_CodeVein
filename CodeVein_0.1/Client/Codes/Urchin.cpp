@@ -347,6 +347,7 @@ void CUrchin::Check_Hit()
 			{
 				if (true == m_tObjParam.bHitAgain)
 				{
+					m_bEventTrigger[0] = false;
 					m_eFirstCategory = MONSTER_STATE_TYPE::HIT;
 					m_tObjParam.bHitAgain = false;
 					m_pMeshCom->Reset_OldIndx();
@@ -382,6 +383,7 @@ void CUrchin::Check_Dist()
 		return;
 
 	if (true == m_bIsCombo ||
+		true == m_bIsMoveAround ||
 		true == m_tObjParam.bIsAttack ||
 		true == m_tObjParam.bIsDodge ||
 		true == m_tObjParam.bIsHit)
@@ -391,11 +393,19 @@ void CUrchin::Check_Dist()
 
 	if (nullptr == m_pAggroTarget)
 	{
-		Function_ResetAfterAtk();
 
-		m_eFirstCategory = MONSTER_STATE_TYPE::IDLE;
+		if (MONSTER_STATE_TYPE::IDLE == m_eFirstCategory)
+			return;
+		else
+		{
+			Function_ResetAfterAtk();
 
-		return;
+			m_eFirstCategory = MONSTER_STATE_TYPE::IDLE;
+
+			m_eState = CUrchin::Idle;
+
+			return;
+		}
 	}
 	else
 	{
@@ -1009,13 +1019,14 @@ void CUrchin::Play_Hit()
 	{
 		if (m_pMeshCom->Is_Finish_Animation(0.95f))
 		{
-			m_tObjParam.bCanHit = true;
-			m_tObjParam.bIsHit = false;
-			m_bCanCoolDown = true;
+			Function_ResetAfterAtk();
 
+			m_bCanCoolDown = true;
 			m_fCoolDownMax = 0.5f;
 
 			m_eFirstCategory = MONSTER_STATE_TYPE::IDLE;
+
+			return;
 		}
 		else if (m_pMeshCom->Is_Finish_Animation(0.2f))
 		{

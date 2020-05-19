@@ -357,6 +357,7 @@ void CWolf::Check_Hit()
 				{
 					if (true == m_tObjParam.bHitAgain)
 					{
+						m_bEventTrigger[0] = false;
 						m_eFirstCategory = MONSTER_STATE_TYPE::HIT;
 						m_tObjParam.bHitAgain = false;
 						m_pMeshCom->Reset_OldIndx();
@@ -392,7 +393,9 @@ void CWolf::Check_Dist()
 		MONSTER_STATE_TYPE::DEAD == m_eFirstCategory)
 		return;
 
-	if (true == m_tObjParam.bIsAttack ||
+	if (true == m_bIsCombo ||
+		true == m_bIsMoveAround ||
+		true == m_tObjParam.bIsAttack ||
 		true == m_tObjParam.bIsDodge ||
 		true == m_tObjParam.bIsHit)
 		return;
@@ -401,31 +404,36 @@ void CWolf::Check_Dist()
 
 	if (nullptr == m_pAggroTarget)
 	{
-		Function_ResetAfterAtk();
-
-		m_eFirstCategory = MONSTER_STATE_TYPE::IDLE;
-
-		if (false == m_bIsIdle)
+		if (MONSTER_STATE_TYPE::IDLE == m_eFirstCategory)
+			return;
+		else
 		{
+			Function_ResetAfterAtk();
+
+			m_eFirstCategory = MONSTER_STATE_TYPE::IDLE;
+
 			switch (CALC::Random_Num(MONSTER_IDLE_TYPE::IDLE_IDLE, MONSTER_IDLE_TYPE::IDLE_STAND))
 			{
 			case MONSTER_IDLE_TYPE::IDLE_IDLE:
 				m_eSecondCategory_IDLE = MONSTER_IDLE_TYPE::IDLE_IDLE;
+				m_eState = WOLF_ANI::Idle;
 				break;
 			case MONSTER_IDLE_TYPE::IDLE_STAND:
 			case MONSTER_IDLE_TYPE::IDLE_CROUCH:
 			case MONSTER_IDLE_TYPE::IDLE_EAT:
 				m_eSecondCategory_IDLE = MONSTER_IDLE_TYPE::IDLE_EAT;
+				m_eState = WOLF_ANI::NF_Eat;
 				break;
 			case MONSTER_IDLE_TYPE::IDLE_SCRATCH:
 			case MONSTER_IDLE_TYPE::IDLE_SIT:
 			case MONSTER_IDLE_TYPE::IDLE_LURK:
 				m_eSecondCategory_IDLE = MONSTER_IDLE_TYPE::IDLE_SIT;
+				m_eState = WOLF_ANI::NF_Sit;
 				break;
-			}
-		}
+			}	
 
-		return;
+			return;
+		}
 	}
 	else
 	{
@@ -921,58 +929,66 @@ void CWolf::Play_Idle()
 	switch (m_eSecondCategory_IDLE)
 	{
 	case MONSTER_IDLE_TYPE::IDLE_IDLE:
-		if (true == m_bInRecognitionRange)
+		if (nullptr != m_pAggroTarget)
 		{
-			m_bIsIdle = false;
-
-			if (true == m_tObjParam.bCanAttack)
-				m_eState = WOLF_ANI::Idle;
-			else
+			if (true == m_bInRecognitionRange)
 			{
-				if (nullptr == m_pAggroTarget)
-				{
-					Function_Find_Target();
+				m_bIsIdle = false;
 
+				if (true == m_tObjParam.bCanAttack)
+					m_eState = WOLF_ANI::Idle;
+				else
+				{
 					if (nullptr == m_pAggroTarget)
 					{
-						Function_ResetAfterAtk();
-						m_fCoolDownMax = 0.f;
-						m_fCoolDownCur = 0.f;
-						m_eFirstCategory = MONSTER_STATE_TYPE::IDLE;
+						Function_Find_Target();
 
-						if (false == m_bIsIdle)
+						if (nullptr == m_pAggroTarget)
 						{
-							switch (CALC::Random_Num(MONSTER_IDLE_TYPE::IDLE_IDLE, MONSTER_IDLE_TYPE::IDLE_STAND))
+							Function_ResetAfterAtk();
+							m_fCoolDownMax = 0.f;
+							m_fCoolDownCur = 0.f;
+							m_eFirstCategory = MONSTER_STATE_TYPE::IDLE;
+
+							if (false == m_bIsIdle)
 							{
-							case MONSTER_IDLE_TYPE::IDLE_IDLE:
-								m_eSecondCategory_IDLE = MONSTER_IDLE_TYPE::IDLE_IDLE;
-								break;
-							case MONSTER_IDLE_TYPE::IDLE_CROUCH:
-							case MONSTER_IDLE_TYPE::IDLE_EAT:
-								m_eSecondCategory_IDLE = MONSTER_IDLE_TYPE::IDLE_CROUCH;
-								break;
-							case MONSTER_IDLE_TYPE::IDLE_SIT:
-							case MONSTER_IDLE_TYPE::IDLE_LURK:
-								m_eSecondCategory_IDLE = MONSTER_IDLE_TYPE::IDLE_SIT;
-								break;
-							case MONSTER_IDLE_TYPE::IDLE_STAND:
-							case MONSTER_IDLE_TYPE::IDLE_SCRATCH:
-								m_eSecondCategory_IDLE = MONSTER_IDLE_TYPE::IDLE_STAND;
-								break;
+								switch (CALC::Random_Num(MONSTER_IDLE_TYPE::IDLE_IDLE, MONSTER_IDLE_TYPE::IDLE_STAND))
+								{
+								case MONSTER_IDLE_TYPE::IDLE_IDLE:
+									m_eSecondCategory_IDLE = MONSTER_IDLE_TYPE::IDLE_IDLE;
+									break;
+								case MONSTER_IDLE_TYPE::IDLE_CROUCH:
+								case MONSTER_IDLE_TYPE::IDLE_EAT:
+									m_eSecondCategory_IDLE = MONSTER_IDLE_TYPE::IDLE_CROUCH;
+									break;
+								case MONSTER_IDLE_TYPE::IDLE_SIT:
+								case MONSTER_IDLE_TYPE::IDLE_LURK:
+									m_eSecondCategory_IDLE = MONSTER_IDLE_TYPE::IDLE_SIT;
+									break;
+								case MONSTER_IDLE_TYPE::IDLE_STAND:
+								case MONSTER_IDLE_TYPE::IDLE_SCRATCH:
+									m_eSecondCategory_IDLE = MONSTER_IDLE_TYPE::IDLE_STAND;
+									break;
+								}
 							}
+
+							Play_Idle();
+
+							return;
 						}
-
-						Play_Idle();
-
-						return;
+						else
+							Function_RotateBody(m_pAggroTarget);
 					}
 					else
 						Function_RotateBody(m_pAggroTarget);
-				}
-				else
-					Function_RotateBody(m_pAggroTarget);
 
-				m_eState = WOLF_ANI::Threat;
+					m_eState = WOLF_ANI::Threat;
+				}
+			}
+			else
+			{
+				m_bIsIdle = true;
+				m_eState = WOLF_ANI::Idle;
 			}
 		}
 		else
@@ -982,23 +998,31 @@ void CWolf::Play_Idle()
 		}
 		break;
 	case MONSTER_IDLE_TYPE::IDLE_EAT:
-		if (true == m_bInRecognitionRange)
+		if (nullptr != m_pAggroTarget)
 		{
-			if (WOLF_ANI::NF_Eat == m_eState)
+			if (true == m_bInRecognitionRange)
+			{
+				if (WOLF_ANI::NF_Eat == m_eState)
+				{
+					m_bIsIdle = true;
+
+					if (m_pMeshCom->Is_Finish_Animation(0.5f))
+						m_eState = WOLF_ANI::NF_Eat_End;
+				}
+				else if (WOLF_ANI::NF_Eat_End == m_eState)
+				{
+					if (m_pMeshCom->Is_Finish_Animation(0.95f))
+					{
+						m_bCanIdle = true;
+						m_bIsIdle = false;
+						m_eState = WOLF_ANI::Threat;
+					}
+				}
+			}
+			else
 			{
 				m_bIsIdle = true;
-
-				if (m_pMeshCom->Is_Finish_Animation(0.5f))
-					m_eState = WOLF_ANI::NF_Eat_End;
-			}
-			else if (WOLF_ANI::NF_Eat_End == m_eState)
-			{
-				if (m_pMeshCom->Is_Finish_Animation(0.95f))
-				{
-					m_bCanIdle = true;
-					m_bIsIdle = false;
-					m_eState = WOLF_ANI::Threat;
-				}
+				m_eState = WOLF_ANI::NF_Eat;
 			}
 		}
 		else
@@ -1008,23 +1032,31 @@ void CWolf::Play_Idle()
 		}
 		break;
 	case MONSTER_IDLE_TYPE::IDLE_SIT:
-		if (true == m_bInRecognitionRange)
+		if (nullptr != m_pAggroTarget)
 		{
-			if (WOLF_ANI::NF_Sit == m_eState)
+			if (true == m_bInRecognitionRange)
+			{
+				if (WOLF_ANI::NF_Sit == m_eState)
+				{
+					m_bIsIdle = true;
+
+					if (m_pMeshCom->Is_Finish_Animation(0.5f))
+						m_eState = WOLF_ANI::NF_Sit_End;
+				}
+				else if (WOLF_ANI::NF_Sit_End == m_eState)
+				{
+					if (m_pMeshCom->Is_Finish_Animation(0.95f))
+					{
+						m_bCanIdle = true;
+						m_bIsIdle = false;
+						m_eState = WOLF_ANI::Threat;
+					}
+				}
+			}
+			else
 			{
 				m_bIsIdle = true;
-
-				if (m_pMeshCom->Is_Finish_Animation(0.5f))
-					m_eState = WOLF_ANI::NF_Sit_End;
-			}
-			else if (WOLF_ANI::NF_Sit_End == m_eState)
-			{
-				if (m_pMeshCom->Is_Finish_Animation(0.95f))
-				{
-					m_bCanIdle = true;
-					m_bIsIdle = false;
-					m_eState = WOLF_ANI::Threat;
-				}
+				m_eState = WOLF_ANI::NF_Sit;
 			}
 		}
 		else
@@ -1215,13 +1247,14 @@ void CWolf::Play_Hit()
 	{
 		if (m_pMeshCom->Is_Finish_Animation(0.95f))
 		{
-			m_tObjParam.bCanHit = true;
-			m_tObjParam.bIsHit = false;
-			m_bCanCoolDown = true;
+			Function_ResetAfterAtk();
 
+			m_bCanCoolDown = true;
 			m_fCoolDownMax = 0.5f;
 
 			m_eFirstCategory = MONSTER_STATE_TYPE::IDLE;
+
+			return;
 		}
 		else if (m_pMeshCom->Is_Finish_Animation(0.2f))
 		{
