@@ -97,7 +97,7 @@ void CLockOn_UI::Caculate_World()
 	m_matWorld = targetBoneMat * targetWorldMat;
 
 	// 위치 보정치
-	m_matWorld._42 += 1.3f;
+	m_matWorld._42 += 0.5f;
 }
 
 _mat CLockOn_UI::Caculate_Billboard()

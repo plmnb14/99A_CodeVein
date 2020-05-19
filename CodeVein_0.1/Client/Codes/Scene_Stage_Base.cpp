@@ -45,14 +45,14 @@ HRESULT CScene_Stage_Base::Ready_Scene()
 
 	g_pManagement->LoadCreateObject_FromPath(m_pGraphic_Device, L"Object_Stage_00.dat");
 
-	// ¾ßÄí¸ð
-	g_pManagement->Add_GameObject_ToLayer(L"GameObject_NPC_Yakumo", SCENE_STAGE, L"Layer_NPC", &CNPC_Yakumo::NPC_INFO(_v3(-4.46f, -1.37f, -5.294f), D3DXToRadian(90.f)));
-
-	// NPC 1
-	g_pManagement->Add_GameObject_ToLayer(L"GameObject_NPC_Yakumo", SCENE_STAGE, L"Layer_NPC", &CNPC_Yakumo::NPC_INFO(_v3(-10.5f, -1.37f, -14.3f), D3DXToRadian(45.f)));
-
-	// NPC 2
-	g_pManagement->Add_GameObject_ToLayer(L"GameObject_NPC_Yakumo", SCENE_STAGE, L"Layer_NPC", &CNPC_Yakumo::NPC_INFO(_v3(6.283f, -1.37f, -14.75f), D3DXToRadian(-45.f)));
+	//// ¾ßÄí¸ð
+	//g_pManagement->Add_GameObject_ToLayer(L"GameObject_NPC_Yakumo", SCENE_STAGE, L"Layer_NPC", &CNPC_Yakumo::NPC_INFO(_v3(-4.46f, -1.37f, -5.294f), D3DXToRadian(90.f)));
+	//
+	//// NPC 1
+	//g_pManagement->Add_GameObject_ToLayer(L"GameObject_NPC_Yakumo", SCENE_STAGE, L"Layer_NPC", &CNPC_Yakumo::NPC_INFO(_v3(-10.5f, -1.37f, -14.3f), D3DXToRadian(45.f)));
+	//
+	//// NPC 2
+	//g_pManagement->Add_GameObject_ToLayer(L"GameObject_NPC_Yakumo", SCENE_STAGE, L"Layer_NPC", &CNPC_Yakumo::NPC_INFO(_v3(6.283f, -1.37f, -14.75f), D3DXToRadian(-45.f)));
 
 	return S_OK;
 }
