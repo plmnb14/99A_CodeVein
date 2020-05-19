@@ -77,19 +77,31 @@ _int CDeerKingBullet::Update_GameObject(_double TimeDelta)
 	m_dCurTime += TimeDelta;
 
 	// 3초 뒤에 발사
+
+
+	// Calc Angle
+	_v3	vRight = *D3DXVec3Cross(&vRight, &_v3(0.f, 1.f, 0.f), &m_vDir);
+	V3_NORMAL_SELF(&vRight);
+	//_float	fDotX = acosf(D3DXVec3Dot(&_v3{ 0,1,0 }, &m_pTransformCom->Get_Axis(AXIS_Z)));
+	_float	fDotY = acosf(D3DXVec3Dot(&_v3{ 0,0,1 }, &m_vDir));
+	if (vRight.z > 0)
+		fDotY *= -1.f;
+
+	m_pTransformCom->Set_Angle(_v3(0.f, fDotY, 0.f));
+
 	if (3.f < m_dCurTime)
 	{
 		OnCollisionEnter();
 
-		// Calc Angle
-		_v3	vRight = *D3DXVec3Cross(&vRight, &_v3(0.f, 1.f, 0.f), &m_vDir);
-		V3_NORMAL_SELF(&vRight);
-		//_float	fDotX = acosf(D3DXVec3Dot(&_v3{ 0,1,0 }, &m_pTransformCom->Get_Axis(AXIS_Z)));
-		_float	fDotY = acosf(D3DXVec3Dot(&_v3{ 0,0,1 }, &m_vDir));
-		if (vRight.z > 0)
-			fDotY *= -1.f;
+		//// Calc Angle
+		//_v3	vRight = *D3DXVec3Cross(&vRight, &_v3(0.f, 1.f, 0.f), &m_vDir);
+		//V3_NORMAL_SELF(&vRight);
+		////_float	fDotX = acosf(D3DXVec3Dot(&_v3{ 0,1,0 }, &m_pTransformCom->Get_Axis(AXIS_Z)));
+		//_float	fDotY = acosf(D3DXVec3Dot(&_v3{ 0,0,1 }, &m_vDir));
+		//if (vRight.z > 0)
+		//	fDotY *= -1.f;
 
-		m_pTransformCom->Set_Angle(_v3(0.f, fDotY, 0.f));
+		//m_pTransformCom->Set_Angle(_v3(0.f, fDotY, 0.f));
 
 		m_pTransformCom->Add_Pos(m_fSpeed * (_float)TimeDelta, m_vDir);
 

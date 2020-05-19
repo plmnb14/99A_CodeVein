@@ -2,6 +2,9 @@
 #include "..\Headers\DeerKing.h"
 #include "..\Headers\Weapon.h"
 #include "..\Headers\BossHP.h"
+#include "ClothManager.h"
+
+using namespace physx;
 
 CDeerKing::CDeerKing(LPDIRECT3DDEVICE9 pGraphic_Device)
 	: CMonster(pGraphic_Device)
@@ -9,12 +12,14 @@ CDeerKing::CDeerKing(LPDIRECT3DDEVICE9 pGraphic_Device)
 }
 
 CDeerKing::CDeerKing(const CDeerKing & rhs)
-	: CMonster(rhs)
+	: CMonster(rhs), m_pCloth(rhs.m_pCloth)
 {
 }
 
 HRESULT CDeerKing::Ready_GameObject_Prototype()
 {
+	Ready_Cloth();
+
 	return S_OK;
 }
 
@@ -98,6 +103,8 @@ HRESULT CDeerKing::Ready_GameObject(void * pArg)
 
 _int CDeerKing::Update_GameObject(_double TimeDelta)
 {
+	m_pCloth->putToSleep();
+
 	if (false == m_bEnable)
 		return NO_EVENT;
 
@@ -110,7 +117,10 @@ _int CDeerKing::Update_GameObject(_double TimeDelta)
 
 	// 죽었을 경우
 	if (m_bIsDead)
+	{
 		m_bEnable = false;
+		g_pPhysx->Get_Scene()->removeActor(*m_pCloth);
+	}
 
 	// 죽음 애니메이션
 	if (m_bReadyDead)
@@ -168,6 +178,9 @@ _int CDeerKing::Update_GameObject(_double TimeDelta)
 	//====================================================================================================
 	m_bInFrustum = m_pOptimizationCom->Check_InFrustumforObject(&m_pTransformCom->Get_Pos(), 2.f);
 	//====================================================================================================
+
+	if (nullptr != m_pCloth)
+		Update_Cloth();
 
 	return NOERROR;
 }
@@ -276,6 +289,9 @@ HRESULT CDeerKing::Render_GameObject_Instancing_SetPass(CShader * pShader)
 	if (nullptr == pShader ||
 		nullptr == m_pMeshCom)
 		return E_FAIL;
+
+	if (nullptr != m_pCloth)
+		Change_Vertex();
 
 	m_pMeshCom->Play_Animation(DELTA_60 * m_dAniPlayMul);
 
@@ -386,11 +402,7 @@ HRESULT CDeerKing::Render_GameObject_SetPass(CShader * pShader, _int iPass, _boo
 
 		for (_uint j = 0; j < iNumSubSet; ++j)
 		{
-			_int tmpPass = m_pMeshCom->Get_MaterialPass(i, j);
-
 			pShader->Begin_Pass(iPass);
-			pShader->Commit_Changes();
-
 			pShader->Commit_Changes();
 
 			m_pMeshCom->Render_Mesh(i, j);
@@ -2122,8 +2134,8 @@ void CDeerKing::Check_PhyCollider()
 		else
 		{
 			m_pMeshCom->SetUp_Animation(Ani_Death);	// 죽음처리 시작
-			Start_Dissolve(0.7f, false, true, 6.9f);
-			m_pShield->Start_Dissolve(0.7f, false, false, 6.9f);
+			Start_Dissolve(0.55f, false, true, 7.2f);
+			m_pShield->Start_Dissolve(0.55f, false, false, 7.2f);
 			
 			CParticleMgr::Get_Instance()->Create_BossDeadParticle_Effect(m_pTransformCom->Get_Pos() + _v3(0.f, 1.3f, 0.f), 6.2f, 0.5f);
 			//g_pManagement->Create_Effect_Delay(L"Boss_Dead_Particle"					, 5.2f, _v3(0.f, 1.3f, 0.f), m_pTransformCom);
@@ -2534,6 +2546,229 @@ HRESULT CDeerKing::Ready_Sound()
 	m_mapSound.emplace(10, L"SE_BOSSGUY_BARK_ATTACK_002.ogg");
 	
 	return S_OK;
+}
+
+HRESULT CDeerKing::Ready_Cloth()
+{
+	PxScene& scene = *g_pPhysx->Get_Scene();
+	PxPhysics& physics = *g_pPhysx->Get_Physics();
+
+	PxSceneWriteLock scopedLock(scene);
+
+	// 컴포넌트 잠깐 가져올 것임.
+	CMesh_Dynamic* pMesh_Dynamic = static_cast<CMesh_Dynamic*>(CManagement::Get_Instance()->Clone_Component(SCENE_STATIC, L"Mesh_DeerKing"));
+
+	if (nullptr == pMesh_Dynamic)
+	{
+		MSG_BOX("CDeerKing Ready_Cloth : Failed To Get DeerKingMesh");
+		return E_FAIL;
+	}
+
+	vector<PxVec4> vertices;
+	vector<PxU16> primitives;
+	PxClothMeshDesc meshDesc = CreateMesh(pMesh_Dynamic->Get_MeshContainer()[0]->pOriginalMesh, 1.f, PxQuat(PxIdentity), PxVec3(0, 0, 0), vertices, primitives);
+
+	if (!meshDesc.isValid())
+		MSG_BOX(" PxCloth : Failed to Craete Mesh");
+
+	for (PxU32 i = 32979; i < 32979 + 829; i++)
+	{
+		if (vertices[i].y < 2.9f)
+			vertices[i].w = 0.2f;
+	}
+	for (PxU32 i = 33892; i < 33892 + 829; i++)
+	{
+		if (vertices[i].y < 2.9f)
+			vertices[i].w = 0.2f;
+	}
+
+	m_pCloth = g_pClothManager->CreateQuadifier(meshDesc);
+
+	scene.addActor(*m_pCloth);
+
+	// set solver settings
+	m_pCloth->setSolverFrequency(120);
+
+	// damp global particle velocity to 90% every 0.1 seconds
+	m_pCloth->setDampingCoefficient(PxVec3(0.4f)); // damp local particle velocity
+	m_pCloth->setLinearDragCoefficient(PxVec3(0.4f)); // transfer frame velocity
+	m_pCloth->setAngularDragCoefficient(PxVec3(0.4f)); // transfer frame rotation
+
+													 // reduce impact of frame acceleration
+													 // x, z: cloth swings out less when walking in a circle
+													 // y: cloth responds less to jump acceleration
+	m_pCloth->setLinearInertiaScale(PxVec3(0.4f, 0.4f, 0.4f));
+
+	// leave impact of frame torque at default
+	//m_pCloth->setAngularInertiaScale(PxVec3(1.0f));
+	m_pCloth->setAngularInertiaScale(PxVec3(0.2f));
+
+	// reduce centrifugal force of rotating frame
+	m_pCloth->setCentrifugalInertiaScale(PxVec3(0.3f));
+
+	m_pCloth->setInertiaScale(0.5f);
+
+	const bool useCustomConfig = true;
+
+	// custom fiber configuration
+	if (useCustomConfig)
+	{
+		PxClothStretchConfig stretchConfig;
+		stretchConfig.stiffness = 1.0f;
+
+		m_pCloth->setStretchConfig(PxClothFabricPhaseType::eVERTICAL, PxClothStretchConfig(0.8f));
+		m_pCloth->setStretchConfig(PxClothFabricPhaseType::eHORIZONTAL, PxClothStretchConfig(0.6f));
+		m_pCloth->setStretchConfig(PxClothFabricPhaseType::eSHEARING, PxClothStretchConfig(0.5f));
+		m_pCloth->setStretchConfig(PxClothFabricPhaseType::eBENDING, PxClothStretchConfig(0.5f));
+		m_pCloth->setTetherConfig(PxClothTetherConfig(1.0f));
+	}
+
+	m_pCloth->putToSleep();
+
+	return S_OK;
+}
+
+physx::PxClothMeshDesc CDeerKing::CreateMesh(LPD3DXMESH pMesh, physx::PxReal scale, physx::PxQuat rot, physx::PxVec3 offset, vector<physx::PxVec4>& vertices, vector<physx::PxU16>& indices)
+{
+	if (nullptr == pMesh)
+	{
+		MSG_BOX("CCloth : n_pMesh is Nullptr");
+		return PxClothMeshDesc();
+	}
+
+	/*
+	Attribld	1
+	FaceStart	51146
+	FaceCount	1344
+	VertexStart	32979
+	VertexCount	829
+
+	Attribld	3
+	FaceStart	52570
+	FaceCount	1344
+	VertexStart	33892
+	VertexCount	829
+
+	흔들릴 버텍스 총 수 : 34721 - 32979 = 1742  
+	흔들릴 삼각형 총 수 : 53914 - 51146 = 2768
+	*/
+
+	_ulong numVertices = pMesh->GetNumVertices();
+	_ulong numTriangles = pMesh->GetNumFaces();
+
+	vertices.resize(numVertices);
+	indices.resize(numTriangles * 3);
+
+	vector<PxVec3> verticesTemp;
+	verticesTemp.resize(numVertices);
+
+	////////////////////////////////////////////////////
+	// 버텍스 포지션 정보를 vec3 에서 vec4로 바꿔서 저장
+	//IDirect3DVertexBuffer9* pVB = nullptr;
+	_byte*		pVertices = nullptr;
+
+	//m_pMesh->GetVertexBuffer(&pVB);
+	//pVB->Lock(0, 0, (void**)&pVertices, 0);
+	pMesh->LockVertexBuffer(0, (void**)&pVertices);
+
+	_ulong dwStride = pMesh->GetNumBytesPerVertex();
+
+	for (_ulong i = 0; i < numVertices; ++i)
+	{
+		PxVec3 vTemp = *(PxVec3*)(pVertices + (i * dwStride));
+		verticesTemp[i] = vTemp;
+	}
+
+	PxVec3 *vSrc = (PxVec3*)&(*verticesTemp.begin());
+	PxVec4 *vDest = &(*vertices.begin());
+	for (_ulong i = 0; i < numVertices; i++, vDest++, vSrc++)
+	{
+		*vDest = PxVec4(scale * rot.rotate(*vSrc) + offset, 0.f);
+	}
+
+	//pVB->Unlock();
+	pMesh->UnlockVertexBuffer();
+
+	/////////////////////////////////////////////////////
+	// 인덱스 정보 저장
+	_byte *	pIndex = nullptr;
+
+	pMesh->LockIndexBuffer(0, (void**)&pIndex);
+	//pMesh->GetIndexBuffer(&m_pIB);
+	//m_pIB->Lock(0, 0, (void**)&pIndex, 0);
+
+	for (_ulong i = 0; i < numTriangles * 3; ++i)
+	{
+		indices[i] = *((PxU16*)pIndex + i);
+	}
+
+	pMesh->UnlockIndexBuffer();
+
+
+	PxClothMeshDesc meshDesc;
+
+	// convert vertex array to PxBoundedData (desc.points)
+	meshDesc.points.data = &(*vertices.begin());
+	meshDesc.points.count = static_cast<PxU32>(numVertices);
+	meshDesc.points.stride = sizeof(PxVec4);
+
+	meshDesc.invMasses.data = &vertices.begin()->w;
+	meshDesc.invMasses.count = static_cast<PxU32>(numVertices);
+	meshDesc.invMasses.stride = sizeof(PxVec4);
+
+	// convert face index array to PxBoundedData (desc.triangles)
+	meshDesc.triangles.data = &(*indices.begin());
+	meshDesc.triangles.count = static_cast<PxU32>(numTriangles);
+	meshDesc.triangles.stride = sizeof(PxU16) * 3; // <- stride per triangle
+												   //meshDesc.triangles.stride = sizeof(PxU32) * 3; // <- stride per triangle
+
+	meshDesc.flags = PxMeshFlag::e16_BIT_INDICES;
+
+	return meshDesc;
+}
+
+void CDeerKing::Change_Vertex()
+{
+	physx::PxSceneWriteLock scopedLock(*g_pPhysx->Get_Scene());
+
+	physx::PxClothFabric* pFabric = m_pCloth->getFabric();
+	physx::PxClothParticleData* pData = m_pCloth->lockParticleData();
+
+	LPD3DXMESH	pMesh = m_pMeshCom->Get_MeshContainer()[0]->pOriginalMesh;
+	//LPD3DXMESH	pMesh = m_pDynamicMesh->Get_MeshContainer()[0]->MeshData.pMesh;
+	_ulong dwStride = pMesh->GetNumBytesPerVertex();
+
+	_byte* pVertices = nullptr;
+
+	pMesh->LockVertexBuffer(0, (void**)&pVertices);
+
+
+	_ulong adsfas = _ulong(pFabric->getNbParticles());
+
+	for (_ulong i = 0; i < _ulong(pFabric->getNbParticles()); ++i)
+	{
+		*(_v3*)(pVertices + (i * dwStride)) = *(_v3*)(pData->particles + i);
+	}
+
+	pMesh->UnlockVertexBuffer();
+}
+
+void CDeerKing::Update_Cloth()
+{
+	PxSceneWriteLock scopedLock(*g_pPhysx->Get_Scene());
+
+	D3DXQUATERNION quater;
+	D3DXVECTOR3 vMonsterPos;
+	D3DXMatrixDecompose(&D3DXVECTOR3(), &quater, &vMonsterPos, &m_pTransformCom->Get_WorldMat());
+
+	PxTransform rootPose = PxTransform(PxVec3(vMonsterPos.x, vMonsterPos.y, vMonsterPos.z), *(PxQuat*)&quater);
+
+	m_pCloth->setTargetPose(rootPose);
+
+	PxReal strength = 20.0f;
+	PxVec3 offset(PxReal(CALC::Random_Num_Double(-1, 1)), PxReal(CALC::Random_Num_Double(-1, 1)), PxReal(CALC::Random_Num_Double(-1, 1)));
+	PxVec3 windAcceleration = strength * offset;
+	m_pCloth->setExternalAcceleration(windAcceleration);
 }
 
 CDeerKing * CDeerKing::Create(LPDIRECT3DDEVICE9 pGraphic_Device)

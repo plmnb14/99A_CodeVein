@@ -38,7 +38,8 @@ public:
 	// 림라이트의 투명도 설정
 	void	Set_OriginRimAlpha(_float _fRimAlpha) { m_tRimParam.fOrigin_RimAlpha = _fRimAlpha; }
 
-
+	// 림라이트의 현재색 설정
+	void	Set_RimColor(_v4 _vRimColor) { m_tRimParam.vRimColor_Cur = _vRimColor; }
 	// 림라이트의 변화색 설정
 	void	Set_RimColorChange(_v4 _vRimColor) { m_tRimParam.vRimColor_Change = _vRimColor; }
 	// 림라이트의 데이터 갱신

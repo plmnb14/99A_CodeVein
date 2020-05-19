@@ -22,8 +22,9 @@ private:
 	void Update_Collider();
 	void Render_Collider();
 	void Update_Trails(_double TimeDelta);
-	virtual void Enter_Collision();
-	virtual void Check_CollisionEvent(list<CGameObject*> plistGameObject);
+
+	virtual void Check_CollisionEvent();
+	virtual void Check_CollisionHit(list<CGameObject*> plistGameObject);
 
 private:
 	virtual void Play_Deformation() override;

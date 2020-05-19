@@ -107,6 +107,82 @@ void CCalculater::V3_RotZ(_v3 * _pOut, const _v3 * _pIn, const _float _fRadian)
 	*_pOut = pOut;
 }
 
+void CCalculater::Generate_ViewMat(_mat * _pOut, const _v3 * vPos, const _v3 * vRight, const _v3 * vUp, const _v3 * vLook)
+{
+	_mat pOutmat = *_pOut;
+
+	pOutmat =
+	{
+		vRight->x , vRight->y, vRight->z, 0.f,
+		vUp->x, vUp->y, vUp->z, 0.f,
+		vLook->x, vLook->y, vLook->z, 0.f,
+		-D3DXVec3Dot(vRight , vPos),
+		-D3DXVec3Dot(vUp , vPos),
+		-D3DXVec3Dot(vLook , vPos),
+		1.f
+	};
+
+	*_pOut = pOutmat;
+}
+
+void CCalculater::Generate_ViewMat(_mat * _pOut, const _v3 * vPos, const _v3 * vLookAt, const _v3 * vUp)
+{
+	_mat pOutmat = *_pOut;
+
+	_v3 vLook = *vPos - *vLookAt;
+	D3DXVec3Normalize(&vLook , &vLook);
+
+	_v3 vRight = *D3DXVec3Cross(&vRight, &vLook, vUp);
+	D3DXVec3Normalize(&vRight, &vRight);
+
+	pOutmat =
+	{
+		vRight.x , vRight.y, vRight.z, 0.f,
+		vUp->x, vUp->y, vUp->z, 0.f,
+		vLook.x, vLook.y, vLook.z, 0.f,
+		-D3DXVec3Dot(&vRight , vPos),
+		-D3DXVec3Dot(vUp , vPos),
+		-D3DXVec3Dot(&vLook , vPos),
+		1.f
+	};
+
+	*_pOut = pOutmat;
+}
+
+void CCalculater::Generate_ProjMat_Per(_mat * matOut, const _float * fFovY, const _float * fAspect, const _float * fZN, const _float * fZF)
+{
+	_mat pOutmat = *matOut;
+	
+	ZeroMemory(pOutmat, sizeof(_mat));
+
+	_float h = 1.f / tanf(*fFovY * 0.5f);
+	_float w = h / *fAspect;
+	_float r = *fZF / (*fZF - *fZN);
+
+	pOutmat._11 = w;
+	pOutmat._22 = h;
+	pOutmat._33 = r;
+	pOutmat._43 = -*fZN * r;
+	pOutmat._34 = 1.f;
+
+	*matOut = pOutmat;
+}
+
+void CCalculater::Generate_ProjMat_Ortho(_mat * matOut, const _float * fW, const _float * fH, const _float * fZN, const _float * fZF)
+{
+	_mat pOutmat = *matOut;
+
+	ZeroMemory(pOutmat, sizeof(_mat));
+
+	pOutmat._11 = 2.f / *fW;
+	pOutmat._22 = 2.f / *fH;
+	pOutmat._33 = 1.f / (*fZF - *fZN);
+	pOutmat._43 = -*fZN / (*fZN - *fZF);
+	pOutmat._34 = 1.f;
+
+	*matOut = pOutmat;
+}
+
 // _fValue1 - 시작점, _fValue2 - 마지막점, _fAmount - 시간
 float CCalculater::Lerp(float _fValue1, float _fValue2, float _fAmount)
 {

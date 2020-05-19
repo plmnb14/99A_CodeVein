@@ -52,7 +52,7 @@ HRESULT CCostume_Outer::Add_Components()
 		return E_FAIL;
 
 	// for.Com_Mesh
-	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Mesh_Player", L"Com_MeshDynamic", (CComponent**)&m_pDynamicMesh)))
+	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Mesh_Drape_01", L"Com_MeshDynamic", (CComponent**)&m_pDynamicMesh)))
 		return E_FAIL;
 
 	// for.Com_BattleAgent
@@ -76,25 +76,15 @@ HRESULT CCostume_Outer::SetUp_ConstantTable(CShader* pShader)
 	if (nullptr == pShader)
 		return E_FAIL;
 
-	_mat		ViewMatrix = g_pManagement->Get_Transform(D3DTS_VIEW);
-	_mat		ProjMatrix = g_pManagement->Get_Transform(D3DTS_PROJECTION);
-
 	//=============================================================================================
 	// 기본 메트릭스
 	//=============================================================================================
 
 	if (FAILED(pShader->Set_Value("g_matWorld", &m_pTransform->Get_WorldMat(), sizeof(_mat))))
 		return E_FAIL;
-	if (FAILED(pShader->Set_Value("g_matView", &ViewMatrix, sizeof(_mat))))
-		return E_FAIL;
-	if (FAILED(pShader->Set_Value("g_matProj", &ProjMatrix, sizeof(_mat))))
-		return E_FAIL;
-
 	//=============================================================================================
 	// 디졸브용 상수
 	//=============================================================================================
-	if (FAILED(g_pDissolveTexture->SetUp_OnShader("g_FXTexture", pShader)))
-		return E_FAIL;
 	if (FAILED(pShader->Set_Value("g_fFxAlpha", &m_fFXAlpha, sizeof(_float))))
 		return E_FAIL;
 
@@ -152,7 +142,7 @@ void CCostume_Outer::Change_OuterMesh(CClothManager::Cloth_Dynamic _eOuterType)
 	{
 	case CClothManager::None:
 	{
-		lstrcpy(szMeshName, L"Mesh_Player");
+		lstrcpy(szMeshName, L"Mesh_Drape_01");
 		m_eOuterType = CClothManager::Cloth_Dynamic::None;
 		break;
 	}
@@ -183,7 +173,7 @@ void CCostume_Outer::Change_OuterMesh(CClothManager::Cloth_Dynamic _eOuterType)
 	}
 	case CClothManager::LongCoat_02:
 	{
-		lstrcpy(szMeshName, L"Mesh_LongCoat_01");
+		lstrcpy(szMeshName, L"Mesh_LongCoat_02");
 		m_eOuterType = CClothManager::LongCoat_02;
 		break;
 	}
@@ -457,14 +447,6 @@ HRESULT CCostume_Outer::Render_GameObject_Instancing_SetPass(CShader * pShader)
 
 			pShader->Set_DynamicTexture_Auto(m_pDynamicMesh, i, j);
 
-			if (13 == m_iPass)
-			{
-				_float fSpec = 0.1f;
-
-				if (FAILED(pShader->Set_Value("g_fSpecularPower", &fSpec, sizeof(_float))))
-					return E_FAIL;
-			}
-
 			pShader->Commit_Changes();
 
 			m_pDynamicMesh->Render_Mesh(i, j);
@@ -472,9 +454,6 @@ HRESULT CCostume_Outer::Render_GameObject_Instancing_SetPass(CShader * pShader)
 			pShader->End_Pass();
 		}
 	}
-
-	// 버텍스 교체
-	//Change_Vertex();
 
 	return S_OK;
 }
@@ -546,8 +525,6 @@ HRESULT CCostume_Outer::Render_GameObject_SetPass(CShader * pShader, _int iPass,
 
 		for (_uint j = 0; j < iNumSubSet; ++j)
 		{
-			_int tmpPass = m_pDynamicMesh->Get_MaterialPass(i, j);
-
 			pShader->Begin_Pass(iPass);
 
 			pShader->Commit_Changes();

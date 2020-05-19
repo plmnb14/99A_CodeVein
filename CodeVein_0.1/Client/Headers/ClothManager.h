@@ -55,25 +55,28 @@ public:
 	void Set_Sleep_AllDynamic();
 
 public:
-	_bool Is_Valid_Static(Cloth_Static eStatic) { return m_bValid_CLoth_Static[eStatic]; }
-	_bool Is_Valid_Dynamic(Cloth_Dynamic eDynamic) { return m_bValid_CLoth_Dynamic[eDynamic]; }
+	_bool Is_Valid_Static(Cloth_Static eStatic) { return m_bValid_Cloth_Static[eStatic]; }
+	_bool Is_Valid_Dynamic(Cloth_Dynamic eDynamic) { return m_bValid_Cloth_Dynamic[eDynamic]; }
 
 	void Clear_Collider(physx::PxCloth* pCloth);
+
+public: // 옷 제작 함수.
+	physx::PxCloth* CreateQuadifier(physx::PxClothMeshDesc& meshDesc);
+	void Set_Cloth_Default(physx::PxCloth* pCloth);
+
+	void Set_Wind(physx::PxCloth* pCloth, _v3 vWindDir);
 
 private:
 	HRESULT Ready_Cloth_Static();
 	HRESULT Ready_Cloth_Dynamic();
 	HRESULT Ready_matPlayerBone();
 	HRESULT Ready_ColRadius();
-	void Set_Cloth_Default(physx::PxCloth* pCloth);
 
-	void Set_Wind(physx::PxCloth* pCloth, _v3 vWindDir);
+	void Set_Value_LongCoat(physx::PxCloth* pCloth);
 
 private:
 	physx::PxClothMeshDesc CreateMesh(LPD3DXMESH pMesh, physx::PxReal scale, physx::PxQuat rot, physx::PxVec3 offset,
 		vector<physx::PxVec4>& vertices, vector<physx::PxU16>& indices);
-
-	physx::PxCloth* CreateQuadifier(physx::PxClothMeshDesc& meshDesc);
 
 	void Update_Hair_ColPos(physx::PxCloth* pCloth);
 	void Update_Cloth_ColPos(physx::PxCloth* pCloth);
@@ -84,7 +87,7 @@ private:
 	void Reset_CurRadius();
 
 private:
-	// 스테틱 메쉬
+	// 플레이어 스테틱 메쉬
 	void Init_Hair01(physx::PxClothMeshDesc& pClothMeshDesc, vector<physx::PxVec4>& vertices, CMesh_Static* pStaticMeshCom);
 	void Init_Hair02(physx::PxClothMeshDesc& pClothMeshDesc, vector<physx::PxVec4>& vertices, CMesh_Static* pStaticMeshCom);
 	void Init_Hair03(physx::PxClothMeshDesc& pClothMeshDesc, vector<physx::PxVec4>& vertices, CMesh_Static* pStaticMeshCom);
@@ -93,7 +96,7 @@ private:
 	void Init_Hair06(physx::PxClothMeshDesc& pClothMeshDesc, vector<physx::PxVec4>& vertices, CMesh_Static* pStaticMeshCom);
 	void Init_Hair07(physx::PxClothMeshDesc& pClothMeshDesc, vector<physx::PxVec4>& vertices, CMesh_Static* pStaticMeshCom);
 
-	// 다이나믹 메쉬
+	// 플레이어 다이나믹 메쉬
 	void Init_Drape_01(physx::PxClothMeshDesc& pClothMeshDesc, vector<physx::PxVec4>& vertices);
 	void Init_Gauntlet_01(physx::PxClothMeshDesc& pClothMeshDesc, vector<physx::PxVec4>& vertices);
 	void Init_Gauntlet_03(physx::PxClothMeshDesc& pClothMeshDesc, vector<physx::PxVec4>& vertices);
@@ -105,13 +108,15 @@ private:
 	void Init_Muffler_01(physx::PxClothMeshDesc& pClothMeshDesc, vector<physx::PxVec4>& vertices);
 	void Init_Muffler_02(physx::PxClothMeshDesc& pClothMeshDesc, vector<physx::PxVec4>& vertices);
 
+	// 몬스터 옷 메쉬
+
+
 private:
 	physx::PxCloth*			m_pCloth_Static[Static_End] = { 0, };
 	physx::PxCloth*			m_pCloth_Dynamic[Dynamic_End] = { 0, };
 
-	_bool					m_bValid_CLoth_Static[Static_End] = { false, };
-	_bool					m_bValid_CLoth_Dynamic[Dynamic_End] = { false, };
-
+	_bool					m_bValid_Cloth_Static[Static_End] = { false, };
+	_bool					m_bValid_Cloth_Dynamic[Dynamic_End] = { false, };
 
 private:
 	D3DXFRAME_DERIVED*		m_pPlayerFrame[PlayerBone_End] = { 0, };

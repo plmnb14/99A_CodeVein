@@ -59,20 +59,6 @@ STDMETHODIMP CHierarchy::CreateMeshContainer(LPCSTR Name, CONST D3DXMESHDATA * p
 
 	pMesh->CloneMesh(pMesh->GetOptions(), Decl, m_pGraphic_Device, &pMeshContainer->MeshData.pMesh);
 
-	//	//// D3DVERTEXELEMENT9구조체 하나가 정점의 fvf하나의 정보를 의미한다.
-	//D3DVERTEXELEMENT9		DeclCreate[MAX_FVF_DECL_SIZE] =
-	//{
-	//	{ 0, 0, D3DDECLTYPE_FLOAT3, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_POSITION, 0 },
-	//	{ 0, 12, D3DDECLTYPE_FLOAT3, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_NORMAL, 0 },
-	//	{ 0, 24, D3DDECLTYPE_FLOAT3, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_TANGENT, 0 },
-	//	{ 0, 36, D3DDECLTYPE_FLOAT3, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_BINORMAL, 0 },
-	//	{ 0, 48, D3DDECLTYPE_FLOAT2, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_TEXCOORD, 0 },
-	//	D3DDECL_END()
-	//};
-	//
-	//	//pMesh->CloneMesh(pMesh->GetOptions(), DeclCreate, m_pGraphic_Device, &pMeshContainer->MeshData.pMesh);
-	//pMesh->CloneMeshFVF(pMesh->GetOptions(), dwFVF, m_pGraphic_Device, &pMeshContainer->MeshData.pMesh);
-	//}
 
 	Safe_Release(pMesh);
 
@@ -84,7 +70,7 @@ STDMETHODIMP CHierarchy::CreateMeshContainer(LPCSTR Name, CONST D3DXMESHDATA * p
 	pMeshContainer->pMeshTexture = new MESHTEXTURE[pMeshContainer->NumMaterials];
 	ZeroMemory(pMeshContainer->pMeshTexture, sizeof(MESHTEXTURE) * pMeshContainer->NumMaterials);
 
-	_tchar		szFullPath[STR_128] = L"";
+	_tchar		szFullPath[STR_256] = L"";
 
 
 	for (size_t i = 0; i < pMeshContainer->NumMaterials; ++i)
@@ -94,10 +80,10 @@ STDMETHODIMP CHierarchy::CreateMeshContainer(LPCSTR Name, CONST D3DXMESHDATA * p
 
 		lstrcpy(szFullPath, m_pFilePath);
 
-		_tchar	szTextureFileName[STR_128] = L"";
+		_tchar	szTextureFileName[STR_256] = L"";
 
 		MultiByteToWideChar(CP_ACP, 0, pMeshContainer->pMaterials[i].pTextureFilename, (_int)strlen(pMeshContainer->pMaterials[i].pTextureFilename)
-			, szTextureFileName, STR_128);
+			, szTextureFileName, STR_256);
 
 		Change_TextureFileExtension(szTextureFileName);
 
@@ -105,10 +91,10 @@ STDMETHODIMP CHierarchy::CreateMeshContainer(LPCSTR Name, CONST D3DXMESHDATA * p
 
 		pMeshContainer->pMeshTexture[i].m_dwMaterialPass = 14;
 
-		if (!lstrcmp(szTextureFileName, L"T_Eyelash_Female1.dds"))
-		{
-			pMeshContainer->pMeshTexture[i].m_dwMaterialPass = 15;
-		}
+		//if (!lstrcmp(szTextureFileName, L"T_Hair_Female_C.dds"))
+		//{
+		//	pMeshContainer->pMeshTexture[i].m_dwMaterialPass = 15;
+		//}
 
 		//==================================================================================================================================
 		// C - Color
@@ -138,6 +124,22 @@ STDMETHODIMP CHierarchy::CreateMeshContainer(LPCSTR Name, CONST D3DXMESHDATA * p
 			D3DXCreateTextureFromFile(m_pGraphic_Device, szFullPath, &pMeshContainer->pMeshTexture[i].pTextures[MESHTEXTURE::TYPE_NORMAL_MAP]);
 			m_bIncludeMap[MESHTEXTURE::TYPE_NORMAL_MAP] = true;
 		}
+		//==================================================================================================================================
+		// H - Height
+		//==================================================================================================================================
+		//Change_TextureFileName(szFullPath, L"N", L"H");
+		//if (NO_EVENT == _waccess(szFullPath, 0))
+		//{
+		//	//D3DXCreateTextureFromFileEx(
+		//	//	m_pGraphic_Device, szFullPath,
+		//	//	D3DX_DEFAULT, D3DX_DEFAULT,
+		//	//	1, 0,
+		//	//	D3DFMT_UNKNOWN, D3DPOOL_DEFAULT,
+		//	//	D3DX_DEFAULT, D3DX_FILTER_NONE, 0, 0, 0, &pMeshContainer->pMeshTexture[i].pTextures[MESHTEXTURE::TYPE_NORMAL_MAP]);
+		//
+		//	D3DXCreateTextureFromFile(m_pGraphic_Device, szFullPath, &pMeshContainer->pMeshTexture[i].pTextures[MESHTEXTURE::TYPE_HEIGHT_MAP]);
+		//	m_bIncludeMap[MESHTEXTURE::TYPE_HEIGHT_MAP] = true;
+		//}
 		//==================================================================================================================================
 		// S - Specular
 		//==================================================================================================================================
@@ -171,26 +173,11 @@ STDMETHODIMP CHierarchy::CreateMeshContainer(LPCSTR Name, CONST D3DXMESHDATA * p
 			D3DXCreateTextureFromFile(m_pGraphic_Device, szFullPath, &pMeshContainer->pMeshTexture[i].pTextures[MESHTEXTURE::TYPE_EMISSIVE_MAP]);
 			m_bIncludeMap[MESHTEXTURE::TYPE_EMISSIVE_MAP] = true;
 		}
-		////==================================================================================================================================
-		//// R - Roughness
-		////==================================================================================================================================
-		Change_TextureFileName(szFullPath, L"E", L"R");
-		if (NO_EVENT == _waccess(szFullPath, 0))
-		{
-			//D3DXCreateTextureFromFileEx(
-			//	m_pGraphic_Device, szFullPath,
-			//	D3DX_DEFAULT, D3DX_DEFAULT,
-			//	1, 0,
-			//	D3DFMT_UNKNOWN, D3DPOOL_DEFAULT,
-			//	D3DX_DEFAULT, D3DX_FILTER_NONE, 0, 0, 0, &pMeshContainer->pMeshTexture[i].pTextures[MESHTEXTURE::TYPE_ROUGHNESS_MAP]);
 
-			D3DXCreateTextureFromFile(m_pGraphic_Device, szFullPath, &pMeshContainer->pMeshTexture[i].pTextures[MESHTEXTURE::TYPE_ROUGHNESS_MAP]);
-			m_bIncludeMap[MESHTEXTURE::TYPE_ROUGHNESS_MAP] = true;
-		}
 		////==================================================================================================================================
 		//// U - Union
 		////==================================================================================================================================
-		Change_TextureFileName(szFullPath, L"R", L"U");
+		Change_TextureFileName(szFullPath, L"E", L"U");
 		if (NO_EVENT == _waccess(szFullPath, 0))
 		{
 			//D3DXCreateTextureFromFileEx(

@@ -325,6 +325,15 @@ CGameObject* CCollBullet_Heal::Clone_GameObject(void* pArg)
 
 void CCollBullet_Heal::Free()
 {
+	if (nullptr != m_pBulletBody_0)
+		m_pBulletBody_0->Set_Dead();
+
+	if (nullptr != m_pBulletBody_1)
+		m_pBulletBody_1->Set_Dead();
+
+	if (nullptr != m_pTrailEffect)
+		m_pTrailEffect->Set_Dead();
+
 	Safe_Release(m_pTransformCom);
 	Safe_Release(m_pCollider);
 	Safe_Release(m_pRendererCom);

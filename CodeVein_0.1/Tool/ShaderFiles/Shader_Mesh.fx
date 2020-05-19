@@ -20,6 +20,9 @@ float		g_fID_R_Power = 0.f;
 float		g_fID_G_Power = 0.f;
 float		g_fID_B_Power = 0.f;
 
+
+float4		g_vLightDir;
+
 //=====================================================
 
 texture		g_DiffuseTexture;
@@ -621,14 +624,16 @@ PS_OUT_ADVENCE PS_Default_DNU(PS_IN In)
 
 	//========================================================================================================================
 
-	//Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / 500.f, Roughness * g_fRoughnessPower, Metalness * g_fSpecularPower);
-	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / 500.f, 0.5f, 0.2f);
+	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / 500.f, Roughness * g_fRoughnessPower, Metalness * g_fSpecularPower);
+	//Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / 500.f, 0.5f, 0.2f);
 
 	//========================================================================================================================
 	float fRim = 1.f - saturate(dot(In.N, In.vRimDir));
 
 	float4 fFinalRimColor = g_vRimColor;
 	float4 fFinalRim = (pow(fRim, g_fRimPower) * fFinalRimColor) * g_fRimAlpha;
+
+	//fFinalRim = smoothstep(0.f, 0.025f, fFinalRim);
 
 	Out.vEmissive = fFinalRim;
 	//========================================================================================================================
@@ -765,6 +770,8 @@ PS_OUT_ADVENCE PS_Default_DNSH(PS_IN In)
 	float4 fFinalRimColor = g_vRimColor;
 	float4 fFinalRim = (pow(fRim, g_fRimPower) * fFinalRimColor) * g_fRimAlpha;
 
+	//fFinalRim = smoothstep(0.f, 0.025f, fFinalRim);
+
 	Out.vEmissive = fFinalRim;
 	//========================================================================================================================
 
@@ -781,6 +788,7 @@ PS_OUT_ADVENCE PS_Default_DNSUID(PS_IN In)
 
 	Out.vDiffuse = 1.f;
 	Out.vDiffuse.xyz = pow(tex2D(DiffuseSampler, In.vTexUV), 2.2);
+	Out.vDiffuse.w = tex2D(DiffuseSampler, In.vTexUV).w;
 
 	//========================================================================================================================
 
@@ -828,6 +836,8 @@ PS_OUT_ADVENCE PS_Default_DNSUID(PS_IN In)
 
 	float4 fFinalRimColor = g_vRimColor;
 	float4 fFinalRim = (pow(fRim, g_fRimPower) * fFinalRimColor) * g_fRimAlpha;
+
+	//fFinalRim = smoothstep(0.f, 0.025f, fFinalRim);
 
 	Out.vEmissive = fFinalRim;
 	//========================================================================================================================
@@ -1547,6 +1557,21 @@ technique Default_Technique
 
 		VertexShader = compile vs_3_0 VS_MAIN();
 		PixelShader = compile ps_3_0 PS_Default_DZ();
+	}
+
+	//====================================================================================================
+	// 22 - Default ( D N S H U )
+	//====================================================================================================
+	pass Default_DNSHU
+	{
+		AlphablendEnable = false;
+
+		AlphaTestEnable = true;
+		AlphaRef = 0;
+		AlphaFunc = Greater;
+
+		VertexShader = compile vs_3_0 VS_MAIN();
+		PixelShader = compile ps_3_0 PS_Default_DNSH();
 	}
 }
 

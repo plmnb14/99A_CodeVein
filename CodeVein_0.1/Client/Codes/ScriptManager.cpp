@@ -14,6 +14,8 @@
 #include "Hunter.h"
 #include "Monkey.h"
 #include "Cocoon.h"
+
+#include "Yeti.h"
 // =================================
 #include "QueensKnight.h"
 #include "PoisonButterfly.h"
@@ -1249,4 +1251,20 @@ void CScriptManager::Free()
 	}
 
 	Safe_Release(m_pGraphicDev);
+}
+
+void CScriptManager::Check_YetiTrap()
+{
+	for (auto& vector_iter : m_vecTrapPool)
+	{
+		if(false == vector_iter->Get_Enable())
+			continue;
+
+		if(false == vector_iter->Get_SummonYeti())
+			continue;
+
+		m_vecObjectPool[vector_iter->Get_YetiIndex()]->Set_Enable(true);
+	}
+
+	return;
 }
