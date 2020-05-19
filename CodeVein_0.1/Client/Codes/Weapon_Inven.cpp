@@ -641,7 +641,6 @@ void CWeapon_Inven::SetUp_Default()
 	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pExplainUI, SCENE_MORTAL, L"Layer_PlayerUI", nullptr);
 }
 
-<<<<<<< HEAD
 void CWeapon_Inven::SetUp_SlotPos()
 {
 	_uint iIdx = 0;

@@ -1290,6 +1290,18 @@
     <ClInclude Include="..\Headers\NPC_Yokumo.h">
       <Filter>02.GameObject\Stage\11%29 NPC\Yokumo</Filter>
     </ClInclude>
+    <ClInclude Include="..\Headers\GeneralStoreOption.h">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\18. GeneralStoreUI%28잡화점%29\04. GeneralStoreNPCUI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\YetiTrap.h">
+      <Filter>02.GameObject\Stage\2%29 Monster\Yeti\YetiTrap</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\Colleague_UI.h">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\15. Colleague UI\00. Base_Colleague</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\Calling_Colleague.h">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\15. Colleague UI\02. Calling_Colleague</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -1945,6 +1957,18 @@
     </ClCompile>
     <ClCompile Include="..\Codes\NPC_Yokumo.cpp">
       <Filter>02.GameObject\Stage\11%29 NPC\Yokumo</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\GeneralStoreOption.cpp">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\18. GeneralStoreUI%28잡화점%29\04. GeneralStoreNPCUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\YetiTrap.cpp">
+      <Filter>02.GameObject\Stage\2%29 Monster\Yeti\YetiTrap</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\Colleague_UI.cpp">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\15. Colleague UI\00. Base_Colleague</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\Calling_Colleague.cpp">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\15. Colleague UI\02. Calling_Colleague</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

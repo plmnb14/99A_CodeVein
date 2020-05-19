@@ -1295,6 +1295,9 @@ _uint CLoading::Loading_Title()
 	//============================================================================================================
 	// 다이나믹 메쉬 불러오는 중
 	//============================================================================================================
+	cout << "Essential Dynamic Mesh 불러오는 중 . . ." << endl;
+	g_pManagement->LoadMesh_FromPath(m_pGraphicDev, L"../../Data/Load_MeshData/Mesh_Essential_Dynamic_Path.dat");
+
 	cout << "Costume Static Mesh 불러오는 중 . . ." << endl;
 	g_pManagement->LoadMesh_FromPath(m_pGraphicDev, L"../../Data/Load_MeshData/Mesh_Costume_Static_Path.dat");
 
@@ -1391,7 +1394,7 @@ _uint CLoading::Loading_Title()
 	g_pSoundManager->Load_Directory_SouneFile_W(L"Title");
 	g_pSoundManager->Load_Directory_SouneFile_W(L"BGM");
 	g_pSoundManager->Load_Directory_SouneFile_W(L"Effect");
-	g_pSoundManager->Load_Directory_SouneFile_W(L"UI");
+	g_pSoundManager->Load_Directory_SouneFile_W(L"UI/UI_Inven");
 	g_pSoundManager->Load_Directory_SouneFile_W(L"UI/UI_WeaponShop");
 	g_pSoundManager->Load_Directory_SouneFile_W(L"NPC/Yakumo");
 	g_pSoundManager->Load_Directory_SouneFile_W(L"Boss_Genji");
