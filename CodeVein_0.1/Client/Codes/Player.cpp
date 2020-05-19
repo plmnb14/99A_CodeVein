@@ -1493,7 +1493,7 @@ void CPlayer::KeyInput()
 	if (m_eActState == ACT_Dead)
 		return;
 
-	cout << "키를 눌러 주세요" << endl;
+	//cout << "키를 눌러 주세요" << endl;
 
 	KeyDown();
 	KeyUp();
@@ -1510,7 +1510,7 @@ void CPlayer::KeyDown()
 	{
 		if (false == m_bStopMovementKeyInput)
 		{
-			cout << "오냐" << endl;
+			//cout << "오냐" << endl;
 
 			// 이동관련
 			Key_Movement_Down();

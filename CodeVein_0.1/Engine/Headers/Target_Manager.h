@@ -21,12 +21,13 @@ public:
 	HRESULT End_Render_Target(const _tchar* pTargetTag);
 	HRESULT New_Stencil(const _tchar* pTargetTag);
 	HRESULT Origin_Stencil(const _tchar* pTargetTag);
-#ifdef _DEBUG
+
+//#ifdef _DEBUG
 public:
 	HRESULT Ready_Debug_Buffer(const _tchar* pTargetTag, _float fStartX, _float fStartY, _float fSizeX, _float fSizeY);
 	HRESULT Render_Debug_Buffer(const _tchar* pMRTTag);
 	HRESULT Render_Debug_Buffer_Single(const _tchar* pTargetTag);
-#endif
+//#endif
 
 private: // 렌더타겟을들을 산발적으로 추가.
 	map<const _tchar*, CTarget*>			m_Targets;

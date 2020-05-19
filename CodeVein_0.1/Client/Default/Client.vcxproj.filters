@@ -604,6 +604,12 @@
     <Filter Include="02.GameObject\Stage\5%29 UI\UI\20. Custom\CategoryElem\SliderBar">
       <UniqueIdentifier>{6836337d-342b-458c-b424-5c5028fce301}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObject\Stage\11%29 NPC\Yakumo">
+      <UniqueIdentifier>{dc8f7480-720a-4f3d-bc65-ada7ef7ac63c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Stage\11%29 NPC\Yokumo">
+      <UniqueIdentifier>{5ca30cf0-1a0e-4b0c-ae8a-94b0ae688791}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -1122,9 +1128,6 @@
     <ClInclude Include="..\Headers\BossNameUI.h">
       <Filter>02.GameObject\Stage\5%29 UI\UI\02.BossUI\BossNameUI</Filter>
     </ClInclude>
-    <ClInclude Include="..\Headers\NPC_Yakumo.h">
-      <Filter>02.GameObject\Stage\11%29 NPC</Filter>
-    </ClInclude>
     <ClInclude Include="..\Headers\WeaponShopUI.h">
       <Filter>02.GameObject\Stage\5%29 UI\UI\17. WeaponShopUI</Filter>
     </ClInclude>
@@ -1262,6 +1265,12 @@
     </ClInclude>
     <ClInclude Include="..\Headers\CustomSliderBar.h">
       <Filter>02.GameObject\Stage\5%29 UI\UI\20. Custom\CategoryElem\SliderBar</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\NPC_Yakumo.h">
+      <Filter>02.GameObject\Stage\11%29 NPC\Yakumo</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\NPC_Yokumo.h">
+      <Filter>02.GameObject\Stage\11%29 NPC\Yokumo</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -1766,9 +1775,6 @@
     <ClCompile Include="..\Codes\BossNameUI.cpp">
       <Filter>02.GameObject\Stage\5%29 UI\UI\02.BossUI\BossNameUI</Filter>
     </ClCompile>
-    <ClCompile Include="..\Codes\NPC_Yakumo.cpp">
-      <Filter>02.GameObject\Stage\11%29 NPC</Filter>
-    </ClCompile>
     <ClCompile Include="..\Codes\WeaponShopUI.cpp">
       <Filter>02.GameObject\Stage\5%29 UI\UI\17. WeaponShopUI</Filter>
     </ClCompile>
@@ -1906,6 +1912,12 @@
     </ClCompile>
     <ClCompile Include="..\Codes\CustomSliderBar.cpp">
       <Filter>02.GameObject\Stage\5%29 UI\UI\20. Custom\CategoryElem\SliderBar</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\NPC_Yakumo.cpp">
+      <Filter>02.GameObject\Stage\11%29 NPC\Yakumo</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\NPC_Yokumo.cpp">
+      <Filter>02.GameObject\Stage\11%29 NPC\Yokumo</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

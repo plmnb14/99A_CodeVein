@@ -16,6 +16,7 @@
 #include "CustomCategoryOption.h"
 #include "CustomInven.h"
 #include "CustomSlot.h"
+#include "CustomSliderBar.h"
 
 CScene_Stage_Base::CScene_Stage_Base(LPDIRECT3DDEVICE9 pGraphic_Device)
 	: CScene(pGraphic_Device)
@@ -32,8 +33,16 @@ HRESULT CScene_Stage_Base::Ready_Scene()
 	if (FAILED(Ready_Layer_BackGround(L"Layer_Sky")))
 		return E_FAIL;
 
-	//if (FAILED(Ready_Layer_Custom(L"Layer_Custom")))
-	//	return E_FAIL;
+	if (FAILED(Ready_Layer_Custom(L"Layer_Custom")))
+		return E_FAIL;
+
+	CRenderer* pRenderer = static_cast<CRenderer*>(CManagement::Get_Instance()->Clone_Component(SCENE_STATIC, L"Renderer"));
+	pRenderer->Fog_On(true);
+	pRenderer->Set_FogDestiny(0.01f);
+	Safe_Release(pRenderer);
+
+	g_pSoundManager->Stop_Sound(CSoundManager::Ambient_01);
+	g_pSoundManager->Play_Sound(L"AMB_BASE_000.ogg", CSoundManager::Ambient_01, CSoundManager::Ambient_Sound);
 
 	// 플레이어의 네비 메쉬도 바꿔줍니다.
 	Ready_Player();
@@ -45,11 +54,14 @@ HRESULT CScene_Stage_Base::Ready_Scene()
 
 	g_pManagement->LoadCreateObject_FromPath(m_pGraphic_Device, L"Object_Stage_00.dat");
 
-	//// 야쿠모
-	//g_pManagement->Add_GameObject_ToLayer(L"GameObject_NPC_Yakumo", SCENE_STAGE, L"Layer_NPC", &CNPC_Yakumo::NPC_INFO(_v3(-4.46f, -1.37f, -5.294f), D3DXToRadian(90.f)));
-	//
-	//// NPC 1
-	//g_pManagement->Add_GameObject_ToLayer(L"GameObject_NPC_Yakumo", SCENE_STAGE, L"Layer_NPC", &CNPC_Yakumo::NPC_INFO(_v3(-10.5f, -1.37f, -14.3f), D3DXToRadian(45.f)));
+	//////////////////////////////////////////////////////////////////////////
+	// NPC
+	//////////////////////////////////////////////////////////////////////////
+	// 야쿠모
+	g_pManagement->Add_GameObject_ToLayer(L"GameObject_NPC_Yakumo", SCENE_STAGE, L"Layer_NPC", &CNPC_Yakumo::NPC_INFO(_v3(-4.46f, -1.37f, -5.294f), D3DXToRadian(90.f)));
+	
+	// NPC 1 요쿠모
+	g_pManagement->Add_GameObject_ToLayer(L"GameObject_NPC_Yokumo", SCENE_STAGE, L"Layer_NPC", &CNPC_Yakumo::NPC_INFO(_v3(-10.5f, -1.37f, -14.3f), D3DXToRadian(45.f)));
 	//
 	//// NPC 2
 	//g_pManagement->Add_GameObject_ToLayer(L"GameObject_NPC_Yakumo", SCENE_STAGE, L"Layer_NPC", &CNPC_Yakumo::NPC_INFO(_v3(6.283f, -1.37f, -14.75f), D3DXToRadian(-45.f)));
@@ -83,29 +95,26 @@ HRESULT CScene_Stage_Base::Ready_Layer_Custom(const _tchar * pLayerTag)
 		return E_FAIL;
 	if (FAILED(g_pManagement->Add_Prototype(SCENE_STATIC, L"DefaultTex_Custom_Hair", CTexture::Create(m_pGraphic_Device, CTexture::TYPE_GENERAL, L"../Resources/Texture/DefaultUI/Customize/Custom_Hair/Custom_Hair_%d.dds", 7))))
 		return E_FAIL;
+	if (FAILED(g_pManagement->Add_Prototype(SCENE_STATIC, L"DefaultTex_Custom_Eye", CTexture::Create(m_pGraphic_Device, CTexture::TYPE_GENERAL, L"../Resources/Texture/DefaultUI/Customize/Custom_Eye/Custom_Eye_%d.dds", 1))))
+		return E_FAIL;
 	if (FAILED(g_pManagement->Add_Prototype(SCENE_STATIC, L"DefaultTex_Custom_Face", CTexture::Create(m_pGraphic_Device, CTexture::TYPE_GENERAL, L"../Resources/Texture/DefaultUI/Customize/Custom_Face/Custom_Face_%d.dds", 10))))
 		return E_FAIL;
 	if (FAILED(g_pManagement->Add_Prototype(SCENE_STATIC, L"DefaultTex_Custom_ToxicGuard", CTexture::Create(m_pGraphic_Device, CTexture::TYPE_GENERAL, L"../Resources/Texture/DefaultUI/Customize/Custom_ToxicGuard/Custom_ToxicGuard_%d.dds", 10))))
 		return E_FAIL;
 
-	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_CustomCategory", CCustomCategory::Create(m_pGraphic_Device))))
-		return E_FAIL;
-	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_CustomCategoryOption", CCustomCategoryOption::Create(m_pGraphic_Device))))
-		return E_FAIL;
 	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_CustomInven", CCustomInven::Create(m_pGraphic_Device))))
 		return E_FAIL;
 	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_CustomSlot", CCustomSlot::Create(m_pGraphic_Device))))
 		return E_FAIL;
-
-	CCustomCategory* pCustomCategory = static_cast<CCustomCategory*>(g_pManagement->Clone_GameObject_Return(L"GameObject_CustomCategory", nullptr));
-	pCustomCategory->Set_Active(true);
-	if (FAILED(g_pManagement->Add_GameOject_ToLayer_NoClone(pCustomCategory, SCENE_STAGE_BASE, pLayerTag, nullptr)))
+	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_CustomSlider", CCustomSliderBar::Create(m_pGraphic_Device))))
+		return E_FAIL;
+	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_CustomCategory", CCustomCategory::Create(m_pGraphic_Device))))
+		return E_FAIL;
+	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_CustomCategoryOption", CCustomCategoryOption::Create(m_pGraphic_Device))))
 		return E_FAIL;
 
-	CCustomInven* pCustomInven = static_cast<CCustomInven*>(g_pManagement->Clone_GameObject_Return(L"GameObject_CustomInven", nullptr));
-	pCustomInven->Set_ActiveSlot(CCustomInven::TYPE_HAIR);
-	pCustomInven->Set_Active(true);
-	if (FAILED(g_pManagement->Add_GameOject_ToLayer_NoClone(pCustomInven, SCENE_STAGE_BASE, pLayerTag, nullptr)))
+	CCustomCategory* pCustomCategory = static_cast<CCustomCategory*>(g_pManagement->Clone_GameObject_Return(L"GameObject_CustomCategory", nullptr));
+	if (FAILED(g_pManagement->Add_GameOject_ToLayer_NoClone(pCustomCategory, SCENE_STAGE_BASE, pLayerTag, nullptr)))
 		return E_FAIL;
 
 	return S_OK;
@@ -147,10 +156,11 @@ HRESULT CScene_Stage_Base::Ready_Layer_BackGround(const _tchar * pLayerTag)
 {
 	// For.Sky
 	CGameObject* pInstance = g_pManagement->Clone_GameObject_Return(L"GameObject_Sky", nullptr);
-
 	TARGET_TO_TRANS(pInstance)->Set_Angle(AXIS_Y, D3DXToRadian(220.f));
+	g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, pLayerTag, nullptr);
 
-	g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Sky", nullptr);
+	if (FAILED(g_pManagement->Add_GameObject_ToLayer(L"GameObject_Sky_Blur", SCENE_STAGE, pLayerTag)))
+		return E_FAIL;
 
 	return S_OK;
 }

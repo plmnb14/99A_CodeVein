@@ -142,6 +142,16 @@ HRESULT CRenderer::Ready_Component_Prototype()
 	if (FAILED(m_pTarget_Manager->Add_Render_Target(m_pGraphic_Dev, L"Target_BlurSky", ViewPort.Width, ViewPort.Height, D3DFMT_A8R8G8B8, D3DXCOLOR(0.f, 0.f, 0.f, 0.f))))
 		return E_FAIL;
 
+	// Target_DistortionAfter
+	if (FAILED(m_pTarget_Manager->Add_Render_Target(m_pGraphic_Dev, L"Target_DistortionAfter", ViewPort.Width, ViewPort.Height, D3DFMT_A8R8G8B8, D3DXCOLOR(0.f, 0.f, 0.f, 0.f))))
+		return E_FAIL;
+	// Target_DOFAfter
+	if (FAILED(m_pTarget_Manager->Add_Render_Target(m_pGraphic_Dev, L"Target_DOFAfter", ViewPort.Width, ViewPort.Height, D3DFMT_A8R8G8B8, D3DXCOLOR(0.f, 0.f, 0.f, 0.f))))
+		return E_FAIL;
+	// Target_ColorGradingAfter
+	if (FAILED(m_pTarget_Manager->Add_Render_Target(m_pGraphic_Dev, L"Target_ColorGradingAfter", ViewPort.Width, ViewPort.Height, D3DFMT_A8R8G8B8, D3DXCOLOR(0.f, 0.f, 0.f, 0.f))))
+		return E_FAIL;
+
 	// MRT : Multi Render Target 그룹을 지어놓은것. 
 
 	// For.MRT_Deferred : Target_Diffuse + Target_Normal
@@ -376,9 +386,21 @@ HRESULT CRenderer::Ready_Component_Prototype()
 		return E_FAIL;
 	
 	//=====================================================================================================================
+	// For.Target_DistortionAfter`s Debug Buffer
+	if (FAILED(m_pTarget_Manager->Ready_Debug_Buffer(L"Target_DistortionAfter", fTargetSize * 6, 0.f, fTargetSize, fTargetSize)))
+		return E_FAIL;
 
+	// For.Target_DOFAfter`s Debug Buffer
+	if (FAILED(m_pTarget_Manager->Ready_Debug_Buffer(L"Target_DOFAfter", fTargetSize * 6, fTargetSize, fTargetSize, fTargetSize)))
+		return E_FAIL;
+
+	//// For.Target_ColorGradingAfter`s Debug Buffer
+	//if (FAILED(m_pTarget_Manager->Ready_Debug_Buffer(L"Target_ColorGradingAfter", fTargetSize * 6, fTargetSize * 2, fTargetSize, fTargetSize)))
+	//	return E_FAIL;
+
+	//=====================================================================================================================
 	// For.Target_GodRay`s Debug Buffer
-	if (FAILED(m_pTarget_Manager->Ready_Debug_Buffer(L"Target_GodRay", fTargetSize * 6, 0, fTargetSize, fTargetSize)))
+	if (FAILED(m_pTarget_Manager->Ready_Debug_Buffer(L"Target_GodRay", fTargetSize * 7, 0, fTargetSize, fTargetSize)))
 		return E_FAIL;
 #endif
 
@@ -457,12 +479,17 @@ HRESULT CRenderer::Draw_RenderList()
 		return E_FAIL;
 
 	// Distortion 타겟에 그림 // 순서 상관X
-	if (FAILED(Render_Distortion()))
+	if (FAILED(Render_DistortionTarget()))
 		return E_FAIL;
 
 	// 후처리
-	if (FAILED(Render_After()))
+	if (FAILED(Render_Distortion()))
 		return E_FAIL;
+	if (FAILED(Render_DOF()))
+		return E_FAIL;
+	if (FAILED(Render_ColorGrading()))
+		return E_FAIL;
+
 	if (FAILED(Render_UI_Back()))
 		return E_FAIL;
 	if (FAILED(Render_3dUI()))
@@ -470,8 +497,7 @@ HRESULT CRenderer::Draw_RenderList()
 	if (FAILED(Render_UI()))
 		return E_FAIL;
 
-#ifdef _DEBUG
-
+//#ifdef _DEBUG
 	if (CInput_Device::Get_Instance()->Key_Down(DIK_NUMPAD9))
 		m_bOnRenderTarget = !m_bOnRenderTarget;
 
@@ -500,7 +526,7 @@ HRESULT CRenderer::Draw_RenderList()
 		m_pGraphic_Dev->SetTexture(0, nullptr);
 	}
 
-#endif
+//#endif
 
 	return NOERROR;
 }
@@ -533,11 +559,6 @@ void CRenderer::Mono_On(_bool bOn)
 void CRenderer::Fog_On(_bool bOn)
 {
 	m_bFog = bOn;
-
-	if (m_bFog)
-		m_fFogDestiny = 0.01f;
-	else
-		m_fFogDestiny = 0.f;
 }
 
 HRESULT CRenderer::Render_Priority()
@@ -796,7 +817,7 @@ HRESULT CRenderer::Render_MotionBlurTarget()
 	return NOERROR;
 }
 
-HRESULT CRenderer::Render_Distortion()
+HRESULT CRenderer::Render_DistortionTarget()
 {
 	if (FAILED(m_pTarget_Manager->Begin_MRT(L"MRT_Distortion")))
 		return E_FAIL;
@@ -1267,7 +1288,11 @@ HRESULT CRenderer::Render_Blend()
 	if (FAILED(m_pShader_Blend->Set_Texture("g_FogColorTexture", m_pTarget_Manager->Get_Texture(L"Target_BlurSky"))))
 		return E_FAIL;
 
-	if (FAILED(m_pShader_Blend->Set_Value("g_FogDestiny", &m_fFogDestiny, sizeof(_float))))
+	_float fDestiny = m_fFogDestiny;
+	if (!m_bFog)
+		fDestiny = 0.f;
+
+	if (FAILED(m_pShader_Blend->Set_Value("g_FogDestiny", &fDestiny, sizeof(_float))))
 		return E_FAIL;
 
 	if (FAILED(m_pTarget_Manager->Begin_MRT(L"MRT_Blend")))
@@ -1551,18 +1576,9 @@ HRESULT CRenderer::Render_ToneMapping()
 	else
 		(m_fToneGradient >= 0.5f) ? m_fToneGradient = 0.5f : m_fToneGradient += DELTA_60 * 6.f;
 
-	if (GetAsyncKeyState(VK_F1) & 0x8000)
-		m_iToneIdx = 0;
-	if (GetAsyncKeyState(VK_F2) & 0x8000)
-		m_iToneIdx = 1;
-	if (GetAsyncKeyState(VK_F3) & 0x8000)
-		m_iToneIdx = 2;
-	if (GetAsyncKeyState(VK_F4) & 0x8000)
-		m_iToneIdx = 3;
-	if (GetAsyncKeyState(VK_F5) & 0x8000)
-		m_iToneIdx = 4;
-	if (GetAsyncKeyState(VK_F6) & 0x8000)
-		m_iToneIdx = 5;
+	_int iPass = 1;
+	if (0.f == m_fToneGradient)
+		iPass = 10;
 	
 	// Tone index
 	if (FAILED(m_pShader_Blend->Set_Value("g_iToneIndex", &m_iToneIdx, sizeof(_int))))
@@ -1576,7 +1592,7 @@ HRESULT CRenderer::Render_ToneMapping()
 
 	// 장치에 백버퍼가 셋팅되어있다.	
 	m_pShader_Blend->Begin_Shader();
-	m_pShader_Blend->Begin_Pass(1);
+	m_pShader_Blend->Begin_Pass(iPass);
 
 	m_pViewPortBuffer->Render_VIBuffer();
 
@@ -1666,7 +1682,7 @@ HRESULT CRenderer::Render_BlurDOF()
 	return S_OK;
 }
 
-HRESULT CRenderer::Render_After()
+HRESULT CRenderer::Render_Distortion()
 {
 	if (nullptr == m_pViewPortBuffer ||
 		nullptr == m_pShader_Blend)
@@ -1676,46 +1692,35 @@ HRESULT CRenderer::Render_After()
 		return E_FAIL;
 	if (FAILED(m_pShader_Blend->Set_Texture("g_DistortionTexture", m_pTarget_Manager->Get_Texture(L"Target_Distortion"))))
 		return E_FAIL;
+
+	m_pTarget_Manager->Begin_Render_Target(L"Target_DistortionAfter");
+
+	// 장치에 백버퍼가 셋팅되어있다.	
+	m_pShader_Blend->Begin_Shader();
+	m_pShader_Blend->Begin_Pass(11);
+
+	m_pViewPortBuffer->Render_VIBuffer();
+
+	m_pShader_Blend->End_Pass();
+	m_pShader_Blend->End_Shader();
+
+	m_pTarget_Manager->End_Render_Target(L"Target_DistortionAfter");
+
+	return S_OK;
+}
+
+HRESULT CRenderer::Render_DOF()
+{
+	if (nullptr == m_pViewPortBuffer ||
+		nullptr == m_pShader_Blend)
+		return E_FAIL;
+
+	if (FAILED(m_pShader_Blend->Set_Texture("g_DiffuseTexture", m_pTarget_Manager->Get_Texture(L"Target_DistortionAfter"))))
+		return E_FAIL;
 	if (FAILED(m_pShader_Blend->Set_Texture("g_DepthTexture", m_pTarget_Manager->Get_Texture(L"Target_Depth"))))
 		return E_FAIL;
 	if (FAILED(m_pShader_Blend->Set_Texture("g_ShadeTexture", m_pTarget_Manager->Get_Texture(L"Target_BlurDOF"))))
 		return E_FAIL;
-
-
-	if (GetAsyncKeyState('M') & 0x8000)
-	{
-		m_pGradingTextureTest->SetUp_OnShader("g_GradingTexture", m_pShader_Blend, 0);
-	}
-	else
-	{
-		// GradingTexture
-		m_pGradingTexture->SetUp_OnShader("g_GradingTexture", m_pShader_Blend, 0);
-	}
-
-	//if (GetAsyncKeyState('O') & 0x8000)
-	//{
-	//	m_fFogDestiny = 0.06f;
-	//}
-	//if (GetAsyncKeyState('I') & 0x8000)
-	//{
-	//	m_fFogDestiny = 0.15f;
-	//}
-	//if (GetAsyncKeyState('U') & 0x8000)
-	//{
-	//	m_fRange += 1.f * DELTA_60;
-	//
-	//	cout << "RANGE : " << m_fRange << endl;
-	//	cout << "FOCUS : " << m_fFocus << endl;
-	//	cout << "=========================" << endl;
-	//}
-	//if (GetAsyncKeyState('Y') & 0x8000)
-	//{
-	//	m_fRange -= 1.f * DELTA_60;
-	//
-	//	cout << "RANGE : " << m_fRange << endl;
-	//	cout << "FOCUS : " << m_fFocus << endl;
-	//	cout << "=========================" << endl;
-	//}
 
 	if (m_fFocus > 1.f) m_fFocus = 1.f;
 	if (m_fFocus < 0.f) m_fFocus = 0.f;
@@ -1727,9 +1732,44 @@ HRESULT CRenderer::Render_After()
 	if (FAILED(m_pShader_Blend->Set_Value("g_Range_DOF", &m_fRange, sizeof(_float))))
 		return E_FAIL;
 
+	m_pTarget_Manager->Begin_Render_Target(L"Target_DOFAfter");
+
 	// 장치에 백버퍼가 셋팅되어있다.	
 	m_pShader_Blend->Begin_Shader();
-	m_pShader_Blend->Begin_Pass(4);
+	m_pShader_Blend->Begin_Pass(12);
+
+	m_pViewPortBuffer->Render_VIBuffer();
+
+	m_pShader_Blend->End_Pass();
+	m_pShader_Blend->End_Shader();
+
+	m_pTarget_Manager->End_Render_Target(L"Target_DOFAfter");
+
+	return S_OK;
+}
+
+HRESULT CRenderer::Render_ColorGrading()
+{
+	if (nullptr == m_pViewPortBuffer ||
+		nullptr == m_pShader_Blend)
+		return E_FAIL;
+
+	if (FAILED(m_pShader_Blend->Set_Texture("g_DiffuseTexture", m_pTarget_Manager->Get_Texture(L"Target_DOFAfter"))))
+		return E_FAIL;
+
+	if (GetAsyncKeyState('M') & 0x8000)
+	{
+		m_pGradingTextureTest->SetUp_OnShader("g_GradingTexture", m_pShader_Blend, 0);
+	}
+	else
+	{
+		// GradingTexture
+		m_pGradingTexture->SetUp_OnShader("g_GradingTexture", m_pShader_Blend, 0);
+	}
+
+	// 장치에 백버퍼가 셋팅되어있다.	
+	m_pShader_Blend->Begin_Shader();
+	m_pShader_Blend->Begin_Pass(13);
 
 	m_pViewPortBuffer->Render_VIBuffer();
 

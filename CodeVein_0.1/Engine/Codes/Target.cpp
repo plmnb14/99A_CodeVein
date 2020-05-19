@@ -119,7 +119,7 @@ HRESULT CTarget::Clear_Target()
 	return NOERROR;
 }
 
-#ifdef _DEBUG
+//#ifdef _DEBUG
 
 HRESULT CTarget::Ready_Debug_Buffer(_float fStartX, _float fStartY, _float fSizeX, _float fSizeY)
 {
@@ -144,7 +144,7 @@ HRESULT CTarget::Render_Debug_Buffer()
 	return NOERROR;
 }
 
-#endif
+//#endif
 
 CTarget * CTarget::Create(LPDIRECT3DDEVICE9 pGraphic_Device, _uint iSizeX, _uint iSizeY, D3DFORMAT eFormat, D3DXCOLOR ClearColor)
 {

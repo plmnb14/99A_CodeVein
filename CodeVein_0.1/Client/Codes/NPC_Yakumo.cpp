@@ -26,7 +26,7 @@ HRESULT CNPC_Yakumo::Ready_GameObject(void * pArg)
 	NPC_INFO pInfo = *(NPC_INFO*)pArg;
 
 	m_pTransformCom->Set_Pos(pInfo.vPos);
-	m_pTransformCom->Set_Scale(V3_ONE);
+	m_pTransformCom->Set_Scale(_v3(1.2f, 1.1f, 1.2f));
 	m_pTransformCom->Set_Angle(AXIS_Y, pInfo.fYAngle);
 	
 	m_pPlayer = g_pManagement->Get_GameObjectBack(L"Layer_Player", SCENE_MORTAL);

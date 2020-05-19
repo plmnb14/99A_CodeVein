@@ -38,6 +38,16 @@ HRESULT CPlayerST::Ready_GameObject(void * pArg)
 
 _int CPlayerST::Update_GameObject(_double TimeDelta)
 {
+	if (g_eSceneID_Cur == SCENE_STAGE_BASE)
+	{
+		Set_Active(false);
+		return S_OK;
+	}
+	else
+	{
+		Set_Active(true);
+	}
+
 	CUI::Update_GameObject(TimeDelta);
 	m_pTarget = g_pManagement->Get_GameObjectBack(L"Layer_Player", SCENE_MORTAL);
 	if (!m_pTarget)

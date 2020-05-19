@@ -25,7 +25,7 @@ public:
 
 public:
 	void Set_ShadowLightPos(_v3 _vPos) { m_vShadowLightPos = _vPos; }
-
+	void Set_FogDestiny(_float _fDestiny) {	m_fFogDestiny = _fDestiny;	}
 public:
 	void DOF_On(_bool bOn);
 	void Mono_On(_bool bOn);
@@ -54,7 +54,7 @@ private:
 	_float						m_fRange = 0.f;
 
 	_bool						m_bFog = false;
-	_float						m_fFogDestiny = 0.f;
+	_float						m_fFogDestiny = 0.01f;
 
 private:
 	CTarget_Manager*			m_pTarget_Manager = nullptr;
@@ -90,7 +90,7 @@ private:
 	HRESULT Render_ShadowMap();
 	HRESULT Render_Shadow();
 	HRESULT Render_MotionBlurTarget();
-	HRESULT Render_Distortion();
+	HRESULT Render_DistortionTarget();
 	HRESULT Render_Alpha();
 	HRESULT Render_Effect();
 	HRESULT Render_Instance();
@@ -109,7 +109,12 @@ private:
 	HRESULT Render_MotionBlur();
 	HRESULT Render_ToneMapping();
 	HRESULT Render_BlurDOF();
-	HRESULT Render_After();
+
+	HRESULT Render_Distortion();
+	HRESULT Render_DOF();
+	HRESULT Render_ColorGrading();
+
+	//HRESULT Render_After();
 
 private:
 	void Calc_CSM();
