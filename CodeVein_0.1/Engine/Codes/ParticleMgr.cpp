@@ -567,11 +567,11 @@ HRESULT CParticleMgr::Ready_TitleEffect()
 {
 	Input_Pool(L"Ortho_Title_Glitter_0", 1);
 	Input_Pool(L"Ortho_Title_Glitter_1", 1);
-	Input_Pool(L"Ortho_Title_ShadowLine", 1);
-	Input_Pool(L"Ortho_Title_ShadowText", 1);
-	Input_Pool(L"Ortho_Title_Smoke", 1);
 	Input_Pool(L"Ortho_Title_BG", 1);
 	Input_Pool(L"Ortho_Title_WhiteFadeout", 1);
+	//Input_Pool(L"Ortho_Title_ShadowLine", 1);
+	//Input_Pool(L"Ortho_Title_ShadowText", 1);
+	//Input_Pool(L"Ortho_Title_Smoke", 1);
 	
 	return S_OK;
 }

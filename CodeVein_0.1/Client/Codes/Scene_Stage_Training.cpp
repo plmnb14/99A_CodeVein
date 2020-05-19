@@ -21,6 +21,12 @@
 
 #include "NPC_Yakumo.h"
 
+#include "CustomCategory.h"
+#include "CustomCategoryOption.h"
+#include "CustomInven.h"
+#include "CustomSlot.h"
+#include "CustomSliderBar.h"
+
 CScene_Stage_Training::CScene_Stage_Training(LPDIRECT3DDEVICE9 pGraphic_Device)
 	: CScene(pGraphic_Device)
 {
@@ -39,6 +45,9 @@ HRESULT CScene_Stage_Training::Ready_Scene()
 		return E_FAIL;
 
 	if (FAILED(Ready_Layer_Environment()))
+		return E_FAIL;
+
+	if (FAILED(Ready_Layer_Custom(L"Layer_Custom")))
 		return E_FAIL;
 
 	CRenderer* pRenderer = static_cast<CRenderer*>(CManagement::Get_Instance()->Clone_Component(SCENE_STATIC, L"Renderer"));
@@ -128,11 +137,11 @@ HRESULT CScene_Stage_Training::Ready_Layer_Enemies()
 	// 야쿠모
 	//g_pManagement->Add_GameObject_ToLayer(L"GameObject_NPC_Yakumo", SCENE_STAGE, L"Layer_NPC", &CNPC_Yakumo::NPC_INFO(_v3(-4.46f, 0.f, -5.294f), D3DXToRadian(90.f)));
 
-	//// 토템
-	//pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_Cocoon",
-	//	&CMonster::MONSTER_STATUS(CMonster::MONSTER_COLOR_TYPE::COLOR_NONE, WEAPON_STATE::WEAPON_None,
-	//		true, _v3(8.f, 0.f, -8.f), V3_NULL, 0));
-	//g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Monster", nullptr);
+	// 토템
+	pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_Cocoon",
+		&CMonster::MONSTER_STATUS(CMonster::MONSTER_COLOR_TYPE::COLOR_NONE, WEAPON_STATE::WEAPON_None,
+			true, _v3(8.f, 0.f, -8.f), V3_NULL, 0));
+	g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Monster", nullptr);
 
 	// 토템
 	//pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_Cocoon",
@@ -296,6 +305,37 @@ HRESULT CScene_Stage_Training::Ready_Layer_Environment()
 	return S_OK;
 }
 
+HRESULT CScene_Stage_Training::Ready_Layer_Custom(const _tchar * pLayerTag)
+{
+	if (FAILED(g_pManagement->Add_Prototype(SCENE_STATIC, L"DefaultTex_Custom_UI", CTexture::Create(m_pGraphic_Device, CTexture::TYPE_GENERAL, L"../Resources/Texture/DefaultUI/Customize/Custom_UI/Custom_UI_%d.dds", 12))))
+		return E_FAIL;
+	if (FAILED(g_pManagement->Add_Prototype(SCENE_STATIC, L"DefaultTex_Custom_Hair", CTexture::Create(m_pGraphic_Device, CTexture::TYPE_GENERAL, L"../Resources/Texture/DefaultUI/Customize/Custom_Hair/Custom_Hair_%d.dds", 7))))
+		return E_FAIL;
+	if (FAILED(g_pManagement->Add_Prototype(SCENE_STATIC, L"DefaultTex_Custom_Eye", CTexture::Create(m_pGraphic_Device, CTexture::TYPE_GENERAL, L"../Resources/Texture/DefaultUI/Customize/Custom_Eye/Custom_Eye_%d.dds", 1))))
+		return E_FAIL;
+	if (FAILED(g_pManagement->Add_Prototype(SCENE_STATIC, L"DefaultTex_Custom_Face", CTexture::Create(m_pGraphic_Device, CTexture::TYPE_GENERAL, L"../Resources/Texture/DefaultUI/Customize/Custom_Face/Custom_Face_%d.dds", 10))))
+		return E_FAIL;
+	if (FAILED(g_pManagement->Add_Prototype(SCENE_STATIC, L"DefaultTex_Custom_ToxicGuard", CTexture::Create(m_pGraphic_Device, CTexture::TYPE_GENERAL, L"../Resources/Texture/DefaultUI/Customize/Custom_ToxicGuard/Custom_ToxicGuard_%d.dds", 10))))
+		return E_FAIL;
+
+	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_CustomInven", CCustomInven::Create(m_pGraphic_Device))))
+		return E_FAIL;
+	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_CustomSlot", CCustomSlot::Create(m_pGraphic_Device))))
+		return E_FAIL;
+	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_CustomSlider", CCustomSliderBar::Create(m_pGraphic_Device))))
+		return E_FAIL;
+	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_CustomCategory", CCustomCategory::Create(m_pGraphic_Device))))
+		return E_FAIL;
+	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_CustomCategoryOption", CCustomCategoryOption::Create(m_pGraphic_Device))))
+		return E_FAIL;
+
+	CCustomCategory* pCustomCategory = static_cast<CCustomCategory*>(g_pManagement->Clone_GameObject_Return(L"GameObject_CustomCategory", nullptr));
+	if (FAILED(g_pManagement->Add_GameOject_ToLayer_NoClone(pCustomCategory, SCENE_STAGE_BASE, pLayerTag, nullptr)))
+		return E_FAIL;
+
+	return S_OK;
+}
+
 void CScene_Stage_Training::Create_Fog(_double TimeDelta)
 {
 	CGameObject* pPlayer = g_pManagement->Get_GameObjectBack(L"Layer_Player", SCENE_MORTAL);
@@ -385,7 +425,7 @@ HRESULT CScene_Stage_Training::Ready_LightDesc()
 	NEW_LIGHT		LightDesc;
 	ZeroMemory(&LightDesc, sizeof(NEW_LIGHT));
 
-	_v3 vLightPos = _v3(50.f, -100.f, 0.f);
+	_v3 vLightPos = _v3(-50.f, -50.f, 0.f);
 	V3_NORMAL_SELF(&vLightPos);
 
 	LightDesc.Type = D3DLIGHT_DIRECTIONAL;

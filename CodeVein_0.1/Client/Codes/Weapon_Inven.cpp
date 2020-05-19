@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "..\Headers\Weapon_Inven.h"
 #include "Weapon.h"
+#include "Player.h"
 #include "UI_Manager.h"
 
 CWeapon_Inven::CWeapon_Inven(_Device pDevice)
@@ -61,14 +62,14 @@ HRESULT CWeapon_Inven::Ready_GameObject(void * pArg)
 		m_UseWeaponParam[i].iWeaponName = WPN_DATA_End;
 	}
 	
-	Add_Weapon(m_tWeaponParam[Wpn_SSword]);
-	Add_Weapon(m_tWeaponParam[Wpn_SSword_Black]);
-	Add_Weapon(m_tWeaponParam[Wpn_SSword_Military]);
-	Add_Weapon(m_tWeaponParam[Wpn_SSword_Slave]);
-	Add_Weapon(m_tWeaponParam[Wpn_Gun_Military]);
-	Add_Weapon(m_tWeaponParam[Wpn_Gun_Slave]);
-	Add_Weapon(m_tWeaponParam[Wpn_Hammer]);
-	Add_Weapon(m_tWeaponParam[Wpn_LSword_Military]);
+
+	//Add_Weapon(m_tWeaponParam[Wpn_SSword_Black]);
+	//Add_Weapon(m_tWeaponParam[Wpn_SSword_Military]);
+	//Add_Weapon(m_tWeaponParam[Wpn_SSword_Slave]);
+	//Add_Weapon(m_tWeaponParam[Wpn_Gun_Military]);
+	//Add_Weapon(m_tWeaponParam[Wpn_Gun_Slave]);
+	//Add_Weapon(m_tWeaponParam[Wpn_Hammer]);
+	//Add_Weapon(m_tWeaponParam[Wpn_LSword_Military]);
 	
 	return NOERROR;
 }
@@ -77,6 +78,7 @@ _int CWeapon_Inven::Update_GameObject(_double TimeDelta)
 {
 	CUI::Update_GameObject(TimeDelta);
 
+	Late_Init();
 
 	m_pRendererCom->Add_RenderList(RENDER_UI, this);
 
@@ -227,8 +229,9 @@ void CWeapon_Inven::Regist_Weapon(CWeapon_Slot* pWeaponSlot)
 	if (m_UseWeaponParam[0].iWeaponName == WPN_DATA_End)
 	{
 		m_UseWeaponParam[0] = pWeaponSlot->Get_WeaponParam();
-
 		pWeaponSlot->Set_Select(true);
+
+		m_pPlayer->Set_WeaponSlot((CPlayer::ACTIVE_WEAPON_SLOT)0, (WEAPON_DATA)m_UseWeaponParam[0].iWeaponName);
 
 		g_pSoundManager->Play_Sound(L"UI_CommonHover.wav", CSoundManager::WeaponInven_Regist_Slot01, CSoundManager::Ambient_Sound);
 	}
@@ -236,7 +239,9 @@ void CWeapon_Inven::Regist_Weapon(CWeapon_Slot* pWeaponSlot)
 	{
 		m_UseWeaponParam[1] = pWeaponSlot->Get_WeaponParam();
 		pWeaponSlot->Set_Select(true);
-		
+
+		m_pPlayer->Set_WeaponSlot((CPlayer::ACTIVE_WEAPON_SLOT)1, (WEAPON_DATA)m_UseWeaponParam[1].iWeaponName);
+
 		g_pSoundManager->Play_Sound(L"UI_CommonHover.wav", CSoundManager::WeaponInven_Regist_Slot02, CSoundManager::Ambient_Sound);
 	}
 	else
@@ -247,6 +252,19 @@ void CWeapon_Inven::UnRegist_Weapon(CWeapon_Slot * pWeaponSlot)
 {
 	if (pWeaponSlot->Get_WeaponParam().iWeaponName == WPN_DATA_End)
 		return;
+
+	// 한 개의 무기는 꼭 착용해야 함.
+	if (1 >= m_vecWeaponSlot.size())
+		return;
+	_bool bIsNull = false;
+	for (_int i = 0; i < 2; i++)
+	{
+		if (nullptr == m_vecWeaponSlot[i] || false == m_vecWeaponSlot[i]->Get_Select())
+			bIsNull = true;
+	}
+	if (bIsNull)
+		return;
+	
 	if (pWeaponSlot->Get_WeaponParam().iWeaponName == m_UseWeaponParam[0].iWeaponName)
 	{
 		m_UseWeaponParam[0].iWeaponName = WPN_DATA_End;
@@ -260,6 +278,8 @@ void CWeapon_Inven::UnRegist_Weapon(CWeapon_Slot * pWeaponSlot)
 		m_UseWeaponParam[0].fTrail_Max = 0.f;
 		m_UseWeaponParam[0].fCol_Height = 0.f;
 		pWeaponSlot->Set_Select(false);
+
+		m_pPlayer->Set_WeaponSlot((CPlayer::ACTIVE_WEAPON_SLOT)0, WEAPON_DATA::WPN_DATA_End);
 
 		g_pSoundManager->Play_Sound(L"UI_CommonClick.wav", CSoundManager::WeaponInven_UnRegist_Slot01, CSoundManager::Ambient_Sound);
 	}
@@ -276,6 +296,8 @@ void CWeapon_Inven::UnRegist_Weapon(CWeapon_Slot * pWeaponSlot)
 		m_UseWeaponParam[1].fTrail_Max = 0.f;
 		m_UseWeaponParam[1].fCol_Height = 0.f;
 		pWeaponSlot->Set_Select(false);
+
+		m_pPlayer->Set_WeaponSlot((CPlayer::ACTIVE_WEAPON_SLOT)1, WEAPON_DATA::WPN_DATA_End);
 
 		g_pSoundManager->Play_Sound(L"UI_CommonClick.wav", CSoundManager::WeaponInven_UnRegist_Slot02, CSoundManager::Ambient_Sound);
 	}
@@ -622,6 +644,20 @@ void CWeapon_Inven::SetUp_Default()
 {
 	m_pExplainUI = static_cast<CExplainWeaponUI*>(g_pManagement->Clone_GameObject_Return(L"GameObject_ExplainWeaponUI", nullptr));
 	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pExplainUI, SCENE_MORTAL, L"Layer_PlayerUI", nullptr);
+}
+
+void CWeapon_Inven::Late_Init()
+{
+	if (m_bLateInit)
+		return;
+
+	m_bLateInit = true;
+
+	m_pPlayer = static_cast<CPlayer*>(g_pManagement->Get_GameObjectBack(L"Layer_Player", SCENE_MORTAL));
+
+	m_vecWeaponSlot.reserve(2);
+	Add_Weapon(m_tWeaponParam[Wpn_SSword]);
+	Regist_Weapon(m_vecWeaponSlot[0]);
 }
 
 void CWeapon_Inven::Add_Weapon(WPN_PARAM tAddWpnParam)

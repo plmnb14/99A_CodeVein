@@ -55,10 +55,10 @@ HRESULT CCostume_Head::Ready_GameObject(void * pArg)
 	if (FAILED(Setup_Default()))
 		return E_FAIL;
 
-	m_pBattleAgent->Set_OriginRimAlpha(0.25f);
-	m_pBattleAgent->Set_OriginRimValue(7.f);
-	m_pBattleAgent->Set_RimAlpha(0.25f);
-	m_pBattleAgent->Set_RimValue(7.f);
+	m_pBattleAgent->Set_OriginRimAlpha(1.f);
+	m_pBattleAgent->Set_OriginRimValue(5.f);
+	m_pBattleAgent->Set_RimAlpha(1.f);
+	m_pBattleAgent->Set_RimValue(5.f);
 
 	return S_OK;
 }
@@ -166,6 +166,15 @@ _int CCostume_Head::Update_GameObject(_double TimeDelta)
 
 	Calc_AttachBoneTransform();
 
+	if (g_pInput_Device->Key_Down(DIK_M))
+	{
+		m_dwDebugValue += 1;
+
+		if (m_dwDebugValue >= 10)
+			m_dwDebugValue = 0;
+		Change_HeadMesh((CHAR_HEAD)m_dwDebugValue);
+	}
+
 	return NO_EVENT;
 }
 
@@ -217,6 +226,9 @@ HRESULT CCostume_Head::Render_GameObject_Instancing_SetPass(CShader * pShader)
 
 	_uint iNumSubSet = (_uint)m_pStaticMesh->Get_NumMaterials();
 
+	_bool bOnToonRimLight = true;
+	pShader->Set_Value("g_bToonRimLight", &bOnToonRimLight, sizeof(_bool));
+
 	for (_uint i = 0; i < iNumSubSet; ++i)
 	{
 		m_iPass = m_pStaticMesh->Get_MaterialPass(i);
@@ -234,6 +246,10 @@ HRESULT CCostume_Head::Render_GameObject_Instancing_SetPass(CShader * pShader)
 
 		pShader->End_Pass();
 	}
+
+	bOnToonRimLight = false;
+	pShader->Set_Value("g_bToonRimLight", &bOnToonRimLight, sizeof(_bool));
+
 	return S_OK;
 }
 
@@ -270,7 +286,7 @@ HRESULT CCostume_Head::Render_GameObject_SetPass(CShader * pShader, _int iPass, 
 		_bool bDecalTarget = false;
 		if (FAILED(pShader->Set_Bool("g_bDecalTarget", bDecalTarget)))
 			return E_FAIL;
-		_float fBloomPower = 0.f;
+		_float fBloomPower = 3.f;
 		if (FAILED(pShader->Set_Value("g_fBloomPower", &fBloomPower, sizeof(_float))))
 			return E_FAIL;
 	}
@@ -324,6 +340,93 @@ HRESULT CCostume_Head::Render_GameObject_SetPass(CShader * pShader, _int iPass, 
 
 
 	return NOERROR;
+}
+
+void CCostume_Head::Change_HeadMesh(CHAR_HEAD _eHeadType)
+{
+	if (_eHeadType == m_eHeadType)
+		return;
+
+	_tchar szMeshName[STR_128] = L"";
+
+	switch (_eHeadType)
+	{
+	case Chara_Head_01:
+	{
+		lstrcpy(szMeshName, L"Mesh_Face_01");
+		m_eHeadType = Chara_Head_01;
+		break;
+	}
+	case Chara_Head_02:
+	{
+		lstrcpy(szMeshName, L"Mesh_Face_02");
+		m_eHeadType = Chara_Head_02;
+		break;
+	}
+	case Chara_Head_03:
+	{
+		lstrcpy(szMeshName, L"Mesh_Face_03");
+		m_eHeadType = Chara_Head_03;
+		break;
+	}
+	case Chara_Head_04:
+	{
+		lstrcpy(szMeshName, L"Mesh_Face_04");
+		m_eHeadType = Chara_Head_04;
+		break;
+	}
+	case Chara_Head_05:
+	{
+		lstrcpy(szMeshName, L"Mesh_Face_05");
+		m_eHeadType = Chara_Head_05;
+		break;
+	}
+	case Chara_Head_06:
+	{
+		lstrcpy(szMeshName, L"Mesh_Face_06");
+		m_eHeadType = Chara_Head_06;
+		break;
+	}
+	case Chara_Head_07:
+	{
+		lstrcpy(szMeshName, L"Mesh_Face_07");
+		m_eHeadType = Chara_Head_07;
+		break;
+	}
+
+	case Chara_Head_08:
+	{
+		lstrcpy(szMeshName, L"Mesh_Face_08");
+		m_eHeadType = Chara_Head_08;
+		break;
+	}
+
+	case Chara_Head_09:
+	{
+		lstrcpy(szMeshName, L"Mesh_Face_09");
+		m_eHeadType = Chara_Head_09;
+		break;
+	}
+
+	case Chara_Head_10:
+	{
+		lstrcpy(szMeshName, L"Mesh_Face_10");
+		m_eHeadType = Chara_Head_10;
+		break;
+	}
+
+	}
+
+	// 컴포넌트에 있는 매쉬 찾아서
+	auto& iter = m_pmapComponents.find(L"Com_StaticMesh");
+
+	// Static 멤버변수는 처음에 Clone 할때 AddRef 해준다., 
+	Safe_Release(m_pStaticMesh);
+	Safe_Release(iter->second);
+
+	// Release 한 컴포넌트에 새로이 Clone 받음
+	iter->second = m_pStaticMesh = static_cast<CMesh_Static*>(CManagement::Get_Instance()->Clone_Component(SCENE_STATIC, szMeshName));
+	Safe_AddRef(iter->second);
 }
 
 CCostume_Head * CCostume_Head::Create(_Device pGraphicDev)

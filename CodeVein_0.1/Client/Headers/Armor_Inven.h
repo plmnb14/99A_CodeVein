@@ -4,6 +4,7 @@
 #include "UI.h"
 
 BEGIN(Client)
+class CPlayer;
 class CArmor_Slot;
 class CExplainArmorUI;
 class CArmor_Inven final : public CUI
@@ -32,7 +33,7 @@ private:
 	void					Regist_Armor(CArmor_Slot* pArmorSlot);
 	void					UnRegist_Armor(CArmor_Slot* pArmorSlot);
 	void					Reset_SelectSlot();
-
+	void					Late_Init();
 public:
 	void					Add_Armor(ARMOR_PARAM tArmorParam);
 	void					Sell_Armor();
@@ -46,6 +47,10 @@ private:
 	vector<CArmor_Slot*>	m_vecArmorSlot;
 	ARMOR_PARAM				m_tRegistParam;
 	CExplainArmorUI*		m_pExplainUI = nullptr;
+
+
+	_bool					m_bLateInit = false;
+	CPlayer*				m_pPlayer = nullptr;
 
 public:
 	static CArmor_Inven*	Create(_Device pGraphic_Device);

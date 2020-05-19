@@ -23,6 +23,7 @@ public:
 	HRESULT Ready_Layer_Player(const _tchar* pLayerTag);
 	HRESULT Ready_Layer_Enemies();
 	HRESULT Ready_Layer_Environment();
+	HRESULT Ready_Layer_Custom(const _tchar* pLayerTag);
 
 private:
 	void Create_Fog(_double TimeDelta);

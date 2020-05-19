@@ -28,6 +28,9 @@ private:
 	virtual ~CCostume_Outer() = default;
 
 public:
+	CClothManager::Cloth_Dynamic Get_OuterType() { return m_eOuterType; }
+
+public:
 	virtual void			Set_AttachBoneMartix(_mat* _matAttachBone) { m_pmatBone = _matAttachBone; }
 	virtual void			Set_ParentMatrix(_mat* _matParent) { m_pmatParent = _matParent; }
 
@@ -40,6 +43,16 @@ public:
 	virtual HRESULT Render_GameObject();
 	virtual HRESULT Render_GameObject_Instancing_SetPass(CShader* pShader);
 	virtual HRESULT Render_GameObject_SetPass(CShader * pShader, _int iPass, _bool _bIsForMotionBlur = false);
+
+public:
+	virtual void Set_LowerAnimation(_ulong _dwAnimIdx, _bool _bOffLerp);
+	virtual void Set_UpperAnimation(_ulong _dwAnimIdx, _bool _bOffLerp);
+	virtual void Set_LeftArmAnimation(_ulong _dwAnimIdx, _bool _bOffLerp);
+	virtual void Set_RightArmAnimation(_ulong _dwAnimIdx, _bool _bOffLerp);
+
+	virtual void Set_AnimMultiply(_float _float) { m_fAnimMultiply = _float; };
+
+	virtual void Reset_OldAniIdx(_ulong _dwNumber);
 
 private:
 	virtual HRESULT Ready_GameObject_Prototype();

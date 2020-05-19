@@ -583,6 +583,30 @@
     <Filter Include="02.GameObject\Stage\5%29 UI\UI\15. Colleague UI\02. Calling_Colleague">
       <UniqueIdentifier>{9fbf4ba7-29f6-4035-b2af-46743d057ed1}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObject\Stage\0%29 Player\02%29 LockOn_UI">
+      <UniqueIdentifier>{dd35c9d4-c094-4098-bae5-031eab46532d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Stage\5%29 UI\UI\20. Custom">
+      <UniqueIdentifier>{bff12a33-ab9c-445f-847a-7e4474b70c8f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Stage\5%29 UI\UI\20. Custom\CategoryElem">
+      <UniqueIdentifier>{3875b696-1a1e-4c8e-bb84-bc48dc14395e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Stage\5%29 UI\UI\20. Custom\CategoryElem\Slot">
+      <UniqueIdentifier>{8fdc6001-a723-4f26-9c43-ddbd7739c689}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Stage\5%29 UI\UI\20. Custom\CategoryElem\Inven">
+      <UniqueIdentifier>{a101d3be-0738-44bf-92b9-a17539418f50}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Stage\5%29 UI\UI\20. Custom\Category">
+      <UniqueIdentifier>{304ff8b8-26bd-4607-a665-7c4794d8d223}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Stage\5%29 UI\UI\20. Custom\Category\Option">
+      <UniqueIdentifier>{341712b1-4c65-4d00-a8a7-aed85b673f86}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Stage\5%29 UI\UI\20. Custom\CategoryElem\SliderBar">
+      <UniqueIdentifier>{6836337d-342b-458c-b424-5c5028fce301}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -1218,6 +1242,18 @@
     <ClInclude Include="..\Headers\NPC_InteractionUI.h">
       <Filter>02.GameObject\Stage\5%29 UI\UI\19.NPC_InteractionUI</Filter>
     </ClInclude>
+    <ClInclude Include="..\Headers\CustomInven.h">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\20. Custom\CategoryElem\Inven</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\CustomSlot.h">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\20. Custom\CategoryElem\Slot</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\CustomCategoryOption.h">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\20. Custom\Category\Option</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\CustomCategory.h">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\20. Custom\Category</Filter>
+    </ClInclude>
     <ClInclude Include="..\Headers\YetiTrap.h">
       <Filter>02.GameObject\Stage\2%29 Monster\Yeti\YetiTrap</Filter>
     </ClInclude>
@@ -1226,6 +1262,12 @@
     </ClInclude>
     <ClInclude Include="..\Headers\Calling_Colleague.h">
       <Filter>02.GameObject\Stage\5%29 UI\UI\15. Colleague UI\02. Calling_Colleague</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\LockOn_UI.h">
+      <Filter>02.GameObject\Stage\0%29 Player\02%29 LockOn_UI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\CustomSliderBar.h">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\20. Custom\CategoryElem\SliderBar</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -1847,6 +1889,18 @@
     <ClCompile Include="..\Codes\NPC_InteractionUI.cpp">
       <Filter>02.GameObject\Stage\5%29 UI\UI\19.NPC_InteractionUI</Filter>
     </ClCompile>
+    <ClCompile Include="..\Codes\CustomInven.cpp">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\20. Custom\CategoryElem\Inven</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\CustomSlot.cpp">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\20. Custom\CategoryElem\Slot</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\CustomCategoryOption.cpp">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\20. Custom\Category\Option</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\CustomCategory.cpp">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\20. Custom\Category</Filter>
+    </ClCompile>
     <ClCompile Include="..\Codes\YetiTrap.cpp">
       <Filter>02.GameObject\Stage\2%29 Monster\Yeti\YetiTrap</Filter>
     </ClCompile>
@@ -1855,6 +1909,12 @@
     </ClCompile>
     <ClCompile Include="..\Codes\Calling_Colleague.cpp">
       <Filter>02.GameObject\Stage\5%29 UI\UI\15. Colleague UI\02. Calling_Colleague</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\LockOn_UI.cpp">
+      <Filter>02.GameObject\Stage\0%29 Player\02%29 LockOn_UI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\CustomSliderBar.cpp">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\20. Custom\CategoryElem\SliderBar</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
