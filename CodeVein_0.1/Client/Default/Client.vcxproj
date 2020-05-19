@@ -218,6 +218,7 @@
     <ClInclude Include="..\Headers\ExplainMaterialUI.h" />
     <ClInclude Include="..\Headers\ExplainWeaponUI.h" />
     <ClInclude Include="..\Headers\ExpendBuyUI.h" />
+    <ClInclude Include="..\Headers\HitCheckUI.h" />
     <ClInclude Include="..\Headers\LockOn_UI.h" />
     <ClInclude Include="..\Headers\MaterialBuyUI.h" />
     <ClInclude Include="..\Headers\MaterialCollectionUI.h" />
@@ -432,6 +433,7 @@
     <ClCompile Include="..\Codes\ExplainMaterialUI.cpp" />
     <ClCompile Include="..\Codes\ExplainWeaponUI.cpp" />
     <ClCompile Include="..\Codes\ExpendBuyUI.cpp" />
+    <ClCompile Include="..\Codes\HitCheckUI.cpp" />
     <ClCompile Include="..\Codes\LockOn_UI.cpp" />
     <ClCompile Include="..\Codes\MaterialBuyUI.cpp" />
     <ClCompile Include="..\Codes\MaterialCollectionUI.cpp" />

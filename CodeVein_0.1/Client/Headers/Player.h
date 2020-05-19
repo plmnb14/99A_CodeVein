@@ -12,6 +12,10 @@
 #include "Costume_Mask.h"
 #include "Costume_Head.h"
 
+#include "OrthoEffect.h"
+
+#include "HitCheckUI.h"
+
 BEGIN(Client)
 
 class CLockOn_UI;
@@ -156,6 +160,12 @@ private:
 	CUI_Manager*			m_pUIManager = nullptr;
 	CCameraMgr*				m_pCamManager = nullptr;
 	CScriptManager*			m_pScriptManager = nullptr;
+
+private:
+	COrthoEffect*			m_pScreenBloodEffect = nullptr;
+	COrthoEffect*			m_pScreenFadeEffect = nullptr;
+
+	CHitCheckUI*			m_pScreenCornerEffect = nullptr;
 
 private:
 	vector<CCollider*>		m_vecPhsycColl;

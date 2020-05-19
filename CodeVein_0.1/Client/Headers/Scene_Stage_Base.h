@@ -27,7 +27,7 @@ public:
 	HRESULT Ready_Layer_BackGround(const _tchar* pLayerTag); 
 
 private:
-	CNavMesh*		m_pNavMesh = nullptr;
+	CNavMesh*			m_pNavMesh = nullptr;
 
 private:
 	CLoading*			m_pLoading = nullptr;

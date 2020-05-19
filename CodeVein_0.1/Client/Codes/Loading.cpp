@@ -62,6 +62,8 @@
 #include "Costume_Head.h"
 #include "Costume_Mask.h"
 
+#include "HitCheckUI.h"
+
 USING(Client)
 
 CLoading::CLoading(_Device pGraphicDev)
@@ -1377,6 +1379,9 @@ _uint CLoading::Loading_Title()
 		return E_FAIL;
 	// 스카이
 	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_Sky_Blur", CSky_Blur::Create(m_pGraphicDev))))
+		return E_FAIL;
+
+	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_HitCheckUI", CHitCheckUI::Create(m_pGraphicDev))))
 		return E_FAIL;
 	//============================================================================================================
 	// 사운드
