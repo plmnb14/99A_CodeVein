@@ -4,6 +4,7 @@
 #include "UI.h"
 
 BEGIN(Client)
+class CPlayer;
 class CWeapon;
 class CWeapon_Slot;
 class CExplainWeaponUI;
@@ -36,6 +37,9 @@ private:
 	void					UnRegist_Weapon(CWeapon_Slot* pWeaponSlot);
 	HRESULT					SetUp_WeaponData();
 	void					SetUp_Default();
+	void					SetUp_SlotPos();
+	void					SetUp_SubUI_Active(_bool bIsActive);
+	void					Late_Init();
 
 public:
 	void Add_Weapon(WPN_PARAM tAddWpnParam);
@@ -51,8 +55,12 @@ private:
 	WPN_PARAM				m_UseWeaponParam[2];
 	WPN_PARAM				m_tWeaponParam[WPN_DATA_End + 1];
 	CExplainWeaponUI*		m_pExplainUI = nullptr;
+	_bool					m_bIsSubActive = false;
 
+	CPlayer*				m_pPlayer = nullptr;
 	CWeapon*				m_pTempWeapon = nullptr;
+
+	_bool					m_bLateInit = false;
 public:
 	static CWeapon_Inven*	Create(_Device pGraphic_Device);
 	virtual CGameObject*	Clone_GameObject(void* pArg);

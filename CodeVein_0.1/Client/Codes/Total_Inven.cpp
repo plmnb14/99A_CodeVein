@@ -20,6 +20,11 @@ Skill_ID CTotal_Inven::Get_Registration_Skill(_uint iNum)
 	return m_vecSkillIcon[iNum]->Get_SkillID();
 }
 
+WEAPON_DATA CTotal_Inven::Get_Registration_Weapon(_uint iNum)
+{
+	return (WEAPON_DATA)m_pWeapon_Slot[iNum]->Get_WeaponParam().iWeaponType;
+}
+
 void CTotal_Inven::Set_Skill_ID(_uint iNum, Skill_ID eSkillID)
 {
 	if (iNum < 0 || iNum > m_vecSkillIcon.size() - 1)
@@ -67,57 +72,49 @@ _int CTotal_Inven::Update_GameObject(_double TimeDelta)
 
 	D3DXMatrixOrthoLH(&m_matProj, WINCX, WINCY, 0.f, 1.0f);
 
+	if (m_bIsActive && !m_bIsSubActive)
+	{
+		CUI_Manager::Get_Instance()->Get_Instance()->Get_Inventory()->Set_Active(false);
+		CUI_Manager::Get_Instance()->Get_Instance()->Get_Inventory()->Set_Detail(false);
+		CUI_Manager::Get_Instance()->Get_StatusUI()->Set_Active(true);
+
+		SetUp_SubUI_Active(true);
+		m_bIsSubActive = true;
+	}
+	else if (!m_bIsActive && m_bIsSubActive)
+	{
+		SetUp_SubUI_Active(false);
+		m_bIsSubActive = false;
+	}
+
+
 	Click_Icon();
 	
 	// 퀵슬롯 정보
-	CQuickSlot* pQuickSlot = CUI_Manager::Get_Instance()->Get_QuickSlot();
+	//CQuickSlot* pQuickSlot = CUI_Manager::Get_Instance()->Get_QuickSlot();
 
-	// 활성화 상태라면
-	if (m_bIsActive)
-	{
-		CUI_Manager::Get_Instance()->Get_Instance()->Get_Inventory()->Set_Active(false);
-		CUI_Manager::Get_Instance()->Get_Instance()->Get_Inventory()->Set_Detail(false);		
-		// 스테이터스 창 활성화
-		CUI_Manager::Get_Instance()->Get_StatusUI()->Set_Active(true);
-		// 퀵슬롯 비활성화
-		//CUI_Manager::Get_Instance()->Get_QuickSlot()->Set_Active(false);
-	}
+	//// 활성화 상태라면
+	//if (m_bIsActive)
+	//{
+	//	CUI_Manager::Get_Instance()->Get_Instance()->Get_Inventory()->Set_Active(false);
+	//	CUI_Manager::Get_Instance()->Get_Instance()->Get_Inventory()->Set_Detail(false);		
+	//	// 스테이터스 창 활성화
+	//	CUI_Manager::Get_Instance()->Get_StatusUI()->Set_Active(true);
+	//}
 
-	// 인벤 아이콘 활성화
-	for (auto& iter : m_vecIcon)
-		iter->Set_Active(m_bIsActive);
+	
 	
 	// 무기
 	LOOP(2)
 	{
 		CWeapon_Inven* pWeaponInven = CUI_Manager::Get_Instance()->Get_Weapon_Inven();
 		m_pWeapon_Slot[i]->Set_WeaponParam(pWeaponInven->Get_UseWeaponParam(i));
-		m_pWeapon_Slot[i]->Set_Active(m_bIsActive);
 	}
 	
 	// 아장
 	CArmor_Inven* pArmorInven = CUI_Manager::Get_Instance()->Get_Armor_Inven();
 	m_pArmor_Slot->Set_ArmorParam(pArmorInven->Get_UseArmorParam());
-	m_pArmor_Slot->Set_Active(m_bIsActive);
 	
-	// 블러드코드 아이콘
-	m_pBloodCode->Set_Active(m_bIsActive);
-	m_pBloodCode->Set_Type(m_ePlayerBloodCode);
-
-	// 퀵슬롯 아이콘 활성화
-	LOOP(8)
-	{
-		m_pQuickSlotInfo[i]->Set_Active(m_bIsActive);
-	}
-		
-	// 스킬 아이콘 활성화
-	for (auto& iter : m_vecSkillIcon)
-	{
-		iter->Set_Active(m_bIsActive);
-	}
-
-	m_pNoticeUI->Set_Active(m_bIsActive);
-		
 	return NO_EVENT;
 }
 
@@ -376,33 +373,38 @@ void CTotal_Inven::SkillSlot_Touch_Sound(_uint i)
 	_uint iChannel = CSoundManager::CHANNELID::Total_Skill_Slot01 + i;
 
 	g_pSoundManager->Play_Sound(L"UI_CommonHover.wav", CSoundManager::CHANNELID(iChannel), CSoundManager::Ambient_Sound);
-	/*switch (i)
+}
+
+void CTotal_Inven::SetUp_SubUI_Active(_bool bIsActive)
+{
+	// 퀵슬롯 아이콘 활성화
+	LOOP(8)
 	{
-	case 0:
-	g_pSoundManager->Play_Sound(L"UI_CommonHover.wav", CSoundManager::CHANNELID::Total_Skill_Slot01, CSoundManager::Ambient_Sound);
-	break;
-	case 1:
-	g_pSoundManager->Play_Sound(L"UI_CommonHover.wav", CSoundManager::CHANNELID::Total_Skill_Slot02, CSoundManager::Ambient_Sound);
-	break;
-	case 2:
-	g_pSoundManager->Play_Sound(L"UI_CommonHover.wav", CSoundManager::CHANNELID::Total_Skill_Slot03, CSoundManager::Ambient_Sound);
-	break;
-	case 3:
-	g_pSoundManager->Play_Sound(L"UI_CommonHover.wav", CSoundManager::CHANNELID::Total_Skill_Slot04, CSoundManager::Ambient_Sound);
-	break;
-	case 4:
-	g_pSoundManager->Play_Sound(L"UI_CommonHover.wav", CSoundManager::CHANNELID::Total_Skill_Slot05, CSoundManager::Ambient_Sound);
-	break;
-	case 5:
-	g_pSoundManager->Play_Sound(L"UI_CommonHover.wav", CSoundManager::CHANNELID::Total_Skill_Slot06, CSoundManager::Ambient_Sound);
-	break;
-	case 6:
-	g_pSoundManager->Play_Sound(L"UI_CommonHover.wav", CSoundManager::CHANNELID::Total_Skill_Slot07, CSoundManager::Ambient_Sound);
-	break;
-	case 7:
-	g_pSoundManager->Play_Sound(L"UI_CommonHover.wav", CSoundManager::CHANNELID::Total_Skill_Slot08, CSoundManager::Ambient_Sound);
-	break;
-	}*/
+		m_pQuickSlotInfo[i]->Set_Active(bIsActive);
+	}
+
+	// 스킬 아이콘 활성화
+	for (auto& iter : m_vecSkillIcon)
+	{
+		iter->Set_Active(bIsActive);
+	}
+
+	m_pNoticeUI->Set_Active(bIsActive);
+	// 블러드코드 아이콘
+	m_pBloodCode->Set_Active(bIsActive);
+	m_pBloodCode->Set_Type(m_ePlayerBloodCode);
+
+	// 무기
+	LOOP(2)
+	{
+		m_pWeapon_Slot[i]->Set_Active(bIsActive);
+	}
+
+	m_pArmor_Slot->Set_Active(bIsActive);
+
+	// 인벤 아이콘 활성화
+	for (auto& iter : m_vecIcon)
+		iter->Set_Active(bIsActive);
 }
 
 CTotal_Inven * CTotal_Inven::Create(_Device pGraphic_Device)

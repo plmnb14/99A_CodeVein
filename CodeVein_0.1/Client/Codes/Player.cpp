@@ -10,6 +10,8 @@
 #include "Costume_Hair.h"
 #include "Costume_Outer.h"
 
+#include "LockOn_UI.h"
+
 float g_OriginCamPos = 3.f;
 
 CPlayer::CPlayer(LPDIRECT3DDEVICE9 pGraphic_Device)
@@ -21,6 +23,47 @@ CPlayer::CPlayer(const CPlayer & rhs)
 	: CGameObject(rhs)
 {
 
+}
+
+void CPlayer::Set_WeaponSlot(ACTIVE_WEAPON_SLOT eType, WEAPON_DATA eData)
+{
+	if (WEAPON_DATA::WPN_DATA_End == eData)
+	{
+		if (m_pWeapon[eType])
+			Safe_Release(m_pWeapon[eType]);
+
+		m_bWeaponActive[eType] = false;
+		m_bWeaponActive[!eType] = true;
+		m_eActiveSlot = (ACTIVE_WEAPON_SLOT)(!eType);
+
+		Change_Weapon();
+
+		return;
+	}
+
+	if (m_pWeapon[eType])
+		Safe_Release(m_pWeapon[eType]);
+
+	LPCSTR tmpChar = "RightHandAttach";
+	_mat   matAttach;
+
+	D3DXFRAME_DERIVED*	pFrame = (D3DXFRAME_DERIVED*)m_pDynamicMesh->Get_BonInfo(tmpChar, 2);
+
+	m_pWeapon[eType] = static_cast<CWeapon*>(g_pManagement->Clone_GameObject_Return(L"GameObject_Weapon", NULL));
+	m_pWeapon[eType]->Change_WeaponData(eData);
+	m_pWeapon[eType]->Set_Friendly(true);
+	m_pWeapon[eType]->Set_AttachBoneMartix(&pFrame->CombinedTransformationMatrix);
+	m_pWeapon[eType]->Set_ParentMatrix(&m_pTransform->Get_WorldMat());
+	//m_bWeaponActive[eType] = true;
+
+}
+
+void CPlayer::Set_ArmorSlot(ARMOR_All_DATA eType)
+{
+	//if (m_pOuter->Get_OuterType() + 1 == eType)
+	//	return;
+
+	m_pOuter->Change_OuterMesh(CClothManager::Cloth_Dynamic(eType + 1));
 }
 
 HRESULT CPlayer::Ready_GameObject_Prototype()
@@ -68,12 +111,18 @@ HRESULT CPlayer::Ready_GameObject(void * pArg)
 	m_tObjParam.sMana_Cur = 100;
 
 	m_pHair = (CCostume_Hair*)g_pManagement->Clone_GameObject_Return(L"GameObject_Costume_Hair", 
-		&CCostume_Hair::_INFO(&m_pTransform->Get_WorldMat(), m_matBones[Bone_Head], _v4(0.f, 0.f, 0.f, 0.f)));
+		&CCostume_Hair::_INFO(&m_pTransform->Get_WorldMat(), m_matBones[Bone_Head], _v4(1.f, 0.f, 0.f, 1.f)));
 
 	m_pOuter = (CCostume_Outer*)g_pManagement->Clone_GameObject_Return(L"GameObject_Costume_Outer", 
 		&CCostume_Outer::_INFO(&m_pTransform->Get_WorldMat(), m_matBones[Bone_Head], _v4(0.f, 0.f, 0.f, 0.f), nullptr));
 
 	m_pOuter->Change_OuterMesh(CClothManager::Gauntlet_01);
+
+
+	m_pLockOn_UI = (CLockOn_UI*)g_pManagement->Clone_GameObject_Return(L"GameObject_LockOn_UI", nullptr);
+
+	m_pScriptManager = CScriptManager::Get_Instance();
+	Safe_AddRef(m_pScriptManager);
 
 	return NOERROR;
 }
@@ -89,7 +138,7 @@ _int CPlayer::Update_GameObject(_double TimeDelta)
 		if (m_lDebugValue >= 4)
 			m_lDebugValue = 0;
 
-		cout << m_lDebugValue << endl;
+		//cout << m_lDebugValue << endl;
 
 		Change_PlayerBody((PLAYER_BODY)m_lDebugValue);
 	}
@@ -130,7 +179,7 @@ _int CPlayer::Update_GameObject(_double TimeDelta)
 
 	m_pNavMesh->Goto_Next_Subset(m_pTransform->Get_Pos(), nullptr);
 
-	CScriptManager::Get_Instance()->Update_ScriptMgr(TimeDelta, m_pNavMesh->Get_SubSetIndex(), m_pNavMesh->Get_CellIndex());
+	m_pScriptManager->Update_ScriptMgr(TimeDelta, m_pNavMesh->Get_SubSetIndex(), m_pNavMesh->Get_CellIndex());
 
 	return NO_EVENT;
 }
@@ -294,8 +343,9 @@ HRESULT CPlayer::Render_GameObject_Instancing_SetPass(CShader * pShader)
 	m_pDynamicMesh->Play_Animation_LeftArm(dDeltaTime * m_fAnimMutiply);
 
 	// 머리 위치 업데이트
-	m_pHair->Update_GameObject(dDeltaTime * m_fAnimMutiply, (m_bOnSkill || m_bOnDodge));
-	m_pOuter->Update_GameObject(dDeltaTime * m_fAnimMutiply, (m_bOnSkill || m_bOnDodge));
+
+	m_pHair->Update_GameObject(dDeltaTime * m_fAnimMutiply, (m_eActState != ACT_Idle) && (m_eActState != ACT_Walk) && (m_eActState != ACT_Run) && (m_eActState != ACT_Dash) && (m_eActState != ACT_MoveDelay));
+	m_pOuter->Update_GameObject(dDeltaTime * m_fAnimMutiply, (m_eActState != ACT_Idle) && (m_eActState != ACT_Walk) && (m_eActState != ACT_Run) && (m_eActState != ACT_Dash) && (m_eActState != ACT_MoveDelay));
 
 	m_pHead[m_eHeadType]->Update_GameObject(dDeltaTime);
 	m_pMask[m_eMaskType]->Update_GameObject(dDeltaTime);
@@ -774,7 +824,7 @@ void CPlayer::Parameter_Movement()
 	if (false == m_bOnAttack)
 		fAngle = (m_pTarget != nullptr ?
 			D3DXToDegree(m_pTransform->Chase_Target_Angle(&TARGET_TO_TRANS(m_pTarget)->Get_Pos())) :
-			CCameraMgr::Get_Instance()->Get_XAngle());
+			m_pCamManager->Get_XAngle());
 
 	else
 		fAngle = D3DXToDegree(m_pTransform->Get_Angle().y);
@@ -828,12 +878,17 @@ void CPlayer::Parameter_Aiming()
 		{
 			if (m_pTarget->Get_Target_Hp() <= 0.f)
 			{
+				m_pTarget = nullptr;
 				m_bHaveAimingTarget = false;
 				m_bOnAiming = false;
 
-				CCameraMgr::Get_Instance()->Set_AimingTarget(nullptr);
-				CCameraMgr::Get_Instance()->Set_OnAimingTarget(false);
-				CCameraMgr::Get_Instance()->Set_LockAngleX(D3DXToDegree(m_pTransform->Get_Angle(AXIS_Y)));
+				m_pCamManager->Set_AimingTarget(nullptr);
+				m_pCamManager->Set_OnAimingTarget(false);
+				m_pCamManager->Set_LockAngleX(D3DXToDegree(m_pTransform->Get_Angle(AXIS_Y)));
+
+				//==========================================================================
+				Active_UI_LockOn(true);
+				//==========================================================================
 
 				return;
 			}
@@ -841,8 +896,13 @@ void CPlayer::Parameter_Aiming()
 
 		Target_AimChasing();
 
-		if(nullptr != m_pTarget)
+		if (nullptr != m_pTarget)
+		{
 			m_pTransform->Set_Angle(AXIS_Y, m_pTransform->Chase_Target_Angle(&TARGET_TO_TRANS(m_pTarget)->Get_Pos()));
+
+			// 디졸브 쓸라면 수정
+			m_pLockOn_UI->Update_GameObject(0);
+		}
 	}
 
 	else if (false == m_bOnAiming)
@@ -852,8 +912,12 @@ void CPlayer::Parameter_Aiming()
 			m_pTarget = nullptr;
 			m_bHaveAimingTarget = false;
 
-			CCameraMgr::Get_Instance()->Set_AimingTarget(m_pTarget);
-			CCameraMgr::Get_Instance()->Set_OnAimingTarget(false);
+			m_pCamManager->Set_AimingTarget(m_pTarget);
+			m_pCamManager->Set_OnAimingTarget(false);
+
+			//==========================================================================
+			Active_UI_LockOn(true);
+			//==========================================================================
 		}
 	}
 }
@@ -942,8 +1006,7 @@ void CPlayer::Parameter_CheckActiveSkill()
 
 void CPlayer::Parameter_CheckActiveWeapon()
 {
-	//m_pUIManager->Get_Weapon_Inven()->Get_UseWeaponState(WPN_SLOT_A);
-	//m_pUIManager->Get_Weapon_Inven()->Get_UseWeaponState(WPN_SLOT_B);
+	
 }
 
 void CPlayer::Movement_Aiming(_float _fAngle, _float _fMovespeed)
@@ -1371,6 +1434,11 @@ void CPlayer::Target_AimChasing()
 			m_pTransform->Set_Angle(AXIS_Y, m_pTransform->Chase_Target_Angle(&pTargetTransPos));
 
 			m_bOnAiming = true;
+
+			//==========================================================================
+			Active_UI_LockOn();
+			//==========================================================================
+
 			return;
 		}
 	}
@@ -1417,9 +1485,18 @@ void CPlayer::Target_AimChasing()
 			m_pTransform->Set_Angle(AXIS_Y, m_pTransform->Chase_Target_Angle(&pTargetTransPos));
 
 			m_bOnAiming = true;
+
+			//==========================================================================
+			Active_UI_LockOn();
+			//==========================================================================
+
 			return;
 		}
 	}
+
+	//==========================================================================
+	Active_UI_LockOn(true);
+	//==========================================================================
 
 	m_bOnAiming = false;
 	m_pCamManager->Set_OnAimingTarget(false);
@@ -1431,7 +1508,7 @@ void CPlayer::KeyInput()
 {
 	// 디버그 할때만 사용됩니다.
 	//=====================================================================
-	if (CCameraMgr::Get_Instance()->Get_CamView() == TOOL_VIEW)
+	if (m_pCamManager->Get_CamView() == TOOL_VIEW)
 		return;
 	//=====================================================================
 
@@ -1453,8 +1530,6 @@ void CPlayer::KeyInput()
 	if (m_eActState == ACT_Dead)
 		return;
 
-	cout << "키를 눌러 주세요" << endl;
-
 	KeyDown();
 	KeyUp();
 }
@@ -1470,8 +1545,6 @@ void CPlayer::KeyDown()
 	{
 		if (false == m_bStopMovementKeyInput)
 		{
-			cout << "오냐" << endl;
-
 			// 이동관련
 			Key_Movement_Down();
 
@@ -1741,7 +1814,7 @@ void CPlayer::Key_Special()
 
 		if (false == m_bOnAiming)
 		{
-			CCameraMgr::Get_Instance()->Set_LockAngleX(D3DXToDegree(m_pTransform->Get_Angle(AXIS_Y)));
+			m_pCamManager->Set_LockAngleX(D3DXToDegree(m_pTransform->Get_Angle(AXIS_Y)));
 		}
 	}
 }
@@ -2213,6 +2286,7 @@ void CPlayer::Key_UI_n_Utiliy(_bool _bActiveUI)
 				m_pUIManager->Get_StatusUI()->Set_Active(false);
 
 				Parameter_CheckActiveSkill();
+				Parameter_CheckActiveWeapon();
 			}
 
 			else
@@ -3437,7 +3511,7 @@ void CPlayer::Play_Dodge()
 			return;
 		}
 
-		else if (m_pDynamicMesh->Is_Finish_Animation_Lower(0.25f))
+		else if (m_pDynamicMesh->Is_Finish_Animation_Lower(0.3f))
 		{
 			m_bCanDodge = true;
 			m_bStopMovementKeyInput = false;
@@ -3767,28 +3841,28 @@ void CPlayer::Play_Hit()
 		}
 
 		m_eAnim_Upper =
-			(iHitDir == 0 ? Cmn_Damage_01_B : 
-				iHitDir == 1 ? Cmn_Damage_01_F :
+			(iHitDir == 0 ? Cmn_Damage_01_F : 
+				iHitDir == 1 ? Cmn_Damage_01_B :
 				iHitDir == 2 ? Cmn_Damage_01_R : Cmn_Damage_01_L);
 
 		//m_eAnim_Upper =
-		//	(iHitDir == 0 ? Cmn_Hit02_B :
-		//		iHitDir == 1 ? Cmn_Hit02_F :
+		//	(iHitDir == 0 ? Cmn_Hit02_F :
+		//		iHitDir == 1 ? Cmn_Hit02_B :
 		//		iHitDir == 2 ? Cmn_Hit02_R : Cmn_Hit02_L);
 
 		//m_eAnim_Upper =
-		//	(iHitDir == 0 ? Cmn_Hit03_B :
-		//		iHitDir == 1 ? Cmn_Hit03_F :
+		//	(iHitDir == 0 ? Cmn_Hit03_F :
+		//		iHitDir == 1 ? Cmn_Hit03_B :
 		//		iHitDir == 2 ? Cmn_Hit03_R : Cmn_Hit03_L);
 
 		//m_eAnim_Upper =
-		//	(iHitDir == 0 ? Cmn_Hit04_B :
-		//		iHitDir == 1 ? Cmn_Hit04_F :
+		//	(iHitDir == 0 ? Cmn_Hit04_F :
+		//		iHitDir == 1 ? Cmn_Hit04_B :
 		//		iHitDir == 2 ? Cmn_Hit04_R : Cmn_Hit04_L);
 
 		//m_eAnim_Upper =
-		//	(iHitDir == 0 ? Cmn_HitBlow_B :
-		//		iHitDir == 1 ? Cmn_HitBlow_F :
+		//	(iHitDir == 0 ? Cmn_HitBlow_F :
+		//		iHitDir == 1 ? Cmn_HitBlow_B :
 		//		iHitDir == 2 ? Cmn_HitBlow_R : Cmn_HitBlow_L);
 
 		// 임시 다운 테스트용
@@ -4609,11 +4683,13 @@ void CPlayer::Play_WeaponChange()
 
 		if (m_pDynamicMesh->Is_Finish_Animation_Upper(0.95f))
 		{
-			m_eActiveSlot =
-				(m_eActiveSlot == WPN_SLOT_A ? WPN_SLOT_B :
-					m_eActiveSlot == WPN_SLOT_B ? WPN_SLOT_C :
-					m_eActiveSlot == WPN_SLOT_C ? WPN_SLOT_D :
-					m_eActiveSlot == WPN_SLOT_D ? WPN_SLOT_E : WPN_SLOT_A);
+			//m_eActiveSlot =
+			//	(m_eActiveSlot == WPN_SLOT_A ? WPN_SLOT_B :
+			//		m_eActiveSlot == WPN_SLOT_B ? WPN_SLOT_C :
+			//		m_eActiveSlot == WPN_SLOT_C ? WPN_SLOT_D :
+			//		m_eActiveSlot == WPN_SLOT_D ? WPN_SLOT_E : WPN_SLOT_A);
+
+			m_eActiveSlot = (m_eActiveSlot == WPN_SLOT_A) ? WPN_SLOT_B : WPN_SLOT_A;
 
 			m_eMainWpnState = m_pWeapon[m_eActiveSlot]->Get_WeaponType();
 
@@ -5082,8 +5158,8 @@ void CPlayer::Play_BloodSuckCount()
 
 	else if (true == m_bOnBloodSuck)
 	{
-		if (m_tObjParam.bIsCounter)
-			cout << "카운터에효" << endl;
+		//if (m_tObjParam.bIsCounter)
+		//	cout << "카운터에효" << endl;
 
 		_double dAniTime = m_pDynamicMesh->Get_TrackInfo().Position;
 
@@ -5479,6 +5555,9 @@ void CPlayer::Play_Skills()
 					for (_int i = 0; i < 10; i++)
 						g_pManagement->Create_Effect_Delay(L"Player_Skill_RedOnion", 0.f, m_pTransform->Get_Pos());
 
+					g_pSoundManager->Stop_Sound(CSoundManager::Player_SFX_02);
+					g_pSoundManager->Play_Sound(L"SE_PLAYER_JUMP002.ogg", CSoundManager::Player_SFX_02, CSoundManager::Effect_Sound);
+
 				}
 
 				Skill_Movement(m_fSkillMoveSpeed_Cur, m_pTransform->Get_Axis(AXIS_Z));
@@ -5507,6 +5586,22 @@ void CPlayer::Play_Skills()
 					g_pManagement->Create_ParticleEffect_Delay(L"Player_Skill_SplitAssert_LaserAfter_Smoke", 0.3f, 0.f, vPlayerPos + vEffGroundPos, nullptr);
 
 					SHAKE_CAM_lv4
+
+					g_pSoundManager->Stop_Sound(CSoundManager::Player_SFX_03);
+					g_pSoundManager->Play_Sound(L"SE_WEAPON_HIT_009.ogg", CSoundManager::Player_SFX_03, CSoundManager::Effect_Sound);
+					g_pSoundManager->Stop_Sound(CSoundManager::Player_SFX_01);
+					g_pSoundManager->Play_Sound(L"SE_WEAPON_IMPACT_001.ogg", CSoundManager::Player_SFX_01, CSoundManager::Effect_Sound);
+				}
+			}
+
+			else if (m_pDynamicMesh->Get_TrackInfo().Position >= 3.5f)
+			{
+				if (m_bEventTrigger[10] == false)
+				{
+					m_bEventTrigger[10] = true;
+
+					g_pSoundManager->Stop_Sound(CSoundManager::Player_SFX_02);
+					g_pSoundManager->Play_Sound(L"SE_BLACK_KNIGHT_JUMP_001.ogg", CSoundManager::Player_SFX_02, CSoundManager::Effect_Sound);
 				}
 			}
 
@@ -5522,6 +5617,9 @@ void CPlayer::Play_Skills()
 					CParticleMgr::Get_Instance()->Create_Skill_Start_Effect(m_pTransform->Get_Pos(), vEffPos);
 					g_pManagement->Create_ParticleEffect_Delay(L"Player_Skill_RedParticle_Explosion", 0.15f, 1.f, m_pTransform->Get_Pos(), m_pTransform);
 					g_pManagement->Create_Effect_Delay(L"Player_Skill_BloodConeMesh_Explosion", 1.f, m_pTransform->Get_Pos());
+
+					g_pSoundManager->Stop_Sound(CSoundManager::Player_SFX_01);
+					g_pSoundManager->Play_Sound(L"SE_DIGGING_GROUND_000.ogg", CSoundManager::Player_SFX_01, CSoundManager::Effect_Sound);
 				}
 			}
 
@@ -5588,6 +5686,9 @@ void CPlayer::Play_Skills()
 					g_pManagement->Create_Effect_Delay(L"Hit_Slash_2", 0.f, vEffPos, m_pTransform);
 					g_pManagement->Create_Effect_Delay(L"Hit_Slash_3", 0.f, vEffPos, m_pTransform);
 					g_pManagement->Create_Effect_Delay(L"Hit_Slash_Particle_0", 0.f, vEffPos, m_pTransform);
+
+					g_pSoundManager->Stop_Sound(CSoundManager::Player_SFX_04);
+					g_pSoundManager->Play_Sound(L"SE_BLACK_KNIGHT_WIND_CUT_002.ogg", CSoundManager::Player_SFX_04, CSoundManager::Effect_Sound);
 				}
 			}
 
@@ -5627,6 +5728,9 @@ void CPlayer::Play_Skills()
 					g_pManagement->Create_Effect_Delay(L"Hit_Slash_3", 0.f, vEffPos, m_pTransform);
 					g_pManagement->Create_Effect_Delay(L"Hit_Slash_Particle_0", 0.f, vEffPos, m_pTransform);
 					g_pManagement->Create_Effect_Delay(L"Player_Skill_RedParticle_Explosion", 0.f, vEffPos, m_pTransform);
+
+					g_pSoundManager->Stop_Sound(CSoundManager::Player_SFX_02);
+					g_pSoundManager->Play_Sound(L"SE_BLACK_KNIGHT_WIND_CUT_000.ogg", CSoundManager::Player_SFX_02, CSoundManager::Effect_Sound);
 				}
 			}
 
@@ -5671,6 +5775,9 @@ void CPlayer::Play_Skills()
 					m_tObjParam.bCanHit = true;
 
 					g_pManagement->Create_Effect_Delay(L"Player_Skill_Distortion_Circle", 0.f, vEffPos_Dis, m_pTransform);
+
+					g_pSoundManager->Stop_Sound(CSoundManager::Player_SFX_03);
+					g_pSoundManager->Play_Sound(L"SE_BLACK_KNIGHT_JUMP_000.ogg", CSoundManager::Player_SFX_03, CSoundManager::Effect_Sound);
 				}
 			}
 
@@ -5698,6 +5805,9 @@ void CPlayer::Play_Skills()
 					//m_tObjParam.bCanHit = false;
 
 					g_pManagement->Create_Effect_Delay(L"Player_Skill_Distortion_Circle", 0.f, vEffPos_Dis, m_pTransform);
+
+					g_pSoundManager->Stop_Sound(CSoundManager::Player_SFX_01);
+					g_pSoundManager->Play_Sound(L"SE_QUEENS_KNIGHTS_WARP_001.ogg", CSoundManager::Player_SFX_01, CSoundManager::Effect_Sound);
 				}
 
 				Skill_Movement(m_fSkillMoveSpeed_Cur, m_pTransform->Get_Axis(AXIS_Z));
@@ -5771,6 +5881,11 @@ void CPlayer::Play_Skills()
 					g_pManagement->Create_Effect_Delay(L"Hit_Slash_Particle_0", 0.f, vEffPos + _v3(0, 0.3f, 0.f), m_pTransform);
 					g_pManagement->Create_Effect_Delay(L"Player_Skill_RedParticle_Explosion", 0.f, vEffPos + _v3(0, 0.3f, 0.f), m_pTransform);
 					g_pManagement->Create_Effect_Delay(L"Player_Skill_WindMesh", 0.f, vEffWindPos + _v3(0, 0.3f, 0.f), m_pTransform, _v3(0.f, vPlayerAngleDeg.y, -65.f));
+
+					g_pSoundManager->Stop_Sound(CSoundManager::Player_SFX_02);
+					g_pSoundManager->Play_Sound(L"SE_BLACK_KNIGHT_SWING_005.ogg", CSoundManager::Player_SFX_02, CSoundManager::Effect_Sound);
+					g_pSoundManager->Stop_Sound(CSoundManager::Player_SFX_01);
+					g_pSoundManager->Play_Sound(L"SE_BLACK_KNIGHT_WIND_CUT_000.ogg", CSoundManager::Player_SFX_01, CSoundManager::Effect_Sound);
 				}
 			}
 
@@ -5807,6 +5922,11 @@ void CPlayer::Play_Skills()
 					g_pManagement->Create_Effect_Delay(L"Hit_Slash_3", 0.f, vEffPos + _v3(0, 0.4f, 0.f), m_pTransform);
 					g_pManagement->Create_Effect_Delay(L"Hit_Slash_Particle_0", 0.f, vEffPos + _v3(0, 0.4f, 0.f), m_pTransform);
 					g_pManagement->Create_Effect_Delay(L"Player_Skill_RedParticle_Explosion", 0.f, vEffPos + _v3(0, 0.4f, 0.f), m_pTransform);
+
+					g_pSoundManager->Stop_Sound(CSoundManager::Player_SFX_03);
+					g_pSoundManager->Play_Sound(L"SE_BLACK_KNIGHT_SWING_002.ogg", CSoundManager::Player_SFX_03, CSoundManager::Effect_Sound);
+					g_pSoundManager->Stop_Sound(CSoundManager::Player_SFX_04);
+					g_pSoundManager->Play_Sound(L"SE_BLACK_KNIGHT_WIND_CUT_002.ogg", CSoundManager::Player_SFX_01, CSoundManager::Effect_Sound);
 				}
 			}
 
@@ -5843,6 +5963,11 @@ void CPlayer::Play_Skills()
 					g_pManagement->Create_Effect_Delay(L"Hit_Slash_3", 0.f, vEffPos + _v3(0, 0.4f, 0.f), m_pTransform);
 					g_pManagement->Create_Effect_Delay(L"Hit_Slash_Particle_0", 0.f, vEffPos + _v3(0, 0.4f, 0.f), m_pTransform);
 					g_pManagement->Create_Effect_Delay(L"Player_Skill_RedParticle_Explosion", 0.f, vEffPos + _v3(0, 0.4f, 0.f), m_pTransform);
+
+					g_pSoundManager->Stop_Sound(CSoundManager::Player_SFX_02);
+					g_pSoundManager->Play_Sound(L"SE_BLACK_KNIGHT_SWING_001.ogg", CSoundManager::Player_SFX_02, CSoundManager::Effect_Sound);
+					g_pSoundManager->Stop_Sound(CSoundManager::Player_SFX_01);
+					g_pSoundManager->Play_Sound(L"SE_BLACK_KNIGHT_WIND_CUT_001.ogg", CSoundManager::Player_SFX_01, CSoundManager::Effect_Sound);
 				}
 			}
 
@@ -5881,6 +6006,11 @@ void CPlayer::Play_Skills()
 					g_pManagement->Create_Effect_Delay(L"Hit_Slash_3", 0.f, vEffPos, m_pTransform);
 					g_pManagement->Create_Effect_Delay(L"Hit_Slash_Particle_0", 0.f, vEffPos, m_pTransform);
 					g_pManagement->Create_Effect_Delay(L"Player_Skill_RedParticle_Explosion", 0.f, vEffPos + _v3(0, 0.4f, 0.f), m_pTransform);
+
+					g_pSoundManager->Stop_Sound(CSoundManager::Player_SFX_03);
+					g_pSoundManager->Play_Sound(L"SE_BLACK_KNIGHT_SWING_000.ogg", CSoundManager::Player_SFX_03, CSoundManager::Effect_Sound);
+					g_pSoundManager->Stop_Sound(CSoundManager::Player_SFX_04);
+					g_pSoundManager->Play_Sound(L"SE_BLACK_KNIGHT_WIND_CUT_000.ogg", CSoundManager::Player_SFX_01, CSoundManager::Effect_Sound);
 				}
 			}
 
@@ -5907,6 +6037,9 @@ void CPlayer::Play_Skills()
 
 					_v3 vDir = *D3DXVec3Normalize(&_v3(), &-m_pTransform->Get_Axis(AXIS_Z));
 					g_pManagement->Create_Effect(L"Player_Skill_WindTornadeMesh", m_pTransform->Get_Pos() + vEffPos, nullptr, vDir, vPlayerAngleDeg);
+
+					g_pSoundManager->Stop_Sound(CSoundManager::Player_SFX_02);
+					g_pSoundManager->Play_Sound(L"SE_BLACK_KNIGHT_JUMP_000.ogg", CSoundManager::Player_SFX_02, CSoundManager::Effect_Sound);
 				}
 			}
 			else if (m_pDynamicMesh->Get_TrackInfo().Position <= 0.1f)
@@ -5917,6 +6050,9 @@ void CPlayer::Play_Skills()
 
 					_v3 vEffPos = m_pTransform->Get_Pos() + _v3(0.f, 1.3f, 0.f);
 					CParticleMgr::Get_Instance()->Create_Skill_Start_Effect(m_pTransform->Get_Pos(), vEffPos);
+
+					g_pSoundManager->Stop_Sound(CSoundManager::Player_SFX_01);
+					g_pSoundManager->Play_Sound(L"SE_DIGGING_GROUND_000.ogg", CSoundManager::Player_SFX_01, CSoundManager::Effect_Sound);
 				}
 			}
 
@@ -6053,6 +6189,8 @@ void CPlayer::Play_Skills()
 					g_pManagement->Create_Effect_Delay(L"Hit_Slash_Particle_0", 0.f, vEffPos, m_pTransform);
 					g_pManagement->Create_ParticleEffect_Delay(L"Player_Skill_RedParticle_Explosion", 0.1f, 0.f, vEffPos, m_pTransform);
 
+					g_pSoundManager->Stop_Sound(CSoundManager::Player_SFX_01);
+					g_pSoundManager->Play_Sound(L"SE_WEAPON_IMPACT_001.ogg", CSoundManager::Player_SFX_01, CSoundManager::Effect_Sound);
 					SHAKE_CAM_lv2;
 				}
 			}
@@ -6064,6 +6202,9 @@ void CPlayer::Play_Skills()
 					m_bEventTrigger[8] = true;
 
 					g_pManagement->Create_Effect_Delay(L"Player_Skill_WindMesh", 0.f, m_pTransform->Get_Pos() + _v3(0, 0.5f, 0.f), nullptr);
+
+					g_pSoundManager->Stop_Sound(CSoundManager::Player_SFX_02);
+					g_pSoundManager->Play_Sound(L"SE_BLACK_KNIGHT_SWING_005.ogg", CSoundManager::Player_SFX_02, CSoundManager::Effect_Sound);
 				}
 			}
 
@@ -6076,6 +6217,9 @@ void CPlayer::Play_Skills()
 					_v3 vEffPos = m_pTransform->Get_Pos() + _v3(0.f, 1.3f, 0.f);
 					CParticleMgr::Get_Instance()->Create_Skill_Start_Effect(V3_NULL, vEffPos, m_pTransform);
 					g_pManagement->Create_ParticleEffect_Delay(L"Player_Skill_DarkSmokeAura"	, 0.5f	, 0.f	, _v3(0, 1.1f, 0.f), m_pTransform);
+
+					g_pSoundManager->Stop_Sound(CSoundManager::Player_SFX_01);
+					g_pSoundManager->Play_Sound(L"SE_DIGGING_GROUND_000.ogg", CSoundManager::Player_SFX_01, CSoundManager::Effect_Sound);
 				}
 			}
 
@@ -6201,6 +6345,11 @@ void CPlayer::Play_Skills()
 					g_pManagement->Create_Effect_Delay(L"Player_Skill_WindMesh", 0.1f, vEffWindPos + _v3(0.f, -0.3f, 0.f), m_pTransform, _v3(0.f, vPlayerAngleDeg.y, 0.f));
 					g_pManagement->Create_Effect_Delay(L"Player_Skill_WindMesh", 0.2f, vEffWindPos + _v3(0.f, -0.f, 0.f), m_pTransform, _v3(0.f, vPlayerAngleDeg.y, 0.f));
 					g_pManagement->Create_Effect_Delay(L"Player_Skill_BloodConeMesh", 0.1f, V3_NULL, m_pTransform);
+
+					g_pSoundManager->Stop_Sound(CSoundManager::Player_SFX_01);
+					g_pSoundManager->Play_Sound(L"SE_BLACK_KNIGHT_SWING_002.ogg", CSoundManager::Player_SFX_01, CSoundManager::Effect_Sound);
+					g_pSoundManager->Stop_Sound(CSoundManager::Player_SFX_02);
+					g_pSoundManager->Play_Sound(L"SE_WEAPON_IMPACT_001.ogg", CSoundManager::Player_SFX_02, CSoundManager::Effect_Sound);
 				}
 			}
 			else if (m_pDynamicMesh->Get_TrackInfo().Position >= 2.067f)
@@ -6212,6 +6361,9 @@ void CPlayer::Play_Skills()
 					g_pManagement->Create_Effect_Delay(L"Player_Skill_WindMesh", 0.f, vEffWindPos, m_pTransform, _v3(0.f, vPlayerAngleDeg.y, -45.f));
 					g_pManagement->Create_Effect_Delay(L"Player_Skill_WindMesh", 0.1f, vEffWindPos, m_pTransform, _v3(0.f, vPlayerAngleDeg.y, -45.f));
 					g_pManagement->Create_Effect_Delay(L"Player_Skill_WindMesh", 0.2f, vEffWindPos, m_pTransform, _v3(0.f, vPlayerAngleDeg.y, -45.f));
+
+					g_pSoundManager->Stop_Sound(CSoundManager::Player_SFX_03);
+					g_pSoundManager->Play_Sound(L"SE_BLACK_KNIGHT_SWING_001.ogg", CSoundManager::Player_SFX_03, CSoundManager::Effect_Sound);
 				}
 			}
 			else if (m_pDynamicMesh->Get_TrackInfo().Position >= 1.1f)
@@ -6223,6 +6375,9 @@ void CPlayer::Play_Skills()
 					g_pManagement->Create_Effect_Delay(L"Player_Skill_WindMesh", 0.f, vEffWindPos, m_pTransform, _v3(-10.f, vPlayerAngleDeg.y, 0.f));
 					g_pManagement->Create_Effect_Delay(L"Player_Skill_WindMesh", 0.1f, vEffWindPos, m_pTransform, _v3(-10.f, vPlayerAngleDeg.y, 0.f));
 					g_pManagement->Create_Effect_Delay(L"Player_Skill_WindMesh", 0.2f, vEffWindPos, m_pTransform, _v3(-10.f, vPlayerAngleDeg.y, 0.f));
+
+					g_pSoundManager->Stop_Sound(CSoundManager::Player_SFX_02);
+					g_pSoundManager->Play_Sound(L"SE_BLACK_KNIGHT_SWING_000.ogg", CSoundManager::Player_SFX_02, CSoundManager::Effect_Sound);
 				}
 			}
 			else if (m_pDynamicMesh->Get_TrackInfo().Position >= 0.1f)
@@ -6232,6 +6387,9 @@ void CPlayer::Play_Skills()
 					m_bEventTrigger[13] = true;
 
 					CParticleMgr::Get_Instance()->Create_Skill_Start_Effect(V3_NULL, V3_NULL, m_pTransform);
+
+					g_pSoundManager->Stop_Sound(CSoundManager::Player_SFX_01);
+					g_pSoundManager->Play_Sound(L"SE_DIGGING_GROUND_000.ogg", CSoundManager::Player_SFX_01, CSoundManager::Effect_Sound);
 				}
 			}
 
@@ -6423,6 +6581,11 @@ void CPlayer::Play_Skills()
 					g_pManagement->Create_Effect_Delay(L"Player_Skill_RedParticle_Explosion"			, 0.f			, vPlayerPos + vEffGroundPos, nullptr);
 					g_pManagement->Create_Effect_Delay(L"Player_Skill_SplitAssert_LaserAfter_RingLine"	, 0.f			, vPlayerPos + vEffGroundPos, nullptr);
 					g_pManagement->Create_ParticleEffect_Delay(L"Player_Skill_SplitAssert_LaserAfter_Smoke", 0.3f, 0.f	, vPlayerPos + vEffGroundPos, nullptr);
+
+					g_pSoundManager->Stop_Sound(CSoundManager::Player_SFX_03);
+					g_pSoundManager->Play_Sound(L"SE_WEAPON_HIT_009.ogg", CSoundManager::Player_SFX_03, CSoundManager::Effect_Sound);
+					g_pSoundManager->Stop_Sound(CSoundManager::Player_SFX_01);
+					g_pSoundManager->Play_Sound(L"SE_WEAPON_IMPACT_000.ogg", CSoundManager::Player_SFX_01, CSoundManager::Effect_Sound);
 				}
 			}
 
@@ -6438,6 +6601,11 @@ void CPlayer::Play_Skills()
 					g_pManagement->Create_Effect(L"Player_Skill_Rush_WhiteParticle_LaserBefore"	, vPlayerPos + vEffGroundPos, nullptr, m_pTransform->Get_Axis(AXIS_Y));
 					g_pManagement->Create_Effect_Delay(L"Player_Skill_WindMesh", 0.1f	, vEffWindPos + _v3(0, 0.3f, 0.f), m_pTransform, _v3(-30.f, vPlayerAngleDeg.y, 30.f));
 					g_pManagement->Create_Effect_Delay(L"Player_Skill_WindMesh", 0.15f	, vEffWindPos + _v3(0, 0.3f, 0.f), m_pTransform, _v3(30.f, vPlayerAngleDeg.y, 30.f));
+
+					g_pSoundManager->Stop_Sound(CSoundManager::Player_SFX_03);
+					g_pSoundManager->Play_Sound(L"SE_BLACK_KNIGHT_WIND_CUT_000.ogg", CSoundManager::Player_SFX_03, CSoundManager::Effect_Sound);
+					g_pSoundManager->Stop_Sound(CSoundManager::Player_SFX_01);
+					g_pSoundManager->Play_Sound(L"SE_BLACK_KNIGHT_SWING_000.ogg", CSoundManager::Player_SFX_01, CSoundManager::Effect_Sound);
 				}
 			}
 
@@ -6453,6 +6621,9 @@ void CPlayer::Play_Skills()
 					g_pManagement->Create_Effect_Delay(L"Player_Skill_WindMesh", 0.36f	, vPlayerPos + vEffWindPos + _v3(0, -0.3f, 0.f) + m_pTransform->Get_Axis(AXIS_Z) * 2.2f, nullptr, _v3(-90.f, vPlayerAngleDeg.y, 0.f));
 					g_pManagement->Create_Effect_Delay(L"Player_Skill_WindMesh", 0.45f	, vPlayerPos + vEffWindPos + _v3(0, -0.3f, 0.f) + m_pTransform->Get_Axis(AXIS_Z) * 3.2f, nullptr, _v3(-90.f, vPlayerAngleDeg.y, 0.f));
 					g_pManagement->Create_Effect_Delay(L"Player_Skill_WindMesh", 0.5f	, vPlayerPos + vEffWindPos + _v3(0, -0.3f, 0.f) + m_pTransform->Get_Axis(AXIS_Z) * 3.8f, nullptr, _v3(-90.f, vPlayerAngleDeg.y, 0.f));
+
+					g_pSoundManager->Stop_Sound(CSoundManager::Player_SFX_02);
+					g_pSoundManager->Play_Sound(L"SE_BLACK_KNIGHT_MAGIC_SWORD_IMPACT_003.ogg", CSoundManager::Player_SFX_02, CSoundManager::Effect_Sound);
 				}
 			}
 
@@ -6464,6 +6635,9 @@ void CPlayer::Play_Skills()
 
 					_v3 vEffPos = m_pTransform->Get_Pos() + _v3(0.f, 1.3f, 0.f);
 					CParticleMgr::Get_Instance()->Create_Skill_Start_Effect(V3_NULL, vEffPos, m_pTransform);
+
+					g_pSoundManager->Stop_Sound(CSoundManager::Player_SFX_01);
+					g_pSoundManager->Play_Sound(L"SE_DIGGING_GROUND_000.ogg", CSoundManager::Player_SFX_01, CSoundManager::Effect_Sound);
 				}
 			}
 
@@ -6661,6 +6835,9 @@ void CPlayer::Play_Skills()
 					g_pManagement->Create_Effect_Delay(L"Player_Skill_Torment_Wind_R", 0.11f, vEffWindPos, m_pTransform, _v3(0.f, vPlayerAngleDeg.y, 10.f));
 					g_pManagement->Create_Effect_Delay(L"Player_Skill_Torment_Wind_Distortion_L", 0.10f, vEffWindPos, m_pTransform, _v3(0.f, vPlayerAngleDeg.y, -10.f));
 					g_pManagement->Create_Effect_Delay(L"Player_Skill_Torment_Wind_Distortion_R", 0.11f, vEffWindPos, m_pTransform, _v3(0.f, vPlayerAngleDeg.y, 10.f));
+
+					g_pSoundManager->Stop_Sound(CSoundManager::Player_SFX_03);
+					g_pSoundManager->Play_Sound(L"SE_BLACK_KNIGHT_SWING_005.ogg", CSoundManager::Player_SFX_03, CSoundManager::Effect_Sound);
 				}
 			}
 
@@ -6672,6 +6849,9 @@ void CPlayer::Play_Skills()
 
 					g_pManagement->Create_Effect_Delay(L"Player_Skill_WindMesh", 0.10f, vEffWindPos , m_pTransform, _v3(10.f, vPlayerAngleDeg.y, 10.f));
 					g_pManagement->Create_Effect_Delay(L"Player_Skill_WindMesh", 0.15f, vEffWindPos , m_pTransform, _v3(10.f, vPlayerAngleDeg.y, 10.f));
+
+					g_pSoundManager->Stop_Sound(CSoundManager::Player_SFX_02);
+					g_pSoundManager->Play_Sound(L"SE_BLACK_KNIGHT_SWING_002.ogg", CSoundManager::Player_SFX_02, CSoundManager::Effect_Sound);
 				}
 			}
 
@@ -6683,6 +6863,9 @@ void CPlayer::Play_Skills()
 
 					_v3 vEffPos = m_pTransform->Get_Pos() + _v3(0.f, 1.3f, 0.f);
 					CParticleMgr::Get_Instance()->Create_Skill_Start_Effect(V3_NULL, vEffPos, m_pTransform);
+
+					g_pSoundManager->Stop_Sound(CSoundManager::Player_SFX_01);
+					g_pSoundManager->Play_Sound(L"SE_DIGGING_GROUND_000.ogg", CSoundManager::Player_SFX_01, CSoundManager::Effect_Sound);
 				}
 			}
 
@@ -10404,11 +10587,11 @@ void CPlayer::Ready_Weapon()
 	m_pWeapon[WPN_SLOT_A]->Set_AttachBoneMartix(m_matHandBone);
 	m_pWeapon[WPN_SLOT_A]->Set_ParentMatrix(&m_pTransform->Get_WorldMat());
 
-	m_pWeapon[WPN_SLOT_B] = static_cast<CWeapon*>(g_pManagement->Clone_GameObject_Return(L"GameObject_Weapon", NULL));
-	m_pWeapon[WPN_SLOT_B]->Change_WeaponData(Wpn_Gun_Black);
-	m_pWeapon[WPN_SLOT_B]->Set_AttachBoneMartix(m_matHandBone);
-	m_pWeapon[WPN_SLOT_B]->Set_ParentMatrix(&m_pTransform->Get_WorldMat());
-	m_pWeapon[WPN_SLOT_B]->Set_Friendly(true);
+	//m_pWeapon[WPN_SLOT_B] = static_cast<CWeapon*>(g_pManagement->Clone_GameObject_Return(L"GameObject_Weapon", NULL));
+	//m_pWeapon[WPN_SLOT_B]->Change_WeaponData(Wpn_Hammer);
+	//m_pWeapon[WPN_SLOT_B]->Set_AttachBoneMartix(&pFamre->CombinedTransformationMatrix);
+	//m_pWeapon[WPN_SLOT_B]->Set_ParentMatrix(&m_pTransform->Get_WorldMat());
+	//m_pWeapon[WPN_SLOT_B]->Set_Friendly(true);
 
 	m_bWeaponActive[WPN_SLOT_A] = true;
 	m_bWeaponActive[WPN_SLOT_B] = false;
@@ -10920,6 +11103,31 @@ void CPlayer::Active_UI_BloodCode(_bool _bResetUI)
 	m_pCamManager->Set_MidDistance(2.5f);
 }
 
+void CPlayer::Active_UI_LockOn(_bool _bResetUI)
+{
+	if (false == _bResetUI)
+	{
+		CMesh_Dynamic*	pMeshDynamic = static_cast<Engine::CMesh_Dynamic*>((m_pTarget)->Get_Component(L"Com_Mesh"));
+		CTransform*		pTtransform = TARGET_TO_TRANS(m_pTarget);
+
+		LPCSTR tmpChar = "Hips";
+
+		D3DXFRAME_DERIVED*	pFamre = (D3DXFRAME_DERIVED*)pMeshDynamic->Get_BonInfo(tmpChar, 0);
+		_mat* matBone = &pFamre->CombinedTransformationMatrix;
+		_mat* matTarget = &pTtransform->Get_WorldMat();
+
+		m_pLockOn_UI->Set_Enable(true);
+		m_pLockOn_UI->Set_Bonmatrix(matBone);
+		m_pLockOn_UI->Set_TargetWorldmatrix(matTarget);
+	}
+
+	else
+	{
+		m_pLockOn_UI->Set_Enable(false);
+		m_pLockOn_UI->Reset_TargetMatrix();
+	}
+}
+
 HRESULT CPlayer::Add_Component()
 {
 	// For.Com_Transform
@@ -11369,6 +11577,8 @@ void CPlayer::Free()
 	m_vecActiveSkillInfo.shrink_to_fit();
 	m_vecActiveSkillInfo.clear();
 
+	Safe_Release(m_pLockOn_UI);
+
 	Safe_Release(m_pDrainWeapon);
 	Safe_Release(m_pCollider);
 	Safe_Release(m_pTransform);
@@ -11381,6 +11591,7 @@ void CPlayer::Free()
 	Safe_Release(m_pUIManager);
 	Safe_Release(m_pCamManager);
 	Safe_Release(m_pStageAgent);
+	Safe_Release(m_pScriptManager);
 
 	m_pCunterTarget = nullptr;
 

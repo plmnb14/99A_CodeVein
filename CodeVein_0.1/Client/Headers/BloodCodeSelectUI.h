@@ -26,6 +26,9 @@ private:
 	void	SetUp_Default();
 	void	Click_BloodCodeSlot();
 
+public:
+	void Release_BloodCode(BloodCode_ID eBloodCodeID);
+
 private:
 	CTransform*				m_pTransformCom = nullptr;
 	CRenderer*				m_pRendererCom = nullptr;

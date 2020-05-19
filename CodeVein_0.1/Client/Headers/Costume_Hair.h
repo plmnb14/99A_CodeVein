@@ -28,12 +28,18 @@ private:
 	virtual ~CCostume_Hair() = default;
 
 public:
+	virtual _v4				Get_Color() { return m_vColorValue; }
+
+public:
 	virtual void			Set_AttachBoneMartix(_mat* _matAttachBone) { m_pmatBone = _matAttachBone; }
 	virtual void			Set_ParentMatrix(_mat* _matParent) { m_pmatParent = _matParent; }
 
+	virtual void			Change_HairMesh(CClothManager::Cloth_Static _eHairType);
+	virtual void			Set_Color(_v4 _vColor) { m_vColorValue = _vColor; }
+
 public:
 	virtual _int	Update_GameObject(_double TimeDelta);
-	_int	Update_GameObject(_double TimeDelta, _bool bCanCol);
+	_int	Update_GameObject(_double TimeDelta, _bool bClearCol);
 	virtual _int	Late_Update_GameObject(_double TimeDelta);
 	virtual HRESULT Render_GameObject();
 	virtual HRESULT Render_GameObject_Instancing_SetPass(CShader* pShader);
@@ -48,7 +54,6 @@ private:
 
 private:
 	virtual void Calc_AttachBoneTransform();
-	virtual void Change_HairMesh(CClothManager::Cloth_Static _eHairType);
 
 private:
 	void Change_Vertex();
@@ -66,7 +71,7 @@ private:
 
 private:
 	CClothManager::Cloth_Static		m_eHairType = CClothManager::Hair_01;
-	_v4								m_vColorValue = {};
+	_v4								m_vColorValue = {1.f, 0.f, 0.f, 1.f};
 
 public:
 	static CCostume_Hair* Create(_Device pGraphicDev);

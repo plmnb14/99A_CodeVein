@@ -4,6 +4,7 @@
 #include "GameObject.h"
 #include "Management.h"
 #include "CameraMgr.h"
+#include "ScriptManager.h"
 
 #include "UI_Manager.h"
 
@@ -13,9 +14,7 @@
 
 BEGIN(Client)
 
-class CCostume_Mask;
-class CCostume_Head;
-class CCostume_Body;
+class CLockOn_UI;
 class CCostume_Outer;
 class CCostume_Hair;
 class CStageAgent;
@@ -76,7 +75,7 @@ public:
 
 	enum ACTIVE_WEAPON_SLOT
 	{
-		WPN_SLOT_A, WPN_SLOT_B, WPN_SLOT_C, WPN_SLOT_D, WPN_SLOT_E, WPN_SLOT_End
+		WPN_SLOT_A, WPN_SLOT_B, /*WPN_SLOT_C, WPN_SLOT_D, WPN_SLOT_E,*/ WPN_SLOT_End
 	};
 
 private:
@@ -91,6 +90,14 @@ protected:
 	explicit CPlayer(const CPlayer& rhs);
 	virtual ~CPlayer() = default;
 
+public:
+	CCostume_Hair* Get_Costume_Hair() { return m_pHair; }
+	CCostume_Head* Get_Costume_Head() { return m_pHead[m_eHeadType]; }
+	CCostume_Mask* Get_Costume_Mask() { return m_pMask[m_eMaskType]; }
+
+public:
+	void Set_WeaponSlot(ACTIVE_WEAPON_SLOT eType, WEAPON_DATA eData);
+	void Set_ArmorSlot(ARMOR_All_DATA eType);
 public:
 	virtual HRESULT Ready_GameObject_Prototype();
 	virtual HRESULT Ready_GameObject(void* pArg);
@@ -108,8 +115,8 @@ public:
 private:
 	ACTOR_INFO				m_tInfo = {};
 	ACT_STATE				m_eActState = ACT_Summon;
-	WEAPON_STATE			m_eMainWpnState = WEAPON_Hammer;
-	WEAPON_STATE			m_eSubWpnState = WEAPON_Hammer;
+	WEAPON_STATE			m_eMainWpnState = WEAPON_SSword;
+	WEAPON_STATE			m_eSubWpnState = WEAPON_SSword;
 	DRAIN_STATE				m_eDrainState = DRAIN_END;
 	ACTIVE_WEAPON_SLOT		m_eActiveSlot = WPN_SLOT_A;
 
@@ -120,6 +127,9 @@ private:
 	CWeapon*				m_pWeapon[WPN_SLOT_End] = {};
 	CDrain_Weapon*			m_pDrainWeapon = nullptr;
 	CGameObject*			m_pCunterTarget = nullptr;
+
+private:
+	CLockOn_UI*				m_pLockOn_UI = nullptr;
 
 private:
 	CTransform*				m_pTransform = nullptr;
@@ -145,6 +155,7 @@ private:
 private:
 	CUI_Manager*			m_pUIManager = nullptr;
 	CCameraMgr*				m_pCamManager = nullptr;
+	CScriptManager*			m_pScriptManager = nullptr;
 
 private:
 	vector<CCollider*>		m_vecPhsycColl;
@@ -417,6 +428,9 @@ public:
 	virtual void Active_UI_StageSelect(_bool _bResetUI = false);	// 스테이지 선택
 	virtual void Active_UI_NPC(_bool _bResetUI = false);			// NPC 와의 대화
 	virtual void Active_UI_BloodCode(_bool _bResetUI = false);			// NPC 와의 대화
+
+public:
+	virtual void Active_UI_LockOn(_bool _bResetUI = false);
 
 public:
 	static	CPlayer* Create(_Device pGraphic_Device);

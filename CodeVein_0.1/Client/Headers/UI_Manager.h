@@ -103,11 +103,15 @@
 #include "MaterialBuyUI.h"
 #include "BuyOptionUI.h"
 #include "PurchaseFailUI.h"
+#include "GeneralStoreNPCUI.h"
+#include "GeneralStoreOption.h"
 
 #include "Get_ItemUI.h"
 #include "PickUp_ItemUI.h"
 #include "Calling_Colleague.h"
 #include "PickUp_ItemUIManager.h"
+
+#include "LockOn_UI.h"
 
 BEGIN(Client)
 
@@ -150,7 +154,7 @@ public:
 	CScriptUI* Get_ScriptUI() { return m_pScriptUI; } // 대사 UI
 	CPlayerHP* Get_PlayerHP() { return m_pPlayerHP; } // 플레이어 HP
 	CPlayerST* Get_PlayerST() { return m_pPlayerST; } // 플레이어 ST
-	CGeneralStoreUI* Get_MaterialShopUI() { return m_pGeneralStoreUI; }
+	CGeneralStoreUI* Get_GeneralStoreUI() { return m_pGeneralStoreUI; }
 	CSkillGauge* Get_SkillGauge() { return m_pSkillGauge; }
 	
 	// 펫 인벤토리
@@ -193,6 +197,7 @@ private:
 	CGeneralStoreUI* m_pGeneralStoreUI = nullptr; // 소비, 재료 상점 UI
 	CSkillGauge*	m_pSkillGauge = nullptr;
 	CSkillPointUI*	m_pSkillPointUI = nullptr;
+	CGeneralStoreNPCUI* m_pGeneralStoreNPCUI = nullptr;
 
 	// 펫 인벤토리
 	CPet_Inven* m_pPet_Inven = nullptr;

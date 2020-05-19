@@ -39,6 +39,7 @@ private:
 public:
 	virtual void			Set_AttachBoneMartix(_mat* _matAttachBone) { m_pmatBone = _matAttachBone; }
 	virtual void			Set_ParentMatrix(_mat* _matParent) { m_pmatParent = _matParent; }
+	virtual void			Change_AccMesh(MASK_TYPE _eMaskType);
 
 public:
 	virtual _int	Update_GameObject(_double TimeDelta);
@@ -56,7 +57,6 @@ private:
 
 private:
 	virtual void Calc_AttachBoneTransform();
-	virtual void Change_AccMesh(MASK_TYPE _eMaskType);
 
 private:
 	CTransform*				m_pTransform = nullptr;

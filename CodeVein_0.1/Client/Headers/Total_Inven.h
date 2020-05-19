@@ -26,6 +26,7 @@ public:
 	_bool Get_Detail() { return m_bIsDetail; }
 	BloodCode_ID Get_PlayerBloodCode() { return m_ePlayerBloodCode; }
 	Skill_ID Get_Registration_Skill(_uint iNum);
+	WEAPON_DATA Get_Registration_Weapon(_uint iNum);
 
 public:
 	void Set_Detail(_bool bIsDetail) { m_bIsDetail = bIsDetail; }
@@ -46,6 +47,7 @@ private:
 	void					SetUp_Default();
 	void					Click_Icon();
 	void					SkillSlot_Touch_Sound(_uint i);
+	void					SetUp_SubUI_Active(_bool bIsActive);
 
 private:
 	CBuffer_RcTex*			m_pBufferCom = nullptr;
@@ -64,6 +66,7 @@ private:
 	BloodCode_ID			m_ePlayerBloodCode = BloodCode_End;
 	vector<CSkillSlot*>		m_vecSkillIcon;
 	CNoticeUI*				m_pNoticeUI = nullptr;
+	_bool					m_bIsSubActive = false;
 
 public:
 	static CTotal_Inven*	Create(_Device pGraphic_Device);

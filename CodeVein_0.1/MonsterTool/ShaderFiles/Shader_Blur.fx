@@ -222,6 +222,8 @@ technique Default_Technique
 	//====================================================================================================
 	pass MotionBlur
 	{
+		cullmode = ccw;
+
 		AlphaTestEnable = true;
 		AlphaRef = 0;
 		AlphaFunc = Greater;
@@ -235,6 +237,8 @@ technique Default_Technique
 	//====================================================================================================
 	pass MotionBlur_Height
 	{
+		cullmode = ccw;
+
 		AlphaTestEnable = true;
 		AlphaRef = 0;
 		AlphaFunc = Greater;
@@ -248,6 +252,8 @@ technique Default_Technique
 	//====================================================================================================
 	pass MotionBlur_HeightSkin
 	{
+		cullmode = ccw;
+
 		AlphaTestEnable = true;
 		AlphaRef = 0;
 		AlphaFunc = Greater;

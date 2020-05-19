@@ -18,7 +18,7 @@ HRESULT CClothManager::Ready_ClothManager()
 	return S_OK;
 }
 
-HRESULT CClothManager::Update_Cloth_Static(Cloth_Static eTag, _bool bCanCol)
+HRESULT CClothManager::Update_Cloth_Static(Cloth_Static eTag, _bool bClearCol)
 {
 	PxSceneWriteLock scopedLock(*g_pPhysx->Get_Scene());
 
@@ -39,7 +39,7 @@ HRESULT CClothManager::Update_Cloth_Static(Cloth_Static eTag, _bool bCanCol)
 	Set_Wind(m_pCloth_Static[eTag], g_vWindDir);
 
 	// 스킬 쓸 때는 충돌구 잠시 제거
-	if (bCanCol)
+	if (bClearCol)
 	{
 		Clear_Collider(m_pCloth_Static[eTag]);
 	}
@@ -54,7 +54,7 @@ HRESULT CClothManager::Update_Cloth_Static(Cloth_Static eTag, _bool bCanCol)
 	return S_OK;
 }
 
-HRESULT CClothManager::Update_Cloth_Dynamic(Cloth_Dynamic eTag, _bool bCanCol)
+HRESULT CClothManager::Update_Cloth_Dynamic(Cloth_Dynamic eTag, _bool bClearCol)
 {
 	if (Cloth_Dynamic::None == eTag)
 		return S_OK;
@@ -78,7 +78,7 @@ HRESULT CClothManager::Update_Cloth_Dynamic(Cloth_Dynamic eTag, _bool bCanCol)
 	Set_Wind(m_pCloth_Dynamic[eTag], g_vWindDir);
 
 	// 스킬 쓸 때는 충돌구 잠시 제거
-	if (bCanCol)
+	if (bClearCol)
 	{
 		Clear_Collider(m_pCloth_Static[eTag]);
 	}
@@ -501,7 +501,7 @@ void CClothManager::Set_Wind(physx::PxCloth * pCloth, _v3 vWindDir)
 {
 	D3DXVec3Normalize(&vWindDir, &vWindDir);
 
-	PxReal strength = 5.0f;
+	PxReal strength = 7.5f;
 	PxVec3 offset(PxReal(CALC::Random_Num_Double(-1, 1)) + vWindDir.x, PxReal(CALC::Random_Num_Double(-1, 1)) + vWindDir.y, PxReal(CALC::Random_Num_Double(-1, 1)) + vWindDir.z);
 	PxVec3 windAcceleration = strength * offset;
 	pCloth->setExternalAcceleration(windAcceleration);

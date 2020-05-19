@@ -119,6 +119,12 @@ HRESULT CCostume_Hair::SetUp_ConstantTable(CShader* pShader)
 	if (FAILED(pShader->Set_Value("g_fID_B_Power", &fID_B, sizeof(_float))))
 		return E_FAIL;
 	//=============================================================================================
+	// Ä¿½ºÅÒ Ä®¶ó
+	//=============================================================================================
+
+	if (FAILED(pShader->Set_Value("g_vColor", &m_vColorValue, sizeof(_v4))))
+		return E_FAIL;
+	//=============================================================================================
 
 	m_pBattleAgent->Update_RimParam_OnShader(pShader);
 
@@ -260,7 +266,7 @@ _int CCostume_Hair::Update_GameObject(_double TimeDelta)
 	return NO_EVENT;
 }
 
-_int CCostume_Hair::Update_GameObject(_double TimeDelta, _bool bCanCol)
+_int CCostume_Hair::Update_GameObject(_double TimeDelta, _bool bClearCol)
 {
 	if (false == m_bEnable)
 		return NO_EVENT;
@@ -281,7 +287,7 @@ _int CCostume_Hair::Update_GameObject(_double TimeDelta, _bool bCanCol)
 	}
 
 	if(g_pClothManager->Is_Valid_Static(m_eHairType))
-		g_pClothManager->Update_Cloth_Static(m_eHairType, bCanCol);
+		g_pClothManager->Update_Cloth_Static(m_eHairType, bClearCol);
 
 	return NO_EVENT;
 }
@@ -381,14 +387,12 @@ HRESULT CCostume_Hair::Render_GameObject_Instancing_SetPass(CShader * pShader)
 	for (_uint i = 0; i < iNumSubSet; ++i)
 	{
 		m_iPass = m_pStaticMesh->Get_MaterialPass(i);
+		
+		// Color Value Custom
+		m_iPass = 23;
 
 		if (m_bDissolve)
 			m_iPass = 3;
-
-		if (m_iPass == 7)
-		{
-			cout << "7¹ø" << endl;
-		}
 
 		//bOnToonRimLight = true;
 		//pShader->Set_Value("g_bToonRimLight", &bOnToonRimLight, sizeof(_bool));

@@ -28,8 +28,8 @@ HRESULT CLogoBtn::Ready_GameObject(void * pArg)
 
 	m_fPosX = WINCX * 0.5f;
 	m_fPosY = 470.f;
-	m_fSizeX = 237.f;
-	m_fSizeY = 44.f;
+	m_fSizeX = 256.f;
+	m_fSizeY = 64.f;
 	
 	m_fViewZ = 0.1f;
 	m_fAlpha = 0.f;

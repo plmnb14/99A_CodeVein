@@ -31,6 +31,8 @@ private:
 	void					Click_Inven(); // 활성화일 경우에만 적용됨
 	void					SetUp_Default();
 	void					Add_Slot();
+	void					SetUp_SlotPos();
+	void					SetUp_SubUI_Active(_bool bIsActive);
 
 public:
 	void Add_Material(CMaterial::MATERIAL_TYPE eType);
@@ -47,6 +49,7 @@ private:
 	vector<CMaterial_Slot*>	m_vecMaterialSlot;
 	vector<UI_DESC*>		m_vecUI_DESC;
 	CExplainMaterialUI*		m_pExplainUI = nullptr;
+	_bool					m_bIsSubActive = false;
 
 public:
 	static CMaterial_Inven*	Create(_Device pGraphic_Device);

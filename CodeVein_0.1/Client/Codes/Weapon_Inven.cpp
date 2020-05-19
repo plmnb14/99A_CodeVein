@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "..\Headers\Weapon_Inven.h"
 #include "Weapon.h"
+#include "Player.h"
 #include "UI_Manager.h"
 
 CWeapon_Inven::CWeapon_Inven(_Device pDevice)
@@ -61,14 +62,14 @@ HRESULT CWeapon_Inven::Ready_GameObject(void * pArg)
 		m_UseWeaponParam[i].iWeaponName = WPN_DATA_End;
 	}
 	
-	Add_Weapon(m_tWeaponParam[Wpn_SSword]);
-	Add_Weapon(m_tWeaponParam[Wpn_SSword_Black]);
-	Add_Weapon(m_tWeaponParam[Wpn_SSword_Military]);
-	Add_Weapon(m_tWeaponParam[Wpn_SSword_Slave]);
-	Add_Weapon(m_tWeaponParam[Wpn_Gun_Military]);
-	Add_Weapon(m_tWeaponParam[Wpn_Gun_Slave]);
-	Add_Weapon(m_tWeaponParam[Wpn_Hammer]);
-	Add_Weapon(m_tWeaponParam[Wpn_LSword_Military]);
+
+	//Add_Weapon(m_tWeaponParam[Wpn_SSword_Black]);
+	//Add_Weapon(m_tWeaponParam[Wpn_SSword_Military]);
+	//Add_Weapon(m_tWeaponParam[Wpn_SSword_Slave]);
+	//Add_Weapon(m_tWeaponParam[Wpn_Gun_Military]);
+	//Add_Weapon(m_tWeaponParam[Wpn_Gun_Slave]);
+	//Add_Weapon(m_tWeaponParam[Wpn_Hammer]);
+	//Add_Weapon(m_tWeaponParam[Wpn_LSword_Military]);
 	
 	return NOERROR;
 }
@@ -77,24 +78,26 @@ _int CWeapon_Inven::Update_GameObject(_double TimeDelta)
 {
 	CUI::Update_GameObject(TimeDelta);
 
+	Late_Init();
 
 	m_pRendererCom->Add_RenderList(RENDER_UI, this);
 
 	D3DXMatrixOrthoLH(&m_matProj, WINCX, WINCY, 0.f, 1.0f);
 
-	Click_Inven();
-	
-	_uint iIdx = 0;
-	for (auto& pWeaponSlot : m_vecWeaponSlot)
+	if (m_bIsActive && !m_bIsSubActive)
 	{
-		pWeaponSlot->Set_Active(m_bIsActive);
-		pWeaponSlot->Set_UI_Pos(m_fPosX - 100.f + 52.f * (iIdx % 5), m_fPosY - 150.f + 52.f * (iIdx / 5));
-		pWeaponSlot->Set_ViewZ(m_fViewZ - 0.1f);
-		iIdx++;
+		SetUp_SubUI_Active(true);
+		m_bIsSubActive = true;
+	}
+	else if (!m_bIsActive && m_bIsSubActive)
+	{
+		SetUp_SubUI_Active(false);
+		m_bIsSubActive = false;
 	}
 
+	Click_Inven();
 	
-	m_pExplainUI->Set_Active(m_bIsActive);
+	
 	
 	return NO_EVENT;
 }
@@ -123,10 +126,6 @@ HRESULT CWeapon_Inven::Render_GameObject()
 		return E_FAIL;
 
 	g_pManagement->Set_Transform(D3DTS_WORLD, m_matWorld);
-
-	m_matOldView = g_pManagement->Get_Transform(D3DTS_VIEW);
-	m_matOldProj = g_pManagement->Get_Transform(D3DTS_PROJECTION);
-
 	g_pManagement->Set_Transform(D3DTS_VIEW, m_matView);
 	g_pManagement->Set_Transform(D3DTS_PROJECTION, m_matProj);
 
@@ -143,8 +142,6 @@ HRESULT CWeapon_Inven::Render_GameObject()
 
 	m_pShaderCom->End_Shader();
 
-	g_pManagement->Set_Transform(D3DTS_VIEW, m_matOldView);
-	g_pManagement->Set_Transform(D3DTS_PROJECTION, m_matOldProj);
 
 	return NOERROR;
 }
@@ -227,8 +224,9 @@ void CWeapon_Inven::Regist_Weapon(CWeapon_Slot* pWeaponSlot)
 	if (m_UseWeaponParam[0].iWeaponName == WPN_DATA_End)
 	{
 		m_UseWeaponParam[0] = pWeaponSlot->Get_WeaponParam();
-
 		pWeaponSlot->Set_Select(true);
+
+		m_pPlayer->Set_WeaponSlot((CPlayer::ACTIVE_WEAPON_SLOT)0, (WEAPON_DATA)m_UseWeaponParam[0].iWeaponName);
 
 		g_pSoundManager->Play_Sound(L"UI_CommonHover.wav", CSoundManager::WeaponInven_Regist_Slot01, CSoundManager::Ambient_Sound);
 	}
@@ -236,7 +234,9 @@ void CWeapon_Inven::Regist_Weapon(CWeapon_Slot* pWeaponSlot)
 	{
 		m_UseWeaponParam[1] = pWeaponSlot->Get_WeaponParam();
 		pWeaponSlot->Set_Select(true);
-		
+
+		m_pPlayer->Set_WeaponSlot((CPlayer::ACTIVE_WEAPON_SLOT)1, (WEAPON_DATA)m_UseWeaponParam[1].iWeaponName);
+
 		g_pSoundManager->Play_Sound(L"UI_CommonHover.wav", CSoundManager::WeaponInven_Regist_Slot02, CSoundManager::Ambient_Sound);
 	}
 	else
@@ -247,6 +247,19 @@ void CWeapon_Inven::UnRegist_Weapon(CWeapon_Slot * pWeaponSlot)
 {
 	if (pWeaponSlot->Get_WeaponParam().iWeaponName == WPN_DATA_End)
 		return;
+
+	// 한 개의 무기는 꼭 착용해야 함.
+	if (1 >= m_vecWeaponSlot.size())
+		return;
+	_bool bIsNull = false;
+	for (_int i = 0; i < 2; i++)
+	{
+		if (nullptr == m_vecWeaponSlot[i] || false == m_vecWeaponSlot[i]->Get_Select())
+			bIsNull = true;
+	}
+	if (bIsNull)
+		return;
+	
 	if (pWeaponSlot->Get_WeaponParam().iWeaponName == m_UseWeaponParam[0].iWeaponName)
 	{
 		m_UseWeaponParam[0].iWeaponName = WPN_DATA_End;
@@ -260,6 +273,8 @@ void CWeapon_Inven::UnRegist_Weapon(CWeapon_Slot * pWeaponSlot)
 		m_UseWeaponParam[0].fTrail_Max = 0.f;
 		m_UseWeaponParam[0].fCol_Height = 0.f;
 		pWeaponSlot->Set_Select(false);
+
+		m_pPlayer->Set_WeaponSlot((CPlayer::ACTIVE_WEAPON_SLOT)0, WEAPON_DATA::WPN_DATA_End);
 
 		g_pSoundManager->Play_Sound(L"UI_CommonClick.wav", CSoundManager::WeaponInven_UnRegist_Slot01, CSoundManager::Ambient_Sound);
 	}
@@ -276,6 +291,8 @@ void CWeapon_Inven::UnRegist_Weapon(CWeapon_Slot * pWeaponSlot)
 		m_UseWeaponParam[1].fTrail_Max = 0.f;
 		m_UseWeaponParam[1].fCol_Height = 0.f;
 		pWeaponSlot->Set_Select(false);
+
+		m_pPlayer->Set_WeaponSlot((CPlayer::ACTIVE_WEAPON_SLOT)1, WEAPON_DATA::WPN_DATA_End);
 
 		g_pSoundManager->Play_Sound(L"UI_CommonClick.wav", CSoundManager::WeaponInven_UnRegist_Slot02, CSoundManager::Ambient_Sound);
 	}
@@ -624,6 +641,43 @@ void CWeapon_Inven::SetUp_Default()
 	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pExplainUI, SCENE_MORTAL, L"Layer_PlayerUI", nullptr);
 }
 
+void CWeapon_Inven::SetUp_SlotPos()
+{
+	_uint iIdx = 0;
+	for (auto& pWeaponSlot : m_vecWeaponSlot)
+	{		
+		pWeaponSlot->Set_UI_Pos(m_fPosX - 100.f + 52.f * (iIdx % 5), m_fPosY - 150.f + 52.f * (iIdx / 5));
+		pWeaponSlot->Set_ViewZ(m_fViewZ - 0.1f);
+		iIdx++;
+	}
+}
+
+void CWeapon_Inven::SetUp_SubUI_Active(_bool bIsActive)
+{
+	_uint iIdx = 0;
+	for (auto& pWeaponSlot : m_vecWeaponSlot)
+	{
+		pWeaponSlot->Set_Active(bIsActive);
+		iIdx++;
+	}
+
+	m_pExplainUI->Set_Active(bIsActive);
+}
+
+void CWeapon_Inven::Late_Init()
+{
+	if (m_bLateInit)
+		return;
+
+	m_bLateInit = true;
+
+	m_pPlayer = static_cast<CPlayer*>(g_pManagement->Get_GameObjectBack(L"Layer_Player", SCENE_MORTAL));
+
+	m_vecWeaponSlot.reserve(2);
+	Add_Weapon(m_tWeaponParam[Wpn_SSword]);
+	Regist_Weapon(m_vecWeaponSlot[0]);
+}
+
 void CWeapon_Inven::Add_Weapon(WPN_PARAM tAddWpnParam)
 {
 	CWeapon_Slot* pSlot = static_cast<CWeapon_Slot*>(g_pManagement->Clone_GameObject_Return(L"GameObject_WeaponSlot", nullptr));
@@ -632,13 +686,7 @@ void CWeapon_Inven::Add_Weapon(WPN_PARAM tAddWpnParam)
 	g_pManagement->Add_GameOject_ToLayer_NoClone(pSlot, SCENE_MORTAL, L"Layer_PlayerUI", nullptr);	
 	m_vecWeaponSlot.push_back(pSlot);
 
-	// 슬롯 생성시 위치 조정
-	for (_uint i = 0; i < m_vecWeaponSlot.size(); ++i)
-	{
-		m_vecWeaponSlot[i]->Set_Active(m_bIsActive);
-		m_vecWeaponSlot[i]->Set_ViewZ(m_fViewZ - 0.1f);
-		m_vecWeaponSlot[i]->Set_UI_Pos(m_fPosX - 103.f + 52.f * (i % 5), m_fPosY - 140.f + 52.f * (i / 5));
-	}
+	SetUp_SlotPos();
 }
 
 void CWeapon_Inven::Sell_Weapon()
@@ -655,6 +703,8 @@ void CWeapon_Inven::Sell_Weapon()
 		}
 		++idx;
 	}
+
+	SetUp_SlotPos();
 }
 
 CWeapon_Inven * CWeapon_Inven::Create(_Device pGraphic_Device)

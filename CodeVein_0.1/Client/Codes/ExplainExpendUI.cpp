@@ -37,33 +37,8 @@ _int CExplainExpendUI::Update_GameObject(_double TimeDelta)
 	m_pRendererCom->Add_RenderList(RENDER_UI, this);
 
 	D3DXMatrixOrthoLH(&m_matProj, WINCX, WINCY, 0.f, 1.0f);
-	//	Expend_Hp,				// 체력 아이템
-	//	Expend_Return,			// 귀환 아이템
-	//	Expend_Blood,			// 영혈 아이템
-	//	Expend_Cheet,			// 치트 아이템
-	//	Expend_SuperArmor,		// 슈퍼 아머
-	//	EXPEND_END
-	switch (m_eType)
-	{
-	case CExpendables::Expend_MaximumUp:
-		m_iIndex = 0;
-		break;
-	case CExpendables::Expend_Hp:
-		m_iIndex = 1;
-		break;
-	case CExpendables::Expend_Return:
-		m_iIndex = 2;
-		break;
-	case CExpendables::Expend_Blood:
-		m_iIndex = 3;
-		break;
-	case CExpendables::Expend_Cheet:
-		m_iIndex = 4;
-		break;
-	case CExpendables::Expend_SuperArmor:
-		m_iIndex = 5;
-		break;
-	}
+	
+	
 
 	if (!m_bIsActive)
 		m_eType = CExpendables::EXPEND_END;
@@ -112,6 +87,8 @@ HRESULT CExplainExpendUI::Render_GameObject()
 {
 	if (!m_bIsActive || m_eType == CExpendables::EXPEND_END)
 		return NOERROR;
+
+	SetUp_TexIndex();
 
 	if (nullptr == m_pShaderCom ||
 		nullptr == m_pBufferCom)
@@ -188,6 +165,38 @@ void CExplainExpendUI::SetUp_Default()
 	m_pFontCurHave->Set_UI_Size(10.4f, 20.f);
 	m_pFontCurHave->Set_ViewZ(m_fViewZ - 0.1f);
 	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pFontCurHave, SCENE_MORTAL, L"Layer_PlayerUI", nullptr);
+}
+
+void CExplainExpendUI::SetUp_TexIndex()
+{
+	//	Expend_Hp,				// 체력 아이템
+	//	Expend_Return,			// 귀환 아이템
+	//	Expend_Blood,			// 영혈 아이템
+	//	Expend_Cheet,			// 치트 아이템
+	//	Expend_SuperArmor,		// 슈퍼 아머
+	//	EXPEND_END
+
+	switch (m_eType)
+	{
+	case CExpendables::Expend_MaximumUp:
+		m_iIndex = 0;
+		break;
+	case CExpendables::Expend_Hp:
+		m_iIndex = 1;
+		break;
+	case CExpendables::Expend_Return:
+		m_iIndex = 2;
+		break;
+	case CExpendables::Expend_Blood:
+		m_iIndex = 3;
+		break;
+	case CExpendables::Expend_Cheet:
+		m_iIndex = 4;
+		break;
+	case CExpendables::Expend_SuperArmor:
+		m_iIndex = 5;
+		break;
+	}
 }
 
 CExplainExpendUI * CExplainExpendUI::Create(_Device pGraphic_Device)
