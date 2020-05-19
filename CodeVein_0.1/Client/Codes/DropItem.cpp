@@ -161,6 +161,7 @@ _int CDropItem::Update_GameObject(_double TimeDelta)
 					m_bCanGetItem = true;
 					++m_iCount_GetItem;
 					m_pPickUpMgr->Set_Count_GetItem(m_iCount_GetItem);
+					m_pPickUpMgr->Set_vecPickUp_Item(pPickUp);
 					break;
 				}
 				case NAMETYPE_WpnAll_Gun_ReverTardor:
@@ -172,6 +173,7 @@ _int CDropItem::Update_GameObject(_double TimeDelta)
 					m_bCanGetItem = true;
 					++m_iCount_GetItem;
 					m_pPickUpMgr->Set_Count_GetItem(m_iCount_GetItem);
+					m_pPickUpMgr->Set_vecPickUp_Item(pPickUp);
 					break;
 				}
 				case NAMETYPE_WpnAll_Gun_Nakil:
@@ -183,6 +185,7 @@ _int CDropItem::Update_GameObject(_double TimeDelta)
 					m_bCanGetItem = true;
 					++m_iCount_GetItem;
 					m_pPickUpMgr->Set_Count_GetItem(m_iCount_GetItem);
+					m_pPickUpMgr->Set_vecPickUp_Item(pPickUp);
 					break;
 				}
 				case NAMETYPE_WpnAll_Gun_DarkBayonet:
@@ -194,6 +197,7 @@ _int CDropItem::Update_GameObject(_double TimeDelta)
 					m_bCanGetItem = true;
 					++m_iCount_GetItem;
 					m_pPickUpMgr->Set_Count_GetItem(m_iCount_GetItem);
+					m_pPickUpMgr->Set_vecPickUp_Item(pPickUp);
 					break;
 				}
 				case NAMETYPE_WpnAll_Halberd_SolidPiercer:
@@ -205,6 +209,7 @@ _int CDropItem::Update_GameObject(_double TimeDelta)
 					m_bCanGetItem = true;
 					++m_iCount_GetItem;
 					m_pPickUpMgr->Set_Count_GetItem(m_iCount_GetItem);
+					m_pPickUpMgr->Set_vecPickUp_Item(pPickUp);
 					break;
 				}
 				case NAMETYPE_WpnAll_Halberd_Black:
@@ -216,6 +221,7 @@ _int CDropItem::Update_GameObject(_double TimeDelta)
 					m_bCanGetItem = true;
 					++m_iCount_GetItem;
 					m_pPickUpMgr->Set_Count_GetItem(m_iCount_GetItem);
+					m_pPickUpMgr->Set_vecPickUp_Item(pPickUp);
 					break;
 				}
 				case NAMETYPE_WpnAll_Halberd_DarkBodish:
@@ -227,6 +233,7 @@ _int CDropItem::Update_GameObject(_double TimeDelta)
 					m_bCanGetItem = true;
 					++m_iCount_GetItem;
 					m_pPickUpMgr->Set_Count_GetItem(m_iCount_GetItem);
+					m_pPickUpMgr->Set_vecPickUp_Item(pPickUp);
 					break;
 				}
 				case NAMETYPE_WpnAll_Halberd_Nakil:
@@ -238,6 +245,7 @@ _int CDropItem::Update_GameObject(_double TimeDelta)
 					m_bCanGetItem = true;
 					++m_iCount_GetItem;
 					m_pPickUpMgr->Set_Count_GetItem(m_iCount_GetItem);
+					m_pPickUpMgr->Set_vecPickUp_Item(pPickUp);
 					break;
 				}
 				case NAMETYPE_WpnAll_Hammer_ImperseAnker:
@@ -248,6 +256,7 @@ _int CDropItem::Update_GameObject(_double TimeDelta)
 					m_bCanGetItem = true;
 					++m_iCount_GetItem;
 					m_pPickUpMgr->Set_Count_GetItem(m_iCount_GetItem);
+					m_pPickUpMgr->Set_vecPickUp_Item(pPickUp);
 					break;
 				}
 				case NAMETYPE_WpnAll_Hammer_Black:
@@ -258,6 +267,7 @@ _int CDropItem::Update_GameObject(_double TimeDelta)
 					m_bCanGetItem = true;
 					++m_iCount_GetItem;
 					m_pPickUpMgr->Set_Count_GetItem(m_iCount_GetItem);
+					m_pPickUpMgr->Set_vecPickUp_Item(pPickUp);
 					break;
 				}
 				case NAMETYPE_WpnAll_Hammer_DarkHeavyAxe:
@@ -268,6 +278,7 @@ _int CDropItem::Update_GameObject(_double TimeDelta)
 					m_bCanGetItem = true;
 					++m_iCount_GetItem;
 					m_pPickUpMgr->Set_Count_GetItem(m_iCount_GetItem);
+					m_pPickUpMgr->Set_vecPickUp_Item(pPickUp);
 					break;
 				}
 				case NAMETYPE_WpnAll_Hammer_Nakil:
@@ -278,6 +289,7 @@ _int CDropItem::Update_GameObject(_double TimeDelta)
 					m_bCanGetItem = true;
 					++m_iCount_GetItem;
 					m_pPickUpMgr->Set_Count_GetItem(m_iCount_GetItem);
+					m_pPickUpMgr->Set_vecPickUp_Item(pPickUp);
 					break;
 				}
 				case NAMETYPE_WpnAll_LSword_Tsubai:
@@ -288,6 +300,7 @@ _int CDropItem::Update_GameObject(_double TimeDelta)
 					m_bCanGetItem = true;
 					++m_iCount_GetItem;
 					m_pPickUpMgr->Set_Count_GetItem(m_iCount_GetItem);
+					m_pPickUpMgr->Set_vecPickUp_Item(pPickUp);
 					break;
 				}
 				case NAMETYPE_WpnAll_LSword_Black:
@@ -298,6 +311,7 @@ _int CDropItem::Update_GameObject(_double TimeDelta)
 					m_bCanGetItem = true;
 					++m_iCount_GetItem;
 					m_pPickUpMgr->Set_Count_GetItem(m_iCount_GetItem);
+					m_pPickUpMgr->Set_vecPickUp_Item(pPickUp);
 					break;
 				}
 				case NAMETYPE_WpnAll_LSword_Nakil:
@@ -308,6 +322,7 @@ _int CDropItem::Update_GameObject(_double TimeDelta)
 					m_bCanGetItem = true;
 					++m_iCount_GetItem;
 					m_pPickUpMgr->Set_Count_GetItem(m_iCount_GetItem);
+					m_pPickUpMgr->Set_vecPickUp_Item(pPickUp);
 					break;
 				}
 				case NAMETYPE_WpnAll_LSword_DarkTsubai:
@@ -318,6 +333,7 @@ _int CDropItem::Update_GameObject(_double TimeDelta)
 					m_bCanGetItem = true;
 					++m_iCount_GetItem;
 					m_pPickUpMgr->Set_Count_GetItem(m_iCount_GetItem);
+					m_pPickUpMgr->Set_vecPickUp_Item(pPickUp);
 					break;
 				}
 				case NAMETYPE_WpnAll_SSword_Red:
@@ -328,6 +344,7 @@ _int CDropItem::Update_GameObject(_double TimeDelta)
 					m_bCanGetItem = true;
 					++m_iCount_GetItem;
 					m_pPickUpMgr->Set_Count_GetItem(m_iCount_GetItem);
+					m_pPickUpMgr->Set_vecPickUp_Item(pPickUp);
 					break;
 				}
 				case NAMETYPE_WpnAll_SSword_Executioner:
@@ -338,6 +355,7 @@ _int CDropItem::Update_GameObject(_double TimeDelta)
 					m_bCanGetItem = true;
 					++m_iCount_GetItem;
 					m_pPickUpMgr->Set_Count_GetItem(m_iCount_GetItem);
+					m_pPickUpMgr->Set_vecPickUp_Item(pPickUp);
 					break;
 				}
 				case NAMETYPE_WpnAll_SSword_Nakil:
@@ -347,6 +365,7 @@ _int CDropItem::Update_GameObject(_double TimeDelta)
 					m_bCanGetItem = true;
 					++m_iCount_GetItem;
 					m_pPickUpMgr->Set_Count_GetItem(m_iCount_GetItem);
+					m_pPickUpMgr->Set_vecPickUp_Item(pPickUp);
 					break;
 				}
 				case NAMETYPE_WpnAll_SSword_DarkBrodeSword:
@@ -357,6 +376,7 @@ _int CDropItem::Update_GameObject(_double TimeDelta)
 					m_bCanGetItem = true;
 					++m_iCount_GetItem;
 					m_pPickUpMgr->Set_Count_GetItem(m_iCount_GetItem);
+					m_pPickUpMgr->Set_vecPickUp_Item(pPickUp);
 					break;
 				}
 				case NAMETYPE_Expend_MaximumUp:
@@ -367,6 +387,7 @@ _int CDropItem::Update_GameObject(_double TimeDelta)
 					m_bCanGetItem = true;
 					++m_iCount_GetItem;
 					m_pPickUpMgr->Set_Count_GetItem(m_iCount_GetItem);
+					m_pPickUpMgr->Set_vecPickUp_Item(pPickUp);
 					break;
 				}
 				case NAMETYPE_Expend_Hp:
@@ -377,16 +398,19 @@ _int CDropItem::Update_GameObject(_double TimeDelta)
 					m_bCanGetItem = true;
 					++m_iCount_GetItem;
 					m_pPickUpMgr->Set_Count_GetItem(m_iCount_GetItem);
+					m_pPickUpMgr->Set_vecPickUp_Item(pPickUp);
 					break;
 				}
 				case NAMETYPE_Expend_Return:
 				{
 					CUI_Manager::Get_Instance()->Get_Expendables_Inven()->Add_Expendables(CExpendables::EXPEND_TYPE::Expend_Return);
 					m_iRenderIndex = 22;
-					pItem_Mgr->Set_PickUp_Number(m_iRenderIndex);
 					m_bCanGetItem = true;
 					++m_iCount_GetItem;
+
+					pPickUp->Set_ItemNumber_Index(m_iRenderIndex);
 					m_pPickUpMgr->Set_Count_GetItem(m_iCount_GetItem);
+					m_pPickUpMgr->Set_vecPickUp_Item(pPickUp);
 					break;
 				}
 				case NAMETYPE_Expend_Blood:
@@ -394,10 +418,12 @@ _int CDropItem::Update_GameObject(_double TimeDelta)
 					CUI_Manager::Get_Instance()->Get_Expendables_Inven()->Add_Expendables(CExpendables::EXPEND_TYPE::Expend_Blood);
 					m_iRenderIndex = 23;
 					//pItem_Mgr->Set_PickUp_Number(m_iRenderIndex);
-					pPickUp->Set_ItemNumber_Index(m_iRenderIndex);
 					m_bCanGetItem = true;
 					++m_iCount_GetItem;
+
+					pPickUp->Set_ItemNumber_Index(m_iRenderIndex);
 					m_pPickUpMgr->Set_Count_GetItem(m_iCount_GetItem);
+					m_pPickUpMgr->Set_vecPickUp_Item(pPickUp);
 					break;
 				}
 				case NAMETYPE_Expend_Cheet:
@@ -405,10 +431,12 @@ _int CDropItem::Update_GameObject(_double TimeDelta)
 					CUI_Manager::Get_Instance()->Get_Expendables_Inven()->Add_Expendables(CExpendables::EXPEND_TYPE::Expend_Cheet);
 					m_iRenderIndex = 24;
 					//pItem_Mgr->Set_PickUp_Number(m_iRenderIndex);
-					pPickUp->Set_ItemNumber_Index(m_iRenderIndex);
 					m_bCanGetItem = true;
 					++m_iCount_GetItem;
+
+					pPickUp->Set_ItemNumber_Index(m_iRenderIndex);
 					m_pPickUpMgr->Set_Count_GetItem(m_iCount_GetItem);
+					m_pPickUpMgr->Set_vecPickUp_Item(pPickUp);
 					break;
 				}
 				case NAMETYPE_Expend_SuperArmor:
@@ -416,10 +444,12 @@ _int CDropItem::Update_GameObject(_double TimeDelta)
 					CUI_Manager::Get_Instance()->Get_Expendables_Inven()->Add_Expendables(CExpendables::EXPEND_TYPE::Expend_SuperArmor);
 					m_iRenderIndex = 25;
 					//pItem_Mgr->Set_PickUp_Number(m_iRenderIndex);
-					pPickUp->Set_ItemNumber_Index(m_iRenderIndex);
 					m_bCanGetItem = true;
 					++m_iCount_GetItem;
+
+					pPickUp->Set_ItemNumber_Index(m_iRenderIndex);
 					m_pPickUpMgr->Set_Count_GetItem(m_iCount_GetItem);
+					m_pPickUpMgr->Set_vecPickUp_Item(pPickUp);
 					break;
 				}
 				case NAMETYPE_Queen_Steel:
