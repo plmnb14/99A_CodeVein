@@ -242,7 +242,7 @@ void CCustomSliderBar::Check_Drag()
 
 void CCustomSliderBar::Check_Value()
 {
-	CCostume_Hair* pHair = m_pPlayer->Get_Hair();
+	CCostume_Hair* pHair = m_pPlayer->Get_Costume_Hair();
 	_v4 vColor = pHair->Get_Color();
 	switch (m_eType)
 	{

@@ -56,6 +56,14 @@ void CPlayer::Set_WeaponSlot(ACTIVE_WEAPON_SLOT eType, WEAPON_DATA eData)
 
 }
 
+void CPlayer::Set_ArmorSlot(ARMOR_All_DATA eType)
+{
+	//if (m_pOuter->Get_OuterType() + 1 == eType)
+	//	return;
+
+	m_pOuter->Change_OuterMesh(CClothManager::Cloth_Dynamic(eType + 1));
+}
+
 HRESULT CPlayer::Ready_GameObject_Prototype()
 {
 	return S_OK;

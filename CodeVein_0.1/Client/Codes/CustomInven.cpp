@@ -6,6 +6,8 @@
 
 #include "Player.h"
 #include "Costume_Hair.h"
+#include "Costume_Head.h"
+#include "Costume_Mask.h"
 
 CCustomInven::CCustomInven(_Device pDevice)
 	: CUI(pDevice)
@@ -224,8 +226,12 @@ void CCustomInven::Click_Inven()
 			pSlot->Set_Select(true);
 			m_iSelectIndex[m_eActiveType] = iIdx;
 
-			if(TYPE_HAIR == m_eActiveType)
-				m_pPlayer->Get_Hair()->Change_HairMesh(CClothManager::Cloth_Static(iIdx));
+			if (TYPE_HAIR == m_eActiveType)
+				m_pPlayer->Get_Costume_Hair()->Change_HairMesh(CClothManager::Cloth_Static(iIdx));
+			if (TYPE_FACE == m_eActiveType)
+				m_pPlayer->Get_Costume_Head()->Change_HeadMesh(CCostume_Head::CHAR_HEAD(iIdx));
+			if (TYPE_MASK == m_eActiveType)
+				m_pPlayer->Get_Costume_Mask()->Change_AccMesh(CCostume_Mask::MASK_TYPE(iIdx));
 		}
 		iIdx++;
 	}

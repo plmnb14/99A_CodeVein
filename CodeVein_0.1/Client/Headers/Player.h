@@ -92,11 +92,13 @@ protected:
 	virtual ~CPlayer() = default;
 
 public:
-	CCostume_Hair* Get_Hair() { return m_pHair; }
+	CCostume_Hair* Get_Costume_Hair() { return m_pHair; }
+	CCostume_Head* Get_Costume_Head() { return m_pHead[m_eHeadType]; }
+	CCostume_Mask* Get_Costume_Mask() { return m_pMask[m_eMaskType]; }
 
 public:
 	void Set_WeaponSlot(ACTIVE_WEAPON_SLOT eType, WEAPON_DATA eData);
-
+	void Set_ArmorSlot(ARMOR_All_DATA eType);
 public:
 	virtual HRESULT Ready_GameObject_Prototype();
 	virtual HRESULT Ready_GameObject(void* pArg);
