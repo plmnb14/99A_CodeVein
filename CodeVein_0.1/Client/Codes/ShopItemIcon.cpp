@@ -38,7 +38,7 @@ void CShopItemIcon::Set_ArmorDescType(ARMOR_All_DATA eType)
 
 	m_iTexIdx = m_eArmorDesc;
 
-	Change_Texture(L"Tex_WeaponIcon"); // test
+	Change_Texture(L"Tex_ArmorIcon");
 }
 
 HRESULT CShopItemIcon::Ready_GameObject_Prototype()

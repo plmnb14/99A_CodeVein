@@ -647,6 +647,17 @@ HRESULT CWeapon_Inven_InShop::SetUp_WeaponData(INVEN_SHOP_OPTION eShop)
 	{
 		// юс╫ц
 		ARMOR_PARAM tParam;
+
+		tParam.iArmorType = ARMOR_Drape;
+		tParam.iArmorName = ArmorAll_Drape_DarkNightHook;
+		tParam.iReinforce = 0;
+		tParam.fDef = 100;
+		tParam.fPlusDef = 30;
+		tParam.fHP = 730;
+		tParam.fPlusHP = 60;
+		tParam.iPrice = 2000;
+		m_tArmorParam[tParam.iArmorName] = tParam;
+
 		tParam.iArmorType = ARMOR_Gauntlet;
 		tParam.iArmorName = ArmorAll_Gauntlet_DarkNightHook;
 		tParam.iReinforce = 0;
@@ -658,31 +669,11 @@ HRESULT CWeapon_Inven_InShop::SetUp_WeaponData(INVEN_SHOP_OPTION eShop)
 		m_tArmorParam[tParam.iArmorName] = tParam;
 
 		tParam.iArmorType = ARMOR_Gauntlet;
-		tParam.iArmorName = ArmorAll_Gauntlet_NovelSilver;
-		tParam.iReinforce = 0;
-		tParam.fDef = 110;
-		tParam.fPlusDef = 20;
-		tParam.fHP = 90;
-		tParam.fPlusHP = 80;
-		tParam.iPrice = 1000;
-		m_tArmorParam[tParam.iArmorName] = tParam;
-
-		tParam.iArmorType = ARMOR_Gauntlet;
 		tParam.iArmorName = ArmorAll_Gauntlet_MangSikHook;
 		tParam.iReinforce = 0;
 		tParam.fDef = 105;
 		tParam.fPlusDef = 30;
 		tParam.fHP = 95;
-		tParam.fPlusHP = 60;
-		tParam.iPrice = 1000;
-		m_tArmorParam[tParam.iArmorName] = tParam;
-
-		tParam.iArmorType = ARMOR_Gauntlet;
-		tParam.iArmorName = ArmorAll_Gauntlet_QueenKiller;
-		tParam.iReinforce = 0;
-		tParam.fDef = 120;
-		tParam.fPlusDef = 30;
-		tParam.fHP = 80;
 		tParam.fPlusHP = 60;
 		tParam.iPrice = 1000;
 		m_tArmorParam[tParam.iArmorName] = tParam;
@@ -733,16 +724,6 @@ HRESULT CWeapon_Inven_InShop::SetUp_WeaponData(INVEN_SHOP_OPTION eShop)
 		tParam.fDef = 180;
 		tParam.fPlusDef = 30;
 		tParam.fHP = 550;
-		tParam.fPlusHP = 60;
-		tParam.iPrice = 2000;
-		m_tArmorParam[tParam.iArmorName] = tParam;
-
-		tParam.iArmorType = ARMOR_Muffler;
-		tParam.iArmorName = ArmorAll_Muffler_Suiside;
-		tParam.iReinforce = 0;
-		tParam.fDef = 100;
-		tParam.fPlusDef = 30;
-		tParam.fHP = 730;
 		tParam.fPlusHP = 60;
 		tParam.iPrice = 2000;
 		m_tArmorParam[tParam.iArmorName] = tParam;

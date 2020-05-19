@@ -76,7 +76,7 @@ public:
 
 	enum ACTIVE_WEAPON_SLOT
 	{
-		WPN_SLOT_A, WPN_SLOT_B, WPN_SLOT_C, WPN_SLOT_D, WPN_SLOT_E, WPN_SLOT_End
+		WPN_SLOT_A, WPN_SLOT_B, /*WPN_SLOT_C, WPN_SLOT_D, WPN_SLOT_E,*/ WPN_SLOT_End
 	};
 
 private:
@@ -91,6 +91,14 @@ protected:
 	explicit CPlayer(const CPlayer& rhs);
 	virtual ~CPlayer() = default;
 
+public:
+	CCostume_Hair* Get_Costume_Hair() { return m_pHair; }
+	CCostume_Head* Get_Costume_Head() { return m_pHead[m_eHeadType]; }
+	CCostume_Mask* Get_Costume_Mask() { return m_pMask[m_eMaskType]; }
+
+public:
+	void Set_WeaponSlot(ACTIVE_WEAPON_SLOT eType, WEAPON_DATA eData);
+	void Set_ArmorSlot(ARMOR_All_DATA eType);
 public:
 	virtual HRESULT Ready_GameObject_Prototype();
 	virtual HRESULT Ready_GameObject(void* pArg);

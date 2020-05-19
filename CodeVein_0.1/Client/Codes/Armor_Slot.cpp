@@ -256,35 +256,30 @@ void CArmor_Slot::SetUp_SlotTexIdx()
 {
 	switch (m_tArmorParam.iArmorName)
 	{
-	case ArmorAll_Gauntlet_DarkNightHook:		// 암야의 갈고리
+	case ArmorAll_Drape_DarkNightHook:		// 암야의 갈고리
 		m_iIndex = 4;
 		break;
-	case ArmorAll_Gauntlet_NovelSilver:		// 노블 실버
+	case ArmorAll_Gauntlet_DarkNightHook:		// 암야의 갈고리
 		m_iIndex = 5;
 		break;
 	case ArmorAll_Gauntlet_MangSikHook:		// 망식의 갈고리
 		m_iIndex = 6;
 		break;
-	case ArmorAll_Gauntlet_QueenKiller:	// 퀸 킬러(여왕 토벌대 아장)_발톱형
+	case ArmorAll_LongCoat_DarkNightSpear:	// 암야의 돌격창
 		m_iIndex = 7;
 		break;
-	case ArmorAll_LongCoat_DarkNightSpear:	// 암야의 돌격창
+	case ArmorAll_LongCoat_WhiteSilver:		// 백은의 의장
 		m_iIndex = 8;
 		break;
-	case ArmorAll_LongCoat_WhiteSilver:		// 백은의 의장
+	case ArmorAll_LongCoat_QueenKiller:	// 퀸 킬러(여왕 토벌대 아장)_가시형
 		m_iIndex = 9;
 		break;
-	case ArmorAll_LongCoat_QueenKiller:	// 퀸 킬러(여왕 토벌대 아장)_가시형
+	case ArmorAll_Muffler_DarkNightSpike:	// 암야의 가시
 		m_iIndex = 10;
 		break;
-	case ArmorAll_Muffler_DarkNightSpike:	// 암야의 가시
+	case ArmorAll_Muffler_WhiteGraze:		// 화이트 그레이즈
 		m_iIndex = 11;
 		break;
-	case ArmorAll_Muffler_WhiteGraze:		// 화이트 그레이즈
-		m_iIndex = 12;
-		break;
-	case ArmorAll_Muffler_Suiside:			// 수어사이드 쏜
-		m_iIndex = 13;
 		break;
 	case ArmorAll_END:
 		m_iIndex = 3;

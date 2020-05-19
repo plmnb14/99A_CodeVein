@@ -633,13 +633,5 @@ void CNPC_Yakumo::Free()
 
 	CGameObject::Free();
 
-	Safe_Release(m_pOptimizationCom);
-	Safe_Release(m_pBattleAgentCom);
-	Safe_Release(m_pColliderCom);
-	Safe_Release(m_pTransformCom);
-	Safe_Release(m_pMeshCom);
-	Safe_Release(m_pShaderCom);
-	Safe_Release(m_pRendererCom);
-
 	return;
 }
