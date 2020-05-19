@@ -613,6 +613,9 @@
     <Filter Include="02.GameObject\Stage\5%29 UI\UI\20. Custom\CategoryElem\SliderBar">
       <UniqueIdentifier>{6836337d-342b-458c-b424-5c5028fce301}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObject\Stage\0%29 Player\03%29 HitCheckUI">
+      <UniqueIdentifier>{574b934b-ae5a-4f6b-9e15-0bd599ad1957}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -1281,6 +1284,9 @@
     <ClInclude Include="..\Headers\CustomSliderBar.h">
       <Filter>02.GameObject\Stage\5%29 UI\UI\20. Custom\CategoryElem\SliderBar</Filter>
     </ClInclude>
+    <ClInclude Include="..\Headers\HitCheckUI.h">
+      <Filter>02.GameObject\Stage\0%29 Player\03%29 HitCheckUI</Filter>
+    </ClInclude>
     <ClInclude Include="..\Headers\GeneralStoreOption.h">
       <Filter>02.GameObject\Stage\5%29 UI\UI\18. GeneralStoreUI%28잡화점%29\04. GeneralStoreNPCUI</Filter>
     </ClInclude>
@@ -1945,6 +1951,9 @@
     </ClCompile>
     <ClCompile Include="..\Codes\CustomSliderBar.cpp">
       <Filter>02.GameObject\Stage\5%29 UI\UI\20. Custom\CategoryElem\SliderBar</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\HitCheckUI.cpp">
+      <Filter>02.GameObject\Stage\0%29 Player\03%29 HitCheckUI</Filter>
     </ClCompile>
     <ClCompile Include="..\Codes\GeneralStoreOption.cpp">
       <Filter>02.GameObject\Stage\5%29 UI\UI\18. GeneralStoreUI%28잡화점%29\04. GeneralStoreNPCUI</Filter>

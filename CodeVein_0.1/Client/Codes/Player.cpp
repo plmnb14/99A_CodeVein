@@ -54,7 +54,7 @@ void CPlayer::Set_WeaponSlot(ACTIVE_WEAPON_SLOT eType, WEAPON_DATA eData)
 	m_pWeapon[eType]->Set_Friendly(true);
 	m_pWeapon[eType]->Set_AttachBoneMartix(&pFrame->CombinedTransformationMatrix);
 	m_pWeapon[eType]->Set_ParentMatrix(&m_pTransform->Get_WorldMat());
-	//m_bWeaponActive[eType] = true;
+	//m_bWeaponActive[eType] = true;r
 
 }
 
@@ -124,6 +124,8 @@ HRESULT CPlayer::Ready_GameObject(void * pArg)
 	m_pScriptManager = CScriptManager::Get_Instance();
 	Safe_AddRef(m_pScriptManager);
 
+	m_pScreenCornerEffect = (CHitCheckUI*)g_pManagement->Clone_GameObject_Return(L"GameObject_HitCheckUI", nullptr);
+
 	return NOERROR;
 }
 
@@ -180,6 +182,8 @@ _int CPlayer::Update_GameObject(_double TimeDelta)
 	m_pNavMesh->Goto_Next_Subset(m_pTransform->Get_Pos(), nullptr);
 
 	m_pScriptManager->Update_ScriptMgr(TimeDelta, m_pNavMesh->Get_SubSetIndex(), m_pNavMesh->Get_CellIndex());
+
+	m_pScreenCornerEffect->Update_GameObject(TimeDelta);
 
 	return NO_EVENT;
 }
@@ -343,8 +347,9 @@ HRESULT CPlayer::Render_GameObject_Instancing_SetPass(CShader * pShader)
 	m_pDynamicMesh->Play_Animation_LeftArm(dDeltaTime * m_fAnimMutiply);
 
 	// 머리 위치 업데이트
-	m_pHair->Update_GameObject(dDeltaTime * m_fAnimMutiply, (m_bOnSkill || m_bOnDodge));
-	m_pOuter->Update_GameObject(dDeltaTime * m_fAnimMutiply, (m_bOnSkill || m_bOnDodge));
+
+	m_pHair->Update_GameObject(dDeltaTime * m_fAnimMutiply, (m_eActState != ACT_Idle) && (m_eActState != ACT_Walk) && (m_eActState != ACT_Run) && (m_eActState != ACT_Dash) && (m_eActState != ACT_MoveDelay));
+	m_pOuter->Update_GameObject(dDeltaTime * m_fAnimMutiply, (m_eActState != ACT_Idle) && (m_eActState != ACT_Walk) && (m_eActState != ACT_Run) && (m_eActState != ACT_Dash) && (m_eActState != ACT_MoveDelay));
 
 	m_pHead[m_eHeadType]->Update_GameObject(dDeltaTime);
 	m_pMask[m_eMaskType]->Update_GameObject(dDeltaTime);
@@ -1467,6 +1472,9 @@ void CPlayer::Target_AimChasing()
 			// 기존에 OldLength 보다 작을 경우
 			if (fOldLength > fLength)
 				fOldLength = fLength;
+
+			else
+				continue;
 
 			pOldTarget = iter;
 		}
@@ -3826,6 +3834,10 @@ void CPlayer::Play_Hit()
 {
 	if (false == m_tObjParam.bIsHit)
 	{
+		m_pScreenCornerEffect->Set_Enable(true);
+		m_pScreenCornerEffect->Set_LifeTime(0.5f);
+		m_pScreenCornerEffect->Set_OnLifeTime(true);
+
 		m_tObjParam.bIsHit = true;
 
 		// 피격 림라이트
@@ -11572,6 +11584,8 @@ void CPlayer::Free()
 	{
 		Safe_Delete(iter);
 	}
+
+	Safe_Release(m_pScreenCornerEffect);
 
 	m_vecActiveSkillInfo.shrink_to_fit();
 	m_vecActiveSkillInfo.clear();
