@@ -47,6 +47,8 @@ public:
 	virtual HRESULT Render_GameObject_Instancing_SetPass(CShader* pShader);
 	virtual HRESULT Render_GameObject_SetPass(CShader * pShader, _int iPass, _bool _bIsForMotionBlur = false);
 
+	void Change_HeadMesh(CHAR_HEAD _eHeadType);
+
 private:
 	virtual HRESULT Ready_GameObject_Prototype();
 	virtual HRESULT Ready_GameObject(void* pArg);
@@ -80,6 +82,9 @@ private:
 	_uint					m_eAnimLower = 0;
 	_uint					m_eAnimRight = 0;
 	_uint					m_eAnimLeft = 0;
+
+private:
+	_ulong					m_dwDebugValue = 0;
 
 public:
 	static CCostume_Head* Create(_Device pGraphicDev);

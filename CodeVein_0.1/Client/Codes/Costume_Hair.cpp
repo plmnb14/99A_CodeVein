@@ -30,12 +30,12 @@ HRESULT CCostume_Hair::Ready_GameObject(void * pArg)
 	if (FAILED(Setup_Default()))
 		return E_FAIL;
 
-	m_pBattleAgent->Set_RimChangeData(false);
+	//m_pBattleAgent->Set_RimChangeData(false);
 
 	m_pBattleAgent->Set_OriginRimAlpha(0.f);
-	m_pBattleAgent->Set_OriginRimValue(0.f);
+	m_pBattleAgent->Set_OriginRimValue(7.f);
 	m_pBattleAgent->Set_RimAlpha(0.f);
-	m_pBattleAgent->Set_RimValue(0.f);
+	m_pBattleAgent->Set_RimValue(7.f);
 
 	return S_OK;
 }
@@ -62,7 +62,7 @@ HRESULT CCostume_Hair::Add_Components()
 	// for.Com_BattleAgent
 	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"BattleAgent", L"Com_BattleAgent", (CComponent**)&m_pBattleAgent)))
 		return E_FAIL;
-
+	
 	return S_OK;
 }
 
@@ -99,7 +99,7 @@ HRESULT CCostume_Hair::SetUp_ConstantTable(CShader* pShader)
 	_float	fEmissivePower = 0.f;	// 이미시브 : 높을 수록, 자체 발광이 강해짐.
 	_float	fSpecularPower = 1.f;	// 메탈니스 : 높을 수록, 정반사가 강해짐.
 	_float	fRoughnessPower = 1.f;	// 러프니스 : 높을 수록, 빛 산란이 적어짐(빛이 응집됨).
-	_float	fMinSpecular = 0.1f;	// 최소 빛	: 최소 단위의 빛을 더해줌.
+	_float	fMinSpecular = 0.0f;	// 최소 빛	: 최소 단위의 빛을 더해줌.
 	_float	fID_R = 1.0f;	// ID_R : R채널 ID 값 , 1이 최대
 	_float	fID_G = 0.5f;	// ID_G : G채널 ID 값 , 1이 최대
 	_float	fID_B = 0.1f;	// ID_B	: B채널 ID 값 , 1이 최대
@@ -380,6 +380,8 @@ HRESULT CCostume_Hair::Render_GameObject_Instancing_SetPass(CShader * pShader)
 	if (FAILED(SetUp_ConstantTable(pShader)))
 		return E_FAIL;
 
+	_bool bOnToonRimLight = false;
+
 	_uint iNumSubSet = (_uint)m_pStaticMesh->Get_NumMaterials();
 
 	for (_uint i = 0; i < iNumSubSet; ++i)
@@ -392,6 +394,14 @@ HRESULT CCostume_Hair::Render_GameObject_Instancing_SetPass(CShader * pShader)
 		if (m_bDissolve)
 			m_iPass = 3;
 
+		if (m_iPass == 7)
+		{
+			cout << "7번" << endl;
+		}
+
+		//bOnToonRimLight = true;
+		//pShader->Set_Value("g_bToonRimLight", &bOnToonRimLight, sizeof(_bool));
+
 		pShader->Begin_Pass(m_iPass);
 
 		pShader->Set_StaticTexture_Auto(m_pStaticMesh, i);
@@ -402,6 +412,9 @@ HRESULT CCostume_Hair::Render_GameObject_Instancing_SetPass(CShader * pShader)
 
 		pShader->End_Pass();
 	}
+
+	//bOnToonRimLight = false;
+	//pShader->Set_Value("g_bToonRimLight", &bOnToonRimLight, sizeof(_bool));
 
 	return S_OK;
 }
@@ -439,7 +452,7 @@ HRESULT CCostume_Hair::Render_GameObject_SetPass(CShader * pShader, _int iPass, 
 		_bool bDecalTarget = false;
 		if (FAILED(pShader->Set_Bool("g_bDecalTarget", bDecalTarget)))
 			return E_FAIL;
-		_float fBloomPower = 0.f;
+		_float fBloomPower = 2.f;
 		if (FAILED(pShader->Set_Value("g_fBloomPower", &fBloomPower, sizeof(_float))))
 			return E_FAIL;
 	}

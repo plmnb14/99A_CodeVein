@@ -571,6 +571,9 @@
     <Filter Include="02.GameObject\Stage\5%29 UI\UI\19.NPC_InteractionUI">
       <UniqueIdentifier>{2daaaef8-fa47-4495-9b69-26032a063b5f}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObject\Stage\2%29 Monster\Yeti\YetiTrap">
+      <UniqueIdentifier>{528e16d8-34c1-40cd-a3f5-e6cd73494f2b}</UniqueIdentifier>
+    </Filter>
     <Filter Include="02.GameObject\Stage\5%29 UI\UI\15. Colleague UI\00. Base_Colleague">
       <UniqueIdentifier>{4d703d90-b4cc-4d4a-b54e-77f6bd367b9d}</UniqueIdentifier>
     </Filter>
@@ -1248,6 +1251,9 @@
     <ClInclude Include="..\Headers\CustomCategory.h">
       <Filter>02.GameObject\Stage\5%29 UI\UI\20. Custom\Category</Filter>
     </ClInclude>
+    <ClInclude Include="..\Headers\YetiTrap.h">
+      <Filter>02.GameObject\Stage\2%29 Monster\Yeti\YetiTrap</Filter>
+    </ClInclude>
     <ClInclude Include="..\Headers\Colleague_UI.h">
       <Filter>02.GameObject\Stage\5%29 UI\UI\15. Colleague UI\00. Base_Colleague</Filter>
     </ClInclude>
@@ -1888,6 +1894,9 @@
     </ClCompile>
     <ClCompile Include="..\Codes\CustomCategory.cpp">
       <Filter>02.GameObject\Stage\5%29 UI\UI\20. Custom\Category</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\YetiTrap.cpp">
+      <Filter>02.GameObject\Stage\2%29 Monster\Yeti\YetiTrap</Filter>
     </ClCompile>
     <ClCompile Include="..\Codes\Colleague_UI.cpp">
       <Filter>02.GameObject\Stage\5%29 UI\UI\15. Colleague UI\00. Base_Colleague</Filter>

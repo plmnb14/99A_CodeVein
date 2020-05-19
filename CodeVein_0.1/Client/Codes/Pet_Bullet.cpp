@@ -82,7 +82,7 @@ _int CPet_Bullet::Update_GameObject(_double TimeDelta)
 			}
 		}
 
-		Enter_Collision();
+		Check_CollisionEvent();
 	}
 		break;
 
@@ -93,20 +93,16 @@ _int CPet_Bullet::Update_GameObject(_double TimeDelta)
 	//{
 	//	m_vDir = m_pTarget_AIController->Get_V3Value(L"IceSword_Dir");
 	//	_v3 vSelfDir = m_pTarget_AIController->Get_V3Value(L"Self_Dir");
-
 	//	_mat matAttatch = m_pTarget_AIController->Get_MatValue(L"Mat_LeftHandAttach");
 	//	_mat matParent = m_pTarget_AIController->Get_MatValue(L"Self_Mat");
 	//	m_pTransform->Calc_ParentMat(&(matAttatch * matParent));
-
 	//	m_pTransform->Set_Angle(AXIS_X, D3DXToRadian(m_vAngle.x));
 	//	m_pTransform->Set_Angle(AXIS_Y, D3DXToRadian(m_vAngle.y));
 	//	m_pTransform->Set_Angle(AXIS_Z, D3DXToRadian(m_vAngle.z));
-
 	//	if (m_dCurTime > m_dLifeTime)
 	//	{
 	//		m_bDead = true;
 	//		m_pEffect->Set_Dead();
-
 	//		CParticleMgr::Get_Instance()->Create_Effect(L"IceCrystal_01", m_pTransform->Get_Pos() + m_vDir * 1.3f, nullptr);
 	//		CParticleMgr::Get_Instance()->Create_Effect(L"IceCrystal_02", m_pTransform->Get_Pos() + m_vDir * 1.3f, nullptr);
 	//		CParticleMgr::Get_Instance()->Create_Effect(L"IceCrystal_03", m_pTransform->Get_Pos() + m_vDir * 1.3f, nullptr);
@@ -122,23 +118,18 @@ _int CPet_Bullet::Update_GameObject(_double TimeDelta)
 	//		if (m_dCurTime > 0.1f && m_bEffect)
 	//		{
 	//			m_bEffect = true;
-
 	//			CParticleMgr::Get_Instance()->Create_Effect(L"IceBlock_Smoke_01", m_pTransform->Get_Pos() + m_vDir * 1.3f, nullptr);
 	//			CParticleMgr::Get_Instance()->Create_Effect(L"IceBlock_Smoke_02", m_pTransform->Get_Pos() + m_vDir * 1.3f, nullptr);
 	//			CParticleMgr::Get_Instance()->Create_Effect(L"IceBlock_Particle", m_pTransform->Get_Pos() + m_vDir * 1.3f, nullptr);
 	//		}
-
 	//		m_fEffectOffset += _float(TimeDelta);
-
 	//		if (m_fEffectOffset > 0.01f)
 	//		{
 	//			m_fEffectOffset = 0.f;
-
 	//			CParticleMgr::Get_Instance()->Create_Effect(L"IceSmoke_01", m_pTransform->Get_Pos() + m_vDir * 1.3f, nullptr);
 	//			CParticleMgr::Get_Instance()->Create_Effect(L"IceSmoke_02", m_pTransform->Get_Pos() + m_vDir * 1.3f, nullptr);
 	//		}
 	//	}
-
 	//	Enter_Collision();
 	//}
 		break;
@@ -175,7 +166,7 @@ _int CPet_Bullet::Update_GameObject(_double TimeDelta)
 		}
 
 		if (m_dCurTime <= 0.3f)
-			Enter_Collision();
+			Check_CollisionEvent();
 
 	}
 		break;
@@ -278,18 +269,15 @@ void CPet_Bullet::Render_Collider()
 	return;
 }
 
-void CPet_Bullet::Enter_Collision()
+void CPet_Bullet::Check_CollisionEvent()
 {
-	Update_Collider();
-	Check_CollisionEvent(g_pManagement->Get_GameObjectList(L"Layer_Boss", SCENE_STAGE));
-	Check_CollisionEvent(g_pManagement->Get_GameObjectList(L"Layer_Monster", SCENE_STAGE));
-
-	return;
+	Check_CollisionHit(g_pManagement->Get_GameObjectList(L"Layer_Boss", SCENE_STAGE));
+	Check_CollisionHit(g_pManagement->Get_GameObjectList(L"Layer_Monster", SCENE_STAGE));
 }
 
-void CPet_Bullet::Check_CollisionEvent(list<CGameObject*> plistGameObject)
+void CPet_Bullet::Check_CollisionHit(list<CGameObject*> plistGameObject)
 {
-	if (false == m_tObjParam.bCanAttack)
+	if (false == m_tObjParam.bIsAttack)
 		return;
 
 	_bool bFirst = true;
@@ -301,6 +289,9 @@ void CPet_Bullet::Check_CollisionEvent(list<CGameObject*> plistGameObject)
 
 		for (auto& vecIter : m_vecAttackCol)
 		{
+			if (false == vecIter->Get_Enabled())
+				continue;
+
 			bFirst = true;
 
 			for (auto& vecCol : iter->Get_PhysicColVector())
@@ -315,12 +306,28 @@ void CPet_Bullet::Check_CollisionEvent(list<CGameObject*> plistGameObject)
 
 					if (false == iter->Get_Target_IsDodge())
 					{
-						iter->Set_Target_CanHit(false);
+						//iter->Set_Target_CanHit(false);
 
 						if (iter->Get_Target_IsHit())
 							iter->Set_HitAgain(true);
 
-						iter->Add_Target_Hp(-m_tObjParam.fDamage);
+						iter->Add_Target_Hp(m_tObjParam.fDamage);
+					}
+
+					vecIter->Set_Enabled(false);
+
+					switch (m_eBulletType)
+					{
+					case Client::CPet::PET_BULLET_POISON:
+						break;
+					case Client::CPet::PET_BULLET_ICE:
+						break;
+					case Client::CPet::PET_BULLET_ICICLEBLADE:
+						break;
+					case Client::CPet::PET_BULLET_ICICLEBEAM:
+						break;
+					case Client::CPet::PET_BULLET_FIRE:
+						break;
 					}
 
 					break;
@@ -427,7 +434,7 @@ HRESULT CPet_Bullet::Ready_Effect(void * pArg)
 		m_pTransform->Set_Scale(V3_ONE);
 
 		m_tObjParam.bCanAttack = true;
-		m_tObjParam.fDamage = 400.f;
+		m_tObjParam.fDamage = 4.f;
 
 		m_dCurTime = 0;
 		m_bDead = false;

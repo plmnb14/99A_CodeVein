@@ -84,6 +84,11 @@ HRESULT CPlayer::Ready_GameObject(void * pArg)
 	m_pBattleAgent->Set_RimAlpha(0.25f);
 	m_pBattleAgent->Set_RimValue(7.f);
 
+	//m_pBattleAgent->Set_OriginRimAlpha(1.f);
+	//m_pBattleAgent->Set_OriginRimValue(2.f);
+	//m_pBattleAgent->Set_RimAlpha(1.f);
+	//m_pBattleAgent->Set_RimValue(2.f);
+
 	m_pUIManager = CUI_Manager::Get_Instance();
 	Safe_AddRef(m_pUIManager);
 
@@ -110,6 +115,17 @@ _int CPlayer::Update_GameObject(_double TimeDelta)
 {
 	if (false == m_bEnable)
 		return NO_EVENT;
+
+	if (g_pInput_Device->Key_Down(DIK_N))
+	{
+		m_lDebugValue += 1;
+		if (m_lDebugValue >= 4)
+			m_lDebugValue = 0;
+
+		cout << m_lDebugValue << endl;
+
+		Change_PlayerBody((PLAYER_BODY)m_lDebugValue);
+	}
 
 	if (g_pInput_Device->Key_Down(DIK_Y))
 	{
@@ -198,6 +214,12 @@ _int CPlayer::Late_Update_GameObject(_double TimeDelta)
 	m_pDynamicMesh->SetUp_Animation_Upper(m_eAnim_Upper , m_bOffLerp);
 	m_pDynamicMesh->SetUp_Animation_RightArm(m_eAnim_RightArm , m_bOffLerp);
 	m_pDynamicMesh->SetUp_Animation_LeftArm(m_eAnim_LeftArm, m_bOffLerp);
+
+	m_pOuter->Set_AnimMultiply(m_fAnimMutiply);
+	m_pOuter->Set_LowerAnimation(m_eAnim_Lower, m_bOffLerp);
+	m_pOuter->Set_UpperAnimation(m_eAnim_Upper, m_bOffLerp);
+	m_pOuter->Set_LeftArmAnimation(m_eAnim_LeftArm, m_bOffLerp);
+	m_pOuter->Set_RightArmAnimation(m_eAnim_RightArm, m_bOffLerp);
 
 	IF_NOT_NULL(m_pWeapon[m_eActiveSlot])
 		m_pWeapon[m_eActiveSlot]->Late_Update_GameObject(TimeDelta);
@@ -320,6 +342,8 @@ HRESULT CPlayer::Render_GameObject_Instancing_SetPass(CShader * pShader)
 
 	_uint iNumMeshContainer = _uint(m_pDynamicMesh->Get_NumMeshContainer());
 
+	_bool bOnToonRimLight = true;
+
 	for (_uint i = 0; i < _uint(iNumMeshContainer); ++i)
 	{
 		_uint iNumSubSet = (_uint)m_pDynamicMesh->Get_NumMaterials(i);
@@ -333,6 +357,27 @@ HRESULT CPlayer::Render_GameObject_Instancing_SetPass(CShader * pShader)
 			if (m_bDissolve)
 				m_iPass = 3;
 
+			else if (m_iPass == 13)
+			{
+				bOnToonRimLight = true;
+
+				_float fRimValue = 1.5f;
+				_float fRimAlpha = 1.f;
+
+				pShader->Set_Value("g_bToonRimLight", &bOnToonRimLight, sizeof(_bool));
+
+				pShader->Set_Value("g_fRimAlpha", &fRimAlpha, sizeof(_float));
+				pShader->Set_Value("g_fRimPower", &fRimValue, sizeof(_float));
+			}
+
+			else
+			{
+				bOnToonRimLight = false;
+				pShader->Set_Value("g_bToonRimLight", &bOnToonRimLight, sizeof(_bool));
+
+				m_pBattleAgent->Update_RimParam_OnShader(pShader);
+			}
+
 			pShader->Begin_Pass(m_iPass);
 
 			pShader->Set_DynamicTexture_Auto(m_pDynamicMesh, i, j);
@@ -344,6 +389,9 @@ HRESULT CPlayer::Render_GameObject_Instancing_SetPass(CShader * pShader)
 			pShader->End_Pass();
 		}
 	}
+
+	bOnToonRimLight = false;
+	pShader->Set_Value("g_bToonRimLight", &bOnToonRimLight, sizeof(_bool));
 
 #ifdef _DEBUG
 	//Draw_Collider();
@@ -385,10 +433,12 @@ HRESULT CPlayer::Render_GameObject_SetPass(CShader* pShader, _int iPass, _bool _
 		_bool bMotionBlur = true;
 		if (FAILED(pShader->Set_Bool("g_bMotionBlur", bMotionBlur)))
 			return E_FAIL;
+
 		_bool bDecalTarget = false;
 		if (FAILED(pShader->Set_Bool("g_bDecalTarget", bDecalTarget)))
 			return E_FAIL;
-		_float fBloomPower = 0.f;
+
+		_float fBloomPower = 10.f;
 		if (FAILED(pShader->Set_Value("g_fBloomPower", &fBloomPower, sizeof(_float))))
 			return E_FAIL;
 	}
@@ -447,6 +497,12 @@ HRESULT CPlayer::Render_GameObject_SetPass(CShader* pShader, _int iPass, _bool _
 	//============================================================================================
 
 	return S_OK;
+}
+
+void CPlayer::Reset_OldAnimations()
+{
+	m_pDynamicMesh->Reset_OldIndx(1);
+	m_pOuter->Reset_OldAniIdx(1);
 }
 
 void CPlayer::Teleport_ResetOptions(_int _eSceneID, _int _eTeleportID)
@@ -745,7 +801,7 @@ void CPlayer::Parameter_Movement()
 
 	_float fMoveSpeed = m_tInfo.fMoveSpeed_Cur * DELTA_60;
 	_float fRadian = 0.f;
-	_float fRecover = 720.f;
+	_float fRecover = 1440.f;
 	_float fAngle = 0.f;
 		
 	if (false == m_bOnAttack)
@@ -874,7 +930,7 @@ void CPlayer::Parameter_HitCheck()
 				m_tObjParam.bHitAgain = false;
 				m_tObjParam.bIsHit = false;
 
-				m_pDynamicMesh->Reset_OldIndx(3);
+				Reset_OldAnimations();
 			}
 		}
 	}
@@ -1108,7 +1164,7 @@ void CPlayer::Movement_NonAiming(_float _fRecover, _float _fAngle, _float _fRadi
 
 	else if (m_bMove[MOVE_Left])
 	{
-		if (m_fAngle_Recover < -270)
+		if (m_fAngle_Recover < -270.f)
 		{
 			m_fAngle_Recover += _fRecover * DELTA_60;
 
@@ -1118,7 +1174,7 @@ void CPlayer::Movement_NonAiming(_float _fRecover, _float _fAngle, _float _fRadi
 			}
 		}
 
-		else if (m_fAngle_Recover <= 0)
+		else if (m_fAngle_Recover <= 0.f)
 		{
 			m_fAngle_Recover -= _fRecover * DELTA_60;
 
@@ -1128,7 +1184,7 @@ void CPlayer::Movement_NonAiming(_float _fRecover, _float _fAngle, _float _fRadi
 			}
 		}
 
-		else if (m_fAngle_Recover > 90)
+		else if (m_fAngle_Recover > 90.f)
 		{
 			m_fAngle_Recover += _fRecover * DELTA_60;
 
@@ -1138,7 +1194,7 @@ void CPlayer::Movement_NonAiming(_float _fRecover, _float _fAngle, _float _fRadi
 			}
 		}
 
-		else if (m_fAngle_Recover > 0)
+		else if (m_fAngle_Recover > 0.f)
 		{
 			m_fAngle_Recover -= _fRecover * DELTA_60;
 
@@ -1154,7 +1210,7 @@ void CPlayer::Movement_NonAiming(_float _fRecover, _float _fAngle, _float _fRadi
 		else if (true == m_bOnAttack)
 			_fRadian = D3DXToRadian(_fAngle);
 
-		m_pTransform->Set_Angle({ 0, _fRadian, 0 });
+		m_pTransform->Set_Angle({ 0.f, _fRadian, 0.f });
 
 		_v3 tmpLook = m_pTransform->Get_Axis(AXIS_Z);
 		D3DXVec3Normalize(&tmpLook, &tmpLook);
@@ -1429,6 +1485,8 @@ void CPlayer::KeyInput()
 	if (m_eActState == ACT_Dead)
 		return;
 
+	cout << "키를 눌러 주세요" << endl;
+
 	KeyDown();
 	KeyUp();
 }
@@ -1444,6 +1502,8 @@ void CPlayer::KeyDown()
 	{
 		if (false == m_bStopMovementKeyInput)
 		{
+			cout << "오냐" << endl;
+
 			// 이동관련
 			Key_Movement_Down();
 
@@ -1699,7 +1759,7 @@ void CPlayer::Key_Special()
 		{
 			m_bOnDodge = false;
 
-			m_pDynamicMesh->Reset_OldIndx(1);
+			Reset_OldAnimations();
 
 			m_eActState = ACT_Dodge;
 
@@ -2803,465 +2863,506 @@ void CPlayer::Play_Dodge()
 		g_pManagement->Create_Effect(L"Player_FootSmoke_Jump", m_pTransform->Get_Pos());
 		g_pManagement->Create_Effect(L"Player_FootSmoke_DodgeBack", V3_NULL, m_pTransform);
 
-		switch (m_eMainWpnState)
+		if (true == m_bOnAiming)
 		{
-		case WEAPON_None:
-		case WEAPON_SSword:
-		{			
-			if (m_bMove[MOVE_Front] || m_bMove[MOVE_Back] || m_bMove[MOVE_Right] || m_bMove[MOVE_Left])
+			switch (m_eMainWpnState)
 			{
-				if (m_bMove[MOVE_Front])
-				{
-					if (m_bMove[MOVE_Left])
-					{
-						m_eAnim_Lower = Ssword_Dodge_FL;
-					}
-
-					else if (m_bMove[MOVE_Right])
-					{
-						m_eAnim_Lower = Ssword_Dodge_FR;
-					}
-
-					else
-					{
-						m_eAnim_Lower = Ssword_Dodge_F;
-					}
-				}
-
-				else if (m_bMove[MOVE_Back])
-				{
-					if (m_bMove[MOVE_Left])
-					{
-						m_eAnim_Lower = Ssword_Dodge_BL;
-					}
-
-					else if (m_bMove[MOVE_Right])
-					{
-						m_eAnim_Lower = Ssword_Dodge_BR;
-					}
-
-					else
-					{
-						m_eAnim_Lower = Ssword_Dodge_B;
-					}
-				}
-
-				else if (m_bMove[MOVE_Left])
-				{
-					if (m_bMove[MOVE_Front])
-					{
-						m_eAnim_Lower = Ssword_Dodge_FL;
-					}
-
-					else if (m_bMove[MOVE_Back])
-					{
-						m_eAnim_Lower = Ssword_Dodge_BL;
-					}
-
-					else
-					{
-						m_eAnim_Lower = Ssword_Dodge_L;
-					}
-				}
-
-				else if (m_bMove[MOVE_Right])
-				{
-					if (m_bMove[MOVE_Front])
-					{
-						m_eAnim_Lower = Ssword_Dodge_FR;
-					}
-
-					else if (m_bMove[MOVE_Back])
-					{
-						m_eAnim_Lower = Ssword_Dodge_BR;
-					}
-
-					else
-					{
-						m_eAnim_Lower = Ssword_Dodge_R;
-					}
-				}
-			}
-			else
-		{
-			m_bDodgeBack = true;
-			m_eAnim_Lower = Ssword_Dodge_B;
-		}
-
-		break;
-		}
-
-		case WEAPON_LSword:
-		{
-			if (m_bMove[MOVE_Front] || m_bMove[MOVE_Back] || m_bMove[MOVE_Right] || m_bMove[MOVE_Left])
+			case WEAPON_None:
+			case WEAPON_SSword:
 			{
-				if (m_bMove[MOVE_Front])
-				{
-					if (m_bMove[MOVE_Left])
-					{
-						m_eAnim_Lower = Lsword_Dodge_FL;
-					}
-
-					else if (m_bMove[MOVE_Right])
-					{
-						m_eAnim_Lower = Lsword_Dodge_FR;
-					}
-
-					else
-					{
-						m_eAnim_Lower = Lsword_Dodge_F;
-					}
-				}
-
-				else if (m_bMove[MOVE_Back])
-				{
-					if (m_bMove[MOVE_Left])
-					{
-						m_eAnim_Lower = Lsword_Dodge_BL;
-					}
-
-					else if (m_bMove[MOVE_Right])
-					{
-						m_eAnim_Lower = Lsword_Dodge_BR;
-					}
-
-					else
-					{
-						m_eAnim_Lower = Lsword_Dodge_B;
-					}
-				}
-
-				else if (m_bMove[MOVE_Left])
+				if (m_bMove[MOVE_Front] || m_bMove[MOVE_Back] || m_bMove[MOVE_Right] || m_bMove[MOVE_Left])
 				{
 					if (m_bMove[MOVE_Front])
 					{
-						m_eAnim_Lower = Lsword_Dodge_FL;
+						if (m_bMove[MOVE_Left])
+						{
+							m_eAnim_Lower = Ssword_Dodge_FL;
+						}
+
+						else if (m_bMove[MOVE_Right])
+						{
+							m_eAnim_Lower = Ssword_Dodge_FR;
+						}
+
+						else
+						{
+							m_eAnim_Lower = Ssword_Dodge_F;
+						}
 					}
 
 					else if (m_bMove[MOVE_Back])
 					{
-						m_eAnim_Lower = Lsword_Dodge_BL;
+						if (m_bMove[MOVE_Left])
+						{
+							m_eAnim_Lower = Ssword_Dodge_BL;
+						}
+
+						else if (m_bMove[MOVE_Right])
+						{
+							m_eAnim_Lower = Ssword_Dodge_BR;
+						}
+
+						else
+						{
+							m_eAnim_Lower = Ssword_Dodge_B;
+						}
 					}
 
-					else
+					else if (m_bMove[MOVE_Left])
 					{
-						m_eAnim_Lower = Lsword_Dodge_L;
-					}
-				}
+						if (m_bMove[MOVE_Front])
+						{
+							m_eAnim_Lower = Ssword_Dodge_FL;
+						}
 
-				else if (m_bMove[MOVE_Right])
-				{
-					if (m_bMove[MOVE_Front])
-					{
-						m_eAnim_Lower = Lsword_Dodge_FR;
-					}
+						else if (m_bMove[MOVE_Back])
+						{
+							m_eAnim_Lower = Ssword_Dodge_BL;
+						}
 
-					else if (m_bMove[MOVE_Back])
-					{
-						m_eAnim_Lower = Lsword_Dodge_BR;
-					}
-
-					else
-					{
-						m_eAnim_Lower = Lsword_Dodge_R;
-					}
-				}
-
-			}
-			else
-			{
-				m_bDodgeBack = true;
-				m_eAnim_Lower = Lsword_Dodge_B;
-			}
-			break;
-		}
-
-		case WEAPON_Hammer:
-		{
-			if (m_bMove[MOVE_Front] || m_bMove[MOVE_Back] || m_bMove[MOVE_Right] || m_bMove[MOVE_Left])
-			{
-				if (m_bMove[MOVE_Front])
-				{
-					if (m_bMove[MOVE_Left])
-					{
-						m_eAnim_Lower = Hammer_Dodge_FL;
+						else
+						{
+							m_eAnim_Lower = Ssword_Dodge_L;
+						}
 					}
 
 					else if (m_bMove[MOVE_Right])
 					{
-						m_eAnim_Lower = Hammer_Dodge_FR;
-					}
+						if (m_bMove[MOVE_Front])
+						{
+							m_eAnim_Lower = Ssword_Dodge_FR;
+						}
 
-					else
-					{
-						m_eAnim_Lower = Hammer_Dodge_F;
+						else if (m_bMove[MOVE_Back])
+						{
+							m_eAnim_Lower = Ssword_Dodge_BR;
+						}
+
+						else
+						{
+							m_eAnim_Lower = Ssword_Dodge_R;
+						}
 					}
 				}
-
-				else if (m_bMove[MOVE_Back])
+				else
 				{
-					if (m_bMove[MOVE_Left])
-					{
-						m_eAnim_Lower = Hammer_Dodge_BL;
-					}
-
-					else if (m_bMove[MOVE_Right])
-					{
-						m_eAnim_Lower = Hammer_Dodge_BR;
-					}
-
-					else
-					{
-						m_eAnim_Lower = Hammer_Dodge_B;
-					}
+					m_bDodgeBack = true;
+					m_eAnim_Lower = Ssword_Dodge_B;
 				}
 
-				else if (m_bMove[MOVE_Left])
-				{
-					if (m_bMove[MOVE_Front])
-					{
-						m_eAnim_Lower = Hammer_Dodge_FL;
-					}
-
-					else if (m_bMove[MOVE_Back])
-					{
-						m_eAnim_Lower = Hammer_Dodge_BL;
-					}
-
-					else
-					{
-						m_eAnim_Lower = Hammer_Dodge_L;
-					}
-				}
-
-				else if (m_bMove[MOVE_Right])
-				{
-					if (m_bMove[MOVE_Front])
-					{
-						m_eAnim_Lower = Hammer_Dodge_FR;
-					}
-
-					else if (m_bMove[MOVE_Back])
-					{
-						m_eAnim_Lower = Hammer_Dodge_BR;
-					}
-
-					else
-					{
-						m_eAnim_Lower = Hammer_Dodge_R;
-					}
-				}
+				break;
 			}
 
-			else
+			case WEAPON_LSword:
 			{
-				m_bDodgeBack = true;
-				m_eAnim_Lower = Hammer_Dodge_B;
-			}
-			break;
-		}
-
-		case WEAPON_Halberd:
-		{
-			if (m_bMove[MOVE_Front] || m_bMove[MOVE_Back] || m_bMove[MOVE_Right] || m_bMove[MOVE_Left])
-			{
-				if (m_bMove[MOVE_Front])
-				{
-					if (m_bMove[MOVE_Left])
-					{
-						m_eAnim_Lower = Halberd_Dodge_F;
-					}
-
-					else if (m_bMove[MOVE_Right])
-					{
-						m_eAnim_Lower = Halberd_Dodge_FR;
-					}
-
-					else
-					{
-						m_eAnim_Lower = Halberd_Dodge_FL;
-					}
-				}
-
-				else if (m_bMove[MOVE_Back])
-				{
-					if (m_bMove[MOVE_Left])
-					{
-						m_eAnim_Lower = Halberd_Dodge_BL;
-					}
-
-					else if (m_bMove[MOVE_Right])
-					{
-						m_eAnim_Lower = Halberd_Dodge_BR;
-					}
-
-					else
-					{
-						m_eAnim_Lower = Halberd_Dodge_B;
-					}
-				}
-
-				else if (m_bMove[MOVE_Left])
+				if (m_bMove[MOVE_Front] || m_bMove[MOVE_Back] || m_bMove[MOVE_Right] || m_bMove[MOVE_Left])
 				{
 					if (m_bMove[MOVE_Front])
 					{
-						m_eAnim_Lower = Halberd_Dodge_FL;
+						if (m_bMove[MOVE_Left])
+						{
+							m_eAnim_Lower = Lsword_Dodge_FL;
+						}
+
+						else if (m_bMove[MOVE_Right])
+						{
+							m_eAnim_Lower = Lsword_Dodge_FR;
+						}
+
+						else
+						{
+							m_eAnim_Lower = Lsword_Dodge_F;
+						}
 					}
 
 					else if (m_bMove[MOVE_Back])
 					{
-						m_eAnim_Lower = Halberd_Dodge_BL;
+						if (m_bMove[MOVE_Left])
+						{
+							m_eAnim_Lower = Lsword_Dodge_BL;
+						}
+
+						else if (m_bMove[MOVE_Right])
+						{
+							m_eAnim_Lower = Lsword_Dodge_BR;
+						}
+
+						else
+						{
+							m_eAnim_Lower = Lsword_Dodge_B;
+						}
 					}
 
-					else
+					else if (m_bMove[MOVE_Left])
 					{
-						m_eAnim_Lower = Halberd_Dodge_L;
-					}
-				}
+						if (m_bMove[MOVE_Front])
+						{
+							m_eAnim_Lower = Lsword_Dodge_FL;
+						}
 
-				else if (m_bMove[MOVE_Right])
-				{
-					if (m_bMove[MOVE_Front])
-					{
-						m_eAnim_Lower = Halberd_Dodge_FR;
-					}
+						else if (m_bMove[MOVE_Back])
+						{
+							m_eAnim_Lower = Lsword_Dodge_BL;
+						}
 
-					else if (m_bMove[MOVE_Back])
-					{
-						m_eAnim_Lower = Halberd_Dodge_BR;
-					}
-
-					else
-					{
-						m_eAnim_Lower = Halberd_Dodge_R;
-					}
-				}
-			}
-
-			else
-			{
-				m_bDodgeBack = true;
-				m_eAnim_Lower = Halberd_Dodge_B;
-			}
-			break;
-		}
-
-		case WEAPON_Gun:
-		{
-			if (m_bMove[MOVE_Front] || m_bMove[MOVE_Back] || m_bMove[MOVE_Right] || m_bMove[MOVE_Left])
-			{
-				m_bDodgeBack = false;
-
-				if (false == m_bOnAiming)
-				{
-					m_eAnim_Lower = Gun_Dodge_F;
-					break;
-				}
-
-				if (m_bMove[MOVE_Front])
-				{
-					if (m_bMove[MOVE_Left])
-					{
-						m_eAnim_Lower = Gun_Dodge_FL;
+						else
+						{
+							m_eAnim_Lower = Lsword_Dodge_L;
+						}
 					}
 
 					else if (m_bMove[MOVE_Right])
 					{
-						m_eAnim_Lower = Gun_Dodge_FR;
+						if (m_bMove[MOVE_Front])
+						{
+							m_eAnim_Lower = Lsword_Dodge_FR;
+						}
+
+						else if (m_bMove[MOVE_Back])
+						{
+							m_eAnim_Lower = Lsword_Dodge_BR;
+						}
+
+						else
+						{
+							m_eAnim_Lower = Lsword_Dodge_R;
+						}
 					}
 
-					else
+				}
+				else
+				{
+					m_bDodgeBack = true;
+					m_eAnim_Lower = Lsword_Dodge_B;
+				}
+				break;
+			}
+
+			case WEAPON_Hammer:
+			{
+				if (m_bMove[MOVE_Front] || m_bMove[MOVE_Back] || m_bMove[MOVE_Right] || m_bMove[MOVE_Left])
+				{
+					if (m_bMove[MOVE_Front])
+					{
+						if (m_bMove[MOVE_Left])
+						{
+							m_eAnim_Lower = Hammer_Dodge_FL;
+						}
+
+						else if (m_bMove[MOVE_Right])
+						{
+							m_eAnim_Lower = Hammer_Dodge_FR;
+						}
+
+						else
+						{
+							m_eAnim_Lower = Hammer_Dodge_F;
+						}
+					}
+
+					else if (m_bMove[MOVE_Back])
+					{
+						if (m_bMove[MOVE_Left])
+						{
+							m_eAnim_Lower = Hammer_Dodge_BL;
+						}
+
+						else if (m_bMove[MOVE_Right])
+						{
+							m_eAnim_Lower = Hammer_Dodge_BR;
+						}
+
+						else
+						{
+							m_eAnim_Lower = Hammer_Dodge_B;
+						}
+					}
+
+					else if (m_bMove[MOVE_Left])
+					{
+						if (m_bMove[MOVE_Front])
+						{
+							m_eAnim_Lower = Hammer_Dodge_FL;
+						}
+
+						else if (m_bMove[MOVE_Back])
+						{
+							m_eAnim_Lower = Hammer_Dodge_BL;
+						}
+
+						else
+						{
+							m_eAnim_Lower = Hammer_Dodge_L;
+						}
+					}
+
+					else if (m_bMove[MOVE_Right])
+					{
+						if (m_bMove[MOVE_Front])
+						{
+							m_eAnim_Lower = Hammer_Dodge_FR;
+						}
+
+						else if (m_bMove[MOVE_Back])
+						{
+							m_eAnim_Lower = Hammer_Dodge_BR;
+						}
+
+						else
+						{
+							m_eAnim_Lower = Hammer_Dodge_R;
+						}
+					}
+				}
+
+				else
+				{
+					m_bDodgeBack = true;
+					m_eAnim_Lower = Hammer_Dodge_B;
+				}
+				break;
+			}
+
+			case WEAPON_Halberd:
+			{
+				if (m_bMove[MOVE_Front] || m_bMove[MOVE_Back] || m_bMove[MOVE_Right] || m_bMove[MOVE_Left])
+				{
+					if (m_bMove[MOVE_Front])
+					{
+						if (m_bMove[MOVE_Left])
+						{
+							m_eAnim_Lower = Halberd_Dodge_F;
+						}
+
+						else if (m_bMove[MOVE_Right])
+						{
+							m_eAnim_Lower = Halberd_Dodge_FR;
+						}
+
+						else
+						{
+							m_eAnim_Lower = Halberd_Dodge_FL;
+						}
+					}
+
+					else if (m_bMove[MOVE_Back])
+					{
+						if (m_bMove[MOVE_Left])
+						{
+							m_eAnim_Lower = Halberd_Dodge_BL;
+						}
+
+						else if (m_bMove[MOVE_Right])
+						{
+							m_eAnim_Lower = Halberd_Dodge_BR;
+						}
+
+						else
+						{
+							m_eAnim_Lower = Halberd_Dodge_B;
+						}
+					}
+
+					else if (m_bMove[MOVE_Left])
+					{
+						if (m_bMove[MOVE_Front])
+						{
+							m_eAnim_Lower = Halberd_Dodge_FL;
+						}
+
+						else if (m_bMove[MOVE_Back])
+						{
+							m_eAnim_Lower = Halberd_Dodge_BL;
+						}
+
+						else
+						{
+							m_eAnim_Lower = Halberd_Dodge_L;
+						}
+					}
+
+					else if (m_bMove[MOVE_Right])
+					{
+						if (m_bMove[MOVE_Front])
+						{
+							m_eAnim_Lower = Halberd_Dodge_FR;
+						}
+
+						else if (m_bMove[MOVE_Back])
+						{
+							m_eAnim_Lower = Halberd_Dodge_BR;
+						}
+
+						else
+						{
+							m_eAnim_Lower = Halberd_Dodge_R;
+						}
+					}
+				}
+
+				else
+				{
+					m_bDodgeBack = true;
+					m_eAnim_Lower = Halberd_Dodge_B;
+				}
+				break;
+			}
+
+			case WEAPON_Gun:
+			{
+				if (m_bMove[MOVE_Front] || m_bMove[MOVE_Back] || m_bMove[MOVE_Right] || m_bMove[MOVE_Left])
+				{
+					m_bDodgeBack = false;
+
+					if (false == m_bOnAiming)
 					{
 						m_eAnim_Lower = Gun_Dodge_F;
+						break;
 					}
-				}
 
-				else if (m_bMove[MOVE_Back])
-				{
-					if (m_bMove[MOVE_Left])
+					if (m_bMove[MOVE_Front])
 					{
-						m_eAnim_Lower = Gun_Dodge_BL;
+						if (m_bMove[MOVE_Left])
+						{
+							m_eAnim_Lower = Gun_Dodge_FL;
+						}
+
+						else if (m_bMove[MOVE_Right])
+						{
+							m_eAnim_Lower = Gun_Dodge_FR;
+						}
+
+						else
+						{
+							m_eAnim_Lower = Gun_Dodge_F;
+						}
+					}
+
+					else if (m_bMove[MOVE_Back])
+					{
+						if (m_bMove[MOVE_Left])
+						{
+							m_eAnim_Lower = Gun_Dodge_BL;
+						}
+
+						else if (m_bMove[MOVE_Right])
+						{
+							m_eAnim_Lower = Gun_Dodge_BR;
+						}
+
+						else
+						{
+							m_eAnim_Lower = Gun_Dodge_B;
+						}
+					}
+
+					else if (m_bMove[MOVE_Left])
+					{
+						if (m_bMove[MOVE_Front])
+						{
+							m_eAnim_Lower = Gun_Dodge_FL;
+						}
+
+						else if (m_bMove[MOVE_Back])
+						{
+							m_eAnim_Lower = Gun_Dodge_BL;
+						}
+
+						else
+						{
+							m_eAnim_Lower = Gun_Dodge_L;
+						}
 					}
 
 					else if (m_bMove[MOVE_Right])
 					{
-						m_eAnim_Lower = Gun_Dodge_BR;
-					}
+						if (m_bMove[MOVE_Front])
+						{
+							m_eAnim_Lower = Gun_Dodge_FR;
+						}
 
-					else
-					{
-						m_eAnim_Lower = Gun_Dodge_B;
+						else if (m_bMove[MOVE_Back])
+						{
+							m_eAnim_Lower = Gun_Dodge_BR;
+						}
+
+						else
+						{
+							m_eAnim_Lower = Gun_Dodge_R;
+						}
 					}
 				}
 
-				else if (m_bMove[MOVE_Left])
+				else
 				{
-					if (m_bMove[MOVE_Front])
-					{
-						m_eAnim_Lower = Gun_Dodge_FL;
-					}
-
-					else if (m_bMove[MOVE_Back])
-					{
-						m_eAnim_Lower = Gun_Dodge_BL;
-					}
-
-					else
-					{
-						m_eAnim_Lower = Gun_Dodge_L;
-					}
+					m_bDodgeBack = true;
+					m_eAnim_Lower = Gun_Dodge_B;
 				}
+				break;
+			}
+			}
+		}
 
-				else if (m_bMove[MOVE_Right])
-				{
-					if (m_bMove[MOVE_Front])
-					{
-						m_eAnim_Lower = Gun_Dodge_FR;
-					}
+		else if (false == m_bOnAiming)
+		{
+			// 만약 에이밍 중이 아니라면,
 
-					else if (m_bMove[MOVE_Back])
-					{
-						m_eAnim_Lower = Gun_Dodge_BR;
-					}
+			// 아무 방향키도 누르지 않을 시,
+			if (!m_bMove[MOVE_Front] && !m_bMove[MOVE_Back] && !m_bMove[MOVE_Right] && !m_bMove[MOVE_Left])
+			{
+				m_bDodgeBack = true;
 
-					else
-					{
-						m_eAnim_Lower = Gun_Dodge_R;
-					}
-				}
+				m_eAnim_Lower =
+					m_eMainWpnState == WEAPON_SSword ? Ssword_Dodge_B :
+					m_eMainWpnState == WEAPON_LSword ? Lsword_Dodge_B :
+					m_eMainWpnState == WEAPON_Halberd ? Halberd_Dodge_B :
+					m_eMainWpnState == WEAPON_Gun ? Gun_Dodge_B : Hammer_Dodge_B;
+			}
+
+			else if (!m_bMove[MOVE_Front] && m_bMove[MOVE_Back] && !m_bMove[MOVE_Right] && !m_bMove[MOVE_Left])
+			{
+				m_bDodgeBack = true;
+
+				m_eAnim_Lower =
+					m_eMainWpnState == WEAPON_SSword ? Ssword_Dodge_B :
+					m_eMainWpnState == WEAPON_LSword ? Lsword_Dodge_B :
+					m_eMainWpnState == WEAPON_Halberd ? Halberd_Dodge_B :
+					m_eMainWpnState == WEAPON_Gun ? Gun_Dodge_B : Hammer_Dodge_B;
 			}
 
 			else
 			{
-				m_bDodgeBack = true;
-				m_eAnim_Lower = Gun_Dodge_B;
+				m_eAnim_Lower =
+					m_eMainWpnState == WEAPON_SSword ? Ssword_Dodge_F :
+					m_eMainWpnState == WEAPON_LSword ? Lsword_Dodge_F :
+					m_eMainWpnState == WEAPON_Halberd ? Halberd_Dodge_F :
+					m_eMainWpnState == WEAPON_Gun ? Gun_Dodge_F : Hammer_Dodge_F;
 			}
-			break;
-		}
 		}
 
 		m_eAnim_Upper = m_eAnim_Lower;
 		m_eAnim_RightArm = m_eAnim_Lower;
+		m_eAnim_LeftArm = m_eAnim_Lower;
 
 		m_tObjParam.bIsDodge = true;
 		m_bOnDodge = true;
 		m_bCanDodge = false;
 		m_bStopMovementKeyInput = true;
 
-		m_fSkillMoveMultiply =  1.f;
+		m_fSkillMoveMultiply = 1.f;
 
 		m_fSkillMoveSpeed_Cur =
 			(m_eMainWpnState == WEAPON_LSword ? 12.f :
 				m_eMainWpnState == WEAPON_Hammer ? 12.f :
 				m_eMainWpnState == WEAPON_Halberd ? 12.f :
-				m_eMainWpnState == WEAPON_SSword ? 12.f :
+				m_eMainWpnState == WEAPON_SSword ? 15.f :
 				m_eMainWpnState == WEAPON_Gun ? 12.f : 15.f);
 
 		m_fSkillMoveMultiply =
 			(m_eMainWpnState == WEAPON_LSword ? 0.8f :
 				m_eMainWpnState == WEAPON_Hammer ? 0.8f :
 				m_eMainWpnState == WEAPON_Halberd ? 0.8f :
-				m_eMainWpnState == WEAPON_SSword ? 2.3f :
+				m_eMainWpnState == WEAPON_SSword ? 1.2f :
 				m_eMainWpnState == WEAPON_Gun ? 0.6f : 1.2f);
 
 		m_fSkillMoveAccel_Cur = 0.f;
@@ -3598,6 +3699,7 @@ void CPlayer::Play_HeavyAtk()
 
 		m_eAnim_Upper = m_eAnim_Lower;
 		m_eAnim_RightArm = m_eAnim_Lower;
+		m_eAnim_LeftArm = m_eAnim_Lower;
 
 		m_bOnAttack = true;
 	}
@@ -4523,6 +4625,7 @@ void CPlayer::Play_WeaponChange()
 		m_eAnim_Upper = Cmn_WeaponChange;
 		m_eAnim_Lower = m_eAnim_Upper;
 		m_eAnim_RightArm = m_eAnim_Upper;
+		m_eAnim_LeftArm = m_eAnim_Lower;
 
 		m_fAnimMutiply = 1.f;
 	}
@@ -4754,6 +4857,7 @@ void CPlayer::Play_Summon()
 
 		Start_Dissolve(0.3f, true, false);
 
+		m_pOuter->Start_Dissolve(0.3f, true, false);
 		m_pHair->Start_Dissolve(0.3f, true, false);
 		m_pMask[m_eMaskType]->Start_Dissolve(0.3f, true, false);
 		m_pHead[m_eHeadType]->Start_Dissolve(0.3f, true, false);
@@ -4786,6 +4890,7 @@ void CPlayer::Play_BloodSuck()
 		m_eAnim_Upper = LongCoat_Charge_Start;
 		m_eAnim_Lower = m_eAnim_Upper;
 		m_eAnim_RightArm = m_eAnim_Upper;
+		m_eAnim_LeftArm = m_eAnim_Lower;
 
 		Reset_BattleState();
 
@@ -4825,6 +4930,7 @@ void CPlayer::Play_BloodSuck()
 				m_eAnim_Upper = LongCoat_Charge_End;
 				m_eAnim_Lower = m_eAnim_Upper;
 				m_eAnim_RightArm = m_eAnim_Upper;
+				m_eAnim_LeftArm = m_eAnim_Lower;
 
 				m_bOnChargeSuck = true;
 
@@ -4861,6 +4967,7 @@ void CPlayer::Play_BloodSuck()
 					m_eAnim_Upper = LongCoat_Charge_End;
 					m_eAnim_Lower = m_eAnim_Upper;
 					m_eAnim_RightArm = m_eAnim_Upper;
+					m_eAnim_LeftArm = m_eAnim_Lower;
 
 					m_bOnChargeSuck = true;
 
@@ -4997,6 +5104,7 @@ void CPlayer::Play_BloodSuckCount()
 		m_eAnim_Upper = LongCoat_Parry;
 		m_eAnim_Lower = m_eAnim_Upper;
 		m_eAnim_RightArm = m_eAnim_Upper;
+		m_eAnim_LeftArm = m_eAnim_Lower;
 
 		IF_NOT_NULL(m_pDrainWeapon)
 		{
@@ -7320,6 +7428,7 @@ void CPlayer::Play_Ssword_HeavyAtk()
 				m_eAnim_Lower = (m_fChargeTimer_Cur > 0.2f ? Ssword_HeavyAtk_02 : Ssword_HeavyAtk_01);
 				m_eAnim_Upper = m_eAnim_Lower;
 				m_eAnim_RightArm = m_eAnim_Lower;
+				m_eAnim_LeftArm = m_eAnim_Lower;
 
 				m_fChargeTimer_Cur = 0.f;
 
@@ -7589,6 +7698,7 @@ void CPlayer::Play_Gun_WeakAtk()
 
 		m_eAnim_Upper = m_eAnim_Lower;
 		m_eAnim_RightArm = m_eAnim_Lower;
+		m_eAnim_LeftArm = m_eAnim_Lower;
 	}
 
 	else if (true == m_bOnAttack)
@@ -8091,6 +8201,7 @@ void CPlayer::Play_Gun_HeavyAtk()
 				m_eAnim_Lower = (m_fChargeTimer_Cur > 0.2f ? Gun_HeavyAtk_02 : Gun_HeavyAtk_01);
 				m_eAnim_Upper = m_eAnim_Lower;
 				m_eAnim_RightArm = m_eAnim_Lower;
+				m_eAnim_LeftArm = m_eAnim_Lower;
 
 				m_fChargeTimer_Cur = 0.f;
 
@@ -8244,6 +8355,7 @@ void CPlayer::Play_Halverd_WeakAtk()
 
 		m_eAnim_Upper = m_eAnim_Lower;
 		m_eAnim_RightArm = m_eAnim_Lower;
+		m_eAnim_LeftArm = m_eAnim_Lower;
 	}
 
 	else if (true == m_bOnAttack)
@@ -8983,6 +9095,7 @@ void CPlayer::Play_Hammer_WeakAtk()
 
 		m_eAnim_Upper = m_eAnim_Lower;
 		m_eAnim_RightArm = m_eAnim_Lower;
+		m_eAnim_LeftArm = m_eAnim_Lower;
 	}
 
 	else if (true == m_bOnAttack)
@@ -9306,7 +9419,7 @@ void CPlayer::Play_Hammer_HeavyAtk()
 				m_eActState = ACT_Idle;
 			}
 
-			else if (m_pDynamicMesh->Get_TrackInfo().Position >= 6.4f)
+			else if (m_pDynamicMesh->Get_TrackInfo().Position >= 5.6f)
 			{
 				if (m_bEventTrigger[11] == false)
 				{
@@ -9316,7 +9429,7 @@ void CPlayer::Play_Hammer_HeavyAtk()
 				}
 			}
 
-			else if (m_pDynamicMesh->Get_TrackInfo().Position >= 6.2f)
+			else if (m_pDynamicMesh->Get_TrackInfo().Position >= 5.5f)
 			{
 				if (m_bEventTrigger[10] == false)
 				{
@@ -9330,7 +9443,7 @@ void CPlayer::Play_Hammer_HeavyAtk()
 				}
 			}
 
-			else if (m_pDynamicMesh->Get_TrackInfo().Position >= 6.f)
+			else if (m_pDynamicMesh->Get_TrackInfo().Position >= 5.2f)
 			{
 				if (m_bEventTrigger[9] == false)
 				{
@@ -9341,7 +9454,7 @@ void CPlayer::Play_Hammer_HeavyAtk()
 				}
 			}
 
-			else if (m_pDynamicMesh->Get_TrackInfo().Position >= 4.633f)
+			else if (m_pDynamicMesh->Get_TrackInfo().Position >= 3.833f)
 			{
 				if (m_bEventTrigger[8] == false)
 				{
@@ -9355,7 +9468,7 @@ void CPlayer::Play_Hammer_HeavyAtk()
 				}
 			}
 
-			else if (m_pDynamicMesh->Get_TrackInfo().Position >= 4.443f)
+			else if (m_pDynamicMesh->Get_TrackInfo().Position >= 3.143f)
 			{
 				if (m_bEventTrigger[7] == false)
 				{
@@ -9366,7 +9479,7 @@ void CPlayer::Play_Hammer_HeavyAtk()
 				}
 			}
 
-			else if (m_pDynamicMesh->Get_TrackInfo().Position >= 3.4f)
+			else if (m_pDynamicMesh->Get_TrackInfo().Position >= 2.6f)
 			{
 				if (m_bEventTrigger[6] == false)
 				{
@@ -9380,7 +9493,7 @@ void CPlayer::Play_Hammer_HeavyAtk()
 				}
 			}
 
-			else if (m_pDynamicMesh->Get_TrackInfo().Position >= 3.2f)
+			else if (m_pDynamicMesh->Get_TrackInfo().Position >= 2.4f)
 			{
 				if (m_bEventTrigger[5] == false)
 				{
@@ -9391,7 +9504,7 @@ void CPlayer::Play_Hammer_HeavyAtk()
 				}
 			}
 
-			else if (m_pDynamicMesh->Get_TrackInfo().Position >= 2.867f)
+			else if (m_pDynamicMesh->Get_TrackInfo().Position >= 2.067f)
 			{
 				if (m_bEventTrigger[4] == false)
 				{
@@ -9402,7 +9515,7 @@ void CPlayer::Play_Hammer_HeavyAtk()
 			}
 
 
-			if (m_pDynamicMesh->Get_TrackInfo().Position >= 8.5f)
+			if (m_pDynamicMesh->Get_TrackInfo().Position >= 8.2f)
 			{
 				if (m_bEventTrigger[1] == false)
 				{
@@ -9418,7 +9531,7 @@ void CPlayer::Play_Hammer_HeavyAtk()
 				Skill_Movement(m_fSkillMoveSpeed_Cur, -m_pTransform->Get_Axis(AXIS_Z));
 			}
 
-			else if (m_pDynamicMesh->Get_TrackInfo().Position >= 5.5f && m_pDynamicMesh->Get_TrackInfo().Position < 6.35f)
+			else if (m_pDynamicMesh->Get_TrackInfo().Position >= 5.2f && m_pDynamicMesh->Get_TrackInfo().Position < 6.05f)
 			{
 				if (m_bEventTrigger[0] == false)
 				{
@@ -9434,7 +9547,7 @@ void CPlayer::Play_Hammer_HeavyAtk()
 				Skill_Movement(m_fSkillMoveSpeed_Cur, m_pTransform->Get_Axis(AXIS_Z));
 			}
 
-			else if (m_pDynamicMesh->Get_TrackInfo().Position >= 3.6f && m_pDynamicMesh->Get_TrackInfo().Position < 5.f)
+			else if (m_pDynamicMesh->Get_TrackInfo().Position >= 3.3f && m_pDynamicMesh->Get_TrackInfo().Position < 4.7f)
 			{
 				Decre_Skill_Movement(m_fSkillMoveMultiply);
 				Skill_Movement(m_fSkillMoveSpeed_Cur, m_pTransform->Get_Axis(AXIS_Z));
@@ -9451,7 +9564,7 @@ void CPlayer::Play_Hammer_HeavyAtk()
 				m_eActState = ACT_Idle;
 			}
 
-			else if (m_pDynamicMesh->Get_TrackInfo().Position >= 3.4f)
+			else if (m_pDynamicMesh->Get_TrackInfo().Position >= 3.2f)
 			{
 				if (m_bEventTrigger[7] == false)
 				{
@@ -9461,7 +9574,7 @@ void CPlayer::Play_Hammer_HeavyAtk()
 				}
 			}
 
-			else if (m_pDynamicMesh->Get_TrackInfo().Position >= 3.2f)
+			else if (m_pDynamicMesh->Get_TrackInfo().Position >= 3.0f)
 			{
 				if (m_bEventTrigger[6] == false)
 				{
@@ -9475,7 +9588,7 @@ void CPlayer::Play_Hammer_HeavyAtk()
 				}
 			}
 
-			else if (m_pDynamicMesh->Get_TrackInfo().Position >= 2.267f)
+			else if (m_pDynamicMesh->Get_TrackInfo().Position >= 2.067f)
 			{
 				if (m_bEventTrigger[5] == false)
 				{
@@ -9486,7 +9599,7 @@ void CPlayer::Play_Hammer_HeavyAtk()
 				}
 			}
 
-			else if (m_pDynamicMesh->Get_TrackInfo().Position >= 1.967f)
+			else if (m_pDynamicMesh->Get_TrackInfo().Position >= 1.767f)
 			{
 				if (m_bEventTrigger[4] == false)
 				{
@@ -9497,7 +9610,7 @@ void CPlayer::Play_Hammer_HeavyAtk()
 			}
 
 
-			if (m_pDynamicMesh->Get_TrackInfo().Position >= 1.45f)
+			if (m_pDynamicMesh->Get_TrackInfo().Position >= 1.25f)
 			{
 				Decre_Skill_Movement(m_fSkillMoveMultiply);
 				Skill_Movement(m_fSkillMoveSpeed_Cur, m_pTransform->Get_Axis(AXIS_Z));
@@ -9508,7 +9621,7 @@ void CPlayer::Play_Hammer_HeavyAtk()
 				}
 			}
 
-			else if (m_pDynamicMesh->Get_TrackInfo().Position >= 1.35f)
+			else if (m_pDynamicMesh->Get_TrackInfo().Position >= 1.15f)
 			{
 				if (m_fAnimMutiply > 0.5f)
 				{
@@ -9680,6 +9793,7 @@ void CPlayer::Play_Lsword_WeakAtk()
 
 		m_eAnim_Upper = m_eAnim_Lower;
 		m_eAnim_RightArm = m_eAnim_Lower;
+		m_eAnim_LeftArm = m_eAnim_Lower;
 	}
 
 	else if (true == m_bOnAttack)
@@ -10076,6 +10190,7 @@ void CPlayer::Play_Lsword_HeavyAtk()
 				m_eAnim_Lower = (m_fChargeTimer_Cur > 0.2f ? Lsword_HeavyAtk_02 : Lsword_HeavyAtk_01);
 				m_eAnim_Upper = m_eAnim_Lower;
 				m_eAnim_RightArm = m_eAnim_Lower;
+				m_eAnim_LeftArm = m_eAnim_Lower;
 
 				m_fChargeTimer_Cur = 0.f;
 
@@ -10423,10 +10538,12 @@ void CPlayer::Ready_Weapon()
 
 	D3DXFRAME_DERIVED*	pFamre = (D3DXFRAME_DERIVED*)m_pDynamicMesh->Get_BonInfo(tmpChar, 2);
 
+	m_matHandBone = &pFamre->CombinedTransformationMatrix;
+
 	m_pWeapon[WPN_SLOT_A] = static_cast<CWeapon*>(g_pManagement->Clone_GameObject_Return(L"GameObject_Weapon", NULL));
-	m_pWeapon[WPN_SLOT_A]->Change_WeaponData(Wpn_SSword);
+	m_pWeapon[WPN_SLOT_A]->Change_WeaponData(Wpn_Hammer);
 	m_pWeapon[WPN_SLOT_A]->Set_Friendly(true);
-	m_pWeapon[WPN_SLOT_A]->Set_AttachBoneMartix(&pFamre->CombinedTransformationMatrix);
+	m_pWeapon[WPN_SLOT_A]->Set_AttachBoneMartix(m_matHandBone);
 	m_pWeapon[WPN_SLOT_A]->Set_ParentMatrix(&m_pTransform->Get_WorldMat());
 
 	//m_pWeapon[WPN_SLOT_B] = static_cast<CWeapon*>(g_pManagement->Clone_GameObject_Return(L"GameObject_Weapon", NULL));
@@ -10475,6 +10592,8 @@ void CPlayer::Ready_DrainWeapon()
 	_mat   matAttach;
 
 	D3DXFRAME_DERIVED*	pFamre = (D3DXFRAME_DERIVED*)m_pDynamicMesh->Get_BonInfo(tmpChar, 0);
+
+	m_matTailBone = &pFamre->CombinedTransformationMatrix;
 
 	m_pDrainWeapon = static_cast<CDrain_Weapon*>(g_pManagement->Clone_GameObject_Return(L"GameObject_DrainWeapon", NULL));
 	m_pDrainWeapon->Set_ParentMatrix(&m_pTransform->Get_WorldMat());
@@ -10958,7 +11077,7 @@ HRESULT CPlayer::Add_Component()
 		return E_FAIL;
 
 	// for.Com_Mesh
-	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Mesh_BodyInner_03", L"Com_MeshDynamic", (CComponent**)&m_pDynamicMesh)))
+	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Mesh_BodyInner_01", L"Com_MeshDynamic", (CComponent**)&m_pDynamicMesh)))
 		return E_FAIL;
 
 	// for.Com_NavMesh
@@ -11071,8 +11190,6 @@ HRESULT CPlayer::SetUp_ConstantTable(CShader* pShader)
 		return E_FAIL;
 	//=============================================================================================
 
-	m_pBattleAgent->Update_RimParam_OnShader(pShader);
-
 	return NOERROR;
 }
 
@@ -11136,6 +11253,11 @@ void CPlayer::Reset_BattleState()
 	m_tObjParam.bIsAttack = false;
 	m_tObjParam.bCanHit = true;
 	m_tObjParam.bIsHit = false;
+
+	m_tObjParam.bCanDodge = true;
+	m_tObjParam.bIsDodge = false;
+	m_bOnDodge = false;
+	m_bCanDodge = true;
 
 	m_sWeakAtkCnt = 0;
 	m_sHeavyAtkCnt = 0;
@@ -11304,15 +11426,39 @@ void CPlayer::Change_PlayerBody(PLAYER_BODY _eBodyType)
 		));
 
 	// 컴포넌트에 있는 매쉬 찾아서
-	auto& iter = m_pmapComponents.find(L"Com_DynamicMesh");
+	auto& iter = m_pmapComponents.find(L"Com_MeshDynamic");
+	Safe_Release(iter->second);
 
 	// Static 멤버변수는 처음에 Clone 할때 AddRef 해준다., 
 	Safe_Release(m_pDynamicMesh);
-	Safe_Release(iter->second);
 
 	// Release 한 컴포넌트에 새로이 Clone 받음.
 	iter->second = m_pDynamicMesh = static_cast<CMesh_Dynamic*>(CManagement::Get_Instance()->Clone_Component(SCENE_STATIC, szBodyName));
 	Safe_AddRef(iter->second);
+
+	Ready_BoneMatrix();
+
+	LPCSTR tmpChar = "RightHandAttach";
+
+	D3DXFRAME_DERIVED*	pFamre = (D3DXFRAME_DERIVED*)m_pDynamicMesh->Get_BonInfo(tmpChar, 2);
+
+	m_matHandBone = &pFamre->CombinedTransformationMatrix;
+
+	tmpChar = "Hips";
+
+	pFamre = (D3DXFRAME_DERIVED*)m_pDynamicMesh->Get_BonInfo(tmpChar, 0);
+
+	m_matTailBone = &pFamre->CombinedTransformationMatrix;
+
+	m_pHair->Set_AttachBoneMartix(m_matBones[Bone_Head]);
+	m_pHead[m_eHeadType]->Set_AttachBoneMartix(m_matBones[Bone_Head]);
+	m_pMask[m_eMaskType]->Set_AttachBoneMartix(m_matBones[Bone_Head]);
+	m_pWeapon[m_eActiveSlot]->Set_AttachBoneMartix(m_matHandBone);
+	m_pDrainWeapon->Set_AttachBoneMartix(m_matTailBone);
+}
+
+void CPlayer::Update_OuterAnim()
+{
 }
 
 CPlayer * CPlayer::Create(_Device pGraphic_Device)
