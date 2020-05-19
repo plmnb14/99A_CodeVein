@@ -70,7 +70,7 @@ _int CBossHP::Update_GameObject(_double TimeDelta)
 		
 	if (m_pBossNameUI)
 	{
-		m_pBossNameUI->Set_UI_Pos(m_fPosX, m_fPosY - 25.f);
+		m_pBossNameUI->Set_UI_Pos(m_fPosX, m_fPosY - 30.f);
 		m_pBossNameUI->Set_Active(m_bIsActive);
 		m_pBossNameUI->Set_UI_Index(m_eBossNameIdx);
 	}	

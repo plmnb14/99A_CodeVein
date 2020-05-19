@@ -1406,8 +1406,9 @@ technique Default_Technique
 	// 0 - Default ( DNS )
 	//====================================================================================================
 	pass Default_Rendering
-	{
-		// RenderState		
+	{	
+		cullmode = ccw;
+
 		AlphablendEnable = false;
 
 		AlphaTestEnable = true;
@@ -1422,6 +1423,8 @@ technique Default_Technique
 	//====================================================================================================
 	pass AlphaBlending
 	{
+		cullmode = ccw;
+
 		AlphaBlendEnable = true;
 		SrcBlend = SrcAlpha;
 		DestBlend = DestAlpha;
@@ -1435,6 +1438,8 @@ technique Default_Technique
 	//====================================================================================================
 	pass MotionBlur
 	{
+		cullmode = ccw;
+
 		AlphaTestEnable = true;
 		AlphaRef = 0;
 		AlphaFunc = Greater;
@@ -1447,11 +1452,15 @@ technique Default_Technique
 	//====================================================================================================
 	pass Dissolve
 	{
+		cullmode = ccw;
+
+		//AlphaBlendEnable = true;
+		//SrcBlend = SrcAlpha;
+		//DestBlend = DestAlpha;
+
 		AlphaTestEnable = true;
 		AlphaRef = 0;
 		AlphaFunc = Greater;
-
-		cullmode = ccw;
 
 		VertexShader = compile vs_3_0 VS_MAIN();
 		PixelShader = compile ps_3_0 PS_DISSOLVE();
@@ -1461,6 +1470,8 @@ technique Default_Technique
 	//====================================================================================================
 	pass Default_DN
 	{
+		cullmode = ccw;
+
 		AlphablendEnable = false;
 
 		AlphaTestEnable = true;
@@ -1475,7 +1486,7 @@ technique Default_Technique
 	//====================================================================================================
 	pass Default_DNE
 	{
-		cullmode = none;
+		cullmode = ccw;
 		AlphablendEnable = false;
 
 		AlphaTestEnable = true;
@@ -1490,7 +1501,7 @@ technique Default_Technique
 	//====================================================================================================
 	pass Default_DNSE
 	{
-		cullmode = none;
+		cullmode = ccw;
 		AlphablendEnable = false;
 
 		AlphaTestEnable = true;
@@ -1506,7 +1517,7 @@ technique Default_Technique
 	//====================================================================================================
 	pass Default_DNU
 	{
-		cullmode = none;
+		cullmode = ccw;
 		AlphablendEnable = false;
 
 		AlphaTestEnable = true;
@@ -1521,7 +1532,7 @@ technique Default_Technique
 	//====================================================================================================
 	pass Default_DNI
 	{
-		cullmode = none;
+		cullmode = ccw;
 		AlphablendEnable = false;
 
 		AlphaTestEnable = true;
@@ -1536,7 +1547,7 @@ technique Default_Technique
 	//====================================================================================================
 	pass Default_DNT
 	{
-		cullmode = none;
+		cullmode = ccw;
 		AlphablendEnable = false;
 
 		AlphaTestEnable = true;
@@ -1551,7 +1562,7 @@ technique Default_Technique
 	//====================================================================================================
 	pass Default_DNR
 	{
-		cullmode = none;
+		cullmode = ccw;
 		AlphablendEnable = false;
 
 		AlphaTestEnable = true;
@@ -1567,7 +1578,7 @@ technique Default_Technique
 	//====================================================================================================
 	pass Default_DNSU
 	{
-		cullmode = none;
+		cullmode = ccw;
 		AlphablendEnable = false;
 
 		AlphaTestEnable = true;
@@ -1581,9 +1592,9 @@ technique Default_Technique
 	//====================================================================================================
 	// 12 - Default ( D N S E ID )
 	//====================================================================================================
-	pass Default_DNSEID
+	pass Default_DNSUID
 	{
-		cullmode = none;
+		cullmode = ccw;
 		AlphablendEnable = false;
 
 		AlphaTestEnable = true;
@@ -1599,7 +1610,7 @@ technique Default_Technique
 	//====================================================================================================
 	pass Default_DNS
 	{
-		cullmode = none;
+		cullmode = ccw;
 		AlphablendEnable = false;
 
 		AlphaTestEnable = true;
@@ -1650,7 +1661,7 @@ technique Default_Technique
 	//====================================================================================================
 	pass Default_DNE
 	{
-		cullmode = none;
+		cullmode = ccw;
 		AlphablendEnable = false;
 
 		AlphaTestEnable = true;
@@ -1666,7 +1677,7 @@ technique Default_Technique
 	//====================================================================================================
 	pass Default_DNEID
 	{
-		cullmode = none;
+		cullmode = ccw;
 		AlphablendEnable = false;
 
 		AlphaTestEnable = true;
@@ -1682,7 +1693,7 @@ technique Default_Technique
 	//====================================================================================================
 	pass Default_DNEU
 	{
-		cullmode = none;
+		cullmode = ccw;
 		AlphablendEnable = false;
 
 		AlphaTestEnable = true;
@@ -1713,6 +1724,8 @@ technique Default_Technique
 	//====================================================================================================
 	pass Default_DNSH
 	{
+		cullmode = ccw;
+
 		AlphablendEnable = false;
 
 		AlphaTestEnable = true;
@@ -1728,6 +1741,7 @@ technique Default_Technique
 	//====================================================================================================
 	pass Default_DNSEU
 	{
+		cullmode = ccw;
 		AlphablendEnable = false;
 
 		AlphaTestEnable = true;
@@ -1743,6 +1757,7 @@ technique Default_Technique
 	//====================================================================================================
 	pass Default_DZ
 	{
+		cullmode = ccw;
 		AlphablendEnable = false;
 
 		AlphaTestEnable = true;
@@ -1758,6 +1773,7 @@ technique Default_Technique
 	//====================================================================================================
 	pass Default_DNSHU
 	{
+		cullmode = ccw;
 		AlphablendEnable = false;
 
 		AlphaTestEnable = true;

@@ -37,6 +37,8 @@ private:
 	void					Delete_QuickSlot(CExpendables_Slot* pSlot);
 	void					Slot_Regist_Sound(_uint iIdx);
 	void					Slot_UnRegist_Sound(_uint iIdx);
+	void					SetUp_SlotPos();
+	void					SetUp_SubUI_Active(_bool bIsActive);
 
 public:
 	void Add_Expendables(CExpendables::EXPEND_TYPE eType); // 해당 타입의 소비 아이템 획득
@@ -58,6 +60,7 @@ private:
 	vector<UI_DESC*>		m_vecUI_DESC;
 	_uint					m_iMaximumCnt = 3;
 	CExplainExpendUI*		m_pExplainUI = nullptr;
+	_bool					m_bIsSubActive = false;
 
 public:
 	static CExpendables_Inven*	Create(_Device pGraphic_Device);

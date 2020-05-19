@@ -706,6 +706,9 @@ HRESULT CRenderer::Render_Shadow()
 	_float fOffsetX = 0.5f + (0.5f / 1280);
 	_float fOffsetY = 0.5f + (0.5f / 720);
 
+	//_float fOffsetX = 0.5f + (0.5f / g_sShadow_X);
+	//_float fOffsetY = 0.5f + (0.5f / g_sShadow_Y);
+
 	_mat matScaleBias;
 	D3DXMatrixIdentity(&matScaleBias);
 

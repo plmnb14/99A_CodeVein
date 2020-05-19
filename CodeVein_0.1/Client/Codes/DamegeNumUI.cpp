@@ -116,7 +116,7 @@ HRESULT CDamegeNumUI::Render_GameObject()
 	if (nullptr == m_pTarget)
 		return E_FAIL;
 
-	m_pGraphic_Dev->SetRenderState(D3DRS_CULLMODE, D3DCULL_NONE);
+	//m_pGraphic_Dev->SetRenderState(D3DRS_CULLMODE, D3DCULL_NONE);
 
 	m_pShaderCom->Begin_Shader();
 

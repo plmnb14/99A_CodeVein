@@ -33,7 +33,10 @@ private:
 	void					Regist_Armor(CArmor_Slot* pArmorSlot);
 	void					UnRegist_Armor(CArmor_Slot* pArmorSlot);
 	void					Reset_SelectSlot();
+	void					SetUp_SlotPos();
+	void					SetUp_SubUI_Active(_bool bIsActive);
 	void					Late_Init();
+
 public:
 	void					Add_Armor(ARMOR_PARAM tArmorParam);
 	void					Sell_Armor();
@@ -47,6 +50,7 @@ private:
 	vector<CArmor_Slot*>	m_vecArmorSlot;
 	ARMOR_PARAM				m_tRegistParam;
 	CExplainArmorUI*		m_pExplainUI = nullptr;
+	_bool					m_bIsSubActive = false;
 
 
 	_bool					m_bLateInit = false;

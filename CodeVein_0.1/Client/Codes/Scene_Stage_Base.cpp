@@ -79,7 +79,7 @@ _int CScene_Stage_Base::Update_Scene(_double TimeDelta)
 	//g_pSoundManager->Play_Sound(L"Gwan_Cchak.wav", CSoundManager::Background_01, CSoundManager::BGM_Sound);
 	//====================================================================================================
 
-	CUI_Manager::Get_Instance()->Update_UI();
+	//CUI_Manager::Get_Instance()->Update_UI();
 
 	return NO_EVENT;
 }

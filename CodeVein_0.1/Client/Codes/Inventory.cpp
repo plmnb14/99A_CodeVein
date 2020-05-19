@@ -20,8 +20,6 @@ HRESULT CInventory::Ready_GameObject_Prototype()
 
 HRESULT CInventory::Ready_GameObject(void * pArg)
 {
-	if (FAILED(Add_Component()))
-		return E_FAIL;
 	CUI::Ready_GameObject(pArg);
 
 	m_fPosX = 229.5f;
@@ -42,84 +40,44 @@ _int CInventory::Update_GameObject(_double TimeDelta)
 
 	Click_Icon();
 
-	for (auto& pIcon : m_vecIcon)
-		pIcon->Set_Active(m_bIsActive);
+	if (m_bIsActive && !m_bIsSubActive)
+	{
+		SetUp_SubUI_Active(true);
+		m_bIsSubActive = true;
+	}
+	else if (!m_bIsActive && m_bIsSubActive)
+	{
+		SetUp_SubUI_Active(false);
+
+		m_pExpInven->Set_Active(false);
+		m_pMtrInven->Set_Active(false);
+		m_pWeaponInven->Set_Active(false);
+		m_pArmorInven->Set_Active(false);
+
+		m_bIsSubActive = false;
+	}
 	
-	if (!m_bIsActive)
+	/*if (!m_bIsActive)
 	{
 		m_pExpInven->Set_Active(false);
 		m_pMtrInven->Set_Active(false);
 		m_pWeaponInven->Set_Active(false);
-		m_pArmorInven->Set_Active(false);	
-	}
+		m_pArmorInven->Set_Active(false);
+	}*/
 
 	return NO_EVENT;
-}
-
-_int CInventory::Late_Update_GameObject(_double TimeDelta)
-{
-	
-
-	return NO_EVENT;
-}
-
-HRESULT CInventory::Render_GameObject()
-{
-	
-
-	return NOERROR;
-}
-
-HRESULT CInventory::Add_Component()
-{
-	// For.Com_Transform
-	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Transform", L"Com_Transform", (CComponent**)&m_pTransformCom)))
-		return E_FAIL;
-
-	// For.Com_Renderer
-	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Renderer", L"Com_Renderer", (CComponent**)&m_pRendererCom)))
-		return E_FAIL;
-
-	// For.Com_Texture
-	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Tex_MenuWindow", L"Com_Texture", (CComponent**)&m_pTextureCom)))
-		return E_FAIL;
-
-	// For.Com_Shader
-	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Shader_UI", L"Com_Shader", (CComponent**)&m_pShaderCom)))
-		return E_FAIL;
-
-	// for.Com_VIBuffer
-	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"VIBuffer_Rect", L"Com_VIBuffer", (CComponent**)&m_pBufferCom)))
-		return E_FAIL;
-
-	return NOERROR;
-}
-
-HRESULT CInventory::SetUp_ConstantTable()
-{
-	if (nullptr == m_pShaderCom)
-		return E_FAIL;
-
-	if (FAILED(m_pShaderCom->Set_Value("g_matWorld", &m_matWorld, sizeof(_mat))))
-		return E_FAIL;
-	if (FAILED(m_pShaderCom->Set_Value("g_matView", &m_matView, sizeof(_mat))))
-		return E_FAIL;
-	if (FAILED(m_pShaderCom->Set_Value("g_matProj", &m_matProj, sizeof(_mat))))
-		return E_FAIL;
-	if (FAILED(m_pTextureCom->SetUp_OnShader("g_DiffuseTexture", m_pShaderCom, 0)))
-		return E_FAIL;
-
-	return NOERROR;
 }
 
 void CInventory::SetUp_Default()
 {
-	m_pQuickSlot = CUI_Manager::Get_Instance()->Get_QuickSlot();
-	m_pExpInven = CUI_Manager::Get_Instance()->Get_Expendables_Inven();
-	m_pMtrInven = CUI_Manager::Get_Instance()->Get_Material_Inven();
-	m_pWeaponInven = CUI_Manager::Get_Instance()->Get_Weapon_Inven();
-	m_pArmorInven = CUI_Manager::Get_Instance()->Get_Armor_Inven();
-	m_pTotalInven = CUI_Manager::Get_Instance()->Get_Total_Inven();
+	m_pUIManager = CUI_Manager::Get_Instance();
+
+	m_pQuickSlot = m_pUIManager->Get_QuickSlot();
+	m_pExpInven = m_pUIManager->Get_Expendables_Inven();
+	m_pMtrInven = m_pUIManager->Get_Material_Inven();
+	m_pWeaponInven = m_pUIManager->Get_Weapon_Inven();
+	m_pArmorInven = m_pUIManager->Get_Armor_Inven();
+	m_pTotalInven = m_pUIManager->Get_Total_Inven();
 	
 	CUI::UI_DESC* pDesc = nullptr;
 	LOOP(5)
@@ -145,8 +103,6 @@ void CInventory::Click_Icon()
 	{
 		if (pIcon->Pt_InRect() && g_pInput_Device->Get_DIMouseState(CInput_Device::DIM_LB))
 		{
-			
-
 			switch (pIcon->Get_Type())
 			{
 			case CInventory_Icon::ICON_EXPEND:
@@ -205,6 +161,12 @@ void CInventory::Click_Icon()
 	
 }
 
+void CInventory::SetUp_SubUI_Active(_bool bIsActive)
+{
+	for (auto& pIcon : m_vecIcon)
+		pIcon->Set_Active(bIsActive);
+}
+
 CInventory * CInventory::Create(_Device pGraphic_Device)
 {
 	CInventory* pInstance = new CInventory(pGraphic_Device);
@@ -227,11 +189,5 @@ CGameObject * CInventory::Clone_GameObject(void * pArg)
 
 void CInventory::Free()
 {
-	Safe_Release(m_pTransformCom);
-	Safe_Release(m_pBufferCom);
-	Safe_Release(m_pTextureCom);
-	Safe_Release(m_pRendererCom);
-	Safe_Release(m_pShaderCom);
-
 	CUI::Free();
 }

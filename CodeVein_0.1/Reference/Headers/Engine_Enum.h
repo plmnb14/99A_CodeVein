@@ -154,16 +154,14 @@ enum WEAPON_ALL_DATA
 
 enum ARMOR_All_DATA
 {
+	ArmorAll_Drape_DarkNightHook,		// 암야의 낭아
 	ArmorAll_Gauntlet_DarkNightHook,	// 암야의 갈고리
-	ArmorAll_Gauntlet_NovelSilver,		// 노블 실버
 	ArmorAll_Gauntlet_MangSikHook,		// 망식의 갈고리
-	ArmorAll_Gauntlet_QueenKiller,		// 퀸 킬러(여왕 토벌대 아장)_발톱형
 	ArmorAll_LongCoat_DarkNightSpear,	// 암야의 돌격창
 	ArmorAll_LongCoat_WhiteSilver,		// 백은의 의장
 	ArmorAll_LongCoat_QueenKiller,		// 퀸 킬러(여왕 토벌대 아장)_가시형
 	ArmorAll_Muffler_DarkNightSpike,	// 암야의 가시
 	ArmorAll_Muffler_WhiteGraze,		// 화이트 그레이즈
-	ArmorAll_Muffler_Suiside,			// 수어사이드 쏜
 
 	ArmorAll_END
 };
@@ -242,8 +240,20 @@ enum PET_TYPE
 
 enum ARMOR_TYPE
 {
+	ARMOR_Drape,
 	ARMOR_Gauntlet,
 	ARMOR_LongCoat,
 	ARMOR_Muffler,
+	ARMOR_Drape,
 	ARMOR_End
+};
+
+enum BOSS_NAME
+{
+	Poison_Butterfly,	// 만개하는 독나비
+	Deer_King,			// 사슴왕
+	Fire_Boy,			// 화염포의 종자
+	Ice_Girl,			// 얼음검의 종자
+	Queens_Knight,		// 여왕의 기사 . 재림
+	BossName_End
 };

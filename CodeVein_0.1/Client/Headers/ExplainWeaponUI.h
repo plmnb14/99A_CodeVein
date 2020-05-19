@@ -4,6 +4,7 @@
 #include "UI.h"
 
 BEGIN(Client)
+class CPlayerFontUI;
 class CExplainWeaponUI final : public CUI
 {
 private:
@@ -37,6 +38,10 @@ private:
 	WPN_PARAM				m_tWeaponParam;
 	_uint					m_iInfoIdx = 0;
 	_uint					m_iWeaponIconIdx = 0;
+	_uint					m_iWeaponMoveIdx = 0;
+	CPlayerFontUI*			m_pAttackFont = nullptr;
+	CPlayerFontUI*			m_pAddDamageFont = nullptr;
+	CPlayerFontUI*			m_pReinForceFont = nullptr;
 
 public:
 	static CExplainWeaponUI*	Create(_Device pGraphic_Device);

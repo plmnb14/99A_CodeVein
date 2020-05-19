@@ -63,7 +63,7 @@ HRESULT CExpendables_Inven::Ready_GameObject(void * pArg)
 	//Add_MultiExpendables(CExpendables::Expend_Blood, 5);
 	//Add_MultiExpendables(CExpendables::Expend_Cheet, 6);
 	//Add_MultiExpendables(CExpendables::Expend_Hp, 7);
-	
+	SetUp_SlotPos();
 	return NOERROR;
 }
 
@@ -77,22 +77,16 @@ _int CExpendables_Inven::Update_GameObject(_double TimeDelta)
 	
 	Click_Inven();
 
-	_uint iIdx = 0;
-	for (auto& vector_iter : m_vecSlot)
+	if (m_bIsActive && !m_bIsSubActive)
 	{
-		vector_iter->Set_UI_Pos(m_fPosX - 100.f + 52.f * (iIdx % 5), m_fPosY - 150.f + 52.f * (iIdx / 5));
-		iIdx++;
+		SetUp_SubUI_Active(true);
+		m_bIsSubActive = true;
 	}
-
-	for (auto& pSlot : m_vecSlot)
+	else if (!m_bIsActive && m_bIsSubActive)
 	{
-		pSlot->Set_Active(m_bIsActive);
-		pSlot->Set_ViewZ(m_fViewZ - 0.1f);
+		SetUp_SubUI_Active(false);
+		m_bIsSubActive = false;
 	}
-
-	if (m_pExplainUI)
-		m_pExplainUI->Set_Active(m_bIsActive);
-	
 
 	return NO_EVENT;
 }
@@ -238,6 +232,7 @@ void CExpendables_Inven::Add_Slot()
 	pSlot->Set_UI_Size(50.f, 50.f);
 	g_pManagement->Add_GameOject_ToLayer_NoClone(pSlot, SCENE_MORTAL, L"Layer_PlayerUI", nullptr);
 	m_vecSlot.push_back(pSlot);
+	SetUp_SlotPos();
 }
 
 void CExpendables_Inven::Add_Expendables(CExpendables::EXPEND_TYPE eType)
@@ -252,12 +247,15 @@ void CExpendables_Inven::Add_Expendables(CExpendables::EXPEND_TYPE eType)
 	pExpendables->Set_Type(eType);
 	
 	Load_Expendables(pExpendables, 0);
+	SetUp_SlotPos();
 }
 
 void CExpendables_Inven::Add_MultiExpendables(CExpendables::EXPEND_TYPE eType, _uint iCnt)
 {
 	for (_uint i = 0; i < iCnt; ++i)
 		Add_Expendables(eType);
+
+	SetUp_SlotPos();
 }
 
 void CExpendables_Inven::Delete_QuickSlot(CExpendables_Slot* pSlot)
@@ -271,6 +269,7 @@ void CExpendables_Inven::Delete_QuickSlot(CExpendables_Slot* pSlot)
 			break;
 		}	
 	}
+	SetUp_SlotPos();
 	return;
 }
 
@@ -290,6 +289,27 @@ void CExpendables_Inven::Slot_UnRegist_Sound(_uint iIdx)
 	_uint iChannel = CSoundManager::CHANNELID::ExpendInven_UnRegist_Slot01 + iIdx;
 
 	g_pSoundManager->Play_Sound(L"UI_CommonClick.wav", CSoundManager::CHANNELID(iChannel), CSoundManager::Ambient_Sound);
+}
+
+void CExpendables_Inven::SetUp_SlotPos()
+{
+	_uint iIdx = 0;
+	for (auto& vector_iter : m_vecSlot)
+	{
+		vector_iter->Set_UI_Pos(m_fPosX - 100.f + 52.f * (iIdx % 5), m_fPosY - 150.f + 52.f * (iIdx / 5));
+		vector_iter->Set_ViewZ(m_fViewZ - 0.1f);
+		iIdx++;
+	}
+}
+
+void CExpendables_Inven::SetUp_SubUI_Active(_bool bIsActive)
+{
+	for (auto& pSlot : m_vecSlot)
+	{
+		pSlot->Set_Active(bIsActive);
+	}
+
+	m_pExplainUI->Set_Active(bIsActive);
 }
 
 void CExpendables_Inven::Use_Expendableas(CExpendables_Slot * pSlot)
@@ -327,6 +347,7 @@ void CExpendables_Inven::Use_Expendableas(CExpendables_Slot * pSlot)
 		
 		++idx;
 	}
+	SetUp_SlotPos();
 }
 
 void CExpendables_Inven::Sell_Expendables(_uint iDelete)
@@ -355,13 +376,14 @@ void CExpendables_Inven::Sell_Expendables(_uint iDelete)
 		++idx;
 	}
 
-	_ulong Idx = 0;
+	/*_ulong Idx = 0;
 	for (auto& pSlot : m_vecSlot)
 	{
 
 		pSlot->Set_UI_Pos(m_vecUI_DESC[Idx]->fPosX, m_vecUI_DESC[Idx]->fPosY);
 		++Idx;
-	}
+	}*/
+	SetUp_SlotPos();
 }
 
 
