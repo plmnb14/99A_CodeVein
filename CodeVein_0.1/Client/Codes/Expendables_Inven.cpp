@@ -60,9 +60,9 @@ HRESULT CExpendables_Inven::Ready_GameObject(void * pArg)
 		}
 	}
 
-	//Add_MultiExpendables(CExpendables::Expend_Blood, 5);
-	//Add_MultiExpendables(CExpendables::Expend_Cheet, 6);
-	//Add_MultiExpendables(CExpendables::Expend_Hp, 7);
+	Add_MultiExpendables(CExpendables::Expend_Blood, 5);
+	Add_MultiExpendables(CExpendables::Expend_Cheet, 6);
+	Add_MultiExpendables(CExpendables::Expend_Hp, 7);
 	SetUp_SlotPos();
 	return NOERROR;
 }

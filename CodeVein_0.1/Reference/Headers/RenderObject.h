@@ -112,6 +112,7 @@ private:
 protected:
 	_bool			m_bIsSelected = false;
 	_bool			m_bOnTool = false;
+	_bool			m_bAdvencedCull = false;
 
 	// 오브젝트 렌더 그룹 변수
 private:
@@ -126,6 +127,11 @@ private:
 
 	virtual HRESULT Ready_GameObject(void* pAvg);
 	virtual HRESULT	Add_Components(_tchar * szMeshName);
+
+private:
+	virtual void Check_Stage_01();
+	virtual void Check_Stage_02();
+	virtual void Check_Stage_03();
 
 public:
 	static CRenderObject* Create_For_Tool(_Device _pGraphicDev);

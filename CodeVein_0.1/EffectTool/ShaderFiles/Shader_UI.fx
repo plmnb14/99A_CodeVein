@@ -394,4 +394,17 @@ technique Default_Technique
 		vertexshader = compile vs_3_0 VS_2D_UV_CTRL();
 		pixelshader = compile ps_3_0 PS_HPBar_Noise();
 	}
+
+	pass BillBoard_Render	// 11
+	{
+		zEnable = false;
+		cullmode = none;
+
+		AlphablendEnable = true;
+		SrcBlend = SrcAlpha;
+		destblend = invsrcalpha;
+
+		VertexShader = compile vs_3_0 VS_MAIN();
+		PixelShader = compile ps_3_0 PS_MAIN();
+	}
 }

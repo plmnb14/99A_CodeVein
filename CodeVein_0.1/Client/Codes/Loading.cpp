@@ -1903,18 +1903,18 @@ HRESULT CLoading::Ready_Intro_MonsterPrototype()
 	//============================================================================================================================================
 	// ≈‰≈€
 	//============================================================================================================================================
-	{
-		if (FAILED(g_pManagement->Add_Prototype(L"Monster_Cocoon", CCocoon::Create(m_pGraphicDev))))
-			return E_FAIL;
-		// ≈‰≈€ πÊªÁ√—æÀ
-		if (FAILED(g_pManagement->Add_Prototype(L"Monster_CocoonBullet", CCocoonBullet::Create(m_pGraphicDev))))
-			return E_FAIL;
-		CObjectPool_Manager::Get_Instance()->Create_ObjectPool(L"Monster_CocoonBullet", L"Monster_CocoonBullet", 800);
-		// ≈‰≈€ √—æÀ
-		if (FAILED(g_pManagement->Add_Prototype(L"Monster_CocoonBigBullet", CCocoonBigBullet::Create(m_pGraphicDev))))
-			return E_FAIL;
-		CObjectPool_Manager::Get_Instance()->Create_ObjectPool(L"Monster_CocoonBigBullet", L"Monster_CocoonBigBullet", 100);
-	}
+	//{
+	//	if (FAILED(g_pManagement->Add_Prototype(L"Monster_Cocoon", CCocoon::Create(m_pGraphicDev))))
+	//		return E_FAIL;
+	//	// ≈‰≈€ πÊªÁ√—æÀ
+	//	if (FAILED(g_pManagement->Add_Prototype(L"Monster_CocoonBullet", CCocoonBullet::Create(m_pGraphicDev))))
+	//		return E_FAIL;
+	//	CObjectPool_Manager::Get_Instance()->Create_ObjectPool(L"Monster_CocoonBullet", L"Monster_CocoonBullet", 800);
+	//	// ≈‰≈€ √—æÀ
+	//	if (FAILED(g_pManagement->Add_Prototype(L"Monster_CocoonBigBullet", CCocoonBigBullet::Create(m_pGraphicDev))))
+	//		return E_FAIL;
+	//	CObjectPool_Manager::Get_Instance()->Create_ObjectPool(L"Monster_CocoonBigBullet", L"Monster_CocoonBigBullet", 100);
+	//}
 	//============================================================================================================================================
 	// ±Ë«Â≈Õ
 	//============================================================================================================================================

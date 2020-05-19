@@ -171,7 +171,7 @@ PS_OUT PS_MAIN(PS_IN In)
 	vector	vShade		= tex2D(ShadeSampler, In.vTexUV);
 	vector	vSpecular	= tex2D(SpecularSampler, In.vTexUV);
 	vector	vSSAO		= tex2D(SSAOSampler, In.vTexUV);
-	vector	vShadow		= tex2D(ShadowMapSampler, In.vTexUV);
+	//vector	vShadow		= tex2D(ShadowMapSampler, In.vTexUV);
 
 	float AO = vSpecular.a;
 	vSpecular.a = 0.f;
@@ -189,11 +189,6 @@ PS_OUT PS_MAIN(PS_IN In)
 	fog.x = 500 / (500 - 0.1);
 	fog.y = -1 / (500 - 0.1);
 
-	//float fDestiny = g_FogDestiny;
-	//if (0 == g_FogDestiny || 0 == vDepth.x)
-	//	fDestiny = 0.001f;
-	////  지수 Fog
-	//vector vFog = 1 / exp(pow(PixelCameraZ * fDestiny, 2));
 	if (0 == vDepth.x || 0 == g_FogDestiny)
 		return Out;
 	
@@ -212,56 +207,56 @@ PS_OUT PS_TONEMAPPING(PS_IN In)
 	Out.vColor = tex2D(DiffuseSampler, In.vTexUV);
 	Out.vColor += tex2D(BloomSampler, In.vTexUV);
 
-	// For Test
-	if (0 == g_iToneIndex)
-	{
-		// DX Sample ========================================================================
-		float Luminance = 1.08f;
-		static const float fMiddleGray = 0.18f;
-		static const float fWhiteCutoff = 0.9f;
-		
-		float3 Color = pow(Out.vColor.xyz, 1.f / 2.2f) * fMiddleGray / (Luminance + 0.001f);
-		Color *= (1.f + (Color / (fWhiteCutoff * fWhiteCutoff)));
-		Color /= (1.f + Color);
-		Out.vColor = float4(pow(Color, 1.f / 2.2f), 1.f);
-	}
-	else if (1 == g_iToneIndex)
-	{
-		//ToneMapACES ========================================================================
-		const float A = 2.51, B = 0.03, C = 2.43, D = 0.59, E = 0.14;
-		Out.vColor = saturate((Out.vColor * (A * Out.vColor + B)) / (Out.vColor * (C * Out.vColor + D) + E));
-	}
-	else if (2 == g_iToneIndex)
-	{
-		// EA studio ========================================================================
-		float3 Color = Out.vColor.xyz;
-		float3 x = max(0.f, Color - 0.004);
-		Color = (x * (6.2f * x + 0.5f)) / (x * (6.2f * x + 1.7f) + 0.06f);
-		//Color = pow(Color, 1.0 / 2.2);
-		Out.vColor = float4(Color, 1.f);
-	}
-	else if (3 == g_iToneIndex)
-	{
-		// reinhardTone ========================================================================
-		float3 mapped = Out.vColor.xyz / (Out.vColor.xyz + float3(1.0, 1.0, 1.0));
-		mapped = pow(mapped, float3((1.0 / 2.2), (1.0 / 2.2), (1.0 / 2.2)));
-		Out.vColor = float4(mapped, 1.f);
-	}
-	else if (4 == g_iToneIndex)
-	{
-		//// Uncharted2 Tonemap ========================================================================
-		float A = 0.15;
-		float B = 0.50;
-		float C = 0.10;
-		float D = 0.20;
-		float E = 0.02;
-		float F = 0.30;
-
-		float3 x = Out.vColor.rgb;
-		float3 Color = ((x*(A*x + C*B) + D*E) / (x*(A*x + B) + D*F)) - E / F;
-		Out.vColor = float4(Color, 1.f);
-	}
-	else
+	//// For Test
+	//if (0 == g_iToneIndex)
+	//{
+	//	// DX Sample ========================================================================
+	//	float Luminance = 1.08f;
+	//	static const float fMiddleGray = 0.18f;
+	//	static const float fWhiteCutoff = 0.9f;
+	//	
+	//	float3 Color = pow(Out.vColor.xyz, 1.f / 2.2f) * fMiddleGray / (Luminance + 0.001f);
+	//	Color *= (1.f + (Color / (fWhiteCutoff * fWhiteCutoff)));
+	//	Color /= (1.f + Color);
+	//	Out.vColor = float4(pow(Color, 1.f / 2.2f), 1.f);
+	//}
+	//else if (1 == g_iToneIndex)
+	//{
+	//	//ToneMapACES ========================================================================
+	//	const float A = 2.51, B = 0.03, C = 2.43, D = 0.59, E = 0.14;
+	//	Out.vColor = saturate((Out.vColor * (A * Out.vColor + B)) / (Out.vColor * (C * Out.vColor + D) + E));
+	//}
+	//else if (2 == g_iToneIndex)
+	//{
+	//	// EA studio ========================================================================
+	//	float3 Color = Out.vColor.xyz;
+	//	float3 x = max(0.f, Color - 0.004);
+	//	Color = (x * (6.2f * x + 0.5f)) / (x * (6.2f * x + 1.7f) + 0.06f);
+	//	//Color = pow(Color, 1.0 / 2.2);
+	//	Out.vColor = float4(Color, 1.f);
+	//}
+	//else if (3 == g_iToneIndex)
+	//{
+	//	// reinhardTone ========================================================================
+	//	float3 mapped = Out.vColor.xyz / (Out.vColor.xyz + float3(1.0, 1.0, 1.0));
+	//	mapped = pow(mapped, float3((1.0 / 2.2), (1.0 / 2.2), (1.0 / 2.2)));
+	//	Out.vColor = float4(mapped, 1.f);
+	//}
+	//else if (4 == g_iToneIndex)
+	//{
+	//	//// Uncharted2 Tonemap ========================================================================
+	//	float A = 0.15;
+	//	float B = 0.50;
+	//	float C = 0.10;
+	//	float D = 0.20;
+	//	float E = 0.02;
+	//	float F = 0.30;
+	//
+	//	float3 x = Out.vColor.rgb;
+	//	float3 Color = ((x*(A*x + C*B) + D*E) / (x*(A*x + B) + D*F)) - E / F;
+	//	Out.vColor = float4(Color, 1.f);
+	//}
+	//else
 		Out.vColor = pow(Out.vColor, 1 / 2.2);
 
 	// MONO =========================================================
@@ -565,6 +560,49 @@ PS_OUT MotionBlurForObj(PS_IN In)
 	return Out;
 }
 
+float4 g_LightShaftValue; // x = Destiny / y = Decay / z = Weight / w = Exposure
+float3 g_ScreenLightPos;
+matrix g_matWVP;
+PS_OUT GodRay(PS_IN In)
+{
+	PS_OUT			Out = (PS_OUT)0;
+
+#define NUM_SAMPLES 64
+
+	float2 texCoord = In.vTexUV;
+
+	float3 lightPos = mul(g_ScreenLightPos, g_matWVP).xyz;
+	float2 screenLightPos = lightPos.xy / 1.0f * 0.5f - 0.5f;
+	screenLightPos.y = 1.0f - screenLightPos.y;
+
+	float2 DeltaTexCoord = (texCoord.xy - screenLightPos.xy); // 화면 공간에서 픽셀에서 광원까지의 벡터를 계산합니다.
+
+	DeltaTexCoord *= 1.0f / NUM_SAMPLES * g_LightShaftValue.x; // 샘플링할 수로 나누고, 제어 팩터로 스케일링합니다.
+
+	float3 Color = tex2D(DiffuseSampler, texCoord).xyz;
+	if(Color.g < 1.f)
+		return Out;
+
+	float IlluminationDecay = 1.0f; // 일루미네이션 감소 팩터를 설정합니다.
+
+	for (int i = 0; i < NUM_SAMPLES; i++)
+	{
+		texCoord -= DeltaTexCoord; // 광선을 따라 샘플링
+
+		float3 Sample = tex2D(DiffuseSampler, texCoord).xyz; // 샘플을 새 좌표로 위치시킴
+
+		Sample *= IlluminationDecay * g_LightShaftValue.z; // 스케일 / 감쇄 팩터를 적용하여 감소.
+
+		Color += Sample; // 조합 된 색상을 축적합니다. 
+
+		IlluminationDecay *= g_LightShaftValue.y; // 감쇄 팩터 지수를 업데이트합니다. 
+	}
+
+	Out.vColor = saturate(float4(Color * g_LightShaftValue.w, 1.0)); // 추가 컨트롤 팩터와 함께 최종 색상을 출력합니다.
+
+	return Out;
+}
+
 technique Default_Technique
 {
 	pass Default_Rendering // 0
@@ -689,6 +727,18 @@ technique Default_Technique
 	
 		VertexShader = NULL;
 		PixelShader = compile ps_3_0 PS_BLURV();
+	}
+
+	pass GodRay // 9
+	{
+		ZWriteEnable = false;
+
+		AlphatestEnable = true;
+		AlphaRef = 0;
+		AlphaFunc = Greater;
+
+		VertexShader = NULL;
+		PixelShader = compile ps_3_0 GodRay();
 	}
 }
 

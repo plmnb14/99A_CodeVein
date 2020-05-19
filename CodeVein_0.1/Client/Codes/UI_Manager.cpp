@@ -327,7 +327,7 @@ HRESULT CUI_Manager::SetUp_UILayer()
 	// ¿‚»≠¡° NPC UI
 	m_pGeneralStoreNPCUI = static_cast<CGeneralStoreNPCUI*>(g_pManagement->Clone_GameObject_Return(L"GameObject_GeneralStoreNPCUI", nullptr));
 	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pGeneralStoreNPCUI, SCENE_MORTAL, L"Layer_PlayerUI", nullptr);
-	//m_pGeneralStoreNPCUI->Set_Active(true);
+	
 	//////////////////////////////////// ∆Í UI /////////////////////////////////////////////////////////////////////
 	// ∆Í ¿Œ∫•≈‰∏Æ
 	m_pPet_Inven = static_cast<CPet_Inven*>(g_pManagement->Clone_GameObject_Return(L"GameObject_PetInven", nullptr));
