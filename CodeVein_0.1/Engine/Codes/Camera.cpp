@@ -376,10 +376,11 @@ void CCamera::Set_OnAimingTarget(_bool _bOnAim)
 	m_fAtLerpValue = 0.f;
 	m_fPosLerpValue = 0.f;
 
-	//if (false == m_bOnAiming)
-	//{
-	//	m_fY_LockAngle = 22.5f;
-	//}
+	if (false == m_bOnAiming)
+	{
+		m_pTargetBoneMatrix = nullptr;
+		m_pTargetWorldMatrix = nullptr;
+	}
 }
 
 void CCamera::Set_AimUI(_bool _bAimUI)
@@ -582,7 +583,37 @@ HRESULT CCamera::SetUp_ViewType(CameraView _CameraViewType)
 			_v3 vOwnerRight = vTrans->Get_Axis(AXIS_X);
 			_v3 vLerpTargetPos, vLerpTargetAt;
 
-			vAimAt = TARGET_TO_TRANS(m_pAimingTarget)->Get_Pos(); // +(WORLD_UP * 1.5f);
+			if (false == m_bAimUI)
+			{
+				if (nullptr == m_pTargetBoneMatrix)
+				{
+					CMesh_Dynamic*	pMeshDynamic = static_cast<Engine::CMesh_Dynamic*>((m_pAimingTarget)->Get_Component(L"Com_Mesh"));
+					CTransform*		pTargettransform = TARGET_TO_TRANS(m_pAimingTarget);
+
+					LPCSTR tmpChar = "Hips";
+
+					D3DXFRAME_DERIVED*	pFamre = (D3DXFRAME_DERIVED*)pMeshDynamic->Get_BonInfo(tmpChar, 0);
+
+					m_pTargetBoneMatrix = &pFamre->CombinedTransformationMatrix;
+					m_pTargetWorldMatrix = &pTargettransform->Get_WorldMat();
+
+					_mat tmpMat = *m_pTargetBoneMatrix * *m_pTargetWorldMatrix;
+
+					memcpy(vAimAt, &tmpMat._41, sizeof(_v3));
+				}
+
+				else
+				{
+					_mat tmpMat = *m_pTargetBoneMatrix * *m_pTargetWorldMatrix;
+
+					memcpy(vAimAt, &tmpMat._41, sizeof(_v3));
+				}
+			}
+
+			else
+			{
+				vAimAt = TARGET_TO_TRANS(m_pAimingTarget)->Get_Pos();
+			}
 
 			vEyePos = vOwnerDir *= -1.f;
 			vEyePos *= m_fDistance;

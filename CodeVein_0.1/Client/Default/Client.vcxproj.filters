@@ -616,6 +616,12 @@
     <Filter Include="02.GameObject\Stage\0%29 Player\03%29 HitCheckUI">
       <UniqueIdentifier>{574b934b-ae5a-4f6b-9e15-0bd599ad1957}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObject\Stage\0%29 Player\04%29 FadeCornerUI">
+      <UniqueIdentifier>{2610a5ca-e957-4877-91de-7c89f5531585}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Logo\LoadingScripts">
+      <UniqueIdentifier>{fad94808-a810-4f0e-9e27-8cb866ff4b43}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -1299,6 +1305,12 @@
     <ClInclude Include="..\Headers\Calling_Colleague.h">
       <Filter>02.GameObject\Stage\5%29 UI\UI\15. Colleague UI\02. Calling_Colleague</Filter>
     </ClInclude>
+    <ClInclude Include="..\Headers\FadeCornerUI.h">
+      <Filter>02.GameObject\Stage\0%29 Player\04%29 FadeCornerUI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\LoadingScripts.h">
+      <Filter>02.GameObject\Logo\LoadingScripts</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -1966,6 +1978,12 @@
     </ClCompile>
     <ClCompile Include="..\Codes\Calling_Colleague.cpp">
       <Filter>02.GameObject\Stage\5%29 UI\UI\15. Colleague UI\02. Calling_Colleague</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\FadeCornerUI.cpp">
+      <Filter>02.GameObject\Stage\0%29 Player\04%29 FadeCornerUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\LoadingScripts.cpp">
+      <Filter>02.GameObject\Logo\LoadingScripts</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

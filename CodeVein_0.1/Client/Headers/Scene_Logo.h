@@ -7,6 +7,8 @@
 #include "OrthoEffect.h"
 
 BEGIN(Client)
+
+class CLoadingScripts;
 class CLogoBtn;
 class CLoadingScreen;
 class CBackGround;
@@ -45,6 +47,7 @@ private:
 	CLogoBtn*			m_pLogoBtn = nullptr;
 	CLoadingScreen*		m_pLoadingScreen = nullptr;
 	CBackGround*		m_pBackgroundLogo = nullptr;
+	CLoadingScripts*	m_pLoadingScripts = nullptr;
 
 	_bool				m_bIsChangeStage = false;
 	_bool				m_bLateInit = false;

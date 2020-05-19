@@ -1,64 +1,61 @@
 #include "stdafx.h"
-#include "HitCheckUI.h"
+#include "LoadingScripts.h"
 
-CHitCheckUI::CHitCheckUI(_Device pGraphic_Device)
+CLoadingScripts::CLoadingScripts(LPDIRECT3DDEVICE9 pGraphic_Device)
 	: CUI(pGraphic_Device)
 {
+
 }
 
-CHitCheckUI::CHitCheckUI(const CHitCheckUI & rhs)
+CLoadingScripts::CLoadingScripts(const CLoadingScripts & rhs)
 	: CUI(rhs)
 {
+
 }
 
-HRESULT CHitCheckUI::Ready_GameObject_Prototype()
+HRESULT CLoadingScripts::Ready_GameObject_Prototype()
 {
 	CUI::Ready_GameObject_Prototype();
 
 	return NOERROR;
 }
 
-HRESULT CHitCheckUI::Ready_GameObject(void * pArg)
+HRESULT CLoadingScripts::Ready_GameObject(void * pArg)
 {
 	if (FAILED(Add_Component()))
 		return E_FAIL;
 
 	CUI::Ready_GameObject(pArg);
 
-	m_fPosX = 640;
-	m_fPosY = 360.f;
-	m_fSizeX = 1280.f;
-	m_fSizeY = 720.f;
+	m_fPosX = 640.f;
+	m_fPosY = 602.f;
 
-	m_bEnable = false;
+	m_fSizeX = 512.f;
+	m_fSizeY = 512.f;
+
+	m_fViewZ = 1.f;
+
 	return NOERROR;
 }
 
-_int CHitCheckUI::Update_GameObject(_double TimeDelta)
+_int CLoadingScripts::Update_GameObject(_double TimeDelta)
 {
-	if (false == m_bEnable)
-		return NO_EVENT;
+	if (!m_bEnable)
+		return S_OK;
 
-	if (m_bOnLifeTime)
-	{
-		m_fLifeTime_Cur -= (_float)TimeDelta;
-		m_fAlphaPercent = m_fLifeTime_Cur / m_fLifeTime_Max;
-
-		if (m_fLifeTime_Cur <= 0.f || m_fAlphaPercent <= 0.f)
-		{
-			m_fLifeTime_Max = 0.f;
-			m_fLifeTime_Cur = 0.f;
-			m_fAlphaPercent = 0.f;
-			m_bOnLifeTime = false;
-			m_bEnable = false;
-		}
-	}
-
-	CGameObject::Update_GameObject(TimeDelta);
+	CUI::Update_GameObject(TimeDelta);
 
 	m_pRendererCom->Add_RenderList(RENDER_UI, this);
 
 	D3DXMatrixOrthoLH(&m_matProj, WINCX, WINCY, 0.f, 1.f);
+
+	return NO_EVENT;
+}
+
+_int CLoadingScripts::Late_Update_GameObject(_double TimeDelta)
+{
+	if (!m_bEnable)
+		return S_OK;
 
 	D3DXMatrixIdentity(&m_matWorld);
 	D3DXMatrixIdentity(&m_matView);
@@ -72,13 +69,11 @@ _int CHitCheckUI::Update_GameObject(_double TimeDelta)
 	return NO_EVENT;
 }
 
-_int CHitCheckUI::Late_Update_GameObject(_double TimeDelta)
+HRESULT CLoadingScripts::Render_GameObject()
 {
-	return NO_EVENT;
-}
+	if (!m_bEnable)
+		return S_OK;
 
-HRESULT CHitCheckUI::Render_GameObject()
-{
 	if (nullptr == m_pShaderCom ||
 		nullptr == m_pBufferCom)
 		return E_FAIL;
@@ -89,25 +84,24 @@ HRESULT CHitCheckUI::Render_GameObject()
 	g_pManagement->Set_Transform(D3DTS_PROJECTION, m_matProj);
 
 
-	if (FAILED(SetUp_ConstantTable(0)))
+	if (FAILED(SetUp_ConstantTable(m_iIndex)))
 		return E_FAIL;
 
 	m_pShaderCom->Begin_Shader();
 
-	m_pShaderCom->Begin_Pass(12);
+	m_pShaderCom->Begin_Pass(1);
 
 	m_pBufferCom->Render_VIBuffer();
 
 	m_pShaderCom->End_Pass();
 
 	m_pShaderCom->End_Shader();
-
-	cout << " 졸라 잘 나오긴해!!" << endl;
+	
 
 	return NOERROR;
 }
 
-HRESULT CHitCheckUI::Add_Component()
+HRESULT CLoadingScripts::Add_Component()
 {
 	// For.Com_Transform
 	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Transform", L"Com_Transform", (CComponent**)&m_pTransformCom)))
@@ -118,7 +112,7 @@ HRESULT CHitCheckUI::Add_Component()
 		return E_FAIL;
 
 	// For.Com_Texture
-	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Tex_Ortho_Blood", L"Com_Texture", (CComponent**)&m_pTextureCom)))
+	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"DefaultTex_LoadingScripts", L"Com_Texture", (CComponent**)&m_pTextureCom)))
 		return E_FAIL;
 
 	// For.Com_Shader
@@ -132,53 +126,53 @@ HRESULT CHitCheckUI::Add_Component()
 	return NOERROR;
 }
 
-HRESULT CHitCheckUI::SetUp_ConstantTable(_uint iIndex)
+HRESULT CLoadingScripts::SetUp_ConstantTable(_uint iIndex)
 {
 	if (nullptr == m_pShaderCom)
 		return E_FAIL;
 
-
 	if (FAILED(m_pShaderCom->Set_Value("g_matWorld", &m_matWorld, sizeof(_mat))))
 		return E_FAIL;
 	if (FAILED(m_pShaderCom->Set_Value("g_matView", &m_matView, sizeof(_mat))))
+
 		return E_FAIL;
 	if (FAILED(m_pShaderCom->Set_Value("g_matProj", &m_matProj, sizeof(_mat))))
 		return E_FAIL;
+
 	if (FAILED(m_pTextureCom->SetUp_OnShader("g_DiffuseTexture", m_pShaderCom, iIndex)))
-		return E_FAIL;
-	if (FAILED(m_pShaderCom->Set_Value("g_fAlpha", &m_fAlphaPercent, sizeof(_float))))
 		return E_FAIL;
 
 	return NOERROR;
 }
 
-CHitCheckUI * CHitCheckUI::Create(_Device pGraphic_Device)
+CLoadingScripts * CLoadingScripts::Create(LPDIRECT3DDEVICE9 pGraphic_Device)
 {
-	CHitCheckUI* pInstance = new CHitCheckUI(pGraphic_Device);
+	CLoadingScripts*	pInstance = new CLoadingScripts(pGraphic_Device);
 
 	if (FAILED(pInstance->Ready_GameObject_Prototype()))
 	{
-		MSG_BOX("CHitCheckUI Creating Fail");
+		MSG_BOX("Failed To Creating CMainApp");
 		Safe_Release(pInstance);
 	}
 
 	return pInstance;
+
 }
 
-CGameObject * CHitCheckUI::Clone_GameObject(void * pArg)
+CGameObject * CLoadingScripts::Clone_GameObject(void * pArg)
 {
-	CHitCheckUI* pInstance = new CHitCheckUI(*this);
+	CLoadingScripts*	pInstance = new CLoadingScripts(*this);
 
 	if (FAILED(pInstance->Ready_GameObject(pArg)))
 	{
-		MSG_BOX("Failed To Cloned CHitCheckUI");
+		MSG_BOX("Failed To Cloned CMainApp");
 		Safe_Release(pInstance);
 	}
 
 	return pInstance;
 }
 
-void CHitCheckUI::Free()
+void CLoadingScripts::Free()
 {
 	Safe_Release(m_pTransformCom);
 	Safe_Release(m_pBufferCom);
@@ -186,5 +180,5 @@ void CHitCheckUI::Free()
 	Safe_Release(m_pTextureCom);
 	Safe_Release(m_pRendererCom);
 
-	CUI::Free();
+	CGameObject::Free();
 }
