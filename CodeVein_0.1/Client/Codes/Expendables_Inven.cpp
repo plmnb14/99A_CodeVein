@@ -279,7 +279,7 @@ void CExpendables_Inven::Slot_Regist_Sound(_uint iIdx)
 		return;
 	_uint iChannel = CSoundManager::CHANNELID::ExpendInven_Regist_Slot01 + iIdx;
 
-	g_pSoundManager->Play_Sound(L"UI_CommonHover.wav", CSoundManager::CHANNELID(iChannel), CSoundManager::Ambient_Sound);
+	g_pSoundManager->Play_Sound(L"UI_CommonHover.wav", CSoundManager::CHANNELID(iChannel), CSoundManager::Effect_Sound);
 }
 
 void CExpendables_Inven::Slot_UnRegist_Sound(_uint iIdx)
@@ -288,7 +288,7 @@ void CExpendables_Inven::Slot_UnRegist_Sound(_uint iIdx)
 		return;
 	_uint iChannel = CSoundManager::CHANNELID::ExpendInven_UnRegist_Slot01 + iIdx;
 
-	g_pSoundManager->Play_Sound(L"UI_CommonClick.wav", CSoundManager::CHANNELID(iChannel), CSoundManager::Ambient_Sound);
+	g_pSoundManager->Play_Sound(L"UI_CommonClick.wav", CSoundManager::CHANNELID(iChannel), CSoundManager::Effect_Sound);
 }
 
 void CExpendables_Inven::SetUp_SlotPos()
