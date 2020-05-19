@@ -101,6 +101,10 @@ HRESULT CRenderer::Ready_Component_Prototype()
 	if (FAILED(m_pTarget_Manager->Add_Render_Target(m_pGraphic_Dev, L"Target_Blend", ViewPort.Width, ViewPort.Height, D3DFMT_A32B32G32R32F, D3DXCOLOR(0.f, 0.f, 0.f, 0.f))))
 		return E_FAIL;
 
+	// Target_GodRay
+	if (FAILED(m_pTarget_Manager->Add_Render_Target(m_pGraphic_Dev, L"Target_GodRay", ViewPort.Width, ViewPort.Height, D3DFMT_A8R8G8B8, D3DXCOLOR(0.f, 0.f, 0.f, 0.f))))
+		return E_FAIL;
+
 	// Target_Blur
 	if (FAILED(m_pTarget_Manager->Add_Render_Target(m_pGraphic_Dev, L"Target_Blur", ViewPort.Width, ViewPort.Height, D3DFMT_A8R8G8B8, D3DXCOLOR(0.0f, 0.0f, 0.0f, 0.f))))
 		return E_FAIL;
@@ -370,6 +374,12 @@ HRESULT CRenderer::Ready_Component_Prototype()
 	// For.Target_BlurDOF`s Debug Buffer
 	if (FAILED(m_pTarget_Manager->Ready_Debug_Buffer(L"Target_BlurDOF", fTargetSize * 5, fTargetSize * 3, fTargetSize, fTargetSize)))
 		return E_FAIL;
+	
+	//=====================================================================================================================
+
+	// For.Target_GodRay`s Debug Buffer
+	if (FAILED(m_pTarget_Manager->Ready_Debug_Buffer(L"Target_GodRay", fTargetSize * 6, 0, fTargetSize, fTargetSize)))
+		return E_FAIL;
 #endif
 
 	return NOERROR;
@@ -413,6 +423,10 @@ HRESULT CRenderer::Draw_RenderList()
 	// 노멀타겟과 빛정보를 이용하여 셰이드타겟에 값을 그리낟.
 	if (FAILED(Render_LightAcc()))
 		return E_FAIL;
+	
+	//// GodRay
+	//if (FAILED(Render_GodRay()))
+	//	return E_FAIL;
 
 	// 디퓨즈, 셰이드 두 타겟을 혼합하여 백버퍼에 찍는다.
 	// With Skybox(priority), With Alpha
@@ -481,6 +495,7 @@ HRESULT CRenderer::Draw_RenderList()
 		m_pTarget_Manager->Render_Debug_Buffer(L"MRT_SSAO_Blur");
 		m_pTarget_Manager->Render_Debug_Buffer_Single(L"Target_BlurDOF");
 		m_pTarget_Manager->Render_Debug_Buffer_Single(L"Target_DecalDepth");
+		m_pTarget_Manager->Render_Debug_Buffer_Single(L"Target_GodRay");
 		
 		m_pGraphic_Dev->SetTexture(0, nullptr);
 	}
@@ -1274,6 +1289,16 @@ HRESULT CRenderer::Render_Blend()
 	m_pShader_Blend->End_Pass();
 	m_pShader_Blend->End_Shader();
 
+	////GodRay Test
+	//m_pShader_Blend->Begin_Shader();
+	//m_pShader_Blend->Begin_Pass(5);
+	//if (FAILED(m_pShader_Blend->Set_Texture("g_DiffuseTexture", m_pTarget_Manager->Get_Texture(L"Target_GodRay"))))
+	//	return E_FAIL;
+	//m_pShader_Blend->Commit_Changes();
+	//m_pViewPortBuffer->Render_VIBuffer();
+	//m_pShader_Blend->End_Pass();
+	//m_pShader_Blend->End_Shader();
+
 	// Alpha
 	if (FAILED(Render_Alpha()))
 		return E_FAIL;
@@ -1283,6 +1308,52 @@ HRESULT CRenderer::Render_Blend()
 		return E_FAIL;
 
 	if (FAILED(m_pTarget_Manager->End_MRT(L"MRT_Blend")))
+		return E_FAIL;
+
+	return NOERROR;
+}
+
+HRESULT CRenderer::Render_GodRay()
+{
+	if (nullptr == m_pViewPortBuffer ||
+		nullptr == m_pShader_Blend)
+		return E_FAIL;
+
+	if (FAILED(m_pShader_Blend->Set_Texture("g_DiffuseTexture", m_pTarget_Manager->Get_Texture(L"Target_Depth"))))
+		return E_FAIL;
+
+	//_v3 vCamPos = CManagement::Get_Instance()->Get_CamPosition();
+	//_v3 vLightPos = vCamPos + m_vShadowLightPos;
+
+	m_pShader_Shadow->Set_Value("g_ScreenLightPos", &m_vShadowLightPos, sizeof(_v3));
+
+	_mat ViewMatrix = CManagement::Get_Instance()->Get_Transform(D3DTS_VIEW);
+	_mat ProjMatrix = CManagement::Get_Instance()->Get_Transform(D3DTS_PROJECTION);
+
+	_mat matWVP = ViewMatrix * ProjMatrix;
+	m_pShader_Shadow->Set_Value("g_matWVP", &matWVP, sizeof(_mat));
+
+	float decay = 0.96815f;
+	float exposure = 0.2f;
+	float density = 0.926f;
+	float weight = 0.58767f;
+	_v4 vParam = _v4(density, decay, weight, exposure);
+	m_pShader_Shadow->Set_Value("g_LightShaftValue", &vParam, sizeof(_v4));
+	
+	
+	if (FAILED(m_pTarget_Manager->Begin_Render_Target(L"Target_GodRay")))
+		return E_FAIL;
+
+	// 장치에 백버퍼가 셋팅되어있다.	
+	m_pShader_Blend->Begin_Shader();
+	m_pShader_Blend->Begin_Pass(9);
+
+	m_pViewPortBuffer->Render_VIBuffer();
+
+	m_pShader_Blend->End_Pass();
+	m_pShader_Blend->End_Shader();
+
+	if (FAILED(m_pTarget_Manager->End_Render_Target(L"Target_GodRay")))
 		return E_FAIL;
 
 	return NOERROR;

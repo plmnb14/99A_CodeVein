@@ -23,6 +23,7 @@ public:
 	void Set_Mask(const _tchar* _Name, _int _iMaskIdx);
 	void Set_UI_Layer();
 	void Set_ViewZ(_float fViewZ);
+	void Set_Active(_bool bActive);
 
 public:
 	HRESULT SetUp_ConstantTable_Instance(CShader* pShader);
@@ -67,6 +68,7 @@ private:
 	_int	m_iMaskIdx = 0;
 
 	_bool	m_bUILayer = false;
+	_bool	m_bIsActive = true;
 
 protected:
 	void Check_Frame(_double TimeDelta);

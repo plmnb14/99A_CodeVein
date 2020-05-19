@@ -28,6 +28,9 @@ private:
 	virtual ~CCostume_Outer() = default;
 
 public:
+	CClothManager::Cloth_Dynamic Get_OuterType() { return m_eOuterType; }
+
+public:
 	virtual void			Set_AttachBoneMartix(_mat* _matAttachBone) { m_pmatBone = _matAttachBone; }
 	virtual void			Set_ParentMatrix(_mat* _matParent) { m_pmatParent = _matParent; }
 

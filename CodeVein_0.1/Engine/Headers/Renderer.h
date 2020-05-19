@@ -102,6 +102,7 @@ private:
 private:
 	HRESULT Render_LightAcc();
 	HRESULT Render_Blend();
+	HRESULT Render_GodRay();
 	HRESULT Render_BrightPass();
 	HRESULT Render_Blur();
 	HRESULT Render_MotionBlurObj();
