@@ -7,7 +7,7 @@
 #include "ParticleMgr.h"
 #include "ScriptManager.h"
 #include "ObjectPool_Manager.h"
-#include "SoundManager.h".
+#include "SoundManager.h"
 
 CMainApp::CMainApp()
 {
@@ -15,7 +15,7 @@ CMainApp::CMainApp()
 
 HRESULT CMainApp::Ready_MainApp()
 {
-	if (FAILED(Ready_Default_Setting(CGraphic_Device::WINMODE_FULL, g_nWinCX, g_nWinCY)))
+	if (FAILED(Ready_Default_Setting(CGraphic_Device::WINMODE_WIN, g_nWinCX, g_nWinCY)))
 		return E_FAIL;
 
 	if (FAILED(Ready_Component_Prototype()))
