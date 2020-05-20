@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "..\Headers\Haze.h"
 #include "ParticleMgr.h"
+#include "UI_Manager.h"
 
 CHaze::CHaze(LPDIRECT3DDEVICE9 pGraphic_Device)
 	: CGameObject(pGraphic_Device)
@@ -27,6 +28,7 @@ HRESULT CHaze::Ready_GameObject(void* pArg)
 		return S_OK;
 	}
 
+	m_bDead = false;
 	m_fSpeed = 7.f;
 	m_dLifeTime = 10.f;
 	m_fCurveAccel = 1.f;
@@ -95,7 +97,7 @@ _int CHaze::Update_GameObject(_double TimeDelta)
 		}
 
 		m_fEffectOffset += _float(TimeDelta);
-		if (m_fEffectOffset > 0.1f)
+		if (m_fEffectOffset > 0.05f)
 		{
 			m_fEffectOffset = 0.f;
 			CParticleMgr::Get_Instance()->Create_Effect(L"Haze_FlashParticle", m_pTransformCom->Get_Pos());
@@ -109,6 +111,9 @@ _int CHaze::Late_Update_GameObject(_double TimeDelta)
 {
 	if (nullptr == m_pRendererCom)
 		return E_FAIL;
+
+	if (m_fDelay > 0.f)
+		return NO_EVENT;
 
 	if (FAILED(m_pRendererCom->Add_RenderList(RENDER_NONALPHA, this)))
 		return E_FAIL;
@@ -127,6 +132,9 @@ void CHaze::Check_Move(_double TimeDelta)
 	if (D3DXVec3Length(&vDir) < 0.5f)
 	{
 		m_dCurTime += 1000.f;
+
+		CUI_Manager::Get_Instance()->Get_HazeUI()->Accumulate_Haze((_long)m_fHazeValue);
+
 		return;
 	}
 
@@ -157,10 +165,10 @@ void CHaze::Update_Trails(_double TimeDelta)
 	memcpy(vDir, &m_pTransformCom->Get_WorldMat()._21, sizeof(_v3));
 	//m_vDir
 
-	if (m_pTrailEffect)
+	if (m_pTrailEffect) 
 	{
 		m_pTrailEffect->Set_ParentTransform(&matWorld);
-		m_pTrailEffect->Ready_Info(vBegin + vDir * -0.05f, vBegin + vDir * 0.05f);
+		m_pTrailEffect->Ready_Info(vBegin + vDir * -0.09f, vBegin + vDir * 0.09f);
 		m_pTrailEffect->Update_GameObject(TimeDelta);
 	}
 }

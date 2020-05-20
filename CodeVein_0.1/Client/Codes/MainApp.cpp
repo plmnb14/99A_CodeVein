@@ -25,7 +25,12 @@ HRESULT CMainApp::Ready_MainApp()
 		return E_FAIL;
 
 	// 볼륨조절
-	g_pSoundManager->Set_Volume(CSoundManager::Master_Volume, 0.f);
+	g_pSoundManager->Set_Volume(CSoundManager::Master_Volume, 0.5f);
+
+	g_pSoundManager->Set_Volume(CSoundManager::Effect_Volume, 1.f);
+	g_pSoundManager->Set_Volume(CSoundManager::BGM_Volume, 1.f); 
+	g_pSoundManager->Set_Volume(CSoundManager::Ambien_Volume, 1.f);
+	g_pSoundManager->Set_Volume(CSoundManager::Voice_Volume, 1.f);
 
 	return S_OK;
 }
@@ -35,6 +40,22 @@ _int CMainApp::Update_MainApp(_double TimeDelta)
 	if (nullptr == g_pManagement)
 		return -1;
 	
+	// 마스터 볼륨 업
+	if (g_pInput_Device->Key_Down(DIK_NUMPADPLUS))
+	{
+		g_pSoundManager->Add_Volume(CSoundManager::Master_Volume, 0.05f);
+
+		cout << "현재 마스터 사운드 볼륨 : " << g_pSoundManager->Get_Volume() << endl;
+	}
+
+	// 마스터 볼륨 다운
+	else if (g_pInput_Device->Key_Down(DIK_NUMPADMINUS))
+	{
+		g_pSoundManager->Add_Volume(CSoundManager::Master_Volume, -0.05f);
+
+		cout << "현재 마스터 사운드 볼륨 : " << g_pSoundManager->Get_Volume() << endl;
+	}
+
 	m_fFrameDeltaTimer = (_float)TimeDelta;
 
 	CCameraMgr::Get_Instance()->Update();
@@ -43,7 +64,7 @@ _int CMainApp::Update_MainApp(_double TimeDelta)
 	CObjectPool_Manager::Get_Instance()->Update_ObjectPool(TimeDelta);
 	CObjectPool_Manager::Get_Instance()->LateUpdate_ObjectPool(TimeDelta);
 
-	//g_pSoundManager->Update_SoundManager();
+	g_pSoundManager->Update_SoundManager();
 
 	return g_pManagement->Update_Management(TimeDelta);
 }	

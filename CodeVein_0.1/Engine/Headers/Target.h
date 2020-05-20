@@ -29,11 +29,11 @@ public:
 	HRESULT Begin_ViewPort();
 	HRESULT End_ViewPort();
 
-#ifdef _DEBUG
+//#ifdef _DEBUG
 public:
 	HRESULT Ready_Debug_Buffer(_float fStartX, _float fStartY, _float fSizeX, _float fSizeY);
 	HRESULT Render_Debug_Buffer();
-#endif
+//#endif
 
 private:
 	LPDIRECT3DDEVICE9		m_pGraphic_Device = nullptr;
@@ -48,10 +48,10 @@ private:
 	D3DVIEWPORT9			m_tViewPort_Old = {};
 	D3DVIEWPORT9			m_tViewPort_New = {};
 
-#ifdef _DEBUG
+//#ifdef _DEBUG
 private:
 	CBuffer_ViewPort*		m_pViewPortBuffer = nullptr;
-#endif
+//#endif
 public:
 	static CTarget* Create(LPDIRECT3DDEVICE9 pGraphic_Device, _uint iSizeX, _uint iSizeY, D3DFORMAT eFormat, D3DXCOLOR ClearColor);
 	virtual void Free();

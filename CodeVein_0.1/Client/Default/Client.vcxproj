@@ -218,9 +218,11 @@
     <ClInclude Include="..\Headers\ExplainMaterialUI.h" />
     <ClInclude Include="..\Headers\ExplainWeaponUI.h" />
     <ClInclude Include="..\Headers\ExpendBuyUI.h" />
+    <ClInclude Include="..\Headers\FadeCornerUI.h" />
     <ClInclude Include="..\Headers\HitCheckUI.h" />
     <ClInclude Include="..\Headers\GeneralStoreNPCUI.h" />
     <ClInclude Include="..\Headers\GeneralStoreOption.h" />
+    <ClInclude Include="..\Headers\LoadingScripts.h" />
     <ClInclude Include="..\Headers\LockOn_UI.h" />
     <ClInclude Include="..\Headers\MaterialBuyUI.h" />
     <ClInclude Include="..\Headers\MaterialCollectionUI.h" />
@@ -229,7 +231,9 @@
     <ClInclude Include="..\Headers\Material_InfoUI.h" />
     <ClInclude Include="..\Headers\NPC_InteractionUI.h" />
     <ClInclude Include="..\Headers\NPC_Yakumo.h" />
+    <ClInclude Include="..\Headers\NPC_Yokumo.h" />
     <ClInclude Include="..\Headers\Pet_DeerKing.h" />
+    <ClInclude Include="..\Headers\PickUp_ItemUIManager.h" />
     <ClInclude Include="..\Headers\PurchaseFailUI.h" />
     <ClInclude Include="..\Headers\ScriptUI.h" />
     <ClInclude Include="..\Headers\Costume_Mask.h" />
@@ -435,9 +439,11 @@
     <ClCompile Include="..\Codes\ExplainMaterialUI.cpp" />
     <ClCompile Include="..\Codes\ExplainWeaponUI.cpp" />
     <ClCompile Include="..\Codes\ExpendBuyUI.cpp" />
+    <ClCompile Include="..\Codes\FadeCornerUI.cpp" />
     <ClCompile Include="..\Codes\HitCheckUI.cpp" />
     <ClCompile Include="..\Codes\GeneralStoreNPCUI.cpp" />
     <ClCompile Include="..\Codes\GeneralStoreOption.cpp" />
+    <ClCompile Include="..\Codes\LoadingScripts.cpp" />
     <ClCompile Include="..\Codes\LockOn_UI.cpp" />
     <ClCompile Include="..\Codes\MaterialBuyUI.cpp" />
     <ClCompile Include="..\Codes\MaterialCollectionUI.cpp" />
@@ -446,7 +452,9 @@
     <ClCompile Include="..\Codes\Material_InfoUI.cpp" />
     <ClCompile Include="..\Codes\NPC_InteractionUI.cpp" />
     <ClCompile Include="..\Codes\NPC_Yakumo.cpp" />
+    <ClCompile Include="..\Codes\NPC_Yokumo.cpp" />
     <ClCompile Include="..\Codes\Pet_DeerKing.cpp" />
+    <ClCompile Include="..\Codes\PickUp_ItemUIManager.cpp" />
     <ClCompile Include="..\Codes\PurchaseFailUI.cpp" />
     <ClCompile Include="..\Codes\ScriptUI.cpp" />
     <ClCompile Include="..\Codes\Costume_Mask.cpp" />

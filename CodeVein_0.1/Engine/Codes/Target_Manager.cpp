@@ -170,7 +170,7 @@ HRESULT CTarget_Manager::Origin_Stencil(const _tchar * pTargetTag)
 	return NOERROR;
 }
 
-#ifdef _DEBUG
+//#ifdef _DEBUG
 
 HRESULT CTarget_Manager::Ready_Debug_Buffer(const _tchar * pTargetTag, _float fStartX, _float fStartY, _float fSizeX, _float fSizeY)
 {
@@ -210,7 +210,7 @@ HRESULT CTarget_Manager::Render_Debug_Buffer_Single(const _tchar * pTargetTag)
 	return NOERROR;
 }
 
-#endif
+//#endif
 
 CTarget * CTarget_Manager::Find_RenderTarget(const _tchar * pTargetTag)
 {

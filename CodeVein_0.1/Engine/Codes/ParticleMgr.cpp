@@ -20,6 +20,9 @@ HRESULT CParticleMgr::Ready_ParticleManager_Essential()
 	Input_Pool(L"ItemGet_Particle", 100);
 
 	Input_Pool(L"Player_FootSmoke", 50);
+	Input_Pool(L"Player_FootSmoke_Snow", 50);
+	Input_Pool(L"Player_FootSmoke_SnowChunk", 50);
+	Input_Pool(L"Player_FootSmoke_SnowUp", 50);
 	Input_Pool(L"Player_FootSmoke_Jump", 30);
 	Input_Pool(L"Player_FootSmoke_DodgeBack", 90);
 	Input_Pool(L"Player_SpaceBar_StepParticle", 500);
@@ -578,9 +581,6 @@ HRESULT CParticleMgr::Ready_TitleEffect()
 
 HRESULT CParticleMgr::Update_ParticleManager(const _double TimeDelta)
 {
-	//if (CInput_Device::Get_Instance()->Key_Down(DIK_B))
-	//	Create_Effect_Delay(L"Boss_Dead_Particle", 0.f, V3_NULL, nullptr);
-	//
 	//if (CInput_Device::Get_Instance()->Key_Down(DIK_L))
 	//	Create_BossDeadParticle_Effect(V3_NULL, 0.f, 0.5f);
 

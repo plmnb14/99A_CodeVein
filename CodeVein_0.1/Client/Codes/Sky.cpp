@@ -28,7 +28,7 @@ HRESULT CSky::Ready_GameObject(void * pArg)
 	m_pTransformCom->Set_Pos(_v3(0.f, -20.f, 0.f));
 	m_pTransformCom->Set_Scale(_v3(0.3f, 0.3f, 0.3f));
 	
-	lstrcpy(m_szName, L"Mesh_Sky_0");
+	//lstrcpy(m_szName, L"Mesh_Sky_0");
 
 	return NOERROR;
 }

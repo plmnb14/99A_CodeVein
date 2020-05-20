@@ -79,8 +79,10 @@ HRESULT CBackGround::Render_GameObject()
 
 	_uint iTexNum = 0;
 	_uint iPass = 0;
+
+	m_pShaderCom->Begin_Shader();
 	
-	LOOP(3)
+	LOOP(4)
 	{
 		if (0 == i)
 		{
@@ -96,25 +98,31 @@ HRESULT CBackGround::Render_GameObject()
 			iTexNum = 4;
 			iPass = 1;
 		}
-		else
+		else if (2 == i)
 		{
 			iTexNum = 1;
 			iPass = 1;
 		}
+		else if(3 == i)
+		{
+			iTexNum = 6;
+			iPass = 1;
+		}
+
 		if (FAILED(SetUp_ConstantTable(iTexNum)))
 			return E_FAIL;
 
-		m_pShaderCom->Begin_Shader();
-
 		m_pShaderCom->Begin_Pass(iPass);
+
+		m_pShaderCom->Commit_Changes();
 
 		m_pBufferCom->Render_VIBuffer();
 
 		m_pShaderCom->End_Pass();
-
-		m_pShaderCom->End_Shader();
 	}
 	
+	m_pShaderCom->End_Shader();
+
 	return NOERROR;
 }
 

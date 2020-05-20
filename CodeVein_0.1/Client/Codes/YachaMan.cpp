@@ -4926,7 +4926,18 @@ void CYachaMan::Play_Dead()
 				m_bEnable = false;
 				m_dAniPlayMul = 0;
 			}
-			else if (m_pMeshCom->Is_Finish_Animation(0.2f))
+			else if (3.233f <= AniTime)
+			{
+				if (false == m_bEventTrigger[0])
+				{
+					m_bEventTrigger[0] = true;
+					Start_Dissolve(0.7f, false, true);
+					m_pWeapon->Start_Dissolve(0.5f, false, true);
+
+					CObjectPool_Manager::Get_Instance()->Create_Object(L"GameObject_Haze", (void*)&CHaze::HAZE_INFO(100.f, m_pTransformCom->Get_Pos(), 0.f));
+				}
+			}
+			else if (2.9f <= AniTime)
 			{
 				if (false == m_bEventTrigger[2])
 				{
@@ -4948,17 +4959,6 @@ void CYachaMan::Play_Dead()
 						g_pSoundManager->Play_Sound(L"YachMan_Death2.ogg", CSoundManager::Yacha_Voice, CSoundManager::Effect_Sound);
 						break;
 					}
-				}
-			}
-			else if (3.233f <= AniTime)
-			{
-				if (false == m_bEventTrigger[0])
-				{
-					m_bEventTrigger[1] = true;
-					Start_Dissolve(0.7f, false, true);
-					m_pWeapon->Start_Dissolve(0.5f, false, true);
-
-					CObjectPool_Manager::Get_Instance()->Create_Object(L"GameObject_Haze", (void*)&CHaze::HAZE_INFO(100.f, m_pTransformCom->Get_Pos(), 0.f));
 				}
 			}
 

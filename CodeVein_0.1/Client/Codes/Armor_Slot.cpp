@@ -256,7 +256,7 @@ void CArmor_Slot::SetUp_SlotTexIdx()
 {
 	switch (m_tArmorParam.iArmorName)
 	{
-	case ArmorAll_Drape_DarkNightHook:		// 암야의 갈고리
+	case ArmorAll_Drape_DarkNightHook:		// 암야의 낭아
 		m_iIndex = 4;
 		break;
 	case ArmorAll_Gauntlet_DarkNightHook:		// 암야의 갈고리

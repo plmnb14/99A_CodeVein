@@ -271,6 +271,9 @@ void CCustomSlot::Check_SlotTexture()
 	case Client::CCustomSlot::TYPE_MASK:
 		Change_Texture(L"DefaultTex_Custom_ToxicGuard");
 		break;
+	case Client::CCustomSlot::TYPE_INNER:
+		Change_Texture(L"DefaultTex_Custom_Inner");
+		break;
 	}
 }
 

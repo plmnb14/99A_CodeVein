@@ -170,7 +170,12 @@ HRESULT CUI_Manager::Add_UI_Prototype(_Device pDevice)
 
 	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_Calling_Colleague", CCalling_Colleague::Create(pDevice))))
 		return E_FAIL;
+
+	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_PIckUP_ItemUIMgr", CPickUp_ItemUIManager::Create(pDevice))))
+		return E_FAIL;
 	
+	//if (FAILED(g_pManagement->Add_Prototype(L"GameObject_Get_ItemUI", CGet_ItemUI::Create(pDevice))))
+	//	return E_FAIL;
 
 	//=======================================================
 	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_FontNum", CUI_FontNum::Create(pDevice))))
@@ -327,7 +332,7 @@ HRESULT CUI_Manager::SetUp_UILayer()
 	// 잡화점 NPC UI
 	m_pGeneralStoreNPCUI = static_cast<CGeneralStoreNPCUI*>(g_pManagement->Clone_GameObject_Return(L"GameObject_GeneralStoreNPCUI", nullptr));
 	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pGeneralStoreNPCUI, SCENE_MORTAL, L"Layer_PlayerUI", nullptr);
-	//m_pGeneralStoreNPCUI->Set_Active(true);
+	
 	//////////////////////////////////// 펫 UI /////////////////////////////////////////////////////////////////////
 	// 펫 인벤토리
 	m_pPet_Inven = static_cast<CPet_Inven*>(g_pManagement->Clone_GameObject_Return(L"GameObject_PetInven", nullptr));
@@ -337,6 +342,12 @@ HRESULT CUI_Manager::SetUp_UILayer()
 	////////////Get Item UI
 	m_pPickUp_ItemUI = static_cast<CPickUp_ItemUI*>(g_pManagement->Clone_GameObject_Return(L"GameObject_PickUP_ItemUI", nullptr));
 	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pPickUp_ItemUI, SCENE_MORTAL, L"Layer_PickUp_ItemUI", nullptr);
+
+	m_pPickUP_ItemUIMgr = static_cast<CPickUp_ItemUIManager*>(g_pManagement->Clone_GameObject_Return(L"GameObject_PIckUP_ItemUIMgr", nullptr));
+	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pPickUP_ItemUIMgr, SCENE_MORTAL, L"Layer_PickUP_ItemUIMgr", nullptr);
+
+	//m_pGet_ItemUI = static_cast<CGet_ItemUI*>(g_pManagement->Clone_GameObject_Return(L"GameObject_Get_ItemUI", nullptr));
+	//g_pManagement->Add_GameOject_ToLayer_NoClone(m_pGet_ItemUI, SCENE_MORTAL, L"Layer_Get_ItemUI", nullptr);
 
 	// 동료 활성화/비활성화 UI
 	m_pCalling_Colleague = static_cast<CCalling_Colleague*>(g_pManagement->Clone_GameObject_Return(L"GameObject_Calling_Colleague", nullptr));

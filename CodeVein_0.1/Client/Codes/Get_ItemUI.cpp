@@ -79,6 +79,9 @@ HRESULT CGet_ItemUI::Render_GameObject()
 	if (nullptr == m_pShaderCom || nullptr == m_pBufferCom)
 		return E_FAIL;
 
+	//if (false == m_bIsActive)
+	//	return NOERROR;
+
 	g_pManagement->Set_Transform(D3DTS_WORLD, m_matWorld);
 
 	g_pManagement->Set_Transform(D3DTS_VIEW, m_matView);
@@ -88,22 +91,11 @@ HRESULT CGet_ItemUI::Render_GameObject()
 
 	m_pShaderCom->Begin_Pass(1);
 
-	if (0 == m_iUINumber)
-	{
-		if (FAILED(SetUp_ConstantTable(0)))
-			return E_FAIL;
+	if (FAILED(SetUp_ConstantTable(m_iUINumber)))
+		return E_FAIL;
 		
-		m_pShaderCom->Commit_Changes();
-		m_pBufferCom->Render_VIBuffer();
-	}
-	if (1 == m_iUINumber)
-	{
-		if (FAILED(SetUp_ConstantTable(1)))
-			return E_FAIL;
-
-		m_pShaderCom->Commit_Changes();
-		m_pBufferCom->Render_VIBuffer();
-	}
+	m_pShaderCom->Commit_Changes();
+	m_pBufferCom->Render_VIBuffer();
 
 	m_pShaderCom->End_Pass();
 
@@ -162,8 +154,6 @@ HRESULT CGet_ItemUI::SetUp_ConstantTable(_uint TextureIndex)
 	if (FAILED(m_pTextureCom->SetUp_OnShader("g_DiffuseTexture", m_pShaderCom, TextureIndex)))
 		return E_FAIL;
 
-	//m_iUINumber = TextureIndex;
-
 	return S_OK;
 }
 
@@ -178,7 +168,7 @@ void CGet_ItemUI::SetUp_State(_double TimeDelta)
 		m_iUINumber = 1;
 	if (g_pInput_Device->Key_Up(DIK_I))
 	{
-		m_iUINumber = 2;
+		m_iUINumber = 0;
 		++m_iPickUp_ItemNumber;
 		pUIManager->Set_CoundItem(m_iPickUp_ItemNumber);
 		m_bShow_GetItemName = true;
@@ -187,10 +177,8 @@ void CGet_ItemUI::SetUp_State(_double TimeDelta)
 	else
 		m_bShow_GetItemName = false;
 
-	if (2 == m_iUINumber)
+	if (1 == m_iUINumber && true == m_bShow_GetItemName)
 		m_iUINumber = 0;
-	if (m_iPickUp_ItemNumber > 2)
-		m_iPickUp_ItemNumber = 0;
 }
 
 CGet_ItemUI * CGet_ItemUI::Create(_Device pGraphic_Device)

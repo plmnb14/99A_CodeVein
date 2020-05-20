@@ -2589,7 +2589,9 @@ void CQueensKnight::Check_PhyCollider()
 			Start_Dissolve(				0.4f, false, true	, 2.7f);
 			m_pSword->Start_Dissolve(	0.4f, false, false	, 2.7f);
 			m_pShield->Start_Dissolve(	0.4f, false, false	, 2.7f);
-			CParticleMgr::Get_Instance()->Create_BossDeadParticle_Effect(m_pTransformCom->Get_Pos() + _v3(0.f, 1.3f, 0.f), 2.5f, 0.5f);
+			for (_int i = 0; i < 20; i++)
+				CObjectPool_Manager::Get_Instance()->Create_Object(L"GameObject_Haze", (void*)&CHaze::HAZE_INFO(100.f, m_pTransformCom->Get_Pos(), 2.3f + (i * 0.1f)));
+			CParticleMgr::Get_Instance()->Create_BossDeadParticle_Effect(m_pTransformCom->Get_Pos() + _v3(0.f, 1.3f, 0.f), 2.5f, 0.02f);
 			g_pManagement->Create_ParticleEffect_Delay(L"SpawnParticle_ForBoss"	, 2.5f	,  3.f, m_pTransformCom->Get_Pos() + _v3(0.f, 0.5f, 0.f));
 		}
 	}

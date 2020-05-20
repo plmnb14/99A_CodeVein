@@ -12,7 +12,6 @@
 #include "Weapon.h"
 #include "Pet.h"
 
-#include "Get_ItemUI.h"
 
 BEGIN(Client)
 
@@ -76,6 +75,10 @@ public:
 	virtual _int Late_Update_GameObject(_double TimeDelta) override;
 	virtual HRESULT Render_GameObject() override;
 
+
+public:
+	_uint	Get_Count_GetItem() { return m_iCount_GetItem; }
+
 private:
 	void Check_Dist();
 	void Check_PosY();
@@ -98,6 +101,7 @@ private:
 	CEffect*						m_pEffect = nullptr;
 
 	CGet_ItemUI*					m_pGet_ItemUI = nullptr;
+	CPickUp_ItemUIManager*			m_pPickUpMgr = nullptr;
 
 
 	ITEM_NAMETYPE					m_eItem_NameType = ITEM_NAMETYPE::NAMETYPE_End;	// 아이템 이름
@@ -124,6 +128,7 @@ private:
 	_bool							m_bCheck_Start_GetItemUI = false;
 
 	_uint							m_iRenderIndex = 0;
+	_uint							m_iCount_GetItem = 0;
 };
 
 END

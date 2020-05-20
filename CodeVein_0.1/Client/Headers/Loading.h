@@ -19,6 +19,7 @@ public:
 	SCENEID Get_LoadingID(void) const { return m_eLoadingID; }
 	CRITICAL_SECTION* Get_Crt(void) { return &m_Crt; }
 	_bool Get_Finish(void) const { return m_bFinish; }
+	_ulong Get_LoadingCnt() { return m_dwLoadingCnt; }
 
 public:
 	virtual void Set_LoadStaticMesh(_bool _bLoadStatic) { m_bLoadStaticMesh = _bLoadStatic; }
@@ -49,6 +50,9 @@ private:
 	SCENEID				m_eLoadingID = SCENE_LOGO;
 	_Device				m_pGraphicDev = nullptr;
 	_bool				m_bFinish = false;
+
+private:
+	_ulong				m_dwLoadingCnt = 0;
 
 private:
 	_bool				m_bLoadStaticMesh = false;

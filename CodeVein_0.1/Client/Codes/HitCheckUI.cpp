@@ -56,7 +56,7 @@ _int CHitCheckUI::Update_GameObject(_double TimeDelta)
 
 	CGameObject::Update_GameObject(TimeDelta);
 
-	m_pRendererCom->Add_RenderList(RENDER_ORTHO, this);
+	m_pRendererCom->Add_RenderList(RENDER_UI, this);
 
 	D3DXMatrixOrthoLH(&m_matProj, WINCX, WINCY, 0.f, 1.f);
 
@@ -74,15 +74,6 @@ _int CHitCheckUI::Update_GameObject(_double TimeDelta)
 
 _int CHitCheckUI::Late_Update_GameObject(_double TimeDelta)
 {
-	//D3DXMatrixIdentity(&m_matWorld);
-	//D3DXMatrixIdentity(&m_matView);
-	//
-	//m_matWorld._11 = m_fSizeX;
-	//m_matWorld._22 = m_fSizeY;
-	//m_matWorld._33 = 1.f;
-	//m_matWorld._41 = m_fPosX - WINCX * 0.5f;
-	//m_matWorld._42 = -m_fPosY + WINCY * 0.5f;
-
 	return NO_EVENT;
 }
 
@@ -103,13 +94,15 @@ HRESULT CHitCheckUI::Render_GameObject()
 
 	m_pShaderCom->Begin_Shader();
 
-	m_pShaderCom->Begin_Pass(9);
+	m_pShaderCom->Begin_Pass(12);
 
 	m_pBufferCom->Render_VIBuffer();
 
 	m_pShaderCom->End_Pass();
 
 	m_pShaderCom->End_Shader();
+
+	cout << " 졸라 잘 나오긴해!!" << endl;
 
 	return NOERROR;
 }
@@ -129,7 +122,7 @@ HRESULT CHitCheckUI::Add_Component()
 		return E_FAIL;
 
 	// For.Com_Shader
-	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Shader_Effect", L"Com_Shader", (CComponent**)&m_pShaderCom)))
+	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Shader_UI", L"Com_Shader", (CComponent**)&m_pShaderCom)))
 		return E_FAIL;
 
 	// for.Com_VIBuffer

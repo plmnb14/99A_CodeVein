@@ -231,7 +231,6 @@ enum ARMOR_TYPE
 	ARMOR_Gauntlet,
 	ARMOR_LongCoat,
 	ARMOR_Muffler,
-	ARMOR_Drape,
 	ARMOR_End
 };
 

@@ -204,7 +204,7 @@ void CSkill_Inven::Click_SubUI()
 	{
 		m_bIsActive = false;
 		CUI_Manager::Get_Instance()->Get_Total_Inven()->Set_Active(true);
-		g_pSoundManager->Play_Sound(L"UI_CommonHover.wav", CSoundManager::CHANNELID::Skill_Inven_Exit, CSoundManager::Ambient_Sound);
+		g_pSoundManager->Play_Sound(L"UI_CommonHover.wav", CSoundManager::CHANNELID::Skill_Inven_Exit, CSoundManager::Effect_Sound);
 	}
 
 	// 스킬 슬롯 선택시
@@ -272,7 +272,7 @@ void CSkill_Inven::Regist_Slot_Sound(_uint iIdx)
 		return;
 
 	_uint iChnnel = CSoundManager::SkillInven_Regist_Slot01 + iIdx;
-	g_pSoundManager->Play_Sound(L"UI_CommonHover.wav", CSoundManager::CHANNELID(iChnnel), CSoundManager::Ambient_Sound);
+	g_pSoundManager->Play_Sound(L"UI_CommonHover.wav", CSoundManager::CHANNELID(iChnnel), CSoundManager::Effect_Sound);
 }
 
 void CSkill_Inven::UnRegist_Slot_Sound(_uint iIdx)
@@ -281,7 +281,7 @@ void CSkill_Inven::UnRegist_Slot_Sound(_uint iIdx)
 		return;
 
 	_uint iChnnel = CSoundManager::SkillInven_UnRegist_Slot01 + iIdx;
-	g_pSoundManager->Play_Sound(L"UI_CommonClick.wav", CSoundManager::CHANNELID(iChnnel), CSoundManager::Ambient_Sound);
+	g_pSoundManager->Play_Sound(L"UI_CommonClick.wav", CSoundManager::CHANNELID(iChnnel), CSoundManager::Effect_Sound);
 }
 
 void CSkill_Inven::SetUp_SlotPos()

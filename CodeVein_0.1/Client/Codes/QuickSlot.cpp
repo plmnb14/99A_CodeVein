@@ -42,6 +42,18 @@ HRESULT CQuickSlot::Ready_GameObject(void * pArg)
 
 _int CQuickSlot::Update_GameObject(_double TimeDelta)
 {
+	if (g_eSceneID_Cur == SCENE_STAGE_BASE)
+	{
+		Set_Active(false);
+		m_pItemCntFont->Set_Active(false);
+		return S_OK;
+	}
+	else
+	{
+		Set_Active(true);
+		m_pItemCntFont->Set_Active(true);
+	}
+
 	CUI::Update_GameObject(TimeDelta);
 
 	m_pRendererCom->Add_RenderList(RENDER_UI, this);
