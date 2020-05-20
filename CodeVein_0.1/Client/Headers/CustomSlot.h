@@ -13,6 +13,7 @@ public:
 		TYPE_FACE,
 		TYPE_EYE,
 		TYPE_MASK,
+		TYPE_INNER,
 		TYPE_END
 	};
 

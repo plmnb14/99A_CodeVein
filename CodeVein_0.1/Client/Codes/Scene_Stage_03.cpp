@@ -35,6 +35,8 @@ HRESULT CScene_Stage_03::Ready_Scene()
 
 	CRenderer* pRenderer = static_cast<CRenderer*>(CManagement::Get_Instance()->Clone_Component(SCENE_STATIC, L"Renderer"));
 	pRenderer->Fog_On(true);
+	pRenderer->Set_FogDestiny(0.01f);
+	pRenderer->Set_UseLinearFog(true);
 	Safe_Release(pRenderer);
 
 	g_pManagement->LoadCreateObject_FromPath(m_pGraphic_Device, L"Object_Stage_03.dat");
@@ -44,53 +46,11 @@ HRESULT CScene_Stage_03::Ready_Scene()
 
 _int CScene_Stage_03::Update_Scene(_double TimeDelta)
 {
-	CUI_Manager::Get_Instance()->Update_UI();
-
-	if (g_pInput_Device->Key_Down(DIK_H))
-	{
-		CGameObject* pInstance = g_pManagement->Get_GameObjectBack(L"Layer_Player", SCENE_MORTAL);
-
-		pInstance->Set_Enable(false);
-
-		g_pManagement->Clear_LightList();
-
-		CScriptManager::Get_Instance()->Reset_Script_DynmicObject();
-		CScriptManager::Get_Instance()->Reset_ScriptEvent(0, true);
-
-		if (FAILED(g_pManagement->Clear_Instance(SCENE_STAGE)))
-			return -1;
-
-		CScene* pScene = CScene_Stage_Base::Create(m_pGraphic_Device, m_bLoadStaticMesh);
-
-		if (FAILED(g_pManagement->SetUp_CurrentScene(pScene)))
-			return -1;
-	}
-
 	return _int();
 }
 
 HRESULT CScene_Stage_03::Render_Scene()
 {
-	if (g_pInput_Device->Key_Down(DIK_H))
-	{
-		g_eSceneID_Cur = SCENE_STAGE_BASE;
-		g_eSTeleportID_Cur = TeleportID_Home_1;
-
-		CGameObject* pInstance = g_pManagement->Get_GameObjectBack(L"Layer_Player", SCENE_MORTAL);
-
-		pInstance->Set_Enable(false);
-
-		g_pManagement->Clear_LightList();
-
-		if (FAILED(g_pManagement->Clear_Instance(SCENE_STAGE)))
-			return -1;
-
-		CScene* pScene = CScene_Stage_Base::Create(m_pGraphic_Device, m_bLoadStaticMesh);
-
-		if (FAILED(g_pManagement->SetUp_CurrentScene(pScene)))
-			return -1;
-	}
-
 	return S_OK;
 }
 
@@ -128,6 +88,8 @@ HRESULT CScene_Stage_03::Ready_Layer_Environment(const _tchar* pLayerTag)
 	if (FAILED(g_pManagement->Add_GameObject_ToLayer(L"GameObject_BossMassageUI", SCENE_STAGE, L"Layer_BossMassageUI")))
 		return E_FAIL;
 
+	g_pManagement->Create_Effect(L"FloorPlane_Black", _v3(0.f, -5.f, 0.f));
+
 	return S_OK;
 }
 
@@ -143,6 +105,65 @@ HRESULT CScene_Stage_03::Ready_Layer_Colleague(const _tchar * pLayerTag)
 	return S_OK;
 }
 
+void CScene_Stage_03::Create_Fog(_double TimeDelta)
+{
+	CGameObject* pPlayer = g_pManagement->Get_GameObjectBack(L"Layer_Player", SCENE_MORTAL);
+	if (!pPlayer)
+		return;
+
+	CTransform* pPlayerTrans = TARGET_TO_TRANS(pPlayer);
+	_v3 vPlayerPos = pPlayerTrans->Get_Pos();
+
+	const _float FOG_OFFSET = 5.f;
+
+	m_fMapFogDelay += _float(TimeDelta);
+	if (m_fMapFogDelay > FOG_OFFSET)
+	{
+		m_fMapFogDelay = 0.f;
+		g_pManagement->Create_Effect(L"MapFog_0", _v3(0.f, -4.f, 0.f));
+	}
+
+	g_pManagement->Create_Effect_Offset(L"MapFog_0", 7.f, _v3(0.f, -3.f, 0.f));
+}
+
+void CScene_Stage_03::Create_Dust(_double TimeDelta)
+{
+	CGameObject* pPlayer = g_pManagement->Get_GameObjectBack(L"Layer_Player", SCENE_MORTAL);
+	if (!pPlayer)
+		return;
+
+	CTransform* pPlayerTrans = TARGET_TO_TRANS(pPlayer);
+	_v3 vPlayerPos = pPlayerTrans->Get_Pos();
+
+	const _float DUST_OFFSET = 1.f;
+
+	m_fMapWindDustDelay += _float(TimeDelta);
+	if (m_fMapWindDustDelay > DUST_OFFSET)
+	{
+		m_fMapWindDustDelay = 0.f;
+
+		for (_int i = 0; i < 10; ++i)
+		{
+			_mat matRotY;
+			_v3 vDir = _v3(1.f, 0.f, 1.f);
+			D3DXMatrixIdentity(&matRotY);
+
+			D3DXMatrixRotationY(&matRotY, D3DXToRadian(_float(CCalculater::Random_Num_Double(0, 360))));
+			D3DXVec3TransformNormal(&vDir, &vDir, &matRotY);
+			D3DXVec3Normalize(&vDir, &vDir);
+
+			_float fMinRange = 1.f;
+			_float fRandRange = _float(CCalculater::Random_Num_Double(0, 30));
+			_v3 vRandPos = vDir * (fMinRange + fRandRange);// +_v3(0.f, 0.2f, 0.f);
+
+			g_pManagement->Create_Effect(L"MapDust", vPlayerPos + vRandPos + _v3(0.f, _float(CCalculater::Random_Num_Double(0, 0.5)), 0.f), nullptr);
+
+			fRandRange = _float(CCalculater::Random_Num_Double(0, 20));
+			vRandPos = vDir * (fMinRange + fRandRange);
+			g_pManagement->Create_Effect(L"MapDust_2", vPlayerPos + vRandPos + _v3(0.f, _float(CCalculater::Random_Num_Double(0, 0.5)), 0.f), nullptr);
+		}
+	}
+}
 
 HRESULT CScene_Stage_03::Ready_LightDesc()
 {

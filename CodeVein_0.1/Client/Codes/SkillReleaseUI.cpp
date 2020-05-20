@@ -295,7 +295,7 @@ void CSkillReleaseUI::Click_BloodSkillSlot_Sound(_uint iIdx)
 
 	_uint iChannel = CSoundManager::CHANNELID::BloodSkill_Slot01 + iIdx;
 
-	g_pSoundManager->Play_Sound(L"UI_CommonClick.wav", CSoundManager::CHANNELID(iChannel), CSoundManager::Ambient_Sound);
+	g_pSoundManager->Play_Sound(L"UI_CommonClick.wav", CSoundManager::CHANNELID(iChannel), CSoundManager::Effect_Sound);
 }
 
 void CSkillReleaseUI::Back_To_BloodCodeUI()

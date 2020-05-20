@@ -3,6 +3,7 @@
 #include "Client_Defines.h"
 #include "Scene.h"
 #include "Loading.h"
+#include "OrthoEffect.h"
 
 #include "Management.h"
 
@@ -24,10 +25,18 @@ public:
 	HRESULT Ready_Layer_Environment(const _tchar* pLayerTag);
 
 private:
+	void Create_Fog(_double TimeDelta);
+	void Create_Dust(_double TimeDelta);
+
+private:
 	CNavMesh*		m_pNavMesh = nullptr;
 
 private:
 	_float m_fMapFogDelay = 10.f;
+	_float m_fMapWindDustDelay = 1.f;
+
+	COrthoEffect*		m_pSnowEffect_0 = nullptr;
+	COrthoEffect*		m_pSnowEffect_1 = nullptr;
 
 private:
 	HRESULT Ready_LightDesc();

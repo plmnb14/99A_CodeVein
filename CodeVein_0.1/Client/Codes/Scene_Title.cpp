@@ -32,11 +32,15 @@ HRESULT CScene_Title::Ready_Scene()
 {
 	system("cls");
 
+	//g_pSoundManager->Stop_Sound(CSoundManager::Background_01);
+
 	if (FAILED(Ready_Prototype_GameObject()))
 		return E_FAIL;
 
 	if (FAILED(Ready_Layer_LoadingUI(L"Layer_LoadingUI")))
 		return E_FAIL;
+
+	g_pSoundManager->Stop_Sound(CSoundManager::Background_01);
 
 	m_pLoading = CLoading::Create(m_pGraphic_Device, SCENE_STAGE);
 
@@ -51,7 +55,7 @@ HRESULT CScene_Title::Ready_Scene()
 
 _int CScene_Title::Update_Scene(_double TimeDelta)
 {
-	//CUI_Manager::Get_Instance()->Update_UI();
+	CUI_Manager::Get_Instance()->Update_UI();
 
 	if (true == m_pLoading->Get_Finish())
 	{

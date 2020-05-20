@@ -225,13 +225,25 @@ void CHunterBullet::Check_CollisionHit(list<CGameObject*> plistGameObject)
 						continue;
 					}
 
-					iter->Set_Target_CanHit(false);
-					iter->Add_Target_Hp(-m_tObjParam.fDamage);
+					if (false == iter->Get_Target_IsDodge())
+					{
+						iter->Set_Target_CanHit(false);
 
-					m_dCurTime = 100;
+						if (true == iter->Get_Target_IsHit())
+							iter->Set_HitAgain(true);
 
+						if (false == iter->Get_Target_IsDodge())
+						{
+							_uint min = (_uint)(m_tObjParam.fDamage - (m_tObjParam.fDamage * 0.2f));
+							_uint max = (_uint)(m_tObjParam.fDamage + (m_tObjParam.fDamage * 0.2f));
+
+							iter->Add_Target_Hp(-(_float)CALC::Random_Num(min, max));
+							g_pManagement->Create_Hit_Effect(vecIter, vecCol, TARGET_TO_TRANS(iter));
+
+							m_dCurTime = 100;
+						}
+					}
 					break;
-
 				}
 				else
 				{

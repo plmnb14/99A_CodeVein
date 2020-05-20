@@ -9,6 +9,24 @@ CSoundManager::CSoundManager()
 	m_pSystem = nullptr;
 }
 
+void CSoundManager::Add_Volume(VOLUME _eChannel, _float _fVolume)
+{
+	if (m_fVolumeChannel[_eChannel] <= m_fMaxVolume)
+	{
+		m_fVolumeChannel[_eChannel] += _fVolume;
+
+		if (m_fVolumeChannel[_eChannel] > m_fMaxVolume)
+		{
+			m_fVolumeChannel[_eChannel] = m_fMaxVolume;
+		}
+
+		else if (m_fVolumeChannel[_eChannel] < 0.f)
+		{
+			m_fVolumeChannel[_eChannel] = 0.f;
+		}
+	}
+}
+
 void CSoundManager::Play_Sound(TCHAR * pSoundKey, CHANNELID eID, SOUND _eSoundGroup)
 {
 	if (m_mapSound.empty())
@@ -59,22 +77,22 @@ void CSoundManager::Stop_All()
 
 void CSoundManager::Update_SoundManager()
 {
-	//FMOD_ChannelGroup_SetPitch(m_pChannelGroup[0], m_fPitchChannel[Master_Volume] * m_fPitchChannel[BGM_Sound]);
-	//FMOD_ChannelGroup_SetVolume(m_pChannelGroup[0], m_fVolumeChannel[Master_Volume] * m_fVolumeChannel[BGM_Sound]);
-	//
-	//FMOD_ChannelGroup_SetPitch(m_pChannelGroup[1], m_fPitchChannel[Master_Volume] * m_fPitchChannel[Voice_Sound]);
-	//FMOD_ChannelGroup_SetVolume(m_pChannelGroup[1], m_fVolumeChannel[Master_Volume] * m_fVolumeChannel[Voice_Sound]);
-	//
-	//FMOD_ChannelGroup_SetPitch(m_pChannelGroup[2], m_fPitchChannel[Master_Volume] * m_fPitchChannel[Effect_Sound]);
-	//FMOD_ChannelGroup_SetVolume(m_pChannelGroup[2], m_fVolumeChannel[Master_Volume] * m_fVolumeChannel[Effect_Sound]);
-	//
-	//FMOD_ChannelGroup_SetPitch(m_pChannelGroup[3], m_fPitchChannel[Master_Volume] * m_fPitchChannel[Ambient_Sound]);
-	//FMOD_ChannelGroup_SetVolume(m_pChannelGroup[3], m_fVolumeChannel[Master_Volume] * m_fVolumeChannel[Ambient_Sound]);
+	FMOD_ChannelGroup_SetPitch(m_pChannelGroup[0], m_fPitchChannel[Master_Volume] * m_fPitchChannel[BGM_Sound]);
+	FMOD_ChannelGroup_SetVolume(m_pChannelGroup[0], m_fVolumeChannel[Master_Volume] * m_fVolumeChannel[BGM_Sound]);
+
+	FMOD_ChannelGroup_SetPitch(m_pChannelGroup[1], m_fPitchChannel[Master_Volume] * m_fPitchChannel[Voice_Sound]);
+	FMOD_ChannelGroup_SetVolume(m_pChannelGroup[1], m_fVolumeChannel[Master_Volume] * m_fVolumeChannel[Voice_Sound]);
+
+	FMOD_ChannelGroup_SetPitch(m_pChannelGroup[2], m_fPitchChannel[Master_Volume] * m_fPitchChannel[Effect_Sound]);
+	FMOD_ChannelGroup_SetVolume(m_pChannelGroup[2], m_fVolumeChannel[Master_Volume] * m_fVolumeChannel[Effect_Sound]);
+
+	FMOD_ChannelGroup_SetPitch(m_pChannelGroup[3], m_fPitchChannel[Master_Volume] * m_fPitchChannel[Ambient_Sound]);
+	FMOD_ChannelGroup_SetVolume(m_pChannelGroup[3], m_fVolumeChannel[Master_Volume] * m_fVolumeChannel[Ambient_Sound]);
 }
 
 HRESULT CSoundManager::Ready_SoundManager()
 {
-	for (_uint i = 0; i < End_Sound; ++i)
+	for (_uint i = 0; i < End_Volume; ++i)
 	{
 		m_fVolumeChannel[i] = 1.f;
 		m_fPitchChannel[i] = 1.f;

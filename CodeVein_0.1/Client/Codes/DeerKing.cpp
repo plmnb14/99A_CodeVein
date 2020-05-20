@@ -2138,7 +2138,10 @@ void CDeerKing::Check_PhyCollider()
 			m_pMeshCom->SetUp_Animation(Ani_Death);	// 죽음처리 시작
 			Start_Dissolve(0.55f, false, true, 7.2f);
 			m_pShield->Start_Dissolve(0.55f, false, false, 7.2f);
-			
+
+			for (_int i = 0; i < 20; i++)
+				CObjectPool_Manager::Get_Instance()->Create_Object(L"GameObject_Haze", (void*)&CHaze::HAZE_INFO(100.f, m_pTransformCom->Get_Pos(), 7.5f + (i * 0.02f)));
+
 			CParticleMgr::Get_Instance()->Create_BossDeadParticle_Effect(m_pTransformCom->Get_Pos() + _v3(0.f, 1.3f, 0.f), 6.2f, 0.5f);
 			//g_pManagement->Create_Effect_Delay(L"Boss_Dead_Particle"					, 5.2f, _v3(0.f, 1.3f, 0.f), m_pTransformCom);
 			g_pManagement->Create_ParticleEffect_Delay(L"SpawnParticle_ForBoss"	, 2.5f	, 6.9f, m_pTransformCom->Get_Pos() + _v3(0.f, 0.5f, 0.f));

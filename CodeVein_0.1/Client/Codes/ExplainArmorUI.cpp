@@ -34,31 +34,67 @@ _int CExplainArmorUI::Update_GameObject(_double TimeDelta)
 
 	D3DXMatrixOrthoLH(&m_matProj, WINCX, WINCY, 0.f, 1.0f);
 
-	switch (m_tArmorParam.iArmorType)
+	//	ArmorAll_Drape_DarkNightHook,		// 암야의 낭아
+	//	ArmorAll_Gauntlet_DarkNightHook,	// 암야의 갈고리
+	//	ArmorAll_Gauntlet_MangSikHook,		// 망식의 갈고리
+	//	ArmorAll_LongCoat_DarkNightSpear,	// 암야의 돌격창
+	//	ArmorAll_LongCoat_WhiteSilver,		// 백은의 의장
+	//	ArmorAll_LongCoat_QueenKiller,		// 퀸 킬러(여왕 토벌대 아장)_가시형
+	//	ArmorAll_Muffler_DarkNightSpike,	// 암야의 가시
+	//	ArmorAll_Muffler_WhiteGraze,		// 화이트 그레이즈
+	//
+	//	ArmorAll_END
+
+	switch (m_tArmorParam.iArmorName)
 	{
-	case ARMOR_Gauntlet:
+	case ArmorAll_Drape_DarkNightHook:
 	{
 		m_iInfoIdx = 1;
-		m_iArmorIconIdx = 4;
+		m_iArmorIconIdx = 9;
 	}
 		break;
-	case ARMOR_LongCoat:
+	case ArmorAll_Gauntlet_DarkNightHook:
 	{
 		m_iInfoIdx = 2;
-		m_iArmorIconIdx = 5;
+		m_iArmorIconIdx = 10;
 	}
 		break;
-	case ARMOR_Muffler:
+	case ArmorAll_Gauntlet_MangSikHook:
 	{
 		m_iInfoIdx = 3;
-		m_iArmorIconIdx = 6;
+		m_iArmorIconIdx = 11;
 	}	
 		break;
-	case ARMOR_End:
+	case ArmorAll_LongCoat_DarkNightSpear:
 	{
-		
+		m_iInfoIdx = 4;
+		m_iArmorIconIdx = 12;
 	}	
 		break;
+	case ArmorAll_LongCoat_WhiteSilver:
+	{
+		m_iInfoIdx = 5;
+		m_iArmorIconIdx = 13;
+	}
+	break;
+	case ArmorAll_LongCoat_QueenKiller:
+	{
+		m_iInfoIdx = 6;
+		m_iArmorIconIdx = 14;
+	}
+	break;
+	case ArmorAll_Muffler_DarkNightSpike:
+	{
+		m_iInfoIdx = 7;
+		m_iArmorIconIdx = 15;
+	}
+	break;
+	case ArmorAll_Muffler_WhiteGraze:
+	{
+		m_iInfoIdx = 8;
+		m_iArmorIconIdx = 16;
+	}
+	break;
 	}
 
 	if (!m_bIsActive)
@@ -106,25 +142,25 @@ HRESULT CExplainArmorUI::Render_GameObject()
 		if (0 == i)
 		{
 			iIndex = 0;
-			m_fSizeX = 400.f;
-			m_fSizeY = 400.f;
-			m_fPosX = WINCX * 0.5f;
-			m_fPosY = WINCY * 0.5f - 100.f;
+			m_fSizeX = 720.f;
+			m_fSizeY = 720.f;
+			m_fPosX = WINCX * 0.5f + 30.f;
+			m_fPosY = WINCY * 0.5f - 30.f;
 		}
 		else if (1 == i)
 		{
 			m_fSizeX = 400.f;
 			m_fSizeY = 225.f;
-			m_fPosX = WINCX * 0.5f + 45.f;
-			m_fPosY = WINCY * 0.5f - 220.f;
+			m_fPosX = WINCX * 0.5f + 70.f;
+			m_fPosY = WINCY * 0.5f - 245.f;
 			iIndex = m_iInfoIdx;
 		}
 		else if (2 == i)
 		{
 			m_fSizeX = 80.f;
 			m_fSizeY = 80.f;
-			m_fPosX = WINCX * 0.5f -135.f;
-			m_fPosY = WINCY * 0.5f - 225.f;
+			m_fPosX = WINCX * 0.5f - 135.f;
+			m_fPosY = WINCY * 0.5f - 238.f;
 			iIndex = m_iArmorIconIdx;
 		}
 

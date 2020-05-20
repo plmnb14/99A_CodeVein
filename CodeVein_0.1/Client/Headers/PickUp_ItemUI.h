@@ -26,6 +26,8 @@ public:
 public:
 	void	Set_Start_PickUp_Render(_bool _Start) { m_bStart_Render = _Start; }
 
+	void	Set_ItemNumber_Index(_uint iIndex) { m_uiRenderNumber = iIndex; }
+
 public:
 	_bool	Get_Start_PickUp_Render() { return m_bStart_Render; }
 
@@ -43,6 +45,8 @@ private:
 	_uint		m_uiRenderNumber = 0;
 	_uint		m_iRenderNum = 0;
 	_uint		m_iCheckPos = 0;
+	_uint		m_iCount_GetItem = 0;
+	
 
 	_bool		m_bStart_Render = false;
 	_bool		m_bOne_PickupUIEnd = false;

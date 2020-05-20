@@ -198,8 +198,6 @@ void CSwordGenjiBullet::OnCollisionEvent(list<CGameObject*> plistGameObject)
 	if (false == m_tObjParam.bCanAttack)
 		return;
 
-	//cout << "uykiuyuh" << endl;
-
 	_bool bFirst = true;
 	//게임 오브젝트를 받아와서
 	for (auto& iter : plistGameObject)
@@ -226,33 +224,26 @@ void CSwordGenjiBullet::OnCollisionEvent(list<CGameObject*> plistGameObject)
 					{
 						iter->Set_Target_CanHit(false);
 
-						if (iter->Get_Target_IsHit())
-						{
+						if (true == iter->Get_Target_IsHit())
 							iter->Set_HitAgain(true);
-						}
 
 						if (false == iter->Get_Target_IsDodge())
 						{
-							// 무기 공격력의 +-20%까지 랜덤범위
 							_uint min = (_uint)(m_tObjParam.fDamage - (m_tObjParam.fDamage * 0.2f));
 							_uint max = (_uint)(m_tObjParam.fDamage + (m_tObjParam.fDamage * 0.2f));
 
-							iter->Add_Target_Hp((_float)-CALC::Random_Num(min, max));
+							iter->Add_Target_Hp(-(_float)CALC::Random_Num(min, max));
 							g_pManagement->Create_Hit_Effect(vecIter, vecCol, TARGET_TO_TRANS(iter));
 
 							m_dCurTime = 100;
 						}
 					}
-
 					break;
 				}
-
 				else
 				{
 					if (bFirst)
-					{
 						break;
-					}
 				}
 			}
 		}

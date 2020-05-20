@@ -47,6 +47,24 @@ HRESULT CSkillUI::Ready_GameObject(void * pArg)
 
 _int CSkillUI::Update_GameObject(_double TimeDelta)
 {
+	if (g_eSceneID_Cur == SCENE_STAGE_BASE)
+	{
+		Set_Active(false);
+		for (_int i = 0; i < 8; i++)
+			m_pActive[i]->Set_Active(false);
+		//m_pSkillGaugeCur->Set_Active(false);
+		//m_pSkillGaugeMax->Set_Active(false);
+		return S_OK;
+	}
+	else
+	{
+		Set_Active(true);
+		for (_int i = 0; i < 8; i++)
+			m_pActive[i]->Set_Active(true);
+		//m_pSkillGaugeCur->Set_Active(true);
+		//m_pSkillGaugeMax->Set_Active(true);
+	}
+
 	CUI::Update_GameObject(TimeDelta);
 
 	

@@ -121,10 +121,10 @@ HRESULT CRenderObject::Render_GameObject()
 
 	Safe_Release(pManagement);
 
-	CGizmo::Get_Instance()->Draw_AABB(m_pCollider->Get_GizmoPos(), m_pCollider->Get_CenterPos(), m_pTransform->Get_Size());
-
-	if (m_bIsSelected)
-		CGizmo::Get_Instance()->Draw_XYZ(m_pTransform->Get_Pos(), m_pTransform->Get_Axis(AXIS_Z), m_pTransform->Get_Axis(AXIS_X));
+	//CGizmo::Get_Instance()->Draw_AABB(m_pCollider->Get_GizmoPos(), m_pCollider->Get_CenterPos(), m_pTransform->Get_Size());
+	//
+	//if (m_bIsSelected)
+	//	CGizmo::Get_Instance()->Draw_XYZ(m_pTransform->Get_Pos(), m_pTransform->Get_Axis(AXIS_Z), m_pTransform->Get_Axis(AXIS_X));
 
 	return S_OK;
 }
@@ -565,12 +565,67 @@ void CRenderObject::Check_Stage_02()
 	{
 		m_bAdvencedCull = true;
 	}
+	if (!lstrcmp(L"SM_MERGED_SplineGaia199", m_szName))
+		m_bAdvencedCull = true;
+	if (!lstrcmp(L"SM_MERGED_SplineGaia319", m_szName))
+		m_bAdvencedCull = true;
+	if (!lstrcmp(L"SM_MERGED_SplineGaia436", m_szName))
+		m_bAdvencedCull = true;
+	if (!lstrcmp(L"SM_MERGED_SplineGaia445", m_szName))
+		m_bAdvencedCull = true;
+	if (!lstrcmp(L"SM_MERGED_SplineGaia449", m_szName))
+		m_bAdvencedCull = true;
+	if (!lstrcmp(L"SM_MERGED_SplineGaia471", m_szName))
+		m_bAdvencedCull = true;
+	if (!lstrcmp(L"SM_MERGED_SplineGaia473", m_szName))
+		m_bAdvencedCull = true;
+	if (!lstrcmp(L"SM_MERGED_SplineGaia475", m_szName))
+		m_bAdvencedCull = true;
+	if (!lstrcmp(L"SM_MERGED_SplineGaia582", m_szName))
+		m_bAdvencedCull = true;
+	if (!lstrcmp(L"SM_MERGED_SplineGaia586", m_szName))
+		m_bAdvencedCull = true;
+	if (!lstrcmp(L"SM_MERGED_SplineGaia611", m_szName))
+		m_bAdvencedCull = true;
+	if (!lstrcmp(L"SM_MERGED_SplineGaia618", m_szName))
+		m_bAdvencedCull = true;
+	if (!lstrcmp(L"SM_MERGED_SplineGaia667", m_szName))
+		m_bAdvencedCull = true;
+	if (!lstrcmp(L"SM_MERGED_SplineGaia726", m_szName))
+		m_bAdvencedCull = true;
+	if (!lstrcmp(L"SM_MERGED_SplineGaia784", m_szName))
+		m_bAdvencedCull = true;
+	if (!lstrcmp(L"SM_MERGED_SplineGaia791", m_szName))
+		m_bAdvencedCull = true;
+	if (!lstrcmp(L"SM_MERGED_SplineGaia891", m_szName))
+		m_bAdvencedCull = true;
 }
 
 void CRenderObject::Check_Stage_03()
 {
+	// ¸Ê ¿Üº®
 	if (!lstrcmp(L"Mesh_SM_TowerSenRL2Top_st07a1", m_szName))
 	{
 		m_bAdvencedCull = true;
 	}
+	if (!lstrcmp(L"Room_Stage3_1", m_szName))
+		m_bAdvencedCull = true;
+	if (!lstrcmp(L"Room_Stage3_2", m_szName))
+		m_bAdvencedCull = true;
+}
+
+void CRenderObject::Check_Stage_04()
+{
+	if (!lstrcmp(L"DuomoFloorB", m_szName))
+		m_bAdvencedCull = true;
+	if (!lstrcmp(L"Cathedral_PillarL_Center_Round", m_szName))
+		m_bAdvencedCull = true;
+	if (!lstrcmp(L"Cathedral_TowerWall_Under_A", m_szName))
+		m_bAdvencedCull = true;
+	if (!lstrcmp(L"Cathedral_TowerWall_Under_B", m_szName))
+		m_bAdvencedCull = true;
+	if (!lstrcmp(L"Cathedral_TowerFloor_D", m_szName))
+		m_bAdvencedCull = true;
+	if (!lstrcmp(L"Cathedral_Floor_Center_Round", m_szName))
+		m_bAdvencedCull = true;
 }

@@ -42,7 +42,11 @@ _int CPickUp_ItemUI::Update_GameObject(_double TimeDelta)
 	CGameObject::LateInit_GameObject();
 	CUI::Update_GameObject(TimeDelta);
 
+	CItem_Manager* pItem_Mgr = CItem_Manager::Get_Instance();
+
 	SetUp_State(TimeDelta);
+
+	//m_iIndex = pItem_Mgr->Get_PickUp_Number();
 
 	D3DXMatrixOrthoLH(&m_matProj, WINCX, WINCY, 0.f, 1.f);
 
@@ -90,16 +94,7 @@ HRESULT CPickUp_ItemUI::Render_GameObject()
 
 	m_pShaderCom->Begin_Pass(3);
 
-	//for (_uint i = 0; i < 3/*pUIManager->Get_CoundItem()*/; ++i)
-	//{
-	//	if (FAILED(SetUp_ConstantTable(i)))
-	//		return E_FAIL;
-
-	//	m_pShaderCom->Commit_Changes();
-	//	m_pBufferCom->Render_VIBuffer();
-	//}
-
-	if (FAILED(SetUp_ConstantTable(pItemManager->Get_PickUp_Number())))
+	if (FAILED(SetUp_ConstantTable(m_uiRenderNumber)))
 		return E_FAIL;
 
 	m_pShaderCom->Commit_Changes();
@@ -108,6 +103,7 @@ HRESULT CPickUp_ItemUI::Render_GameObject()
 	m_pShaderCom->End_Pass();
 
 	m_pShaderCom->End_Shader();
+
 
 	return S_OK;
 }
@@ -161,8 +157,6 @@ HRESULT CPickUp_ItemUI::SetUp_ConstantTable(_uint TextureIndex)
 	if (FAILED(m_pTextureCom->SetUp_OnShader("g_DiffuseTexture", m_pShaderCom, TextureIndex)))
 		return E_FAIL;
 
-	m_uiRenderNumber = TextureIndex;
-
 	return S_OK;
 }
 
@@ -178,66 +172,21 @@ void CPickUp_ItemUI::SetUp_State(_double TimeDelta)
 	
 	if (m_fPickup_Itembar >= m_fSizeX)
 	{
-		m_fPickup_Itembar = 0.f;
+		m_fPickup_Itembar = m_fSizeX;
 		m_bOne_PickupUIEnd = true;
 	}
 	if(true == m_bOne_PickupUIEnd)
 		m_fTimer += (_float)TimeDelta;
-	if (1.5f <= m_fTimer)
+	if (1.45f <= m_fTimer)
 	{
 		m_bOne_PickupUIEnd = false;
+		m_fPickup_Itembar = 0.f;
 		m_bIsActive = false;
 	}
-
-
-	//if (0 == pUIManager->Get_CoundItem() && false == m_bOne_PickupUIEnd)
-	//{
-	//	m_fPercentage = m_fPickup_Itembar / m_fSizeX;
-	//	m_fPickup_Itembar += 7.f;
-	//}
-	//else if (1 == pUIManager->Get_CoundItem() && false == m_bTwo_PickupUIEnd)
-	//{
-	//	m_fPercentage = m_fPickup_Itembar2 / m_fSizeX;
-	//	m_fPickup_Itembar2 += 7.f;
-	//}
-	//else if (2 == pUIManager->Get_CoundItem() && false == m_bThree_PickupUIEnd)
-	//{
-	//	m_fPercentage = m_fPickup_Itembar3 / m_fSizeX;
-	//	m_fPickup_Itembar3 += 7.f;
-	//}
-	//else if (m_fPickup_Itembar2 >= m_fSizeX)
-	//{
-	//	m_fPickup_Itembar2 = 0.f;
-	//	m_fTimer = 0.f;
-	//	m_fTwoTimer += (_float)TimeDelta;
-	//	m_bTwo_PickupUIEnd = true;
-	//}
-	//else if (m_fPickup_Itembar3 >= m_fSizeX)
-	//{
-	//	m_fPickup_Itembar3 = 0.f;
-	//	m_fTimer = 0.f;
-	//	m_fTwoTimer = 0.f;
-	//	m_fAllTimer += (_float)TimeDelta;
-	//	m_bThree_PickupUIEnd = true;
-	//}
-	//if (true == m_bThree_PickupUIEnd)
-	//{
-	//	m_fPickup_Itembar = 0.f;
-	//	m_fPickup_Itembar2 = 0.f;
-	//	m_fPickup_Itembar3 = 0.f;
-	//	m_bOne_PickupUIEnd = false;
-	//	m_bTwo_PickupUIEnd = false;
-	//	m_bThree_PickupUIEnd = false;
-	//}
-	
 }
 
 void CPickUp_ItemUI::SetUp_Rendering_ItemTextrue()
 {
-	/*switch (m_eItemUI_Type)
-	{
-
-	}*/
 }
 
 CPickUp_ItemUI * CPickUp_ItemUI::Create(_Device pGraphic_Device)

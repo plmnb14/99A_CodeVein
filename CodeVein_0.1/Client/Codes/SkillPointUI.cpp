@@ -47,6 +47,20 @@ HRESULT CSkillPointUI::Ready_GameObject(void * pArg)
 
 _int CSkillPointUI::Update_GameObject(_double TimeDelta)
 {
+	if (g_eSceneID_Cur == SCENE_STAGE_BASE)
+	{
+		Set_Active(false);
+		m_pCurPointFont->Set_Active(false);
+		m_pMaxPointFont->Set_Active(false);
+		return S_OK;
+	}
+	else
+	{
+		Set_Active(true);
+		m_pCurPointFont->Set_Active(false);
+		m_pMaxPointFont->Set_Active(false);
+	}
+
 	CUI::Update_GameObject(TimeDelta);
 	m_pRendererCom->Add_RenderList(RENDER_UI, this);
 

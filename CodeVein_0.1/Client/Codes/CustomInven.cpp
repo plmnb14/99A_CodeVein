@@ -25,6 +25,7 @@ void CCustomInven::Set_ActiveSlot(INVEN_TYPE eType)
 	Active_SlotType(false, &m_vecFaceSlot);
 	Active_SlotType(false, &m_vecEyeSlot);
 	Active_SlotType(false, &m_vecMaskSlot);
+	Active_SlotType(false, &m_vecInnerSlot);
 
 	m_eActiveType = eType;
 
@@ -51,6 +52,9 @@ void CCustomInven::Set_ActiveSlot(INVEN_TYPE eType)
 	case Client::CCustomInven::TYPE_MASK:
 		Active_SlotType(true, &m_vecMaskSlot);
 		break;
+	case Client::CCustomInven::TYPE_INNER:
+		Active_SlotType(true, &m_vecInnerSlot);
+		break;
 	}
 }
 
@@ -60,6 +64,7 @@ void CCustomInven::Set_Active(_bool bActive)
 	Active_SlotType(bActive, &m_vecFaceSlot);
 	Active_SlotType(bActive, &m_vecEyeSlot);
 	Active_SlotType(bActive, &m_vecMaskSlot);
+	Active_SlotType(bActive, &m_vecInnerSlot);
 
 	for (_int i = 0; i < 4; i++)
 		m_pHairSlider[i]->Set_Active(bActive);
@@ -171,6 +176,13 @@ void CCustomInven::SetUp_Default()
 		Add_Slot(TYPE_MASK, i);
 	}
 
+	// Inner
+	const _int INNER_COUNT = 4;
+	for (_int i = 0; i < INNER_COUNT; i++)
+	{
+		Add_Slot(TYPE_INNER, i);
+	}
+
 	LOOP(4)
 	{
 		m_pHairSlider[i] = static_cast<CCustomSliderBar*>(g_pManagement->Clone_GameObject_Return(L"GameObject_CustomSlider", nullptr));
@@ -215,6 +227,9 @@ void CCustomInven::Click_Inven()
 	case Client::CCustomInven::TYPE_MASK:
 		pvecActiveSlot = &m_vecMaskSlot;
 		break;
+	case Client::CCustomInven::TYPE_INNER:
+		pvecActiveSlot = &m_vecInnerSlot;
+		break;
 	}
 
 	_int iIdx = 0;
@@ -232,6 +247,8 @@ void CCustomInven::Click_Inven()
 				m_pPlayer->Get_Costume_Head()->Change_HeadMesh(CCostume_Head::CHAR_HEAD(iIdx));
 			if (TYPE_MASK == m_eActiveType)
 				m_pPlayer->Get_Costume_Mask()->Change_AccMesh(CCostume_Mask::MASK_TYPE(iIdx));
+			if (TYPE_INNER == m_eActiveType)
+				m_pPlayer->Set_PlayerBody(CPlayer::PLAYER_BODY(iIdx));
 		}
 		iIdx++;
 	}
@@ -293,6 +310,12 @@ void CCustomInven::Add_Slot(INVEN_TYPE eType, _int iIdx)
 	{
 		m_vecMaskSlot.push_back(pSlot);
 		Slot_PositionRearrange(&m_vecMaskSlot);
+		break;
+	}
+	case Client::CCustomInven::TYPE_INNER:
+	{
+		m_vecInnerSlot.push_back(pSlot);
+		Slot_PositionRearrange(&m_vecInnerSlot);
 		break;
 	}
 	}

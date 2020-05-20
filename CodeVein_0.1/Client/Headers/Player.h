@@ -12,6 +12,11 @@
 #include "Costume_Mask.h"
 #include "Costume_Head.h"
 
+#include "OrthoEffect.h"
+
+#include "HitCheckUI.h"
+#include "FadeCornerUI.h"
+
 BEGIN(Client)
 
 class CLockOn_UI;
@@ -96,6 +101,9 @@ public:
 	CCostume_Mask* Get_Costume_Mask() { return m_pMask[m_eMaskType]; }
 
 public:
+	void Set_PlayerBody(PLAYER_BODY _eBodyType) { Change_PlayerBody(_eBodyType); }
+
+public:
 	void Set_WeaponSlot(ACTIVE_WEAPON_SLOT eType, WEAPON_DATA eData);
 	void Set_ArmorSlot(ARMOR_All_DATA eType);
 public:
@@ -156,6 +164,13 @@ private:
 	CUI_Manager*			m_pUIManager = nullptr;
 	CCameraMgr*				m_pCamManager = nullptr;
 	CScriptManager*			m_pScriptManager = nullptr;
+
+private:
+	COrthoEffect*			m_pScreenBloodEffect = nullptr;
+	COrthoEffect*			m_pScreenFadeEffect = nullptr;
+
+	CHitCheckUI*			m_pScreenCornerEffect = nullptr;
+	CFadeCornerUI*			m_pScreenCornerFade = nullptr;
 
 private:
 	vector<CCollider*>		m_vecPhsycColl;

@@ -106,6 +106,9 @@ public:
 	virtual void Set_Volume(VOLUME _eChannel = Master_Volume, _float _fVolume = 1.f) { m_fVolumeChannel[_eChannel] = _fVolume; }
 	virtual void Set_Pitch(VOLUME _eChannel = Master_Volume, _float _fPitch = 1.f) { m_fPitchChannel[_eChannel] = _fPitch; }
 
+public:
+	virtual void Add_Volume(VOLUME _eChannel = Master_Volume, _float _fVolume = 1.f);
+
 public: 
 	virtual void Play_Sound(TCHAR* pSoundKey, CHANNELID eID, SOUND _eSoundGroup);
 	virtual void Play_BGM(TCHAR* pSoundKey);
@@ -141,8 +144,9 @@ private:
 	//사운드, 채널 객체 및 장치를 관리할 객체. 
 	FMOD_SYSTEM* m_pSystem = nullptr;
 
-	_float m_fVolumeChannel[End_Sound] = {0.f, };		// 음량
-	_float m_fPitchChannel[End_Sound] = {0.f, };		// 재생 속도
+	_float m_fVolumeChannel[End_Volume] = {};		// 음량
+	_float m_fPitchChannel[End_Volume] = {};		// 재생 속도
+	_float m_fMaxVolume = 1.f;
 
 private:
 	_ulong	m_dwSoundCnt_Cur = 0;

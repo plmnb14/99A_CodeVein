@@ -28,11 +28,15 @@ private:
 	CNavMesh*		m_pNavMesh = nullptr;
 
 private:
-	_float m_fMapFogDelay = 10.f;
+	HRESULT Ready_LightDesc();
 
 private:
-	HRESULT Ready_LightDesc();
-	void	Create_Fog(_double TimeDelta);
+	void Create_Fog(_double TimeDelta);
+	void Create_Dust(_double TimeDelta);
+
+private:
+	_float m_fMapFogDelay = 10.f;
+	_float m_fMapWindDustDelay = 1.f;
 
 public:
 	static CScene_Stage_04* Create(LPDIRECT3DDEVICE9 pGraphic_Device, _bool _bLoadStatic);

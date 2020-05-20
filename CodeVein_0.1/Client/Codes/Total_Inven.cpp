@@ -302,7 +302,7 @@ void CTotal_Inven::Click_Icon()
 	if (m_vecIcon[0]->Pt_InRect() &&
 		g_pInput_Device->Get_DIMouseState(CInput_Device::DIM_LB))
 	{
-		g_pSoundManager->Play_Sound(L"UI_CommonHover.wav", CSoundManager::Total_Inven_All, CSoundManager::Ambient_Sound);
+		g_pSoundManager->Play_Sound(L"UI_CommonHover.wav", CSoundManager::Total_Inven_All, CSoundManager::Effect_Sound);
 		m_pInventory = CUI_Manager::Get_Instance()->Get_Inventory();
 		m_pInventory->Set_Active(true);
 		CUI_Manager::Get_Instance()->Get_Expendables_Inven()->Set_Active(true);
@@ -311,7 +311,7 @@ void CTotal_Inven::Click_Icon()
 	else if (m_vecIcon[1]->Pt_InRect() &&
 		g_pInput_Device->Get_DIMouseState(CInput_Device::DIM_LB))
 	{	
-		g_pSoundManager->Play_Sound(L"UI_CommonHover.wav", CSoundManager::Total_Inven_Pet, CSoundManager::Ambient_Sound);
+		g_pSoundManager->Play_Sound(L"UI_CommonHover.wav", CSoundManager::Total_Inven_Pet, CSoundManager::Effect_Sound);
 		m_bIsActive = false;
 		// 스테이터스 창 비활성화
 		CUI_Manager::Get_Instance()->Get_StatusUI()->Set_Active(false);
@@ -321,7 +321,7 @@ void CTotal_Inven::Click_Icon()
 	else if (m_vecIcon[2]->Pt_InRect() &&
 		g_pInput_Device->Get_DIMouseState(CInput_Device::DIM_LB))
 	{
-		g_pSoundManager->Play_Sound(L"UI_CommonHover.wav", CSoundManager::Total_Inven_Exit, CSoundManager::Ambient_Sound);
+		g_pSoundManager->Play_Sound(L"UI_CommonHover.wav", CSoundManager::Total_Inven_Exit, CSoundManager::Effect_Sound);
 		m_bIsActive = false;
 		// 스테이터스 창 비활성화
 		CUI_Manager::Get_Instance()->Get_StatusUI()->Set_Active(false);
@@ -372,7 +372,7 @@ void CTotal_Inven::SkillSlot_Touch_Sound(_uint i)
 
 	_uint iChannel = CSoundManager::CHANNELID::Total_Skill_Slot01 + i;
 
-	g_pSoundManager->Play_Sound(L"UI_CommonHover.wav", CSoundManager::CHANNELID(iChannel), CSoundManager::Ambient_Sound);
+	g_pSoundManager->Play_Sound(L"UI_CommonHover.wav", CSoundManager::CHANNELID(iChannel), CSoundManager::Effect_Sound);
 }
 
 void CTotal_Inven::SetUp_SubUI_Active(_bool bIsActive)

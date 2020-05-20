@@ -292,14 +292,11 @@ _v3 CNavMesh::Move_OnNaviMesh(CRigidBody* _pRigid, const _v3* pTargetPos, const 
 
 	if (CCell::COMPARE_FALL == (*m_vecSubset_Cell[m_dwSubsetIdx])[m_dwIndex]->Compare(&vEndPos, &m_dwIndex, &vDirection, &iIndex, bIsUpper))
 	{
-		//if (CCell::COMPARE_FALL == m_vecSubset_Cell[m_dwSubsetIdx][m_dwIndex]->Compare(&*pTargetPos, &m_dwIndex, &vDirection, &iIndex, bIsUpper))
-		//{
 		if (_pRigid != nullptr)
 		{
 			_pRigid->Set_IsFall(true);
 			_pRigid->Set_IsGround(false);
 		}
-		//}
 
 		m_bCanMove = true;
 		return vEndPos;
@@ -307,28 +304,6 @@ _v3 CNavMesh::Move_OnNaviMesh(CRigidBody* _pRigid, const _v3* pTargetPos, const 
 
 	else if (CCell::COMPARE_MOVE == (*m_vecSubset_Cell[m_dwSubsetIdx])[m_dwIndex]->Compare(&vEndPos, &m_dwIndex , &vDirection, &iIndex , bIsUpper))
 	{
-		//if (m_vecSubset_Cell[m_dwSubsetIdx][m_dwIndex]->Get_CellParam() == ENGINE::UPPER_CELL)
-		//{
-		//	if (CCell::COMPARE_STAY == m_vecSubset_Cell[m_dwSubsetIdx][m_dwIndex]->Compare(&vEndPos, &m_dwIndex, &vDirection, &iIndex))
-		//	{
-		//		_v3		vIncident, vSliding, vLineNor, vNewEndPos;
-		//		_v3		vCross_01, vCross_02;
-		//
-		//		vLineNor = { vDirection.x , 0 , vDirection.y };
-		//		V3_NORMAL_SELF(&vLineNor);
-		//
-		//		// 입사 Vector
-		//		vIncident = *pTargetDir;
-		//
-		//		vSliding = vIncident - D3DXVec3Dot(&vIncident, &vLineNor) * vLineNor;
-		//
-		//		vNewEndPos = *pTargetPos + vSliding * _fSpeedDelta;
-		//
-		//
-		//		return vNewEndPos;
-		//	}
-		//}
-
 		m_bCanMove = true;
 		return vEndPos;
 	}
@@ -350,11 +325,8 @@ _v3 CNavMesh::Move_OnNaviMesh(CRigidBody* _pRigid, const _v3* pTargetPos, const 
 
 		if (CCell::COMPARE_FALL == (*m_vecSubset_Cell[m_dwSubsetIdx])[m_dwIndex]->Compare(&vEndPos, &m_dwIndex, &vDirection, &iIndex, bIsUpper))
 		{
-			//if (CCell::COMPARE_FALL == m_vecSubset_Cell[m_dwSubsetIdx][m_dwIndex]->Compare(&*pTargetPos, &m_dwIndex, &vDirection, &iIndex, bIsUpper))
-			//{
-				_pRigid->Set_IsFall(true);
-				_pRigid->Set_IsGround(false);
-			//}
+			_pRigid->Set_IsFall(true);
+			_pRigid->Set_IsGround(false);
 
 			m_bCanMove = true;
 			return vEndPos;
@@ -362,12 +334,6 @@ _v3 CNavMesh::Move_OnNaviMesh(CRigidBody* _pRigid, const _v3* pTargetPos, const 
 
 		else if (CCell::COMPARE_MOVE == (*m_vecSubset_Cell[m_dwSubsetIdx])[m_dwIndex]->Compare(&vNewEndPos, &m_dwIndex, &vDirection, &iIndex , bIsUpper))
 		{
-			//if (m_vecSubset_Cell[m_dwSubsetIdx][m_dwIndex]->Get_CellParam() == NEXT_SUBSET)
-			//{
-			//	m_dwSubsetIdx += 1;
-			//	m_dwIndex = 0;
-			//}
-
 			m_bCanMove = true;
 			return vNewEndPos;
 		}
@@ -376,74 +342,6 @@ _v3 CNavMesh::Move_OnNaviMesh(CRigidBody* _pRigid, const _v3* pTargetPos, const 
 		{
 			m_bCanMove = false;
 			return  *pTargetPos - *pTargetDir * _fSpeedDelta;
-
-			// 슬라이딩 벡터 보류
-			// 보류
-			//_v2* tmpPoint = m_vecCell[m_dwIndex]->Get_NavLine(CCell::LINES(iIndex));
-			//_v2	 vresultPoint;
-			//_v2	 TargetPoint;
-			//
-			//_v3 tmpPos = *pTargetPos;
-			//_v3 newDir;
-			//_float TmpALen = fabs(D3DXVec2Length(&(tmpPoint[0] - _v2(tmpPos.x, tmpPos.z))));
-			//_float TmpBLen = fabs(D3DXVec2Length(&(tmpPoint[1] - _v2(tmpPos.x, tmpPos.z))));
-			//_float TmpAngle = 0.f;
-			//
-			//// 가까운 점을 찾았다.
-			//vresultPoint = (TmpALen > TmpBLen ? tmpPoint[1] : tmpPoint[0]);
-			//
-			//for (auto& iter : m_vecCell)
-			//{
-			//	//cout << ">?" << endl;
-			//
-			//	LOOP(3)
-			//	{
-			//		for (int j = 0; j < 2; ++j)
-			//		{
-			//			if (iter->Get_NavLine(CCell::LINES(i))[j] == vresultPoint)
-			//			{
-			//				if (j == 0)
-			//					TargetPoint = iter->Get_NavLine(CCell::LINES(i))[1];
-			//
-			//				else
-			//					TargetPoint = iter->Get_NavLine(CCell::LINES(i))[0];
-			//
-			//				_v2 vTmpDir = TargetPoint - vresultPoint;
-			//				_float innerAngle = 0.f;
-			//
-			//				innerAngle = D3DXVec3Dot(&-vSliding, &_v3(vTmpDir.x , 0 , vTmpDir.y));
-			//
-			//				if (innerAngle == 0)
-			//					TmpAngle = innerAngle;
-			//
-			//				else if (TmpAngle < innerAngle)
-			//				{
-			//					// 만약 각이 더 크면
-			//					TmpAngle = innerAngle;
-			//					_v2 TmpDirection = iter->Get_NavLineInfo(CCell::LINES(i)).m_vNor;
-			//
-			//					newDir = { -TmpDirection.x , 0 , -TmpDirection.y };
-			//				}
-			//
-			//				else
-			//					continue;
-			//			}
-			//		}
-			//	}
-			//
-			//
-			//}
-			//
-			//V3_NORMAL_SELF(&newDir);
-			//
-			//// 입사 Vector
-			//vIncident = *pTargetDir;
-			//
-			//vSliding = vIncident - D3DXVec3Dot(&vIncident, &newDir) * newDir;
-			//
-			//vNewEndPos = *pTargetPos + vSliding * _fSpeedDelta;
-			//
-			//return *pTargetPos - vSliding * _fSpeedDelta;
 		}
 	}
 
