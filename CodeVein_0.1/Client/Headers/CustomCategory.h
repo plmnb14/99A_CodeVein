@@ -35,6 +35,9 @@ private:
 	void	Change_Texture(const _tchar* _Name);
 	void	SetUp_Default();
 
+public:
+	_ulong Get_ActiveSlotUI() { return m_dwCurentActiveUI; }
+
 private:
 	CTransform*				m_pTransformCom = nullptr;
 	CRenderer*				m_pRendererCom = nullptr;
@@ -48,6 +51,7 @@ private:
 
 	_bool								m_bLateInit = false;
 	_int								m_iTexIdx = 0;
+	_ulong								m_dwCurentActiveUI = 0;
 
 public:
 	static CCustomCategory*	Create(_Device pGraphic_Device);

@@ -40,6 +40,16 @@ public:
 	}TELEPORT_RESET;
 	
 private:
+	typedef enum tagINVEN_TYPE
+	{
+		TYPE_HAIR,
+		TYPE_FACE,
+		TYPE_EYE,
+		TYPE_MASK,
+		TYPE_INNER,
+		TYPE_END
+	}Costume;
+
 	typedef enum tagCustomType
 	{
 		Custom_Hair , Custom_Head , Custom_Mask, Custom_Body, Custom_ShowAll, Custom_end
@@ -187,6 +197,9 @@ private:
 
 	CHitCheckUI*			m_pScreenCornerEffect = nullptr;
 	CFadeCornerUI*			m_pScreenCornerFade = nullptr;
+
+private:
+	_ulong					m_dwOldx = 999999;
 
 private:
 	vector<CCollider*>		m_vecPhsycColl;

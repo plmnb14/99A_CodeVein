@@ -50,6 +50,9 @@ public:
 
 	void Set_MouseCtrl(_bool _bMouseCtrl);
 
+	void Set_CustomizeCamIdx(_ulong _dwCosIdx);
+	void Set_CustomizeCamMode(_bool _bCos);
+
 public:
 	void Add_MainPos(_float _fSpeed, _v3 _vDir);
 	void Add_MainAt(_float _fSpeed, _v3 _vDir);

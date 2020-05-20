@@ -48,6 +48,9 @@ HRESULT CWeaponShopUI::Ready_GameObject(void * pArg)
 
 _int CWeaponShopUI::Update_GameObject(_double TimeDelta)
 {
+	if (false == m_bIsActive)
+		return NO_EVENT;
+
 	CUI::Update_GameObject(TimeDelta);
 	m_pRendererCom->Add_RenderList(RENDER_ALPHA_UI, this);
 

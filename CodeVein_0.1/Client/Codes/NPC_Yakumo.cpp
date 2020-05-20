@@ -367,8 +367,6 @@ void CNPC_Yakumo::Check_Dist()
 			m_fConvertAngle = m_pTransformCom->Chase_Target_Angle(&vPos);
 			_float fHitAngle = D3DXToDegree(m_pTransformCom->Calc_HitTarget_Angle(vPos));
 
-			cout << fHitAngle << endl;
-
 			if (fHitAngle >= -30.f && fHitAngle < 30.f)
 			{
 				// 상호작용 유아이가 뜨고, 플레이어가 누를 수 있게 해줌.

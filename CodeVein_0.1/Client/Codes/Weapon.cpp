@@ -544,7 +544,7 @@ void CWeapon::Change_WeaponMesh(const _tchar* _MeshName)
 	m_vecAttackCol[0]->Set_Radius(_v3(fRadius, fRadius, fRadius));
 
 	// 공격력도 업데이트
-	m_tObjParam.fDamage = m_tWeaponParam->fDamage;
+	m_tObjParam.fDamage = m_tWeaponParam->fDamage * 20.f;
 }
 
 void CWeapon::Update_Collider()

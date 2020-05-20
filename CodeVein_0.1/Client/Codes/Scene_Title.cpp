@@ -30,7 +30,7 @@ CScene_Title::CScene_Title(LPDIRECT3DDEVICE9 pGraphic_Device)
 
 HRESULT CScene_Title::Ready_Scene()
 {
-	system("cls");
+	//system("cls");
 
 	//g_pSoundManager->Stop_Sound(CSoundManager::Background_01);
 
@@ -73,7 +73,7 @@ _int CScene_Title::Update_Scene(_double TimeDelta)
 
 		static_cast<CLoadingBar*>(g_pManagement->Get_GameObjectBack(L"Layer_LoadingUI", SCENE_TITLE))->Set_Finish();
 		
-		cout << "로드 되었습니다!! 넘어가세요!!" << endl;
+		//cout << "로드 되었습니다!! 넘어가세요!!" << endl;
 	}
 
 	if (true == m_pLoading->Get_Finish() && g_pInput_Device->Get_DIMouseState(CInput_Device::DIM_LB))
@@ -140,7 +140,7 @@ _int CScene_Title::Update_Scene(_double TimeDelta)
 		if (FAILED(g_pManagement->Clear_Instance(SCENE_TITLE)))
 			return -1;
 	
-		cout << "다음 스테이지로 이동 중 . . ." << endl;
+		//cout << "다음 스테이지로 이동 중 . . ." << endl;
 		pScene = nullptr;
 	
 		return 0;

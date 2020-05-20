@@ -165,13 +165,13 @@ _int CPlayer::Update_GameObject(_double TimeDelta)
 
 	if (g_pInput_Device->Key_Down(DIK_Y))
 	{
-		cout << "===================================================" << endl;
-		cout << m_pTransform->Get_Pos().x << endl;
-		cout << m_pTransform->Get_Pos().y << endl;
-		cout << m_pTransform->Get_Pos().z << endl;
-		cout << "===================================================" << endl;
-		cout << D3DXToDegree(m_pTransform->Get_Angle(AXIS_Y)) << endl;
-		cout << "===================================================" << endl;
+		//cout << "===================================================" << endl;
+		//cout << m_pTransform->Get_Pos().x << endl;
+		//cout << m_pTransform->Get_Pos().y << endl;
+		//cout << m_pTransform->Get_Pos().z << endl;
+		//cout << "===================================================" << endl;
+		//cout << D3DXToDegree(m_pTransform->Get_Angle(AXIS_Y)) << endl;
+		//cout << "===================================================" << endl;
 
 	}
 
@@ -840,10 +840,6 @@ void CPlayer::Parameter_Aiming()
 
 		if (nullptr != m_pTarget)
 		{
-			cout << "³ªÀÇ x ÁÂÇ¥ : " << m_pTransform->Get_Pos().x << endl;
-			cout << "³ªÀÇ y ÁÂÇ¥ : " << m_pTransform->Get_Pos().y << endl;
-			cout << "³ªÀÇ z ÁÂÇ¥ : " << m_pTransform->Get_Pos().z << endl;
-
 			m_pTransform->Set_Angle(AXIS_Y, m_pTransform->Chase_Target_Angle(&TARGET_TO_TRANS(m_pTarget)->Get_Pos()));
 
 			// µðÁ¹ºê ¾µ¶ó¸é ¼öÁ¤
@@ -1489,6 +1485,51 @@ void CPlayer::KeyDown()
 {
 	if (m_bOnCustomMode)
 	{
+		_ulong dwIdx = m_pUIManager->Get_CustomCategory()->Get_ActiveSlotUI();
+
+		if (m_dwOldx != dwIdx)
+		{
+			m_dwOldx = dwIdx;
+
+			switch (dwIdx)
+			{
+			case TYPE_HAIR:
+			{
+				m_pCamManager->Set_CustomizeCamIdx(1);
+				m_pCamManager->Set_MidDistance(1.3f);
+				break;
+			}
+
+			case TYPE_FACE:
+			{
+				m_pCamManager->Set_CustomizeCamIdx(1);
+				m_pCamManager->Set_MidDistance(1.f);
+				break;
+			}
+
+			case TYPE_EYE:
+			{
+				m_pCamManager->Set_CustomizeCamIdx(1);
+				m_pCamManager->Set_MidDistance(0.8f);
+				break;
+			}
+
+			case TYPE_MASK:
+			{
+				m_pCamManager->Set_CustomizeCamIdx(2);
+				m_pCamManager->Set_MidDistance(1.2f);
+				break;
+			}
+
+			case TYPE_INNER:
+			{
+				m_pCamManager->Set_CustomizeCamIdx(3);
+				m_pCamManager->Set_MidDistance(2.f);
+				break;
+			}
+			}
+		}
+
 		if (g_pInput_Device->Key_Down(DIK_C))
 		{
 			m_pCamManager->Set_CustomizeCamIdx(0);
@@ -1496,6 +1537,13 @@ void CPlayer::KeyDown()
 
 			m_pUIManager->Get_CustomCategory()->Active_CustomUIs();
 			m_bOnCustomMode = false;
+
+			m_pCamManager->Set_MidDistance(g_OriginCamPos);
+
+			m_pCamManager->Set_MouseCtrl(true);
+			g_pInput_Device->Set_MouseLock(true);
+
+			m_pRenderer->DOF_On(false);
 		}
 
 		return;
@@ -1512,6 +1560,11 @@ void CPlayer::KeyDown()
 
 				m_pUIManager->Get_CustomCategory()->Active_CustomUIs();
 				m_bOnCustomMode = true;
+
+				m_pCamManager->Set_MouseCtrl(false);
+				g_pInput_Device->Set_MouseLock(false);
+
+				m_pRenderer->DOF_On(true);
 			}
 		}
 	}
@@ -2395,8 +2448,6 @@ void CPlayer::Key_UI_n_Utiliy(_bool _bActiveUI)
 
 	else if (false == _bActiveUI)
 	{
-		cout << "ÀÛµ¿µÈ°ÅÀ¾À½" << endl;
-  
 		if (g_pInput_Device->Key_Down(DIK_ESCAPE))
 		{
 			g_pInput_Device->Set_MouseLock(false);
@@ -10629,7 +10680,7 @@ void CPlayer::Ready_Weapon()
 	m_matHandBone = &pFamre->CombinedTransformationMatrix;
 
 	m_pWeapon[WPN_SLOT_A] = static_cast<CWeapon*>(g_pManagement->Clone_GameObject_Return(L"GameObject_Weapon", NULL));
-	m_pWeapon[WPN_SLOT_A]->Change_WeaponData(Wpn_Hammer);
+	m_pWeapon[WPN_SLOT_A]->Change_WeaponData(Wpn_SSword);
 	m_pWeapon[WPN_SLOT_A]->Set_Friendly(true);
 	m_pWeapon[WPN_SLOT_A]->Set_AttachBoneMartix(m_matHandBone);
 	m_pWeapon[WPN_SLOT_A]->Set_ParentMatrix(&m_pTransform->Get_WorldMat());

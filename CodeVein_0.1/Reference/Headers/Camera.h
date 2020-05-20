@@ -113,6 +113,9 @@ public:
 public:
 	void		KeyInput();
 
+	void Set_CustomizeCamIdx(_ulong _dwCosIdx);
+	void Set_CustomizeCamMode(_bool _bCos);
+
 public:
 	virtual _int Update_GameObject();
 	virtual void LateUpdate();
@@ -183,6 +186,11 @@ protected:	// Camera Position Setting
 	_float m_fEyeHeight;		// Camera height from target
 	_float m_fLength;			// Cur camera to old camera vec3 lenth
 	_bool  m_bChange;
+
+
+	// 커스터 마이징모드
+	_bool  m_bOnCustomizeMode = false;		// 아닐 경우
+	_ulong m_dwCustomIdx = 4;				// 전체보기
 
 
 protected:	// Zoom Setting
