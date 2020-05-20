@@ -1167,6 +1167,9 @@ void CPet_PoisonButterFly::Play_Deformation()
 		m_bIsSummon = true;
 		m_pMesh->Reset_OldIndx();
 		m_eState = PET_POISIONBUTTERFLY_ANI::Appearance_End;
+
+		g_pManagement->Create_Effect(L"Pet_SpawnParticle", m_pTransform->Get_Pos());
+		g_pManagement->Create_Effect(L"Pet_SpawnSmoke", m_pTransform->Get_Pos());
 	}
 	else
 	{

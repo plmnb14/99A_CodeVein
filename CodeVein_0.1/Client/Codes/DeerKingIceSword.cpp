@@ -103,6 +103,9 @@ _int CDeerKingIceSword::Update_GameObject(_double TimeDelta)
 
 	if (m_dCurTime > m_dLifeTime)
 	{
+		g_pSoundManager->Stop_Sound(CSoundManager::CHANNELID::DearKing_SFX_02);
+		g_pSoundManager->Play_Sound(const_cast<TCHAR*>(L"SE_BOSSGUY_ICE_ATTACK_011.ogg"), CSoundManager::CHANNELID::DearKing_SFX_02, CSoundManager::SOUND::Effect_Sound);
+
 		m_bDead = true;
 		m_pSwordEffect->Set_Dead();
 

@@ -33,8 +33,9 @@ private:
 	CBuffer_RcTex*			m_pBufferCom = nullptr;
 
 private:
-	vector<CGeneralStoreOption*> m_vecOption;
+	vector<CGeneralStoreOption*>	m_vecOption;
 	_float							m_fCross = 100.f;
+	_bool							m_bIsSubActive = false;
 
 public:
 	static CGeneralStoreNPCUI*	Create(_Device pGraphic_Device);

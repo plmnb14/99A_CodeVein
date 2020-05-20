@@ -92,10 +92,6 @@ HRESULT CScene_Stage_Base::Render_Scene()
 
 HRESULT CScene_Stage_Base::Ready_Layer_Custom(const _tchar * pLayerTag)
 {
-	CCustomCategory* pCustomCategory = static_cast<CCustomCategory*>(g_pManagement->Clone_GameObject_Return(L"GameObject_CustomCategory", nullptr));
-	if (FAILED(g_pManagement->Add_GameOject_ToLayer_NoClone(pCustomCategory, SCENE_STAGE_BASE, pLayerTag, nullptr)))
-		return E_FAIL;
-
 	return S_OK;
 }
 

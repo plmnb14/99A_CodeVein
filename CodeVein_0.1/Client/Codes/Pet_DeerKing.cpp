@@ -1233,6 +1233,8 @@ void CPet_DeerKing::Play_Deformation()
 		m_pMesh->Reset_OldIndx();
 		m_eState = PET_DEERKING_ANI::Shield_Appearance_End;
 
+		g_pManagement->Create_Effect(L"Pet_SpawnParticle", m_pTransform->Get_Pos());
+		g_pManagement->Create_Effect(L"Pet_SpawnSmoke", m_pTransform->Get_Pos());
 		return;
 	}
 	else

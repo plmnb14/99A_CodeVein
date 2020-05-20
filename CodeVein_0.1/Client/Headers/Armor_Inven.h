@@ -7,6 +7,7 @@ BEGIN(Client)
 class CPlayer;
 class CArmor_Slot;
 class CExplainArmorUI;
+class CInventory_Icon;
 class CArmor_Inven final : public CUI
 {
 private:
@@ -51,7 +52,7 @@ private:
 	ARMOR_PARAM				m_tRegistParam;
 	CExplainArmorUI*		m_pExplainUI = nullptr;
 	_bool					m_bIsSubActive = false;
-
+	CInventory_Icon*		m_pExitIcon = nullptr;
 
 	_bool					m_bLateInit = false;
 	CPlayer*				m_pPlayer = nullptr;
