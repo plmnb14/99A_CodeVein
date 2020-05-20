@@ -229,13 +229,14 @@ HRESULT CUI_Manager::Add_UI_Prototype(_Device pDevice)
 		return E_FAIL;
 	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_GeneralStoreOption", CGeneralStoreOption::Create(pDevice))))
 		return E_FAIL;
-	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_ExpendSellUI", CExpendSellUI::Create(pDevice))))
+	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_ExpendSellCollectionUI", CExpendSellCollectionUI::Create(pDevice))))
 		return E_FAIL;
-	
-
-	// ===================================================================================
+	// ¿äÄí¸ð NPC Ã¢
 	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_GeneralStoreNPCUI", CGeneralStoreNPCUI::Create(pDevice))))
 		return E_FAIL;
+
+	// ===================================================================================
+	
 
 	return NOERROR;
 }

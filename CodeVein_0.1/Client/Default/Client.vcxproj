@@ -219,7 +219,7 @@
     <ClInclude Include="..\Headers\ExplainWeaponUI.h" />
     <ClInclude Include="..\Headers\ExpendBuyUI.h" />
     <ClInclude Include="..\Headers\FadeCornerUI.h" />
-    <ClInclude Include="..\Headers\ExpendSellUI.h" />
+    <ClInclude Include="..\Headers\ExpendSellCollectionUI.h" />
     <ClInclude Include="..\Headers\GeneralStoreSellUI.h" />
     <ClInclude Include="..\Headers\HitCheckUI.h" />
     <ClInclude Include="..\Headers\GeneralStoreNPCUI.h" />
@@ -442,7 +442,7 @@
     <ClCompile Include="..\Codes\ExplainWeaponUI.cpp" />
     <ClCompile Include="..\Codes\ExpendBuyUI.cpp" />
     <ClCompile Include="..\Codes\FadeCornerUI.cpp" />
-    <ClCompile Include="..\Codes\ExpendSellUI.cpp" />
+    <ClCompile Include="..\Codes\ExpendSellCollectionUI.cpp" />
     <ClCompile Include="..\Codes\GeneralStoreSellUI.cpp" />
     <ClCompile Include="..\Codes\HitCheckUI.cpp" />
     <ClCompile Include="..\Codes\GeneralStoreNPCUI.cpp" />

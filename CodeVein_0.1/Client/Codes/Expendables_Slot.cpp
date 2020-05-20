@@ -341,7 +341,7 @@ void CExpendables_Slot::Free()
 {
 	if (m_pItemCntFont)
 		m_pItemCntFont->Set_Dead();
-
+	
 	Safe_Release(m_pTransformCom);
 	Safe_Release(m_pBufferCom);
 	Safe_Release(m_pShaderCom);

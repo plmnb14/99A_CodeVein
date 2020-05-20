@@ -1,25 +1,25 @@
 #include "stdafx.h"
-#include "..\Headers\ExpendSellUI.h"
+#include "..\Headers\ExpendSellCollectionUI.h"
 #include "UI_Manager.h"
 
-CExpendSellUI::CExpendSellUI(_Device pDevice)
+CExpendSellCollectionUI::CExpendSellCollectionUI(_Device pDevice)
 	: CUI(pDevice)
 {
 }
 
-CExpendSellUI::CExpendSellUI(const CExpendSellUI & rhs)
+CExpendSellCollectionUI::CExpendSellCollectionUI(const CExpendSellCollectionUI & rhs)
 	: CUI(rhs)
 {
 }
 
-HRESULT CExpendSellUI::Ready_GameObject_Prototype()
+HRESULT CExpendSellCollectionUI::Ready_GameObject_Prototype()
 {
 	CUI::Ready_GameObject_Prototype();
 
 	return NOERROR;
 }
 
-HRESULT CExpendSellUI::Ready_GameObject(void * pArg)
+HRESULT CExpendSellCollectionUI::Ready_GameObject(void * pArg)
 {
 	if (FAILED(Add_Component()))
 		return E_FAIL;
@@ -34,13 +34,13 @@ HRESULT CExpendSellUI::Ready_GameObject(void * pArg)
 	return NOERROR;
 }
 
-_int CExpendSellUI::Update_GameObject(_double TimeDelta)
+_int CExpendSellCollectionUI::Update_GameObject(_double TimeDelta)
 {
 	CUI::Update_GameObject(TimeDelta);
 
 	if (m_bIsActive && !m_bIsSubActive)
 	{
-		m_vecSlot = *CUI_Manager::Get_Instance()->Get_Expendables_Inven()->Get_VecExpendSlot();
+		
 		SetUp_SlotPos();
 		SetUp_SubUI_Active(true);
 
@@ -52,14 +52,14 @@ _int CExpendSellUI::Update_GameObject(_double TimeDelta)
 		m_bIsSubActive = false;
 	}
 
-	
+	m_vecSlot = *CUI_Manager::Get_Instance()->Get_Expendables_Inven()->Get_VecExpendSlot();
 	Click_SubUI();
 	SetUp_SlotPos();
 
 	return NO_EVENT;
 }
 
-_int CExpendSellUI::Late_Update_GameObject(_double TimeDelta)
+_int CExpendSellCollectionUI::Late_Update_GameObject(_double TimeDelta)
 {
 	D3DXMatrixIdentity(&m_matWorld);
 	D3DXMatrixIdentity(&m_matView);
@@ -73,7 +73,7 @@ _int CExpendSellUI::Late_Update_GameObject(_double TimeDelta)
 	return NO_EVENT;
 }
 
-HRESULT CExpendSellUI::Render_GameObject()
+HRESULT CExpendSellCollectionUI::Render_GameObject()
 {
 	/*if (!m_bIsActive)
 		return NOERROR;
@@ -97,7 +97,7 @@ HRESULT CExpendSellUI::Render_GameObject()
 	return NOERROR;
 }
 
-HRESULT CExpendSellUI::Add_Component()
+HRESULT CExpendSellCollectionUI::Add_Component()
 {
 	// For.Com_Transform
 	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Transform", L"Com_Transform", (CComponent**)&m_pTransformCom)))
@@ -122,7 +122,7 @@ HRESULT CExpendSellUI::Add_Component()
 	return NOERROR;
 }
 
-HRESULT CExpendSellUI::SetUp_ConstantTable(_uint iIndex)
+HRESULT CExpendSellCollectionUI::SetUp_ConstantTable(_uint iIndex)
 {
 	if (nullptr == m_pShaderCom)
 		return E_FAIL;
@@ -140,7 +140,7 @@ HRESULT CExpendSellUI::SetUp_ConstantTable(_uint iIndex)
 	return NOERROR;
 }
 
-void CExpendSellUI::SetUp_SubUI_Active(_bool bIsActive)
+void CExpendSellCollectionUI::SetUp_SubUI_Active(_bool bIsActive)
 {
 	for (auto& iter : m_vecSlot)
 	{
@@ -148,8 +148,9 @@ void CExpendSellUI::SetUp_SubUI_Active(_bool bIsActive)
 	}
 }
 
-void CExpendSellUI::SetUp_SlotPos()
+void CExpendSellCollectionUI::SetUp_SlotPos()
 {
+	m_vecSlot = *CUI_Manager::Get_Instance()->Get_Expendables_Inven()->Get_VecExpendSlot();
 	_uint iIdx = 0;
 	for (auto& vector_iter : m_vecSlot)
 	{
@@ -159,21 +160,20 @@ void CExpendSellUI::SetUp_SlotPos()
 	}
 }
 
-void CExpendSellUI::Click_SubUI()
+void CExpendSellCollectionUI::Click_SubUI()
 {
 	if (!m_bIsActive)
 		return;
-
+	
 	for (auto& iter : m_vecSlot)
 	{
-		if (iter->Pt_InRect())
+		if (iter->Pt_InRect() && !iter->Get_Select())
 		{
+			// 디버그용
 			if (g_pInput_Device->Get_DIMouseState(CInput_Device::DIM_LB))
 			{
 				CExpendables_Inven* pInven = CUI_Manager::Get_Instance()->Get_Expendables_Inven();
 				pInven->Sell_Item(iter);
-
-				
 			}
 		}
 	}
@@ -188,9 +188,40 @@ void CExpendSellUI::Click_SubUI()
 	}
 }
 
-CExpendSellUI * CExpendSellUI::Create(_Device pGraphic_Device)
+void CExpendSellCollectionUI::Sell_ExpendItem(CExpendables_Slot * pSlot)
 {
-	CExpendSellUI* pInstance = new CExpendSellUI(pGraphic_Device);
+	if (nullptr == pSlot)
+		return;
+
+	
+
+	if (pSlot->Get_Size() == 0)
+	{		
+		
+
+		_uint iIdx = 0;
+		for (auto& iter : m_vecSlot)
+		{
+			if (iter == pSlot)
+			{
+				pSlot->Set_Dead();
+				m_vecSlot.erase(m_vecSlot.begin() + iIdx);
+				m_vecSlot.shrink_to_fit();
+			}
+			
+			iIdx++;
+		}
+	}
+	else
+		pSlot->Delete_Item();
+		
+
+	SetUp_SlotPos();
+}
+
+CExpendSellCollectionUI * CExpendSellCollectionUI::Create(_Device pGraphic_Device)
+{
+	CExpendSellCollectionUI* pInstance = new CExpendSellCollectionUI(pGraphic_Device);
 
 	if (FAILED(pInstance->Ready_GameObject_Prototype()))
 	{
@@ -201,9 +232,9 @@ CExpendSellUI * CExpendSellUI::Create(_Device pGraphic_Device)
 	return pInstance;
 }
 
-CGameObject * CExpendSellUI::Clone_GameObject(void * pArg)
+CGameObject * CExpendSellCollectionUI::Clone_GameObject(void * pArg)
 {
-	CExpendSellUI* pInstance = new CExpendSellUI(*this);
+	CExpendSellCollectionUI* pInstance = new CExpendSellCollectionUI(*this);
 
 	if (FAILED(pInstance->Ready_GameObject(pArg)))
 	{
@@ -214,7 +245,7 @@ CGameObject * CExpendSellUI::Clone_GameObject(void * pArg)
 	return pInstance;
 }
 
-void CExpendSellUI::Free()
+void CExpendSellCollectionUI::Free()
 {
 	Safe_Release(m_pTransformCom);
 	Safe_Release(m_pBufferCom);

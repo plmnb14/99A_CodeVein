@@ -52,6 +52,8 @@ _int CInventory::Update_GameObject(_double TimeDelta)
 
 		m_bIsSubActive = false;
 	}
+	if (!m_bIsActive)
+		return NO_EVENT;
 	
 	CUI::Update_GameObject(TimeDelta);
 

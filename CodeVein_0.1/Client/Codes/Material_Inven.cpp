@@ -67,12 +67,6 @@ HRESULT CMaterial_Inven::Ready_GameObject(void * pArg)
 
 _int CMaterial_Inven::Update_GameObject(_double TimeDelta)
 {
-	CUI::Update_GameObject(TimeDelta);
-
-	m_pRendererCom->Add_RenderList(RENDER_UI, this);
-
-	D3DXMatrixOrthoLH(&m_matProj, WINCX, WINCY, 0.f, 1.0f);
-
 	if (m_bIsActive && !m_bIsSubActive)
 	{
 		SetUp_SubUI_Active(true);
@@ -83,6 +77,15 @@ _int CMaterial_Inven::Update_GameObject(_double TimeDelta)
 		SetUp_SubUI_Active(false);
 		m_bIsSubActive = false;
 	}
+	if (!m_bIsActive)
+		return NO_EVENT;
+	CUI::Update_GameObject(TimeDelta);
+
+	m_pRendererCom->Add_RenderList(RENDER_UI, this);
+
+	D3DXMatrixOrthoLH(&m_matProj, WINCX, WINCY, 0.f, 1.0f);
+
+	
 
 	Click_Inven();
 	
@@ -91,6 +94,8 @@ _int CMaterial_Inven::Update_GameObject(_double TimeDelta)
 
 _int CMaterial_Inven::Late_Update_GameObject(_double TimeDelta)
 {
+	if (!m_bIsActive)
+		return NO_EVENT;
 	D3DXMatrixIdentity(&m_matWorld);
 	D3DXMatrixIdentity(&m_matView);
 
