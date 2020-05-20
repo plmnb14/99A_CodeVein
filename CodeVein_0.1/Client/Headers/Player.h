@@ -39,6 +39,12 @@ public:
 
 	}TELEPORT_RESET;
 	
+private:
+	typedef enum tagCustomType
+	{
+		Custom_Hair , Custom_Head , Custom_Mask, Custom_Body, Custom_ShowAll, Custom_end
+	}CUSTOM;
+
 public:
 	typedef enum tagPlayerBodyType
 	{
@@ -106,14 +112,22 @@ public:
 public:
 	void Set_WeaponSlot(ACTIVE_WEAPON_SLOT eType, WEAPON_DATA eData);
 	void Set_ArmorSlot(ARMOR_All_DATA eType);
+	void Set_Target_UI(CGameObject* pGameObject);
+
 public:
 	virtual HRESULT Ready_GameObject_Prototype();
 	virtual HRESULT Ready_GameObject(void* pArg);
 	virtual _int	Update_GameObject(_double TimeDelta);
 	virtual _int	Late_Update_GameObject(_double TimeDelta);
-	virtual HRESULT Render_GameObject();
+	//virtual HRESULT mist();
 	virtual HRESULT Render_GameObject_Instancing_SetPass(CShader* pShader);
 	virtual HRESULT Render_GameObject_SetPass(CShader* pShader, _int iPass, _bool _bIsForMotionBlur = false);
+
+public:
+	virtual void Set_OnNPCUI(_bool _bOnNPCUI) { m_bOnUI_NPCTalk = _bOnNPCUI;}
+	virtual void Set_YakumoUI(_bool _bYakumoUI) { m_bOnYakumo_UI = _bYakumoUI; };
+	virtual void Set_YokumoUI(_bool _bYokumoUI) { m_bOnYakumo_UI = _bYokumoUI; };
+	virtual void Set_Jack(_bool _bJacKUI) { m_bOnJack_UI = _bJacKUI; };
 
 public:
 	virtual void Reset_OldAnimations();
@@ -180,6 +194,9 @@ private:
 	vector<SKILL_INFO*>		m_vecActiveSkillInfo;
 
 private:
+	CUSTOM					m_eCustomViewType = Custom_ShowAll;
+
+private:
 	_mat*					m_matBones[Bone_End];
 	_mat*					m_matHandBone = nullptr;
 	_mat*					m_matTailBone = nullptr;
@@ -230,6 +247,11 @@ private:
 	_bool					m_bCanPickUp = false;	// 아이템 줍기
 	_bool					m_bCanDialouge = false; // 대화
 	_bool					m_bCanInterAct = false;	// 상호작용
+	_bool					m_bOnInvenChange = false;
+
+	_bool					m_bOnYakumo_UI = false;
+	_bool					m_bOnYokumo_UI = false;
+	_bool					m_bOnJack_UI = false;
 
 private:
 	_short					m_sHeavyAtkCnt = 0;
@@ -277,6 +299,10 @@ private:
 	_bool				m_bWeaponActive[2] = {};
 
 private:
+	_bool				m_bOnCustomMode = false;
+	
+
+private:
 	HRESULT Add_Component();
 	HRESULT SetUp_Default();
 	HRESULT SetUp_ConstantTable(CShader* pShader);
@@ -298,6 +324,7 @@ private:
 	virtual void Reset_BattleState();
 
 private:
+	virtual void Check_NPC();
 	virtual void Check_Mistletoe();
 	virtual _int Check_HitDirection();
 	virtual _bool Check_CunterAngle(CGameObject* pObj);
@@ -421,6 +448,10 @@ private:
 	virtual void Temp_ActiveSkills();
 
 private:
+	// 캐릭 커스텀
+	//virtual void Awesome_CharaCustom();
+
+private:
 	virtual void Reset_BloodSuck_Options();
 	virtual void Reset_Attack_Bool();
 
@@ -443,9 +474,13 @@ public:
 	virtual void Active_UI_StageSelect(_bool _bResetUI = false);	// 스테이지 선택
 	virtual void Active_UI_NPC(_bool _bResetUI = false);			// NPC 와의 대화
 	virtual void Active_UI_BloodCode(_bool _bResetUI = false);			// NPC 와의 대화
+	virtual void Active_UI_WeaponShop_Yakumo(_bool _bResetUI = false);
+	virtual void Active_UI_MaterialShop_Yokumo(_bool _bResetUI = false);
 
 public:
 	virtual void Active_UI_LockOn(_bool _bResetUI = false);
+
+	virtual void UI_Check();
 
 public:
 	static	CPlayer* Create(_Device pGraphic_Device);

@@ -63,12 +63,12 @@ HRESULT CWeapon_Inven::Ready_GameObject(void * pArg)
 	}
 	
 
-	//Add_Weapon(m_tWeaponParam[Wpn_SSword_Black]);
+	Add_Weapon(m_tWeaponParam[Wpn_SSword_Black]);
 	//Add_Weapon(m_tWeaponParam[Wpn_SSword_Military]);
 	//Add_Weapon(m_tWeaponParam[Wpn_SSword_Slave]);
-	//Add_Weapon(m_tWeaponParam[Wpn_Gun_Military]);
+	Add_Weapon(m_tWeaponParam[Wpn_Gun_Military]);
 	//Add_Weapon(m_tWeaponParam[Wpn_Gun_Slave]);
-	//Add_Weapon(m_tWeaponParam[Wpn_Hammer]);
+	Add_Weapon(m_tWeaponParam[Wpn_Hammer]);
 	//Add_Weapon(m_tWeaponParam[Wpn_LSword_Military]);
 	
 	return NOERROR;
@@ -221,6 +221,7 @@ void CWeapon_Inven::Regist_Weapon(CWeapon_Slot* pWeaponSlot)
 {
 	if (pWeaponSlot->Get_WeaponParam().iWeaponName == WPN_DATA_End)
 		return;
+
 	if (m_UseWeaponParam[0].iWeaponName == WPN_DATA_End)
 	{
 		m_UseWeaponParam[0] = pWeaponSlot->Get_WeaponParam();

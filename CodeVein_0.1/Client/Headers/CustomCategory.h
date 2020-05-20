@@ -23,6 +23,8 @@ public:
 	virtual _int	Late_Update_GameObject(_double TimeDelta);
 	virtual HRESULT Render_GameObject();
 
+	void Active_CustomUIs();
+
 	void Click_Option();
 	void Reset_Option();
 

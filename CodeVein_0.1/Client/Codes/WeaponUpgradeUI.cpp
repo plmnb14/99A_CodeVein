@@ -289,6 +289,8 @@ void CWeaponUpgradeUI::Click_Option()
 				}
 				else if (1 == iIdx)
 				{
+					CUI_Manager::Get_Instance()->Get_WeaponShopUI()->Set_Active(true);
+
 					Set_Active(false);
 				}
 			}

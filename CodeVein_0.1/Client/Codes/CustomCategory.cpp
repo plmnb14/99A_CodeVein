@@ -51,14 +51,6 @@ HRESULT CCustomCategory::Ready_GameObject(void * pArg)
 
 _int CCustomCategory::Update_GameObject(_double TimeDelta)
 {
-	if (g_pInput_Device->Key_Down(DIK_T))
-	{
-		Set_Active(!m_bIsActive);
-		m_pCustomInven->Set_Active(m_bIsActive);
-		if(m_bIsActive)
-			m_pCustomInven->Set_ActiveSlot(CCustomInven::TYPE_HAIR);
-	}
-
 	CUI::Update_GameObject(TimeDelta);
 	m_fPosX = WINCX * 0.1f;
 
@@ -129,6 +121,15 @@ HRESULT CCustomCategory::Render_GameObject()
 	m_pShaderCom->End_Shader();
 
 	return NOERROR;
+}
+
+void CCustomCategory::Active_CustomUIs()
+{
+	Set_Active(!m_bIsActive);
+	m_pCustomInven->Set_Active(m_bIsActive);
+
+	if (m_bIsActive)
+		m_pCustomInven->Set_ActiveSlot(CCustomInven::TYPE_HAIR);
 }
 
 

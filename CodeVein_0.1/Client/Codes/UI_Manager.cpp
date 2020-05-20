@@ -232,6 +232,8 @@ HRESULT CUI_Manager::Add_UI_Prototype(_Device pDevice)
 	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_GeneralStoreNPCUI", CGeneralStoreNPCUI::Create(pDevice))))
 		return E_FAIL;
 
+	// ===================================================================================
+
 	return NOERROR;
 }
 
@@ -332,7 +334,13 @@ HRESULT CUI_Manager::SetUp_UILayer()
 	// ¿‚»≠¡° NPC UI
 	m_pGeneralStoreNPCUI = static_cast<CGeneralStoreNPCUI*>(g_pManagement->Clone_GameObject_Return(L"GameObject_GeneralStoreNPCUI", nullptr));
 	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pGeneralStoreNPCUI, SCENE_MORTAL, L"Layer_PlayerUI", nullptr);
-	
+
+	m_pWeaponShopUI = static_cast<CWeaponShopUI*>(g_pManagement->Clone_GameObject_Return(L"GameObject_WeaponShopUI", nullptr));
+	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pWeaponShopUI, SCENE_MORTAL, L"Layer_PlayerUI", nullptr);
+
+	m_pNPC_InterActionUI = static_cast<CNPC_InteractionUI*>(g_pManagement->Clone_GameObject_Return(L"GameObject_NPC_Interaction", nullptr));
+	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pNPC_InterActionUI, SCENE_MORTAL, L"Layer_PlayerUI", nullptr);
+
 	//////////////////////////////////// ∆Í UI /////////////////////////////////////////////////////////////////////
 	// ∆Í ¿Œ∫•≈‰∏Æ
 	m_pPet_Inven = static_cast<CPet_Inven*>(g_pManagement->Clone_GameObject_Return(L"GameObject_PetInven", nullptr));
@@ -353,7 +361,9 @@ HRESULT CUI_Manager::SetUp_UILayer()
 	m_pCalling_Colleague = static_cast<CCalling_Colleague*>(g_pManagement->Clone_GameObject_Return(L"GameObject_Calling_Colleague", nullptr));
 	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pCalling_Colleague, SCENE_MORTAL, L"Layer_Calling_ColleagueUI", nullptr);
 
-
+	// ƒ⁄Ω∫∆¨
+	m_pCustomCategory = static_cast<CCustomCategory*>(g_pManagement->Clone_GameObject_Return(L"GameObject_CustomCategory", nullptr));
+	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pCustomCategory, SCENE_MORTAL, L"Layer_Custom", nullptr);
 	
 	return NOERROR;
 }

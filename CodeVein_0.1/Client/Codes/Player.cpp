@@ -32,18 +32,20 @@ void CPlayer::Set_WeaponSlot(ACTIVE_WEAPON_SLOT eType, WEAPON_DATA eData)
 		if (m_pWeapon[eType])
 			Safe_Release(m_pWeapon[eType]);
 
+		if(m_eActiveSlot == eType)
+
 		m_bWeaponActive[eType] = false;
 		m_bWeaponActive[!eType] = true;
 		m_eActiveSlot = (ACTIVE_WEAPON_SLOT)(!eType);
 
-		Change_Weapon();
-
 		return;
 	}
 
+	// 해당 슬롯의 무기를 교체 해 줍니다.
 	if (m_pWeapon[eType])
 		Safe_Release(m_pWeapon[eType]);
 
+	// 뼈를 찾고 갖다 붙힙니다.
 	LPCSTR tmpChar = "RightHandAttach";
 	_mat   matAttach;
 
@@ -54,6 +56,13 @@ void CPlayer::Set_WeaponSlot(ACTIVE_WEAPON_SLOT eType, WEAPON_DATA eData)
 	m_pWeapon[eType]->Set_Friendly(true);
 	m_pWeapon[eType]->Set_AttachBoneMartix(&pFrame->CombinedTransformationMatrix);
 	m_pWeapon[eType]->Set_ParentMatrix(&m_pTransform->Get_WorldMat());
+
+	if (m_eActiveSlot == eType)
+	{
+		m_bOnInvenChange = true;
+		Change_Weapon();
+	}
+
 	//m_bWeaponActive[eType] = true;r
 
 }
@@ -64,6 +73,11 @@ void CPlayer::Set_ArmorSlot(ARMOR_All_DATA eType)
 	//	return;
 
 	m_pOuter->Change_OuterMesh(CClothManager::Cloth_Dynamic(eType + 1));
+}
+
+void CPlayer::Set_Target_UI(CGameObject * pGameObject)
+{
+
 }
 
 HRESULT CPlayer::Ready_GameObject_Prototype()
@@ -252,86 +266,6 @@ _int CPlayer::Late_Update_GameObject(_double TimeDelta)
 		m_pDrainWeapon->Late_Update_GameObject(TimeDelta);
 
 	return NO_EVENT;
-}
-
-HRESULT CPlayer::Render_GameObject()
-{
-	if (false == m_bEnable)
-		return S_OK;
-
-	if (nullptr == m_pShader ||
-		nullptr == m_pDynamicMesh)
-		return E_FAIL;
-
-	m_pDynamicMesh->Play_Animation_Lower(g_pTimer_Manager->Get_DeltaTime(L"Timer_Fps_60") * m_fAnimMutiply);
-	m_pDynamicMesh->Play_Animation_Upper(g_pTimer_Manager->Get_DeltaTime(L"Timer_Fps_60") * m_fAnimMutiply);
-	m_pDynamicMesh->Play_Animation_RightArm(g_pTimer_Manager->Get_DeltaTime(L"Timer_Fps_60") * m_fAnimMutiply, false);
-	m_pDynamicMesh->Play_Animation_LeftArm(g_pTimer_Manager->Get_DeltaTime(L"Timer_Fps_60") * m_fAnimMutiply);
-
-	if (m_tObjParam.bInvisible)
-		return S_OK;
-
-	if (FAILED(g_pDissolveTexture->SetUp_OnShader("g_FXTexture", m_pShader)))
-		return E_FAIL;
-
-	_mat matveiwView = g_pManagement->Get_Transform(D3DTS_VIEW);
-	_mat matPro = g_pManagement->Get_Transform(D3DTS_PROJECTION);
-
-	m_pShader->Set_Value("g_matView", &matveiwView, sizeof(_mat));
-	m_pShader->Set_Value("g_matProj", &matPro, sizeof(_mat));
-
-	if (FAILED(SetUp_ConstantTable(m_pShader)))
-		return E_FAIL;
-
-	m_pShader->Begin_Shader();
-
-	_uint iNumMeshContainer = _uint(m_pDynamicMesh->Get_NumMeshContainer());
-	// 메쉬 컨테이너는 3개
-
-	for (_uint i = 0; i < _uint(iNumMeshContainer); ++i)
-	{
-		_uint iNumSubSet = (_uint)m_pDynamicMesh->Get_NumMaterials(i);
-		// 서브셋은 5개
-
-		if (i == 1)
-			continue;
-
-		// 메시를 뼈에 붙인다.
-		m_pDynamicMesh->Update_SkinnedMesh(i);
-
-		for (_uint j = 0; j < iNumSubSet; ++j)
-		{
-
-			m_iPass = m_pDynamicMesh->Get_MaterialPass(i , j);
-
-			if (m_bDissolve)
-				m_iPass = 3;
-
-			m_pShader->Begin_Pass(m_iPass);
-
-			m_pShader->Set_DynamicTexture_Auto(m_pDynamicMesh, i, j);
-
-			if (13 == m_iPass)
-			{
-				_float fSpec = 0.1f;
-
-				if (FAILED(m_pShader->Set_Value("g_fSpecularPower", &fSpec, sizeof(_float))))
-					return E_FAIL;
-			}
-
-			m_pShader->Commit_Changes();
-
-			m_pDynamicMesh->Render_Mesh(i, j);
-
-			m_pShader->End_Pass();
-		}
-	}
-
-	m_pShader->End_Shader();
-
-	Draw_Collider();
-
-	return NOERROR;
 }
 
 HRESULT CPlayer::Render_GameObject_Instancing_SetPass(CShader * pShader)
@@ -1553,6 +1487,35 @@ void CPlayer::KeyInput()
 
 void CPlayer::KeyDown()
 {
+	if (m_bOnCustomMode)
+	{
+		if (g_pInput_Device->Key_Down(DIK_C))
+		{
+			m_pCamManager->Set_CustomizeCamIdx(0);
+			m_pCamManager->Set_CustomizeCamMode(false);
+
+			m_pUIManager->Get_CustomCategory()->Active_CustomUIs();
+			m_bOnCustomMode = false;
+		}
+
+		return;
+	}
+
+	else
+	{
+		if (g_pInput_Device->Key_Down(DIK_C))
+		{
+			if (false == m_pUIManager->Get_CustomCategory()->Get_Active())
+			{
+				m_pCamManager->Set_CustomizeCamIdx(0);
+				m_pCamManager->Set_CustomizeCamMode(true);
+
+				m_pUIManager->Get_CustomCategory()->Active_CustomUIs();
+				m_bOnCustomMode = true;
+			}
+		}
+	}
+
 	if (m_bActiveUI)
 	{
 		Key_UI_n_Utiliy(m_bActiveUI);
@@ -2354,6 +2317,24 @@ void CPlayer::Key_UI_n_Utiliy(_bool _bActiveUI)
 		// 임시로 넣어둔거라, 이거 빼야함
 		else if (g_pInput_Device->Key_Down(DIK_E))
 		{
+			if(m_bOnUI_NPCTalk)
+			{
+				if (m_bOnYakumo_UI)
+				{
+					Active_UI_WeaponShop_Yakumo(true);
+				}
+
+				else if (m_bOnYakumo_UI)
+				{
+
+				}
+
+				else if (m_bOnJack_UI)
+				{
+
+				}
+			}
+
 			if (m_bOnUI_StageSelect)
 			{
 				Active_UI_StageSelect(true);
@@ -2414,6 +2395,8 @@ void CPlayer::Key_UI_n_Utiliy(_bool _bActiveUI)
 
 	else if (false == _bActiveUI)
 	{
+		cout << "작동된거읍음" << endl;
+  
 		if (g_pInput_Device->Key_Down(DIK_ESCAPE))
 		{
 			g_pInput_Device->Set_MouseLock(false);
@@ -2428,11 +2411,35 @@ void CPlayer::Key_UI_n_Utiliy(_bool _bActiveUI)
 
 		else if (g_pInput_Device->Key_Down(DIK_E))
 		{
-			Active_UI_Mistletoe();
+			if(m_bOnUI_Mistletoe)
+				Active_UI_Mistletoe();
 
-			// 여기 유아이 끄는거 넣어야함
-			//m_pUIManager->Get_Skill_AcquisitionUI()->Set_Active(false);
+			else if (m_bOnUI_NPCTalk)
+			{
+				m_pUIManager->Get_NPC_InteractionUI()->Set_Interaction(true);
+				m_pUIManager->Get_NPC_InteractionUI()->Set_ReactConverSation(true);
+
+				if (m_bOnYakumo_UI)
+				{
+					Active_UI_WeaponShop_Yakumo();
+				}
+
+				else if (m_bOnYakumo_UI)
+				{
+
+				}
+
+				else if (m_bOnJack_UI)
+				{
+
+				}
+			}
 		}
+	}
+
+	if (g_pInput_Device->Key_Up(DIK_E))
+	{
+		m_pUIManager->Get_NPC_InteractionUI()->Set_Interaction(false);
 	}
 
 
@@ -2907,8 +2914,6 @@ void CPlayer::Play_MoveDelay()
 
 			m_bOnMoveDelay = false;
 		}
-
-		cout << m_eAnim_Lower << endl;
 
 		_v3 vDelayDir = WORLD_LOOK; 
 		
@@ -4726,25 +4731,24 @@ void CPlayer::Play_WeaponChange()
 
 		if (m_pDynamicMesh->Is_Finish_Animation_Upper(0.95f))
 		{
-			//m_eActiveSlot =
-			//	(m_eActiveSlot == WPN_SLOT_A ? WPN_SLOT_B :
-			//		m_eActiveSlot == WPN_SLOT_B ? WPN_SLOT_C :
-			//		m_eActiveSlot == WPN_SLOT_C ? WPN_SLOT_D :
-			//		m_eActiveSlot == WPN_SLOT_D ? WPN_SLOT_E : WPN_SLOT_A);
-
-			m_eActiveSlot = (m_eActiveSlot == WPN_SLOT_A) ? WPN_SLOT_B : WPN_SLOT_A;
-
 			m_eMainWpnState = m_pWeapon[m_eActiveSlot]->Get_WeaponType();
 
-			m_bChangeWeapon = false;
+			if (false == m_bOnInvenChange)
+			{
+				m_eActiveSlot = (m_eActiveSlot == WPN_SLOT_A) ? WPN_SLOT_B : WPN_SLOT_A;
 
-			m_bOneHand = (
-				m_eMainWpnState == WEAPON_SSword ? true :
-				m_eMainWpnState == WEAPON_LSword ? false :
-				m_eMainWpnState == WEAPON_Halberd ? true :
-				m_eMainWpnState == WEAPON_Gun ? true :
-				m_eMainWpnState == WEAPON_Hammer ? false : true
-				);
+				m_bChangeWeapon = false;
+
+				m_bOneHand = (
+					m_eMainWpnState == WEAPON_SSword ? true :
+					m_eMainWpnState == WEAPON_LSword ? false :
+					m_eMainWpnState == WEAPON_Halberd ? true :
+					m_eMainWpnState == WEAPON_Gun ? true :
+					m_eMainWpnState == WEAPON_Hammer ? false : true
+					);
+			}
+			
+			m_bOnInvenChange = false;
 
 			m_eActState = ACT_Idle;
 		}
@@ -11149,6 +11153,60 @@ void CPlayer::Active_UI_BloodCode(_bool _bResetUI)
 	m_pCamManager->Set_MidDistance(2.5f);
 }
 
+void CPlayer::Active_UI_WeaponShop_Yakumo(_bool _bResetUI)
+{
+	// 활성 상태에 따라 On/Off 판단
+	_bool bUIActive = m_bActiveUI = m_pUIManager->Get_WeaponShopUI()->Get_Active() ? false : true;
+
+	// 스테이지 선택 UI 를 On/Off 시킨다.
+	m_pUIManager->Get_WeaponShopUI()->Set_Active(bUIActive);
+
+	// 선택이 됫는지 안됫는지
+	m_bOnYakumo_UI = bUIActive;
+
+	// 비활성화면 리턴
+	if (!bUIActive)
+	{
+		//if (!m_pUIManager->Get_WeaponShopUI()->Get_OtherPopupOn())
+		//{
+			m_bOnUI_NPCTalk = false;
+
+			m_pCamManager->Set_AimXPosMulti(1.f);
+			m_pCamManager->Set_AimYPos(0.f);
+
+			// 타겟도 Null 해줘요
+			m_pCamManager->Set_AimUI(false);
+			m_pCamManager->Set_OnAimingTarget(false);
+			m_pCamManager->Set_AimingTarget(nullptr);
+			m_pCamManager->Set_MidDistance(g_OriginCamPos);
+			m_pCamManager->Set_MouseCtrl(true);
+			m_pCamManager->Set_LockAngleX(D3DXToDegree(m_pTransform->Get_Angle(AXIS_Y)));
+
+			g_pInput_Device->Set_MouseLock(true);
+
+			m_pRenderer->DOF_On(false);
+		//}
+		return;
+	}
+
+	// 카메라 에임 상태 설정
+	m_pCamManager->Set_OnAimingTarget(bUIActive);
+	m_pCamManager->Set_AimUI(true);
+	m_pCamManager->Set_AimingTarget(m_pUIManager->Get_WeaponShopUI());
+
+	m_pCamManager->Set_MidDistance(1.5f);
+	m_pCamManager->Set_AimXPosMulti(-0.5f);
+	m_pCamManager->Set_AimYPos(0.5f);
+	m_pCamManager->Set_MouseCtrl(false);
+	g_pInput_Device->Set_MouseLock(false);
+
+	m_pRenderer->DOF_On(true);
+}
+
+void CPlayer::Active_UI_MaterialShop_Yokumo(_bool _bResetUI)
+{
+}
+
 void CPlayer::Active_UI_LockOn(_bool _bResetUI)
 {
 	if (false == _bResetUI)
@@ -11172,6 +11230,11 @@ void CPlayer::Active_UI_LockOn(_bool _bResetUI)
 		m_pLockOn_UI->Set_Enable(false);
 		m_pLockOn_UI->Reset_TargetMatrix();
 	}
+}
+
+void CPlayer::UI_Check()
+{
+
 }
 
 HRESULT CPlayer::Add_Component()
@@ -11387,6 +11450,34 @@ void CPlayer::Reset_BattleState()
 
 	LOOP(32)
 		m_bEventTrigger[i] = false;
+}
+
+void CPlayer::Check_NPC()
+{
+	if (m_eActState == ACT_BloodSuck_Execution)
+		return;
+
+	if (m_bActiveUI)
+		return;
+
+	if (g_pManagement->Get_GameObjectList(L"Layer_Mistletoe", SCENE_STAGE).empty())
+		return;
+
+	for (auto& iter : g_pManagement->Get_GameObjectList(L"Layer_Mistletoe", SCENE_STAGE))
+	{
+		if (false == iter->Get_Enable())
+			continue;
+
+		CTransform* pIterTrans = TARGET_TO_TRANS(iter);
+
+		if (1.5f >= V3_LENGTH(&(m_pTransform->Get_Pos() - pIterTrans->Get_Pos())))
+		{
+			m_bOnUI_Mistletoe = true;
+			return;
+		}
+	}
+
+	m_bOnUI_Mistletoe = false;
 }
 
 void CPlayer::Check_Mistletoe()

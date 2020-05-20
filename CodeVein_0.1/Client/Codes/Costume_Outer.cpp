@@ -275,7 +275,7 @@ _int CCostume_Outer::Update_GameObject(_double TimeDelta, _bool bClearCol)
 
 	static _byte iCount = 0;
 
-	if (g_pInput_Device->Key_Down(DIK_T))
+	if (g_pInput_Device->Key_Down(DIK_G))
 	{
 		++iCount;
 

@@ -182,6 +182,16 @@ void CCameraMgr::Set_MouseCtrl(_bool _bMouseCtrl)
 	m_pMainCamera->Set_MouseControl(_bMouseCtrl);
 }
 
+void CCameraMgr::Set_CustomizeCamIdx(_ulong _dwCosIdx)
+{
+	m_pMainCamera->Set_CustomizeCamIdx(_dwCosIdx);
+}
+
+void CCameraMgr::Set_CustomizeCamMode(_bool _bCos)
+{
+	m_pMainCamera->Set_CustomizeCamMode(_bCos);
+}
+
 void CCameraMgr::Add_MainPos(_float _fSpeed, _v3 _vDir)
 {
 	m_pMainCamera->Add_Pos(_fSpeed, _vDir);
