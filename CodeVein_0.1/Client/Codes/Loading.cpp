@@ -1136,6 +1136,11 @@ HRESULT CLoading::Ready_Effect(void)
 		return E_FAIL;
 	if (FAILED(Add_EffectPrototype(L"DrainWeapon_WhiteParticle_3")))
 		return E_FAIL;
+
+	if (FAILED(Add_EffectPrototype(L"Pet_SpawnParticle")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"Pet_SpawnSmoke")))
+		return E_FAIL;
 #pragma endregion
 
 	if (FAILED(g_pManagement->Add_Prototype(L"Blood_Decal_0", CDecalEffect::Create(m_pGraphicDev, Read_EffectData(L"../../Data/EffectData/Blood_Decal_0.dat")))))

@@ -220,7 +220,12 @@ void CCustomSliderBar::Late_Init()
 void CCustomSliderBar::Check_Drag()
 {
 	if (m_bIsColl && g_pInput_Device->Get_DIMouseState(CInput_Device::DIM_LB))
+	{
 		m_bDragStart = true;
+
+		g_pSoundManager->Stop_Sound(CSoundManager::UI_SFX_01);
+		g_pSoundManager->Play_Sound(L"UI_CommonClick.wav", CSoundManager::UI_SFX_01, CSoundManager::Effect_Sound);
+	}
 
 	if (g_pInput_Device->Get_DIMouseState_Up(CInput_Device::DIM_LB))
 		m_bDragStart = false;
