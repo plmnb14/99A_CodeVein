@@ -44,10 +44,6 @@ _int CGeneralStoreUI::Update_GameObject(_double TimeDelta)
 	
 	Update_SubUI();
 	Click_SubUI();
-
-	//// 디버깅용
-	//if(g_pInput_Device->Key_Up(DIK_P))
-	//	m_bIsActive = !m_bIsActive;
 	
 	return NO_EVENT;
 }
@@ -78,6 +74,7 @@ HRESULT CGeneralStoreUI::Render_GameObject()
 	g_pManagement->Set_Transform(D3DTS_VIEW, m_matView);
 	g_pManagement->Set_Transform(D3DTS_PROJECTION, m_matProj);
 
+	
 	if (FAILED(SetUp_ConstantTable(0)))
 		return E_FAIL;
 
@@ -180,6 +177,7 @@ void CGeneralStoreUI::Click_SubUI()
 	if (!m_bIsActive)
 		return;
 
+	
 	// 소비템 버튼 클릭시
 	if (m_pShopIcon[0]->Pt_InRect() && g_pInput_Device->Get_DIMouseState(CInput_Device::DIM_LB))
 	{
@@ -196,6 +194,13 @@ void CGeneralStoreUI::Click_SubUI()
 		m_pMaterialCollectionUI->Set_Active(true);
 
 		g_pSoundManager->Play_Sound(L"UI_CommonHover.wav", CSoundManager::CHANNELID::Purchase_GeneralShop_Icon02, CSoundManager::Ambient_Sound);
+	}
+	
+	
+
+	if (g_pInput_Device->Get_DIMouseState(CInput_Device::DIM_RB))
+	{
+		m_bIsActive = false;
 	}
 }
 

@@ -53,8 +53,11 @@ _int CGeneralStoreOption::Update_GameObject(_double TimeDelta)
 	case OPTION_PURCHASE:
 		m_iIndex = 2;
 		break;
-	case OPTION_BYE:
+	case OPTION_SELL:
 		m_iIndex = 3;
+		break;
+	case OPTION_BYE:
+		m_iIndex = 4;
 		break;
 	}
 

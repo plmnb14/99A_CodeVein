@@ -25,9 +25,9 @@ HRESULT CScriptUI::Ready_GameObject(void * pArg)
 	CUI::Ready_GameObject(pArg);
 
 	m_fPosX = WINCX * 0.5f;
-	m_fPosY = 635.f;
-	m_fSizeX = 512.f;
-	m_fSizeY = 128.f;
+	m_fPosY = 55.f;
+	m_fSizeX = 512.f * 0.7f;
+	m_fSizeY = 128.f * 0.7f;
 
 	m_fLifeTime = 5.f;
 	

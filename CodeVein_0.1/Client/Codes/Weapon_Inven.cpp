@@ -7,11 +7,13 @@
 CWeapon_Inven::CWeapon_Inven(_Device pDevice)
 	: CUI(pDevice)
 {
+	ZeroMemory(m_pRegistSlot, sizeof(CWeapon_Slot*) * 2);
 }
 
 CWeapon_Inven::CWeapon_Inven(const CWeapon_Inven & rhs)
 	: CUI(rhs)
 {
+	ZeroMemory(m_pRegistSlot, sizeof(CWeapon_Slot*) * 2);
 }
 
 HRESULT CWeapon_Inven::Set_WeaponData_FromWeapon()
@@ -87,6 +89,7 @@ _int CWeapon_Inven::Update_GameObject(_double TimeDelta)
 	if (m_bIsActive && !m_bIsSubActive)
 	{
 		SetUp_SubUI_Active(true);
+
 		m_bIsSubActive = true;
 	}
 	else if (!m_bIsActive && m_bIsSubActive)
@@ -96,7 +99,6 @@ _int CWeapon_Inven::Update_GameObject(_double TimeDelta)
 	}
 
 	Click_Inven();
-	
 	
 	
 	return NO_EVENT;
@@ -205,21 +207,28 @@ void CWeapon_Inven::Click_Inven()
 			{
 				Regist_Weapon(pSlot);			
 			}
-			if (g_pInput_Device->Get_DIMouseState(CInput_Device::DIM_RB) &&
+			/*if (g_pInput_Device->Get_DIMouseState(CInput_Device::DIM_RB) &&
 				pSlot->Get_Select())
 			{
 				UnRegist_Weapon(pSlot);
-			}
+			}*/
 			
 		}
 		iIdx++;
+	}
+
+	
+	if (m_pExitIcon->Pt_InRect() && g_pInput_Device->Get_DIMouseState(CInput_Device::DIM_LB))
+	{
+		m_bIsActive = false;
+		CUI_Manager::Get_Instance()->Get_Total_Inven()->Set_Active(true);
 	}
 }
 
 
 void CWeapon_Inven::Regist_Weapon(CWeapon_Slot* pWeaponSlot)
 {
-	if (pWeaponSlot->Get_WeaponParam().iWeaponName == WPN_DATA_End)
+	/*if (pWeaponSlot->Get_WeaponParam().iWeaponName == WPN_DATA_End)
 		return;
 	if (m_UseWeaponParam[0].iWeaponName == WPN_DATA_End)
 	{
@@ -240,7 +249,18 @@ void CWeapon_Inven::Regist_Weapon(CWeapon_Slot* pWeaponSlot)
 		g_pSoundManager->Play_Sound(L"UI_CommonHover.wav", CSoundManager::WeaponInven_Regist_Slot02, CSoundManager::Effect_Sound);
 	}
 	else
+		return;*/
+
+	if (!pWeaponSlot)
 		return;
+	
+	pWeaponSlot->Set_Select(true);
+	m_pRegistSlot[m_iRegistIndex] = pWeaponSlot;
+	Reset_SlotSelect();
+	CTotal_Inven* pTotal_Inven = CUI_Manager::Get_Instance()->Get_Total_Inven();
+
+	pTotal_Inven->Set_WeaponParam(m_iRegistIndex, pWeaponSlot->Get_WeaponParam());
+	m_pPlayer->Set_WeaponSlot((CPlayer::ACTIVE_WEAPON_SLOT)m_iRegistIndex, (WEAPON_DATA)pWeaponSlot->Get_WeaponParam().iWeaponName);
 }
 
 void CWeapon_Inven::UnRegist_Weapon(CWeapon_Slot * pWeaponSlot)
@@ -300,6 +320,7 @@ void CWeapon_Inven::UnRegist_Weapon(CWeapon_Slot * pWeaponSlot)
 		return;
 }
 
+// µð¹ö±ë¿ë
 HRESULT CWeapon_Inven::SetUp_WeaponData()
 {
 	//===========================================================================================
@@ -639,6 +660,12 @@ void CWeapon_Inven::SetUp_Default()
 {
 	m_pExplainUI = static_cast<CExplainWeaponUI*>(g_pManagement->Clone_GameObject_Return(L"GameObject_ExplainWeaponUI", nullptr));
 	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pExplainUI, SCENE_MORTAL, L"Layer_PlayerUI", nullptr);
+
+	m_pExitIcon = static_cast<CInventory_Icon*>(g_pManagement->Clone_GameObject_Return(L"GameObject_InvenIcon", nullptr));
+	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pExitIcon, SCENE_MORTAL, L"Layer_PlayerUI", nullptr);
+	m_pExitIcon->Set_UI_Pos(m_fPosX + 120.f, m_fPosY - 203.f);
+	m_pExitIcon->Set_UI_Size(40.f, 40.f);
+	m_pExitIcon->Set_Type(CInventory_Icon::ICON_EXIT);
 }
 
 void CWeapon_Inven::SetUp_SlotPos()
@@ -662,6 +689,7 @@ void CWeapon_Inven::SetUp_SubUI_Active(_bool bIsActive)
 	}
 
 	m_pExplainUI->Set_Active(bIsActive);
+	m_pExitIcon->Set_Active(bIsActive);
 }
 
 void CWeapon_Inven::Late_Init()
@@ -675,7 +703,24 @@ void CWeapon_Inven::Late_Init()
 
 	m_vecWeaponSlot.reserve(2);
 	Add_Weapon(m_tWeaponParam[Wpn_SSword]);
+	Add_Weapon(m_tWeaponParam[Wpn_Halberd]);
+	Add_Weapon(m_tWeaponParam[Wpn_Gun]);
+	Add_Weapon(m_tWeaponParam[Wpn_LSword]);
 	Regist_Weapon(m_vecWeaponSlot[0]);
+}
+
+void CWeapon_Inven::Reset_SlotSelect()
+{
+	for (auto& iter : m_vecWeaponSlot)
+	{
+		iter->Set_Select(false);
+	}
+	
+	LOOP(2)
+	{
+		if(nullptr != m_pRegistSlot[i])
+			m_pRegistSlot[i]->Set_Select(true);
+	}
 }
 
 void CWeapon_Inven::Add_Weapon(WPN_PARAM tAddWpnParam)

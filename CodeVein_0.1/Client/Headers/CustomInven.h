@@ -63,6 +63,8 @@ private:
 	vector<CCustomSlot*>	m_vecMaskSlot;
 	vector<CCustomSlot*>	m_vecInnerSlot;
 
+	CCustomSlot*			m_pHoverSlot = nullptr;
+
 	CCustomSliderBar*		m_pHairSlider[4];
 
 	INVEN_TYPE				m_eActiveType = TYPE_END;

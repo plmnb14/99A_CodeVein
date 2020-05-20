@@ -394,9 +394,6 @@
     <Filter Include="02.GameObject\Stage\5%29 UI\UI\13. BloodCodeMenuUI\01. SkillReleaseUI\SkillReleaseUI">
       <UniqueIdentifier>{5baab775-370b-4520-8364-36515fc23027}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02.GameObject\Stage\10%29 Pet\01.PoisonButterFly">
-      <UniqueIdentifier>{2f0b99ca-05de-474b-a3f2-deaf4be55682}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02.GameObject\Stage\5%29 UI\UI\03.Inven_UI\00.Inventory\08. Pet_Inven">
       <UniqueIdentifier>{a7a0f26e-f1c3-4bbe-a84d-2ece8c87140c}</UniqueIdentifier>
     </Filter>
@@ -432,9 +429,6 @@
     </Filter>
     <Filter Include="02.GameObject\Stage\0%29 Player\01%29 Costume">
       <UniqueIdentifier>{fb9e8e53-a817-46da-b751-1fe5abd1c284}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObject\Stage\5%29 UI\UI\04. HazeUI">
-      <UniqueIdentifier>{b43ab97b-58b5-48ec-bf6c-e7cb04438b4a}</UniqueIdentifier>
     </Filter>
     <Filter Include="02.GameObject\Stage\5%29 UI\UI\99.Public\MouseUI">
       <UniqueIdentifier>{2bfceb16-1374-4a01-9881-b5af3154309b}</UniqueIdentifier>
@@ -613,7 +607,13 @@
     <Filter Include="02.GameObject\Stage\5%29 UI\UI\20. Custom\CategoryElem\SliderBar">
       <UniqueIdentifier>{6836337d-342b-458c-b424-5c5028fce301}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02.GameObject\Stage\11%29 NPC\Yakumo">
+    <Filter Include="02.GameObject\Stage\10%29 Pet\01.Pet_PoisonButterFly">
+      <UniqueIdentifier>{2f0b99ca-05de-474b-a3f2-deaf4be55682}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Stage\5%29 UI\UI\04.HazeUI">
+      <UniqueIdentifier>{b43ab97b-58b5-48ec-bf6c-e7cb04438b4a}</UniqueIdentifier>
+    </Filter>
+      <Filter Include="02.GameObject\Stage\11%29 NPC\Yakumo">
       <UniqueIdentifier>{dc8f7480-720a-4f3d-bc65-ada7ef7ac63c}</UniqueIdentifier>
     </Filter>
     <Filter Include="02.GameObject\Stage\11%29 NPC\Yokumo">
@@ -630,6 +630,9 @@
     </Filter>
     <Filter Include="02.GameObject\Stage\5%29 UI\UI\06. Get_ItemUI\PickUp_ItemUIManager">
       <UniqueIdentifier>{32244477-327c-4e89-80ba-b6f69a399ca0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Stage\5%29 UI\UI\18. GeneralStoreUI%28잡화점%29\05. GeneralStoreSellUI">
+      <UniqueIdentifier>{05d6ac3c-8d9d-4fde-b24e-30376f054051}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -976,7 +979,7 @@
       <Filter>02.GameObject\Stage\Physx</Filter>
     </ClInclude>
     <ClInclude Include="..\Headers\Pet_PoisonButterFly.h">
-      <Filter>02.GameObject\Stage\10%29 Pet\01.PoisonButterFly</Filter>
+      <Filter>02.GameObject\Stage\10%29 Pet\01.Pet_PoisonButterFly</Filter>
     </ClInclude>
     <ClInclude Include="..\Headers\BloodSkillCursor.h">
       <Filter>02.GameObject\Stage\5%29 UI\UI\13. BloodCodeMenuUI\01. SkillReleaseUI\BloodSkillCursor</Filter>
@@ -1138,7 +1141,7 @@
       <Filter>02.GameObject\Stage\0%29 Player\01%29 Costume\[4] Outer</Filter>
     </ClInclude>
     <ClInclude Include="..\Headers\HazeUI.h">
-      <Filter>02.GameObject\Stage\5%29 UI\UI\04. HazeUI</Filter>
+      <Filter>02.GameObject\Stage\5%29 UI\UI\04.HazeUI</Filter>
     </ClInclude>
     <ClInclude Include="..\Headers\MouseUI.h">
       <Filter>02.GameObject\Stage\5%29 UI\UI\99.Public\MouseUI</Filter>
@@ -1217,9 +1220,6 @@
     </ClInclude>
     <ClInclude Include="..\Headers\Pet_Bullet.h">
       <Filter>02.GameObject\Stage\10%29 Pet\00.Pet_Bullet</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Headers\BuyOptionUI.h">
-      <Filter>02.GameObject\Stage\5%29 UI\UI\18. GeneralStoreUI%28잡화점%29\02. GeneralStoreBuyUI</Filter>
     </ClInclude>
     <ClInclude Include="..\Headers\SkillPointUI.h">
       <Filter>02.GameObject\Stage\5%29 UI\UI\09. SkillUI\02. Skill_Gauge</Filter>
@@ -1325,6 +1325,15 @@
     </ClInclude>
     <ClInclude Include="..\Headers\PickUp_ItemUIManager.h">
       <Filter>02.GameObject\Stage\5%29 UI\UI\06. Get_ItemUI\PickUp_ItemUIManager</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\BuyOptionUI.h">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\18. GeneralStoreUI%28잡화점%29\02. GeneralStoreBuyUI\BuyOptions</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\ExpendSellUI.h">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\18. GeneralStoreUI%28잡화점%29\05. GeneralStoreSellUI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\GeneralStoreSellUI.h">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\18. GeneralStoreUI%28잡화점%29\05. GeneralStoreSellUI</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -1662,7 +1671,7 @@
       <Filter>02.GameObject\Stage\Physx</Filter>
     </ClCompile>
     <ClCompile Include="..\Codes\Pet_PoisonButterFly.cpp">
-      <Filter>02.GameObject\Stage\10%29 Pet\01.PoisonButterFly</Filter>
+      <Filter>02.GameObject\Stage\10%29 Pet\01.Pet_PoisonButterFly</Filter>
     </ClCompile>
     <ClCompile Include="..\Codes\BloodSkillCursor.cpp">
       <Filter>02.GameObject\Stage\5%29 UI\UI\13. BloodCodeMenuUI\01. SkillReleaseUI\BloodSkillCursor</Filter>
@@ -1818,7 +1827,7 @@
       <Filter>02.GameObject\Stage\0%29 Player\01%29 Costume\[4] Outer</Filter>
     </ClCompile>
     <ClCompile Include="..\Codes\HazeUI.cpp">
-      <Filter>02.GameObject\Stage\5%29 UI\UI\04. HazeUI</Filter>
+      <Filter>02.GameObject\Stage\5%29 UI\UI\04.HazeUI</Filter>
     </ClCompile>
     <ClCompile Include="..\Codes\MouseUI.cpp">
       <Filter>02.GameObject\Stage\5%29 UI\UI\99.Public\MouseUI</Filter>
@@ -1897,9 +1906,6 @@
     </ClCompile>
     <ClCompile Include="..\Codes\Pet_Bullet.cpp">
       <Filter>02.GameObject\Stage\10%29 Pet\00.Pet_Bullet</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Codes\BuyOptionUI.cpp">
-      <Filter>02.GameObject\Stage\5%29 UI\UI\18. GeneralStoreUI%28잡화점%29\02. GeneralStoreBuyUI</Filter>
     </ClCompile>
     <ClCompile Include="..\Codes\SkillPointUI.cpp">
       <Filter>02.GameObject\Stage\5%29 UI\UI\09. SkillUI\02. Skill_Gauge</Filter>
@@ -2005,6 +2011,15 @@
     </ClCompile>
     <ClCompile Include="..\Codes\PickUp_ItemUIManager.cpp">
       <Filter>02.GameObject\Stage\5%29 UI\UI\06. Get_ItemUI\PickUp_ItemUIManager</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\BuyOptionUI.cpp">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\18. GeneralStoreUI%28잡화점%29\02. GeneralStoreBuyUI\BuyOptions</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\ExpendSellUI.cpp">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\18. GeneralStoreUI%28잡화점%29\05. GeneralStoreSellUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\GeneralStoreSellUI.cpp">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\18. GeneralStoreUI%28잡화점%29\05. GeneralStoreSellUI</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

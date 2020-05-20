@@ -41,9 +41,10 @@ _int CPet_DeerKing::Update_GameObject(_double TimeDelta)
 	if (false == m_bEnable)
 		return NO_EVENT;
 
+	Play_Deformation();
+
 	CGameObject::Update_GameObject(TimeDelta);
 
-	Play_Deformation();
 	Check_Dist();
 	Check_AniEvent();
 	Function_CoolDown();
@@ -1229,18 +1230,21 @@ void CPet_DeerKing::Play_Deformation()
 	{
 		m_bCanSummon = true;
 		m_bIsSummon = true;
+		m_pMesh->Reset_OldIndx();
 		m_eState = PET_DEERKING_ANI::Shield_Appearance_End;
+
+		g_pManagement->Create_Effect(L"Pet_SpawnParticle", m_pTransform->Get_Pos());
+		g_pManagement->Create_Effect(L"Pet_SpawnSmoke", m_pTransform->Get_Pos());
+		return;
 	}
 	else
 	{
-		if (true == m_bIsSummon)
+		if (m_pMesh->Is_Finish_Animation(0.95f))
 		{
-			if (m_pMesh->Is_Finish_Animation(0.95f))
-			{
-				Function_ResetAfterAtk();
-				m_bIsSummon = false;
-				return;
-			}
+			Function_ResetAfterAtk();
+			m_bIsSummon = false;
+			m_eState = PET_DEERKING_ANI::Idle;
+			return;
 		}
 	}
 
@@ -1364,6 +1368,8 @@ HRESULT CPet_DeerKing::Add_Component(void * pArg)
 	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"BattleAgent", L"Com_BattleAgent", (CComponent**)&m_pBattleAgent)))
 		return E_FAIL;
 
+	m_pTransform->Set_Scale(_v3{ 0.25f, 0.25f, 0.25f });
+
 	m_pCollider->Set_Radius(_v3{ 0.8f, 0.8f, 0.8f });
 	m_pCollider->Set_Dynamic(true);
 	m_pCollider->Set_Type(COL_SPHERE);
@@ -1427,7 +1433,6 @@ HRESULT CPet_DeerKing::Ready_Status(void * pArg)
 	m_fShotRange = 8.f; //목표 원거리범위
 	m_fAtkRange = 4.f; //목표 근거리범위
 	m_fPersonalRange = 2.f; //사회적 거리두기 범위
-	m_iDodgeCountMax = 5; //피격시 회피카운트
 
 	m_eType = PET_TYPE::PET_DEERKING;
 	m_eFirstCategory = PET_STATE_TYPE::IDLE;
@@ -1459,6 +1464,8 @@ HRESULT CPet_DeerKing::Ready_Status(void * pArg)
 	m_bIsMoveAround = false; //경게 진행중
 	m_bCanIdle = true; //일상 가능
 	m_bIsIdle = false; //일상 진행중 아님
+
+	m_bEnable = false;
 
 	m_dTimeDelta = 0;
 	m_dAniPlayMul = 1;

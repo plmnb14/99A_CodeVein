@@ -19,7 +19,7 @@ HRESULT CPet_Inven::Ready_GameObject_Prototype()
 	return S_OK;
 }
 
-HRESULT CPet_Inven::Ready_GameObject(void * pArg)
+HRESULT CPet_Inven::Ready_GameObject(void* pArg)
 {
 	if (FAILED(Add_Component()))
 		return E_FAIL;
@@ -28,12 +28,10 @@ HRESULT CPet_Inven::Ready_GameObject(void * pArg)
 
 	SetUp_Default();
 	
-	Add_Pet(CPet::PET_POISONBUTTERFLY);
-	Add_Pet(CPet::PET_DEERKING);
-	Add_Pet(CPet::PET_DEERKING);
-	Add_Pet(CPet::PET_DEERKING);
-	Add_Pet(CPet::PET_POISONBUTTERFLY);
-	Add_Pet(CPet::PET_POISONBUTTERFLY);
+	Add_Pet(CPet::PET_TYPE::PET_POISONBUTTERFLY);
+	Add_Pet(CPet::PET_TYPE::PET_DEERKING);
+	Add_Pet(CPet::PET_TYPE::PET_DEERKING);
+	Add_Pet(CPet::PET_TYPE::PET_POISONBUTTERFLY);
 
 	SetUp_SlotPos(); // 슬롯 위치 설정
 	return S_OK;
@@ -105,69 +103,8 @@ HRESULT CPet_Inven::Render_GameObject()
 	return S_OK;
 }
 
-void CPet_Inven::Check_Call_Pet(_bool _Check_Get_SlotSelect)
-{
-	CGameObject* pTempPet = nullptr;
-
-	auto& PetContainer = g_pManagement->Get_GameObjectList(L"Layer_Pet", SCENE_STAGE);
-
-	for (auto& list_iter : PetContainer)
-	{
-		if (nullptr == list_iter)
-			continue;
-		else if (m_eNowType != static_cast<CPet*>(list_iter)->Get_PetType())
-			continue;
-
-		pTempPet = list_iter;
-	}
-
-	//1.소환한다
-	// 종류, enable 체크
-	if (true == _Check_Get_SlotSelect)
-	{
-		if (nullptr == pTempPet)
-		{
-			if (CPet::PET_TYPE::PET_POISONBUTTERFLY == m_eNowType)
-			{
-				pTempPet = g_pManagement->Clone_GameObject_Return(L"Pet_PoisonButterFly", &CPet::PET_STATUS(m_eGradeType, WEAPON_STATE::WEAPON_None));
-				g_pManagement->Add_GameOject_ToLayer_NoClone(pTempPet, SCENE_STAGE, L"Layer_Pet", nullptr);
-				return;
-			}
-			else if (CPet::PET_TYPE::PET_DEERKING == m_eNowType)
-			{
-				pTempPet = g_pManagement->Clone_GameObject_Return(L"Pet_DeerKing", &CPet::PET_STATUS(m_eGradeType, WEAPON_STATE::WEAPON_None));
-				g_pManagement->Add_GameOject_ToLayer_NoClone(pTempPet, SCENE_STAGE, L"Layer_Pet", nullptr);
-				return;
-			}
-		}
-		else
-		{
-			static_cast<CPet*>(pTempPet)->Function_Check_Navi();
-			pTempPet = nullptr;
-			return;
-		}
-	}
-	//2.해제한다
-	// 종류, enable 체크
-	else if (false == _Check_Get_SlotSelect)
-	{
-		if (nullptr == pTempPet)
-			return;
-		else
-		{
-			pTempPet->Set_Enable(false);
-			pTempPet = nullptr;
-			return;
-		}
-	}
-
-	return;
-}
-
 void CPet_Inven::Click_Inven()
 {
-	_uint iTempNum = 0;
-
 	if (!m_bIsActive)
 		return;
 
@@ -178,95 +115,196 @@ void CPet_Inven::Click_Inven()
 		CUI_Manager::Get_Instance()->Get_StatusUI()->Set_Active(true);
 	}
 
+	_uint iTempNum = 0;
+	//소환
 	if (g_pInput_Device->Get_DIMouseState(CInput_Device::DIM_LB))
 	{
 		for (auto& iter : m_vecPetSlot)
 		{
-			//슬롯을 선택했다
 			if (true == iter->Pt_InRect())
 			{
-				m_ivectorNum = iTempNum; //펫슬롯이 가진 번호
-				m_eNowType = iter->Get_PetType(); //펫슬롯이 가진 종류
-
 				Reset_SlotSelect();
 				iter->Set_Select(true);
 
-
-				Check_Call_Pet(iter->Get_Select());
+				Check_Call_Pet(iter->Get_Select(), iTempNum, iter->Get_PetType());
 			}
 
 			++iTempNum;
 		}
 	}
+	
+	iTempNum = 0;
 
+	//해제
 	if (g_pInput_Device->Get_DIMouseState(CInput_Device::DIM_RB))
 	{
 		for (auto& iter : m_vecPetSlot)
 		{
-			if (iter->Pt_InRect())
+			if (true == iter->Pt_InRect())
 			{
-				iter->Set_Select(false);
-				
-				m_eNowType = iter->Get_PetType();
-				Check_Call_Pet(iter->Get_Select());
+				if (true == iter->Get_Select())
+				{
+					iter->Set_Select(false);
+					Check_Call_Pet(iter->Get_Select(), iTempNum, iter->Get_PetType());
+				}
 			}
+
+			++iTempNum;
 		}
 	}
-
-	// 소환 버튼 클릭시
-	if (m_pSummonsBtn->Pt_InRect() && g_pInput_Device->Get_DIMouseState(CInput_Device::DIM_LB))
-	{
-		
-	}
-	
 }
 
 void CPet_Inven::Reset_SlotSelect()
 {
-	_uint iTempNum = 0;
-	//모든 슬롯을 비활성화 == 체크 안함 표시 
 	for (auto& iter : m_vecPetSlot)
-	{
 		iter->Set_Select(false);
-	}
-	//펫을 전부 순회해서 소환된 친구가 있다면 소환을 해제하자
-	//그러나 선택한 슬롯이 이전 슬롯과 동일한 종류의 펫을 소환하려 한다면 해제하지 말자!
-	auto& PetContainer = g_pManagement->Get_GameObjectList(L"Layer_Pet", SCENE_STAGE);
 
+	return;
+}
+
+void CPet_Inven::Check_Call_Pet(_bool _Check_Get_SlotSelect, _uint _Idx, CPet::PET_TYPE _eType)
+{
+	CGameObject* pTempPet = nullptr;
+
+	auto& PetContainer = g_pManagement->Get_GameObjectList(L"Layer_Pet", SCENE_STAGE);
+	//기존 소환물 체크
 	for (auto& list_iter : PetContainer)
 	{
+		//없는 경우 넘어가기
 		if (nullptr == list_iter)
-		{
-			++iTempNum;
 			continue;
-		}
-		else if (iTempNum == m_ivectorNum)
+		//소환된 개체 불러오기
+		else if (true == list_iter->Get_Enable())
 		{
-			if (true == list_iter->Get_Enable())
-				list_iter->Set_Enable(false);
+			pTempPet = list_iter;
+			break;
 		}
 	}
+	//소환
+	if (true == _Check_Get_SlotSelect)
+	{
+		//기존 소환물 없는 경우
+		if (nullptr == pTempPet)
+		{
+			//해당 펫 종류가 있는지 확인
+			for (auto& list_iter : PetContainer)
+			{
+				if(nullptr == list_iter)
+					continue;
+				else if (_eType == static_cast<CPet*>(list_iter)->Get_PetType())
+				{
+					pTempPet = list_iter;
+					break;
+				}
+			}
+			
+			//해당 펫을 검색했는데 없다면
+			if (nullptr == pTempPet)
+			{
+				if (CPet::PET_TYPE::PET_POISONBUTTERFLY == _eType)
+				{
+					pTempPet = g_pManagement->Clone_GameObject_Return(L"Pet_PoisonButterFly", &CPet::PET_STATUS(_eType));
+					g_pManagement->Add_GameOject_ToLayer_NoClone(pTempPet, SCENE_STAGE, L"Layer_Pet", nullptr);
+					return;
+				}
+				else if (CPet::PET_TYPE::PET_DEERKING == _eType)
+				{
+					pTempPet = g_pManagement->Clone_GameObject_Return(L"Pet_DeerKing", &CPet::PET_STATUS(_eType));
+					g_pManagement->Add_GameOject_ToLayer_NoClone(pTempPet, SCENE_STAGE, L"Layer_Pet", nullptr);
+					return;
+				}
+			}
+			//해당 펫을 찾았다면
+			else
+			{
+				static_cast<CPet*>(pTempPet)->Function_Check_Navi();
+				static_cast<CPet*>(pTempPet)->Play_Deformation();
+				pTempPet->Set_Enable(true);
+				pTempPet = nullptr;
+				return;
+			}
+		}
+		//기존 소환물이 있는 경우
+		else
+		{
+			//펫 종류가 같은 경우
+			if (_eType == static_cast<CPet*>(pTempPet)->Get_PetType())
+				return;
+			//펫 종류가 다른 경우
+			else
+			{
+				static_cast<CPet*>(pTempPet)->Set_Summon(true);
+				pTempPet->Set_Enable(false);
+				pTempPet = nullptr;
+
+				for (auto& list_iter : PetContainer)
+				{
+					if (nullptr == list_iter)
+						continue;
+					else if (_eType == static_cast<CPet*>(list_iter)->Get_PetType())
+					{
+						pTempPet = list_iter;
+						break;
+					}
+				}
+
+				if (nullptr == pTempPet)
+				{
+					if (CPet::PET_TYPE::PET_POISONBUTTERFLY == _eType)
+					{
+						pTempPet = g_pManagement->Clone_GameObject_Return(L"Pet_PoisonButterFly", &CPet::PET_STATUS(_eType));
+						g_pManagement->Add_GameOject_ToLayer_NoClone(pTempPet, SCENE_STAGE, L"Layer_Pet", nullptr);
+						return;
+					}
+					else if (CPet::PET_TYPE::PET_DEERKING == _eType)
+					{
+						pTempPet = g_pManagement->Clone_GameObject_Return(L"Pet_DeerKing", &CPet::PET_STATUS(_eType));
+						g_pManagement->Add_GameOject_ToLayer_NoClone(pTempPet, SCENE_STAGE, L"Layer_Pet", nullptr);
+						return;
+					}
+				}
+				else
+				{
+					static_cast<CPet*>(pTempPet)->Function_Check_Navi();
+					static_cast<CPet*>(pTempPet)->Play_Deformation();
+					pTempPet->Set_Enable(true);
+					pTempPet = nullptr;
+					return;
+				}
+			}
+		}
+	}
+	//해제
+	else
+	{
+		if (nullptr == pTempPet)
+			return;
+		else
+		{
+			static_cast<CPet*>(pTempPet)->Set_Summon(true);
+			pTempPet->Set_Enable(false);
+			pTempPet = nullptr;
+			return;
+		}
+	}
+
+	return;
 }
 
 HRESULT CPet_Inven::Add_Component()
 {
-	// For.Com_Transform
 	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Transform", L"Com_Transform", (CComponent**)&m_pTransform)))
 		return E_FAIL;
 
-	// For.Com_Renderer
 	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Renderer", L"Com_Renderer", (CComponent**)&m_pRenderer)))
 		return E_FAIL;
 
-	// For.Com_Texture
 	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Tex_MenuWindow", L"Com_Texture", (CComponent**)&m_pTexture)))
 		return E_FAIL;
 
-	// For.Com_Shader
 	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Shader_UI", L"Com_Shader", (CComponent**)&m_pShader)))
 		return E_FAIL;
 
-	// for.Com_VIBuffer
 	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"VIBuffer_Rect", L"Com_VIBuffer", (CComponent**)&m_pBuffer)))
 		return E_FAIL;
 
@@ -339,11 +377,10 @@ void CPet_Inven::SetUp_SubUI_Active(_bool bIsActive)
 	m_pSummonsBtn->Set_Active(bIsActive);
 }
 
-void CPet_Inven::Add_Pet(CPet::PET_TYPE ePetType, CPet::PET_GRADE_TYPE ePetGrade)
+void CPet_Inven::Add_Pet(CPet::PET_TYPE ePetType)
 {
 	CPet_Slot* pPetSlot = static_cast<CPet_Slot*>(g_pManagement->Clone_GameObject_Return(L"GameObject_PetSlot", nullptr));
 	pPetSlot->Set_PetType(ePetType);
-	pPetSlot->Set_PetGrade(CPet::PET_GRADE_NORMAL); // 등급 Normal부터 시작
 	pPetSlot->Set_UI_Size(50.f, 50.f);
 	g_pManagement->Add_GameOject_ToLayer_NoClone(pPetSlot, SCENE_MORTAL, L"Layer_PetUI", nullptr);
 	m_vecPetSlot.push_back(pPetSlot);
@@ -386,4 +423,6 @@ void CPet_Inven::Free()
 	Safe_Release(m_pShader);
 
 	CUI::Free();
+
+	return;
 }

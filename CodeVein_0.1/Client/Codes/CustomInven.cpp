@@ -170,7 +170,7 @@ void CCustomInven::SetUp_Default()
 	}
 
 	// Mask
-	const _int MASK_COUNT = 10;
+	const _int MASK_COUNT = 5;
 	for (_int i = 0; i < MASK_COUNT; i++)
 	{
 		Add_Slot(TYPE_MASK, i);
@@ -235,21 +235,36 @@ void CCustomInven::Click_Inven()
 	_int iIdx = 0;
 	for (auto& pSlot : (*pvecActiveSlot))
 	{
-		if (pSlot->Pt_InRect() && g_pInput_Device->Get_DIMouseState(CInput_Device::DIM_LB))
+		if (pSlot->Pt_InRect())
 		{
-			Reset_SelectSlot(pvecActiveSlot);
-			pSlot->Set_Select(true);
-			m_iSelectIndex[m_eActiveType] = iIdx;
+			if (m_pHoverSlot != pSlot)
+			{
+				g_pSoundManager->Stop_Sound(CSoundManager::UI_SFX_01);
+				g_pSoundManager->Play_Sound(L"UI_CommonHover.wav", CSoundManager::UI_SFX_01, CSoundManager::Effect_Sound);
+			}
 
-			if (TYPE_HAIR == m_eActiveType)
-				m_pPlayer->Get_Costume_Hair()->Change_HairMesh(CClothManager::Cloth_Static(iIdx));
-			if (TYPE_FACE == m_eActiveType)
-				m_pPlayer->Get_Costume_Head()->Change_HeadMesh(CCostume_Head::CHAR_HEAD(iIdx));
-			if (TYPE_MASK == m_eActiveType)
-				m_pPlayer->Get_Costume_Mask()->Change_AccMesh(CCostume_Mask::MASK_TYPE(iIdx));
-			if (TYPE_INNER == m_eActiveType)
-				m_pPlayer->Set_PlayerBody(CPlayer::PLAYER_BODY(iIdx));
+			m_pHoverSlot = pSlot;
+			
+			if (g_pInput_Device->Get_DIMouseState(CInput_Device::DIM_LB))
+			{
+				Reset_SelectSlot(pvecActiveSlot);
+				pSlot->Set_Select(true);
+				m_iSelectIndex[m_eActiveType] = iIdx;
+
+				if (TYPE_HAIR == m_eActiveType)
+					m_pPlayer->Get_Costume_Hair()->Change_HairMesh(CClothManager::Cloth_Static(iIdx));
+				if (TYPE_FACE == m_eActiveType)
+					m_pPlayer->Set_Costume_Head(CCostume_Head::CHAR_HEAD(iIdx));
+				if (TYPE_MASK == m_eActiveType)
+					m_pPlayer->Set_Costume_Mask(CCostume_Mask::MASK_TYPE(iIdx));
+				if (TYPE_INNER == m_eActiveType)
+					m_pPlayer->Set_Costume_Body(CPlayer::PLAYER_BODY(iIdx));
+
+				g_pSoundManager->Stop_Sound(CSoundManager::UI_SFX_01);
+				g_pSoundManager->Play_Sound(L"UI_CommonClick.wav", CSoundManager::UI_SFX_01, CSoundManager::Effect_Sound);
+			}
 		}
+		
 		iIdx++;
 	}
 }

@@ -63,7 +63,6 @@ _int CHunter::Update_GameObject(_double TimeDelta)
 	m_bInFrustum = m_pOptimizationCom->Check_InFrustumforObject(&m_pTransformCom->Get_Pos(), 2.f);
 	//====================================================================================================
 
-
 	return NO_EVENT;
 }
 
@@ -383,6 +382,7 @@ void CHunter::Check_Hit()
 						//연속 피격 가능
 						if (true == m_tObjParam.bHitAgain)
 						{
+							m_bEventTrigger[0] = false;
 							m_eFirstCategory = MONSTER_STATE_TYPE::HIT;
 							//이떄 특수 공격 관련으로 불값이 참인 경우 cc기로
 							//if(특수 공격)
@@ -431,28 +431,24 @@ void CHunter::Check_Dist()
 		MONSTER_STATE_TYPE::DEAD == m_eFirstCategory)
 		return;
 
-	Function_Find_Target();
-
-	if (true == m_bIsIdle ||
-		true == m_bIsCombo ||
+	if (true == m_bIsCombo ||
 		true == m_bIsMoveAround||
 		true == m_tObjParam.bIsAttack ||
 		true == m_tObjParam.bIsDodge ||
 		true == m_tObjParam.bIsHit)
 		return;
 
+	Function_Find_Target();
 	//목표x
 	if (nullptr == m_pAggroTarget)
 	{
-		//유저를 잡았거나, 생성되지 않았거나
-		//동료, 플레이어 레이어 찾기 또는 일상행동을 반복한다
-		Function_ResetAfterAtk();
-
-		m_eFirstCategory = MONSTER_STATE_TYPE::IDLE;
-
-		if (true == m_bCanIdle)
+		if (MONSTER_STATE_TYPE::IDLE == m_eFirstCategory)
+			return;
+		else
 		{
-			m_bCanIdle = false;
+			Function_ResetAfterAtk();
+
+			m_eFirstCategory = MONSTER_STATE_TYPE::IDLE;
 
 			switch (CALC::Random_Num(MONSTER_IDLE_TYPE::IDLE_IDLE, MONSTER_IDLE_TYPE::IDLE_STAND))
 			{
@@ -476,9 +472,8 @@ void CHunter::Check_Dist()
 				m_eState = HUNTER_ANI::Stand;
 				break;
 			}
+			return;
 		}
-
-		return;
 	}
 	//목표o
 	else
@@ -8810,7 +8805,6 @@ void CHunter::Play_SSword_CriticalDraw()
 	}
 	else
 	{
-		cout << "발도라고 생각했던 애니" << endl;
 		if (m_pMeshCom->Is_Finish_Animation(0.95f))
 		{
 			Function_ResetAfterAtk();
@@ -10661,27 +10655,15 @@ void CHunter::Play_Hit()
 		if (m_pMeshCom->Is_Finish_Animation(0.9f))
 		{
 			Function_ResetAfterAtk();
-			m_tObjParam.bCanHit = true;
-			m_tObjParam.bIsHit = false;
 
 			m_bCanCoolDown = true;
 			m_fCoolDownMax = 0.5f;
 
 			m_eFirstCategory = MONSTER_STATE_TYPE::IDLE;
+			
+			return;
 		}
 		else if (m_pMeshCom->Is_Finish_Animation(0.2f))
-		{
-			if (false == m_tObjParam.bCanHit)
-			{
-				m_tObjParam.bCanHit = true;
-
-				if (nullptr == m_pAggroTarget)
-					m_eFBLR = FBLR::FRONTLEFT;
-				else
-					Function_FBLR(m_pAggroTarget);
-			}
-		}
-		else if (m_pMeshCom->Is_Finish_Animation(0.1f))
 		{
 			if (false == m_bEventTrigger[0])
 			{
@@ -10703,6 +10685,16 @@ void CHunter::Play_Hit()
 					g_pSoundManager->Play_Sound(L"Hunter_Hit2.ogg", CSoundManager::Hunter_Voice, CSoundManager::Effect_Sound);
 					break;
 				}
+			}
+
+			if (false == m_tObjParam.bCanHit)
+			{
+				m_tObjParam.bCanHit = true;
+
+				if (nullptr == m_pAggroTarget)
+					m_eFBLR = FBLR::FRONTLEFT;
+				else
+					Function_FBLR(m_pAggroTarget);
 			}
 		}
 
@@ -10749,20 +10741,7 @@ void CHunter::Play_Dead()
 				m_bEnable = false;
 				m_dAniPlayMul = 0;
 			}
-			else if (1.967f <= AniTime)
-			{
-				if (false == m_bEventTrigger[0])
-				{
-					m_bEventTrigger[0] = true;
-
-					Start_Dissolve(0.7f, false, true);
-					m_pWeapon->Start_Dissolve(0.7f, false, true);
-					m_fDeadEffect_Delay = 0.f;
-
-					CObjectPool_Manager::Get_Instance()->Create_Object(L"GameObject_Haze", (void*)&CHaze::HAZE_INFO(100.f, m_pTransformCom->Get_Pos(), 0.f));
-				}
-			}
-			else if (0.987f <= AniTime)
+			else if (m_pMeshCom->Is_Finish_Animation(0.2f))
 			{
 				if (false == m_bEventTrigger[1])
 				{
@@ -10785,6 +10764,19 @@ void CHunter::Play_Dead()
 					}
 				}
 			}
+			else if (1.967f <= AniTime)
+			{
+				if (false == m_bEventTrigger[0])
+				{
+					m_bEventTrigger[0] = true;
+
+					Start_Dissolve(0.7f, false, true);
+					m_pWeapon->Start_Dissolve(0.7f, false, true);
+					m_fDeadEffect_Delay = 0.f;
+
+					CObjectPool_Manager::Get_Instance()->Create_Object(L"GameObject_Haze", (void*)&CHaze::HAZE_INFO(100.f, m_pTransformCom->Get_Pos(), 0.f));
+				}
+			}
 			break;
 
 		case HUNTER_ANI::Death_B:
@@ -10792,6 +10784,29 @@ void CHunter::Play_Dead()
 			{
 				m_bEnable = false;
 				m_dAniPlayMul = 0;
+			}
+			else if (m_pMeshCom->Is_Finish_Animation(0.2f))
+			{
+				if (false == m_bEventTrigger[1])
+				{
+					m_bEventTrigger[1] = true;
+					g_pSoundManager->Stop_Sound(CSoundManager::Hunter_Voice);
+
+					m_iRandom = CALC::Random_Num(0, 2);
+
+					switch (m_iRandom)
+					{
+					case 0:
+						g_pSoundManager->Play_Sound(L"Hunter_Death0.ogg", CSoundManager::Hunter_Voice, CSoundManager::Effect_Sound);
+						break;
+					case 1:
+						g_pSoundManager->Play_Sound(L"Hunter_Death1.ogg", CSoundManager::Hunter_Voice, CSoundManager::Effect_Sound);
+						break;
+					case 2:
+						g_pSoundManager->Play_Sound(L"Hunter_Death2.ogg", CSoundManager::Hunter_Voice, CSoundManager::Effect_Sound);
+						break;
+					}
+				}
 			}
 			else if (4.400f <= AniTime)
 			{
@@ -10806,7 +10821,15 @@ void CHunter::Play_Dead()
 					CObjectPool_Manager::Get_Instance()->Create_Object(L"GameObject_Haze", (void*)&CHaze::HAZE_INFO(100.f, m_pTransformCom->Get_Pos(), 0.f));
 				}
 			}
-			else if(3.875f <= AniTime)
+			break;
+
+		case HUNTER_ANI::Death:
+			if (m_pMeshCom->Is_Finish_Animation(0.95f))
+			{
+				m_bEnable = false;
+				m_dAniPlayMul = 0;
+			}
+			else if (m_pMeshCom->Is_Finish_Animation(0.2f))
 			{
 				if (false == m_bEventTrigger[1])
 				{
@@ -10828,14 +10851,6 @@ void CHunter::Play_Dead()
 						break;
 					}
 				}
-			}
-			break;
-
-		case HUNTER_ANI::Death:
-			if (m_pMeshCom->Is_Finish_Animation(0.95f))
-			{
-				m_bEnable = false;
-				m_dAniPlayMul = 0;
 			}
 			else if (4.233f <= AniTime)
 			{
@@ -10848,29 +10863,6 @@ void CHunter::Play_Dead()
 					m_fDeadEffect_Delay = 0.f;
 
 					CObjectPool_Manager::Get_Instance()->Create_Object(L"GameObject_Haze", (void*)&CHaze::HAZE_INFO(100.f, m_pTransformCom->Get_Pos(), 0.f));
-				}
-			}
-			else if (3.456f <= AniTime)
-			{
-				if (false == m_bEventTrigger[1])
-				{
-					m_bEventTrigger[1] = true;
-					g_pSoundManager->Stop_Sound(CSoundManager::Hunter_Voice);
-
-					m_iRandom = CALC::Random_Num(0, 2);
-
-					switch (m_iRandom)
-					{
-					case 0:
-						g_pSoundManager->Play_Sound(L"Hunter_Death0.ogg", CSoundManager::Hunter_Voice, CSoundManager::Effect_Sound);
-						break;
-					case 1:
-						g_pSoundManager->Play_Sound(L"Hunter_Death1.ogg", CSoundManager::Hunter_Voice, CSoundManager::Effect_Sound);
-						break;
-					case 2:
-						g_pSoundManager->Play_Sound(L"Hunter_Death2.ogg", CSoundManager::Hunter_Voice, CSoundManager::Effect_Sound);
-						break;
-					}
 				}
 			}
 			break;
