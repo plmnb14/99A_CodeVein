@@ -736,9 +736,9 @@ CBT_Composite_Node * CPoisonButterfly::Rush()
 	CBT_ChaseDir* ChaseDir0 = Node_ChaseDir("방향 추적1", L"Player_Pos", 0.3, 0);
 	CBT_RotationDir* Rotation1 = Node_RotationDir("방향 추적1", L"Player_Pos", 0.267);
 	CBT_SetValue* PushColOff = Node_BOOL_SetValue("PushColOff", L"PushCol", false);
-	CBT_SetValue* Sound1Stop1 = Node_BOOL_SetValue("소리1 재생", L"SFX_01_Stop", true);
-	CBT_SetValue* Sound1Play1 = Node_BOOL_SetValue("소리1 재생", L"SFX_01_Play", true);
-	CBT_SetValue* Sound1Tag1 = Node_INT_SetValue("소리1 이름 설정", L"SFX_01_Tag", 0);
+	CBT_SetValue* Sound1Stop1 = Node_BOOL_SetValue("소리1 재생", L"Voice_Stop", true);
+	CBT_SetValue* Sound1Play1 = Node_BOOL_SetValue("소리1 재생", L"Voice_Play", true);
+	CBT_SetValue* Sound1Tag1 = Node_INT_SetValue("소리1 이름 설정", L"Voice_Tag", 11);
 	CBT_MoveDirectly* Move1 = Node_MoveDirectly_Rush("돌진", L"Monster_Speed", L"Monster_Dir", 13, 1.1, 0);
 	CBT_SetValue* PushColOn = Node_BOOL_SetValue("PushColOn", L"PushCol", true);
 
@@ -790,9 +790,9 @@ CBT_Composite_Node * CPoisonButterfly::Fire_5Bullet()
 	CBT_Sequence* SubSeq = Node_Sequence("발사준비");
 	CBT_ChaseDir* Chase0 = Node_ChaseDir("방향 추적", L"Player_Pos", 1.25, 0);
 	CBT_RotationDir* Rotation0 = Node_RotationDir("방향 회전", L"Player_Pos", 0.2);
-	CBT_SetValue* VoiceStop = Node_BOOL_SetValue("소리1 재생", L"Voice_Stop", true);
-	CBT_SetValue* VoicePlay = Node_BOOL_SetValue("소리1 재생", L"Voice_Play", true);
-	CBT_SetValue* VoiceTag = Node_INT_SetValue("소리1 이름 설정", L"Voice_Tag", 10);
+	CBT_SetValue* VoiceStop = Node_BOOL_SetValue("소리1 재생", L"SFX_01_Stop", true);
+	CBT_SetValue* VoicePlay = Node_BOOL_SetValue("소리1 재생", L"SFX_01_Play", true);
+	CBT_SetValue* VoiceTag = Node_INT_SetValue("소리1 이름 설정", L"SFX_01_Tag", 3);
 
 	CBT_CreateBullet* PoisonBullet0 = Node_CreateBullet("독 총알", L"Monster_PoisonBullet", L"Bone_Head", L"Self_PoisonDir0", 5, 5, 1.45, 1, 1, 0, CBT_Service_Node::Finite);
 	CBT_CreateBullet* PoisonBullet1 = Node_CreateBullet("독 총알", L"Monster_PoisonBullet", L"Bone_Head", L"Self_PoisonDir1", 5, 5, 1.45, 1, 1, 0, CBT_Service_Node::Finite);
