@@ -10,6 +10,7 @@ public:
 	enum OPTION_TYPE
 	{
 		OPTION_PURCHASE,
+		OPTION_SELL,
 		OPTION_BYE,
 		OPTION_END
 	};

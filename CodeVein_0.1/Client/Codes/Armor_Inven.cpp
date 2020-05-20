@@ -47,14 +47,6 @@ HRESULT CArmor_Inven::Ready_GameObject(void * pArg)
 
 _int CArmor_Inven::Update_GameObject(_double TimeDelta)
 {
-	CUI::Update_GameObject(TimeDelta);
-	
-	Late_Init();
-
-	m_pRendererCom->Add_RenderList(RENDER_UI, this);
-
-	D3DXMatrixOrthoLH(&m_matProj, WINCX, WINCY, 0.f, 1.0f);
-
 	if (m_bIsActive && !m_bIsSubActive)
 	{
 		SetUp_SubUI_Active(true);
@@ -66,6 +58,17 @@ _int CArmor_Inven::Update_GameObject(_double TimeDelta)
 		m_bIsSubActive = false;
 	}
 
+	if (!m_bIsActive)
+		return NO_EVENT;
+
+	CUI::Update_GameObject(TimeDelta);
+	
+	Late_Init();
+
+	m_pRendererCom->Add_RenderList(RENDER_UI, this);
+
+	D3DXMatrixOrthoLH(&m_matProj, WINCX, WINCY, 0.f, 1.0f);
+
 	Click_Inven();
 		
 	return NO_EVENT;
@@ -73,6 +76,8 @@ _int CArmor_Inven::Update_GameObject(_double TimeDelta)
 
 _int CArmor_Inven::Late_Update_GameObject(_double TimeDelta)
 {
+	if (!m_bIsActive)
+		return NO_EVENT;
 	D3DXMatrixIdentity(&m_matWorld);
 	D3DXMatrixIdentity(&m_matView);
 
@@ -161,18 +166,13 @@ HRESULT CArmor_Inven::SetUp_ConstantTable()
 void CArmor_Inven::SetUp_Default()
 {
 	m_pExplainUI = static_cast<CExplainArmorUI*>(g_pManagement->Clone_GameObject_Return(L"GameObject_ExplainArmorUI", nullptr));
-	//m_pExplainUI->Set_UI_Pos(WINCX * 0.5f + 25.f, WINCY * 0.5f - 30.f);
-	//m_pExplainUI->Set_UI_Size(500.f, 500.f);
 	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pExplainUI, SCENE_MORTAL, L"Layer_PlayerUI", nullptr);
 
-	m_tRegistParam.iArmorType = ARMOR_Drape;
-	m_tRegistParam.iArmorName = ArmorAll_Drape_DarkNightHook;
-	m_tRegistParam.fHP = 100.f;
-	m_tRegistParam.fDef = 10.f;
-	m_tRegistParam.fPlusDef = 10.f;
-	m_tRegistParam.fPlusHP = 10.f;
-	m_tRegistParam.iPrice = 100;
-	m_tRegistParam.iReinforce = 0;
+	m_pExitIcon = static_cast<CInventory_Icon*>(g_pManagement->Clone_GameObject_Return(L"GameObject_InvenIcon", nullptr));
+	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pExitIcon, SCENE_MORTAL, L"Layer_PlayerUI", nullptr);
+	m_pExitIcon->Set_UI_Pos(m_fPosX + 120.f, m_fPosY - 203.f);
+	m_pExitIcon->Set_UI_Size(40.f, 40.f);
+	m_pExitIcon->Set_Type(CInventory_Icon::ICON_EXIT);
 }
 
 void CArmor_Inven::Click_Inven()
@@ -188,27 +188,24 @@ void CArmor_Inven::Click_Inven()
 
 			if (g_pInput_Device->Get_DIMouseState(CInput_Device::DIM_LB))
 			{
+				CTotal_Inven* pTotal_Inven = CUI_Manager::Get_Instance()->Get_Total_Inven();
+
 				Reset_SelectSlot();
 				pSlot->Set_Select(true);
-				m_tRegistParam = pSlot->Get_ArmorParam();
-
-				m_pPlayer->Set_ArmorSlot((ARMOR_All_DATA)m_tRegistParam.iArmorName);
-
+				pTotal_Inven->Set_ArmorParam(pSlot->Get_ArmorParam());
+				
+				m_pPlayer->Set_ArmorSlot((ARMOR_All_DATA)pSlot->Get_ArmorParam().iArmorName);
+				
 				g_pSoundManager->Play_Sound(L"UI_CommonHover.wav", CSoundManager::ArmorInven_Regist_Slot, CSoundManager::Effect_Sound);
 			}			
 		}
-		else if (pSlot->Pt_InRect() && g_pInput_Device->Get_DIMouseState(CInput_Device::DIM_RB))
-		{		
-			// 교체만 가능. 해제 불가
-			return;
+		
+	}
 
-			pSlot->Set_Select(false);
-			m_tRegistParam = {};
-			m_tRegistParam.iArmorType = ARMOR_End;
-			m_tRegistParam.iArmorName = ArmorAll_END;
-
-			g_pSoundManager->Play_Sound(L"UI_CommonClick.wav", CSoundManager::ArmorInven_UnRegist_Slot, CSoundManager::Effect_Sound);
-		}
+	if (m_pExitIcon->Pt_InRect() && g_pInput_Device->Get_DIMouseState(CInput_Device::DIM_LB))
+	{
+		m_bIsActive = false;
+		CUI_Manager::Get_Instance()->Get_Total_Inven()->Set_Active(true);
 	}
 }
 
@@ -264,6 +261,7 @@ void CArmor_Inven::SetUp_SubUI_Active(_bool bIsActive)
 		pSlot->Set_Active(bIsActive);
 	}
 	m_pExplainUI->Set_Active(bIsActive);
+	m_pExitIcon->Set_Active(bIsActive);
 }
 
 void CArmor_Inven::Late_Init()
@@ -276,10 +274,23 @@ void CArmor_Inven::Late_Init()
 	m_pPlayer = static_cast<CPlayer*>(g_pManagement->Get_GameObjectBack(L"Layer_Player", SCENE_MORTAL));
 
 	m_vecArmorSlot.reserve(1);
-	Add_Armor(m_tRegistParam);
 
-	m_tRegistParam = m_vecArmorSlot[0]->Get_ArmorParam();
+	m_tRegistParam.iArmorType = ARMOR_Drape;
+	m_tRegistParam.iArmorName = ArmorAll_Drape_DarkNightHook;
+	m_tRegistParam.fHP = 100.f;
+	m_tRegistParam.fDef = 10.f;
+	m_tRegistParam.fPlusDef = 10.f;
+	m_tRegistParam.fPlusHP = 10.f;
+	m_tRegistParam.iPrice = 100;
+	m_tRegistParam.iReinforce = 0;
+
+	Add_Armor(m_tRegistParam);
 	m_vecArmorSlot[0]->Set_Select(true);
+
+	m_pPlayer->Set_ArmorSlot((ARMOR_All_DATA)m_tRegistParam.iArmorName);
+
+	CTotal_Inven* pTotal_Inven = CUI_Manager::Get_Instance()->Get_Total_Inven();
+	pTotal_Inven->Set_ArmorParam(m_tRegistParam);
 }
 
 void CArmor_Inven::Add_Armor(ARMOR_PARAM tArmorParam)

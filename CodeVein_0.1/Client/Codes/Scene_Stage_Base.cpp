@@ -59,10 +59,10 @@ HRESULT CScene_Stage_Base::Ready_Scene()
 	// NPC
 	//////////////////////////////////////////////////////////////////////////
 	// 야쿠모
-	g_pManagement->Add_GameObject_ToLayer(L"GameObject_NPC_Yakumo", SCENE_STAGE, L"Layer_NPC", &CNPC_Yakumo::NPC_INFO(_v3(-4.46f, -1.37f, -5.294f), D3DXToRadian(90.f)));
+	//g_pManagement->Add_GameObject_ToLayer(L"GameObject_NPC_Yakumo", SCENE_STAGE, L"Layer_NPC", &CNPC_Yakumo::NPC_INFO(_v3(-4.46f, -1.37f, -5.294f), D3DXToRadian(90.f)));
 	
 	// NPC 1 요쿠모
-	g_pManagement->Add_GameObject_ToLayer(L"GameObject_NPC_Yokumo", SCENE_STAGE, L"Layer_NPC", &CNPC_Yakumo::NPC_INFO(_v3(-10.5f, -1.37f, -14.3f), D3DXToRadian(45.f)));
+	//g_pManagement->Add_GameObject_ToLayer(L"GameObject_NPC_Yokumo", SCENE_STAGE, L"Layer_NPC", &CNPC_Yakumo::NPC_INFO(_v3(-10.5f, -1.37f, -14.3f), D3DXToRadian(45.f)));
 	//
 	//// NPC 2
 	//g_pManagement->Add_GameObject_ToLayer(L"GameObject_NPC_Yakumo", SCENE_STAGE, L"Layer_NPC", &CNPC_Yakumo::NPC_INFO(_v3(6.283f, -1.37f, -14.75f), D3DXToRadian(-45.f)));
@@ -72,6 +72,8 @@ HRESULT CScene_Stage_Base::Ready_Scene()
 
 _int CScene_Stage_Base::Update_Scene(_double TimeDelta)
 {
+	Create_Fog(TimeDelta);
+
 	//====================================================================================================
 	// 만약에 하나의 사운드를 계속해서 재생하고 싶다면
 	// Update 문이나, 순회가능한 곳에 Play 해둔다면 Loop 재생이 가능함.
@@ -92,34 +94,6 @@ HRESULT CScene_Stage_Base::Render_Scene()
 
 HRESULT CScene_Stage_Base::Ready_Layer_Custom(const _tchar * pLayerTag)
 {
-	if (FAILED(g_pManagement->Add_Prototype(SCENE_STATIC, L"DefaultTex_Custom_UI", CTexture::Create(m_pGraphic_Device, CTexture::TYPE_GENERAL, L"../Resources/Texture/DefaultUI/Customize/Custom_UI/Custom_UI_%d.dds", 13))))
-		return E_FAIL;
-	if (FAILED(g_pManagement->Add_Prototype(SCENE_STATIC, L"DefaultTex_Custom_Hair", CTexture::Create(m_pGraphic_Device, CTexture::TYPE_GENERAL, L"../Resources/Texture/DefaultUI/Customize/Custom_Hair/Custom_Hair_%d.dds", 7))))
-		return E_FAIL;
-	if (FAILED(g_pManagement->Add_Prototype(SCENE_STATIC, L"DefaultTex_Custom_Eye", CTexture::Create(m_pGraphic_Device, CTexture::TYPE_GENERAL, L"../Resources/Texture/DefaultUI/Customize/Custom_Eye/Custom_Eye_%d.dds", 1))))
-		return E_FAIL;
-	if (FAILED(g_pManagement->Add_Prototype(SCENE_STATIC, L"DefaultTex_Custom_Face", CTexture::Create(m_pGraphic_Device, CTexture::TYPE_GENERAL, L"../Resources/Texture/DefaultUI/Customize/Custom_Face/Custom_Face_%d.dds", 10))))
-		return E_FAIL;
-	if (FAILED(g_pManagement->Add_Prototype(SCENE_STATIC, L"DefaultTex_Custom_ToxicGuard", CTexture::Create(m_pGraphic_Device, CTexture::TYPE_GENERAL, L"../Resources/Texture/DefaultUI/Customize/Custom_ToxicGuard/Custom_ToxicGuard_%d.dds", 10))))
-		return E_FAIL;
-	if (FAILED(g_pManagement->Add_Prototype(SCENE_STATIC, L"DefaultTex_Custom_Inner", CTexture::Create(m_pGraphic_Device, CTexture::TYPE_GENERAL, L"../Resources/Texture/DefaultUI/Customize/Custom_Inner/Custom_Inner_%d.dds", 4))))
-		return E_FAIL;
-
-	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_CustomInven", CCustomInven::Create(m_pGraphic_Device))))
-		return E_FAIL;
-	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_CustomSlot", CCustomSlot::Create(m_pGraphic_Device))))
-		return E_FAIL;
-	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_CustomSlider", CCustomSliderBar::Create(m_pGraphic_Device))))
-		return E_FAIL;
-	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_CustomCategory", CCustomCategory::Create(m_pGraphic_Device))))
-		return E_FAIL;
-	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_CustomCategoryOption", CCustomCategoryOption::Create(m_pGraphic_Device))))
-		return E_FAIL;
-
-	CCustomCategory* pCustomCategory = static_cast<CCustomCategory*>(g_pManagement->Clone_GameObject_Return(L"GameObject_CustomCategory", nullptr));
-	if (FAILED(g_pManagement->Add_GameOject_ToLayer_NoClone(pCustomCategory, SCENE_STAGE_BASE, pLayerTag, nullptr)))
-		return E_FAIL;
-
 	return S_OK;
 }
 
@@ -127,17 +101,19 @@ HRESULT CScene_Stage_Base::Ready_Player()
 {
 	if (FAILED(g_pManagement->Add_Layer(SCENE_STAGE, L"Layer_Mistletoe")))
 		return E_FAIL;
-
 	if (FAILED(g_pManagement->Add_Layer(SCENE_STAGE, L"Layer_Monster")))
 		return E_FAIL;
-
 	if (FAILED(g_pManagement->Add_Layer(SCENE_STAGE, L"Layer_Boss")))
 		return E_FAIL;
-
 	if (FAILED(g_pManagement->Add_Layer(SCENE_STAGE, L"Layer_MonsterProjectile")))
 		return E_FAIL;
-
 	if (FAILED(g_pManagement->Add_Layer(SCENE_STAGE, L"Layer_BossUI")))
+		return E_FAIL;
+	if (FAILED(g_pManagement->Add_Layer(SCENE_STAGE, L"Layer_Colleague")))
+		return E_FAIL;
+	if (FAILED(g_pManagement->Add_Layer(SCENE_STAGE, L"Layer_Pet")))
+		return E_FAIL;
+	if (FAILED(g_pManagement->Add_Layer(SCENE_STAGE, L"Layer_Item")))
 		return E_FAIL;
 
 	CPlayer* pInstance = static_cast<CPlayer*>(g_pManagement->Get_GameObjectBack(L"Layer_Player", SCENE_MORTAL));
@@ -246,11 +222,32 @@ HRESULT CScene_Stage_Base::Ready_LightDesc()
 	return NOERROR;
 }
 
+void CScene_Stage_Base::Create_Fog(_double TimeDelta)
+{
+	CGameObject* pPlayer = g_pManagement->Get_GameObjectBack(L"Layer_Player", SCENE_MORTAL);
+	if (!pPlayer)
+		return;
+
+	CTransform* pPlayerTrans = TARGET_TO_TRANS(pPlayer);
+	_v3 vPlayerPos = pPlayerTrans->Get_Pos();
+
+	const _float FOG_OFFSET = 5.f;
+
+	m_fMapFogDelay += _float(TimeDelta);
+	if (m_fMapFogDelay > FOG_OFFSET)
+	{
+		m_fMapFogDelay = 0.f;
+		g_pManagement->Create_Effect(L"MapFog_0", _v3(0.f, -4.f, 0.f));
+	}
+
+	g_pManagement->Create_Effect_Offset(L"MapFog_0", 7.f, _v3(0.f, -3.f, 0.f));
+}
+
 CScene_Stage_Base * CScene_Stage_Base::Create(LPDIRECT3DDEVICE9 pGraphic_Device, _bool _bLoadStatic)
 {
 	CScene_Stage_Base*	pInstance = new CScene_Stage_Base(pGraphic_Device);
 
-	pInstance->m_bLoadStaticMesh = _bLoadStatic;
+	//pInstance->m_bLoadStaticMesh = _bLoadStatic;
 
 	if (FAILED(pInstance->Ready_Scene()))
 	{
@@ -258,7 +255,7 @@ CScene_Stage_Base * CScene_Stage_Base::Create(LPDIRECT3DDEVICE9 pGraphic_Device,
 		Safe_Release(pInstance);
 	}
 
-	pInstance->m_bLoadStaticMesh = _bLoadStatic;
+	//pInstance->m_bLoadStaticMesh = _bLoadStatic;
 
 	return pInstance;
 }

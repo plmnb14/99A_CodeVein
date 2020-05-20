@@ -52,8 +52,22 @@ HRESULT CMistletoeUI::Ready_GameObject(void * pArg)
 
 _int CMistletoeUI::Update_GameObject(_double TimeDelta)
 {
+	if (m_bIsActive && !m_bIsSubActive)
+	{
+		SetUp_SubUI_Active(true);
+		m_bIsSubActive = true;
+	}
+	else if (!m_bIsActive && m_bIsSubActive)
+	{
+		SetUp_SubUI_Active(false);
+		m_bIsSubActive = false;
+	}
+
+	if (!m_bIsActive)
+		return NO_EVENT;
+
 	CUI::Update_GameObject(TimeDelta);
-	//m_pRendererCom->Add_RenderList(RENDER_ALPHA, this);
+	
 	m_pRendererCom->Add_RenderList(RENDER_ALPHA_UI, this);
 
 	m_pTarget = static_cast<CPlayer*>(g_pManagement->Get_GameObjectBack(L"Layer_Player", SCENE_MORTAL));
@@ -85,7 +99,7 @@ _int CMistletoeUI::Update_GameObject(_double TimeDelta)
 		TARGET_TO_TRANS(m_vecOption[i])->Set_At(m_pTransformCom->Get_At());
 		TARGET_TO_TRANS(m_vecOption[i])->Set_Pos(m_pTransformCom->Get_Pos() + _v3(0.f, _float(i) * -0.2f + 0.2f, 0.f) + *V3_NORMAL_SELF(&vLook) * -0.001f);
 		
-		m_vecOption[i]->Set_Active(m_bIsActive);
+		
 
 	}
 
@@ -107,6 +121,8 @@ _int CMistletoeUI::Update_GameObject(_double TimeDelta)
 
 _int CMistletoeUI::Late_Update_GameObject(_double TimeDelta)
 {
+	if (!m_bIsActive)
+		return NO_EVENT;
 	if (nullptr == m_pRendererCom)
 		return E_FAIL;
 
@@ -255,6 +271,14 @@ void CMistletoeUI::Reset_Option()
 	for (auto& iter : m_vecOption)
 	{
 			iter->Set_Select(false);
+	}
+}
+
+void CMistletoeUI::SetUp_SubUI_Active(_bool bIsActive)
+{
+	for (auto& iter : m_vecOption)
+	{
+		iter->Set_Active(bIsActive);
 	}
 }
 

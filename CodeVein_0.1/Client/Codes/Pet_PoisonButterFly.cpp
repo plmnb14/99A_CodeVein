@@ -1166,7 +1166,12 @@ void CPet_PoisonButterFly::Play_Deformation()
 		m_bCanSummon = true;
 		m_bIsSummon = true;
 		m_pMesh->Reset_OldIndx();
+		m_eFirstCategory = PET_STATE_TYPE::IDLE;
+		m_eSecondCategory_IDLE = PET_IDLE_TYPE::IDLE_STAND;
 		m_eState = PET_POISIONBUTTERFLY_ANI::Appearance_End;
+
+		g_pManagement->Create_Effect(L"Pet_SpawnParticle", m_pTransform->Get_Pos());
+		g_pManagement->Create_Effect(L"Pet_SpawnSmoke", m_pTransform->Get_Pos());
 	}
 	else
 	{
@@ -1183,22 +1188,30 @@ void CPet_PoisonButterFly::Play_Deformation()
 
 void CPet_PoisonButterFly::Play_Idle()
 {
-	m_eState = PET_POISIONBUTTERFLY_ANI::Idle;
-
-	switch (m_eTarget)
+	if (PET_IDLE_TYPE::IDLE_STAND == m_eSecondCategory_IDLE)
 	{
-	case PET_TARGET_TYPE::PET_TARGET_BOSS:
-	case PET_TARGET_TYPE::PET_TARGET_MONSTER:
-		Function_RotateBody(m_pTarget);
-		break;
+		Play_Deformation();
+	}
+	else
+	{
+		m_eState = PET_POISIONBUTTERFLY_ANI::Idle;
 
-	case PET_TARGET_TYPE::PET_TARGET_ITEM:
-		Function_RotateBody(m_pTarget);
-		break;
+		switch (m_eTarget)
+		{
+		case PET_TARGET_TYPE::PET_TARGET_BOSS:
+		case PET_TARGET_TYPE::PET_TARGET_MONSTER:
+			Function_RotateBody(m_pTarget);
+			break;
 
-	case PET_TARGET_TYPE::PET_TARGET_NONE:
-		Function_RotateBody(m_pPlayer);
-		break;
+		case PET_TARGET_TYPE::PET_TARGET_ITEM:
+			Function_RotateBody(m_pTarget);
+			break;
+
+		case PET_TARGET_TYPE::PET_TARGET_NONE:
+			Function_RotateBody(m_pPlayer);
+			break;
+		}
+
 	}
 
 	return;

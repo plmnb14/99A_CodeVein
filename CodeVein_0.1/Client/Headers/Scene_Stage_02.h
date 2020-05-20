@@ -27,6 +27,8 @@ public:
 private:
 	void Create_Fog(_double TimeDelta);
 	void Create_Dust(_double TimeDelta);
+	void Create_Snow(_double TimeDelta);
+	void Check_Effect_Fade();
 
 private:
 	CNavMesh*		m_pNavMesh = nullptr;
@@ -34,9 +36,20 @@ private:
 private:
 	_float m_fMapFogDelay = 10.f;
 	_float m_fMapWindDustDelay = 1.f;
+	_float m_fMapSnowDelay = 1.f;
+
+	_float m_fFogDestiny = 0.04f;
+	_float m_fFogMinDestiny = 0.01f;
+
+	_bool m_bFadeInStart = false;
+	_bool m_bFadeOutStart = false;
+	_float m_fFade = 1.f;
 
 	COrthoEffect*		m_pSnowEffect_0 = nullptr;
-	COrthoEffect*		m_pSnowEffect_1 = nullptr;
+	COrthoEffect*		m_pSmokeEffect_0 = nullptr;
+	COrthoEffect*		m_pSmokeEffect_1 = nullptr;
+
+	CRenderer*			m_pRenderer = nullptr;
 
 private:
 	HRESULT Ready_LightDesc();

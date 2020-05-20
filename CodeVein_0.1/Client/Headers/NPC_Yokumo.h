@@ -7,7 +7,7 @@
 BEGIN(Client)
 class CNPC_InteractionUI;
 class CScriptUI;
-class CGeneralStoreUI;
+class CGeneralStoreNPCUI;
 class CNPC_Yokumo final : public CGameObject
 {
 public:
@@ -84,7 +84,7 @@ public:
 	virtual void Free();
 
 private:
-	CGeneralStoreUI*		m_pShopUI = nullptr;
+	CGeneralStoreNPCUI*		m_pShopUI = nullptr;
 	CScriptUI*				m_pScriptUI = nullptr;
 	CNPC_InteractionUI*		m_pInteractionButton = nullptr;
 

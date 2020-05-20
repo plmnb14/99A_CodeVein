@@ -77,6 +77,13 @@ private:
 	virtual void St01_Sub6();
 
 private:
+	virtual void St02_Sub0();
+	virtual void St02_Sub1();
+	virtual void St02_Sub2();
+	virtual void St02_Sub3();
+	virtual void St02_Sub4();
+
+private:
 	virtual void St03_Sub0();
 	virtual void St03_Sub1();
 	virtual void St03_Sub2();

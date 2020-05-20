@@ -15,6 +15,7 @@ private:
 
 public:
 	vector<CExpendables_Slot*>* Get_QuickSlot() { return &m_vecQuickSlot; }
+	vector<CExpendables_Slot*>* Get_VecExpendSlot() { return &m_vecSlot; }
 	_uint Get_MaximumItemCnt() { return m_iMaximumCnt; }
 
 public:
@@ -45,6 +46,7 @@ public:
 	void Add_MultiExpendables(CExpendables::EXPEND_TYPE eType, _uint iCnt);
 	void Sell_Expendables(_uint iDelete); // 마우스 커서와 충돌한 아이템을 인수만큼 차감	
 	void Use_Expendableas(CExpendables_Slot* pSlot); // 퀵슬롯 등록 아이템 사용시 사용
+	void Sell_Item(CExpendables_Slot* pSlot);
 	
 private:
 	CBuffer_RcTex*			m_pBufferCom = nullptr;

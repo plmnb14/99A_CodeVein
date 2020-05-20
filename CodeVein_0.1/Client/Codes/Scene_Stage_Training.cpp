@@ -49,9 +49,6 @@ HRESULT CScene_Stage_Training::Ready_Scene()
 	if (FAILED(Ready_Layer_Environment()))
 		return E_FAIL;
 
-	if (FAILED(Ready_Layer_Custom(L"Layer_Custom")))
-		return E_FAIL;
-
 	CRenderer* pRenderer = static_cast<CRenderer*>(CManagement::Get_Instance()->Clone_Component(SCENE_STATIC, L"Renderer"));
 	pRenderer->Fog_On(false);
 	Safe_Release(pRenderer);
@@ -253,11 +250,11 @@ HRESULT CScene_Stage_Training::Ready_Layer_Enemies()
 	//		true, _v3(-5.f, 0.f, 8.f), V3_NULL, 0));
 	//g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Boss", nullptr);
 
-	//// 여왕의 기사
-	//pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_QueensKnight",
-	//	&CQueensKnight::INFO(10.f, 5.f, 2.f,
-	//		true, _v3(-8.f, 0.f, 3.f), V3_NULL, 0));
-	//g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Boss", nullptr);
+	// 여왕의 기사
+	pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_QueensKnight",
+		&CQueensKnight::INFO(10.f, 5.f, 2.f,
+			true, _v3(-8.f, 0.f, 3.f), V3_NULL, 0));
+	g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Boss", nullptr);
 
 	//// 얼음여자
 	//pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_IceGirl",
@@ -310,34 +307,6 @@ HRESULT CScene_Stage_Training::Ready_Layer_Environment()
 
 HRESULT CScene_Stage_Training::Ready_Layer_Custom(const _tchar * pLayerTag)
 {
-	if (FAILED(g_pManagement->Add_Prototype(SCENE_STATIC, L"DefaultTex_Custom_UI", CTexture::Create(m_pGraphic_Device, CTexture::TYPE_GENERAL, L"../Resources/Texture/DefaultUI/Customize/Custom_UI/Custom_UI_%d.dds", 13))))
-		return E_FAIL;
-	if (FAILED(g_pManagement->Add_Prototype(SCENE_STATIC, L"DefaultTex_Custom_Hair", CTexture::Create(m_pGraphic_Device, CTexture::TYPE_GENERAL, L"../Resources/Texture/DefaultUI/Customize/Custom_Hair/Custom_Hair_%d.dds", 7))))
-		return E_FAIL;
-	if (FAILED(g_pManagement->Add_Prototype(SCENE_STATIC, L"DefaultTex_Custom_Eye", CTexture::Create(m_pGraphic_Device, CTexture::TYPE_GENERAL, L"../Resources/Texture/DefaultUI/Customize/Custom_Eye/Custom_Eye_%d.dds", 1))))
-		return E_FAIL;
-	if (FAILED(g_pManagement->Add_Prototype(SCENE_STATIC, L"DefaultTex_Custom_Face", CTexture::Create(m_pGraphic_Device, CTexture::TYPE_GENERAL, L"../Resources/Texture/DefaultUI/Customize/Custom_Face/Custom_Face_%d.dds", 10))))
-		return E_FAIL;
-	if (FAILED(g_pManagement->Add_Prototype(SCENE_STATIC, L"DefaultTex_Custom_ToxicGuard", CTexture::Create(m_pGraphic_Device, CTexture::TYPE_GENERAL, L"../Resources/Texture/DefaultUI/Customize/Custom_ToxicGuard/Custom_ToxicGuard_%d.dds", 10))))
-		return E_FAIL;
-	if (FAILED(g_pManagement->Add_Prototype(SCENE_STATIC, L"DefaultTex_Custom_Inner", CTexture::Create(m_pGraphic_Device, CTexture::TYPE_GENERAL, L"../Resources/Texture/DefaultUI/Customize/Custom_Inner/Custom_Inner_%d.dds", 4))))
-		return E_FAIL;
-
-	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_CustomInven", CCustomInven::Create(m_pGraphic_Device))))
-		return E_FAIL;
-	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_CustomSlot", CCustomSlot::Create(m_pGraphic_Device))))
-		return E_FAIL;
-	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_CustomSlider", CCustomSliderBar::Create(m_pGraphic_Device))))
-		return E_FAIL;
-	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_CustomCategory", CCustomCategory::Create(m_pGraphic_Device))))
-		return E_FAIL;
-	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_CustomCategoryOption", CCustomCategoryOption::Create(m_pGraphic_Device))))
-		return E_FAIL;
-
-	CCustomCategory* pCustomCategory = static_cast<CCustomCategory*>(g_pManagement->Clone_GameObject_Return(L"GameObject_CustomCategory", nullptr));
-	if (FAILED(g_pManagement->Add_GameOject_ToLayer_NoClone(pCustomCategory, SCENE_STAGE_BASE, pLayerTag, nullptr)))
-		return E_FAIL;
-
 	return S_OK;
 }
 

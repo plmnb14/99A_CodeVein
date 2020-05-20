@@ -538,10 +538,7 @@ void CMonster::Function_Find_Target()
 	_float	fOldLength = 99999.f;
 
 	if (nullptr != m_pAggroTarget)
-	{
-		Safe_Release(m_pAggroTarget);
 		m_pAggroTarget = nullptr;
-	}
 
 	auto& ColleagueContainer = g_pManagement->Get_GameObjectList(L"Layer_Colleague", SCENE_STAGE);
 
@@ -566,7 +563,6 @@ void CMonster::Function_Find_Target()
 
 		fOldLength = fLenth;
 		m_pAggroTarget = Colleague_iter;
-		Safe_AddRef(m_pAggroTarget);	
 	}
 
 	IF_NOT_NULL_RETURN(m_pAggroTarget);
@@ -590,7 +586,6 @@ void CMonster::Function_Find_Target()
 
 		fOldLength = fLenth;
 		m_pAggroTarget = Player_iter;
-		Safe_AddRef(m_pAggroTarget);
 	}
 
 	IF_NOT_NULL_RETURN(m_pAggroTarget);
@@ -641,9 +636,6 @@ void CMonster::Function_ResetAfterAtk()
 void CMonster::Free()
 {
 	Safe_Release(m_pMonsterUI);
-
-	IF_NOT_NULL(m_pAggroTarget)
-		Safe_Release(m_pAggroTarget);
 
 	IF_NOT_NULL(m_pWeapon)
 		Safe_Release(m_pWeapon);

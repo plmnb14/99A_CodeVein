@@ -105,6 +105,8 @@
 #include "PurchaseFailUI.h"
 #include "GeneralStoreNPCUI.h"
 #include "GeneralStoreOption.h"
+#include "ExpendSellCollectionUI.h"
+#include "GeneralStoreSellUI.h"
 
 #include "Get_ItemUI.h"
 #include "PickUp_ItemUI.h"
@@ -112,6 +114,8 @@
 #include "PickUp_ItemUIManager.h"
 
 #include "LockOn_UI.h"
+
+#include "NPC_InteractionUI.h"
 
 BEGIN(Client)
 
@@ -156,6 +160,7 @@ public:
 	CPlayerST* Get_PlayerST() { return m_pPlayerST; } // 플레이어 ST
 	CGeneralStoreUI* Get_GeneralStoreUI() { return m_pGeneralStoreUI; }
 	CSkillGauge* Get_SkillGauge() { return m_pSkillGauge; }
+	CGeneralStoreSellUI* Get_GeneralStoreSellUI() { return m_pGeneralStoreSellUI; }
 	
 	// 펫 인벤토리
 	CPet_Inven* Get_Pet_Inven() { return m_pPet_Inven; }
@@ -198,6 +203,7 @@ private:
 	CSkillGauge*	m_pSkillGauge = nullptr;
 	CSkillPointUI*	m_pSkillPointUI = nullptr;
 	CGeneralStoreNPCUI* m_pGeneralStoreNPCUI = nullptr;
+	CGeneralStoreSellUI* m_pGeneralStoreSellUI = nullptr;
 
 	// 펫 인벤토리
 	CPet_Inven* m_pPet_Inven = nullptr;
