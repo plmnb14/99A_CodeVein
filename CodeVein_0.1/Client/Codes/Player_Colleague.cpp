@@ -838,7 +838,9 @@ void CPlayer_Colleague::Check_Do_List(_double TimeDelta)
 				}
 		}
 	}
-	else if(false == m_bStart_Fighting && fMinPos >= 2000000.f)
+	else if (false == m_bStart_Fighting && fMinPos >= 2000000.f)
+		m_pObject_Mon = nullptr;
+	else
 		m_pObject_Mon = nullptr;
 
 

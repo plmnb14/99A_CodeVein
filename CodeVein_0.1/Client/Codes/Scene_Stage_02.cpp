@@ -63,7 +63,7 @@ _int CScene_Stage_02::Update_Scene(_double TimeDelta)
 		CGameObject* pInstance = nullptr;
 
 		pInstance = g_pManagement->Clone_GameObject_Return(L"GameObject_Colleague",
-			&CPlayer_Colleague::JACK_INFO(_v3(0.f, 0.f, 0.f), 0.f, 1));
+			&CPlayer_Colleague::JACK_INFO(_v3(0.f, 0.f, 0.f), 0.f, 2));
 
 		if (nullptr != pInstance)
 			g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Colleague", nullptr);

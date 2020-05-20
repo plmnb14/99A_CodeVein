@@ -129,7 +129,7 @@ HRESULT CScene_Stage_04::Ready_Layer_Colleague(const _tchar * pLayerTag)
 	CGameObject* pInstance = nullptr;
 
 	pInstance = g_pManagement->Clone_GameObject_Return(L"GameObject_Colleague",
-		&CPlayer_Colleague::JACK_INFO(_v3(-100.f, 50.f, 0.f), 0.f, 3));
+		&CPlayer_Colleague::JACK_INFO(_v3(-100.f, 50.f, 0.f), 0.f, 4));
 	g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Colleague", nullptr);
 
 	return S_OK;
