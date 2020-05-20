@@ -240,14 +240,12 @@ HRESULT CScene_Stage_Training::Ready_Layer_Enemies()
 
 	//====================================================================================================================================================
 
-
 	//CGameObject* pInstance = g_pManagement->Clone_GameObject_Return(L"GameObject_Dummy", nullptr);
 	//
 	//TARGET_TO_TRANS(pInstance)->Set_Pos(_v3{ 0.f, 0.f, 4.f });
 	//
 	//if (FAILED(g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Monster", nullptr)))
 	//	return E_FAIL;
-
 
 	//// µ¶³ª¹æ
 	//pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_PoisonButterfly",

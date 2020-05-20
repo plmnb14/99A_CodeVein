@@ -96,27 +96,7 @@ public:
 		DEAD_END
 	};
 
-	enum PET_PLUS_TYPE //강화수치
-	{
-		PET_PLUS_0,
-		PET_PLUS_1,
-		PET_PLUS_2,
-		PET_PLUS_3,
-		PET_PLUS_4,
-		PET_PLUS_5,
-		PET_PLUS_END,
-	};
-
-	enum PET_GRADE_TYPE //등급
-	{
-		PET_GRADE_NORMAL,
-		PET_GRADE_RARE,
-		PET_GRADE_UNIQUE,
-		PET_GRADE_LEGEND,
-		PET_GRADE_TYPE_END
-	}; 
-
-	enum PET_TYPE // 펫 종류
+	enum PET_TYPE
 	{
 		PET_DEERKING,
 		PET_POISONBUTTERFLY,
@@ -151,15 +131,13 @@ public:
 
 	struct PET_STATUS
 	{
-		PET_STATUS(PET_GRADE_TYPE _eGrade, WEAPON_STATE _eWeapon)
+		PET_STATUS(PET_TYPE _eGrade)
+			:ePetType(_eGrade)
 		{
-			eUseWhatGrade = _eGrade;
-			eUseWhatWeapon = _eWeapon;
 		}
 
-		PET_GRADE_TYPE		eUseWhatGrade = PET_GRADE_TYPE::PET_GRADE_NORMAL;
-		WEAPON_STATE		eUseWhatWeapon = WEAPON_STATE::WEAPON_None;
-		_ushort				sStageIdx = 0;
+		PET_TYPE		ePetType = PET_TYPE::PET_TYPE_END;
+		_ushort			sStageIdx = 0;
 	};
 
 	struct PET_BULLET_STATUS
@@ -191,10 +169,8 @@ protected:
 	virtual HRESULT Render_GameObject_SetPass(CShader* pShader, _int iPass);
 
 	virtual void Check_CollisionEvent();
-	virtual void Check_CollisionPush();
 	virtual void Check_CollisionHit(list<CGameObject*> plistGameObject);
 
-	virtual void Play_Deformation() PURE;
 	virtual void Play_Idle();
 	virtual void Play_Move();
 	virtual void Play_Hit();
@@ -210,13 +186,10 @@ protected:
 	virtual HRESULT Ready_BoneMatrix(void* pArg);
 
 public:
-	virtual PET_PLUS_TYPE Get_PetPlus() { return m_ePlusType; }
+	virtual void Play_Deformation() PURE;
+	virtual void Set_Summon(_bool _Summon) { m_bCanSummon = _Summon; }
 	virtual PET_TYPE Get_PetType() { return m_eType; }
-	virtual PET_GRADE_TYPE Get_PetGrade() { return m_eGradeType; }
-
-	virtual void Set_PetPlus(PET_PLUS_TYPE _ePlusType) { m_ePlusType = _ePlusType; }
 	virtual void Set_PetType(PET_TYPE _eType) { m_eType = _eType; }
-	virtual void Set_PetGrade(PET_GRADE_TYPE _eGradeType) { m_eGradeType = _eGradeType; }
 
 	PET_MODE_TYPE Get_Pet_Mode() { return m_eNowPetMode; }
 	void Set_Pet_Mode(PET_MODE_TYPE _eMode) { m_eNowPetMode = _eMode; }
@@ -258,15 +231,12 @@ protected:
 	PET_CC_TYPE			m_eSecondCategory_CC = PET_CC_TYPE::CC_END;
 	PET_DEAD_TYPE		m_eSecondCategory_DEAD = PET_DEAD_TYPE::DEAD_END;
 
-	PET_PLUS_TYPE		m_ePlusType = PET_PLUS_TYPE::PET_PLUS_END; //펫 강화수치
-	PET_GRADE_TYPE		m_eGradeType = PET_GRADE_TYPE::PET_GRADE_TYPE_END; //펫 등급
-	PET_TYPE			m_eType = PET_TYPE::PET_TYPE_END; //펫 종류
-
-	FBLR				m_eFBLR= FBLR::FRONT;
-	WEAPON_STATE		m_eWeaponState = WEAPON_STATE::WEAPON_None;
 	PET_TARGET_TYPE		m_eTarget = PET_TARGET_TYPE::PET_TARGET_TYPE_END;
 	PET_MODE_TYPE		m_eNowPetMode = PET_MODE_TYPE::PET_MODE_END;
 	PET_MODE_TYPE		m_eOldPetMdoe = PET_MODE_TYPE::PET_MODE_END;
+	FBLR				m_eFBLR= FBLR::FRONT;
+
+	PET_TYPE			m_eType = PET_TYPE::PET_TYPE_END;
 
 	_double				m_dTimeDelta = 0;
 	_double				m_dAniPlayMul = 1;
@@ -282,10 +252,6 @@ protected:
 	_bool				m_bCanSummon = false; //소환 여부
 	_bool				m_bIsSummon = false; //소환중 여부
 
-	// For Effect
-	_float				m_fDeadEffect_Delay = 0.f;
-	_float				m_fDeadEffect_Offset = 0.f;
-
 	//플레이어와 연관된 변수
 	_bool				m_bAbsoluteOrder = false; //우선 순위 결정
 	_float				m_fLimitRange = 40.f; //최대 제한 거리, 해당 범위 밖인 경우 무조건 복귀
@@ -299,26 +265,28 @@ protected:
 	_float				m_fAtkRange = 5.f; //펫 근거리 범위
 	_float				m_fCoolDownCur = 0.f; //쿨타임 누적
 	_float				m_fCoolDownMax = 0.f; //해당 카운트를 기준으로 쿨타임해제
-	_int				m_iDodgeCount = 0; //회피 누적
-	_int				m_iDodgeCountMax = 0; //해당 카운트를 기준으로 회피 발동
+	_float				m_fDeadEffect_Delay = 0.f;
+	_float				m_fDeadEffect_Offset = 0.f;
 
 	_bool				m_bCanPlayDead = false; //죽을 경우 디졸브,이펙트 작동하기 위한 변수
 	_bool				m_bInRecognitionRange = false; //인지 가능 여부
 	_bool				m_bInShotRange = false; //원거리 가능 여부
 	_bool				m_bInAtkRange = false; //근거리 가능 여부
 	_bool				m_bCanChase = false; //추적 가능 여부
+
 	_bool				m_bCanCoolDown = false; //행동이 종료된 후 대부분 사용되는 쿨타임 가능 여부
 	_bool				m_bIsCoolDown = false; //쿨타임 진행중 여부
-	_bool				m_bCanIdle =true; //기본 동작 진행여부 ->필요성?
-	_bool				m_bIsIdle =false; //기본 동작 진행중 여부 ->필요성?
+
+	_bool				m_bCanIdle =true; //기본 동작 진행여부
+	_bool				m_bIsIdle =false; //기본 동작 진행중 여부
+
 	_bool				m_bCanMoveAround = true; //경계 가능 여부
 	_bool				m_bIsMoveAround = false; //경계 진행중 여부
 
-	_bool				m_bCanChooseAtkType = true; //일반,콤보 공격 여부 ->사용안할 예정, 펫==유틸
-	_bool				m_bIsCombo = false; //콤보 진행 여부 ->미사용 예정, 펫 == 유틸
-	_int				m_iRandom = 0; //랜덤 변수 사용할 일이 거의 없음, 폐기 예정?
+	_bool				m_bCanChooseAtkType = true; //일반,콤보 공격 여부
+	_bool				m_bIsCombo = false; //콤보 진행 여부
 
-	_int				m_iCount = 0; //단순 계산용 카운팅 변수 테스트용도로 이넘값 변경할 예정
+	_int				m_iRandom = 0; //랜덤 변수 사용할 일이 거의 없음, 폐기 예정?
 
 };
 

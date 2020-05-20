@@ -358,6 +358,7 @@ void CYachaMan::Check_Hit()
 
 				if (m_iDodgeCount >= m_iDodgeCountMax)
 				{
+					m_bEventTrigger[0] = false;
 					m_iDodgeCount = 0;
 					m_tObjParam.bCanDodge = true;
 					m_eFirstCategory = MONSTER_STATE_TYPE::MOVE;
@@ -370,6 +371,7 @@ void CYachaMan::Check_Hit()
 					{
 						if (true == m_tObjParam.bHitAgain)
 						{
+							m_bEventTrigger[0] = false;
 							m_eFirstCategory = MONSTER_STATE_TYPE::HIT;
 							m_tObjParam.bHitAgain = false;
 							m_pMeshCom->Reset_OldIndx();
@@ -406,25 +408,24 @@ void CYachaMan::Check_Dist()
 		MONSTER_STATE_TYPE::DEAD == m_eFirstCategory)
 		return;
 
-	Function_Find_Target();
-
-	if (true == m_bIsIdle ||
-		true == m_bIsCombo ||
+	if (true == m_bIsCombo ||
 		true == m_bIsMoveAround ||
 		true == m_tObjParam.bIsAttack ||
 		true == m_tObjParam.bIsDodge ||
 		true == m_tObjParam.bIsHit)
 		return;
 
+	Function_Find_Target();
+
 	if (nullptr == m_pAggroTarget)
 	{
-		Function_ResetAfterAtk();
-
-		m_eFirstCategory = MONSTER_STATE_TYPE::IDLE;
-
-		if (true == m_bCanIdle)
+		if (MONSTER_STATE_TYPE::IDLE == m_eFirstCategory)
+			return;
+		else
 		{
-			m_bCanIdle = false;
+			Function_ResetAfterAtk();
+
+			m_eFirstCategory = MONSTER_STATE_TYPE::IDLE;
 
 			switch (CALC::Random_Num(MONSTER_IDLE_TYPE::IDLE_IDLE, MONSTER_IDLE_TYPE::IDLE_STAND))
 			{
@@ -448,9 +449,9 @@ void CYachaMan::Check_Dist()
 				m_eState = YACHAMAN_ANI::NF_Sit;
 				break;
 			}
-		}
 
-		return;
+			return;
+		}
 	}
 	else
 	{
@@ -4702,13 +4703,14 @@ void CYachaMan::Play_Hit()
 	{
 		if (m_pMeshCom->Is_Finish_Animation(0.95f))
 		{
-			m_tObjParam.bCanHit = true;
-			m_tObjParam.bIsHit = false;
+			Function_ResetAfterAtk();
 
 			m_bCanCoolDown = true;
 			m_fCoolDownMax = 0.5f;
 
 			m_eFirstCategory = MONSTER_STATE_TYPE::IDLE;
+
+			return;
 		}
 		else if (m_pMeshCom->Is_Finish_Animation(0.2f))
 		{
@@ -4786,6 +4788,30 @@ void CYachaMan::Play_Dead()
 				m_bEnable = false;
 				m_dAniPlayMul = 0;
 			}
+			else if (m_pMeshCom->Is_Finish_Animation(0.2f))
+			{
+				if (false == m_bEventTrigger[2])
+				{
+					m_bEventTrigger[2] = true;
+
+					g_pSoundManager->Stop_Sound(CSoundManager::Yacha_Voice);
+
+					m_iRandom = CALC::Random_Num(0, 2);
+
+					switch (m_iRandom)
+					{
+					case 0:
+						g_pSoundManager->Play_Sound(L"YachMan_Death0.ogg", CSoundManager::Yacha_Voice, CSoundManager::Effect_Sound);
+						break;
+					case 1:
+						g_pSoundManager->Play_Sound(L"YachMan_Death1.ogg", CSoundManager::Yacha_Voice, CSoundManager::Effect_Sound);
+						break;
+					case 2:
+						g_pSoundManager->Play_Sound(L"YachMan_Death2.ogg", CSoundManager::Yacha_Voice, CSoundManager::Effect_Sound);
+						break;
+					}
+				}
+			}
 			else if (1.433f <= AniTime)
 			{
 				if (false == m_bEventTrigger[0])
@@ -4830,6 +4856,30 @@ void CYachaMan::Play_Dead()
 			{
 				m_bEnable = false;
 				m_dAniPlayMul = 0;
+			}
+			else if (m_pMeshCom->Is_Finish_Animation(0.2f))
+			{
+				if (false == m_bEventTrigger[2])
+				{
+					m_bEventTrigger[2] = true;
+
+					g_pSoundManager->Stop_Sound(CSoundManager::Yacha_Voice);
+
+					m_iRandom = CALC::Random_Num(0, 2);
+
+					switch (m_iRandom)
+					{
+					case 0:
+						g_pSoundManager->Play_Sound(L"YachMan_Death0.ogg", CSoundManager::Yacha_Voice, CSoundManager::Effect_Sound);
+						break;
+					case 1:
+						g_pSoundManager->Play_Sound(L"YachMan_Death1.ogg", CSoundManager::Yacha_Voice, CSoundManager::Effect_Sound);
+						break;
+					case 2:
+						g_pSoundManager->Play_Sound(L"YachMan_Death2.ogg", CSoundManager::Yacha_Voice, CSoundManager::Effect_Sound);
+						break;
+					}
+				}
 			}
 			else if (1.867f <= AniTime)
 			{
