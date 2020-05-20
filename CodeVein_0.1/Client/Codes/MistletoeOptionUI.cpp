@@ -35,6 +35,9 @@ HRESULT CMistletoeOptionUI::Ready_GameObject(void * pArg)
 
 _int CMistletoeOptionUI::Update_GameObject(_double TimeDelta)
 {
+	if (!m_bIsActive)
+		return S_OK;
+
 	CUI::Update_GameObject(TimeDelta);
 
 	if (m_bIsDead)

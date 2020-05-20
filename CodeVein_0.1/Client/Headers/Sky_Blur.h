@@ -12,9 +12,11 @@ protected:
 	explicit CSky_Blur(LPDIRECT3DDEVICE9 pGraphic_Device);
 	explicit CSky_Blur(const CSky_Blur& rhs);
 	virtual ~CSky_Blur() = default;
+
 public:
 	virtual HRESULT Ready_GameObject_Prototype(); // 원복객체 생성 시, 호출될 함수.
 	virtual HRESULT Ready_GameObject(void* pArg); // 인게임 객체 생성 시, 호출될 함수.
+	virtual HRESULT LateInit_GameObject();
 	virtual _int Update_GameObject(_double TimeDelta);
 	virtual _int Late_Update_GameObject(_double TimeDelta);
 	virtual HRESULT Render_GameObject();
@@ -35,6 +37,8 @@ private:
 	_tchar					m_szName[STR_128];
 
 	_bool					m_bChangeSuccess = false;
+
+	CTransform*				m_pPlayerTrans = nullptr;
 
 private:
 	HRESULT Add_Component();

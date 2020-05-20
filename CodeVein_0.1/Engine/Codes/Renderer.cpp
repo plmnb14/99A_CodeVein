@@ -533,6 +533,11 @@ HRESULT CRenderer::Draw_RenderList()
 	return NOERROR;
 }
 
+void CRenderer::Set_Stage02_SnowEff(_bool _bOn)
+{
+
+}
+
 void CRenderer::DOF_On(_bool bOn)
 {
 	m_bDOF = bOn;
@@ -1294,8 +1299,16 @@ HRESULT CRenderer::Render_Blend()
 		return E_FAIL;
 
 	_float fDestiny = m_fFogDestiny;
+
 	if (!m_bFog)
 		fDestiny = 0.f;
+
+	if (m_bFogFadeOutStart)
+	{
+		m_fFogDestiny -= DELTA_60 * 0.01f;
+		if (m_fFogDestiny >= m_fFogMinDestiny)
+			m_bFogFadeOutStart = false;
+	}
 
 	if (FAILED(m_pShader_Blend->Set_Value("g_FogDestiny", &fDestiny, sizeof(_float))))
 		return E_FAIL;

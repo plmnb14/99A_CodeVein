@@ -33,10 +33,20 @@ HRESULT CSky::Ready_GameObject(void * pArg)
 	return NOERROR;
 }
 
+HRESULT CSky::LateInit_GameObject()
+{
+	m_pPlayerTrans = TARGET_TO_TRANS(g_pManagement->Get_GameObjectBack(L"Layer_Player", SCENE_MORTAL));
+	return S_OK;
+}
+
 _int CSky::Update_GameObject(_double TimeDelta)
 {
+	CGameObject::LateInit_GameObject();
 	CGameObject::Update_GameObject(TimeDelta);
+
 	Check_Scene();
+
+	m_pTransformCom->Set_Pos(m_pPlayerTrans->Get_Pos());
 
 	return NOERROR;
 }

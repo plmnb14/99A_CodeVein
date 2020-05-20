@@ -1183,6 +1183,11 @@ HRESULT CLoading::Ready_Effect(void)
 	if (FAILED(g_pManagement->Add_Prototype(L"Ortho_UpgradeParticle_1", COrthoEffect::Create(m_pGraphicDev, Read_EffectData(L"../../Data/EffectData/Ortho_UpgradeParticle_1.dat")))))
 		return E_FAIL;
 
+	if (FAILED(g_pManagement->Add_Prototype(L"Ortho_Smoke_0", COrthoEffect::Create(m_pGraphicDev, Read_EffectData(L"../../Data/EffectData/Ortho_Smoke_0.dat")))))
+		return E_FAIL;
+	if (FAILED(g_pManagement->Add_Prototype(L"Ortho_Smoke_1", COrthoEffect::Create(m_pGraphicDev, Read_EffectData(L"../../Data/EffectData/Ortho_Smoke_1.dat")))))
+		return E_FAIL;
+
 	return S_OK;
 }
 
@@ -1312,14 +1317,14 @@ _uint CLoading::Loading_Title()
 	++m_dwLoadingCnt;
 	cout << "Costume Static Mesh 불러오는 중 . . ." << endl;
 	g_pManagement->LoadMesh_FromPath(m_pGraphicDev, L"../../Data/Load_MeshData/Mesh_Costume_Static_Path.dat");
-
+	
 	++m_dwLoadingCnt;
 	cout << "Costume Dynamic Mesh 불러오는 중 . . ." << endl;
 	g_pManagement->LoadMesh_FromPath(m_pGraphicDev, L"../../Data/Load_MeshData/Mesh_Costume_Dynamic_Path.dat");
-
+	
 	++m_dwLoadingCnt;
-	cout << " Costume Cloth Making . . ." << endl;
-	g_pClothManager->Ready_ClothManager();
+	//cout << " Costume Cloth Making . . ." << endl;
+	//g_pClothManager->Ready_ClothManager();
 
 	++m_dwLoadingCnt;
 	cout << "Dynamic Mesh 불러오는 중 . . ." << endl;
