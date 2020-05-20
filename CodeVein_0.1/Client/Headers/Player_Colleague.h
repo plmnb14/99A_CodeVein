@@ -205,7 +205,7 @@ private:
 	void	Function_FBRL();
 
 public:
-	void Teleport_ResetOptions(void * pArg/*_int eSceneID, _int eTeleportID*/);
+	HRESULT Teleport_ResetOptions(void * pArg/*_int eSceneID, _int eTeleportID*/);
 
 private:
 	CTransform*				m_pTransformCom = nullptr;

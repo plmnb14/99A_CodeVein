@@ -43,9 +43,10 @@ HRESULT CPlayer_Colleague::Ready_GameObject(void * pArg)
 
 	m_pTransformCom->Set_Pos(pInfo.vPos);
 	m_pTransformCom->Set_Angle(AXIS_Y, pInfo.fYAngle);
-	
-	Teleport_ResetOptions(pArg);
 
+	//Teleport_ResetOptions(pArg);
+
+	Check_Navi();
 	//m_eMovetype = CPlayer_Colleague::Coll_Start;
 
 	m_pBattleAgentCom->Set_OriginRimAlpha(0.25f);
@@ -55,6 +56,8 @@ HRESULT CPlayer_Colleague::Ready_GameObject(void * pArg)
 
 	m_bEnable = true;
 
+	if (m_pNavMesh->Get_SubSetIndex() == -1)
+		return E_FAIL;
 
 	m_pCollJack = static_cast<CColleague_Jack*>(g_pManagement->Clone_GameObject_Return(L"GameObject_Colleague_Jack", pArg));
 	m_pCollJack->Set_Target(this);
@@ -78,6 +81,9 @@ _int CPlayer_Colleague::Update_GameObject(_double TimeDelta)
 	//====================================================================================================
 
 
+	if (-1 == m_pNavMesh->Get_SubSetIndex())
+		return E_FAIL;
+
 	CGameObject::Update_GameObject(TimeDelta);
 
 	m_pCollJack->Update_GameObject(TimeDelta);
@@ -90,15 +96,13 @@ _int CPlayer_Colleague::Update_GameObject(_double TimeDelta)
 
 	/*if (true == m_bCheck_SEndGame)
 	{*/
-	//cout << "동료: " << m_pTransformCom->Get_Pos().x << ", " << m_pTransformCom->Get_Pos().y << ", "  << m_pTransformCom->Get_Pos().z << endl;
-	//cout << "플레이어: " << m_pTargetTransformCom->Get_Pos().x << ", " << m_pTargetTransformCom->Get_Pos().y << ", " << m_pTargetTransformCom->Get_Pos().z << endl;
 
-	if (g_pInput_Device->Key_Down(DIK_K))
-		m_tObjParam.fHp_Cur += 100.f;
-	if (g_pInput_Device->Key_Down(DIK_P))
-		m_tObjParam.fHp_Cur -= 100.f;
+	//if (g_pInput_Device->Key_Down(DIK_K))
+	//	m_tObjParam.fHp_Cur += 100.f;
+	//if (g_pInput_Device->Key_Down(DIK_P))
+	//	m_tObjParam.fHp_Cur -= 100.f;
 
-	cout << m_iCenter_Count << endl;
+	//cout << m_iCenter_Count << endl;
 
 	if (0 >= m_tObjParam.fHp_Cur && 0 > m_iMyHeal_Count)
 		m_eMovetype = CPlayer_Colleague::Coll_Dead;
@@ -116,7 +120,7 @@ _int CPlayer_Colleague::Update_GameObject(_double TimeDelta)
 	//	g_pSoundManager->Stop_Sound(CSoundManager::Jack_Voice);
 	//	g_pSoundManager->Play_Sound(L"Nice_Item.ogg", CSoundManager::Jack_Voice, CSoundManager::Voice_Sound);
 	//}
-		
+
 
 	if ((10.f >= m_tObjParam.fHp_Cur && 0 <= m_iMyHeal_Count) &&
 		m_eMovetype != CPlayer_Colleague::Coll_Dead)
@@ -131,8 +135,8 @@ _int CPlayer_Colleague::Update_GameObject(_double TimeDelta)
 		m_eMovetype = CPlayer_Colleague::Coll_Heal;
 		m_eColl_HealMoment = CPlayer_Colleague::Player_Heal;
 	}
-	
-		
+
+
 	if (false == m_bCheck_Be_Careful &&
 		(true == m_bStart_Fighting && true == m_bNear_byMonster))
 	{
@@ -178,7 +182,7 @@ _int CPlayer_Colleague::Update_GameObject(_double TimeDelta)
 _int CPlayer_Colleague::Late_Update_GameObject(_double TimeDelta)
 {
 	if (false == m_bEnable)
-	return NOERROR;
+		return NOERROR;
 
 	IF_NULL_VALUE_RETURN(m_pRendererCom, E_FAIL);
 
@@ -241,38 +245,38 @@ HRESULT CPlayer_Colleague::Render_GameObject()
 		if (FAILED(SetUp_ConstantTable(m_pShaderCom)))
 			return E_FAIL;
 
-	m_pShaderCom->Begin_Shader();
+		m_pShaderCom->Begin_Shader();
 
-	_uint iNumMeshContainer = _uint(m_pDynamicMesh->Get_NumMeshContainer());
+		_uint iNumMeshContainer = _uint(m_pDynamicMesh->Get_NumMeshContainer());
 
-	for (_uint i = 0; i < _uint(iNumMeshContainer); ++i)
-	{
-		_uint iNumSubSet = (_uint)m_pDynamicMesh->Get_NumMaterials(i);
-
-		m_pDynamicMesh->Update_SkinnedMesh(i);
-
-		for (_uint j = 0; j < iNumSubSet; ++j)
+		for (_uint i = 0; i < _uint(iNumMeshContainer); ++i)
 		{
-			if (CPlayer_Colleague::Coll_Dead != m_eMovetype)
-				m_iPass = m_pDynamicMesh->Get_MaterialPass(i, j);
+			_uint iNumSubSet = (_uint)m_pDynamicMesh->Get_NumMaterials(i);
 
-			if (m_bDissolve)
-				m_iPass = 3;
+			m_pDynamicMesh->Update_SkinnedMesh(i);
 
-			m_pShaderCom->Begin_Pass(m_iPass);
+			for (_uint j = 0; j < iNumSubSet; ++j)
+			{
+				if (CPlayer_Colleague::Coll_Dead != m_eMovetype)
+					m_iPass = m_pDynamicMesh->Get_MaterialPass(i, j);
 
-			m_pShaderCom->Set_DynamicTexture_Auto(m_pDynamicMesh, i, j);
+				if (m_bDissolve)
+					m_iPass = 3;
 
-			m_pShaderCom->Commit_Changes();
+				m_pShaderCom->Begin_Pass(m_iPass);
 
-			m_pDynamicMesh->Render_Mesh(i, j);
+				m_pShaderCom->Set_DynamicTexture_Auto(m_pDynamicMesh, i, j);
 
-			m_pShaderCom->End_Pass();
+				m_pShaderCom->Commit_Changes();
+
+				m_pDynamicMesh->Render_Mesh(i, j);
+
+				m_pShaderCom->End_Pass();
+			}
 		}
-	}
-	m_pShaderCom->End_Shader();
+		m_pShaderCom->End_Shader();
 
-	
+
 
 	}
 
@@ -501,18 +505,18 @@ HRESULT CPlayer_Colleague::SetUp_ConstantTable(CShader* pShader)
 	//=============================================================================================
 
 	/*if (nullptr == m_pShaderCom)
-		return E_FAIL;
+	return E_FAIL;
 
 	if (FAILED(m_pShaderCom->Set_Value("g_matWorld", &m_pTransformCom->Get_WorldMat(), sizeof(_mat))))
-		return E_FAIL;
+	return E_FAIL;
 	if (FAILED(m_pShaderCom->Set_Value("g_matView", &g_pManagement->Get_Transform(D3DTS_VIEW), sizeof(_mat))))
-		return E_FAIL;
+	return E_FAIL;
 	if (FAILED(m_pShaderCom->Set_Value("g_matProj", &g_pManagement->Get_Transform(D3DTS_PROJECTION), sizeof(_mat))))
-		return E_FAIL;
+	return E_FAIL;
 	if (FAILED(g_pDissolveTexture->SetUp_OnShader("g_FXTexture", m_pShaderCom)))
-		return E_FAIL;
+	return E_FAIL;
 	if (FAILED(m_pShaderCom->Set_Value("g_fFxAlpha", &m_fFXAlpha, sizeof(_float))))
-		return E_FAIL;*/
+	return E_FAIL;*/
 
 	return S_OK;
 }
@@ -834,7 +838,7 @@ void CPlayer_Colleague::Check_Do_List(_double TimeDelta)
 				}
 		}
 	}
-	else
+	else if(false == m_bStart_Fighting && fMinPos >= 2000000.f)
 		m_pObject_Mon = nullptr;
 
 
@@ -931,7 +935,6 @@ void CPlayer_Colleague::Check_Do_List(_double TimeDelta)
 			}
 		}
 	}
-	// Hit, Att, Dodge 이면 return 시킨다
 
 
 	//if (true == m_tObjParam.bIsHit/* || true == m_tObjParam.bIsDodge*/)
@@ -958,7 +961,7 @@ void CPlayer_Colleague::Check_Do_List(_double TimeDelta)
 			{
 				m_bNear_byMonster = true;
 
-				
+
 				// 몬스터가 범위 내로 들어왔고 어떤 공격을 할건지
 
 				m_eMovetype = CPlayer_Colleague::Coll_Attack;
@@ -997,40 +1000,40 @@ void CPlayer_Colleague::Check_Do_List(_double TimeDelta)
 			m_eColl_IdleMoment = CPlayer_Colleague::Idle_Waiting;
 		}
 
-	if ((true == m_bStart_Fighting && true == m_bNear_byMonster) && m_fDodge_CoolTime >= 10.f)
-	{
-		_float fAngle = 0.f;
-		if (nullptr != m_pObject_Mon)
-			fAngle = D3DXToDegree(m_pTransformCom->Chase_Target_Angle(&TARGET_TO_TRANS(m_pObject_Mon)->Get_Pos()));
+		if ((true == m_bStart_Fighting && true == m_bNear_byMonster) && m_fDodge_CoolTime >= 10.f)
+		{
+			_float fAngle = 0.f;
+			if (nullptr != m_pObject_Mon)
+				fAngle = D3DXToDegree(m_pTransformCom->Chase_Target_Angle(&TARGET_TO_TRANS(m_pObject_Mon)->Get_Pos()));
 
-		// 전투 상태일 때, 10초마다 구르게
-		//cout << "데굴데굴" << endl;
-		m_eMovetype = CPlayer_Colleague::Coll_Dodge;
+			// 전투 상태일 때, 10초마다 구르게
+			//cout << "데굴데굴" << endl;
+			m_eMovetype = CPlayer_Colleague::Coll_Dodge;
 
-		if (0.f <= fAngle && 30.f > fAngle)
-			m_eColl_DodgeMoment = CPlayer_Colleague::Dodge_BackRoll;
-		else if (30.f <= fAngle && 90.f > fAngle)
-			m_eColl_DodgeMoment = CPlayer_Colleague::Dodge_LeftRoll;
-		else if (-150.f <= fAngle && -90.f > fAngle)
-			m_eColl_DodgeMoment = CPlayer_Colleague::Dodge_BackRoll;
-		else if (90.f <= fAngle && 150.f > fAngle)
-			m_eColl_DodgeMoment = CPlayer_Colleague::Dodge_BackRoll;
-		else if (150.f <= fAngle && 180.f > fAngle)
-			m_eColl_DodgeMoment = CPlayer_Colleague::Dodge_FrontRoll;
-		else if (-180.f <= fAngle && -150.f > fAngle)
-			m_eColl_DodgeMoment = CPlayer_Colleague::Dodge_FrontRoll;
-		else if (-90.f <= fAngle && -30.f > fAngle)
-			m_eColl_DodgeMoment = CPlayer_Colleague::Dodge_RightRoll;
-		else if (-30.f <= fAngle && 0 > fAngle)
-			m_eColl_DodgeMoment = CPlayer_Colleague::Dodge_BackRoll;
+			if (0.f <= fAngle && 30.f > fAngle)
+				m_eColl_DodgeMoment = CPlayer_Colleague::Dodge_BackRoll;
+			else if (30.f <= fAngle && 90.f > fAngle)
+				m_eColl_DodgeMoment = CPlayer_Colleague::Dodge_LeftRoll;
+			else if (-150.f <= fAngle && -90.f > fAngle)
+				m_eColl_DodgeMoment = CPlayer_Colleague::Dodge_BackRoll;
+			else if (90.f <= fAngle && 150.f > fAngle)
+				m_eColl_DodgeMoment = CPlayer_Colleague::Dodge_BackRoll;
+			else if (150.f <= fAngle && 180.f > fAngle)
+				m_eColl_DodgeMoment = CPlayer_Colleague::Dodge_FrontRoll;
+			else if (-180.f <= fAngle && -150.f > fAngle)
+				m_eColl_DodgeMoment = CPlayer_Colleague::Dodge_FrontRoll;
+			else if (-90.f <= fAngle && -30.f > fAngle)
+				m_eColl_DodgeMoment = CPlayer_Colleague::Dodge_RightRoll;
+			else if (-30.f <= fAngle && 0 > fAngle)
+				m_eColl_DodgeMoment = CPlayer_Colleague::Dodge_BackRoll;
 
-		m_fDodge_CoolTime = 0;
-	}
+			m_fDodge_CoolTime = 0;
+		}
 	}
 	else if (fMyPlayerLength >= 30.f)
 	{
-		m_pTransformCom->Set_Pos(_v3(m_pTargetTransformCom->Get_Pos().x - 3.f, m_pTargetTransformCom->Get_Pos().y, m_pTargetTransformCom->Get_Pos().z - 2.f));
- 		Check_Navi();
+		//m_pTransformCom->Set_Pos(_v3(m_pTargetTransformCom->Get_Pos().x - 3.f, m_pTargetTransformCom->Get_Pos().y, m_pTargetTransformCom->Get_Pos().z - 2.f));
+		Check_Navi();
 		g_pSoundManager->Stop_Sound(CSoundManager::Jack_Voice);
 		g_pSoundManager->Play_Sound(L"Don_t_GoAway.ogg", CSoundManager::Jack_Voice, CSoundManager::Voice_Sound);
 	}
@@ -1207,7 +1210,7 @@ void CPlayer_Colleague::Set_AniEvent()
 			CollDodge_FrontRoll();
 			m_eColleague_Ani = CPlayer_Colleague::Ani_Front_Roll;
 			break;
-		}	
+		}
 		case CPlayer_Colleague::Dodge_BackRoll:
 		{
 			CollDodge_BackRoll();
@@ -1274,7 +1277,7 @@ void CPlayer_Colleague::Set_AniEvent()
 			g_pSoundManager->Play_Sound(L"Jack_Death.ogg", CSoundManager::Jack_Voice, CSoundManager::Voice_Sound);
 			m_bJack_Death = true;
 		}
-		
+
 		break;
 	}
 	break;
@@ -1291,7 +1294,7 @@ void CPlayer_Colleague::Check_Navi()
 		g_eSceneID_Cur == 7 ? L"Navmesh_Stage_02.dat" :
 		g_eSceneID_Cur == 8 ? L"Navmesh_Stage_03.dat" : L"Navmesh_Stage_04.dat"));
 
-	m_pTransformCom->Set_Pos(_v3(m_pTargetTransformCom->Get_Pos().x - 3.f, m_pTargetTransformCom->Get_Pos().y, m_pTargetTransformCom->Get_Pos().z - 2.f));
+	m_pTransformCom->Set_Pos(m_pTargetTransformCom->Get_Pos() - m_pTargetTransformCom->Get_Axis(AXIS_Z) * 2.f);
 
 	m_pNavMesh->Reset_NaviMesh();
 	m_pNavMesh->Ready_NaviMesh(m_pGraphic_Dev, szNavData);
@@ -1882,7 +1885,7 @@ void CPlayer_Colleague::CollAtt_Normal()
 	if (false == m_bCheck_Attcing /*|| false == m_bMyHiting*/)
 		Funtion_RotateBody();
 
-	
+
 	if (fMonLenght > 4.f)
 	{
 		m_eMovetype = CPlayer_Colleague::Coll_Attack;
@@ -1901,15 +1904,15 @@ void CPlayer_Colleague::CollAtt_Normal()
 	}
 	/*else if ((1.5f >= fMonLenght && 0.f <= fMonLenght) && )
 	{
-		m_eMovetype = CPlayer_Colleague::Coll_Attack;
-		m_eColl_Sub_AttMoment = CPlayer_Colleague::Att_MonBackWalk;
+	m_eMovetype = CPlayer_Colleague::Coll_Attack;
+	m_eColl_Sub_AttMoment = CPlayer_Colleague::Att_MonBackWalk;
 	}*/
 	else if ((fMonLenght <= 3.f/* && false == m_bCheck_Attcing*/))
 	{
 		if (m_iNormalAtt_Count > 4)
 			m_iNormalAtt_Count = 0;
-			
-		
+
+
 		if (2 <= m_iCenter_Count)
 		{
 			m_eMovetype = CPlayer_Colleague::Coll_Attack;
@@ -1928,7 +1931,7 @@ void CPlayer_Colleague::CollAtt_Normal()
 			// 여기서 삼단베기
 			m_eMovetype = CPlayer_Colleague::Coll_Attack;
 			m_eColl_Sub_AttMoment = CPlayer_Colleague::Att_ThreeCombo;
-			
+
 			if (false == m_bCheck_Skil_Voice)
 			{
 				m_bCheck_Skil_Voice = true;
@@ -2095,11 +2098,11 @@ void CPlayer_Colleague::CollAtt_Base2()
 		}
 		/*else if (0.833f <= AniTime)
 		{
-			if (false == m_bEventTrigger[3])
-			{
-				m_bEventTrigger[3] = true;
-				m_pSword->Set_Enable_Trail(false);
-			}
+		if (false == m_bEventTrigger[3])
+		{
+		m_bEventTrigger[3] = true;
+		m_pSword->Set_Enable_Trail(false);
+		}
 		}*/
 		else if (0.933f <= AniTime)
 		{
@@ -2113,11 +2116,11 @@ void CPlayer_Colleague::CollAtt_Base2()
 		}
 		/*else if (0.267f <= AniTime)
 		{
-			if (false == m_bEventTrigger[5])
-			{
-				m_bEventTrigger[5] = true;
-				m_pSword->Set_Enable_Trail(true);
-			}
+		if (false == m_bEventTrigger[5])
+		{
+		m_bEventTrigger[5] = true;
+		m_pSword->Set_Enable_Trail(true);
+		}
 		}*/
 		else if (0.367f <= AniTime)
 		{
@@ -2756,7 +2759,7 @@ void CPlayer_Colleague::CollAtt_SlowGun()
 
 				_mat matBone = *m_matBone[Bone_LHand] * m_pTransformCom->Get_WorldMat();
 				memcpy(&vBirth, &matBone._41, sizeof(_v3));
-				
+
 				//g_pManagement->Create_Effect_Delay(L"Colleague_Skill_HandLight_Red_0", 0.f, vBirth);
 				g_pManagement->Create_Effect_Delay(L"Colleague_Skill_HandLight_Pink_0", 0.3f, vBirth);
 				g_pManagement->Create_Effect_Delay(L"Colleague_Skill_HandSmoke_Black_0", 0.f, vBirth);
@@ -3222,7 +3225,7 @@ void CPlayer_Colleague::Calling_Colleague(_bool _Calling_Colleague)
 	}
 }
 
-void CPlayer_Colleague::Teleport_ResetOptions(void * pArg/*_int eSceneID, _int eTeleportID*/)
+HRESULT CPlayer_Colleague::Teleport_ResetOptions(void * pArg/*_int eSceneID, _int eTeleportID*/)
 {
 	//_v3 vShadowLightPos = V3_NULL;
 	//_v3 vPos = V3_NULL;
@@ -3303,7 +3306,7 @@ void CPlayer_Colleague::Teleport_ResetOptions(void * pArg/*_int eSceneID, _int e
 	//}
 	//}
 	//m_pTransformCom->Set_Pos(TARGET_TO_TRANS(m_pTarget)->Get_Axis(AXIS_X) * 1.f);
-	
+
 	//m_pRendererCom->Set_ShadowLightPos(vShadowLightPos);
 
 	//fRadian = D3DXToRadian(fAngle);
@@ -3322,6 +3325,11 @@ void CPlayer_Colleague::Teleport_ResetOptions(void * pArg/*_int eSceneID, _int e
 	m_pNavMesh->Reset_NaviMesh();
 	m_pNavMesh->Ready_NaviMesh(m_pGraphic_Dev, szNavMeshName);
 	m_pNavMesh->Check_OnNavMesh(m_pTransformCom->Get_Pos());
+
+	if (m_pNavMesh->Get_SubSetIndex() == -1)
+		return E_FAIL;
+	else
+		return S_OK;
 	//m_pNavMesh->Check_OnNavMesh(vPos);
 }
 

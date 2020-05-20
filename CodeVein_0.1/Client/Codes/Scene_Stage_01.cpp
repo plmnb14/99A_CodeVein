@@ -41,6 +41,8 @@ HRESULT CScene_Stage_01::Ready_Scene()
 
 	g_pManagement->LoadCreateObject_FromPath(m_pGraphic_Device, L"Object_Stage_01.dat");
 
+
+
 	return S_OK;
 }
 
@@ -50,6 +52,19 @@ _int CScene_Stage_01::Update_Scene(_double TimeDelta)
 
 	Create_Fog(TimeDelta);
 	Create_Dust(TimeDelta);
+
+	if (g_pInput_Device->Key_Down(DIK_I))
+	{
+		CGameObject* pInstance = nullptr;
+
+		pInstance = g_pManagement->Clone_GameObject_Return(L"GameObject_Colleague",
+			&CPlayer_Colleague::JACK_INFO(_v3(0.f, 0.f, 0.f), 0.f, 1));
+
+		if (nullptr != pInstance)
+			g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Colleague", nullptr);
+		else
+			cout << "소환할 수 없는 위치입니다" << endl;
+	}
 
 	return _int();
 }
