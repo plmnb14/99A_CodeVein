@@ -4,24 +4,13 @@
 #include "UI.h"
 
 BEGIN(Client)
-class CGeneralStoreOption final : public CUI
+class CExpendables_Slot;
+class CExpendSellUI final : public CUI
 {
-public:
-	enum OPTION_TYPE
-	{
-		OPTION_PURCHASE,
-		OPTION_SELL,
-		OPTION_BYE,
-		OPTION_END
-	};
 private:
-	explicit CGeneralStoreOption(_Device pDevice);
-	explicit CGeneralStoreOption(const CGeneralStoreOption& rhs);
-	virtual ~CGeneralStoreOption() = default;
-
-public:
-	void Set_OptionType(OPTION_TYPE eType) { m_eOptionType = eType; }
-	void Set_Select(_bool bIsSelect) { m_bIsSelect = bIsSelect; }
+	explicit CExpendSellUI(_Device pDevice);
+	explicit CExpendSellUI(const CExpendSellUI& rhs);
+	virtual ~CExpendSellUI() = default;
 
 public:
 	virtual HRESULT Ready_GameObject_Prototype();
@@ -33,6 +22,9 @@ public:
 private:
 	HRESULT Add_Component();
 	HRESULT SetUp_ConstantTable(_uint iIndex);
+	void	SetUp_SubUI_Active(_bool bIsActive);
+	void	SetUp_SlotPos();
+	void	Click_SubUI();
 
 private:
 	CTransform*				m_pTransformCom = nullptr;
@@ -40,14 +32,13 @@ private:
 	CTexture*				m_pTextureCom = nullptr;
 	CShader*				m_pShaderCom = nullptr;
 	CBuffer_RcTex*			m_pBufferCom = nullptr;
-	CCollider*				m_pCollider = nullptr;
 
 private:
-	_bool m_bIsSelect = false;
-	OPTION_TYPE			m_eOptionType = OPTION_END;
+	_bool						m_bIsSubActive = false;
+	vector<CExpendables_Slot*>	m_vecSlot;
 
 public:
-	static CGeneralStoreOption*	Create(_Device pGraphic_Device);
+	static CExpendSellUI*		Create(_Device pGraphic_Device);
 	virtual CGameObject*		Clone_GameObject(void* pArg);
 	virtual void				Free();
 };

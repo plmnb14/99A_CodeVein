@@ -631,6 +631,9 @@
     <Filter Include="02.GameObject\Stage\5%29 UI\UI\06. Get_ItemUI\PickUp_ItemUIManager">
       <UniqueIdentifier>{32244477-327c-4e89-80ba-b6f69a399ca0}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObject\Stage\5%29 UI\UI\18. GeneralStoreUI%28잡화점%29\05. GeneralStoreSellUI">
+      <UniqueIdentifier>{05d6ac3c-8d9d-4fde-b24e-30376f054051}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -1218,9 +1221,6 @@
     <ClInclude Include="..\Headers\Pet_Bullet.h">
       <Filter>02.GameObject\Stage\10%29 Pet\00.Pet_Bullet</Filter>
     </ClInclude>
-    <ClInclude Include="..\Headers\BuyOptionUI.h">
-      <Filter>02.GameObject\Stage\5%29 UI\UI\18. GeneralStoreUI%28잡화점%29\02. GeneralStoreBuyUI</Filter>
-    </ClInclude>
     <ClInclude Include="..\Headers\SkillPointUI.h">
       <Filter>02.GameObject\Stage\5%29 UI\UI\09. SkillUI\02. Skill_Gauge</Filter>
     </ClInclude>
@@ -1325,6 +1325,15 @@
     </ClInclude>
     <ClInclude Include="..\Headers\PickUp_ItemUIManager.h">
       <Filter>02.GameObject\Stage\5%29 UI\UI\06. Get_ItemUI\PickUp_ItemUIManager</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\BuyOptionUI.h">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\18. GeneralStoreUI%28잡화점%29\02. GeneralStoreBuyUI\BuyOptions</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\ExpendSellUI.h">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\18. GeneralStoreUI%28잡화점%29\05. GeneralStoreSellUI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\GeneralStoreSellUI.h">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\18. GeneralStoreUI%28잡화점%29\05. GeneralStoreSellUI</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -1898,9 +1907,6 @@
     <ClCompile Include="..\Codes\Pet_Bullet.cpp">
       <Filter>02.GameObject\Stage\10%29 Pet\00.Pet_Bullet</Filter>
     </ClCompile>
-    <ClCompile Include="..\Codes\BuyOptionUI.cpp">
-      <Filter>02.GameObject\Stage\5%29 UI\UI\18. GeneralStoreUI%28잡화점%29\02. GeneralStoreBuyUI</Filter>
-    </ClCompile>
     <ClCompile Include="..\Codes\SkillPointUI.cpp">
       <Filter>02.GameObject\Stage\5%29 UI\UI\09. SkillUI\02. Skill_Gauge</Filter>
     </ClCompile>
@@ -2005,6 +2011,15 @@
     </ClCompile>
     <ClCompile Include="..\Codes\PickUp_ItemUIManager.cpp">
       <Filter>02.GameObject\Stage\5%29 UI\UI\06. Get_ItemUI\PickUp_ItemUIManager</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\BuyOptionUI.cpp">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\18. GeneralStoreUI%28잡화점%29\02. GeneralStoreBuyUI\BuyOptions</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\ExpendSellUI.cpp">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\18. GeneralStoreUI%28잡화점%29\05. GeneralStoreSellUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\GeneralStoreSellUI.cpp">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\18. GeneralStoreUI%28잡화점%29\05. GeneralStoreSellUI</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

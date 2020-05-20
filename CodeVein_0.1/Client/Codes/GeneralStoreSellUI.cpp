@@ -1,54 +1,62 @@
 #include "stdafx.h"
-#include "..\Headers\GeneralStoreUI.h"
+#include "..\Headers\GeneralStoreSellUI.h"
 #include "UI_Manager.h"
 
-CGeneralStoreUI::CGeneralStoreUI(_Device pDevice)
+
+CGeneralStoreSellUI::CGeneralStoreSellUI(_Device pDevice)
 	: CUI(pDevice)
 {
 }
 
-CGeneralStoreUI::CGeneralStoreUI(const CGeneralStoreUI & rhs)
+CGeneralStoreSellUI::CGeneralStoreSellUI(const CGeneralStoreSellUI & rhs)
 	: CUI(rhs)
 {
 }
 
-HRESULT CGeneralStoreUI::Ready_GameObject_Prototype()
+HRESULT CGeneralStoreSellUI::Ready_GameObject_Prototype()
 {
 	CUI::Ready_GameObject_Prototype();
+
 	return NOERROR;
 }
 
-HRESULT CGeneralStoreUI::Ready_GameObject(void * pArg)
+HRESULT CGeneralStoreSellUI::Ready_GameObject(void * pArg)
 {
 	if (FAILED(Add_Component()))
 		return E_FAIL;
 	CUI::Ready_GameObject(pArg);
-
-	m_fPosX = WINCX * 0.5f;
-	m_fPosY = WINCY * 0.5f;
-	m_fSizeX = 1280.f;
-	m_fSizeY = 700.f;
 
 	SetUp_Default();
 
 	return NOERROR;
 }
 
-_int CGeneralStoreUI::Update_GameObject(_double TimeDelta)
+_int CGeneralStoreSellUI::Update_GameObject(_double TimeDelta)
 {
 	CUI::Update_GameObject(TimeDelta);
-
 	m_pRendererCom->Add_RenderList(RENDER_UI, this);
 
 	D3DXMatrixOrthoLH(&m_matProj, WINCX, WINCY, 0.f, 1.f);
+
+	if (m_bIsActive && !m_bIsSubActive)
+	{
+		m_pExpendSellUI->Set_Active(true);
+		SetUp_SubUI_Active(true);
+		m_bIsSubActive = true;
+	}
+	else if (!m_bIsActive && m_bIsSubActive)
+	{
+		m_pExpendSellUI->Set_Active(false);
+		SetUp_SubUI_Active(false);
+		m_bIsSubActive = false;
+	}
 	
-	Update_SubUI();
 	Click_SubUI();
 	
 	return NO_EVENT;
 }
 
-_int CGeneralStoreUI::Late_Update_GameObject(_double TimeDelta)
+_int CGeneralStoreSellUI::Late_Update_GameObject(_double TimeDelta)
 {
 	D3DXMatrixIdentity(&m_matWorld);
 	D3DXMatrixIdentity(&m_matView);
@@ -62,7 +70,7 @@ _int CGeneralStoreUI::Late_Update_GameObject(_double TimeDelta)
 	return NO_EVENT;
 }
 
-HRESULT CGeneralStoreUI::Render_GameObject()
+HRESULT CGeneralStoreSellUI::Render_GameObject()
 {
 	if (!m_bIsActive)
 		return NOERROR;
@@ -74,8 +82,8 @@ HRESULT CGeneralStoreUI::Render_GameObject()
 	g_pManagement->Set_Transform(D3DTS_VIEW, m_matView);
 	g_pManagement->Set_Transform(D3DTS_PROJECTION, m_matProj);
 
-	
-	if (FAILED(SetUp_ConstantTable(0)))
+
+	if (FAILED(SetUp_ConstantTable(1)))
 		return E_FAIL;
 
 	m_pShaderCom->Begin_Shader();
@@ -87,7 +95,7 @@ HRESULT CGeneralStoreUI::Render_GameObject()
 	return NOERROR;
 }
 
-HRESULT CGeneralStoreUI::Add_Component()
+HRESULT CGeneralStoreSellUI::Add_Component()
 {
 	// For.Com_Transform
 	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Transform", L"Com_Transform", (CComponent**)&m_pTransformCom)))
@@ -112,7 +120,7 @@ HRESULT CGeneralStoreUI::Add_Component()
 	return NOERROR;
 }
 
-HRESULT CGeneralStoreUI::SetUp_ConstantTable(_uint iIndex)
+HRESULT CGeneralStoreSellUI::SetUp_ConstantTable(_uint iIndex)
 {
 	if (nullptr == m_pShaderCom)
 		return E_FAIL;
@@ -129,7 +137,7 @@ HRESULT CGeneralStoreUI::SetUp_ConstantTable(_uint iIndex)
 	return NOERROR;
 }
 
-void CGeneralStoreUI::SetUp_Default()
+void CGeneralStoreSellUI::SetUp_Default()
 {
 	LOOP(2)
 	{
@@ -141,72 +149,42 @@ void CGeneralStoreUI::SetUp_Default()
 	m_pShopIcon[0]->Set_Type(CInventory_Icon::ICON_TYPE::ICON_EXPEND);
 	m_pShopIcon[1]->Set_Type(CInventory_Icon::ICON_TYPE::ICON_MTRL);
 
-	// 소비상점UI 생성
-	m_pExpendCollectionUI = static_cast<CExpendCollectionUI*>(g_pManagement->Clone_GameObject_Return(L"GameObject_ExpendCollectionUI", nullptr));
-	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pExpendCollectionUI, SCENE_MORTAL, L"Layer_PlayerUI", nullptr);
-
-	// 재료상점UI 생성
-	m_pMaterialCollectionUI = static_cast<CMaterialCollectionUI*>(g_pManagement->Clone_GameObject_Return(L"GameObject_MaterialCollectionUI", nullptr));
-	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pMaterialCollectionUI, SCENE_MORTAL, L"Layer_PlayerUI", nullptr);
+	// 소비템 판매
+	m_pExpendSellUI = static_cast<CExpendSellUI*>(g_pManagement->Clone_GameObject_Return(L"GameObject_ExpendSellUI", nullptr));
+	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pExpendSellUI, SCENE_MORTAL, L"Layer_PlayerUI", nullptr);
 }
 
-void CGeneralStoreUI::Update_SubUI()
-{
-	LOOP(2)
-	{
-		m_pShopIcon[i]->Set_Active(m_bIsActive);
-		m_pShopIcon[i]->Set_UI_Pos(80.f + 80.f * i, 130.f);
-		m_pShopIcon[i]->Set_UI_Size(40.f, 40.f);
-	}
-
-	if (!m_bIsActive)
-	{
-		m_pExpendCollectionUI->Set_Active(false);
-		m_pMaterialCollectionUI->Set_Active(false);
-		m_bIsOpen = false;
-	}
-	else if (m_bIsActive && !m_bIsOpen)
-	{
-		m_pExpendCollectionUI->Set_Active(true);
-		m_bIsOpen = true;
-	}
-}
-
-void CGeneralStoreUI::Click_SubUI()
+void CGeneralStoreSellUI::Click_SubUI()
 {
 	if (!m_bIsActive)
 		return;
 
-	
-	// 소비템 버튼 클릭시
 	if (m_pShopIcon[0]->Pt_InRect() && g_pInput_Device->Get_DIMouseState(CInput_Device::DIM_LB))
 	{
-		m_pExpendCollectionUI->Set_Active(true);
-		m_pMaterialCollectionUI->Set_Active(false);
-
-		g_pSoundManager->Play_Sound(L"UI_CommonHover.wav", CSoundManager::CHANNELID::Purchase_GeneralShop_Icon01, CSoundManager::Ambient_Sound);
+		m_pExpendSellUI->Set_Active(true);
 	}
-
-	// 재료 버튼 클릭시
-	if (m_pShopIcon[1]->Pt_InRect() && g_pInput_Device->Get_DIMouseState(CInput_Device::DIM_LB))
+	else if (m_pShopIcon[1]->Pt_InRect() && g_pInput_Device->Get_DIMouseState(CInput_Device::DIM_LB))
 	{
-		m_pExpendCollectionUI->Set_Active(false);
-		m_pMaterialCollectionUI->Set_Active(true);
 
-		g_pSoundManager->Play_Sound(L"UI_CommonHover.wav", CSoundManager::CHANNELID::Purchase_GeneralShop_Icon02, CSoundManager::Ambient_Sound);
 	}
-	
-	
 
 	if (g_pInput_Device->Get_DIMouseState(CInput_Device::DIM_RB))
-	{
 		m_bIsActive = false;
-	}
 }
 
-CGeneralStoreUI * CGeneralStoreUI::Create(_Device pGraphic_Device)
+void CGeneralStoreSellUI::SetUp_SubUI_Active(_bool bIsActive)
 {
-	CGeneralStoreUI* pInstance = new CGeneralStoreUI(pGraphic_Device);
+	LOOP(2)
+	{
+		m_pShopIcon[i]->Set_Active(bIsActive);
+	}
+
+	
+}
+
+CGeneralStoreSellUI * CGeneralStoreSellUI::Create(_Device pGraphic_Device)
+{
+	CGeneralStoreSellUI* pInstance = new CGeneralStoreSellUI(pGraphic_Device);
 
 	if (FAILED(pInstance->Ready_GameObject_Prototype()))
 		Safe_Release(pInstance);
@@ -214,9 +192,9 @@ CGeneralStoreUI * CGeneralStoreUI::Create(_Device pGraphic_Device)
 	return pInstance;
 }
 
-CGameObject * CGeneralStoreUI::Clone_GameObject(void * pArg)
+CGameObject * CGeneralStoreSellUI::Clone_GameObject(void * pArg)
 {
-	CGeneralStoreUI* pInstance = new CGeneralStoreUI(*this);
+	CGeneralStoreSellUI* pInstance = new CGeneralStoreSellUI(*this);
 
 	if (FAILED(pInstance->Ready_GameObject(pArg)))
 		Safe_Release(pInstance);
@@ -224,7 +202,7 @@ CGameObject * CGeneralStoreUI::Clone_GameObject(void * pArg)
 	return pInstance;
 }
 
-void CGeneralStoreUI::Free()
+void CGeneralStoreSellUI::Free()
 {
 	Safe_Release(m_pTransformCom);
 	Safe_Release(m_pBufferCom);
