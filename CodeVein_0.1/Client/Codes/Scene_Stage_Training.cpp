@@ -311,7 +311,7 @@ HRESULT CScene_Stage_Training::Ready_Layer_Environment()
 
 HRESULT CScene_Stage_Training::Ready_Layer_Custom(const _tchar * pLayerTag)
 {
-	if (FAILED(g_pManagement->Add_Prototype(SCENE_STATIC, L"DefaultTex_Custom_UI", CTexture::Create(m_pGraphic_Device, CTexture::TYPE_GENERAL, L"../Resources/Texture/DefaultUI/Customize/Custom_UI/Custom_UI_%d.dds", 12))))
+	if (FAILED(g_pManagement->Add_Prototype(SCENE_STATIC, L"DefaultTex_Custom_UI", CTexture::Create(m_pGraphic_Device, CTexture::TYPE_GENERAL, L"../Resources/Texture/DefaultUI/Customize/Custom_UI/Custom_UI_%d.dds", 13))))
 		return E_FAIL;
 	if (FAILED(g_pManagement->Add_Prototype(SCENE_STATIC, L"DefaultTex_Custom_Hair", CTexture::Create(m_pGraphic_Device, CTexture::TYPE_GENERAL, L"../Resources/Texture/DefaultUI/Customize/Custom_Hair/Custom_Hair_%d.dds", 7))))
 		return E_FAIL;
