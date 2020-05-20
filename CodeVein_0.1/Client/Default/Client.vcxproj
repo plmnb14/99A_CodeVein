@@ -212,6 +212,7 @@
     <ClInclude Include="..\Headers\Costume_Head.h" />
     <ClInclude Include="..\Headers\ExpendCollectionUI.h" />
     <ClInclude Include="..\Headers\ExpendOptionUI.h" />
+    <ClInclude Include="..\Headers\ExpendSellUI.h" />
     <ClInclude Include="..\Headers\Expend_InfoUI.h" />
     <ClInclude Include="..\Headers\ExplainArmorUI.h" />
     <ClInclude Include="..\Headers\ExplainExpendUI.h" />
@@ -230,6 +231,7 @@
     <ClInclude Include="..\Headers\MaterialCollectionUI.h" />
     <ClInclude Include="..\Headers\MaterialOptionUI.h" />
     <ClInclude Include="..\Headers\GeneralStoreUI.h" />
+    <ClInclude Include="..\Headers\MaterialSellCollectionUI.h" />
     <ClInclude Include="..\Headers\Material_InfoUI.h" />
     <ClInclude Include="..\Headers\NPC_InteractionUI.h" />
     <ClInclude Include="..\Headers\NPC_Yakumo.h" />
@@ -435,6 +437,7 @@
     <ClCompile Include="..\Codes\Costume_Head.cpp" />
     <ClCompile Include="..\Codes\ExpendCollectionUI.cpp" />
     <ClCompile Include="..\Codes\ExpendOptionUI.cpp" />
+    <ClCompile Include="..\Codes\ExpendSellUI.cpp" />
     <ClCompile Include="..\Codes\Expend_InfoUI.cpp" />
     <ClCompile Include="..\Codes\ExplainArmorUI.cpp" />
     <ClCompile Include="..\Codes\ExplainExpendUI.cpp" />
@@ -453,6 +456,7 @@
     <ClCompile Include="..\Codes\MaterialCollectionUI.cpp" />
     <ClCompile Include="..\Codes\MaterialOptionUI.cpp" />
     <ClCompile Include="..\Codes\GeneralStoreUI.cpp" />
+    <ClCompile Include="..\Codes\MaterialSellCollectionUI.cpp" />
     <ClCompile Include="..\Codes\Material_InfoUI.cpp" />
     <ClCompile Include="..\Codes\NPC_InteractionUI.cpp" />
     <ClCompile Include="..\Codes\NPC_Yakumo.cpp" />

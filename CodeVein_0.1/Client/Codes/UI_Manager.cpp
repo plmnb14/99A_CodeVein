@@ -162,6 +162,8 @@ HRESULT CUI_Manager::Add_UI_Prototype(_Device pDevice)
 		return E_FAIL;
 	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_GeneralStoreSellUI", CGeneralStoreSellUI::Create(pDevice))))
 		return E_FAIL;
+	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_ExpendSellUI", CExpendSellUI::Create(pDevice))))
+		return E_FAIL;
 	
 	//////////////// Chae
 	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_BossMassageUI", CMassageUI::Create(pDevice))))
@@ -229,7 +231,7 @@ HRESULT CUI_Manager::Add_UI_Prototype(_Device pDevice)
 		return E_FAIL;
 	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_GeneralStoreOption", CGeneralStoreOption::Create(pDevice))))
 		return E_FAIL;
-	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_ExpendSellUI", CExpendSellUI::Create(pDevice))))
+	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_ExpendSellCollectionUI", CExpendSellCollectionUI::Create(pDevice))))
 		return E_FAIL;
 	
 
@@ -370,9 +372,9 @@ HRESULT CUI_Manager::SetUp_UILayer()
 	m_pCalling_Colleague = static_cast<CCalling_Colleague*>(g_pManagement->Clone_GameObject_Return(L"GameObject_Calling_Colleague", nullptr));
 	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pCalling_Colleague, SCENE_MORTAL, L"Layer_Calling_ColleagueUI", nullptr);
 
-	// ÄÚ½ºÆ¬
-	m_pCustomCategory = static_cast<CCustomCategory*>(g_pManagement->Clone_GameObject_Return(L"GameObject_CustomCategory", nullptr));
-	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pCustomCategory, SCENE_MORTAL, L"Layer_Custom", nullptr);
+	//// ÄÚ½ºÆ¬
+	//m_pCustomCategory = static_cast<CCustomCategory*>(g_pManagement->Clone_GameObject_Return(L"GameObject_CustomCategory", nullptr));
+	//g_pManagement->Add_GameOject_ToLayer_NoClone(m_pCustomCategory, SCENE_MORTAL, L"Layer_Custom", nullptr);
 	
 	return NOERROR;
 }

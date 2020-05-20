@@ -1,17 +1,16 @@
 #pragma once
+
 #include "Client_Defines.h"
 #include "UI.h"
 
 BEGIN(Client)
-class CInventory_Icon;
-class CMaterialCollectionUI;
-class CExpendCollectionUI;
-class CGeneralStoreUI final : public CUI
+class CMaterial_Slot;
+class CMaterialSellCollectionUI final : public CUI
 {
 private:
-	explicit CGeneralStoreUI(_Device pDevice);
-	explicit CGeneralStoreUI(const CGeneralStoreUI& rhs);
-	virtual ~CGeneralStoreUI() = default;
+	explicit CMaterialSellCollectionUI(_Device pDevice);
+	explicit CMaterialSellCollectionUI(const CMaterialSellCollectionUI& rhs);
+	virtual ~CMaterialSellCollectionUI() = default;
 
 public:
 	virtual HRESULT Ready_GameObject_Prototype();
@@ -23,10 +22,13 @@ public:
 private:
 	HRESULT Add_Component();
 	HRESULT SetUp_ConstantTable(_uint iIndex);
-	void	SetUp_Default();
-	void	Update_SubUI();
-	void	Click_SubUI();
 	void	SetUp_SubUI_Active(_bool bIsActive);
+	void	SetUp_SlotPos();
+	void	Click_SubUI();
+	void	SetUp_Default();
+
+public:
+	void Sell_MtrlItem(CMaterial_Slot* pSlot);
 
 private:
 	CTransform*				m_pTransformCom = nullptr;
@@ -36,15 +38,12 @@ private:
 	CBuffer_RcTex*			m_pBufferCom = nullptr;
 
 private:
-	CInventory_Icon*			m_pShopIcon[2];
-	CMaterialCollectionUI*		m_pMaterialCollectionUI = nullptr;
-	CExpendCollectionUI*		m_pExpendCollectionUI = nullptr;
-	_bool						m_bIsOpen = false;
 	_bool						m_bIsSubActive = false;
-
+	vector<CMaterial_Slot*>		m_vecSlot;
+	
 public:
-	static CGeneralStoreUI*	Create(_Device pGraphic_Device);
-	virtual CGameObject*	Clone_GameObject(void* pArg);
-	virtual void			Free();
+	static CMaterialSellCollectionUI*	Create(_Device pGraphic_Device);
+	virtual CGameObject*				Clone_GameObject(void* pArg);
+	virtual void						Free();
 };
 END

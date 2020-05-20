@@ -107,6 +107,7 @@
 #include "GeneralStoreOption.h"
 #include "ExpendSellCollectionUI.h"
 #include "GeneralStoreSellUI.h"
+#include "ExpendSellUI.h"
 
 #include "Get_ItemUI.h"
 #include "PickUp_ItemUI.h"
