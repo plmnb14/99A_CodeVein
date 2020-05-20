@@ -47,14 +47,6 @@ HRESULT CArmor_Inven::Ready_GameObject(void * pArg)
 
 _int CArmor_Inven::Update_GameObject(_double TimeDelta)
 {
-	CUI::Update_GameObject(TimeDelta);
-	
-	Late_Init();
-
-	m_pRendererCom->Add_RenderList(RENDER_UI, this);
-
-	D3DXMatrixOrthoLH(&m_matProj, WINCX, WINCY, 0.f, 1.0f);
-
 	if (m_bIsActive && !m_bIsSubActive)
 	{
 		SetUp_SubUI_Active(true);
@@ -66,6 +58,17 @@ _int CArmor_Inven::Update_GameObject(_double TimeDelta)
 		m_bIsSubActive = false;
 	}
 
+	if (!m_bIsActive)
+		return NO_EVENT;
+
+	CUI::Update_GameObject(TimeDelta);
+	
+	Late_Init();
+
+	m_pRendererCom->Add_RenderList(RENDER_UI, this);
+
+	D3DXMatrixOrthoLH(&m_matProj, WINCX, WINCY, 0.f, 1.0f);
+
 	Click_Inven();
 		
 	return NO_EVENT;
@@ -73,6 +76,8 @@ _int CArmor_Inven::Update_GameObject(_double TimeDelta)
 
 _int CArmor_Inven::Late_Update_GameObject(_double TimeDelta)
 {
+	if (!m_bIsActive)
+		return NO_EVENT;
 	D3DXMatrixIdentity(&m_matWorld);
 	D3DXMatrixIdentity(&m_matView);
 

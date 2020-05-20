@@ -221,7 +221,7 @@ void CGeneralStoreNPCUI::Click_Option()
 	else
 		m_vecOption[0]->Set_Select(false);
 
-	/*if (CCollisionMgr::Collision_Ray(m_vecOption[1], g_pInput_Device->Get_Ray(), &m_fCross))
+	if (CCollisionMgr::Collision_Ray(m_vecOption[1], g_pInput_Device->Get_Ray(), &m_fCross))
 	{
 		m_vecOption[1]->Set_Select(true);
 
@@ -234,7 +234,7 @@ void CGeneralStoreNPCUI::Click_Option()
 		}	
 	}
 	else
-		m_vecOption[1]->Set_Select(false);*/
+		m_vecOption[1]->Set_Select(false);
 
 	if (CCollisionMgr::Collision_Ray(m_vecOption[2], g_pInput_Device->Get_Ray(), &m_fCross))
 	{

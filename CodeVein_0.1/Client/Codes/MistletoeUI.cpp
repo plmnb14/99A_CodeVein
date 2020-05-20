@@ -52,9 +52,23 @@ HRESULT CMistletoeUI::Ready_GameObject(void * pArg)
 
 _int CMistletoeUI::Update_GameObject(_double TimeDelta)
 {
+	if (m_bIsActive && !m_bIsSubActive)
+	{
+		SetUp_SubUI_Active(true);
+		m_bIsSubActive = true;
+	}
+	else if (!m_bIsActive && m_bIsSubActive)
+	{
+		SetUp_SubUI_Active(false);
+		m_bIsSubActive = false;
+	}
+
+	if (!m_bIsActive)
+		return NO_EVENT;
+
 	CUI::Update_GameObject(TimeDelta);
-	//m_pRendererCom->Add_RenderList(RENDER_ALPHA, this);
-	m_pRendererCom->Add_RenderList(RENDER_UI_BACK, this);
+	
+	m_pRendererCom->Add_RenderList(RENDER_ALPHA_UI, this);
 
 	m_pTarget = static_cast<CPlayer*>(g_pManagement->Get_GameObjectBack(L"Layer_Player", SCENE_MORTAL));
 	if (nullptr == m_pTarget)
@@ -76,6 +90,7 @@ _int CMistletoeUI::Update_GameObject(_double TimeDelta)
 	_float fOriginYRadian = pTargetTrans->Get_Angle().y;
 	_float fAdditionalYRadian = fOriginYRadian + D3DXToRadian(20.f);
 	m_pTransformCom->Set_Angle(AXIS_Y, fAdditionalYRadian);
+
 	
 	LOOP(3)
 	{
@@ -84,8 +99,11 @@ _int CMistletoeUI::Update_GameObject(_double TimeDelta)
 		TARGET_TO_TRANS(m_vecOption[i])->Set_At(m_pTransformCom->Get_At());
 		TARGET_TO_TRANS(m_vecOption[i])->Set_Pos(m_pTransformCom->Get_Pos() + _v3(0.f, _float(i) * -0.2f + 0.2f, 0.f) + *V3_NORMAL_SELF(&vLook) * -0.001f);
 		
-		m_vecOption[i]->Set_Active(m_bIsActive);
+		
+
 	}
+
+	
 
 	//if (!m_bIsActive)
 	//{
@@ -103,6 +121,8 @@ _int CMistletoeUI::Update_GameObject(_double TimeDelta)
 
 _int CMistletoeUI::Late_Update_GameObject(_double TimeDelta)
 {
+	if (!m_bIsActive)
+		return NO_EVENT;
 	if (nullptr == m_pRendererCom)
 		return E_FAIL;
 
@@ -124,7 +144,7 @@ HRESULT CMistletoeUI::Render_GameObject()
 		return E_FAIL;
 
 	m_pShaderCom->Begin_Shader();
-	m_pShaderCom->Begin_Pass(3);
+	m_pShaderCom->Begin_Pass(6);
 
 	m_pBufferCom->Render_VIBuffer();
 	m_pShaderCom->End_Pass();
@@ -145,7 +165,7 @@ HRESULT CMistletoeUI::Render_GameObject_Instancing_SetPass(CShader * pShader)
 		return E_FAIL;
 
 	pShader->Begin_Shader();
-	pShader->Begin_Pass(3);
+	pShader->Begin_Pass(6);
 
 	m_pBufferCom->Render_VIBuffer();
 	pShader->End_Pass();
@@ -193,10 +213,6 @@ HRESULT CMistletoeUI::SetUp_ConstantTable(CShader * pShader)
 		return E_FAIL;
 
 	if (FAILED(m_pTextureCom->SetUp_OnShader("g_DiffuseTexture", pShader, _uint(0))))
-		return E_FAIL;
-	
-	_float fAlpha = 0.7f;
-	if (FAILED(pShader->Set_Value("g_fAlpha", &fAlpha, sizeof(_float))))
 		return E_FAIL;
 
 	pShader->Set_Texture("g_DepthTexture", g_pManagement->Get_Target_Texture(L"Target_DepthUI"));
@@ -255,6 +271,14 @@ void CMistletoeUI::Reset_Option()
 	for (auto& iter : m_vecOption)
 	{
 			iter->Set_Select(false);
+	}
+}
+
+void CMistletoeUI::SetUp_SubUI_Active(_bool bIsActive)
+{
+	for (auto& iter : m_vecOption)
+	{
+		iter->Set_Active(bIsActive);
 	}
 }
 

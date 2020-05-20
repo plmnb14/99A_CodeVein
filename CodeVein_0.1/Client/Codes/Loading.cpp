@@ -1405,7 +1405,7 @@ _uint CLoading::Loading_Title()
 	// 흡혈 무기
 	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_DrainWeapon", CDrain_Weapon::Create(m_pGraphicDev))))
 		return E_FAIL;
-	//무기
+	// 무기
 	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_Weapon", CWeapon::Create(m_pGraphicDev))))
 		return E_FAIL;
 	// 트레일

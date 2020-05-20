@@ -5,12 +5,12 @@
 
 BEGIN(Client)
 class CExpendables_Slot;
-class CExpendSellUI final : public CUI
+class CExpendSellCollectionUI final : public CUI
 {
 private:
-	explicit CExpendSellUI(_Device pDevice);
-	explicit CExpendSellUI(const CExpendSellUI& rhs);
-	virtual ~CExpendSellUI() = default;
+	explicit CExpendSellCollectionUI(_Device pDevice);
+	explicit CExpendSellCollectionUI(const CExpendSellCollectionUI& rhs);
+	virtual ~CExpendSellCollectionUI() = default;
 
 public:
 	virtual HRESULT Ready_GameObject_Prototype();
@@ -26,6 +26,9 @@ private:
 	void	SetUp_SlotPos();
 	void	Click_SubUI();
 
+public:
+	void Sell_ExpendItem(CExpendables_Slot* pSlot);
+
 private:
 	CTransform*				m_pTransformCom = nullptr;
 	CRenderer*				m_pRendererCom = nullptr;
@@ -38,7 +41,7 @@ private:
 	vector<CExpendables_Slot*>	m_vecSlot;
 
 public:
-	static CExpendSellUI*		Create(_Device pGraphic_Device);
+	static CExpendSellCollectionUI*		Create(_Device pGraphic_Device);
 	virtual CGameObject*		Clone_GameObject(void* pArg);
 	virtual void				Free();
 };
