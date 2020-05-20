@@ -26,6 +26,7 @@ private:
 	HRESULT SetUp_ConstantTable(CShader* pShader);
 	void Click_Option();
 	void Reset_Option();
+	void SetUp_SubUI_Active(_bool bIsActive);
 
 public:
 	void Active_SubUI(CMistletoeOptionUI* pSelectOption);
@@ -45,6 +46,7 @@ private:
 	_uint					m_iSelectIndex = 0;
 	CStageSelectUI*			m_pStageSelectUI = nullptr;
 	_float m_fCross = 100.f;
+	_bool m_bIsSubActive = false;
 
 public:
 	static CMistletoeUI*	Create(_Device pGraphic_Device);

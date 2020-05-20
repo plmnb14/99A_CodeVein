@@ -63,6 +63,11 @@ void COrthoEffect::Set_Active(_bool bActive)
 	m_bIsActive = bActive;
 }
 
+void COrthoEffect::Set_Alpha(_float fAlpha)
+{
+	m_fAlpha = fAlpha;
+}
+
 HRESULT COrthoEffect::SetUp_ConstantTable_Instance(CShader* pShader)
 {
 	_float fMaskIndex = 0.f;

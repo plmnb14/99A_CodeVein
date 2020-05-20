@@ -167,7 +167,10 @@ HRESULT CParticleMgr::Ready_ParticleManager()
 	Input_Pool(L"Blood_Decal_6", 50);
 
 	Input_Pool(L"Snow_Ortho_0", 2);
-	Input_Pool(L"Snow_Ortho_1", 10);
+	Input_Pool(L"Snow_Ortho_1", 2);
+
+	Input_Pool(L"Ortho_Smoke_0", 2);
+	Input_Pool(L"Ortho_Smoke_1", 2);
 
 	Input_Pool(L"Ortho_Blood_0", 3);
 	Input_Pool(L"Ortho_BossDead_BG", 3);
@@ -1540,6 +1543,20 @@ CEffect * CParticleMgr::Create_EffectReturn(_tchar * szName)
 	}
 
 	return pEff;
+}
+
+void CParticleMgr::Clear_Fog()
+{
+	for (auto& pGameObject : m_EffectList)
+	{
+		if (nullptr != pGameObject)
+		{
+			if (!lstrcmp(pGameObject->Get_ParticleName(), L"MapFog_0"))
+			{
+				pGameObject->Set_Dead();
+			}
+		}
+	}
 }
 
 HRESULT CParticleMgr::Update_Effect(const _double TimeDelta)

@@ -72,6 +72,8 @@ HRESULT CScene_Stage_Base::Ready_Scene()
 
 _int CScene_Stage_Base::Update_Scene(_double TimeDelta)
 {
+	Create_Fog(TimeDelta);
+
 	//====================================================================================================
 	// 만약에 하나의 사운드를 계속해서 재생하고 싶다면
 	// Update 문이나, 순회가능한 곳에 Play 해둔다면 Loop 재생이 가능함.
@@ -218,6 +220,27 @@ HRESULT CScene_Stage_Base::Ready_LightDesc()
 		return E_FAIL;
 
 	return NOERROR;
+}
+
+void CScene_Stage_Base::Create_Fog(_double TimeDelta)
+{
+	CGameObject* pPlayer = g_pManagement->Get_GameObjectBack(L"Layer_Player", SCENE_MORTAL);
+	if (!pPlayer)
+		return;
+
+	CTransform* pPlayerTrans = TARGET_TO_TRANS(pPlayer);
+	_v3 vPlayerPos = pPlayerTrans->Get_Pos();
+
+	const _float FOG_OFFSET = 5.f;
+
+	m_fMapFogDelay += _float(TimeDelta);
+	if (m_fMapFogDelay > FOG_OFFSET)
+	{
+		m_fMapFogDelay = 0.f;
+		g_pManagement->Create_Effect(L"MapFog_0", _v3(0.f, -4.f, 0.f));
+	}
+
+	g_pManagement->Create_Effect_Offset(L"MapFog_0", 7.f, _v3(0.f, -3.f, 0.f));
 }
 
 CScene_Stage_Base * CScene_Stage_Base::Create(LPDIRECT3DDEVICE9 pGraphic_Device, _bool _bLoadStatic)

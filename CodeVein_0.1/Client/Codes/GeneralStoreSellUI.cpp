@@ -150,7 +150,7 @@ void CGeneralStoreSellUI::SetUp_Default()
 	m_pShopIcon[1]->Set_Type(CInventory_Icon::ICON_TYPE::ICON_MTRL);
 
 	// 소비템 판매
-	m_pExpendSellUI = static_cast<CExpendSellUI*>(g_pManagement->Clone_GameObject_Return(L"GameObject_ExpendSellUI", nullptr));
+	m_pExpendSellUI = static_cast<CExpendSellCollectionUI*>(g_pManagement->Clone_GameObject_Return(L"GameObject_ExpendSellCollectionUI", nullptr));
 	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pExpendSellUI, SCENE_MORTAL, L"Layer_PlayerUI", nullptr);
 }
 
