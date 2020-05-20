@@ -6,19 +6,21 @@ BEGIN(Engine)
 
 class CNavMesh;
 class CTransform;
+class CRigidBody;
 class ENGINE_DLL CBT_MoveAround final : public CBT_Task_Node
 {
 public:
 
 	typedef struct tagInitInfo
 	{
-		tagInitInfo(char* _pNodeName, CTransform* pThis_Transform, CNavMesh* _pNavMesh, _tchar* _pTarget_Key, _tchar* _pBB_Speed_Key, _tchar* _pBB_MoveDir_Key, _float _fMove_Speed, _double _MoveTime, _double _TimeOffset)
-			: pTransform(pThis_Transform), pNavMesh(_pNavMesh), fMove_Speed(_fMove_Speed), dMoveTime(_MoveTime), dTimeOffset(_TimeOffset)
+		tagInitInfo(char* _pNodeName, CTransform* pThis_Transform, CNavMesh* _pNavMesh, CRigidBody* _pRigid, _tchar* _pTarget_Key, _tchar* _pBB_Speed_Key, _tchar* _pBB_MoveDir_Key, _float _fMove_Speed, _double _MoveTime, _double _TimeOffset)
+			: pTransform(pThis_Transform), pNavMesh(_pNavMesh), pRigid(_pRigid), fMove_Speed(_fMove_Speed), dMoveTime(_MoveTime), dTimeOffset(_TimeOffset)
 		{ strcpy_s<STR_128>(Target_NodeName, _pNodeName); lstrcpy(Target_Key, _pTarget_Key);
 		lstrcpy(BB_Speed_Key, _pBB_Speed_Key); lstrcpy(BB_MoveDir_Key, _pBB_MoveDir_Key);}
 		
 		CTransform*	pTransform = nullptr;
 		CNavMesh*	pNavMesh = nullptr;
+		CRigidBody*	pRigid = nullptr;
 		char		Target_NodeName[STR_128] = { 0, };
 		_tchar		Target_Key[STR_128] = { 0, };
 		_tchar		BB_Speed_Key[STR_128] = { 0, };
@@ -46,6 +48,7 @@ private:
 private:
 	CTransform*	m_pTransform = nullptr;
 	CNavMesh*	m_pNavMesh = nullptr;
+	CRigidBody*	m_pRigid = nullptr;
 	_tchar		m_Target_Key[STR_128] = { 0, };
 	_tchar		m_BB_SpeedKey[STR_128] = { 0, };
 	_tchar		m_BB_MoveDir_Key[STR_128] = { 0, };

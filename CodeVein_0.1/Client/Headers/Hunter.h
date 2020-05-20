@@ -280,6 +280,7 @@ private:
 	HRESULT Ready_Weapon();
 	HRESULT Ready_Collider();
 	HRESULT Ready_BoneMatrix();
+	HRESULT Ready_Rigid();
 
 public:
 	static CHunter* Create(LPDIRECT3DDEVICE9 pGraphic_Device);

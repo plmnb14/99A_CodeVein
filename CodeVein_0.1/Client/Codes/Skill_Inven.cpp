@@ -52,14 +52,6 @@ HRESULT CSkill_Inven::Ready_GameObject(void * pArg)
 
 _int CSkill_Inven::Update_GameObject(_double TimeDelta)
 {
-	CUI::Update_GameObject(TimeDelta);
-	m_pRendererCom->Add_RenderList(RENDER_UI, this);
-
-	D3DXMatrixOrthoLH(&m_matProj, WINCX, WINCY, 0.f, 1.0f);
-
-	Click_SubUI();
-	//Search_Regist_Skill();
-
 	if (m_bIsActive && !m_bIsSubActive)
 	{
 		SetUp_SubUI_Active(true);
@@ -81,6 +73,18 @@ _int CSkill_Inven::Update_GameObject(_double TimeDelta)
 		m_bIsSubActive = false;
 	}
 
+	if (!m_bIsActive)
+		return NO_EVENT;
+	CUI::Update_GameObject(TimeDelta);
+	m_pRendererCom->Add_RenderList(RENDER_UI, this);
+
+	D3DXMatrixOrthoLH(&m_matProj, WINCX, WINCY, 0.f, 1.0f);
+
+	Click_SubUI();
+	//Search_Regist_Skill();
+
+	
+
 	/*if (!m_bIsActive)
 	{
 		for (auto& iter : m_vecSlot)
@@ -97,6 +101,8 @@ _int CSkill_Inven::Update_GameObject(_double TimeDelta)
 
 _int CSkill_Inven::Late_Update_GameObject(_double TimeDelta)
 {
+	if (!m_bIsActive)
+		return NO_EVENT;
 	D3DXMatrixIdentity(&m_matWorld);
 	D3DXMatrixIdentity(&m_matView);
 

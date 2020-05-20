@@ -66,6 +66,11 @@ HRESULT CDeerKing::Ready_GameObject(void * pArg)
 	pBlackBoard->Set_Value(L"PushCol", true);	// 충돌여부 제어변수
 	//pBlackBoard->Set_Value(L"PhyCol", true); // 피격판정 제어 변수
 
+	pBlackBoard->Set_Value(L"CamShake1", false);
+	pBlackBoard->Set_Value(L"CamShake2", false);
+	pBlackBoard->Set_Value(L"CamShake4", false);
+
+
 	CBT_Selector* Start_Sel = Node_Selector("행동 시작");
 	//CBT_Sequence* Start_Sel = Node_Sequence("행동 시작");	//테스트
 
@@ -127,6 +132,13 @@ _int CDeerKing::Update_GameObject(_double TimeDelta)
 	{
 		// 죽기전 UI 비활성화
 		m_pBossUI->Set_Active(false);
+
+		if (false == m_bFinishCamShake && m_pMeshCom->Is_Finish_Animation(0.5f))
+		{
+			m_bFinishCamShake = true;
+			SHAKE_CAM_lv3;
+		}
+
 		return NO_EVENT;
 	}
 
@@ -480,6 +492,7 @@ CBT_Composite_Node * CDeerKing::RightFoot_Attack(_float fWeight)
 	CBT_Wait* Wait0 = Node_Wait("대기", 0.05, 0);
 	CBT_RotationDir* Rotation0 = Node_RotationDir("돌기0", L"Player_Pos", 0.2);
 	CBT_MoveDirectly* Move0 = Node_MoveDirectly_Rush("이동0", L"Monster_Speed", L"Monster_Dir", 2.f, 0.766, 0);
+	CBT_SetValue* CamShake = Node_BOOL_SetValue("카메라 흔들기", L"CamShake2", true);
 	CBT_SetValue* VoiceStop = Node_BOOL_SetValue("목소리 재생", L"Voice_Stop", true);
 	CBT_SetValue* VoicePlay = Node_BOOL_SetValue("목소리 재생", L"Voice_Play", true);
 	CBT_SetValue* VoiceTag = Node_INT_SetValue("목소리 이름 설정", L"Voice_Tag", 10);
@@ -523,6 +536,7 @@ CBT_Composite_Node * CDeerKing::RightFoot_Attack(_float fWeight)
 	SubSeq->Add_Child(Wait0);
 	SubSeq->Add_Child(Rotation0);
 	SubSeq->Add_Child(Move0);
+	SubSeq->Add_Child(CamShake);
 	SubSeq->Add_Child(VoiceStop);
 	SubSeq->Add_Child(VoicePlay);
 	SubSeq->Add_Child(VoiceTag);
@@ -551,6 +565,7 @@ CBT_Composite_Node * CDeerKing::Rush_RightFoot()
 	CBT_RotationDir* Rotation0 = Node_RotationDir("돌기0", L"Player_Pos", 0.066);
 	CBT_MoveDirectly* Move0 = Node_MoveDirectly_Rush("이동0", L"Monster_Speed", L"Monster_Dir", -1.f, 0.3, 0);
 	CBT_Wait* Wait1 = Node_Wait("대기", 0.117, 0);
+	CBT_SetValue* CamShake = Node_BOOL_SetValue("카메라 흔들기", L"CamShake1", true);
 	CBT_SetValue* VoiceStop = Node_BOOL_SetValue("목소리 재생", L"Voice_Stop", true);
 	CBT_SetValue* VoicePlay = Node_BOOL_SetValue("목소리 재생", L"Voice_Play", true);
 	CBT_SetValue* VoiceTag = Node_INT_SetValue("목소리 이름 설정", L"Voice_Tag", 10);
@@ -589,6 +604,7 @@ CBT_Composite_Node * CDeerKing::Rush_RightFoot()
 	SubSeq->Add_Child(Rotation0);
 	SubSeq->Add_Child(Move0);
 	SubSeq->Add_Child(Wait1);
+	SubSeq->Add_Child(CamShake);
 	SubSeq->Add_Child(VoiceStop);
 	SubSeq->Add_Child(VoicePlay);
 	SubSeq->Add_Child(VoiceTag);
@@ -674,6 +690,7 @@ CBT_Composite_Node * CDeerKing::Head_ColdBeam()
 	CBT_RotationDir* Rotation0 = Node_RotationDir("돌기0", L"Player_Pos", 0.1);
 	CBT_Wait* Wait0 = Node_Wait("대기", 0.6, 0);
 	CBT_MoveDirectly* Move0 = Node_MoveDirectly_Rush("이동0", L"Monster_Speed", L"Monster_Dir", 3.f, 0.4, 0);
+	CBT_SetValue* CamShake = Node_BOOL_SetValue("카메라 흔들기", L"CamShake2", true);
 	CBT_SetValue* VoiceStop = Node_BOOL_SetValue("목소리 재생", L"Voice_Stop", true);
 	CBT_SetValue* VoicePlay = Node_BOOL_SetValue("목소리 재생", L"Voice_Play", true);
 	CBT_SetValue* VoiceTag = Node_INT_SetValue("목소리 이름 설정", L"Voice_Tag", 10);
@@ -681,6 +698,7 @@ CBT_Composite_Node * CDeerKing::Head_ColdBeam()
 	CBT_SetValue* Sound1Play = Node_BOOL_SetValue("소리1 재생", L"SFX_01_Play", true);
 	CBT_SetValue* Sound1Tag = Node_INT_SetValue("소리1 이름 설정", L"SFX_01_Tag", 1);
 	CBT_Wait* Wait1 = Node_Wait("대기", 0.7, 0);
+	CBT_SetValue* CamShake1 = Node_BOOL_SetValue("카메라 흔들기", L"CamShake2", true);
 	CBT_SetValue* Sound2Stop = Node_BOOL_SetValue("소리1 재생", L"SFX_01_Stop", true);
 	CBT_SetValue* Sound2Play = Node_BOOL_SetValue("소리1 재생", L"SFX_01_Play", true);
 	CBT_SetValue* Sound2Tag = Node_INT_SetValue("소리1 이름 설정", L"SFX_01_Tag", 2);
@@ -738,6 +756,7 @@ CBT_Composite_Node * CDeerKing::Head_ColdBeam()
 	SubSeq->Add_Child(Rotation0);
 	SubSeq->Add_Child(Wait0);
 	SubSeq->Add_Child(Move0);
+	SubSeq->Add_Child(CamShake);
 	SubSeq->Add_Child(VoiceStop);
 	SubSeq->Add_Child(VoicePlay);
 	SubSeq->Add_Child(VoiceTag);
@@ -745,6 +764,7 @@ CBT_Composite_Node * CDeerKing::Head_ColdBeam()
 	SubSeq->Add_Child(Sound1Play);
 	SubSeq->Add_Child(Sound1Tag);
 	SubSeq->Add_Child(Wait1);
+	SubSeq->Add_Child(CamShake1);
 	SubSeq->Add_Child(Sound2Stop);
 	SubSeq->Add_Child(Sound2Play);
 	SubSeq->Add_Child(Sound2Tag);
@@ -862,6 +882,7 @@ CBT_Composite_Node * CDeerKing::Jump_Attack(_float fWeight)
 	CBT_Wait* Wait0 = Node_Wait("대기0", 0.466, 0);
 	CBT_MoveDirectly* Move0 = Node_MoveDirectly_Rush("이동0", L"Monster_Speed", L"Monster_Dir", 1.f, 0.2, 0);
 	CBT_MoveDirectly* Move1 = Node_MoveDirectly_Rush("이동1", L"Monster_Speed", L"Monster_Dir", 10.f, 0.584, 0);
+	CBT_SetValue* CamShake = Node_BOOL_SetValue("카메라 흔들기", L"CamShake4", true);
 	CBT_SetValue* VoiceStop = Node_BOOL_SetValue("목소리 재생", L"Voice_Stop", true);
 	CBT_SetValue* VoicePlay = Node_BOOL_SetValue("목소리 재생", L"Voice_Play", true);
 	CBT_SetValue* VoiceTag = Node_INT_SetValue("목소리 이름 설정", L"Voice_Tag", 10);
@@ -921,6 +942,7 @@ CBT_Composite_Node * CDeerKing::Jump_Attack(_float fWeight)
 	SubSeq->Add_Child(Wait0);
 	SubSeq->Add_Child(Move0);
 	SubSeq->Add_Child(Move1);
+	SubSeq->Add_Child(CamShake);
 	SubSeq->Add_Child(VoiceStop);
 	SubSeq->Add_Child(VoicePlay);
 	SubSeq->Add_Child(VoiceTag);
@@ -1021,6 +1043,7 @@ CBT_Composite_Node * CDeerKing::Jump_In_Place()
 	// Show_Ani43 * 0.85 = 0.85
 	// Show_Ani44 * 0.9 = 0.90
 	CBT_Wait* Wait1 = Node_Wait("대기0", 0.662, 0);
+	CBT_SetValue* CamShake = Node_BOOL_SetValue("카메라 흔들기", L"CamShake4", true);
 	CBT_SetValue* VoiceStop = Node_BOOL_SetValue("목소리 재생", L"Voice_Stop", true);
 	CBT_SetValue* VoicePlay = Node_BOOL_SetValue("목소리 재생", L"Voice_Play", true);
 	CBT_SetValue* VoiceTag = Node_INT_SetValue("목소리 이름 설정", L"Voice_Tag", 12);
@@ -1099,6 +1122,7 @@ CBT_Composite_Node * CDeerKing::Jump_In_Place()
 	SubSeq->Add_Child(Wait0);
 	SubSeq->Add_Child(Rotation0);
 	SubSeq->Add_Child(Wait1);
+	SubSeq->Add_Child(CamShake);
 	SubSeq->Add_Child(VoiceStop);
 	SubSeq->Add_Child(VoicePlay);
 	SubSeq->Add_Child(VoiceTag);
@@ -1235,15 +1259,15 @@ CBT_Composite_Node * CDeerKing::Jump_Fist()
 
 	CBT_Wait* Wait0 = Node_Wait("대기", 0.6, 0);
 	CBT_RotationDir* Rotation0 = Node_RotationDir("돌기0", L"Player_Pos", 0.15);
+	// Show_Ani47 * 0.9 = 0.99
+	// Show_Ani48 * 0.95 = 0.031
 	CBT_SetValue* VoiceStop = Node_BOOL_SetValue("목소리 재생", L"Voice_Stop", true);
 	CBT_SetValue* VoicePlay = Node_BOOL_SetValue("목소리 재생", L"Voice_Play", true);
 	CBT_SetValue* VoiceTag = Node_INT_SetValue("목소리 이름 설정", L"Voice_Tag", 10);
 	CBT_SetValue* Sound1Stop = Node_BOOL_SetValue("소리1 재생", L"SFX_01_Stop", true);
 	CBT_SetValue* Sound1Play = Node_BOOL_SetValue("소리1 재생", L"SFX_01_Play", true);
 	CBT_SetValue* Sound1Tag = Node_INT_SetValue("소리1 이름 설정", L"SFX_01_Tag", 1);
-
-	// Show_Ani47 * 0.9 = 0.99
-	// Show_Ani48 * 0.95 = 0.031
+	CBT_SetValue* CamShake = Node_BOOL_SetValue("카메라 흔들기", L"CamShake4", true);
 
 	CBT_CreateEffect* Effect0 = Node_CreateEffect_Finite("제트팩 불꽃", L"FireBoy_FireBullet"				, L"Bone_LeftJet"	, 0.2, 50, 0.01, 0);
 	CBT_CreateEffect* Effect1 = Node_CreateEffect_Finite("제트팩 불꽃", L"FireBoy_FireBullet"				, L"Bone_RightJet"	, 0.2, 50, 0.01, 0);
@@ -1305,8 +1329,9 @@ CBT_Composite_Node * CDeerKing::Jump_Fist()
 	SubSeq->Add_Child(Wait0);
 	SubSeq->Add_Child(Rotation0);
 	SubSeq->Add_Child(Chase_Timer(0.554, 12.f));
+	SubSeq->Add_Child(CamShake);
 	SubSeq->Add_Child(VoiceStop);
-	SubSeq->Add_Child(VoicePlay);
+	SubSeq->Add_Child(VoicePlay); 
 	SubSeq->Add_Child(VoiceTag);
 	SubSeq->Add_Child(Sound1Stop);
 	SubSeq->Add_Child(Sound1Play);
@@ -1338,6 +1363,7 @@ CBT_Composite_Node * CDeerKing::Blade_Attack()
 	CBT_SetValue* Sound1Play = Node_BOOL_SetValue("소리1 재생", L"SFX_01_Play", true);
 	CBT_SetValue* Sound1Tag = Node_INT_SetValue("소리1 이름 설정", L"SFX_01_Tag", 0);
 	CBT_MoveDirectly* Move1 = Node_MoveDirectly_Rush("이동1", L"Monster_Speed", L"Monster_Dir", 5.f, 0.316, 0);
+	CBT_SetValue* CamShake = Node_BOOL_SetValue("카메라 흔들기", L"CamShake2", true);
 	CBT_Wait* Wait2 = Node_Wait("대기2", 0.567, 0);
 	CBT_MoveDirectly* Move2 = Node_MoveDirectly_Rush("이동2", L"Monster_Speed", L"Monster_Dir", -1.f, 0.383, 0);
 
@@ -1357,6 +1383,7 @@ CBT_Composite_Node * CDeerKing::Blade_Attack()
 	SubSeq->Add_Child(Sound1Play);
 	SubSeq->Add_Child(Sound1Tag);
 	SubSeq->Add_Child(Move1);
+	SubSeq->Add_Child(CamShake);
 	SubSeq->Add_Child(Wait2);
 	SubSeq->Add_Child(Move2);
 
@@ -1734,6 +1761,8 @@ void CDeerKing::Update_Shield()
 		g_pSoundManager->Stop_Sound(CSoundManager::CHANNELID::DearKing_SFX_02);
 		g_pSoundManager->Play_Sound(const_cast<TCHAR*>(L"SE_BOSSGUY_MATERIAL_011.ogg"), CSoundManager::CHANNELID::DearKing_SFX_02, CSoundManager::SOUND::Effect_Sound);
 
+		SHAKE_CAM_lv2;
+
 		vShield_Pos.y = 0.8f;
 		m_bFinish_Throw_Shield = true;
 
@@ -1913,9 +1942,27 @@ HRESULT CDeerKing::Update_Value_Of_BB()
 
 
 
+	// 카메라 흔들기
+	if (true == m_pAIControllerCom->Get_BoolValue(L"CamShake1"))
+	{
+		m_pAIControllerCom->Set_Value_Of_BlackBoard(L"CamShake1", false);
 
+		SHAKE_CAM_lv1;
+	}
 
+	if (true == m_pAIControllerCom->Get_BoolValue(L"CamShake2"))
+	{
+		m_pAIControllerCom->Set_Value_Of_BlackBoard(L"CamShake2", false);
 
+		SHAKE_CAM_lv2;
+	}
+
+	if (true == m_pAIControllerCom->Get_BoolValue(L"CamShake4"))
+	{
+		m_pAIControllerCom->Set_Value_Of_BlackBoard(L"CamShake4", false);
+
+		SHAKE_CAM_lv4;
+	}
 
 
 

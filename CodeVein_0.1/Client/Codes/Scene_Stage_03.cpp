@@ -35,8 +35,8 @@ HRESULT CScene_Stage_03::Ready_Scene()
 
 	CRenderer* pRenderer = static_cast<CRenderer*>(CManagement::Get_Instance()->Clone_Component(SCENE_STATIC, L"Renderer"));
 	pRenderer->Fog_On(true);
-	pRenderer->Set_FogDestiny(0.01f);
-	pRenderer->Set_UseLinearFog(true);
+	pRenderer->Set_FogDestiny(0.02f);
+	pRenderer->Set_UseLinearFog(false);
 	Safe_Release(pRenderer);
 
 	g_pManagement->LoadCreateObject_FromPath(m_pGraphic_Device, L"Object_Stage_03.dat");

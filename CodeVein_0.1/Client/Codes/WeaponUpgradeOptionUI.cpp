@@ -24,6 +24,7 @@ HRESULT CWeaponUpgradeOptionUI::Ready_GameObject(void * pArg)
 {
 	if (FAILED(Add_Component()))
 		return E_FAIL;
+
 	CUI::Ready_GameObject(pArg);
 
 	m_fPosX = 650.f;

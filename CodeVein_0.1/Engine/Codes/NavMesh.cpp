@@ -295,11 +295,11 @@ _v3 CNavMesh::Move_OnNaviMesh(CRigidBody* _pRigid, const _v3* pTargetPos, const 
 		if (_pRigid != nullptr)
 		{
 			_pRigid->Set_IsFall(true);
-			_pRigid->Set_IsGround(false);
+			return vEndPos;
 		}
 
 		m_bCanMove = true;
-		return vEndPos;
+		return *pTargetPos;
 	}
 
 	else if (CCell::COMPARE_MOVE == (*m_vecSubset_Cell[m_dwSubsetIdx])[m_dwIndex]->Compare(&vEndPos, &m_dwIndex , &vDirection, &iIndex , bIsUpper))
@@ -325,11 +325,14 @@ _v3 CNavMesh::Move_OnNaviMesh(CRigidBody* _pRigid, const _v3* pTargetPos, const 
 
 		if (CCell::COMPARE_FALL == (*m_vecSubset_Cell[m_dwSubsetIdx])[m_dwIndex]->Compare(&vEndPos, &m_dwIndex, &vDirection, &iIndex, bIsUpper))
 		{
-			_pRigid->Set_IsFall(true);
-			_pRigid->Set_IsGround(false);
+			if (_pRigid != nullptr)
+			{
+				_pRigid->Set_IsFall(true);
+				return vEndPos;
+			}
 
 			m_bCanMove = true;
-			return vEndPos;
+			return *pTargetPos;
 		}
 
 		else if (CCell::COMPARE_MOVE == (*m_vecSubset_Cell[m_dwSubsetIdx])[m_dwIndex]->Compare(&vNewEndPos, &m_dwIndex, &vDirection, &iIndex , bIsUpper))

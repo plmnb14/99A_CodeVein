@@ -31,9 +31,13 @@ private:
 
 private:
 	CLoading*			m_pLoading = nullptr;
+	_float				m_fMapFogDelay = 10.f;
 
 private:
 	HRESULT Ready_LightDesc();
+
+private:
+	void	Create_Fog(_double TimeDelta);
 
 public:
 	static CScene_Stage_Base* Create(LPDIRECT3DDEVICE9 pGraphic_Device , _bool _bLoadStatic);

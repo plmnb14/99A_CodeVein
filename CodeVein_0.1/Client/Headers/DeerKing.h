@@ -180,6 +180,7 @@ private:
 	D3DXFRAME_DERIVED*	m_pSpine3_RightJetFrame = nullptr;
 	D3DXFRAME_DERIVED*	m_pHead_LeftCornerFrame = nullptr;
 
+	_bool				m_bFinishCamShake = false;
 
 private:	// 최초상태 세팅
 	_float				m_fFov = 0.f;

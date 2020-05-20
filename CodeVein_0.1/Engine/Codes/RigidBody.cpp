@@ -16,8 +16,13 @@ CRigidBody::~CRigidBody()
 {
 }
 
-void CRigidBody::LateUpdate()
+_int CRigidBody::Update_Component_Self(_double dTimeDelta)
 {
+	// 추락상태일 때 시간 누적
+	if (m_tRigid.bIsFall)
+		m_fCurFallTime += _float(dTimeDelta);
+
+	return NO_EVENT;
 }
 
 void CRigidBody::Set_UseGravity(bool _UseGravity)
@@ -80,6 +85,11 @@ void CRigidBody::Set_MaxSpeed(D3DXVECTOR3 _MaxSpeed)
 	m_tRigid.vMaxSpeed = _MaxSpeed;
 }
 
+void CRigidBody::Set_CurTime(_float fTime)
+{
+	m_fCurFallTime = fTime;
+}
+
 float CRigidBody::Set_Jump(D3DXVECTOR3 _TransForm , float _Time)
 {
 	m_tRigid.vAccel.y -= m_tRigid.vMaxAccel.y * _Time;
@@ -104,6 +114,7 @@ CRigidBody* CRigidBody::Create(_Device _pGraphicDev)
 
 	if (FAILED(pComponent->Ready_Component()))
 	{
+
 		Safe_Release(pComponent);
 		return nullptr;
 	}

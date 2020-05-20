@@ -129,6 +129,13 @@ _int CIceGirl::Update_GameObject(_double TimeDelta)
 	{
 		// 죽으면서 UI 비활성화
 		m_pBossUI->Set_Active(false);
+
+		if (false == m_bFinishCamShake && m_pMeshCom->Is_Finish_Animation(0.5f))
+		{
+			m_bFinishCamShake = true;
+			SHAKE_CAM_lv3;
+		}
+
 		return NO_EVENT;
 	}
 		

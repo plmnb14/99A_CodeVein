@@ -137,7 +137,7 @@ private:
 	// 재생하고 있는 사운드를 관리할 객체 
 	FMOD_CHANNEL* m_pChannelArr[MAX_CHANNEL] = { nullptr, };
 
-	FMOD_CHANNELGROUP* m_pChannelGroup[3] = { nullptr, };
+	FMOD_CHANNELGROUP* m_pChannelGroup[4] = { nullptr, };
 
 	FMOD_CHANNELGROUP* m_pMasterChannelGroup = nullptr;
 

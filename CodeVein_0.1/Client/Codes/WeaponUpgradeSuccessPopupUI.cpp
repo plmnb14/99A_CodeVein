@@ -232,6 +232,7 @@ void CWeaponUpgradeSuccessPopupUI::Click_Option()
 				if (0 == iIdx)
 				{
 					Set_Active(false);
+
 				}
 			}
 		}

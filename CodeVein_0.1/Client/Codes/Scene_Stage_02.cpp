@@ -31,11 +31,10 @@ HRESULT CScene_Stage_02::Ready_Scene()
 	if (FAILED(Ready_Layer_Environment(L"Layer_Environment")))
 		return E_FAIL;
 
-	CRenderer* pRenderer = static_cast<CRenderer*>(CManagement::Get_Instance()->Clone_Component(SCENE_STATIC, L"Renderer"));
-	pRenderer->Fog_On(true);
-	pRenderer->Set_FogDestiny(0.04f);
-	pRenderer->Set_UseLinearFog(false);
-	Safe_Release(pRenderer);
+	m_pRenderer = static_cast<CRenderer*>(CManagement::Get_Instance()->Clone_Component(SCENE_STATIC, L"Renderer"));
+	m_pRenderer->Fog_On(true);
+	m_pRenderer->Set_FogDestiny(0.04f);
+	m_pRenderer->Set_UseLinearFog(false);
 
 	g_pSoundManager->Stop_Sound(CSoundManager::Ambient_01);
 	g_pSoundManager->Play_Sound(L"BGM_MT_SNOW.ogg", CSoundManager::Ambient_01, CSoundManager::Ambient_Sound);
@@ -51,10 +50,12 @@ _int CScene_Stage_02::Update_Scene(_double TimeDelta)
 
 	Create_Fog(TimeDelta);
 	Create_Dust(TimeDelta);
+	Check_Effect_Fade();
 
-	if (g_pInput_Device->Key_Pressing(DIK_B))
+	if (g_pInput_Device->Key_Down(DIK_B))
 	{
-		Create_Snow(TimeDelta);
+		m_pRenderer->Start_FogFadeOut();
+		m_bFadeOutStart = true;
 	}
 
 	if (g_pInput_Device->Key_Down(DIK_I))
@@ -129,11 +130,13 @@ HRESULT CScene_Stage_02::Ready_Layer_Player(const _tchar * pLayerTag)
 
 HRESULT CScene_Stage_02::Ready_Layer_Environment(const _tchar* pLayerTag)
 {
-	if (FAILED(g_pManagement->Add_GameObject_ToLayer(L"GameObject_Sky", SCENE_STAGE, pLayerTag)))
-		return E_FAIL;
+	CGameObject* pInstance = g_pManagement->Clone_GameObject_Return(L"GameObject_Sky", nullptr);
+	TARGET_TO_TRANS(pInstance)->Set_Angle(AXIS_Y, D3DXToRadian(0.f));
+	g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Sky", nullptr);
 
-	if (FAILED(g_pManagement->Add_GameObject_ToLayer(L"GameObject_Sky_Blur", SCENE_STAGE, pLayerTag)))
-		return E_FAIL;
+	pInstance = g_pManagement->Clone_GameObject_Return(L"GameObject_Sky_Blur", nullptr);
+	TARGET_TO_TRANS(pInstance)->Set_Angle(AXIS_Y, D3DXToRadian(0.f));
+	g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Sky", nullptr);
 
 	if (FAILED(g_pManagement->Add_GameObject_ToLayer(L"GameObject_BossMassageUI", SCENE_STAGE, L"Layer_BossMassageUI")))
 		return E_FAIL;
@@ -142,15 +145,25 @@ HRESULT CScene_Stage_02::Ready_Layer_Environment(const _tchar* pLayerTag)
 
 	m_pSnowEffect_0 = static_cast<COrthoEffect*>(CParticleMgr::Get_Instance()->Create_EffectReturn(L"Snow_Ortho_0"));
 	m_pSnowEffect_0->Set_Desc(_v3(0, 0, 0), nullptr);
-	m_pSnowEffect_0->Set_UV_Speed(0.5f, -0.8f);
+	m_pSnowEffect_0->Set_UV_Speed(0.8f, -1.2f);
+	m_pSnowEffect_0->Set_UI_Layer();
+	//m_pSnowEffect_0->Set_ViewZ(0.f);
 	m_pSnowEffect_0->Reset_Init();
 	m_pSnowEffect_0->Set_Active(true);
 
-	m_pSnowEffect_1 = static_cast<COrthoEffect*>(CParticleMgr::Get_Instance()->Create_EffectReturn(L"Snow_Ortho_1"));
-	m_pSnowEffect_1->Set_Desc(_v3(0, 0, 0), nullptr);
-	m_pSnowEffect_1->Set_UV_Speed(0.75f, -0.9f);
-	m_pSnowEffect_1->Reset_Init();
-	m_pSnowEffect_1->Set_Active(true);
+	m_pSmokeEffect_0 = static_cast<COrthoEffect*>(CParticleMgr::Get_Instance()->Create_EffectReturn(L"Ortho_Smoke_0"));
+	m_pSmokeEffect_0->Set_Desc(_v3(0, 0, 0), nullptr);
+	m_pSmokeEffect_0->Set_UV_Speed(0.75f, 0.f);
+	m_pSmokeEffect_0->Set_UI_Layer();
+	m_pSmokeEffect_0->Reset_Init();
+	m_pSmokeEffect_0->Set_Active(true);
+
+	m_pSmokeEffect_1 = static_cast<COrthoEffect*>(CParticleMgr::Get_Instance()->Create_EffectReturn(L"Ortho_Smoke_1"));
+	m_pSmokeEffect_1->Set_Desc(_v3(0, 0, 0), nullptr);
+	m_pSmokeEffect_1->Set_UV_Speed(0.5f, 0.f);
+	m_pSmokeEffect_1->Set_UI_Layer();
+	m_pSmokeEffect_1->Reset_Init();
+	m_pSmokeEffect_1->Set_Active(true);
 
 	return S_OK;
 }
@@ -211,7 +224,7 @@ void CScene_Stage_02::Create_Dust(_double TimeDelta)
 	CTransform* pPlayerTrans = TARGET_TO_TRANS(pPlayer);
 	_v3 vPlayerPos = pPlayerTrans->Get_Pos();
 
-	const _float DUST_OFFSET = 1.f;
+	const _float DUST_OFFSET = 0.5f;
 
 	m_fMapWindDustDelay += _float(TimeDelta);
 	if (m_fMapWindDustDelay > DUST_OFFSET)
@@ -257,9 +270,31 @@ void CScene_Stage_02::Create_Snow(_double TimeDelta)
 		CTransform* pPlayerTrans = TARGET_TO_TRANS(pPlayer);
 		_v3 vPlayerPos = pPlayerTrans->Get_Pos();
 
-		for (_int i = 0; i < 2; i++)
+		for (_int i = 0; i < 10; i++)
 			g_pManagement->Create_Effect(L"MapSnow", vPlayerPos + _v3(0.f, 10.f, 0.f), nullptr);
 	}
+}
+
+void CScene_Stage_02::Check_Effect_Fade()
+{
+	if (m_bFadeInStart && m_fFade < 1.f)
+	{
+		m_bFadeOutStart = false;
+		m_fFade += DELTA_60;
+		m_pSmokeEffect_0->Set_Alpha(m_fFade);
+		m_pSmokeEffect_1->Set_Alpha(m_fFade);
+		m_pSnowEffect_0->Set_Alpha(m_fFade);
+	}
+
+	if (m_bFadeOutStart && m_fFade > 0.f)
+	{
+		m_bFadeInStart = false;
+		m_fFade -= DELTA_60;
+		m_pSmokeEffect_0->Set_Alpha(m_fFade);
+		m_pSmokeEffect_1->Set_Alpha(m_fFade);
+		m_pSnowEffect_0->Set_Alpha(m_fFade);
+	}
+
 }
 
 CScene_Stage_02 * CScene_Stage_02::Create(LPDIRECT3DDEVICE9 pGraphic_Device, _bool _bLoadStatic)
@@ -280,8 +315,14 @@ CScene_Stage_02 * CScene_Stage_02::Create(LPDIRECT3DDEVICE9 pGraphic_Device, _bo
 void CScene_Stage_02::Free()
 {
 	//Safe_Release(m_pNavMesh);
+
 	m_pSnowEffect_0->Set_Dead();
-	m_pSnowEffect_1->Set_Dead();
+	m_pSmokeEffect_0->Set_Dead();
+	m_pSmokeEffect_1->Set_Dead();
+	
+	CParticleMgr::Get_Instance()->Clear_Fog();
+
+	Safe_Release(m_pRenderer);
 
 	CScene::Free();
 }

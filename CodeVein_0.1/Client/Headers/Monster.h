@@ -211,6 +211,7 @@ protected:
 	COptimization*		m_pOptimizationCom = nullptr;
 	CBattleAgent*		m_pBattleAgentCom = nullptr;
 	CAIController*		m_pAIControllerCom = nullptr;
+	CRigidBody*			m_pRigidCom = nullptr;
 
 	CGameObject*		m_pAggroTarget = nullptr;
 

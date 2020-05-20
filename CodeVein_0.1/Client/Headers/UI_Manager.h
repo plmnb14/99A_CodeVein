@@ -105,15 +105,20 @@
 #include "PurchaseFailUI.h"
 #include "GeneralStoreNPCUI.h"
 #include "GeneralStoreOption.h"
-#include "ExpendSellUI.h"
+#include "ExpendSellCollectionUI.h"
 #include "GeneralStoreSellUI.h"
 
 #include "Get_ItemUI.h"
 #include "PickUp_ItemUI.h"
 #include "Calling_Colleague.h"
 #include "PickUp_ItemUIManager.h"
+#include "NPC_InteractionUI.h"
 
 #include "LockOn_UI.h"
+#include "CustomCategory.h"
+#include "ExpendSellCollectionUI.h"
+
+#include "NPC_InteractionUI.h"
 
 BEGIN(Client)
 
@@ -158,9 +163,10 @@ public:
 	CPlayerST* Get_PlayerST() { return m_pPlayerST; } // 플레이어 ST
 	CGeneralStoreUI* Get_GeneralStoreUI() { return m_pGeneralStoreUI; }
 	CSkillGauge* Get_SkillGauge() { return m_pSkillGauge; }
+	CWeaponShopUI* Get_WeaponShopUI() { return m_pWeaponShopUI; }
+	CNPC_InteractionUI* Get_NPC_InteractionUI() { return m_pNPC_InterActionUI; }
+	CCustomCategory* Get_CustomCategory() { return m_pCustomCategory;}
 	CGeneralStoreSellUI* Get_GeneralStoreSellUI() { return m_pGeneralStoreSellUI; }
-	
-	// 펫 인벤토리
 	CPet_Inven* Get_Pet_Inven() { return m_pPet_Inven; }
 
 
@@ -201,6 +207,9 @@ private:
 	CSkillGauge*	m_pSkillGauge = nullptr;
 	CSkillPointUI*	m_pSkillPointUI = nullptr;
 	CGeneralStoreNPCUI* m_pGeneralStoreNPCUI = nullptr;
+	CWeaponShopUI*	m_pWeaponShopUI = nullptr;
+	CNPC_InteractionUI* m_pNPC_InterActionUI = nullptr;
+	CCustomCategory* m_pCustomCategory = nullptr;
 	CGeneralStoreSellUI* m_pGeneralStoreSellUI = nullptr;
 
 	// 펫 인벤토리
