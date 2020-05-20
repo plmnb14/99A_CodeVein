@@ -84,10 +84,10 @@ _int CPet_Slot::Update_GameObject(_double TimeDelta)
 
 	switch (m_ePetType)
 	{
-	case CPet::PET_POISONBUTTERFLY:
+	case CPet::PET_TYPE::PET_POISONBUTTERFLY:
 		m_iIndex = 3;
 		break;
-	case CPet::PET_DEERKING:
+	case CPet::PET_TYPE::PET_DEERKING:
 		m_iIndex = 4;
 		break;
 	}

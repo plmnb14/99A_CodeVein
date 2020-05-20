@@ -50,6 +50,11 @@ _int CScene_Stage_02::Update_Scene(_double TimeDelta)
 	Create_Fog(TimeDelta);
 	Create_Dust(TimeDelta);
 
+	if (g_pInput_Device->Key_Pressing(DIK_B))
+	{
+		Create_Snow(TimeDelta);
+	}
+
 	return _int();
 }
 
@@ -214,6 +219,27 @@ void CScene_Stage_02::Create_Dust(_double TimeDelta)
 			vRandPos = vDir * (fMinRange + fRandRange);
 			g_pManagement->Create_Effect(L"MapDust_2", vPlayerPos + vRandPos + _v3(0.f, _float(CCalculater::Random_Num_Double(0, 0.5)), 0.f), nullptr);
 		}
+	}
+}
+
+void CScene_Stage_02::Create_Snow(_double TimeDelta)
+{
+	CGameObject* pPlayer = g_pManagement->Get_GameObjectBack(L"Layer_Player", SCENE_MORTAL);
+	if (!pPlayer)
+		return; 
+
+	const _float SNOW_OFFSET = 0.2f;
+
+	m_fMapSnowDelay += _float(TimeDelta);
+	if (m_fMapSnowDelay > SNOW_OFFSET)
+	{
+		m_fMapSnowDelay = 0.f;
+
+		CTransform* pPlayerTrans = TARGET_TO_TRANS(pPlayer);
+		_v3 vPlayerPos = pPlayerTrans->Get_Pos();
+
+		for (_int i = 0; i < 2; i++)
+			g_pManagement->Create_Effect(L"MapSnow", vPlayerPos + _v3(0.f, 10.f, 0.f), nullptr);
 	}
 }
 

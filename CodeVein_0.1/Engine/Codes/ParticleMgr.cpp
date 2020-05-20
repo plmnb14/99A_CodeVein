@@ -17,8 +17,6 @@ HRESULT CParticleMgr::Ready_ParticleManager_Essential()
 	if (nullptr == m_pManagement)
 		return E_FAIL;
 
-	Input_Pool(L"ItemGet_Particle", 100);
-
 	Input_Pool(L"Player_FootSmoke", 50);
 	Input_Pool(L"Player_FootSmoke_Snow", 50);
 	Input_Pool(L"Player_FootSmoke_SnowChunk", 50);
@@ -41,6 +39,26 @@ HRESULT CParticleMgr::Ready_ParticleManager_Essential()
 	Input_Pool(L"Player_Buff_HandSmoke", 30);
 	Input_Pool(L"Player_Buff_Particle", 40);
 	Input_Pool(L"Player_Buff_Flash", 70);
+
+	Input_Pool(L"MistletoeParticle", 500);
+	Input_Pool(L"MistletoeParticle_Sub", 500);
+	Input_Pool(L"MistletoeParticle_Active", 500);
+
+	Input_Pool(L"SpawnParticle", 1000);
+	Input_Pool(L"SpawnParticle_Sub", 1000);
+
+	Input_Pool(L"Ortho_UpgradeParticle_0", 50);
+	Input_Pool(L"Ortho_UpgradeParticle_1", 50);
+
+	Input_Pool(L"Pet_SpawnParticle", 90);
+	Input_Pool(L"Pet_SpawnSmoke", 90);
+
+	return S_OK;
+}
+
+HRESULT CParticleMgr::Ready_ParticleManager()
+{
+	Input_Pool(L"ItemGet_Particle", 100);
 
 	Input_Pool(L"Monster_DeadSmoke_0", 2000);
 	//Input_Pool(L"Monster_DeadSmoke_1", 1000);
@@ -102,17 +120,6 @@ HRESULT CParticleMgr::Ready_ParticleManager_Essential()
 	Input_Pool(L"Hit_Particle_Red", 100);
 	Input_Pool(L"Hit_Particle_Yellow", 100);
 
-	Input_Pool(L"Hit_LongSpark_L_0", 100);
-	Input_Pool(L"Hit_LongSpark_L_1", 100);
-	Input_Pool(L"Hit_LongSpark_L_2", 100);
-	Input_Pool(L"Hit_LongSpark_R_0", 100);
-	Input_Pool(L"Hit_LongSpark_R_1", 100);
-	Input_Pool(L"Hit_LongSpark_R_2", 100);
-	Input_Pool(L"Hit_LongSpark_Distortion_0", 100);
-
-	Input_Pool(L"SpawnParticle", 1000);
-	Input_Pool(L"SpawnParticle_Sub", 1000);
-
 	Input_Pool(L"Bullet_Body", 30);
 	Input_Pool(L"Bullet_Body_Aura", 100);
 	Input_Pool(L"Bullet_DeadFlash", 30);
@@ -124,9 +131,15 @@ HRESULT CParticleMgr::Ready_ParticleManager_Essential()
 	Input_Pool(L"Bullet_Tail_Particle", 100);
 	Input_Pool(L"RockBullet_Body", 10);
 
-	Input_Pool(L"MistletoeParticle", 500);
-	Input_Pool(L"MistletoeParticle_Sub", 500);
-	Input_Pool(L"MistletoeParticle_Active", 500);
+	Input_Pool(L"Hit_LongSpark_L_0", 100);
+	Input_Pool(L"Hit_LongSpark_L_1", 100);
+	Input_Pool(L"Hit_LongSpark_L_2", 100);
+	Input_Pool(L"Hit_LongSpark_R_0", 100);
+	Input_Pool(L"Hit_LongSpark_R_1", 100);
+	Input_Pool(L"Hit_LongSpark_R_2", 100);
+	Input_Pool(L"Hit_LongSpark_Distortion_0", 100);
+
+	Input_Pool(L"Weapon_HeavyDust", 300);
 
 	Input_Pool(L"ItemObject", 100);
 	Input_Pool(L"ItemObject_Red", 100);
@@ -138,12 +151,10 @@ HRESULT CParticleMgr::Ready_ParticleManager_Essential()
 	Input_Pool(L"Haze_Body", 50);
 	Input_Pool(L"Haze_FlashParticle", 2500);
 
-	Input_Pool(L"Weapon_HeavyDust", 300);
-
 	Input_Pool(L"MapDust", 100);
 	Input_Pool(L"MapDust_2", 100);
 	Input_Pool(L"MapMist", 100);
-	Input_Pool(L"MapSnow", 500);
+	Input_Pool(L"MapSnow", 1000);
 	Input_Pool(L"MapFog_0", 300);
 	Input_Pool(L"FloorPlane_Black", 2);
 
@@ -158,21 +169,14 @@ HRESULT CParticleMgr::Ready_ParticleManager_Essential()
 	Input_Pool(L"Snow_Ortho_0", 2);
 	Input_Pool(L"Snow_Ortho_1", 10);
 
-	Input_Pool(L"Ortho_BlackCorner_0", 3);
-	Input_Pool(L"Ortho_BlackCorner_1", 3);
-	Input_Pool(L"Ortho_BlackCorner_2", 3);
 	Input_Pool(L"Ortho_Blood_0", 3);
 	Input_Pool(L"Ortho_BossDead_BG", 3);
 	Input_Pool(L"Ortho_BossDead_Text", 3);
 
-	Input_Pool(L"Ortho_UpgradeParticle_0", 50);
-	Input_Pool(L"Ortho_UpgradeParticle_1", 50);
+	Input_Pool(L"Ortho_BlackCorner_0", 3);
+	Input_Pool(L"Ortho_BlackCorner_1", 3);
+	Input_Pool(L"Ortho_BlackCorner_2", 3);
 
-	return S_OK;
-}
-
-HRESULT CParticleMgr::Ready_ParticleManager()
-{
 	Input_Pool(L"Player_Drain_Ink_0", 80);
 	Input_Pool(L"Player_Drain_Ink_1", 80);
 	Input_Pool(L"Player_Drain_Ink_2", 80);
@@ -553,8 +557,6 @@ HRESULT CParticleMgr::Ready_ParticleManager()
 	Input_Pool(L"SpawnParticle_ForBoss", 5000);
 	//Input_Pool(L"SpawnParticle_ForBoss_Point", 5000);
 	//Input_Pool(L"SpawnParticle_ForBoss_Point_Sub", 5000);
-
-	
 
 	return S_OK;
 }

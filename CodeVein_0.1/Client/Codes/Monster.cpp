@@ -156,8 +156,6 @@ void CMonster::Set_Target_Auto(_bool Ransdom_Aggro)
 		}
 	}
 
-
-
 }
 
 CGameObject * CMonster::Get_pTargetObject()
@@ -187,64 +185,36 @@ void CMonster::Check_DropItem()
 {
 	CGameObject* pItem = nullptr;
 
-	m_iRandom = CALC::Random_Num(0, 10);
+	m_iRandom = CALC::Random_Num(0, 8);
 
 	switch (m_iRandom)
 	{
 	case 0:
-		CObjectPool_Manager::Get_Instance()->Create_Object(L"GameObject_DropItem", 
-			&CDropItem::ITEM_STATUS(ITEM_TYPE::ITEM_PET, ITEM_GRADE_TYPE::ITEM_GRADE_NORMAL, CPet::PET_TYPE::PET_POISONBUTTERFLY,
-			m_pTransformCom->Get_Pos(), 120.f));
+		pItem = g_pManagement->Clone_GameObject_Return(L"GameObject_DropItem", &CDropItem::ITEM_STATUS(ITEM_GRADE_TYPE::ITEM_GRADE_NORMAL, ITEM_NAMETYPE::NAMETYPE_Expend_MaximumUp, m_pTransformCom->Get_Pos(), 12.f));
 		break;
 	case 1:
-		CObjectPool_Manager::Get_Instance()->Create_Object(L"GameObject_DropItem",
-			&CDropItem::ITEM_STATUS(ITEM_TYPE::ITEM_PET, ITEM_GRADE_TYPE::ITEM_GRADE_NORMAL, CPet::PET_TYPE::PET_POISONBUTTERFLY,
-				m_pTransformCom->Get_Pos(), 120.f));
+		pItem = g_pManagement->Clone_GameObject_Return(L"GameObject_DropItem", &CDropItem::ITEM_STATUS(ITEM_GRADE_TYPE::ITEM_GRADE_NORMAL, ITEM_NAMETYPE::NAMETYPE_Expend_Hp, m_pTransformCom->Get_Pos(), 12.f));
 		break;
 	case 2:
-		CObjectPool_Manager::Get_Instance()->Create_Object(L"GameObject_DropItem",
-			&CDropItem::ITEM_STATUS(ITEM_TYPE::ITEM_PET, ITEM_GRADE_TYPE::ITEM_GRADE_NORMAL, CPet::PET_TYPE::PET_POISONBUTTERFLY,
-				m_pTransformCom->Get_Pos(), 120.f));
+		pItem = g_pManagement->Clone_GameObject_Return(L"GameObject_DropItem", &CDropItem::ITEM_STATUS(ITEM_GRADE_TYPE::ITEM_GRADE_NORMAL, ITEM_NAMETYPE::NAMETYPE_Expend_Return, m_pTransformCom->Get_Pos(), 12.f));
 		break;
 	case 3:
-		CObjectPool_Manager::Get_Instance()->Create_Object(L"GameObject_DropItem",
-			&CDropItem::ITEM_STATUS(ITEM_TYPE::ITEM_PET, ITEM_GRADE_TYPE::ITEM_GRADE_NORMAL, CPet::PET_TYPE::PET_POISONBUTTERFLY,
-				m_pTransformCom->Get_Pos(), 120.f));
+		pItem = g_pManagement->Clone_GameObject_Return(L"GameObject_DropItem", &CDropItem::ITEM_STATUS(ITEM_GRADE_TYPE::ITEM_GRADE_NORMAL, ITEM_NAMETYPE::NAMETYPE_Expend_Blood, m_pTransformCom->Get_Pos(), 12.f));
 		break;
 	case 4:
-		CObjectPool_Manager::Get_Instance()->Create_Object(L"GameObject_DropItem",
-			&CDropItem::ITEM_STATUS(ITEM_TYPE::ITEM_PET, ITEM_GRADE_TYPE::ITEM_GRADE_NORMAL, CPet::PET_TYPE::PET_POISONBUTTERFLY,
-				m_pTransformCom->Get_Pos(), 120.f));
+		pItem = g_pManagement->Clone_GameObject_Return(L"GameObject_DropItem", &CDropItem::ITEM_STATUS(ITEM_GRADE_TYPE::ITEM_GRADE_NORMAL, ITEM_NAMETYPE::NAMETYPE_Expend_Cheet, m_pTransformCom->Get_Pos(), 12.f));
 		break;
 	case 5:
-		CObjectPool_Manager::Get_Instance()->Create_Object(L"GameObject_DropItem",
-			&CDropItem::ITEM_STATUS(ITEM_TYPE::ITEM_PET, ITEM_GRADE_TYPE::ITEM_GRADE_NORMAL, CPet::PET_TYPE::PET_POISONBUTTERFLY,
-				m_pTransformCom->Get_Pos(), 120.f));
+		pItem = g_pManagement->Clone_GameObject_Return(L"GameObject_DropItem", &CDropItem::ITEM_STATUS(ITEM_GRADE_TYPE::ITEM_GRADE_NORMAL, ITEM_NAMETYPE::NAMETYPE_Expend_SuperArmor, m_pTransformCom->Get_Pos(), 12.f));
 		break;
 	case 6:
-		CObjectPool_Manager::Get_Instance()->Create_Object(L"GameObject_DropItem",
-			&CDropItem::ITEM_STATUS(ITEM_TYPE::ITEM_PET, ITEM_GRADE_TYPE::ITEM_GRADE_NORMAL, CPet::PET_TYPE::PET_POISONBUTTERFLY,
-				m_pTransformCom->Get_Pos(), 120.f));
+		pItem = g_pManagement->Clone_GameObject_Return(L"GameObject_DropItem", &CDropItem::ITEM_STATUS(ITEM_GRADE_TYPE::ITEM_GRADE_NORMAL, ITEM_NAMETYPE::NAMETYPE_Queen_Steel, m_pTransformCom->Get_Pos(), 12.f));
 		break;
 	case 7:
-		CObjectPool_Manager::Get_Instance()->Create_Object(L"GameObject_DropItem",
-			&CDropItem::ITEM_STATUS(ITEM_TYPE::ITEM_PET, ITEM_GRADE_TYPE::ITEM_GRADE_NORMAL, CPet::PET_TYPE::PET_POISONBUTTERFLY,
-				m_pTransformCom->Get_Pos(), 120.f));
+		pItem = g_pManagement->Clone_GameObject_Return(L"GameObject_DropItem", &CDropItem::ITEM_STATUS(ITEM_GRADE_TYPE::ITEM_GRADE_NORMAL, ITEM_NAMETYPE::NAMETYPE_Queen_Titanium, m_pTransformCom->Get_Pos(), 12.f));
 		break;
 	case 8:
-		CObjectPool_Manager::Get_Instance()->Create_Object(L"GameObject_DropItem",
-			&CDropItem::ITEM_STATUS(ITEM_TYPE::ITEM_PET, ITEM_GRADE_TYPE::ITEM_GRADE_NORMAL, CPet::PET_TYPE::PET_POISONBUTTERFLY,
-				m_pTransformCom->Get_Pos(), 120.f));
-		break;
-	case 9:
-		CObjectPool_Manager::Get_Instance()->Create_Object(L"GameObject_DropItem",
-			&CDropItem::ITEM_STATUS(ITEM_TYPE::ITEM_PET, ITEM_GRADE_TYPE::ITEM_GRADE_NORMAL, CPet::PET_TYPE::PET_POISONBUTTERFLY,
-				m_pTransformCom->Get_Pos(), 120.f));
-		break;
-	case 10:
-		CObjectPool_Manager::Get_Instance()->Create_Object(L"GameObject_DropItem",
-			&CDropItem::ITEM_STATUS(ITEM_TYPE::ITEM_PET, ITEM_GRADE_TYPE::ITEM_GRADE_NORMAL, CPet::PET_TYPE::PET_POISONBUTTERFLY,
-				m_pTransformCom->Get_Pos(), 120.f));
+		pItem = g_pManagement->Clone_GameObject_Return(L"GameObject_DropItem", &CDropItem::ITEM_STATUS(ITEM_GRADE_TYPE::ITEM_GRADE_NORMAL, ITEM_NAMETYPE::NAMETYPE_Queen_Tungsten, m_pTransformCom->Get_Pos(), 12.f));
 		break;
 	}
 
@@ -331,9 +301,7 @@ void CMonster::Check_CollisionHit(list<CGameObject*> plistGameObject)
 						iter->Add_Target_Hp(m_tObjParam.fDamage);
 
 						if (iter->Get_Target_IsHit())
-						{
 							iter->Set_HitAgain(true);
-						}
 					}
 
 					vecIter->Set_Enabled(false);
@@ -567,13 +535,13 @@ void CMonster::Function_DecreMoveMent(_float _fMutiply)
 
 void CMonster::Function_Find_Target()
 {
+	_float	fOldLength = 99999.f;
+
 	if (nullptr != m_pAggroTarget)
 	{
 		Safe_Release(m_pAggroTarget);
 		m_pAggroTarget = nullptr;
 	}
-
-	_float	fOldLength = 99999.f;
 
 	auto& ColleagueContainer = g_pManagement->Get_GameObjectList(L"Layer_Colleague", SCENE_STAGE);
 

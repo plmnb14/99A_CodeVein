@@ -379,7 +379,10 @@ void CCocoon::Check_Dist()
 		MONSTER_STATE_TYPE::DEAD == m_eFirstCategory)
 		return;
 
-	if (true == m_tObjParam.bIsAttack ||
+	if (true == m_bIsCombo ||
+		true == m_bIsMoveAround ||
+		true == m_tObjParam.bIsAttack ||
+		true == m_tObjParam.bIsDodge ||
 		true == m_tObjParam.bIsHit)
 		return;
 
@@ -387,11 +390,23 @@ void CCocoon::Check_Dist()
 
 	if (nullptr == m_pAggroTarget)
 	{
-		Function_ResetAfterAtk();
-		m_bInRecognitionRange = false;
-		m_eFirstCategory = MONSTER_STATE_TYPE::IDLE;
+		if (MONSTER_STATE_TYPE::IDLE == m_eFirstCategory)
+		{
+			if (COCOON_ANI::Threat == m_eState)
+				m_eState = COCOON_ANI::Idle;
 
-		return;
+			return;
+		}
+		else
+		{
+			Function_ResetAfterAtk();
+
+			m_eFirstCategory = MONSTER_STATE_TYPE::IDLE;
+
+			m_eState = COCOON_ANI::Idle;
+
+			return;
+		}
 	}
 	else
 	{
@@ -680,60 +695,68 @@ void CCocoon::Play_Mist()
 
 void CCocoon::Play_Idle()
 {
-	if (true == m_bInRecognitionRange)
+	if (nullptr != m_pAggroTarget)
 	{
-		m_bIsIdle = false;
-
-		if (true == m_tObjParam.bCanAttack)
+		if (true == m_bInRecognitionRange)
 		{
-			m_eState = COCOON_ANI::Threat;
+			m_bIsIdle = false;
 
-			if (nullptr == m_pAggroTarget)
+			if (true == m_tObjParam.bCanAttack)
 			{
-				Function_Find_Target();
+				m_eState = COCOON_ANI::Threat;
 
 				if (nullptr == m_pAggroTarget)
 				{
-					Function_ResetAfterAtk();
-					m_eFirstCategory = MONSTER_STATE_TYPE::IDLE;
-					m_bInRecognitionRange = false;
-					m_fCoolDownMax = 0.f;
-					m_fCoolDownCur = 0.f;
+					Function_Find_Target();
 
-					Play_Idle();
+					if (nullptr == m_pAggroTarget)
+					{
+						Function_ResetAfterAtk();
+						m_eFirstCategory = MONSTER_STATE_TYPE::IDLE;
+						m_bInRecognitionRange = false;
+						m_fCoolDownMax = 0.f;
+						m_fCoolDownCur = 0.f;
 
-					return;
+						Play_Idle();
+
+						return;
+					}
+					else
+						Function_RotateBody(m_pAggroTarget);
 				}
 				else
 					Function_RotateBody(m_pAggroTarget);
 			}
 			else
-				Function_RotateBody(m_pAggroTarget);
+			{
+				m_eState = COCOON_ANI::Threat;
+				if (nullptr == m_pAggroTarget)
+				{
+					Function_Find_Target();
+
+					if (nullptr == m_pAggroTarget)
+					{
+						Function_ResetAfterAtk();
+						m_eFirstCategory = MONSTER_STATE_TYPE::IDLE;
+						m_bInRecognitionRange = false;
+						m_fCoolDownMax = 0.f;
+						m_fCoolDownCur = 0.f;
+
+						Play_Idle();
+
+						return;
+					}
+					else
+						Function_RotateBody(m_pAggroTarget);
+				}
+				else
+					Function_RotateBody(m_pAggroTarget);
+			}
 		}
 		else
 		{
-			m_eState = COCOON_ANI::Threat;
-			if (nullptr == m_pAggroTarget)
-			{
-				Function_Find_Target();
-
-				if (nullptr == m_pAggroTarget)
-				{
-					Function_ResetAfterAtk();
-					m_eFirstCategory = MONSTER_STATE_TYPE::IDLE;
-					m_bInRecognitionRange = false;
-					m_fCoolDownMax = 0.f;
-					m_fCoolDownCur = 0.f;
-
-					Play_Idle();
-
-					return;
-				}
-				else
-					Function_RotateBody(m_pAggroTarget);
-			}
-			else
-				Function_RotateBody(m_pAggroTarget);
+			m_bIsIdle = true;
+			m_eState = COCOON_ANI::Idle;
 		}
 	}
 	else
@@ -813,6 +836,16 @@ void CCocoon::Play_Dead()
 			m_bEnable = false;
 			m_dAniPlayMul = 0;
 		}
+		else if (m_pMeshCom->Is_Finish_Animation(0.2f))
+		{
+			if (false == m_bEventTrigger[1])
+			{
+				m_bEventTrigger[1] = true;
+
+				g_pSoundManager->Stop_Sound(CSoundManager::Hunter_Voice);
+				g_pSoundManager->Play_Sound(L"Cocoon_Death.ogg", CSoundManager::Cocoon_Voice, CSoundManager::Effect_Sound);
+			}
+		}
 		else if (3.733f <= AniTime)
 		{
 			if (false == m_bEventTrigger[0])
@@ -822,7 +855,6 @@ void CCocoon::Play_Dead()
 				Start_Dissolve(0.8f, false, true, 0.0f);
 				m_fDeadEffect_Delay = 0.f;
 
-				g_pSoundManager->Play_Sound(L"Cocoon_Death.ogg", CSoundManager::Cocoon_Voice, CSoundManager::Effect_Sound);
 				Check_DropItem();
 
 				CObjectPool_Manager::Get_Instance()->Create_Object(L"GameObject_Haze", (void*)&CHaze::HAZE_INFO(100.f, m_pTransformCom->Get_Pos(), 0.f));

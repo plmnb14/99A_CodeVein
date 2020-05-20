@@ -229,23 +229,36 @@ void CGunGenjiBullet::OnCollisionEvent(list<CGameObject*> plistGameObject)
 						continue;
 					}
 
-					cout << "응 투사체 부딪힘" << endl;
+					//iter->Set_Target_CanHit(false);
+					//iter->Add_Target_Hp(m_tObjParam.fDamage);
 
-					iter->Set_Target_CanHit(false);
-					iter->Add_Target_Hp(m_tObjParam.fDamage);
+					if (false == iter->Get_Target_IsDodge())
+					{
+						iter->Set_Target_CanHit(false);
 
-					m_dCurTime = 100;	// 바로 사망시키기 위해서 현재시간 100줬음
+						if (true == iter->Get_Target_IsHit())
+						{
+							iter->Set_HitAgain(true);
+						}
 
+						if (false == iter->Get_Target_IsDodge())
+						{
+							// 무기 공격력의 +-20%까지 랜덤범위
+							_uint min = (_uint)(m_tObjParam.fDamage - (m_tObjParam.fDamage * 0.2f));
+							_uint max = (_uint)(m_tObjParam.fDamage + (m_tObjParam.fDamage * 0.2f));
+
+							iter->Add_Target_Hp((_float)-CALC::Random_Num(min, max));
+							g_pManagement->Create_Hit_Effect(vecIter, vecCol, TARGET_TO_TRANS(iter));
+
+							m_dCurTime = 100;
+						}
+					}
 					break;
-
 				}
-
 				else
 				{
 					if (bFirst)
-					{
 						break;
-					}
 				}
 			}
 		}
