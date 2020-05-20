@@ -63,6 +63,13 @@
 #include "Costume_Head.h"
 #include "Costume_Mask.h"
 
+//커마 관련 헤더, 베이스->스테이지->베이스로 갈 경우 터지는 원인이였음
+#include "CustomInven.h"
+#include "CustomSlot.h"
+#include "CustomSliderBar.h"
+#include "CustomCategory.h"
+#include "CustomCategoryOption.h"
+
 #include "HitCheckUI.h"
 #include "FadeCornerUI.h"
 
@@ -1693,6 +1700,30 @@ _uint CLoading::Loading_Stage()
 		if (FAILED(g_pManagement->Add_Prototype(L"GameObject_Costume_Hair", CCostume_Hair::Create(m_pGraphicDev))))
 			return E_FAIL;
 		if (FAILED(g_pManagement->Add_Prototype(L"GameObject_Costume_Outer", CCostume_Outer::Create(m_pGraphicDev))))
+			return E_FAIL;
+
+		if (FAILED(g_pManagement->Add_Prototype(SCENE_STATIC, L"DefaultTex_Custom_UI", CTexture::Create(m_pGraphicDev, CTexture::TYPE_GENERAL, L"../Resources/Texture/DefaultUI/Customize/Custom_UI/Custom_UI_%d.dds", 13))))
+			return E_FAIL;
+		if (FAILED(g_pManagement->Add_Prototype(SCENE_STATIC, L"DefaultTex_Custom_Hair", CTexture::Create(m_pGraphicDev, CTexture::TYPE_GENERAL, L"../Resources/Texture/DefaultUI/Customize/Custom_Hair/Custom_Hair_%d.dds", 7))))
+			return E_FAIL;
+		if (FAILED(g_pManagement->Add_Prototype(SCENE_STATIC, L"DefaultTex_Custom_Eye", CTexture::Create(m_pGraphicDev, CTexture::TYPE_GENERAL, L"../Resources/Texture/DefaultUI/Customize/Custom_Eye/Custom_Eye_%d.dds", 1))))
+			return E_FAIL;
+		if (FAILED(g_pManagement->Add_Prototype(SCENE_STATIC, L"DefaultTex_Custom_Face", CTexture::Create(m_pGraphicDev, CTexture::TYPE_GENERAL, L"../Resources/Texture/DefaultUI/Customize/Custom_Face/Custom_Face_%d.dds", 10))))
+			return E_FAIL;
+		if (FAILED(g_pManagement->Add_Prototype(SCENE_STATIC, L"DefaultTex_Custom_ToxicGuard", CTexture::Create(m_pGraphicDev, CTexture::TYPE_GENERAL, L"../Resources/Texture/DefaultUI/Customize/Custom_ToxicGuard/Custom_ToxicGuard_%d.dds", 10))))
+			return E_FAIL;
+		if (FAILED(g_pManagement->Add_Prototype(SCENE_STATIC, L"DefaultTex_Custom_Inner", CTexture::Create(m_pGraphicDev, CTexture::TYPE_GENERAL, L"../Resources/Texture/DefaultUI/Customize/Custom_Inner/Custom_Inner_%d.dds", 4))))
+			return E_FAIL;
+
+		if (FAILED(g_pManagement->Add_Prototype(L"GameObject_CustomInven", CCustomInven::Create(m_pGraphicDev))))
+			return E_FAIL;
+		if (FAILED(g_pManagement->Add_Prototype(L"GameObject_CustomSlot", CCustomSlot::Create(m_pGraphicDev))))
+			return E_FAIL;
+		if (FAILED(g_pManagement->Add_Prototype(L"GameObject_CustomSlider", CCustomSliderBar::Create(m_pGraphicDev))))
+			return E_FAIL;
+		if (FAILED(g_pManagement->Add_Prototype(L"GameObject_CustomCategory", CCustomCategory::Create(m_pGraphicDev))))
+			return E_FAIL;
+		if (FAILED(g_pManagement->Add_Prototype(L"GameObject_CustomCategoryOption", CCustomCategoryOption::Create(m_pGraphicDev))))
 			return E_FAIL;
 
 		g_bOnStage[0] = true;
