@@ -46,6 +46,17 @@ HRESULT CDarkGroundBullet::Ready_GameObject(void * pArg)
 	m_bDead = false;
 	m_fEffectOffset = 0.f;
 
+	_int iRand = CCalculater::Random_Num(0, 1);
+	if (0 == iRand)
+	{
+		g_pSoundManager->Stop_Sound(CSoundManager::QueenKnight_SFX_02);
+		g_pSoundManager->Play_Sound(L"SE_THUNDER_ELEMENTS_001.ogg", CSoundManager::QueenKnight_SFX_02, CSoundManager::Effect_Sound);
+	}
+	else
+	{
+		g_pSoundManager->Stop_Sound(CSoundManager::QueenKnight_SFX_02);
+		g_pSoundManager->Play_Sound(L"SE_THUNDER_ELEMENTS_002.ogg", CSoundManager::QueenKnight_SFX_02, CSoundManager::Effect_Sound);
+	}
 
 	return NOERROR;
 }
