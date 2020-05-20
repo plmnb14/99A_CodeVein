@@ -377,7 +377,7 @@ void CPet_Inven::SetUp_SubUI_Active(_bool bIsActive)
 	m_pSummonsBtn->Set_Active(bIsActive);
 }
 
-void CPet_Inven::Add_Pet(CPet::PET_TYPE ePetType, CPet::PET_GRADE_TYPE ePetGrade)
+void CPet_Inven::Add_Pet(CPet::PET_TYPE ePetType)
 {
 	CPet_Slot* pPetSlot = static_cast<CPet_Slot*>(g_pManagement->Clone_GameObject_Return(L"GameObject_PetSlot", nullptr));
 	pPetSlot->Set_PetType(ePetType);
