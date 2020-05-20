@@ -346,7 +346,6 @@ void CPet::Function_Find_Target()
 			fOldLength = fLenth;
 			m_pTarget = Monster_iter;
 			m_eTarget = PET_TARGET_TYPE::PET_TARGET_MONSTER;
-			Safe_AddRef(m_pTarget);
 		}
 
 		IF_NOT_NULL_RETURN(m_pTarget);
@@ -371,7 +370,6 @@ void CPet::Function_Find_Target()
 			fOldLength = fLenth;
 			m_pTarget = Boss_iter;
 			m_eTarget = PET_TARGET_TYPE::PET_TARGET_BOSS;
-			Safe_AddRef(m_pTarget);
 		}
 
 		IF_NOT_NULL_RETURN(m_pTarget);
@@ -395,7 +393,6 @@ void CPet::Function_Find_Target()
 			fOldLength = fLenth;
 			m_pTarget = Item_iter;
 			m_eTarget = PET_TARGET_TYPE::PET_TARGET_ITEM;
-			Safe_AddRef(m_pTarget);
 		}
 
 		IF_NOT_NULL_RETURN(m_pTarget);
@@ -422,7 +419,6 @@ void CPet::Function_Find_Target()
 			fOldLength = fLenth;
 			m_pTarget = Item_iter;
 			m_eTarget = PET_TARGET_TYPE::PET_TARGET_ITEM;
-			Safe_AddRef(m_pTarget);
 		}
 
 		IF_NOT_NULL_RETURN(m_pTarget);
@@ -447,7 +443,6 @@ void CPet::Function_Find_Target()
 			fOldLength = fLenth;
 			m_pTarget = Monster_iter;
 			m_eTarget = PET_TARGET_TYPE::PET_TARGET_MONSTER;
-			Safe_AddRef(m_pTarget);
 		}
 
 		IF_NOT_NULL_RETURN(m_pTarget);
@@ -472,7 +467,6 @@ void CPet::Function_Find_Target()
 			fOldLength = fLenth;
 			m_pTarget = Boss_iter;
 			m_eTarget = PET_TARGET_TYPE::PET_TARGET_BOSS;
-			Safe_AddRef(m_pTarget);
 		}
 
 		IF_NOT_NULL_RETURN(m_pTarget);
@@ -667,8 +661,8 @@ HRESULT CPet::Ready_BoneMatrix(void * pArg)
 
 void CPet::Free()
 {
-	IF_NOT_NULL(m_pTarget)
-		Safe_Release(m_pTarget);
+	//IF_NOT_NULL(m_pTarget)
+	//	Safe_Release(m_pTarget);
 
 	IF_NOT_NULL(m_pPlayer)
 		Safe_Release(m_pPlayer);

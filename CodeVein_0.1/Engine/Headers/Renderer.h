@@ -27,7 +27,8 @@ public:
 	void Set_ShadowLightPos(_v3 _vPos) { m_vShadowLightPos = _vPos; }
 	void Set_FogDestiny(_float _fDestiny) { m_fFogDestiny = _fDestiny; }
 	void Set_UseLinearFog(_bool _bUseLinear) {	m_bUseLinearFog = _bUseLinear;	}
-
+	void Start_FogFadeOut() { m_bFogFadeOutStart = true; }
+	void Set_Stage02_SnowEff(_bool _bOn);
 public:
 	void DOF_On(_bool bOn);
 	void Mono_On(_bool bOn);
@@ -57,7 +58,9 @@ private:
 
 	_bool						m_bFog = false;
 	_bool						m_bUseLinearFog = true;
+	_bool						m_bFogFadeOutStart = false;
 	_float						m_fFogDestiny = 0.01f;
+	_float						m_fFogMinDestiny = 0.01f;
 
 private:
 	CTarget_Manager*			m_pTarget_Manager = nullptr;

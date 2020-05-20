@@ -51,6 +51,8 @@ public:
 	CEffect* Create_TitleEffect(_tchar* szName);
 	CEffect* Create_EffectReturn(_tchar* szName);
 
+	void Clear_Fog();
+
 private:
 	HRESULT Update_Effect(const _double TimeDelta);
 	HRESULT Update_Trail(const _double TimeDelta);

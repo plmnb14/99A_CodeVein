@@ -1,3 +1,4 @@
+
 #include "stdafx.h"
 #include "Scene_Stage_Training.h"
 
