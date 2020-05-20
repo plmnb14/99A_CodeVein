@@ -233,7 +233,7 @@ HRESULT CScene_Logo::Ready_BGM()
 	g_pSoundManager->Load_Directory_SouneFile_W(L"BGM");
 
 	g_pSoundManager->Stop_Sound(CSoundManager::Background_01);
-	g_pSoundManager->Play_Sound(L"07_Main.ogg", CSoundManager::Background_01, CSoundManager::BGM_Sound);
+	g_pSoundManager->Play_BGM(L"07_Main.ogg");
 
 	return S_OK;
 }
