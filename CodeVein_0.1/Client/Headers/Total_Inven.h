@@ -15,6 +15,7 @@ class CQuickSlot;
 class CSkillIcon;
 class CSkillSlot;
 class CNoticeUI;
+class CPlayer;
 class CTotal_Inven final : public CUI
 {
 private:
@@ -33,6 +34,7 @@ public:
 	void Set_PlayerBloodCodeType(BloodCode_ID eID) { m_ePlayerBloodCode = eID; }
 	void Set_Skill_ID(_uint iNum, Skill_ID eSkillID);
 	void Set_WeaponParam(_uint iIndex, WPN_PARAM tWpnParam);
+	void Set_ArmorParam(ARMOR_PARAM tArmorParam);
 
 public:
 	virtual HRESULT			Ready_GameObject_Prototype();
@@ -40,6 +42,7 @@ public:
 	virtual _int			Update_GameObject(_double TimeDelta);
 	virtual _int			Late_Update_GameObject(_double TimeDelta);
 	virtual HRESULT			Render_GameObject();
+	
 
 private:
 	HRESULT					Add_Component();
@@ -48,6 +51,7 @@ private:
 	void					Click_Icon();
 	void					SkillSlot_Touch_Sound(_uint i);
 	void					SetUp_SubUI_Active(_bool bIsActive);
+	void					Late_Init();
 
 private:
 	CBuffer_RcTex*			m_pBufferCom = nullptr;
@@ -55,6 +59,8 @@ private:
 	CRenderer*				m_pRendererCom = nullptr;
 	CTexture*				m_pTextureCom = nullptr;
 	CShader*				m_pShaderCom = nullptr;
+
+private:
 	vector<CInventory_Icon*>	m_vecIcon;
 	_bool					m_bIsDetail = false;
 	CInventory*				m_pInventory = nullptr;
@@ -67,6 +73,8 @@ private:
 	vector<CSkillSlot*>		m_vecSkillIcon;
 	CNoticeUI*				m_pNoticeUI = nullptr;
 	_bool					m_bIsSubActive = false;
+	_bool					m_bIsInit = false;
+	CPlayer*				m_pPlayer = nullptr;
 
 public:
 	static CTotal_Inven*	Create(_Device pGraphic_Device);
