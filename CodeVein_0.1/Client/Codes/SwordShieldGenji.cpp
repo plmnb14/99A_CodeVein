@@ -30,6 +30,7 @@ HRESULT CSwordShieldGenji::Ready_GameObject(void * pArg)
 	Ready_BoneMatrix();
 	Ready_Collider();
 	Ready_Sound();
+	Ready_Rigid();
 
 	m_tObjParam.bCanRepel = true;			// 튕겨내기 가능성 (나의 공격이 적에게서)
 	m_tObjParam.bCanCounter = true;			// 반격가능성
@@ -145,10 +146,20 @@ _int CSwordShieldGenji::Update_GameObject(_double TimeDelta)
 	Push_Collider();
 
 	CGameObject::Update_GameObject(TimeDelta);
+	m_pRigidCom->Update_Component_Self(TimeDelta);
+	
+	// 떨어지면 1초 뒤 죽임.
+	if (m_pRigidCom->Get_CurTime() > 1.f)
+		m_bIsDead = true;
 
 	// 죽었을 경우
 	if (m_bIsDead)
+	{
 		m_bEnable = false;
+
+		Check_DropItem();
+		CObjectPool_Manager::Get_Instance()->Create_Object(L"GameObject_Haze", (void*)&CHaze::HAZE_INFO(100.f, m_pTransformCom->Get_Pos(), 0.f));
+	}
 
 	if (m_bReadyDead)
 	{
@@ -1080,7 +1091,7 @@ void CSwordShieldGenji::Skill_Movement(_float _fspeed, _v3 _vDir)
 	D3DXVec3Normalize(&tmpLook, &tmpLook);
 
 	// 네비게이션 적용하면 
-	m_pTransformCom->Set_Pos((m_pNavMeshCom->Move_OnNaviMesh(NULL, &m_pTransformCom->Get_Pos(), &tmpLook, fSpeed * g_pTimer_Manager->Get_DeltaTime(L"Timer_Fps_60"))));
+	m_pTransformCom->Set_Pos((m_pNavMeshCom->Move_OnNaviMesh(m_pRigidCom, &m_pTransformCom->Get_Pos(), &tmpLook, fSpeed * g_pTimer_Manager->Get_DeltaTime(L"Timer_Fps_60"))));
 
 }
 
@@ -1176,7 +1187,7 @@ void CSwordShieldGenji::Check_PhyCollider()
 			m_pShield->Start_Dissolve(0.6f, false, false, 0.5f);
 
 			m_fDeadEffect_Delay = 0.5f;
-			CObjectPool_Manager::Get_Instance()->Create_Object(L"GameObject_Haze", (void*)&CHaze::HAZE_INFO(100.f, m_pTransformCom->Get_Pos(), 0.5f));
+			//CObjectPool_Manager::Get_Instance()->Create_Object(L"GameObject_Haze", (void*)&CHaze::HAZE_INFO(100.f, m_pTransformCom->Get_Pos(), 0.5f));
 		}
 	}
 	else
@@ -1234,7 +1245,7 @@ void CSwordShieldGenji::Push_Collider()
 				vDir.y = 0;
 
 				// 네비 메쉬타게 끔 세팅
-				pTrans->Set_Pos(pNav->Move_OnNaviMesh(NULL, &pTrans->Get_Pos(), &vDir, m_pColliderCom->Get_Length().x));
+				pTrans->Set_Pos(pNav->Move_OnNaviMesh(m_pRigidCom, &pTrans->Get_Pos(), &vDir, m_pColliderCom->Get_Length().x));
 			}
 		}
 	}
@@ -1325,6 +1336,10 @@ HRESULT CSwordShieldGenji::Add_Component(void* pArg)
 	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"BattleAgent", L"Com_BattleAgent", (CComponent**)&m_pBattleAgentCom)))
 		return E_FAIL;
 	//=================================================================================
+
+	// for.Com_RigidBody
+	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Rigidbody", L"Com_Rigidbody", (CComponent**)&m_pRigidCom)))
+		return E_FAIL;
 
 	m_pColliderCom->Set_Radius(_v3{ 1.f, 1.f, 1.f });
 	m_pColliderCom->Set_Dynamic(true);
@@ -1535,6 +1550,24 @@ HRESULT CSwordShieldGenji::Ready_Sound()
 {
 	m_mapSound.emplace(0, L"SE_GATE_WOMAN_ATTACK_SWING_002.ogg");
 	m_mapSound.emplace(1, L"SE_QUEENS_KNIGHTS_ATTACK_GUARD_001.ogg");
+
+	return S_OK;
+}
+
+HRESULT CSwordShieldGenji::Ready_Rigid()
+{
+	if (nullptr != m_pRigidCom)
+	{
+		m_pRigidCom->Set_UseGravity(true);							// 중력의 영향 유무
+
+		m_pRigidCom->Set_IsFall(false);								// 낙하중인지 체크
+
+		m_pRigidCom->Set_fPower(2.f);								// 점프 파워
+
+		m_pRigidCom->Set_Speed({ 10.f , 10.f , 10.f });				// 각 축에 해당하는 속도
+		m_pRigidCom->Set_Accel({ 1.f, 0.f, 0.f });					// 각 축에 해당하는 Accel 값
+		m_pRigidCom->Set_MaxAccel({ 2.f , 4.f , 2.f });				// 각 축에 해당하는 MaxAccel 값
+	}
 
 	return S_OK;
 }

@@ -89,6 +89,8 @@ HRESULT CPlayer::Ready_GameObject(void * pArg)
 	Ready_Masks();
 	Ready_Heads();
 
+	Ready_Rigid();
+
 	m_pBattleAgent->Set_OriginRimAlpha(0.25f);
 	m_pBattleAgent->Set_OriginRimValue(7.f);
 	m_pBattleAgent->Set_RimAlpha(0.25f);
@@ -167,7 +169,7 @@ _int CPlayer::Update_GameObject(_double TimeDelta)
 	KeyInput();
 
 	Parameter_HitCheck();
-	Parameter_YPos();
+	Parameter_YPos(TimeDelta);
 	Parameter_Movement();
 	Parameter_State();
 	Parameter_HeavyCharging();
@@ -861,9 +863,17 @@ void CPlayer::Parameter_HeavyCharging()
 	}
 }
 
-void CPlayer::Parameter_YPos()
+void CPlayer::Parameter_YPos(_double dTimeDelta)
 {
-	m_pTransform->Set_Pos(m_pNavMesh->Axis_Y_OnNavMesh(m_pTransform->Get_Pos()));
+	if(m_pRigid->Get_IsFall() == false)
+		m_pTransform->Set_Pos(m_pNavMesh->Axis_Y_OnNavMesh(m_pTransform->Get_Pos()));
+	else
+	{
+		_float fYSpeed = m_pRigid->Set_Fall(m_pTransform->Get_Pos(), _float(dTimeDelta));
+
+		D3DXVECTOR3 JumpLength = { 0, -fYSpeed, 0 };
+		m_pTransform->Add_Pos(JumpLength);
+	}
 }
 
 void CPlayer::Parameter_Collision()
@@ -1102,7 +1112,7 @@ void CPlayer::Movement_Aiming(_float _fAngle, _float _fMovespeed)
 		D3DXVec3Normalize(&tmpLook, &tmpLook);
 
 		m_pTransform->Set_Angle(AXIS_Y, D3DXToRadian(_fAngle));
-		m_pTransform->Set_Pos((m_pNavMesh->Move_OnNaviMesh(NULL, &m_pTransform->Get_Pos(), &tmpLook, _fMovespeed)));
+		m_pTransform->Set_Pos((m_pNavMesh->Move_OnNaviMesh(m_pRigid, &m_pTransform->Get_Pos(), &tmpLook, _fMovespeed)));
 	}
 }
 
@@ -1202,7 +1212,7 @@ void CPlayer::Movement_NonAiming(_float _fRecover, _float _fAngle, _float _fRadi
 
 		// 네비 메쉬 추가되면 바꿔야함
 		//m_pTransform->Add_Pos(fMoveSpeed);
-		m_pTransform->Set_Pos((m_pNavMesh->Move_OnNaviMesh(NULL, &m_pTransform->Get_Pos(), &tmpLook, _fMoveSpeed)));
+		m_pTransform->Set_Pos((m_pNavMesh->Move_OnNaviMesh(m_pRigid, &m_pTransform->Get_Pos(), &tmpLook, _fMoveSpeed)));
 	}
 
 	else if (m_bMove[MOVE_Left])
@@ -1260,7 +1270,7 @@ void CPlayer::Movement_NonAiming(_float _fRecover, _float _fAngle, _float _fRadi
 
 		// 네비 메쉬 추가되면 바꿔야함
 		//m_pTransform->Add_Pos(fMoveSpeed);
-		m_pTransform->Set_Pos((m_pNavMesh->Move_OnNaviMesh(NULL, &m_pTransform->Get_Pos(), &tmpLook, _fMoveSpeed)));
+		m_pTransform->Set_Pos((m_pNavMesh->Move_OnNaviMesh(m_pRigid, &m_pTransform->Get_Pos(), &tmpLook, _fMoveSpeed)));
 	}
 
 	else if (m_bMove[MOVE_Right])
@@ -1318,7 +1328,7 @@ void CPlayer::Movement_NonAiming(_float _fRecover, _float _fAngle, _float _fRadi
 
 		// 네비 메쉬 추가되면 바꿔야함
 		//m_pTransform->Add_Pos(fMoveSpeed);
-		m_pTransform->Set_Pos((m_pNavMesh->Move_OnNaviMesh(NULL, &m_pTransform->Get_Pos(), &tmpLook, _fMoveSpeed)));
+		m_pTransform->Set_Pos((m_pNavMesh->Move_OnNaviMesh(m_pRigid, &m_pTransform->Get_Pos(), &tmpLook, _fMoveSpeed)));
 	}
 
 	else if (m_bMove[MOVE_Back])
@@ -1395,7 +1405,7 @@ void CPlayer::Movement_NonAiming(_float _fRecover, _float _fAngle, _float _fRadi
 
 		// 네비 메쉬 추가되면 바꿔야함
 		//m_pTransform->Add_Pos(fMoveSpeed);
-		m_pTransform->Set_Pos((m_pNavMesh->Move_OnNaviMesh(NULL, &m_pTransform->Get_Pos(), &tmpLook, _fMoveSpeed)));
+		m_pTransform->Set_Pos((m_pNavMesh->Move_OnNaviMesh(m_pRigid, &m_pTransform->Get_Pos(), &tmpLook, _fMoveSpeed)));
 	}
 }
 
@@ -10912,6 +10922,23 @@ void CPlayer::Ready_Skills()
 
 }
 
+void CPlayer::Ready_Rigid()
+{
+	if (nullptr != m_pRigid)
+	{
+		m_pRigid->Set_UseGravity(true);							// 중력의 영향 유무
+
+		m_pRigid->Set_IsFall(false);								// 낙하중인지 체크
+
+		m_pRigid->Set_fPower(2.f);								// 점프 파워
+
+		m_pRigid->Set_Speed({ 10.f , 10.f , 10.f });				// 각 축에 해당하는 속도
+		m_pRigid->Set_Accel({ 1.f, 0.f, 0.f });					// 각 축에 해당하는 Accel 값
+		m_pRigid->Set_MaxAccel({ 2.f , 4.f , 2.f });			// 각 축에 해당하는 MaxAccel 값
+	}
+
+}
+
 void CPlayer::Temp_ActiveSkills()
 {
 }
@@ -10959,7 +10986,7 @@ void CPlayer::Skill_Movement(_float _fspeed, _v3 _vDir)
 	m_fCurMoveSpeed = _fspeed;
 
 	// 네비게이션 적용하면 
-	m_pTransform->Set_Pos((m_pNavMesh->Move_OnNaviMesh(NULL, &m_pTransform->Get_Pos(), &tmpLook, fSpeed * g_pTimer_Manager->Get_DeltaTime(L"Timer_Fps_60"))));
+	m_pTransform->Set_Pos((m_pNavMesh->Move_OnNaviMesh(m_pRigid, &m_pTransform->Get_Pos(), &tmpLook, fSpeed * g_pTimer_Manager->Get_DeltaTime(L"Timer_Fps_60"))));
 }
 
 void CPlayer::Decre_Skill_Movement(_float _fMutiply)
@@ -11204,6 +11231,10 @@ HRESULT CPlayer::Add_Component()
 	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"BattleAgent", L"Com_BattleAgent", (CComponent**)&m_pBattleAgent)))
 		return E_FAIL;
 
+	// for.Com_RigidBody
+	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Rigidbody", L"Com_Rigidbody", (CComponent**)&m_pRigid)))
+		return E_FAIL;
+
 
 	m_pCollider->Set_Radius(_v3{ 0.5f, 0.5f, 0.5f });
 	m_pCollider->Set_Dynamic(true);
@@ -11326,7 +11357,7 @@ void CPlayer::OnCollisionEnter()
 	//		vDir.y = 0;
 	//
 	//		// 네비 메쉬타게 끔 세팅
-	//		pTrans->Set_Pos(pNav->Move_OnNaviMesh(NULL, &pTrans->Get_Pos(), &vDir, m_pCollider->Get_Length().x));
+	//		pTrans->Set_Pos(pNav->Move_OnNaviMesh(m_pRigid, &pTrans->Get_Pos(), &vDir, m_pCollider->Get_Length().x));
 	//	}
 	//}
 }
@@ -11636,6 +11667,7 @@ void CPlayer::Free()
 	Safe_Release(m_pRenderer);
 	Safe_Release(m_pNavMesh);
 	Safe_Release(m_pBattleAgent);
+	Safe_Release(m_pRigid);
 
 	Safe_Release(m_pUIManager);
 	Safe_Release(m_pCamManager);

@@ -170,6 +170,7 @@ private:
 	D3DXFRAME_DERIVED*	m_pLeftHandFrame = nullptr;
 	D3DXFRAME_DERIVED*	m_pHipsFrame = nullptr;
 
+	_bool				m_bFinishCamShake = false;
 
 private:	// 최초상태 세팅
 	_float				m_fFov = 0.f;

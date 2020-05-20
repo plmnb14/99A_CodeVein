@@ -147,6 +147,7 @@ private:
 	CNavMesh*				m_pNavMesh = nullptr;
 	CCollider*				m_pCollider = nullptr;
 	CBattleAgent*			m_pBattleAgent = nullptr;
+	CRigidBody*				m_pRigid = nullptr;
 
 private:
 	CCostume_Hair*			m_pHair = nullptr;
@@ -313,7 +314,7 @@ private:
 	virtual void Parameter_Atk();
 	virtual void Parameter_Movement();
 	virtual void Parameter_HeavyCharging();
-	virtual void Parameter_YPos();
+	virtual void Parameter_YPos(_double dTimeDelta);
 	virtual void Parameter_Collision();
 	virtual void Parameter_Aiming();
 	virtual void Parameter_HitCheck();
@@ -418,6 +419,7 @@ private:
 	virtual void Ready_BoneMatrix();
 	virtual void Ready_Collider();
 	virtual void Ready_Skills();
+	virtual void Ready_Rigid();
 	virtual void Temp_ActiveSkills();
 
 private:

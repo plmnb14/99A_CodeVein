@@ -109,9 +109,7 @@ PS_OUT PS_MOTIONBLUR(PS_MOTIONBLUR_IN In)
 	Out.vNormal = vector(0.f, 0.f, 0.f, 0.f);
 	Out.vBloomPower = vector(g_fBloomPower,0,0,0);
 
-	if (!g_bDecalTarget)
-		Out.vDecalDepth = vector(0.f, 0.f, 0.f, 0.f);
-	else 
+	if (g_bDecalTarget)
 		Out.vDecalDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / 500.f, 1.f, 1.f);
 	
 	return Out;
@@ -143,9 +141,7 @@ PS_OUT PS_MOTIONBLUR_Height(PS_MOTIONBLUR_IN In)
 	Out.vNormal = vector(1.f, 0.f, 1.f, 1.f);
 	Out.vBloomPower = vector(g_fBloomPower, 0, 0, 0);
 
-	if (!g_bDecalTarget)
-		Out.vDecalDepth = vector(0.f, 0.f, 0.f, 0.f);
-	else
+	if (g_bDecalTarget)
 		Out.vDecalDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / 500.f, 1.f, 1.f);
 
 	return Out;
@@ -175,9 +171,7 @@ PS_OUT PS_MOTIONBLUR_HeightSkin(PS_MOTIONBLUR_IN In)
 	Out.vNormal = vector(1.f, 0.f, 0.f, 1.f);
 	Out.vBloomPower = vector(g_fBloomPower, 0, 0, 0);
 
-	if (!g_bDecalTarget)
-		Out.vDecalDepth = vector(0.f, 0.f, 0.f, 0.f);
-	else
+	if (g_bDecalTarget)
 		Out.vDecalDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / 500.f, 1.f, 1.f);
 
 	return Out;
@@ -207,9 +201,7 @@ PS_OUT PS_MOTIONBLUR_Alpha(PS_MOTIONBLUR_IN In)
 	Out.vNormal = vector(1.f, 0.f, 1.f, 1.f);
 	Out.vBloomPower = vector(g_fBloomPower, 0, 0, 0);
 
-	if (!g_bDecalTarget)
-		Out.vDecalDepth = vector(0.f, 0.f, 0.f, 0.f);
-	else
+	if (g_bDecalTarget)
 		Out.vDecalDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / 500.f, 1.f, 1.f);
 
 	return Out;

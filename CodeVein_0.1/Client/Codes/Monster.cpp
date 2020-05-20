@@ -190,31 +190,31 @@ void CMonster::Check_DropItem()
 	switch (m_iRandom)
 	{
 	case 0:
-		pItem = g_pManagement->Clone_GameObject_Return(L"GameObject_DropItem", &CDropItem::ITEM_STATUS(ITEM_GRADE_TYPE::ITEM_GRADE_NORMAL, ITEM_NAMETYPE::NAMETYPE_Expend_MaximumUp, m_pTransformCom->Get_Pos(), 12.f));
+		pItem = g_pManagement->Clone_GameObject_Return(L"GameObject_DropItem", &CDropItem::ITEM_STATUS(ITEM_GRADE_TYPE::ITEM_GRADE_NORMAL, ITEM_NAMETYPE::NAMETYPE_Expend_MaximumUp, m_pTransformCom->Get_Pos(), 120.f));
 		break;
 	case 1:
-		pItem = g_pManagement->Clone_GameObject_Return(L"GameObject_DropItem", &CDropItem::ITEM_STATUS(ITEM_GRADE_TYPE::ITEM_GRADE_NORMAL, ITEM_NAMETYPE::NAMETYPE_Expend_Hp, m_pTransformCom->Get_Pos(), 12.f));
+		pItem = g_pManagement->Clone_GameObject_Return(L"GameObject_DropItem", &CDropItem::ITEM_STATUS(ITEM_GRADE_TYPE::ITEM_GRADE_NORMAL, ITEM_NAMETYPE::NAMETYPE_Expend_Hp, m_pTransformCom->Get_Pos(), 120.f));
 		break;
 	case 2:
-		pItem = g_pManagement->Clone_GameObject_Return(L"GameObject_DropItem", &CDropItem::ITEM_STATUS(ITEM_GRADE_TYPE::ITEM_GRADE_NORMAL, ITEM_NAMETYPE::NAMETYPE_Expend_Return, m_pTransformCom->Get_Pos(), 12.f));
+		pItem = g_pManagement->Clone_GameObject_Return(L"GameObject_DropItem", &CDropItem::ITEM_STATUS(ITEM_GRADE_TYPE::ITEM_GRADE_NORMAL, ITEM_NAMETYPE::NAMETYPE_Expend_Return, m_pTransformCom->Get_Pos(), 120.f));
 		break;
 	case 3:
-		pItem = g_pManagement->Clone_GameObject_Return(L"GameObject_DropItem", &CDropItem::ITEM_STATUS(ITEM_GRADE_TYPE::ITEM_GRADE_NORMAL, ITEM_NAMETYPE::NAMETYPE_Expend_Blood, m_pTransformCom->Get_Pos(), 12.f));
+		pItem = g_pManagement->Clone_GameObject_Return(L"GameObject_DropItem", &CDropItem::ITEM_STATUS(ITEM_GRADE_TYPE::ITEM_GRADE_NORMAL, ITEM_NAMETYPE::NAMETYPE_Expend_Blood, m_pTransformCom->Get_Pos(), 120.f));
 		break;
 	case 4:
-		pItem = g_pManagement->Clone_GameObject_Return(L"GameObject_DropItem", &CDropItem::ITEM_STATUS(ITEM_GRADE_TYPE::ITEM_GRADE_NORMAL, ITEM_NAMETYPE::NAMETYPE_Expend_Cheet, m_pTransformCom->Get_Pos(), 12.f));
+		pItem = g_pManagement->Clone_GameObject_Return(L"GameObject_DropItem", &CDropItem::ITEM_STATUS(ITEM_GRADE_TYPE::ITEM_GRADE_NORMAL, ITEM_NAMETYPE::NAMETYPE_Expend_Cheet, m_pTransformCom->Get_Pos(), 120.f));
 		break;
 	case 5:
-		pItem = g_pManagement->Clone_GameObject_Return(L"GameObject_DropItem", &CDropItem::ITEM_STATUS(ITEM_GRADE_TYPE::ITEM_GRADE_NORMAL, ITEM_NAMETYPE::NAMETYPE_Expend_SuperArmor, m_pTransformCom->Get_Pos(), 12.f));
+		pItem = g_pManagement->Clone_GameObject_Return(L"GameObject_DropItem", &CDropItem::ITEM_STATUS(ITEM_GRADE_TYPE::ITEM_GRADE_NORMAL, ITEM_NAMETYPE::NAMETYPE_Expend_SuperArmor, m_pTransformCom->Get_Pos(), 120.f));
 		break;
 	case 6:
-		pItem = g_pManagement->Clone_GameObject_Return(L"GameObject_DropItem", &CDropItem::ITEM_STATUS(ITEM_GRADE_TYPE::ITEM_GRADE_NORMAL, ITEM_NAMETYPE::NAMETYPE_Queen_Steel, m_pTransformCom->Get_Pos(), 12.f));
+		pItem = g_pManagement->Clone_GameObject_Return(L"GameObject_DropItem", &CDropItem::ITEM_STATUS(ITEM_GRADE_TYPE::ITEM_GRADE_NORMAL, ITEM_NAMETYPE::NAMETYPE_Queen_Steel, m_pTransformCom->Get_Pos(), 120.f));
 		break;
 	case 7:
-		pItem = g_pManagement->Clone_GameObject_Return(L"GameObject_DropItem", &CDropItem::ITEM_STATUS(ITEM_GRADE_TYPE::ITEM_GRADE_NORMAL, ITEM_NAMETYPE::NAMETYPE_Queen_Titanium, m_pTransformCom->Get_Pos(), 12.f));
+		pItem = g_pManagement->Clone_GameObject_Return(L"GameObject_DropItem", &CDropItem::ITEM_STATUS(ITEM_GRADE_TYPE::ITEM_GRADE_NORMAL, ITEM_NAMETYPE::NAMETYPE_Queen_Titanium, m_pTransformCom->Get_Pos(), 120.f));
 		break;
 	case 8:
-		pItem = g_pManagement->Clone_GameObject_Return(L"GameObject_DropItem", &CDropItem::ITEM_STATUS(ITEM_GRADE_TYPE::ITEM_GRADE_NORMAL, ITEM_NAMETYPE::NAMETYPE_Queen_Tungsten, m_pTransformCom->Get_Pos(), 12.f));
+		pItem = g_pManagement->Clone_GameObject_Return(L"GameObject_DropItem", &CDropItem::ITEM_STATUS(ITEM_GRADE_TYPE::ITEM_GRADE_NORMAL, ITEM_NAMETYPE::NAMETYPE_Queen_Tungsten, m_pTransformCom->Get_Pos(), 120.f));
 		break;
 	}
 
@@ -258,7 +258,7 @@ void CMonster::Check_CollisionPush()
 
 				vDir.y = 0;
 
-				pTrans->Set_Pos(pNav->Move_OnNaviMesh(NULL, &pTrans->Get_Pos(), &vDir, m_pColliderCom->Get_Length().x));
+				pTrans->Set_Pos(pNav->Move_OnNaviMesh(m_pRigidCom, &pTrans->Get_Pos(), &vDir, m_pColliderCom->Get_Length().x));
 			}
 		}
 	}
@@ -485,7 +485,7 @@ void CMonster::Function_MoveAround(CGameObject * _pGameObject, _float _fSpeed, _
 
 	m_pTransformCom->Set_Angle(AXIS_Y, fYAngle);
 
-	m_pTransformCom->Set_Pos((m_pNavMeshCom->Move_OnNaviMesh(NULL, &m_pTransformCom->Get_Pos(), &_vDir, _fSpeed * g_pTimer_Manager->Get_DeltaTime(L"Timer_Fps_60"))));
+	m_pTransformCom->Set_Pos((m_pNavMeshCom->Move_OnNaviMesh(m_pRigidCom, &m_pTransformCom->Get_Pos(), &_vDir, _fSpeed * g_pTimer_Manager->Get_DeltaTime(L"Timer_Fps_60"))));
 
 	return;
 }
@@ -514,7 +514,7 @@ void CMonster::Function_CoolDown()
 void CMonster::Function_Movement(_float _fspeed, _v3 _vDir)
 {
 	V3_NORMAL(&_vDir, &_vDir);
-	m_pTransformCom->Set_Pos((m_pNavMeshCom->Move_OnNaviMesh(NULL, &m_pTransformCom->Get_Pos(), &_vDir, _fspeed * g_pTimer_Manager->Get_DeltaTime(L"Timer_Fps_60"))));
+	m_pTransformCom->Set_Pos((m_pNavMeshCom->Move_OnNaviMesh(m_pRigidCom, &m_pTransformCom->Get_Pos(), &_vDir, _fspeed * g_pTimer_Manager->Get_DeltaTime(L"Timer_Fps_60"))));
 
 	return;
 }
@@ -648,6 +648,7 @@ void CMonster::Free()
 	IF_NOT_NULL(m_pWeapon)
 		Safe_Release(m_pWeapon);
 
+	Safe_Release(m_pRigidCom);
 	Safe_Release(m_pAIControllerCom);
 	Safe_Release(m_pOptimizationCom);
 	Safe_Release(m_pBattleAgentCom);

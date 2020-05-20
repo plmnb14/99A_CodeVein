@@ -1,6 +1,7 @@
 #include "../Headers/BT_MoveTo.h"
 #include "../Headers/Transform.h"
 #include "..\Headers\NavMesh.h"
+#include "../Headers/RigidBody.h"
 
 CBT_MoveTo::CBT_MoveTo()
 {
@@ -24,7 +25,7 @@ CBT_Node::BT_NODE_STATE CBT_MoveTo::Update_Node(_double TimeDelta, vector<CBT_No
 		return End_Node(pNodeStack, plistSubNodeStack, BT_NODE_STATE::SUCCEEDED, pBlackBoard, bDebugging);
 	}
 	//m_pTransform->Add_Pos(m_fMoveSpeed);
-	m_pTransform->Set_Pos((m_pNavMesh->Move_OnNaviMesh(NULL, &m_pTransform->Get_Pos(), &m_vMoveDir, m_fMoveSpeed * _float(TimeDelta))));
+	m_pTransform->Set_Pos((m_pNavMesh->Move_OnNaviMesh(m_pRigid, &m_pTransform->Get_Pos(), &m_vMoveDir, m_fMoveSpeed * _float(TimeDelta))));
 
 	return BT_NODE_STATE::INPROGRESS;
 }
@@ -81,6 +82,9 @@ HRESULT CBT_MoveTo::Ready_Clone_Node(void * pInit_Struct)
 	m_pNavMesh = temp.pNavMesh;
 	Safe_AddRef(m_pNavMesh);
 
+	m_pRigid = temp.pRigid;
+	Safe_AddRef(m_pRigid);
+
 	lstrcpy(m_pPosKey, temp.Pos_Key);
 
 	m_dMovingTime = temp.Target_dMovingTime;
@@ -125,4 +129,5 @@ void CBT_MoveTo::Free()
 {
 	Safe_Release(m_pTransform);
 	Safe_Release(m_pNavMesh);
+	Safe_Release(m_pRigid);
 }

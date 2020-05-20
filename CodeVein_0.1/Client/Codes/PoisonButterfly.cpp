@@ -123,6 +123,13 @@ _int CPoisonButterfly::Update_GameObject(_double TimeDelta)
 	{
 		// 죽으면서 UI 비활성화
 		m_pBossUI->Set_Active(false);
+
+		if ( false == m_bFinishCamShake && m_pMeshCom->Is_Finish_Animation(0.5f))
+		{
+			m_bFinishCamShake = true;
+			SHAKE_CAM_lv3;
+		}
+
 		return NO_EVENT;
 	}
 
@@ -1641,6 +1648,8 @@ void CPoisonButterfly::Check_PhyCollider()
 				CObjectPool_Manager::Get_Instance()->Create_Object(L"GameObject_Haze", (void*)&CHaze::HAZE_INFO(100.f, m_pTransformCom->Get_Pos(), 0.3f + (i * 0.02f)));
 			CParticleMgr::Get_Instance()->Create_BossDeadParticle_Effect(m_pTransformCom->Get_Pos() + _v3(0.f, 1.3f, 0.f), 0.6f, 0.5f);
 			g_pManagement->Create_ParticleEffect_Delay(L"SpawnParticle_ForBoss", 1.f, 0.6f, m_pTransformCom->Get_Pos() + _v3(0.f, 1.3f, 0.f));
+			 
+			//CCameraMgr::Get_Instance()->MainCamera_Oscillatation_SetUp(2.f, 20.f, 0.5f, 0.9f, CCamera::CAM_OSC_TYPE::POS_OSC);
 		}
 	}
 	else

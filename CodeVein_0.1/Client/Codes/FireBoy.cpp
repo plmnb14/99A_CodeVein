@@ -69,6 +69,9 @@ HRESULT CFireBoy::Ready_GameObject(void * pArg)
 	pBlackBoard->Set_Value(L"Voice_Play", false);
 	pBlackBoard->Set_Value(L"Voice_Stop", false);
 
+	pBlackBoard->Set_Value(L"CamShake1", false);
+
+
 	CBT_Selector* Start_Sel = Node_Selector("행동 시작");
 	//CBT_Sequence* Start_Sel = Node_Sequence("행동 시작");	//테스트
 
@@ -123,6 +126,13 @@ _int CFireBoy::Update_GameObject(_double TimeDelta)
 	{
 		// 죽기전 UI 비활성화
 		m_pBossUI->Set_Active(false);
+
+		if (false == m_bFinishCamShake && m_pMeshCom->Is_Finish_Animation(0.5f))
+		{
+			m_bFinishCamShake = true;
+			SHAKE_CAM_lv3;
+		}
+
 		return NO_EVENT;
 	}
 		
@@ -413,6 +423,7 @@ CBT_Composite_Node * CFireBoy::Arm_Attack()
 	CBT_SetValue* VoicePlay = Node_BOOL_SetValue("목소리 재생", L"Voice_Play", true);
 	CBT_SetValue* VoiceTag = Node_INT_SetValue("목소리 이름 설정", L"Voice_Tag", 11);
 	CBT_MoveDirectly* Move0 = Node_MoveDirectly_Rush("이동0", L"Monster_Speed", L"Monster_Dir", 3.f, 0.367f, 0);
+	CBT_SetValue* CamShake = Node_BOOL_SetValue("목소리 재생", L"CamShake1", true);
 	CBT_SetValue* Sound1Stop = Node_BOOL_SetValue("소리1 재생", L"SFX_01_Stop", true);
 	CBT_SetValue* Sound1Play = Node_BOOL_SetValue("소리1 재생", L"SFX_01_Play", true);
 	CBT_SetValue* Sound1Tag = Node_INT_SetValue("소리1 이름 설정", L"SFX_01_Tag", 6);
@@ -435,6 +446,7 @@ CBT_Composite_Node * CFireBoy::Arm_Attack()
 	SubSeq->Add_Child(VoicePlay);
 	SubSeq->Add_Child(VoiceTag);
 	SubSeq->Add_Child(Move0);
+	SubSeq->Add_Child(CamShake);
 	SubSeq->Add_Child(Sound1Stop);
 	SubSeq->Add_Child(Sound1Play);
 	SubSeq->Add_Child(Sound1Tag);
@@ -465,6 +477,7 @@ CBT_Composite_Node * CFireBoy::Gun_Attack()
 	CBT_SetValue* Sound1Stop = Node_BOOL_SetValue("소리1 재생", L"SFX_01_Stop", true);
 	CBT_SetValue* Sound1Play = Node_BOOL_SetValue("소리1 재생", L"SFX_01_Play", true);
 	CBT_SetValue* Sound1Tag = Node_INT_SetValue("소리1 이름 설정", L"SFX_01_Tag", 6);
+	CBT_SetValue* CamShake = Node_BOOL_SetValue("목소리 재생", L"CamShake1", true);
 	CBT_Wait* Wait1 = Node_Wait("대기1", 0.847, 0);
 	CBT_MoveDirectly* Move1 = Node_MoveDirectly_Rush("이동1", L"Monster_Speed", L"Monster_Dir", 0.6f, 0.17, 0);
 
@@ -482,6 +495,7 @@ CBT_Composite_Node * CFireBoy::Gun_Attack()
 	SubSeq->Add_Child(Sound1Stop);
 	SubSeq->Add_Child(Sound1Play);
 	SubSeq->Add_Child(Sound1Tag);
+	SubSeq->Add_Child(CamShake);
 	SubSeq->Add_Child(Wait1);
 	SubSeq->Add_Child(Move1);
 
@@ -1074,6 +1088,15 @@ HRESULT CFireBoy::Update_Value_Of_BB()
 		m_pAIControllerCom->Set_Value_Of_BlackBoard(L"Voice_Play", false);
 
 		g_pSoundManager->Play_Sound(const_cast<TCHAR*>(m_mapSound[m_pAIControllerCom->Get_IntValue(L"Voice_Tag")]), CSoundManager::CHANNELID::FireBoy_Voice, CSoundManager::SOUND::Effect_Sound);
+	}
+
+
+	// 카메라 흔들기
+	if (true == m_pAIControllerCom->Get_BoolValue(L"CamShake1"))
+	{
+		m_pAIControllerCom->Set_Value_Of_BlackBoard(L"CamShake1", false);
+
+		SHAKE_CAM_lv1;
 	}
 
 

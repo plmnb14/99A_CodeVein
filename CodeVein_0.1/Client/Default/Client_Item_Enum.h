@@ -69,3 +69,27 @@ enum ITEM_NAMETYPE
 
 	NAMETYPE_End
 };
+
+enum MONSTER_NAMETYPE
+{
+	// 일반 몬스터
+	M_Cocoon,
+	M_GunGenji,
+	M_SwordGenji,
+	M_SwordShieldGenji,
+	M_Hunter,
+	M_Monkey,
+	M_ThaiMan,
+	M_Urchin,
+	M_Wolf,
+	M_YachaMan,
+	M_Yeti,
+
+	// 보스 몬스터
+	M_DeerKing,
+	M_FireBoy,
+	M_IceGirl,
+	M_PoisonButterfly,
+	M_QueensKnight
+
+};
