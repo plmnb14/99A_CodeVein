@@ -182,15 +182,20 @@ void CArmor_Inven::Click_Inven()
 
 	for (auto& pSlot : m_vecArmorSlot)
 	{
-		if (pSlot->Pt_InRect() && g_pInput_Device->Get_DIMouseState(CInput_Device::DIM_LB))
+		if (pSlot->Pt_InRect())
 		{
-			Reset_SelectSlot();
-			pSlot->Set_Select(true);
-			m_tRegistParam = pSlot->Get_ArmorParam();
+			m_pExplainUI->Set_ArmorParam(pSlot->Get_ArmorParam());
 
-			m_pPlayer->Set_ArmorSlot((ARMOR_All_DATA)m_tRegistParam.iArmorName);
+			if (g_pInput_Device->Get_DIMouseState(CInput_Device::DIM_LB))
+			{
+				Reset_SelectSlot();
+				pSlot->Set_Select(true);
+				m_tRegistParam = pSlot->Get_ArmorParam();
 
-			g_pSoundManager->Play_Sound(L"UI_CommonHover.wav", CSoundManager::ArmorInven_Regist_Slot, CSoundManager::Ambient_Sound);
+				m_pPlayer->Set_ArmorSlot((ARMOR_All_DATA)m_tRegistParam.iArmorName);
+
+				g_pSoundManager->Play_Sound(L"UI_CommonHover.wav", CSoundManager::ArmorInven_Regist_Slot, CSoundManager::Effect_Sound);
+			}			
 		}
 		else if (pSlot->Pt_InRect() && g_pInput_Device->Get_DIMouseState(CInput_Device::DIM_RB))
 		{		
@@ -202,7 +207,7 @@ void CArmor_Inven::Click_Inven()
 			m_tRegistParam.iArmorType = ARMOR_End;
 			m_tRegistParam.iArmorName = ArmorAll_END;
 
-			g_pSoundManager->Play_Sound(L"UI_CommonClick.wav", CSoundManager::ArmorInven_UnRegist_Slot, CSoundManager::Ambient_Sound);
+			g_pSoundManager->Play_Sound(L"UI_CommonClick.wav", CSoundManager::ArmorInven_UnRegist_Slot, CSoundManager::Effect_Sound);
 		}
 	}
 }

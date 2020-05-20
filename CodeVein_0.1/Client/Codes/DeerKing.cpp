@@ -1697,6 +1697,8 @@ void CDeerKing::Down()
 		m_tObjParam.bIsHit = true;
 		m_tObjParam.bCanHit = true;
 
+		m_dHitTime = 0;	// 피격가능 타임 초기화
+
 		if (true == m_bDown_LoopAni)
 		{
 			m_pMeshCom->Reset_OldIndx();	//루프 애니 초기화
@@ -2105,7 +2107,7 @@ void CDeerKing::Check_PhyCollider()
 
 		m_dHitTime = 0;	// 피격가능 타임 초기화
 
-		m_bFight = true;		// 싸움 시작
+		//m_bFight = true;		// 싸움 시작
 
 		if (m_tObjParam.fHp_Cur > 0.f)
 		{

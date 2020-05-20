@@ -37,34 +37,40 @@ _int CExplainExpendUI::Update_GameObject(_double TimeDelta)
 	m_pRendererCom->Add_RenderList(RENDER_UI, this);
 
 	D3DXMatrixOrthoLH(&m_matProj, WINCX, WINCY, 0.f, 1.0f);
-	
-	
 
-	if (!m_bIsActive)
+	_int i = 0;
+	if (m_bIsActive)
+	{
+		if (m_pFontCurHave)
+		{
+			if (m_eType != CExpendables::EXPEND_END)
+				m_pFontCurHave->Set_Active(true);
+			else
+				m_pFontCurHave->Set_Active(false);
+
+			m_pFontCurHave->Update_NumberValue(_float(m_iCurHaveCnt));
+			m_pFontCurHave->Set_UI_Pos(m_fPosX - 175.f, m_fPosY - 3.f);
+			m_pFontCurHave->Set_UI_Size(10.4f, 20.f);
+		}
+		if (m_pFontMaximum)
+		{
+			if (m_eType != CExpendables::EXPEND_END)
+				m_pFontMaximum->Set_Active(true);
+			else
+				m_pFontMaximum->Set_Active(false);
+
+			m_pFontMaximum->Update_NumberValue(_float(m_iMaximumCnt));
+			m_pFontMaximum->Set_UI_Pos(m_fPosX - 145.f, m_fPosY - 3.f);
+			m_pFontMaximum->Set_UI_Size(10.4f, 20.f);
+		}
+	}
+	else
+	{
+		m_pFontCurHave->Set_Active(false);
+		m_pFontMaximum->Set_Active(false);
 		m_eType = CExpendables::EXPEND_END;
-
-	if (m_pFontCurHave)
-	{
-		if(m_eType != CExpendables::EXPEND_END)
-			m_pFontCurHave->Set_Active(m_bIsActive);
-		else
-			m_pFontCurHave->Set_Active(false);
-
-		m_pFontCurHave->Update_NumberValue(_float(m_iCurHaveCnt));
-		m_pFontCurHave->Set_UI_Pos(m_fPosX - 175.f, m_fPosY - 3.f);
-		m_pFontCurHave->Set_UI_Size(10.4f, 20.f);
 	}
-	if (m_pFontMaximum)
-	{
-		if (m_eType != CExpendables::EXPEND_END)
-			m_pFontMaximum->Set_Active(m_bIsActive);
-		else
-			m_pFontMaximum->Set_Active(false);
 		
-		m_pFontMaximum->Update_NumberValue(_float(m_iMaximumCnt));
-		m_pFontMaximum->Set_UI_Pos(m_fPosX - 145.f, m_fPosY - 3.f);
-		m_pFontMaximum->Set_UI_Size(10.4f, 20.f);
-	}
 
 	return NO_EVENT;
 }
@@ -88,8 +94,6 @@ HRESULT CExplainExpendUI::Render_GameObject()
 	if (!m_bIsActive || m_eType == CExpendables::EXPEND_END)
 		return NOERROR;
 
-	SetUp_TexIndex();
-
 	if (nullptr == m_pShaderCom ||
 		nullptr == m_pBufferCom)
 		return E_FAIL;
@@ -97,6 +101,8 @@ HRESULT CExplainExpendUI::Render_GameObject()
 	g_pManagement->Set_Transform(D3DTS_WORLD, m_matWorld);
 	g_pManagement->Set_Transform(D3DTS_VIEW, m_matView);
 	g_pManagement->Set_Transform(D3DTS_PROJECTION, m_matProj);
+
+	SetUp_TexIndex();
 
 	if (FAILED(SetUp_ConstantTable(m_iIndex)))
 		return E_FAIL;
@@ -155,13 +161,13 @@ HRESULT CExplainExpendUI::SetUp_ConstantTable(_uint iIndex)
 void CExplainExpendUI::SetUp_Default()
 {
 	m_pFontMaximum = static_cast<CPlayerFontUI*>(g_pManagement->Clone_GameObject_Return(L"GameObject_PlayerFontUI", nullptr));
-	m_pFontMaximum->Set_UI_Pos(m_fPosX, m_fPosY - 50.f);
+	m_pFontMaximum->Set_UI_Pos(m_fPosX - 145.f, m_fPosY - 3.f);
 	m_pFontMaximum->Set_UI_Size(10.4f, 20.f);
 	m_pFontMaximum->Set_ViewZ(m_fViewZ - 0.1f);
 	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pFontMaximum, SCENE_MORTAL, L"Layer_PlayerUI", nullptr);
 
 	m_pFontCurHave = static_cast<CPlayerFontUI*>(g_pManagement->Clone_GameObject_Return(L"GameObject_PlayerFontUI", nullptr));
-	m_pFontCurHave->Set_UI_Pos(m_fPosX + 30.f, m_fPosY - 50.f);
+	m_pFontCurHave->Set_UI_Pos(m_fPosX - 175.f, m_fPosY - 3.f);
 	m_pFontCurHave->Set_UI_Size(10.4f, 20.f);
 	m_pFontCurHave->Set_ViewZ(m_fViewZ - 0.1f);
 	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pFontCurHave, SCENE_MORTAL, L"Layer_PlayerUI", nullptr);
@@ -198,6 +204,7 @@ void CExplainExpendUI::SetUp_TexIndex()
 		break;
 	}
 }
+
 
 CExplainExpendUI * CExplainExpendUI::Create(_Device pGraphic_Device)
 {

@@ -619,6 +619,18 @@
     <Filter Include="02.GameObject\Stage\11%29 NPC\Yokumo">
       <UniqueIdentifier>{5ca30cf0-1a0e-4b0c-ae8a-94b0ae688791}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObject\Stage\0%29 Player\03%29 HitCheckUI">
+      <UniqueIdentifier>{574b934b-ae5a-4f6b-9e15-0bd599ad1957}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Stage\0%29 Player\04%29 FadeCornerUI">
+      <UniqueIdentifier>{2610a5ca-e957-4877-91de-7c89f5531585}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Logo\LoadingScripts">
+      <UniqueIdentifier>{fad94808-a810-4f0e-9e27-8cb866ff4b43}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Stage\5%29 UI\UI\06. Get_ItemUI\PickUp_ItemUIManager">
+      <UniqueIdentifier>{32244477-327c-4e89-80ba-b6f69a399ca0}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -1290,6 +1302,9 @@
     <ClInclude Include="..\Headers\NPC_Yokumo.h">
       <Filter>02.GameObject\Stage\11%29 NPC\Yokumo</Filter>
     </ClInclude>
+    <ClInclude Include="..\Headers\HitCheckUI.h">
+      <Filter>02.GameObject\Stage\0%29 Player\03%29 HitCheckUI</Filter>
+    </ClInclude>
     <ClInclude Include="..\Headers\GeneralStoreOption.h">
       <Filter>02.GameObject\Stage\5%29 UI\UI\18. GeneralStoreUI%28잡화점%29\04. GeneralStoreNPCUI</Filter>
     </ClInclude>
@@ -1301,6 +1316,15 @@
     </ClInclude>
     <ClInclude Include="..\Headers\Calling_Colleague.h">
       <Filter>02.GameObject\Stage\5%29 UI\UI\15. Colleague UI\02. Calling_Colleague</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\FadeCornerUI.h">
+      <Filter>02.GameObject\Stage\0%29 Player\04%29 FadeCornerUI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\LoadingScripts.h">
+      <Filter>02.GameObject\Logo\LoadingScripts</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\PickUp_ItemUIManager.h">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\06. Get_ItemUI\PickUp_ItemUIManager</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -1958,6 +1982,9 @@
     <ClCompile Include="..\Codes\NPC_Yokumo.cpp">
       <Filter>02.GameObject\Stage\11%29 NPC\Yokumo</Filter>
     </ClCompile>
+    <ClCompile Include="..\Codes\HitCheckUI.cpp">
+      <Filter>02.GameObject\Stage\0%29 Player\03%29 HitCheckUI</Filter>
+    </ClCompile>
     <ClCompile Include="..\Codes\GeneralStoreOption.cpp">
       <Filter>02.GameObject\Stage\5%29 UI\UI\18. GeneralStoreUI%28잡화점%29\04. GeneralStoreNPCUI</Filter>
     </ClCompile>
@@ -1969,6 +1996,15 @@
     </ClCompile>
     <ClCompile Include="..\Codes\Calling_Colleague.cpp">
       <Filter>02.GameObject\Stage\5%29 UI\UI\15. Colleague UI\02. Calling_Colleague</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\FadeCornerUI.cpp">
+      <Filter>02.GameObject\Stage\0%29 Player\04%29 FadeCornerUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\LoadingScripts.cpp">
+      <Filter>02.GameObject\Logo\LoadingScripts</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\PickUp_ItemUIManager.cpp">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\06. Get_ItemUI\PickUp_ItemUIManager</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

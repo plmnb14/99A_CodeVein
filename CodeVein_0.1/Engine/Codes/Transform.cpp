@@ -250,6 +250,8 @@ const _float CTransform::Chase_Target_Angle(const _v3 * pTargetPos)
 	if (vRight.z > 0)
 		fDot *= -1.f;
 
+	cout << fDot << endl;
+
 	return fDot;
 }
 

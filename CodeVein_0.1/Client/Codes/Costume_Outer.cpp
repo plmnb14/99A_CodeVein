@@ -265,7 +265,7 @@ _int CCostume_Outer::Update_GameObject(_double TimeDelta)
 	return NO_EVENT;
 }
 
-_int CCostume_Outer::Update_GameObject(_double TimeDelta, _bool bSkill)
+_int CCostume_Outer::Update_GameObject(_double TimeDelta, _bool bClearCol)
 {
 	if (false == m_bEnable)
 		return NO_EVENT;
@@ -287,7 +287,7 @@ _int CCostume_Outer::Update_GameObject(_double TimeDelta, _bool bSkill)
 
 
 	if(g_pClothManager->Is_Valid_Dynamic(m_eOuterType))
-		g_pClothManager->Update_Cloth_Dynamic(m_eOuterType, bSkill);
+		g_pClothManager->Update_Cloth_Dynamic(m_eOuterType, bClearCol);
 
 
 

@@ -263,6 +263,7 @@ PS_OUT PS_UI_MASK3(PS_IN In)
 	Out.vColor = tex2D(DiffuseSampler, In.vTexUV);
 
 	Out.vColor.a *= Out.vColor.r;
+	Out.vColor.a *= g_fAlpha;
 
 	return Out;
 }
@@ -280,6 +281,16 @@ PS_OUT PS_HPBar_Noise(PS_IN In)
 	Out.vColor.r = 1.f;
 	Out.vColor.g = 0.5f;
 	Out.vColor.b = 0.036f;
+
+	return Out;
+}
+
+PS_OUT PS_UI_AlphaCtrl(PS_IN In)
+{
+	PS_OUT			Out = (PS_OUT)0;
+
+	Out.vColor = tex2D(DiffuseSampler, In.vTexUV);
+	Out.vColor.a *= g_fAlpha;
 
 	return Out;
 }
@@ -394,4 +405,45 @@ technique Default_Technique
 		vertexshader = compile vs_3_0 VS_2D_UV_CTRL();
 		pixelshader = compile ps_3_0 PS_HPBar_Noise();
 	}
+
+	pass BillBoard_Render	// 11
+	{
+		zEnable = false;
+		cullmode = none;
+
+		AlphablendEnable = true;
+		SrcBlend = SrcAlpha;
+		destblend = invsrcalpha;
+
+		VertexShader = compile vs_3_0 VS_MAIN();
+		PixelShader = compile ps_3_0 PS_MAIN();
+	}
+
+	//======================================================================================
+	// 12
+	//======================================================================================
+	pass	UI_R_Masking_Rendering_Only
+	{
+		zEnable = false;
+		AlphaBlendEnable = true;
+		srcblend = srcalpha;
+		destblend = invsrcalpha;
+
+		vertexshader = compile vs_3_0 VS_MAIN();
+		pixelshader = compile ps_3_0 PS_UI_MASK3();
+	}
+	//======================================================================================
+	// 13
+	//======================================================================================
+	pass	UI_Alpha_Ctrl
+	{
+		zEnable = false;
+		AlphaBlendEnable = true;
+		srcblend = srcalpha;
+		destblend = invsrcalpha;
+
+		vertexshader = compile vs_3_0 VS_MAIN();
+		pixelshader = compile ps_3_0 PS_UI_AlphaCtrl();
+	}
+	//======================================================================================
 }

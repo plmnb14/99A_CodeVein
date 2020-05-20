@@ -107,7 +107,7 @@ void CInventory::Click_Icon()
 			{
 			case CInventory_Icon::ICON_EXPEND:
 			{
-				g_pSoundManager->Play_Sound(L"UI_CommonHover.wav", CSoundManager::Inven_Icon_Expend, CSoundManager::Ambient_Sound);
+				g_pSoundManager->Play_Sound(L"UI_CommonHover.wav", CSoundManager::Inven_Icon_Expend, CSoundManager::Effect_Sound);
 
 				m_pExpInven->Set_Active(true);
 				m_pMtrInven->Set_Active(false);
@@ -117,7 +117,7 @@ void CInventory::Click_Icon()
 				break;
 			case CInventory_Icon::ICON_MTRL:
 			{
-				g_pSoundManager->Play_Sound(L"UI_CommonHover.wav", CSoundManager::Inven_Icon_Material, CSoundManager::Ambient_Sound);
+				g_pSoundManager->Play_Sound(L"UI_CommonHover.wav", CSoundManager::Inven_Icon_Material, CSoundManager::Effect_Sound);
 
 				m_pExpInven->Set_Active(false);
 				m_pMtrInven->Set_Active(true);
@@ -127,7 +127,7 @@ void CInventory::Click_Icon()
 				break;
 			case CInventory_Icon::ICON_WEAPON:
 			{
-				g_pSoundManager->Play_Sound(L"UI_CommonHover.wav", CSoundManager::Inven_Icon_Weapon, CSoundManager::Ambient_Sound);
+				g_pSoundManager->Play_Sound(L"UI_CommonHover.wav", CSoundManager::Inven_Icon_Weapon, CSoundManager::Effect_Sound);
 
 				m_pExpInven->Set_Active(false);
 				m_pMtrInven->Set_Active(false);
@@ -137,7 +137,7 @@ void CInventory::Click_Icon()
 				break;
 			case CInventory_Icon::ICON_ARMOR:
 			{
-				g_pSoundManager->Play_Sound(L"UI_CommonHover.wav", CSoundManager::Inven_Icon_Armor, CSoundManager::Ambient_Sound);
+				g_pSoundManager->Play_Sound(L"UI_CommonHover.wav", CSoundManager::Inven_Icon_Armor, CSoundManager::Effect_Sound);
 
 				m_pExpInven->Set_Active(false);
 				m_pMtrInven->Set_Active(false);
@@ -147,7 +147,7 @@ void CInventory::Click_Icon()
 				break;
 			case CInventory_Icon::ICON_ALL:
 			{
-				g_pSoundManager->Play_Sound(L"UI_CommonHover.wav", CSoundManager::Inven_Icon_All, CSoundManager::Ambient_Sound);
+				g_pSoundManager->Play_Sound(L"UI_CommonHover.wav", CSoundManager::Inven_Icon_All, CSoundManager::Effect_Sound);
 
 				m_pTotalInven->Set_Active(true);
 				m_bIsDetail = false;

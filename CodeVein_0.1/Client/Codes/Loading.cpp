@@ -63,6 +63,9 @@
 #include "Costume_Head.h"
 #include "Costume_Mask.h"
 
+#include "HitCheckUI.h"
+#include "FadeCornerUI.h"
+
 USING(Client)
 
 CLoading::CLoading(_Device pGraphicDev)
@@ -1301,67 +1304,76 @@ _uint CLoading::Loading_Title()
 	//============================================================================================================
 	// 다이나믹 메쉬 불러오는 중
 	//============================================================================================================
-	cout << "Essential Dynamic Mesh 불러오는 중 . . ." << endl;
-	g_pManagement->LoadMesh_FromPath(m_pGraphicDev, L"../../Data/Load_MeshData/Mesh_Essential_Dynamic_Path.dat");
-
+	++m_dwLoadingCnt;
 	cout << "Costume Static Mesh 불러오는 중 . . ." << endl;
 	g_pManagement->LoadMesh_FromPath(m_pGraphicDev, L"../../Data/Load_MeshData/Mesh_Costume_Static_Path.dat");
 
+	++m_dwLoadingCnt;
 	cout << "Costume Dynamic Mesh 불러오는 중 . . ." << endl;
 	g_pManagement->LoadMesh_FromPath(m_pGraphicDev, L"../../Data/Load_MeshData/Mesh_Costume_Dynamic_Path.dat");
 
+	++m_dwLoadingCnt;
 	cout << " Costume Cloth Making . . ." << endl;
 	g_pClothManager->Ready_ClothManager();
 
-	cout << "DynamicMesh 불러오는 중 . . ." << endl;
+	++m_dwLoadingCnt;
+	cout << "Dynamic Mesh 불러오는 중 . . ." << endl;
+	g_pManagement->LoadMesh_FromPath(m_pGraphicDev, L"../../Data/Load_MeshData/Mesh_NPC_Path.dat");
 	g_pManagement->LoadMesh_FromPath(m_pGraphicDev, L"../../Data/Load_MeshData/Mesh_Dynamic_Path.dat");
-	
-	//cout << "NPC 불러오는 중 . . ." << endl;
-	//g_pManagement->LoadMesh_FromPath(m_pGraphicDev, L"../../Data/Load_MeshData/Mesh_NPC_Path.dat");
+
 	//============================================================================================================
 	// 무기 불러오는 중
 	//============================================================================================================
-	cout << "Weapon Mesh 불러오는 중 . . ." << endl;
+	++m_dwLoadingCnt;
+	cout << "Essential Weapon Mesh 불러오는 중 . . ." << endl;
 	g_pManagement->LoadMesh_FromPath(m_pGraphicDev, L"../../Data/Load_MeshData/Mesh_Weapon_Path.dat");
 
+	++m_dwLoadingCnt;
 	cout << "DrainWeapon Mesh 불러오는 중 . . ." << endl;
 	g_pManagement->LoadMesh_FromPath(m_pGraphicDev, L"../../Data/Load_MeshData/Mesh_DrainWeapon_Path.dat");
 	//============================================================================================================
 	// 텍스쳐 불러오는 중
 	//============================================================================================================
+	++m_dwLoadingCnt;
 	cout << "All Texture 불러오는 중 . . ." << endl;
 	g_pManagement->LoadTex_FromPath(m_pGraphicDev, L"../../Data/Load_TexData/Tex_Path.dat");
 	//============================================================================================================
 	// 이펙트 메쉬 불러오는중
 	//============================================================================================================
+	++m_dwLoadingCnt;
 	cout << "Effect Mesh 불러오는 중 . . ." << endl;
 	g_pManagement->LoadMesh_FromPath(m_pGraphicDev, L"../../Data/Load_MeshData/Mesh_Effect_Path.dat");
 	//============================================================================================================
 	// 이펙트 원형 생성
 	//============================================================================================================
+	++m_dwLoadingCnt;
 	cout << "Effect 원형 생성중" << endl;
 	Ready_Effect();
 	//============================================================================================================
 	// 필수 파티클 생성
 	//============================================================================================================
+	++m_dwLoadingCnt;
 	cout << "Particle Essential 불러오는 중 . . ." << endl;
 	if (FAILED(CParticleMgr::Get_Instance()->Ready_ParticleManager_Essential()))
 		return E_FAIL;
 	//============================================================================================================
 	// 플레이어 스킬, 보스 이펙트 포함
 	//============================================================================================================
-	//cout << "Particle Etc 불러오는 중 . . ." << endl;
-	//if (FAILED(CParticleMgr::Get_Instance()->Ready_ParticleManager()))
-	//	return E_FAIL;
+	++m_dwLoadingCnt;
+	cout << "Particle Etc 불러오는 중 . . ." << endl;
+	if (FAILED(CParticleMgr::Get_Instance()->Ready_ParticleManager()))
+		return E_FAIL;
 	//============================================================================================================
 	// UI 원형 생성
 	//============================================================================================================
+	++m_dwLoadingCnt;
 	cout << " UI 원형 생성 중 . . ." << endl;
 	CUI_Manager::Get_Instance()->Add_UI_Prototype(m_pGraphicDev);
 	CItem_Manager::Get_Instance()->Add_Item_Prototype(m_pGraphicDev);
 	//============================================================================================================
 	// 기타
 	//============================================================================================================
+	++m_dwLoadingCnt;
 	cout << "Essential Protorypes 추가 중 . . ."  << endl;
 	//============================================================================================================
 	// Costume Head
@@ -1388,6 +1400,12 @@ _uint CLoading::Loading_Title()
 	// 스카이
 	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_Sky_Blur", CSky_Blur::Create(m_pGraphicDev))))
 		return E_FAIL;
+	// 힛체크
+	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_HitCheckUI", CHitCheckUI::Create(m_pGraphicDev))))
+		return E_FAIL;
+	// 힛체크
+	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_FadeCornerUI", CFadeCornerUI::Create(m_pGraphicDev))))
+		return E_FAIL;
 	//============================================================================================================
 	// 사운드
 	// 하위 폴더 순회 안합니다.
@@ -1397,6 +1415,7 @@ _uint CLoading::Loading_Title()
 	//  하위폴더의 경우 "path/path" 이런식으로 슬레시 하나만 쳐주면됨
 	//============================================================================================================
 
+	++m_dwLoadingCnt;
 	g_pSoundManager->Load_Directory_SouneFile_W(L"Title");
 	g_pSoundManager->Load_Directory_SouneFile_W(L"BGM");
 	g_pSoundManager->Load_Directory_SouneFile_W(L"Effect");
@@ -1404,6 +1423,7 @@ _uint CLoading::Loading_Title()
 	g_pSoundManager->Load_Directory_SouneFile_W(L"UI/UI_WeaponShop");
 	g_pSoundManager->Load_Directory_SouneFile_W(L"NPC/Yakumo");
 	g_pSoundManager->Load_Directory_SouneFile_W(L"Boss_Genji");
+
 	m_bFinish = true;
 
 	system("cls");
@@ -1690,6 +1710,9 @@ _uint CLoading::Loading_MainStages()
 	// 3번 - 스테이지 01
 	if (false == g_bOnStage[3])
 	{
+		cout << "DynamicMesh 불러오는 중 . . ." << endl;
+		g_pManagement->LoadMesh_FromPath(m_pGraphicDev, L"../../Data/Load_MeshData/Mesh_Dynamic_Path.dat");
+
 		cout << "Load Stage_01 StaticMesh . . ." << endl;
 		g_pManagement->LoadMesh_FilesFromPath_AddProtoRenderObj(m_pGraphicDev, L"../../Data/Load_MeshData/Mesh_Static_Stage01_Path.dat");
 

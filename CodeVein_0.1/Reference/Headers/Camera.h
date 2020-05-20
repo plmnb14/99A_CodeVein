@@ -141,6 +141,10 @@ protected:	// Device Setting
 	_mat			m_MatProj;
 
 protected:
+	_mat*			m_pTargetBoneMatrix = nullptr;
+	_mat*			m_pTargetWorldMatrix = nullptr;
+
+protected:
 	_v3				m_vOriginAt;
 	_v3				m_vReturnValue[2];
 

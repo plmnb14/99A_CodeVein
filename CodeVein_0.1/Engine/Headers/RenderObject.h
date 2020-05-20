@@ -132,6 +132,7 @@ private:
 	virtual void Check_Stage_01();
 	virtual void Check_Stage_02();
 	virtual void Check_Stage_03();
+	virtual void Check_Stage_04();
 
 public:
 	static CRenderObject* Create_For_Tool(_Device _pGraphicDev);

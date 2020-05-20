@@ -228,7 +228,7 @@ void CWeapon_Inven::Regist_Weapon(CWeapon_Slot* pWeaponSlot)
 
 		m_pPlayer->Set_WeaponSlot((CPlayer::ACTIVE_WEAPON_SLOT)0, (WEAPON_DATA)m_UseWeaponParam[0].iWeaponName);
 
-		g_pSoundManager->Play_Sound(L"UI_CommonHover.wav", CSoundManager::WeaponInven_Regist_Slot01, CSoundManager::Ambient_Sound);
+		g_pSoundManager->Play_Sound(L"UI_CommonHover.wav", CSoundManager::WeaponInven_Regist_Slot01, CSoundManager::Effect_Sound);
 	}
 	else if (m_UseWeaponParam[1].iWeaponName == WPN_DATA_End)
 	{
@@ -237,7 +237,7 @@ void CWeapon_Inven::Regist_Weapon(CWeapon_Slot* pWeaponSlot)
 
 		m_pPlayer->Set_WeaponSlot((CPlayer::ACTIVE_WEAPON_SLOT)1, (WEAPON_DATA)m_UseWeaponParam[1].iWeaponName);
 
-		g_pSoundManager->Play_Sound(L"UI_CommonHover.wav", CSoundManager::WeaponInven_Regist_Slot02, CSoundManager::Ambient_Sound);
+		g_pSoundManager->Play_Sound(L"UI_CommonHover.wav", CSoundManager::WeaponInven_Regist_Slot02, CSoundManager::Effect_Sound);
 	}
 	else
 		return;
@@ -276,7 +276,7 @@ void CWeapon_Inven::UnRegist_Weapon(CWeapon_Slot * pWeaponSlot)
 
 		m_pPlayer->Set_WeaponSlot((CPlayer::ACTIVE_WEAPON_SLOT)0, WEAPON_DATA::WPN_DATA_End);
 
-		g_pSoundManager->Play_Sound(L"UI_CommonClick.wav", CSoundManager::WeaponInven_UnRegist_Slot01, CSoundManager::Ambient_Sound);
+		g_pSoundManager->Play_Sound(L"UI_CommonClick.wav", CSoundManager::WeaponInven_UnRegist_Slot01, CSoundManager::Effect_Sound);
 	}
 	else if (pWeaponSlot->Get_WeaponParam().iWeaponName == m_UseWeaponParam[1].iWeaponName)
 	{
@@ -294,7 +294,7 @@ void CWeapon_Inven::UnRegist_Weapon(CWeapon_Slot * pWeaponSlot)
 
 		m_pPlayer->Set_WeaponSlot((CPlayer::ACTIVE_WEAPON_SLOT)1, WEAPON_DATA::WPN_DATA_End);
 
-		g_pSoundManager->Play_Sound(L"UI_CommonClick.wav", CSoundManager::WeaponInven_UnRegist_Slot02, CSoundManager::Ambient_Sound);
+		g_pSoundManager->Play_Sound(L"UI_CommonClick.wav", CSoundManager::WeaponInven_UnRegist_Slot02, CSoundManager::Effect_Sound);
 	}
 	else
 		return;
