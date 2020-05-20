@@ -46,7 +46,10 @@ HRESULT CScene_Stage_03::Ready_Scene()
 
 _int CScene_Stage_03::Update_Scene(_double TimeDelta)
 {
-	return _int();
+	Create_Fog(TimeDelta);
+	Create_Dust(TimeDelta);
+
+	return S_OK;
 }
 
 HRESULT CScene_Stage_03::Render_Scene()
@@ -88,7 +91,7 @@ HRESULT CScene_Stage_03::Ready_Layer_Environment(const _tchar* pLayerTag)
 	if (FAILED(g_pManagement->Add_GameObject_ToLayer(L"GameObject_BossMassageUI", SCENE_STAGE, L"Layer_BossMassageUI")))
 		return E_FAIL;
 
-	g_pManagement->Create_Effect(L"FloorPlane_Black", _v3(0.f, -5.f, 0.f));
+	//g_pManagement->Create_Effect(L"FloorPlane_Black", _v3(0.f, -19.f, 0.f));
 
 	return S_OK;
 }
@@ -120,10 +123,10 @@ void CScene_Stage_03::Create_Fog(_double TimeDelta)
 	if (m_fMapFogDelay > FOG_OFFSET)
 	{
 		m_fMapFogDelay = 0.f;
-		g_pManagement->Create_Effect(L"MapFog_0", _v3(0.f, -4.f, 0.f));
+		g_pManagement->Create_Effect(L"MapFog_0", _v3(0.f, -17.5f, 0.f));
 	}
 
-	g_pManagement->Create_Effect_Offset(L"MapFog_0", 7.f, _v3(0.f, -3.f, 0.f));
+	g_pManagement->Create_Effect_Offset(L"MapFog_0", 7.f, _v3(0.f, -18.2f, 0.f));
 }
 
 void CScene_Stage_03::Create_Dust(_double TimeDelta)
