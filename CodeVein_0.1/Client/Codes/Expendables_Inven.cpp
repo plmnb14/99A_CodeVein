@@ -88,6 +88,7 @@ _int CExpendables_Inven::Update_GameObject(_double TimeDelta)
 		m_bIsSubActive = false;
 	}
 
+	SetUp_SlotPos();
 	return NO_EVENT;
 }
 
@@ -350,6 +351,30 @@ void CExpendables_Inven::Use_Expendableas(CExpendables_Slot * pSlot)
 	SetUp_SlotPos();
 }
 
+void CExpendables_Inven::Sell_Item(CExpendables_Slot * pSlot)
+{
+	if (nullptr == pSlot)
+		return;
+	
+	pSlot->Delete_Item();
+
+	_ulong idx = 0;
+	for (auto& pExSlot : m_vecSlot)
+	{
+		if (pExSlot->Get_Size() == 0)
+		{
+			m_vecSlot.erase(m_vecSlot.begin() + idx);
+			m_vecSlot.shrink_to_fit();
+			pExSlot->Set_Dead();
+			Add_Slot();
+			break;
+		}
+
+		++idx;
+	}
+	SetUp_SlotPos();
+}
+
 void CExpendables_Inven::Sell_Expendables(_uint iDelete)
 {
 	_uint idx = 0;
@@ -376,14 +401,13 @@ void CExpendables_Inven::Sell_Expendables(_uint iDelete)
 		++idx;
 	}
 
-	/*_ulong Idx = 0;
+	_ulong Idx = 0;
 	for (auto& pSlot : m_vecSlot)
 	{
 
 		pSlot->Set_UI_Pos(m_vecUI_DESC[Idx]->fPosX, m_vecUI_DESC[Idx]->fPosY);
 		++Idx;
-	}*/
-	SetUp_SlotPos();
+	}
 }
 
 
