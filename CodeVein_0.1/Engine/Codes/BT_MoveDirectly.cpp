@@ -1,6 +1,7 @@
 #include "..\Headers\BT_MoveDirectly.h"
 #include "..\Headers\Transform.h"
 #include "..\Headers\NavMesh.h"
+#include "../Headers/RigidBody.h"
 
 CBT_MoveDirectly::CBT_MoveDirectly()
 {
@@ -46,7 +47,7 @@ CBT_Node::BT_NODE_STATE CBT_MoveDirectly::Update_Node(_double TimeDelta, vector<
 				
 				// 이동
 				pMoveDir = D3DXVec3Normalize(&_v3(), (_v3*)m_pTransform->Get_WorldMat().m[2]);
-				m_pTransform->Set_Pos((m_pNavMesh->Move_OnNaviMesh(NULL, &m_pTransform->Get_Pos(), pMoveDir, m_fMove_Speed * (_float)TimeDelta)));
+				m_pTransform->Set_Pos((m_pNavMesh->Move_OnNaviMesh(m_pRigid, &m_pTransform->Get_Pos(), pMoveDir, m_fMove_Speed * (_float)TimeDelta)));
 
 				// BB에 스피드와 진행방향 저장
 				pBlackBoard->Set_Value(m_BB_SpeedKey, m_fMove_Speed * (_float)TimeDelta);
@@ -66,7 +67,7 @@ CBT_Node::BT_NODE_STATE CBT_MoveDirectly::Update_Node(_double TimeDelta, vector<
 			}
 
 			pMoveDir = D3DXVec3Normalize(&_v3(), (_v3*)m_pTransform->Get_WorldMat().m[2]);
-			m_pTransform->Set_Pos((m_pNavMesh->Move_OnNaviMesh(NULL, &m_pTransform->Get_Pos(), pMoveDir, m_fMove_Speed * (_float)TimeDelta)));
+			m_pTransform->Set_Pos((m_pNavMesh->Move_OnNaviMesh(m_pRigid, &m_pTransform->Get_Pos(), pMoveDir, m_fMove_Speed * (_float)TimeDelta)));
 
 			// BB에 스피드와 진행방향 저장
 			pBlackBoard->Set_Value(m_BB_SpeedKey, m_fMove_Speed * (_float)TimeDelta);
@@ -167,6 +168,11 @@ HRESULT CBT_MoveDirectly::Ready_Clone_Node(void * pInit_Struct)
 	if (m_pNavMesh)
 		Safe_AddRef(m_pNavMesh);
 
+	m_pRigid = temp.pRigid;
+
+	if (m_pRigid)
+		Safe_AddRef(m_pRigid);
+
 	m_eMode = temp.eMode;
 	strcpy_s<STR_128>(m_pNodeName, temp.Target_NodeName);
 
@@ -232,4 +238,5 @@ void CBT_MoveDirectly::Free()
 {
 	Safe_Release(m_pTransform);
 	Safe_Release(m_pNavMesh);
+	Safe_Release(m_pRigid);
 }

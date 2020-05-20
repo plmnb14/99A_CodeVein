@@ -35,6 +35,8 @@ HRESULT CMistletoeOptionUI::Ready_GameObject(void * pArg)
 
 _int CMistletoeOptionUI::Update_GameObject(_double TimeDelta)
 {
+	if (!m_bIsActive)
+		return NO_EVENT;
 	CUI::Update_GameObject(TimeDelta);
 
 	if (m_bIsDead)
@@ -65,6 +67,8 @@ _int CMistletoeOptionUI::Update_GameObject(_double TimeDelta)
 
 _int CMistletoeOptionUI::Late_Update_GameObject(_double TimeDelta)
 {
+	if (!m_bIsActive)
+		return NO_EVENT;
 	if (nullptr == m_pRendererCom)
 		return E_FAIL;
 

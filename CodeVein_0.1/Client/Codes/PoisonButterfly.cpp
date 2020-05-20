@@ -68,6 +68,7 @@ HRESULT CPoisonButterfly::Ready_GameObject(void * pArg)
 	pBlackBoard->Set_Value(L"SFX_02_Tag", 0);
 	pBlackBoard->Set_Value(L"SFX_02_Play", false);
 	pBlackBoard->Set_Value(L"SFX_02_Stop", false);
+
 	pBlackBoard->Set_Value(L"Voice_Tag", 0);
 	pBlackBoard->Set_Value(L"Voice_Play", false);
 	pBlackBoard->Set_Value(L"Voice_Stop", false);
@@ -123,6 +124,13 @@ _int CPoisonButterfly::Update_GameObject(_double TimeDelta)
 	{
 		// 죽으면서 UI 비활성화
 		m_pBossUI->Set_Active(false);
+
+		if ( false == m_bFinishCamShake && m_pMeshCom->Is_Finish_Animation(0.5f))
+		{
+			m_bFinishCamShake = true;
+			SHAKE_CAM_lv3;
+		}
+
 		return NO_EVENT;
 	}
 
@@ -730,14 +738,14 @@ CBT_Composite_Node * CPoisonButterfly::Rush()
 	CBT_RotationDir* Rotation0 = Node_RotationDir("방향 추적0", L"Player_Pos", 0.2);
 	CBT_SetValue* Sound1Stop = Node_BOOL_SetValue("소리1 재생", L"SFX_01_Stop", true);
 	CBT_SetValue* Sound1Play = Node_BOOL_SetValue("소리1 재생", L"SFX_01_Play", true);
-	CBT_SetValue* Sound1Tag = Node_INT_SetValue("소리1 이름 설정", L"SFX_01_Tag", 0);
+	CBT_SetValue* Sound1Tag = Node_INT_SetValue("소리1 이름 설정", L"SFX_01_Tag", 1);
 	CBT_MoveDirectly* Move0 = Node_MoveDirectly_Rush("뒤로 이동", L"Monster_Speed", L"Monster_Dir", -3.f, 1.083, 0);
 	CBT_ChaseDir* ChaseDir0 = Node_ChaseDir("방향 추적1", L"Player_Pos", 0.3, 0);
 	CBT_RotationDir* Rotation1 = Node_RotationDir("방향 추적1", L"Player_Pos", 0.267);
 	CBT_SetValue* PushColOff = Node_BOOL_SetValue("PushColOff", L"PushCol", false);
-	CBT_SetValue* Sound1Stop1 = Node_BOOL_SetValue("소리1 재생", L"SFX_01_Stop", true);
-	CBT_SetValue* Sound1Play1 = Node_BOOL_SetValue("소리1 재생", L"SFX_01_Play", true);
-	CBT_SetValue* Sound1Tag1 = Node_INT_SetValue("소리1 이름 설정", L"SFX_01_Tag", 0);
+	CBT_SetValue* Sound1Stop1 = Node_BOOL_SetValue("소리1 재생", L"Voice_Stop", true);
+	CBT_SetValue* Sound1Play1 = Node_BOOL_SetValue("소리1 재생", L"Voice_Play", true);
+	CBT_SetValue* Sound1Tag1 = Node_INT_SetValue("소리1 이름 설정", L"Voice_Tag", 11);
 	CBT_MoveDirectly* Move1 = Node_MoveDirectly_Rush("돌진", L"Monster_Speed", L"Monster_Dir", 13, 1.1, 0);
 	CBT_SetValue* PushColOn = Node_BOOL_SetValue("PushColOn", L"PushCol", true);
 
@@ -789,9 +797,9 @@ CBT_Composite_Node * CPoisonButterfly::Fire_5Bullet()
 	CBT_Sequence* SubSeq = Node_Sequence("발사준비");
 	CBT_ChaseDir* Chase0 = Node_ChaseDir("방향 추적", L"Player_Pos", 1.25, 0);
 	CBT_RotationDir* Rotation0 = Node_RotationDir("방향 회전", L"Player_Pos", 0.2);
-	CBT_SetValue* VoiceStop = Node_BOOL_SetValue("소리1 재생", L"Voice_Stop", true);
-	CBT_SetValue* VoicePlay = Node_BOOL_SetValue("소리1 재생", L"Voice_Play", true);
-	CBT_SetValue* VoiceTag = Node_INT_SetValue("소리1 이름 설정", L"Voice_Tag", 10);
+	CBT_SetValue* VoiceStop = Node_BOOL_SetValue("소리1 재생", L"SFX_01_Stop", true);
+	CBT_SetValue* VoicePlay = Node_BOOL_SetValue("소리1 재생", L"SFX_01_Play", true);
+	CBT_SetValue* VoiceTag = Node_INT_SetValue("소리1 이름 설정", L"SFX_01_Tag", 3);
 
 	CBT_CreateBullet* PoisonBullet0 = Node_CreateBullet("독 총알", L"Monster_PoisonBullet", L"Bone_Head", L"Self_PoisonDir0", 5, 5, 1.45, 1, 1, 0, CBT_Service_Node::Finite);
 	CBT_CreateBullet* PoisonBullet1 = Node_CreateBullet("독 총알", L"Monster_PoisonBullet", L"Bone_Head", L"Self_PoisonDir1", 5, 5, 1.45, 1, 1, 0, CBT_Service_Node::Finite);
@@ -1409,6 +1417,66 @@ HRESULT CPoisonButterfly::Update_Value_Of_BB()
 		g_pSoundManager->Play_Sound(const_cast<TCHAR*>(m_mapSound[m_pAIControllerCom->Get_IntValue(L"SFX_02_Tag")]), CSoundManager::CHANNELID::Butterfly_SFX_02, CSoundManager::SOUND::Effect_Sound);
 	}
 
+	// SFX_03
+	if (true == m_pAIControllerCom->Get_BoolValue(L"SFX_03_Stop"))	// 멈춤
+	{
+		m_pAIControllerCom->Set_Value_Of_BlackBoard(L"SFX_03_Stop", false);
+
+		g_pSoundManager->Stop_Sound(CSoundManager::CHANNELID::Butterfly_SFX_02);
+	}
+
+	if (true == m_pAIControllerCom->Get_BoolValue(L"SFX_03_Play"))	// 재생
+	{
+		m_pAIControllerCom->Set_Value_Of_BlackBoard(L"SFX_03_Play", false);
+
+		g_pSoundManager->Play_Sound(const_cast<TCHAR*>(m_mapSound[m_pAIControllerCom->Get_IntValue(L"SFX_03_Tag")]), CSoundManager::CHANNELID::Butterfly_SFX_02, CSoundManager::SOUND::Effect_Sound);
+	}
+
+	// SFX_04
+	if (true == m_pAIControllerCom->Get_BoolValue(L"SFX_04_Stop"))	// 멈춤
+	{
+		m_pAIControllerCom->Set_Value_Of_BlackBoard(L"SFX_04_Stop", false);
+
+		g_pSoundManager->Stop_Sound(CSoundManager::CHANNELID::Butterfly_SFX_01);
+	}
+
+	if (true == m_pAIControllerCom->Get_BoolValue(L"SFX_04_Play"))	// 재생
+	{
+		m_pAIControllerCom->Set_Value_Of_BlackBoard(L"SFX_04_Play", false);
+
+		g_pSoundManager->Play_Sound(const_cast<TCHAR*>(m_mapSound[m_pAIControllerCom->Get_IntValue(L"SFX_04_Tag")]), CSoundManager::CHANNELID::Butterfly_SFX_01, CSoundManager::SOUND::Effect_Sound);
+	}
+
+	// SFX_05
+	if (true == m_pAIControllerCom->Get_BoolValue(L"SFX_05_Stop"))	// 멈춤
+	{
+		m_pAIControllerCom->Set_Value_Of_BlackBoard(L"SFX_05_Stop", false);
+
+		g_pSoundManager->Stop_Sound(CSoundManager::CHANNELID::Butterfly_SFX_02);
+	}
+
+	if (true == m_pAIControllerCom->Get_BoolValue(L"SFX_05_Play"))	// 재생
+	{
+		m_pAIControllerCom->Set_Value_Of_BlackBoard(L"SFX_05_Play", false);
+
+		g_pSoundManager->Play_Sound(const_cast<TCHAR*>(m_mapSound[m_pAIControllerCom->Get_IntValue(L"SFX_05_Tag")]), CSoundManager::CHANNELID::Butterfly_SFX_02, CSoundManager::SOUND::Effect_Sound);
+	}
+
+	// SFX_06
+	if (true == m_pAIControllerCom->Get_BoolValue(L"SFX_06_Stop"))	// 멈춤
+	{
+		m_pAIControllerCom->Set_Value_Of_BlackBoard(L"SFX_06_Stop", false);
+
+		g_pSoundManager->Stop_Sound(CSoundManager::CHANNELID::Butterfly_SFX_01);
+	}
+
+	if (true == m_pAIControllerCom->Get_BoolValue(L"SFX_06_Play"))	// 재생
+	{
+		m_pAIControllerCom->Set_Value_Of_BlackBoard(L"SFX_06_Play", false);
+
+		g_pSoundManager->Play_Sound(const_cast<TCHAR*>(m_mapSound[m_pAIControllerCom->Get_IntValue(L"SFX_06_Tag")]), CSoundManager::CHANNELID::Butterfly_SFX_01, CSoundManager::SOUND::Effect_Sound);
+	}
+
 	// Voice
 	if (true == m_pAIControllerCom->Get_BoolValue(L"Voice_Stop"))	// 멈춤
 	{
@@ -1641,6 +1709,8 @@ void CPoisonButterfly::Check_PhyCollider()
 				CObjectPool_Manager::Get_Instance()->Create_Object(L"GameObject_Haze", (void*)&CHaze::HAZE_INFO(100.f, m_pTransformCom->Get_Pos(), 0.3f + (i * 0.02f)));
 			CParticleMgr::Get_Instance()->Create_BossDeadParticle_Effect(m_pTransformCom->Get_Pos() + _v3(0.f, 1.3f, 0.f), 0.6f, 0.5f);
 			g_pManagement->Create_ParticleEffect_Delay(L"SpawnParticle_ForBoss", 1.f, 0.6f, m_pTransformCom->Get_Pos() + _v3(0.f, 1.3f, 0.f));
+			 
+			//CCameraMgr::Get_Instance()->MainCamera_Oscillatation_SetUp(2.f, 20.f, 0.5f, 0.9f, CCamera::CAM_OSC_TYPE::POS_OSC);
 		}
 	}
 	else
@@ -2036,8 +2106,12 @@ HRESULT CPoisonButterfly::Ready_NF(void * pArg)
 HRESULT CPoisonButterfly::Ready_Sound()
 {
 	m_mapSound.emplace(0, L"SE_GODDESS_ATTACK_SWING_000.ogg");	// 꼬리 공격 바람소리
+	m_mapSound.emplace(1, L"SE_GODDESS_KETSUGI_MOVE_000.ogg");	// 돌진
+	m_mapSound.emplace(2, L"skybridge3.ogg");	// 회오리
+	m_mapSound.emplace(3, L"SE_GODDESS_KETSUGI_001.ogg");	// 총알 발사
 	m_mapSound.emplace(10, L"SE_GODDESS_BARK_004.ogg");	// 공격하기 전 소리지르기
-
+	m_mapSound.emplace(11, L"SE_GODDESS_BARK_007.ogg");	// 돌진 소리지르기
+	
 	return S_OK;
 }
 

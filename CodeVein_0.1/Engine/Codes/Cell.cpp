@@ -269,55 +269,10 @@ CCell::COMPARE CCell::Compare(const _v3 * pEndPos, _long * pIndex , _v2* _pDirec
 			}
 			else
 			{
-
-				// 현재 타일이 Upper가 아닐 때
-				if (false == _bIsUpper)
-				{
 					// 전진하는 타일이 Upper 라면
-					if (m_pSibling[i]->Get_CellParam() == UPPER_CELL)
-					{
-						_int  iCnt	 = 0;
-						_bool bLower = false;
-
-						for (_int j = 0; j < 3; ++j)
-						{
-							if (pEndPos->y < m_pSibling[i]->Get_VertexPos()[j].y)
-							{
-								bLower = true;
-								//++iCnt;
-							}
-						}
-
-						//if (iCnt > 2)
-						//{
-						//	//cout << "여기 탐 " << endl;
-						//
-						//	bLower = true;
-						//}
-
-						//더 낮다면
-						if (true == bLower)
-						{
-							*_pDirection = m_tNavLine[i].m_vNor;
-
-							IF_NOT_NULL(_iIndex)
-								*_iIndex = i;
-
-							// 멈춥니다.
-							return COMPARE_STAY;
-						}
-					}
-				}
-
-				// 만약 현재가 Upper 이고
-				else if (true == _bIsUpper)
+				if (m_pSibling[i]->Get_CellParam() == EVENT_TRIGGER)
 				{
-					// 전진하고자 하는 셀이 Upper 가 아니라면
-					if (m_pSibling[i]->Get_CellParam() != UPPER_CELL)
-					{
-						*pIndex = m_pSibling[i]->Get_CellIdx();
-						return COMPARE_FALL;
-					}
+					return COMPARE_FALL;
 				}
 
 				// 어퍼 아니면

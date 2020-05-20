@@ -1,6 +1,7 @@
 #include "..\Headers\BT_MoveAround.h"
 #include "..\Headers\Transform.h"
 #include "..\Headers\NavMesh.h"
+#include "../Headers/RigidBody.h"
 
 CBT_MoveAround::CBT_MoveAround()
 {
@@ -42,7 +43,7 @@ CBT_Node::BT_NODE_STATE CBT_MoveAround::Update_Node(_double TimeDelta, vector<CB
 			D3DXVec3Cross(&vRight, &vToTarget, &_v3(0.f, 1.f, 0.f));
 			D3DXVec3Normalize(&vRight, &vRight);
 
-			m_pTransform->Set_Pos((m_pNavMesh->Move_OnNaviMesh(NULL, &m_pTransform->Get_Pos(), &vRight, m_fMove_Speed * (_float)TimeDelta)));
+			m_pTransform->Set_Pos((m_pNavMesh->Move_OnNaviMesh(m_pRigid, &m_pTransform->Get_Pos(), &vRight, m_fMove_Speed * (_float)TimeDelta)));
 			
 			// BB에 스피드와 진행방향 저장
 			pBlackBoard->Set_Value(m_BB_SpeedKey, m_fMove_Speed * (_float)TimeDelta);
@@ -59,7 +60,7 @@ CBT_Node::BT_NODE_STATE CBT_MoveAround::Update_Node(_double TimeDelta, vector<CB
 			D3DXVec3Normalize(&vRight, &vRight);
 			vRight *= -1.f;
 
-			m_pTransform->Set_Pos((m_pNavMesh->Move_OnNaviMesh(NULL, &m_pTransform->Get_Pos(), &vRight, -m_fMove_Speed * (_float)TimeDelta)));
+			m_pTransform->Set_Pos((m_pNavMesh->Move_OnNaviMesh(m_pRigid, &m_pTransform->Get_Pos(), &vRight, -m_fMove_Speed * (_float)TimeDelta)));
 
 			// BB에 스피드와 진행방향 저장
 			pBlackBoard->Set_Value(m_BB_SpeedKey, m_fMove_Speed * (_float)TimeDelta);
@@ -131,6 +132,11 @@ HRESULT CBT_MoveAround::Ready_Clone_Node(void * pInit_Struct)
 	if (m_pNavMesh)
 		Safe_AddRef(m_pNavMesh);
 
+	m_pRigid = temp.pRigid;
+
+	if (m_pRigid)
+		Safe_AddRef(m_pRigid);
+
 	strcpy_s<STR_128>(m_pNodeName, temp.Target_NodeName);
 	lstrcpy(m_Target_Key, temp.Target_Key);
 	lstrcpy(m_BB_SpeedKey, temp.BB_Speed_Key);
@@ -166,4 +172,5 @@ void CBT_MoveAround::Free()
 {
 	Safe_Release(m_pTransform);
 	Safe_Release(m_pNavMesh);
+	Safe_Release(m_pRigid);
 }

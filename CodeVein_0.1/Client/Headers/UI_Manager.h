@@ -105,7 +105,7 @@
 #include "PurchaseFailUI.h"
 #include "GeneralStoreNPCUI.h"
 #include "GeneralStoreOption.h"
-#include "ExpendSellUI.h"
+#include "ExpendSellCollectionUI.h"
 #include "GeneralStoreSellUI.h"
 
 #include "Get_ItemUI.h"
@@ -116,6 +116,8 @@
 
 #include "LockOn_UI.h"
 #include "CustomCategory.h"
+
+#include "NPC_InteractionUI.h"
 
 BEGIN(Client)
 

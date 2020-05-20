@@ -195,6 +195,7 @@ private:
 	HRESULT Ready_Collider();
 	HRESULT Ready_NF(void* pArg);
 	HRESULT Ready_Sound();
+	HRESULT Ready_Rigid();
 
 private:
 	void Check_Execution();

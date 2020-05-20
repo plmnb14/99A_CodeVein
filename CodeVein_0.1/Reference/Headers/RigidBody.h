@@ -12,7 +12,7 @@ private:
 	virtual		~CRigidBody();
 
 public:
-	virtual void LateUpdate();
+	_int Update_Component_Self(_double dTimeDelta);
 
 public:
 	void Set_UseGravity(bool _UseGravity);
@@ -31,6 +31,7 @@ public:
 	void Set_Accel(D3DXVECTOR3 _Accel = { 0.f, 0.f, 0.f });
 	void Set_MaxAccel(D3DXVECTOR3 _MaxAccel = { 0.1f, 0.1f, 0.1f });
 	void Set_MaxSpeed(D3DXVECTOR3 _MaxSpeed = { 1.f, 1.f, 1.f });
+	void Set_CurTime(_float fTime);
 
 public:
 	D3DXVECTOR3 Get_Accel() { return m_tRigid.vAccel; }
@@ -42,6 +43,7 @@ public:
 	bool Get_IsFall() { return m_tRigid.bIsFall; }
 	bool Get_IsAir() { return m_tRigid.bIsAir; }
 	bool Get_IsHit() { return m_tRigid.bIsHit; }
+	_float Get_CurTime() { return m_fCurFallTime; }
 	
 public:
 	float Set_Jump(D3DXVECTOR3 _TransForm, float _Time); 
@@ -57,6 +59,8 @@ public:
 
 private:
 	RIGID m_tRigid;
+
+	_float m_fCurFallTime = 0;;
 
 private:
 	virtual HRESULT Ready_Component();

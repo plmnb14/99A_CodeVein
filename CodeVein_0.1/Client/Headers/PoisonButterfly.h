@@ -160,6 +160,7 @@ private:
 	D3DXFRAME_DERIVED*	m_pHeadFrame = nullptr;
 	D3DXFRAME_DERIVED*	m_pTail6_Tongue2Frame = nullptr;
 
+	_bool				m_bFinishCamShake = false;
 
 private:	// 최초상태 세팅
 	_float				m_fFov = 0.f;

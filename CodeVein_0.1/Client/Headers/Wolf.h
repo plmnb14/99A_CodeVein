@@ -89,6 +89,7 @@ private:
 	HRESULT Ready_Status(void* pArg);
 	HRESULT Ready_Collider();
 	HRESULT Ready_BoneMatrix();
+	HRESULT Ready_Rigid();
 
 public:
 	static CWolf* Create(LPDIRECT3DDEVICE9 pGraphic_Device);

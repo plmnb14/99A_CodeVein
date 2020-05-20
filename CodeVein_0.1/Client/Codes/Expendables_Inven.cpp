@@ -69,14 +69,6 @@ HRESULT CExpendables_Inven::Ready_GameObject(void * pArg)
 
 _int CExpendables_Inven::Update_GameObject(_double TimeDelta)
 {
-	CUI::Update_GameObject(TimeDelta);
-
-	m_pRendererCom->Add_RenderList(RENDER_UI, this);
-
-	D3DXMatrixOrthoLH(&m_matProj, WINCX, WINCY, 0.f, 1.0f);
-	
-	Click_Inven();
-
 	if (m_bIsActive && !m_bIsSubActive)
 	{
 		SetUp_SubUI_Active(true);
@@ -88,12 +80,27 @@ _int CExpendables_Inven::Update_GameObject(_double TimeDelta)
 		m_bIsSubActive = false;
 	}
 
-	SetUp_SlotPos();
+	if (!m_bIsActive)
+		return NO_EVENT;
+
+	CUI::Update_GameObject(TimeDelta);
+
+	m_pRendererCom->Add_RenderList(RENDER_UI, this);
+
+	D3DXMatrixOrthoLH(&m_matProj, WINCX, WINCY, 0.f, 1.0f);
+	
+	Click_Inven();
+
+	
+
+	
 	return NO_EVENT;
 }
 
 _int CExpendables_Inven::Late_Update_GameObject(_double TimeDelta)
 {
+	if (!m_bIsActive)
+		return NO_EVENT;
 	D3DXMatrixIdentity(&m_matWorld);
 	D3DXMatrixIdentity(&m_matView);
 
@@ -353,25 +360,24 @@ void CExpendables_Inven::Use_Expendableas(CExpendables_Slot * pSlot)
 
 void CExpendables_Inven::Sell_Item(CExpendables_Slot * pSlot)
 {
-	if (nullptr == pSlot)
+	if (nullptr == pSlot || pSlot->Get_Size() <= 0)
 		return;
 	
 	pSlot->Delete_Item();
 
-	_ulong idx = 0;
-	for (auto& pExSlot : m_vecSlot)
+	if (pSlot->Get_Size() <= 0)
 	{
-		if (pExSlot->Get_Size() == 0)
+		for (_uint i = 0; i < m_vecSlot.size(); ++i)
 		{
-			m_vecSlot.erase(m_vecSlot.begin() + idx);
-			m_vecSlot.shrink_to_fit();
-			pExSlot->Set_Dead();
-			Add_Slot();
-			break;
+			if (pSlot == m_vecSlot[i])
+			{
+				pSlot->Set_Dead();
+				m_vecSlot.erase(m_vecSlot.begin() + i);
+				m_vecSlot.shrink_to_fit();
+			}
 		}
-
-		++idx;
 	}
+
 	SetUp_SlotPos();
 }
 

@@ -29,6 +29,7 @@ HRESULT CHunter::Ready_GameObject(void * pArg)
 	Ready_BoneMatrix();
 	Ready_Collider();
 	Ready_Weapon();
+	Ready_Rigid();
 
 	m_pMonsterUI = static_cast<CMonsterUI*>(g_pManagement->Clone_GameObject_Return(L"GameObject_MonsterHPUI", pArg));
 	m_pMonsterUI->Set_Target(this);
@@ -44,6 +45,11 @@ _int CHunter::Update_GameObject(_double TimeDelta)
 		return NO_EVENT;
 
 	CGameObject::Update_GameObject(TimeDelta);
+	m_pRigidCom->Update_Component_Self(TimeDelta);
+
+	// 떨어지면 1초 뒤 죽임.
+	if (m_pRigidCom->Get_CurTime() > 1.f)
+		m_eFirstCategory = MONSTER_STATE_TYPE::DEAD;
 
 	m_pMonsterUI->Update_GameObject(TimeDelta);
 
@@ -10920,6 +10926,9 @@ HRESULT CHunter::Add_Component(void* pArg)
 	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"BattleAgent", L"Com_BattleAgent", (CComponent**)&m_pBattleAgentCom)))
 		return E_FAIL;
 
+	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Rigidbody", L"Com_Rigidbody", (CComponent**)&m_pRigidCom)))
+		return E_FAIL;
+
 	m_pColliderCom->Set_Radius(_v3{ 0.6f, 0.6f, 0.6f });
 	m_pColliderCom->Set_Dynamic(true);
 	m_pColliderCom->Set_Type(COL_SPHERE);
@@ -11225,6 +11234,24 @@ HRESULT CHunter::Ready_BoneMatrix()
 
 	IF_NULL_VALUE_RETURN(pFrame = (D3DXFRAME_DERIVED*)m_pMeshCom->Get_BonInfo("RightHandAttach", 0), E_FAIL);
 	m_matBone[Bone_RightHandAttach] = &pFrame->CombinedTransformationMatrix; // 투사체 발사용 손뼈
+
+	return S_OK;
+}
+
+HRESULT CHunter::Ready_Rigid()
+{
+	if (nullptr != m_pRigidCom)
+	{
+		m_pRigidCom->Set_UseGravity(true);							// 중력의 영향 유무
+
+		m_pRigidCom->Set_IsFall(false);								// 낙하중인지 체크
+
+		m_pRigidCom->Set_fPower(2.f);								// 점프 파워
+
+		m_pRigidCom->Set_Speed({ 10.f , 10.f , 10.f });				// 각 축에 해당하는 속도
+		m_pRigidCom->Set_Accel({ 1.f, 0.f, 0.f });					// 각 축에 해당하는 Accel 값
+		m_pRigidCom->Set_MaxAccel({ 2.f , 4.f , 2.f });				// 각 축에 해당하는 MaxAccel 값
+	}
 
 	return S_OK;
 }
