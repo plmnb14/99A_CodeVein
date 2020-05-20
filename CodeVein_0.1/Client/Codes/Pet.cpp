@@ -23,15 +23,9 @@ HRESULT CPet::Render_GameObject_SetPass(CShader * pShader, _int iPass)
 
 void CPet::Check_CollisionEvent()
 {
-	Check_CollisionPush();
 	Check_CollisionHit(g_pManagement->Get_GameObjectList(L"Layer_Boss", SCENE_STAGE));
 	Check_CollisionHit(g_pManagement->Get_GameObjectList(L"Layer_Monster", SCENE_STAGE));
 
-	return;
-}
-
-void CPet::Check_CollisionPush()
-{
 	return;
 }
 
@@ -352,7 +346,6 @@ void CPet::Function_Find_Target()
 			fOldLength = fLenth;
 			m_pTarget = Monster_iter;
 			m_eTarget = PET_TARGET_TYPE::PET_TARGET_MONSTER;
-			Safe_AddRef(m_pTarget);
 		}
 
 		IF_NOT_NULL_RETURN(m_pTarget);
@@ -377,7 +370,6 @@ void CPet::Function_Find_Target()
 			fOldLength = fLenth;
 			m_pTarget = Boss_iter;
 			m_eTarget = PET_TARGET_TYPE::PET_TARGET_BOSS;
-			Safe_AddRef(m_pTarget);
 		}
 
 		IF_NOT_NULL_RETURN(m_pTarget);
@@ -401,7 +393,6 @@ void CPet::Function_Find_Target()
 			fOldLength = fLenth;
 			m_pTarget = Item_iter;
 			m_eTarget = PET_TARGET_TYPE::PET_TARGET_ITEM;
-			Safe_AddRef(m_pTarget);
 		}
 
 		IF_NOT_NULL_RETURN(m_pTarget);
@@ -428,7 +419,6 @@ void CPet::Function_Find_Target()
 			fOldLength = fLenth;
 			m_pTarget = Item_iter;
 			m_eTarget = PET_TARGET_TYPE::PET_TARGET_ITEM;
-			Safe_AddRef(m_pTarget);
 		}
 
 		IF_NOT_NULL_RETURN(m_pTarget);
@@ -453,7 +443,6 @@ void CPet::Function_Find_Target()
 			fOldLength = fLenth;
 			m_pTarget = Monster_iter;
 			m_eTarget = PET_TARGET_TYPE::PET_TARGET_MONSTER;
-			Safe_AddRef(m_pTarget);
 		}
 
 		IF_NOT_NULL_RETURN(m_pTarget);
@@ -478,7 +467,6 @@ void CPet::Function_Find_Target()
 			fOldLength = fLenth;
 			m_pTarget = Boss_iter;
 			m_eTarget = PET_TARGET_TYPE::PET_TARGET_BOSS;
-			Safe_AddRef(m_pTarget);
 		}
 
 		IF_NOT_NULL_RETURN(m_pTarget);
@@ -496,6 +484,9 @@ void CPet::Function_Find_Target()
 
 void CPet::Function_ResetAfterAtk()
 {
+	m_fCoolDownCur = 0.f;
+	m_fCoolDownMax = 0.f;
+
 	m_tObjParam.bCanHit = true;
 	m_tObjParam.bIsHit = false;
 
@@ -584,6 +575,7 @@ void CPet::Function_Check_Navi()
 {
 	Function_ResetAfterAtk();
 	m_bEnable = true;
+	m_bCanSummon = false;
 
 	_tchar szNavData[STR_128] = L"";
 
@@ -596,13 +588,10 @@ void CPet::Function_Check_Navi()
 	//player 오른쪽으로 2.f만큼 소환될것임
 	CTransform* pPlayerTransform = TARGET_TO_TRANS(m_pPlayer);
 	m_pTransform->Set_Pos(pPlayerTransform->Get_Pos() + pPlayerTransform->Get_Axis(AXIS_X) * 2.f);
-	m_pTransform->Set_Scale(_v3{ 0.25f, 0.25f, 0.25f });
 
 	m_pNavMesh->Set_Index(-1);
 	m_pNavMesh->Ready_NaviMesh(m_pGraphic_Dev, szNavData);
 	m_pNavMesh->Check_OnNavMesh(m_pTransform->Get_Pos());
-
-	Play_Deformation();
 
 	return;
 }
@@ -672,8 +661,8 @@ HRESULT CPet::Ready_BoneMatrix(void * pArg)
 
 void CPet::Free()
 {
-	IF_NOT_NULL(m_pTarget)
-		Safe_Release(m_pTarget);
+	//IF_NOT_NULL(m_pTarget)
+	//	Safe_Release(m_pTarget);
 
 	IF_NOT_NULL(m_pPlayer)
 		Safe_Release(m_pPlayer);

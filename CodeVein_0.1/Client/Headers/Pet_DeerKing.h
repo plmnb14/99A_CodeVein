@@ -101,6 +101,7 @@ public:
 	virtual HRESULT Render_GameObject() override;
 	virtual HRESULT Render_GameObject_Instancing_SetPass(CShader* pShader) override;
 	virtual HRESULT Render_GameObject_SetPass(CShader * pShader, _int iPass, _bool _bIsForMotionBlur = false) override;
+	virtual void Play_Deformation() override;
 
 private:
 	void Update_Collider();
@@ -116,7 +117,6 @@ private:
 	void Play_Combo();
 
 protected:
-	virtual void Play_Deformation() override;
 	virtual void Play_Idle() override;
 	virtual void Play_Move() override;
 	virtual void Play_CC() override;

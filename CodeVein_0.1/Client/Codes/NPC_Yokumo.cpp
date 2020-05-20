@@ -51,7 +51,7 @@ HRESULT CNPC_Yokumo::Ready_GameObject(void * pArg)
 HRESULT CNPC_Yokumo::LateInit_GameObject()
 {
 	// UI
-	m_pShopUI = static_cast<CGeneralStoreUI*>(g_pManagement->Clone_GameObject_Return(L"GameObject_GeneralStoreUI", nullptr));
+	m_pShopUI = static_cast<CGeneralStoreNPCUI*>(g_pManagement->Clone_GameObject_Return(L"GameObject_GeneralStoreNPCUI", nullptr));
 	m_pShopUI->Set_Target(this);
 	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pShopUI, SCENE_MORTAL, L"Layer_PlayerUI", nullptr);
 

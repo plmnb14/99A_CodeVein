@@ -105,6 +105,8 @@
 #include "PurchaseFailUI.h"
 #include "GeneralStoreNPCUI.h"
 #include "GeneralStoreOption.h"
+#include "ExpendSellUI.h"
+#include "GeneralStoreSellUI.h"
 
 #include "Get_ItemUI.h"
 #include "PickUp_ItemUI.h"
@@ -161,8 +163,7 @@ public:
 	CWeaponShopUI* Get_WeaponShopUI() { return m_pWeaponShopUI; }
 	CNPC_InteractionUI* Get_NPC_InteractionUI() { return m_pNPC_InterActionUI; }
 	CCustomCategory* Get_CustomCategory() { return m_pCustomCategory;}
-
-	// ∆Í ¿Œ∫•≈‰∏Æ
+	CGeneralStoreSellUI* Get_GeneralStoreSellUI() { return m_pGeneralStoreSellUI; }
 	CPet_Inven* Get_Pet_Inven() { return m_pPet_Inven; }
 
 
@@ -206,6 +207,7 @@ private:
 	CWeaponShopUI*	m_pWeaponShopUI = nullptr;
 	CNPC_InteractionUI* m_pNPC_InterActionUI = nullptr;
 	CCustomCategory* m_pCustomCategory = nullptr;
+	CGeneralStoreSellUI* m_pGeneralStoreSellUI = nullptr;
 
 	// ∆Í ¿Œ∫•≈‰∏Æ
 	CPet_Inven* m_pPet_Inven = nullptr;

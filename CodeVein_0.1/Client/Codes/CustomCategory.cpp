@@ -150,6 +150,9 @@ void CCustomCategory::Click_Option()
 			if (g_pInput_Device->Get_DIMouseState(CInput_Device::DIM_LB))
 			{
 				m_pCustomInven->Set_ActiveSlot(CCustomInven::INVEN_TYPE(iIdx));
+
+				g_pSoundManager->Stop_Sound(CSoundManager::UI_SFX_01);
+				g_pSoundManager->Play_Sound(L"UI_CommonClick.wav", CSoundManager::UI_SFX_01, CSoundManager::Effect_Sound);
 			}
 		}
 		else

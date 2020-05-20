@@ -64,6 +64,7 @@ HRESULT CScene_Stage_Base::Ready_Scene()
 	
 	// NPC 1 ¿äÄí¸ð
 	g_pManagement->Add_GameObject_ToLayer(L"GameObject_NPC_Yokumo", SCENE_STAGE, L"Layer_NPC", &CNPC_Yokumo::NPC_INFO(_v3(-10.5f, -1.37f, -14.3f), D3DXToRadian(45.f)));
+
 	//
 	//// NPC 2
 	//g_pManagement->Add_GameObject_ToLayer(L"GameObject_NPC_Yakumo", SCENE_STAGE, L"Layer_NPC", &CNPC_Yakumo::NPC_INFO(_v3(6.283f, -1.37f, -14.75f), D3DXToRadian(-45.f)));
@@ -100,17 +101,19 @@ HRESULT CScene_Stage_Base::Ready_Player()
 {
 	if (FAILED(g_pManagement->Add_Layer(SCENE_STAGE, L"Layer_Mistletoe")))
 		return E_FAIL;
-
 	if (FAILED(g_pManagement->Add_Layer(SCENE_STAGE, L"Layer_Monster")))
 		return E_FAIL;
-
 	if (FAILED(g_pManagement->Add_Layer(SCENE_STAGE, L"Layer_Boss")))
 		return E_FAIL;
-
 	if (FAILED(g_pManagement->Add_Layer(SCENE_STAGE, L"Layer_MonsterProjectile")))
 		return E_FAIL;
-
 	if (FAILED(g_pManagement->Add_Layer(SCENE_STAGE, L"Layer_BossUI")))
+		return E_FAIL;
+	if (FAILED(g_pManagement->Add_Layer(SCENE_STAGE, L"Layer_Colleague")))
+		return E_FAIL;
+	if (FAILED(g_pManagement->Add_Layer(SCENE_STAGE, L"Layer_Pet")))
+		return E_FAIL;
+	if (FAILED(g_pManagement->Add_Layer(SCENE_STAGE, L"Layer_Item")))
 		return E_FAIL;
 
 	CPlayer* pInstance = static_cast<CPlayer*>(g_pManagement->Get_GameObjectBack(L"Layer_Player", SCENE_MORTAL));
@@ -223,7 +226,7 @@ CScene_Stage_Base * CScene_Stage_Base::Create(LPDIRECT3DDEVICE9 pGraphic_Device,
 {
 	CScene_Stage_Base*	pInstance = new CScene_Stage_Base(pGraphic_Device);
 
-	pInstance->m_bLoadStaticMesh = _bLoadStatic;
+	//pInstance->m_bLoadStaticMesh = _bLoadStatic;
 
 	if (FAILED(pInstance->Ready_Scene()))
 	{
@@ -231,7 +234,7 @@ CScene_Stage_Base * CScene_Stage_Base::Create(LPDIRECT3DDEVICE9 pGraphic_Device,
 		Safe_Release(pInstance);
 	}
 
-	pInstance->m_bLoadStaticMesh = _bLoadStatic;
+	//pInstance->m_bLoadStaticMesh = _bLoadStatic;
 
 	return pInstance;
 }

@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "..\Headers\Total_Inven.h"
 #include "UI_Manager.h"
+#include "Player.h"
 
 CTotal_Inven::CTotal_Inven(_Device pDevice)
 	: CUI(pDevice)
@@ -38,6 +39,11 @@ void CTotal_Inven::Set_WeaponParam(_uint iIndex, WPN_PARAM tWpnParam)
 	m_pWeapon_Slot[iIndex]->Set_WeaponParam(tWpnParam);
 }
 
+void CTotal_Inven::Set_ArmorParam(ARMOR_PARAM tArmorParam)
+{
+	m_pArmor_Slot->Set_ArmorParam(tArmorParam);
+}
+
 HRESULT CTotal_Inven::Ready_GameObject_Prototype()
 {
 	CUI::Ready_GameObject_Prototype();
@@ -67,6 +73,8 @@ HRESULT CTotal_Inven::Ready_GameObject(void * pArg)
 _int CTotal_Inven::Update_GameObject(_double TimeDelta)
 {
 	CUI::Update_GameObject(TimeDelta);
+
+	Late_Init();
 
 	m_pRendererCom->Add_RenderList(RENDER_UI, this);
 
@@ -104,16 +112,16 @@ _int CTotal_Inven::Update_GameObject(_double TimeDelta)
 
 	
 	
-	// 무기
-	LOOP(2)
-	{
-		CWeapon_Inven* pWeaponInven = CUI_Manager::Get_Instance()->Get_Weapon_Inven();
-		m_pWeapon_Slot[i]->Set_WeaponParam(pWeaponInven->Get_UseWeaponParam(i));
-	}
+	//// 무기
+	//LOOP(2)
+	//{
+	//	CWeapon_Inven* pWeaponInven = CUI_Manager::Get_Instance()->Get_Weapon_Inven();
+	//	m_pWeapon_Slot[i]->Set_WeaponParam(pWeaponInven->Get_UseWeaponParam(i));
+	//}
 	
 	// 아장
-	CArmor_Inven* pArmorInven = CUI_Manager::Get_Instance()->Get_Armor_Inven();
-	m_pArmor_Slot->Set_ArmorParam(pArmorInven->Get_UseArmorParam());
+	//CArmor_Inven* pArmorInven = CUI_Manager::Get_Instance()->Get_Armor_Inven();
+	//m_pArmor_Slot->Set_ArmorParam(pArmorInven->Get_UseArmorParam());
 	
 	return NO_EVENT;
 }
@@ -363,6 +371,24 @@ void CTotal_Inven::Click_Icon()
 
 		}
 	}
+
+	LOOP(2)
+	{
+		if (m_pWeapon_Slot[i]->Pt_InRect() && g_pInput_Device->Get_DIMouseState(CInput_Device::DIM_LB))
+		{
+			CWeapon_Inven* pWeapon_Inven = CUI_Manager::Get_Instance()->Get_Weapon_Inven();
+			pWeapon_Inven->Set_RegistIndex(i);
+			m_bIsActive = false;
+			pWeapon_Inven->Set_Active(true);
+		}
+	}
+
+	if (m_pArmor_Slot->Pt_InRect() && g_pInput_Device->Get_DIMouseState(CInput_Device::DIM_LB))
+	{
+		CArmor_Inven* pArmor_Inven = CUI_Manager::Get_Instance()->Get_Armor_Inven();
+		pArmor_Inven->Set_Active(true);
+		m_bIsActive = false;
+	}
 }
 
 void CTotal_Inven::SkillSlot_Touch_Sound(_uint i)
@@ -405,6 +431,16 @@ void CTotal_Inven::SetUp_SubUI_Active(_bool bIsActive)
 	// 인벤 아이콘 활성화
 	for (auto& iter : m_vecIcon)
 		iter->Set_Active(bIsActive);
+}
+
+void CTotal_Inven::Late_Init()
+{
+	if (m_bIsInit)
+		return;
+
+	m_bIsInit = true;
+
+	m_pPlayer = static_cast<CPlayer*>(g_pManagement->Get_GameObjectBack(L"Layer_Player", SCENE_MORTAL));
 }
 
 CTotal_Inven * CTotal_Inven::Create(_Device pGraphic_Device)

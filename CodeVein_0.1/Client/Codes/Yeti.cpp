@@ -351,6 +351,7 @@ void CYeti::Check_Hit()
 				{
 					if (true == m_tObjParam.bHitAgain)
 					{
+						m_bEventTrigger[0] = false;
 						m_eFirstCategory = MONSTER_STATE_TYPE::HIT;
 						m_tObjParam.bHitAgain = false;
 						m_pMeshCom->Reset_OldIndx();
@@ -386,24 +387,29 @@ void CYeti::Check_Dist()
 		MONSTER_STATE_TYPE::DEAD == m_eFirstCategory)
 		return;
 
-	Function_Find_Target();
-
-	if (true == m_bIsIdle ||
-		true == m_bIsCombo ||
+	if (true == m_bIsCombo ||
 		true == m_bIsMoveAround ||
 		true == m_tObjParam.bIsAttack ||
 		true == m_tObjParam.bIsDodge ||
 		true == m_tObjParam.bIsHit)
 		return;
 
+	Function_Find_Target();
 
 	if (nullptr == m_pAggroTarget)
 	{
-		Function_ResetAfterAtk();
+		if (MONSTER_STATE_TYPE::IDLE == m_eFirstCategory)
+			return;
+		else
+		{
+			Function_ResetAfterAtk();
 
-		m_eFirstCategory = MONSTER_STATE_TYPE::IDLE;
+			m_eFirstCategory = MONSTER_STATE_TYPE::IDLE;
 
-		return;
+			m_eState = YETI_ANI::Idle;
+
+			return;
+		}
 	}
 	else
 	{
@@ -3758,13 +3764,13 @@ void CYeti::Play_Hit()
 		if (m_pMeshCom->Is_Finish_Animation(0.95f))
 		{
 			Function_ResetAfterAtk();
-			m_tObjParam.bCanHit = true;
-			m_tObjParam.bIsHit = false;
 
 			m_bCanCoolDown = true;
 			m_fCoolDownMax = 0.5f;
 
 			m_eFirstCategory = MONSTER_STATE_TYPE::IDLE;
+
+			return;
 		}
 		else if (m_pMeshCom->Is_Finish_Animation(0.2f))
 		{
@@ -3789,6 +3795,7 @@ void CYeti::Play_Hit()
 					break;
 				}
 			}
+
 			if (false == m_tObjParam.bCanHit)
 			{
 				m_tObjParam.bCanHit = true;
@@ -3827,19 +3834,7 @@ void CYeti::Play_Dead()
 			m_bEnable = false;
 			m_dAniPlayMul = 0;
 		}
-		else if (5.433f <= AniTime)
-		{
-			if (false == m_bEventTrigger[0])
-			{
-				m_bEventTrigger[0] = true;
-
-				Start_Dissolve(0.7f, false, true, 0.0f);
-				m_fDeadEffect_Delay = 0.f;
-
-				CObjectPool_Manager::Get_Instance()->Create_Object(L"GameObject_Haze", (void*)&CHaze::HAZE_INFO(100.f, m_pTransformCom->Get_Pos(), 0.f));
-			}
-		}
-		else if (5.f <= AniTime)
+		else if (m_pMeshCom->Is_Finish_Animation(0.2f))
 		{
 			if (false == m_bEventTrigger[3])
 			{
@@ -3861,6 +3856,18 @@ void CYeti::Play_Dead()
 					g_pSoundManager->Play_Sound(L"Yeti_Death2.ogg", CSoundManager::Yeti_Voice, CSoundManager::Effect_Sound);
 					break;
 				}
+			}
+		}
+		else if (5.433f <= AniTime)
+		{
+			if (false == m_bEventTrigger[0])
+			{
+				m_bEventTrigger[0] = true;
+
+				Start_Dissolve(0.7f, false, true, 0.0f);
+				m_fDeadEffect_Delay = 0.f;
+
+				CObjectPool_Manager::Get_Instance()->Create_Object(L"GameObject_Haze", (void*)&CHaze::HAZE_INFO(100.f, m_pTransformCom->Get_Pos(), 0.f));
 			}
 		}
 

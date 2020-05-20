@@ -36,10 +36,6 @@ HRESULT CInventory::Ready_GameObject(void * pArg)
 
 _int CInventory::Update_GameObject(_double TimeDelta)
 {
-	CUI::Update_GameObject(TimeDelta);
-
-	Click_Icon();
-
 	if (m_bIsActive && !m_bIsSubActive)
 	{
 		SetUp_SubUI_Active(true);
@@ -51,12 +47,15 @@ _int CInventory::Update_GameObject(_double TimeDelta)
 
 		m_pExpInven->Set_Active(false);
 		m_pMtrInven->Set_Active(false);
-		m_pWeaponInven->Set_Active(false);
-		m_pArmorInven->Set_Active(false);
+		//m_pWeaponInven->Set_Active(false);
+		//m_pArmorInven->Set_Active(false);
 
 		m_bIsSubActive = false;
 	}
 	
+	CUI::Update_GameObject(TimeDelta);
+
+	Click_Icon();
 	/*if (!m_bIsActive)
 	{
 		m_pExpInven->Set_Active(false);
@@ -75,12 +74,12 @@ void CInventory::SetUp_Default()
 	m_pQuickSlot = m_pUIManager->Get_QuickSlot();
 	m_pExpInven = m_pUIManager->Get_Expendables_Inven();
 	m_pMtrInven = m_pUIManager->Get_Material_Inven();
-	m_pWeaponInven = m_pUIManager->Get_Weapon_Inven();
-	m_pArmorInven = m_pUIManager->Get_Armor_Inven();
+	//m_pWeaponInven = m_pUIManager->Get_Weapon_Inven();
+	//m_pArmorInven = m_pUIManager->Get_Armor_Inven();
 	m_pTotalInven = m_pUIManager->Get_Total_Inven();
 	
 	CUI::UI_DESC* pDesc = nullptr;
-	LOOP(5)
+	LOOP(3)
 	{
 		pDesc = new CUI::UI_DESC;
 		pDesc->fPosX = m_fPosX - 100.f + 50.f * i;
@@ -89,9 +88,14 @@ void CInventory::SetUp_Default()
 		pDesc->fSizeY = 40.f;
 		g_pManagement->Add_GameObject_ToLayer(L"GameObject_InvenIcon", SCENE_MORTAL, L"Layer_PlayerUI", pDesc);
 		CInventory_Icon* pIcon = static_cast<CInventory_Icon*>(g_pManagement->Get_GameObjectBack(L"Layer_PlayerUI", SCENE_MORTAL));
-		pIcon->Set_Type(CInventory_Icon::ICON_TYPE(i));
+		//pIcon->Set_Type(CInventory_Icon::ICON_TYPE(i));
 		m_vecIcon.push_back(pIcon);
 	}
+
+	m_vecIcon[0]->Set_Type(CInventory_Icon::ICON_EXPEND);
+	m_vecIcon[1]->Set_Type(CInventory_Icon::ICON_MTRL);
+	m_vecIcon[2]->Set_Type(CInventory_Icon::ICON_ALL);
+	m_vecIcon[2]->Set_UI_Pos(m_fPosX + 120.f, m_fPosY - 203.f);
 }
 
 void CInventory::Click_Icon()
@@ -111,8 +115,8 @@ void CInventory::Click_Icon()
 
 				m_pExpInven->Set_Active(true);
 				m_pMtrInven->Set_Active(false);
-				m_pWeaponInven->Set_Active(false);
-				m_pArmorInven->Set_Active(false);
+				//m_pWeaponInven->Set_Active(false);
+				//m_pArmorInven->Set_Active(false);
 			}			
 				break;
 			case CInventory_Icon::ICON_MTRL:
@@ -121,11 +125,11 @@ void CInventory::Click_Icon()
 
 				m_pExpInven->Set_Active(false);
 				m_pMtrInven->Set_Active(true);
-				m_pWeaponInven->Set_Active(false);
-				m_pArmorInven->Set_Active(false);
+				//m_pWeaponInven->Set_Active(false);
+				//m_pArmorInven->Set_Active(false);
 			}
 				break;
-			case CInventory_Icon::ICON_WEAPON:
+			/*case CInventory_Icon::ICON_WEAPON:
 			{
 				g_pSoundManager->Play_Sound(L"UI_CommonHover.wav", CSoundManager::Inven_Icon_Weapon, CSoundManager::Effect_Sound);
 
@@ -144,7 +148,7 @@ void CInventory::Click_Icon()
 				m_pWeaponInven->Set_Active(false);
 				m_pArmorInven->Set_Active(true);
 			}	
-				break;
+				break;*/
 			case CInventory_Icon::ICON_ALL:
 			{
 				g_pSoundManager->Play_Sound(L"UI_CommonHover.wav", CSoundManager::Inven_Icon_All, CSoundManager::Effect_Sound);

@@ -132,6 +132,10 @@ HRESULT CMainApp::Ready_Default_Setting(CGraphic_Device::WINMODE eMode, _ushort 
 
 	CScriptManager::Get_Instance()->Ready_ScriptManager(m_pGraphic_Dev);
 
+	g_pSoundManager->Load_Directory_SouneFile_W(L"BGM");
+
+	//g_pSoundManager->Stop_Sound(CSoundManager::Background_01);
+	//g_pSoundManager->Play_Sound(L"07_Main.ogg", CSoundManager::Background_01, CSoundManager::BGM_Sound); 
 	m_pStageAgent = CStageAgent::Get_Instance();
 	Safe_AddRef(m_pStageAgent);
 

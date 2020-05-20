@@ -160,6 +160,8 @@ HRESULT CUI_Manager::Add_UI_Prototype(_Device pDevice)
 		return E_FAIL;
 	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_PurchaseFailUI", CPurchaseFailUI::Create(pDevice))))
 		return E_FAIL;
+	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_GeneralStoreSellUI", CGeneralStoreSellUI::Create(pDevice))))
+		return E_FAIL;
 	
 	//////////////// Chae
 	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_BossMassageUI", CMassageUI::Create(pDevice))))
@@ -227,6 +229,9 @@ HRESULT CUI_Manager::Add_UI_Prototype(_Device pDevice)
 		return E_FAIL;
 	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_GeneralStoreOption", CGeneralStoreOption::Create(pDevice))))
 		return E_FAIL;
+	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_ExpendSellUI", CExpendSellUI::Create(pDevice))))
+		return E_FAIL;
+	
 
 	// ===================================================================================
 	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_GeneralStoreNPCUI", CGeneralStoreNPCUI::Create(pDevice))))
@@ -340,6 +345,10 @@ HRESULT CUI_Manager::SetUp_UILayer()
 
 	m_pNPC_InterActionUI = static_cast<CNPC_InteractionUI*>(g_pManagement->Clone_GameObject_Return(L"GameObject_NPC_Interaction", nullptr));
 	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pNPC_InterActionUI, SCENE_MORTAL, L"Layer_PlayerUI", nullptr);
+
+	// 잡화점 판매
+	m_pGeneralStoreSellUI = static_cast<CGeneralStoreSellUI*>(g_pManagement->Clone_GameObject_Return(L"GameObject_GeneralStoreSellUI", nullptr));
+	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pGeneralStoreSellUI, SCENE_MORTAL, L"Layer_PlayerUI", nullptr);
 
 	//////////////////////////////////// 펫 UI /////////////////////////////////////////////////////////////////////
 	// 펫 인벤토리

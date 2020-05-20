@@ -41,61 +41,22 @@ HRESULT CScene_Stage_03::Ready_Scene()
 
 	g_pManagement->LoadCreateObject_FromPath(m_pGraphic_Device, L"Object_Stage_03.dat");
 
+	//CScriptManager::Get_Instance()->Set_StageIdx(3);
+	//CScriptManager::Get_Instance()->Ready_Script_DynamicObject(3); //필요없으나 일단 예의상 넣었음
+
 	return S_OK;
 }
 
 _int CScene_Stage_03::Update_Scene(_double TimeDelta)
 {
-	CUI_Manager::Get_Instance()->Update_UI();
-
 	Create_Fog(TimeDelta);
 	Create_Dust(TimeDelta);
 
-	if (g_pInput_Device->Key_Down(DIK_H))
-	{
-		CGameObject* pInstance = g_pManagement->Get_GameObjectBack(L"Layer_Player", SCENE_MORTAL);
-
-		pInstance->Set_Enable(false);
-
-		g_pManagement->Clear_LightList();
-
-		CScriptManager::Get_Instance()->Reset_Script_DynmicObject();
-		CScriptManager::Get_Instance()->Reset_ScriptEvent(0, true);
-
-		if (FAILED(g_pManagement->Clear_Instance(SCENE_STAGE)))
-			return -1;
-
-		CScene* pScene = CScene_Stage_Base::Create(m_pGraphic_Device, m_bLoadStaticMesh);
-
-		if (FAILED(g_pManagement->SetUp_CurrentScene(pScene)))
-			return -1;
-	}
-
-	return _int();
+	return S_OK;
 }
 
 HRESULT CScene_Stage_03::Render_Scene()
 {
-	if (g_pInput_Device->Key_Down(DIK_H))
-	{
-		g_eSceneID_Cur = SCENE_STAGE_BASE;
-		g_eSTeleportID_Cur = TeleportID_Home_1;
-
-		CGameObject* pInstance = g_pManagement->Get_GameObjectBack(L"Layer_Player", SCENE_MORTAL);
-
-		pInstance->Set_Enable(false);
-
-		g_pManagement->Clear_LightList();
-
-		if (FAILED(g_pManagement->Clear_Instance(SCENE_STAGE)))
-			return -1;
-
-		CScene* pScene = CScene_Stage_Base::Create(m_pGraphic_Device, m_bLoadStaticMesh);
-
-		if (FAILED(g_pManagement->SetUp_CurrentScene(pScene)))
-			return -1;
-	}
-
 	return S_OK;
 }
 
@@ -110,6 +71,12 @@ HRESULT CScene_Stage_03::Ready_Layer_Player(const _tchar * pLayerTag)
 	if (FAILED(g_pManagement->Add_Layer(SCENE_STAGE, L"Layer_MonsterProjectile")))
 		return E_FAIL;
 	if (FAILED(g_pManagement->Add_Layer(SCENE_STAGE, L"Layer_BossUI")))
+		return E_FAIL;
+	if (FAILED(g_pManagement->Add_Layer(SCENE_STAGE, L"Layer_Colleague")))
+		return E_FAIL;
+	if (FAILED(g_pManagement->Add_Layer(SCENE_STAGE, L"Layer_Pet")))
+		return E_FAIL;
+	if (FAILED(g_pManagement->Add_Layer(SCENE_STAGE, L"Layer_Item")))
 		return E_FAIL;
 
 	CPlayer* pInstance = static_cast<CPlayer*>(g_pManagement->Get_GameObjectBack(L"Layer_Player", SCENE_MORTAL));
@@ -133,7 +100,7 @@ HRESULT CScene_Stage_03::Ready_Layer_Environment(const _tchar* pLayerTag)
 	if (FAILED(g_pManagement->Add_GameObject_ToLayer(L"GameObject_BossMassageUI", SCENE_STAGE, L"Layer_BossMassageUI")))
 		return E_FAIL;
 
-	g_pManagement->Create_Effect(L"FloorPlane_Black", _v3(0.f, -5.f, 0.f));
+	//g_pManagement->Create_Effect(L"FloorPlane_Black", _v3(0.f, -19.f, 0.f));
 
 	return S_OK;
 }
@@ -165,10 +132,10 @@ void CScene_Stage_03::Create_Fog(_double TimeDelta)
 	if (m_fMapFogDelay > FOG_OFFSET)
 	{
 		m_fMapFogDelay = 0.f;
-		g_pManagement->Create_Effect(L"MapFog_0", _v3(0.f, -4.f, 0.f));
+		g_pManagement->Create_Effect(L"MapFog_0", _v3(0.f, -17.5f, 0.f));
 	}
 
-	g_pManagement->Create_Effect_Offset(L"MapFog_0", 7.f, _v3(0.f, -3.f, 0.f));
+	g_pManagement->Create_Effect_Offset(L"MapFog_0", 7.f, _v3(0.f, -18.2f, 0.f));
 }
 
 void CScene_Stage_03::Create_Dust(_double TimeDelta)
