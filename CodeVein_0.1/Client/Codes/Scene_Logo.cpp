@@ -57,6 +57,14 @@ _int CScene_Logo::Update_Scene(_double TimeDelta)
 		}
 		if (m_pLoadingScreen->Get_Load())
 			m_bIsChangeStage = true;
+		
+		if (m_pLoadingScreen->Get_Active())
+		{
+			m_fBGMFade -= _float(TimeDelta);
+			if (m_fBGMFade <= 0.f)
+				m_fBGMFade = 0.f;
+			g_pSoundManager->Set_Volume(CSoundManager::BGM_Volume, m_fBGMFade);
+		}
 	}
 	else
 	{

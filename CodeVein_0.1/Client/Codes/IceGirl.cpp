@@ -133,9 +133,14 @@ _int CIceGirl::Update_GameObject(_double TimeDelta)
 
 		if (false == m_bFinishCamShake && m_pMeshCom->Is_Finish_Animation(0.5f))
 		{
-			m_bFinishCamShake = true;
+			m_bFinishCamShake = true; 
 			SHAKE_CAM_lv3;
 		}
+
+		m_fBGMFade -= _float(TimeDelta);
+		if (m_fBGMFade <= 0.f)
+			m_fBGMFade = 0.f;
+		g_pSoundManager->Set_Volume(CSoundManager::BGM_Volume, m_fBGMFade);
 
 		return NO_EVENT;
 	}
@@ -159,21 +164,6 @@ _int CIceGirl::Update_GameObject(_double TimeDelta)
 
 		if (true == m_bAIController)
 			m_pAIControllerCom->Update_AIController(TimeDelta);
-
-		if (!m_bUITrigger)
-		{
-			m_bUITrigger = true;
-
-			// 플레이어 발견 시, UI 활성화(지원)
-			m_pBossUI->Set_Active(true);
-
-			CMassageUI* pMassageUI = static_cast<CMassageUI*>(g_pManagement->Get_GameObjectBack(L"Layer_BossMassageUI", SCENE_STAGE));
-			pMassageUI->Set_BossName(BOSS_NAME::Fire_Boy_Ice_Girl);
-			pMassageUI->Set_Check_Play_BossnameUI(true);
-
-			g_pSoundManager->Stop_Sound(CSoundManager::Background_01);
-			g_pSoundManager->Play_BGM(L"Boss_FireIce_BGM.ogg");
-		}
 
 		// 보스UI 업데이트
 		// 체력이 0이 되었을때 밀림현상 방지.
@@ -2226,6 +2216,21 @@ HRESULT CIceGirl::Update_NF()
 
 			// 가까운 녀석 어그로 끌림.
 			Set_Target_Auto();
+		}
+
+		if (!m_bUITrigger)
+		{
+			m_bUITrigger = true;
+
+			// 플레이어 발견 시, UI 활성화(지원)
+			m_pBossUI->Set_Active(true);
+
+			CMassageUI* pMassageUI = static_cast<CMassageUI*>(g_pManagement->Get_GameObjectBack(L"Layer_BossMassageUI", SCENE_STAGE));
+			pMassageUI->Set_BossName(BOSS_NAME::Fire_Boy_Ice_Girl);
+			pMassageUI->Set_Check_Play_BossnameUI(true);
+
+			g_pSoundManager->Stop_Sound(CSoundManager::Background_01);
+			g_pSoundManager->Play_BGM(L"Boss_FireIce_BGM.ogg");
 		}
 	}
 

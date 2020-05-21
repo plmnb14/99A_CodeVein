@@ -58,6 +58,8 @@ private:
 	COrthoEffect*		m_pGlitterEffect_1 = nullptr;
 	COrthoEffect*		m_pTitleBG = nullptr;
 
+	_float				m_fBGMFade = 1.f;
+
 private:
 	DEBUG_SceneChange   m_eSceneChange = Stage_Training;
 
