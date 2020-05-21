@@ -352,18 +352,114 @@ void CScriptManager::St01_Sub6()
 
 void CScriptManager::St02_Sub0()
 {
+	switch (m_dwCellIdx)
+	{
+	case 17:
+	{
+		if (m_bEventTrigger[Script_Stage02][0] == false)
+		{
+			m_bEventTrigger[Script_Stage02][0] = true;
+
+			m_vecObjectPool[0]->Set_Enable(true);
+			m_vecObjectPool[1]->Set_Enable(true);
+			m_vecObjectPool[2]->Set_Enable(true);
+			m_vecObjectPool[3]->Set_Enable(true);
+			m_vecObjectPool[4]->Set_Enable(true);
+			m_vecObjectPool[5]->Set_Enable(true);
+		}
+	}
+		break;
+
+	case 110:
+	{
+		if (m_bEventTrigger[Script_Stage02][1] == false)
+		{
+			m_bEventTrigger[Script_Stage02][1] = true;
+
+			m_vecObjectPool[6]->Set_Enable(true);
+			m_vecObjectPool[7]->Set_Enable(true);
+			m_vecObjectPool[8]->Set_Enable(true);
+			m_vecObjectPool[9]->Set_Enable(true);
+			m_vecObjectPool[10]->Set_Enable(true);
+			m_vecObjectPool[11]->Set_Enable(true);
+		}
+	}
+		break;
+
+	}
 }
 
 void CScriptManager::St02_Sub1()
 {
+	switch (m_dwCellIdx)
+	{
+	case 42:
+	{
+		if (m_bEventTrigger[Script_Stage02][2] == false)
+		{
+			m_bEventTrigger[Script_Stage02][2] = true;
+
+			m_vecObjectPool[12]->Set_Enable(true);
+			m_vecObjectPool[13]->Set_Enable(true);
+			m_vecObjectPool[14]->Set_Enable(true);
+			m_vecObjectPool[15]->Set_Enable(true);
+			m_vecObjectPool[16]->Set_Enable(true);
+
+			m_vecObjectPool[17]->Set_Enable(true);
+			m_vecObjectPool[18]->Set_Enable(true);
+			m_vecObjectPool[19]->Set_Enable(true);
+			m_vecObjectPool[20]->Set_Enable(true);
+			m_vecObjectPool[21]->Set_Enable(true);
+
+			m_vecObjectPool[22]->Set_Enable(true);
+			m_vecObjectPool[23]->Set_Enable(true);
+			m_vecObjectPool[24]->Set_Enable(true);
+			m_vecObjectPool[25]->Set_Enable(true);
+		}
+	}
+	break;
+
+	}
 }
 
 void CScriptManager::St02_Sub2()
 {
+	switch (m_dwCellIdx)
+	{
+	case 60:
+	{
+		if (m_bEventTrigger[Script_Stage02][3] == false)
+		{
+			m_bEventTrigger[Script_Stage02][3] = true;
+
+			m_vecObjectPool[5]->Set_Enable(true);
+			m_vecObjectPool[6]->Set_Enable(true);
+			m_vecObjectPool[7]->Set_Enable(true);
+			m_vecObjectPool[8]->Set_Enable(true);
+			m_vecObjectPool[9]->Set_Enable(true);
+		}
+
+	}
+		break;
+	}
 }
 
 void CScriptManager::St02_Sub3()
 {
+	switch (m_dwCellIdx)
+	{
+	case 52:
+	{
+		if (m_bEventTrigger[Script_Stage03][4] == false)
+		{
+			m_bEventTrigger[Script_Stage03][4] = true;
+
+			m_vecObjectPool[10]->Set_Enable(true);
+		}
+
+	}
+		break;
+	}
 }
 
 void CScriptManager::St02_Sub4()
@@ -374,7 +470,7 @@ void CScriptManager::St03_Sub0()
 {
 	switch (m_dwCellIdx)
 	{
-	case 6:
+	case 17:
 	{
 		if (m_bEventTrigger[Script_Stage03][0] == false)
 		{
@@ -382,20 +478,23 @@ void CScriptManager::St03_Sub0()
 
 			m_vecObjectPool[0]->Set_Enable(true);
 			m_vecObjectPool[1]->Set_Enable(true);
+			m_vecObjectPool[2]->Set_Enable(true);
+			m_vecObjectPool[3]->Set_Enable(true);
+			m_vecObjectPool[4]->Set_Enable(true);
 		}
 
 		break;
 	}
 
-	case 51:
+	case 110:
 	{
 		if (m_bEventTrigger[Script_Stage03][1] == false)
 		{
 			m_bEventTrigger[Script_Stage03][1] = true;
 
-			m_vecObjectPool[2]->Set_Enable(true);
-			m_vecObjectPool[3]->Set_Enable(true);
-			m_vecObjectPool[4]->Set_Enable(true);
+			m_vecObjectPool[5]->Set_Enable(true);
+			m_vecObjectPool[6]->Set_Enable(true);
+			m_vecObjectPool[7]->Set_Enable(true);
 		}
 
 		break;
@@ -1015,11 +1114,83 @@ void CScriptManager::Ready_Stage02_DynamicObject()
 	m_vecObjectPool.reserve(30);
 
 	_v4 vPos[30] =
-	{
+	{ 
+		_v4(41.398f, 3.096f, -192.382f, 41.398f),
+		_v4(32.243f, 2.672f, -219.018f, 32.243f),
+		_v4(38.303f, 2.863f, -205.344f, 38.303f),
+		_v4(63.997f, 2.969f, -216.479f, 63.997f),
+		_v4(51.65f, 3.2f, -193.928f, 51.65f),
+
+		_v4(104.147f, 3.85f, -211.804f, 104.147f),
+		_v4(112.755f, 3.826f, -43.789f, 112.755f),
+		_v4(107.271f, 3.775f, -218.127f, 107.271f),
+		_v4(128.826f, 4.f, -183.542f, 128.826f),
+
+		_v4(131.906f, 4.01535f, -187.868f, 131.906f),
+		_v4(143.767f, 4.f, -179.792f, 143.767f),
+		_v4(131.515f, 4.f, -168.277f, 131.515f),
+		_v4(150.414f, 4.f, -173.471f, 150.414f),
+		_v4(143.148f, 4.f, -143.535f, 143.148f),
+		_v4(137.213f, 4.f, -145.73f, 137.213f),
+		_v4(122.463f, 4.f, -156.413f, 122.463f),
+		_v4(130.221f, 4.f, -126.726f, 130.221f),
+		_v4(108.823f, 4.f, -126.748f, 108.823f),
+
+		_v4(91.882f, 3.562f, -121.391f, 91.882f),
+		_v4(101.699f, 4.f, -116.463f, 101.699f),
+		_v4(98.238f, 3.849f, -122.223f, 98.238f),
+		_v4(85.896f, 4.019f, -103.512f, 85.896f),
+
+		_v4(56.034f, -0.244f, -67.926f, 56.034f),
+		_v4(44.555f, 0.f, -59.188f, 44.555f),
+		_v4(59.717f, 0.f, -56.3345f, 59.717f),
+		_v4(57.916f, 0.f, -49.487f, 57.916f),
+		_v4(41.947f, 0.255f, 2.428f, 41.947f),
+
+		_v4(37.5246f, 0.1f, -4.49077f, 37.5246f),
+		_v4(37.2138f, 0.1f, -8.83999f, 37.2138f),
+		_v4(-10.3593f, -0.833f, -1.846f, -10.3593f),
+
 	};
 
 	CGameObject* pInstance = nullptr;
 	_uint		iIndex = 0;
+
+	// // ================================================================================================================
+	//Subset처음부터 TriggerIdx 토템x2
+	{
+		//토템
+		pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_Cocoon",
+			&CMonster::MONSTER_STATUS(CMonster::MONSTER_COLOR_TYPE::COLOR_NONE, WEAPON_STATE::WEAPON_None,
+				true, _v3(vPos[iIndex].x, vPos[iIndex].y, vPos[iIndex].z), V3_NULL, 3));
+		pInstance->Set_Enable(false);
+		m_vecObjectPool.push_back(pInstance);
+		Safe_AddRef(pInstance);
+		g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Monster", nullptr);
+		++iIndex;
+
+		//토템
+		pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_Cocoon",
+			&CMonster::MONSTER_STATUS(CMonster::MONSTER_COLOR_TYPE::COLOR_NONE, WEAPON_STATE::WEAPON_None,
+				true, _v3(vPos[iIndex].x, vPos[iIndex].y, vPos[iIndex].z), V3_NULL, 3));
+		pInstance->Set_Enable(false);
+		m_vecObjectPool.push_back(pInstance);
+		Safe_AddRef(pInstance);
+		g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Monster", nullptr);
+		++iIndex;
+	}
+
+	// // ================================================================================================================
+	//Subset처음부터 TriggerIdx 토템x2
+	{
+
+	}
+
+	// // ================================================================================================================
+	//Subset처음부터 TriggerIdx 토템x2
+
+	// // ================================================================================================================
+	//Subset처음부터 TriggerIdx 토템x2
 
 }
 
