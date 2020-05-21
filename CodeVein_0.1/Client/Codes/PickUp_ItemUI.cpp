@@ -183,6 +183,7 @@ void CPickUp_ItemUI::SetUp_State(_double TimeDelta)
 	{
 		m_bOne_PickupUIEnd = false;
 		m_fPickup_Itembar = 0.f;
+		pUIManager->Get_PickUP_ItemUIMgr()->Get_vecPickUp_Item().pop_back(); 
 		m_bIsActive = false;
 	}
 }

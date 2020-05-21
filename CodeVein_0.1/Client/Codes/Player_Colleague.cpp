@@ -366,12 +366,12 @@ HRESULT CPlayer_Colleague::Render_GameObject_SetPass(CShader * pShader, _int iPa
 
 		m_matLastWVP = WorldMatrix * ViewMatrix * ProjMatrix;
 
-		_bool bMotionBlur = true;
-		if (FAILED(pShader->Set_Bool("g_bMotionBlur", bMotionBlur)))
-			return E_FAIL;
-		_bool bDecalTarget = false;
-		if (FAILED(pShader->Set_Bool("g_bDecalTarget", bDecalTarget)))
-			return E_FAIL;
+		//_bool bMotionBlur = true;
+		//if (FAILED(pShader->Set_Bool("g_bMotionBlur", bMotionBlur)))
+		//	return E_FAIL;
+		//_bool bDecalTarget = false;
+		//if (FAILED(pShader->Set_Bool("g_bDecalTarget", bDecalTarget)))
+		//	return E_FAIL;
 		_float fBloomPower = 0.5f;
 		if (FAILED(pShader->Set_Value("g_fBloomPower", &fBloomPower, sizeof(_float))))
 			return E_FAIL;
@@ -2518,14 +2518,14 @@ void CPlayer_Colleague::CollAtt_CenterDown()		// 2¹ø
 
 
 
-	//if (true == m_tObjParam.bCanAttack)
-	//{
-	//	m_tObjParam.bCanAttack = false;
-	//	m_tObjParam.bIsAttack = true;
-	//}
-	//else
-	//{
-	if (m_pDynamicMesh->Is_Finish_Animation_Lower(0.9f)/* && m_eColl_Sub_AttMoment == CPlayer_Colleague::Att_CenterDown*/)
+	if (true == m_tObjParam.bCanAttack)
+	{
+		m_tObjParam.bCanAttack = false;
+		m_tObjParam.bIsAttack = true;
+	}
+	else
+	{
+	if (m_pDynamicMesh->Is_Finish_Animation_Lower(0.9f) && m_eColleague_Ani == CPlayer_Colleague::Ani_Jump_CenterAtt_Skil)
 	{
 		Funtion_Reset_State();
 		m_eMovetype = CPlayer_Colleague::Coll_Idle;
@@ -2537,181 +2537,146 @@ void CPlayer_Colleague::CollAtt_CenterDown()		// 2¹ø
 		++m_iNormalAtt_Count;
 		g_pSoundManager->Stop_Sound(CSoundManager::Jack_Voice);
 		g_pSoundManager->Stop_Sound(CSoundManager::Jack_SFX_02);
+		g_pSoundManager->Stop_Sound(CSoundManager::Jack_SFX_01);
 		m_bCheck_Skil_Voice = false;
 		m_iCenter_Count = 0;
 		return;
 	}
-	else if (AniTime >= 3.233f)
+	else if (m_pDynamicMesh->Get_TrackInfo().Position >= 1.7f)
 	{
-		if (m_bEventTrigger[9] == false)
+		if (m_bEventTrigger[6] == false)
 		{
-			m_bEventTrigger[9] = true;
+			m_bEventTrigger[6] = true;
 
 			m_pSword->Set_Enable_Trail(false);
 		}
 	}
 
-	else if (AniTime >= 3.033f)
+	else if (m_pDynamicMesh->Get_TrackInfo().Position >= 1.5f)
 	{
-		if (m_bEventTrigger[8] == false)
+		if (m_bEventTrigger[5] == false)
 		{
-			m_bEventTrigger[8] = true;
+			m_bEventTrigger[5] = true;
 
 			m_pSword->Set_Target_CanAttack(false);
 			m_pSword->Set_Enable_Record(false);
 		}
 	}
 
-	else if (AniTime >= 2.887f)
+	else if (m_pDynamicMesh->Get_TrackInfo().Position >= 1.167f)
 	{
-		if (m_bEventTrigger[7] == false)
+		if (m_bEventTrigger[4] == false)
 		{
-			m_bEventTrigger[7] = true;
-
-			g_pManagement->Create_Effect_Delay(L"Player_Skill_Ring_Hor", 0.f, vEffPos, m_pTransformCom);
-			g_pManagement->Create_Effect_Delay(L"Player_Skill_Ring_Ver", 0.f, vEffPos, m_pTransformCom);
-			g_pManagement->Create_Effect_Delay(L"Player_Skill_RedCircle_Flash", 0.f, vEffPos, m_pTransformCom);
-			g_pManagement->Create_Effect_Delay(L"Player_Skill_RedParticle_Explosion", 0.f, vEffPos, m_pTransformCom);
-		}
-	}
-
-	else if (AniTime >= 2.867f)
-	{
-		if (m_bEventTrigger[6] == false)
-		{
-			m_bEventTrigger[6] = true;
-
-			g_pManagement->Create_Effect_Delay(L"Player_Skill_ScratchBlur_Ver", 0.f, vEffPos, m_pTransformCom);
-			g_pManagement->Create_Effect_Delay(L"Player_Skill_ScratchBlur_Sub_Ver", 0.f, vEffPos, m_pTransformCom);
-			g_pManagement->Create_Effect_Delay(L"Player_Skill_Scratch_Ver", 0.f, vEffPos, m_pTransformCom);
-			g_pManagement->Create_Effect_Delay(L"Hit_Slash_0", 0.f, vEffPos, m_pTransformCom);
-			g_pManagement->Create_Effect_Delay(L"Hit_Slash_1", 0.f, vEffPos, m_pTransformCom);
-			g_pManagement->Create_Effect_Delay(L"Hit_Slash_2", 0.f, vEffPos, m_pTransformCom);
-			g_pManagement->Create_Effect_Delay(L"Hit_Slash_3", 0.f, vEffPos, m_pTransformCom);
-			g_pManagement->Create_Effect_Delay(L"Hit_Slash_Particle_0", 0.f, vEffPos, m_pTransformCom);
-		}
-	}
-
-	else if (AniTime >= 2.767f)
-	{
-		if (m_bEventTrigger[5] == false)
-		{
-			m_bEventTrigger[5] = true;
+			m_bEventTrigger[4] = true;
 
 			m_pSword->Set_Target_CanAttack(true);
 			m_pSword->Set_Enable_Record(true);
 		}
 	}
 
-	else if (AniTime >= 2.6f)
-	{
-		if (m_bEventTrigger[4] == false)
-		{
-			m_bEventTrigger[4] = true;
-
-			m_pSword->Set_Enable_Trail(true);
-		}
-	}
-
-	else if (AniTime >= 1.967f)
+	else if (m_pDynamicMesh->Get_TrackInfo().Position >= 1.0f)
 	{
 		if (m_bEventTrigger[3] == false)
 		{
 			m_bEventTrigger[3] = true;
 
-			g_pManagement->Create_Effect_Delay(L"Player_Skill_ScratchBlur_Hor", 0.f, vEffPos, m_pTransformCom);
-			g_pManagement->Create_Effect_Delay(L"Player_Skill_ScratchBlur_Sub_Hor", 0.f, vEffPos, m_pTransformCom);
-			g_pManagement->Create_Effect_Delay(L"Player_Skill_Scratch_Hor", 0.f, vEffPos, m_pTransformCom);
-			g_pManagement->Create_Effect_Delay(L"Hit_Slash_0", 0.f, vEffPos, m_pTransformCom);
-			g_pManagement->Create_Effect_Delay(L"Hit_Slash_1", 0.f, vEffPos, m_pTransformCom);
-			g_pManagement->Create_Effect_Delay(L"Hit_Slash_2", 0.f, vEffPos, m_pTransformCom);
-			g_pManagement->Create_Effect_Delay(L"Hit_Slash_3", 0.f, vEffPos, m_pTransformCom);
-			g_pManagement->Create_Effect_Delay(L"Hit_Slash_Particle_0", 0.f, vEffPos, m_pTransformCom);
-			g_pManagement->Create_Effect_Delay(L"Player_Skill_RedParticle_Explosion", 0.f, vEffPos, m_pTransformCom);
+			m_pSword->Set_Enable_Trail(true);
 		}
 	}
 
 
-	if (AniTime >= 2.867f && AniTime < 3.333f)
-	{
-		if (m_bEventTrigger[12] == false)
-		{
-			m_bEventTrigger[12] = true;
-
-			m_fAtt_MoveSpeed_Cur = 1.f;
-			m_fAtt_MoveAccel_Cur = 0.f;
-
-			m_fAni_Multiply = 1.f;
-		}
-		Colleague_Movement(m_fAtt_MoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_Z));
-		Colleague_SkilMovement(m_fAni_Multiply);
-	}
-
-	else if (AniTime >= 2.f)
+	if (m_pDynamicMesh->Get_TrackInfo().Position >= 2.6f && m_pDynamicMesh->Get_TrackInfo().Position < 3.367f)
 	{
 		if (m_bEventTrigger[2] == false)
 		{
 			m_bEventTrigger[2] = true;
 
-			m_tObjParam.bInvisible = false;
-			m_pSword->Set_Invisible(false);
-
-			m_fAni_Multiply = 1.f;
+			m_fAtt_MoveAccel_Cur = 0.f;
+			m_fAtt_MoveSpeed_Cur = 0.2f;
+			m_fAni_Multiply = 0.0f;
 		}
+		Colleague_SkilMovement(m_fAni_Multiply);
+		Colleague_Movement(m_fAtt_MoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_Z));
 	}
 
-	else if (AniTime >= 1.9f)
+	else if (m_pDynamicMesh->Get_TrackInfo().Position >= 1.366f && m_pDynamicMesh->Get_TrackInfo().Position < 2.067f)
 	{
-		if (m_bEventTrigger[10] == false)
+		if (m_bEventTrigger[1] == false)
 		{
-			m_bEventTrigger[10] = true;
+			m_bEventTrigger[1] = true;
 
-			_v3 vEffPos_Dis = _v3(0.f, 1.5f, 0.f) - m_pTransformCom->Get_Axis(AXIS_Z) * 1.f;
-			m_tObjParam.bCanHit = true;
-
-			g_pManagement->Create_Effect_Delay(L"Player_Skill_Distortion_Circle", 0.f, vEffPos_Dis, m_pTransformCom);
+			m_fAtt_MoveAccel_Cur = 0.f;
+			m_fAtt_MoveSpeed_Cur = 0.2f;
+			m_fAni_Multiply = 0.0f;
 		}
+		Colleague_SkilMovement(m_fAni_Multiply);
+		Colleague_Movement(m_fAtt_MoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_Z));
 	}
 
-	if (AniTime >= 1.167f && AniTime < 2.1f)
+	else if (m_pDynamicMesh->Get_TrackInfo().Position >= 0.f && m_pDynamicMesh->Get_TrackInfo().Position < 1.366f)
 	{
 		if (m_bEventTrigger[0] == false)
 		{
 			m_bEventTrigger[0] = true;
 
-			m_fAtt_MoveSpeed_Cur = 30.f;
 			m_fAtt_MoveAccel_Cur = 0.f;
-
-			m_fAni_Multiply = 1.5f;
-
-			//m_tObjParam.bInvisible = true;
-			//m_pSword->Set_Invisible(true);
+			m_fAtt_MoveSpeed_Cur = 0.2f;
+			m_fAni_Multiply = 0.0f;
 		}
-
-		if (m_bEventTrigger[1] == false)
-		{
-			m_bEventTrigger[1] = true;
-
-			_v3 vEffPos_Dis = _v3(0.f, 1.5f, 0.f) + m_pTransformCom->Get_Axis(AXIS_Z) * 1.5f;
-			m_tObjParam.bCanHit = false;
-
-			g_pManagement->Create_Effect_Delay(L"Player_Skill_Distortion_Circle", 0.f, vEffPos_Dis, m_pTransformCom);
-		}
-		Colleague_Movement(m_fAtt_MoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_Z));
+		Funtion_RotateBody();
 		Colleague_SkilMovement(m_fAni_Multiply);
+		Colleague_Movement(m_fAtt_MoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_Z));
 	}
 
-	else if (m_pDynamicMesh->Get_TrackInfo().Position > 0.5f)
-	{
-		if (m_bEventTrigger[11] == false)
-		{
-			m_bEventTrigger[11] = true;
+	_v3 vEffPos = _v3(0.f, 1.5f, 0.f) + m_pTransformCom->Get_Axis(AXIS_Z) * 1.5f;
 
-			// µðÁ¹ºê Àá±ñ »©µÒ
-			//Start_Dissolve(1.f, false);
+	if (m_pDynamicMesh->Get_TrackInfo().Position >= 1.333f)
+	{
+		if (m_bEventTrigger[9] == false)
+		{
+			m_bEventTrigger[9] = true;
+
+			g_pManagement->Create_Effect_Delay(L"Player_Skill_ShadowAssault_ScratchBlur", 0.f, vEffPos, m_pTransformCom);
+			g_pManagement->Create_Effect_Delay(L"Player_Skill_ShadowAssault_Scratch", 0.f, vEffPos, m_pTransformCom);
+			g_pManagement->Create_Effect_Delay(L"Hit_Slash_0", 0.f, vEffPos, m_pTransformCom);
+			g_pManagement->Create_Effect_Delay(L"Hit_Slash_1", 0.f, vEffPos, m_pTransformCom);
+			g_pManagement->Create_Effect_Delay(L"Hit_Slash_2", 0.f, vEffPos, m_pTransformCom);
+			g_pManagement->Create_Effect_Delay(L"Hit_Slash_3", 0.f, vEffPos, m_pTransformCom);
+			g_pManagement->Create_Effect_Delay(L"Hit_Slash_Particle_0", 0.f, vEffPos, m_pTransformCom);
+			g_pManagement->Create_ParticleEffect_Delay(L"Player_Skill_RedParticle_Explosion", 0.1f, 0.f, vEffPos, m_pTransformCom);
+
+			g_pSoundManager->Stop_Sound(CSoundManager::Jack_SFX_01);
+			g_pSoundManager->Play_Sound(L"SE_WEAPON_IMPACT_001.ogg", CSoundManager::Jack_SFX_01, CSoundManager::Effect_Sound);
+			SHAKE_CAM_lv2;
 		}
 	}
-	//}
+
+	else if (m_pDynamicMesh->Get_TrackInfo().Position >= 1.133f)
+	{
+		if (m_bEventTrigger[8] == false)
+		{
+			m_bEventTrigger[8] = true;
+
+			g_pManagement->Create_Effect_Delay(L"Player_Skill_WindMesh", 0.f, m_pTransformCom->Get_Pos() + _v3(0, 0.5f, 0.f), nullptr);
+
+			g_pSoundManager->Stop_Sound(CSoundManager::Jack_SFX_02);
+			g_pSoundManager->Play_Sound(L"SE_BLACK_KNIGHT_SWING_005.ogg", CSoundManager::Jack_SFX_02, CSoundManager::Effect_Sound);
+		}
+	}
+
+	else if (m_pDynamicMesh->Get_TrackInfo().Position >= 0.1f)
+	{
+		if (m_bEventTrigger[7] == false)
+		{
+			m_bEventTrigger[7] = true;
+
+			_v3 vEffPos = m_pTransformCom->Get_Pos() + _v3(0.f, 1.3f, 0.f);
+			CParticleMgr::Get_Instance()->Create_Skill_Start_Effect(V3_NULL, vEffPos, m_pTransformCom);
+			g_pManagement->Create_ParticleEffect_Delay(L"Player_Skill_DarkSmokeAura", 0.5f, 0.f, _v3(0, 1.1f, 0.f), m_pTransformCom);
+		}
+	}
+
+	}
 	return;
 }
 
