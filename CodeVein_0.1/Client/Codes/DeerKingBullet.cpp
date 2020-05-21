@@ -57,12 +57,6 @@ HRESULT CDeerKingBullet::Ready_GameObject(void * pArg)
 	m_tObjParam.bCanAttack = true;
 	m_tObjParam.fDamage = 250.f * pow(1.5f, g_sStageIdx_Cur - 1);
 
-	m_pBulletBody = static_cast<CEffect*>(g_pManagement->Clone_GameObject_Return(L"DeerKing_IceBullet_0", nullptr));
-	m_pBulletBody->Set_Desc(_v3(0, 0, 0), nullptr);
-	m_pBulletBody->Set_ParentObject(this);
-	m_pBulletBody->Reset_Init();
-	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pBulletBody, SCENE_STAGE, L"Layer_Effect", nullptr);
-	
 
 	return NOERROR;
 }
@@ -82,7 +76,6 @@ _int CDeerKingBullet::Update_GameObject(_double TimeDelta)
 	// Calc Angle
 	_v3	vRight = *D3DXVec3Cross(&vRight, &_v3(0.f, 1.f, 0.f), &m_vDir);
 	V3_NORMAL_SELF(&vRight);
-	//_float	fDotX = acosf(D3DXVec3Dot(&_v3{ 0,1,0 }, &m_pTransformCom->Get_Axis(AXIS_Z)));
 	_float	fDotY = acosf(D3DXVec3Dot(&_v3{ 0,0,1 }, &m_vDir));
 	if (vRight.z > 0)
 		fDotY *= -1.f;
@@ -93,16 +86,6 @@ _int CDeerKingBullet::Update_GameObject(_double TimeDelta)
 	{
 		OnCollisionEnter();
 
-		//// Calc Angle
-		//_v3	vRight = *D3DXVec3Cross(&vRight, &_v3(0.f, 1.f, 0.f), &m_vDir);
-		//V3_NORMAL_SELF(&vRight);
-		////_float	fDotX = acosf(D3DXVec3Dot(&_v3{ 0,1,0 }, &m_pTransformCom->Get_Axis(AXIS_Z)));
-		//_float	fDotY = acosf(D3DXVec3Dot(&_v3{ 0,0,1 }, &m_vDir));
-		//if (vRight.z > 0)
-		//	fDotY *= -1.f;
-
-		//m_pTransformCom->Set_Angle(_v3(0.f, fDotY, 0.f));
-
 		m_pTransformCom->Add_Pos(m_fSpeed * (_float)TimeDelta, m_vDir);
 
 		if (!m_bFire)
@@ -112,6 +95,13 @@ _int CDeerKingBullet::Update_GameObject(_double TimeDelta)
 			g_pManagement->Create_Effect(L"IceBlock_Particle"						, m_pTransformCom->Get_Pos(), nullptr);
 			g_pManagement->Create_Effect(L"DeerKing_IceBullet_DeadParticle_Stone_0"	, m_pTransformCom->Get_Pos(), nullptr);
 			g_pManagement->Create_Effect(L"DeerKing_IceBullet_DeadParticle_0"		, m_pTransformCom->Get_Pos(), nullptr);
+
+			m_pBulletBody = static_cast<CEffect*>(g_pManagement->Clone_GameObject_Return(L"DeerKing_IceBullet_0", nullptr));
+			m_pBulletBody->Set_Desc(_v3(0, 0, 0), nullptr);
+			m_pBulletBody->Set_ParentObject(this);
+			m_pBulletBody->Reset_Init();
+			//m_pBulletBody->Set_Scale(_v3(0.2f, 0.4f, 0.4f));
+			g_pManagement->Add_GameOject_ToLayer_NoClone(m_pBulletBody, SCENE_STAGE, L"Layer_Effect", nullptr);
 		}
 	}
 	else

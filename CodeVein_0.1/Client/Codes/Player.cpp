@@ -17,6 +17,7 @@ float g_OriginCamPos = 3.f;
 CPlayer::CPlayer(LPDIRECT3DDEVICE9 pGraphic_Device)
 	: CGameObject(pGraphic_Device)
 {
+
 }
 
 CPlayer::CPlayer(const CPlayer & rhs)
@@ -51,28 +52,43 @@ void CPlayer::Set_WeaponSlot(ACTIVE_WEAPON_SLOT eType, WEAPON_DATA eData)
 
 	D3DXFRAME_DERIVED*	pFrame = (D3DXFRAME_DERIVED*)m_pDynamicMesh->Get_BonInfo(tmpChar, 2);
 
+	WPN_PARAM tmpParam = m_pUIManager->Get_Weapon_Inven()->Get_UseWeaponParam(eType);
+
 	m_pWeapon[eType] = static_cast<CWeapon*>(g_pManagement->Clone_GameObject_Return(L"GameObject_Weapon", NULL));
+	m_pWeapon[eType]->Set_WeaponParam(tmpParam, tmpParam.iWeaponName);
 	m_pWeapon[eType]->Change_WeaponData(eData);
 	m_pWeapon[eType]->Set_Friendly(true);
 	m_pWeapon[eType]->Set_AttachBoneMartix(&pFrame->CombinedTransformationMatrix);
 	m_pWeapon[eType]->Set_ParentMatrix(&m_pTransform->Get_WorldMat());
 
-	if (m_eActiveSlot == eType)
+	// 메인 슬롯이라면
+	if(WPN_SLOT_A == eType)
+		m_eMainWpnState = m_pWeapon[eType]->Get_WeaponType();
+
+	// 메인 슬롯이라면
+	else if (WPN_SLOT_B == eType)
 	{
-		m_bOnInvenChange = true;
-		Change_Weapon();
+		m_eSubWpnState = m_pWeapon[eType]->Get_WeaponType();
+
+		m_bOneHand = (
+			m_eMainWpnState == WEAPON_SSword ? true :
+			m_eMainWpnState == WEAPON_LSword ? false :
+			m_eMainWpnState == WEAPON_Halberd ? true :
+			m_eMainWpnState == WEAPON_Gun ? true :
+			m_eMainWpnState == WEAPON_Hammer ? false : true
+			);
 	}
-
-	//m_bWeaponActive[eType] = true;r
-
 }
 
-void CPlayer::Set_ArmorSlot(ARMOR_All_DATA eType)
+void CPlayer::Set_ArmorSlot(ARMOR_All_DATA eType, _float fMaxHP)
 {
 	//if (m_pOuter->Get_OuterType() + 1 == eType)
 	//	return;
 
 	m_pOuter->Change_OuterMesh(CClothManager::Cloth_Dynamic(eType + 1));
+	m_tObjParam.fHp_Max = fMaxHP;
+	if (fMaxHP < m_tObjParam.fHp_Cur)
+		m_tObjParam.fHp_Cur = fMaxHP;
 }
 
 void CPlayer::Set_Target_UI(CGameObject * pGameObject)
@@ -790,10 +806,22 @@ void CPlayer::Parameter_YPos(_double dTimeDelta)
 		m_pTransform->Set_Pos(m_pNavMesh->Axis_Y_OnNavMesh(m_pTransform->Get_Pos()));
 	else
 	{
-		_float fYSpeed = m_pRigid->Set_Fall(m_pTransform->Get_Pos(), _float(dTimeDelta));
+		if (m_FallingTimer > 1.5f)
+		{
+			Teleport_ResetOptions(g_eSceneID_Cur, g_eSTeleportID_Cur);
 
-		D3DXVECTOR3 JumpLength = { 0, -fYSpeed, 0 };
-		m_pTransform->Add_Pos(JumpLength);
+			m_pRigid->Set_IsFall(false);
+			m_FallingTimer = 0.f;
+		}
+		else
+		{
+			m_FallingTimer += _float(dTimeDelta);
+
+			_float fYSpeed = m_pRigid->Set_Fall(m_pTransform->Get_Pos(), _float(dTimeDelta));
+
+			D3DXVECTOR3 JumpLength = { 0, -fYSpeed, 0 };
+			m_pTransform->Add_Pos(JumpLength);
+		}
 	}
 }
 
@@ -1652,21 +1680,25 @@ void CPlayer::Key_Movement_Down()
 	if (g_pInput_Device->Key_Down(DIK_W))
 	{
 		m_bMove[MOVE_Front] = true;
+		m_bOldMoveDierection[MOVE_Front] = true;
 	}
 
 	else if (g_pInput_Device->Key_Down(DIK_S))
 	{
 		m_bMove[MOVE_Back] = true;
+		m_bOldMoveDierection[MOVE_Back] = true;
 	}
 
 	if (g_pInput_Device->Key_Down(DIK_A))
 	{
 		m_bMove[MOVE_Left] = true;
+		m_bOldMoveDierection[MOVE_Left] = true;
 	}
 
 	else if (g_pInput_Device->Key_Down(DIK_D))
 	{
 		m_bMove[MOVE_Right] = true;
+		m_bOldMoveDierection[MOVE_Right] = true;
 	}
 
 	if (g_pInput_Device->Key_Down(DIK_LSHIFT))
@@ -1802,21 +1834,33 @@ void CPlayer::Key_Movement_Up()
 	if (g_pInput_Device->Key_Up(DIK_W))
 	{
 		m_bMove[MOVE_Front] = false;
+
+		if (false == m_bOnAiming)
+			m_bOldMoveDierection[MOVE_Front] = false;
 	}
 
 	else if (g_pInput_Device->Key_Up(DIK_S))
 	{
 		m_bMove[MOVE_Back] = false;
+
+		if(false == m_bOnAiming)
+			m_bOldMoveDierection[MOVE_Back] = false;
 	}
 
 	if (g_pInput_Device->Key_Up(DIK_A))
 	{
 		m_bMove[MOVE_Left] = false;
+
+		if (false == m_bOnAiming)
+			m_bOldMoveDierection[MOVE_Left] = false;
 	}
 
 	else if (g_pInput_Device->Key_Up(DIK_D))
 	{
 		m_bMove[MOVE_Right] = false;
+
+		if (false == m_bOnAiming)
+			m_bOldMoveDierection[MOVE_Right] = false;
 	}
 
 	if (g_pInput_Device->Key_Up(DIK_LSHIFT))
@@ -2299,8 +2343,8 @@ void CPlayer::Key_BloodSuck()
 				m_eActState = ACT_BloodSuck_Execution;
 			}
 
-			else
-				cout << "처형할 대상이 없습니다." << endl;
+			//else
+			//	cout << "처형할 대상이 없습니다." << endl;
 		}
 	}
 }
@@ -2852,14 +2896,14 @@ void CPlayer::Play_MoveDelay()
 
 		if (m_bOnAiming)
 		{
-			if (m_bMove[MOVE_Front])
+			if (m_bOldMoveDierection[MOVE_Front])
 			{
-				if (m_bMove[MOVE_Left])
+				if (m_bOldMoveDierection[MOVE_Left])
 				{
 					m_eAnim_Lower = Cmn_Run_FL_End;
 				}
 
-				else if (m_bMove[MOVE_Right])
+				else if (m_bOldMoveDierection[MOVE_Right])
 				{
 					m_eAnim_Lower = Cmn_Run_FR_End;
 				}
@@ -2870,14 +2914,14 @@ void CPlayer::Play_MoveDelay()
 				}
 			}
 
-			else if (m_bMove[MOVE_Back])
+			else if (m_bOldMoveDierection[MOVE_Back])
 			{
-				if (m_bMove[MOVE_Left])
+				if (m_bOldMoveDierection[MOVE_Left])
 				{
 					m_eAnim_Lower = Cmn_Run_FL_End;
 				}
 
-				else if (m_bMove[MOVE_Right])
+				else if (m_bOldMoveDierection[MOVE_Right])
 				{
 					m_eAnim_Lower = Cmn_Run_FR_End;
 				}
@@ -2888,14 +2932,14 @@ void CPlayer::Play_MoveDelay()
 				}
 			}
 
-			else if (m_bMove[MOVE_Left])
+			else if (m_bOldMoveDierection[MOVE_Left])
 			{
-				if (m_bMove[MOVE_Front])
+				if (m_bOldMoveDierection[MOVE_Front])
 				{
 					m_eAnim_Lower = Cmn_Run_FL_End;
 				}
 
-				else if (m_bMove[MOVE_Back])
+				else if (m_bOldMoveDierection[MOVE_Back])
 				{
 					m_eAnim_Lower = Cmn_Run_BL_End;
 				}
@@ -2906,14 +2950,14 @@ void CPlayer::Play_MoveDelay()
 				}
 			}
 
-			else if (m_bMove[MOVE_Right])
+			else if (m_bOldMoveDierection[MOVE_Right])
 			{
-				if (m_bMove[MOVE_Front])
+				if (m_bOldMoveDierection[MOVE_Front])
 				{
 					m_eAnim_Lower = Cmn_Run_FR_End;
 				}
 
-				else if (m_bMove[MOVE_Back])
+				else if (m_bOldMoveDierection[MOVE_Back])
 				{
 					m_eAnim_Lower = Cmn_Run_BR_End;
 				}
@@ -2931,6 +2975,7 @@ void CPlayer::Play_MoveDelay()
 		}
 
 		m_eAnim_Upper = m_eAnim_Lower;
+		m_eAnim_LeftArm = m_eAnim_Lower;
 
 		// 한손 일때
 		if (m_bOneHand)
@@ -2942,14 +2987,20 @@ void CPlayer::Play_MoveDelay()
 		// 양손 일때
 		else
 		{
-			m_eAnim_LeftArm = m_eAnim_RightArm =
-				(m_eMainWpnState == WEAPON_Hammer ? 
-					Hammer_BlendWalk : Lsword_BlendWalk);
+			m_eAnim_RightArm =
+				(m_eMainWpnState == WEAPON_Hammer ? Hammer_BlendWalk :
+					m_eMainWpnState == WEAPON_LSword ? Lsword_BlendWalk : Lsword_BlendWalk);
 		}
 
 		m_fSkillMoveAccel_Cur = 0.f;
 		m_fSkillMoveSpeed_Cur = m_tInfo.fMoveSpeed_Cur;
 		m_fSkillMoveMultiply = 0.75f;
+
+		m_bOldMoveDierection[MOVE_Front] = false;
+		m_bOldMoveDierection[MOVE_Back] = false;
+		m_bOldMoveDierection[MOVE_Left] = false;
+		m_bOldMoveDierection[MOVE_Right] = false;
+
 	}
 
 	else if (true == m_bOnMoveDelay)
@@ -4777,22 +4828,19 @@ void CPlayer::Play_WeaponChange()
 
 		if (m_pDynamicMesh->Is_Finish_Animation_Upper(0.95f))
 		{
+			m_eActiveSlot = (m_eActiveSlot == WPN_SLOT_A) ? WPN_SLOT_B : WPN_SLOT_A;
+
+			m_bChangeWeapon = false;
+
+			m_bOneHand = (
+				m_eMainWpnState == WEAPON_SSword ? false :
+				m_eMainWpnState == WEAPON_LSword ? true :
+				m_eMainWpnState == WEAPON_Halberd ? false :
+				m_eMainWpnState == WEAPON_Gun ? false :
+				m_eMainWpnState == WEAPON_Hammer ? true : true
+				);
+
 			m_eMainWpnState = m_pWeapon[m_eActiveSlot]->Get_WeaponType();
-
-			if (false == m_bOnInvenChange)
-			{
-				m_eActiveSlot = (m_eActiveSlot == WPN_SLOT_A) ? WPN_SLOT_B : WPN_SLOT_A;
-
-				m_bChangeWeapon = false;
-
-				m_bOneHand = (
-					m_eMainWpnState == WEAPON_SSword ? true :
-					m_eMainWpnState == WEAPON_LSword ? false :
-					m_eMainWpnState == WEAPON_Halberd ? true :
-					m_eMainWpnState == WEAPON_Gun ? true :
-					m_eMainWpnState == WEAPON_Hammer ? false : true
-					);
-			}
 			
 			m_bOnInvenChange = false;
 
@@ -11057,16 +11105,6 @@ void CPlayer::Change_Weapon()
 	// 무기가 없으면 교체 못함
 	IF_NULL_RETURN(m_pWeapon[WPN_SLOT_B]);
 
-	//// 무기가 없으면 교체 못함
-	//IF_NULL_RETURN(m_pWeapon[WPN_SLOT_C]);
-	//
-	//// 무기가 없으면 교체 못함
-	//IF_NULL_RETURN(m_pWeapon[WPN_SLOT_D]);
-	//
-	//// 무기가 없으면 교체 못함
-	//IF_NULL_RETURN(m_pWeapon[WPN_SLOT_E]);
-
-
 	if (m_eActState == ACT_WeaponChange)
 		return;
 	// 바꾼 무기로부터 타입을 받아옴
@@ -11412,8 +11450,8 @@ HRESULT CPlayer::SetUp_Default()
 	m_tObjParam.bCanCounter = true;
 	m_tObjParam.bCanHit = true;
 	m_tObjParam.bIsDodge = false;
-	m_tObjParam.fHp_Cur = 1000.f;
-	m_tObjParam.fHp_Max = 1000.f;
+	m_tObjParam.fHp_Cur = 9999.f;
+	m_tObjParam.fHp_Max = 9999.f;
 	
 	// Anim
 	m_fAnimMutiply = 1.f;

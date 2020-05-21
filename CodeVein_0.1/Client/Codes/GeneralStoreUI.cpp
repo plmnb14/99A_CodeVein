@@ -41,6 +41,7 @@ _int CGeneralStoreUI::Update_GameObject(_double TimeDelta)
 		m_pExpendCollectionUI->Set_Active(true);
 		SetUp_SubUI_Active(true);
 		m_bIsSubActive = true;
+		
 	}
 	else if (!m_bIsActive && m_bIsSubActive)
 	{
@@ -48,10 +49,15 @@ _int CGeneralStoreUI::Update_GameObject(_double TimeDelta)
 		m_pMaterialCollectionUI->Set_Active(false);
 		SetUp_SubUI_Active(false);
 		m_bIsSubActive = false;
+		
+		CUI_Manager::Get_Instance()->Get_MouseUI()->Set_Active(false);
 	}
 
 	if (!m_bIsActive)
 		return NO_EVENT;
+	else
+		CUI_Manager::Get_Instance()->Get_MouseUI()->Set_Active(true);
+
 	CUI::Update_GameObject(TimeDelta);
 
 	m_pRendererCom->Add_RenderList(RENDER_UI, this);
@@ -197,7 +203,7 @@ void CGeneralStoreUI::Click_SubUI()
 		m_pExpendCollectionUI->Set_Active(true);
 		m_pMaterialCollectionUI->Set_Active(false);
 
-		g_pSoundManager->Play_Sound(L"UI_CommonHover.wav", CSoundManager::CHANNELID::Purchase_GeneralShop_Icon01, CSoundManager::Ambient_Sound);
+		CUI_Manager::Get_Instance()->Stop_Play_UISound(L"Slot_Regist.ogg", CSoundManager::CHANNELID::UI_Click, CSoundManager::Effect_Sound);
 	}
 
 	// 재료 버튼 클릭시
@@ -206,7 +212,7 @@ void CGeneralStoreUI::Click_SubUI()
 		m_pExpendCollectionUI->Set_Active(false);
 		m_pMaterialCollectionUI->Set_Active(true);
 
-		g_pSoundManager->Play_Sound(L"UI_CommonHover.wav", CSoundManager::CHANNELID::Purchase_GeneralShop_Icon02, CSoundManager::Ambient_Sound);
+		CUI_Manager::Get_Instance()->Stop_Play_UISound(L"Slot_Regist.ogg", CSoundManager::CHANNELID::UI_Click, CSoundManager::Effect_Sound);
 	}
 	
 	

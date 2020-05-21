@@ -83,6 +83,8 @@ _int CTotal_Inven::Update_GameObject(_double TimeDelta)
 
 		g_pSoundManager->Stop_Sound(CSoundManager::UI_SFX_01);
 		g_pSoundManager->Play_Sound(L"UI_WindowToggle.ogg", CSoundManager::UI_SFX_01, CSoundManager::Effect_Sound);
+
+		
 	}
 	else if (!m_bIsActive && m_bIsSubActive)
 	{
@@ -91,9 +93,14 @@ _int CTotal_Inven::Update_GameObject(_double TimeDelta)
 
 		g_pSoundManager->Stop_Sound(CSoundManager::UI_SFX_01);
 		g_pSoundManager->Play_Sound(L"UI_WindowToggle.ogg", CSoundManager::UI_SFX_01, CSoundManager::Effect_Sound);
+
+		CUI_Manager::Get_Instance()->Get_MouseUI()->Set_Active(false);
 	}
 	if (!m_bIsActive)
 		return NO_EVENT;
+	else
+		CUI_Manager::Get_Instance()->Get_MouseUI()->Set_Active(true);
+	
 	CUI::Update_GameObject(TimeDelta);
 
 	Late_Init();
@@ -321,7 +328,7 @@ void CTotal_Inven::Click_Icon()
 	if (m_vecIcon[0]->Pt_InRect() &&
 		g_pInput_Device->Get_DIMouseState(CInput_Device::DIM_LB))
 	{
-		g_pSoundManager->Play_Sound(L"UI_CommonHover.wav", CSoundManager::Total_Inven_All, CSoundManager::Effect_Sound);
+		CUI_Manager::Get_Instance()->Stop_Play_UISound(L"Slot_Regist.ogg", CSoundManager::CHANNELID::UI_Click, CSoundManager::Effect_Sound);
 		m_pInventory = CUI_Manager::Get_Instance()->Get_Inventory();
 		m_pInventory->Set_Active(true);
 		CUI_Manager::Get_Instance()->Get_Expendables_Inven()->Set_Active(true);
@@ -330,7 +337,7 @@ void CTotal_Inven::Click_Icon()
 	else if (m_vecIcon[1]->Pt_InRect() &&
 		g_pInput_Device->Get_DIMouseState(CInput_Device::DIM_LB))
 	{	
-		g_pSoundManager->Play_Sound(L"UI_CommonHover.wav", CSoundManager::Total_Inven_Pet, CSoundManager::Effect_Sound);
+		CUI_Manager::Get_Instance()->Stop_Play_UISound(L"Slot_Regist.ogg", CSoundManager::CHANNELID::UI_Click, CSoundManager::Effect_Sound);
 		m_bIsActive = false;
 		// 스테이터스 창 비활성화
 		CUI_Manager::Get_Instance()->Get_StatusUI()->Set_Active(false);
@@ -340,7 +347,7 @@ void CTotal_Inven::Click_Icon()
 	else if (m_vecIcon[2]->Pt_InRect() &&
 		g_pInput_Device->Get_DIMouseState(CInput_Device::DIM_LB))
 	{
-		g_pSoundManager->Play_Sound(L"UI_CommonHover.wav", CSoundManager::Total_Inven_Exit, CSoundManager::Effect_Sound);
+		CUI_Manager::Get_Instance()->Stop_Play_UISound(L"Slot_Regist.ogg", CSoundManager::CHANNELID::UI_Click, CSoundManager::Effect_Sound);
 		m_bIsActive = false;
 		// 스테이터스 창 비활성화
 		CUI_Manager::Get_Instance()->Get_StatusUI()->Set_Active(false);
@@ -373,7 +380,7 @@ void CTotal_Inven::Click_Icon()
 
 			if (g_pInput_Device->Get_DIMouseState(CInput_Device::DIM_LB))
 			{
-				SkillSlot_Touch_Sound(i);
+				CUI_Manager::Get_Instance()->Stop_Play_UISound(L"Slot_Regist.ogg", CSoundManager::CHANNELID::UI_Click, CSoundManager::Effect_Sound);
 				m_bIsActive = false;
 
 				CUI_Manager::Get_Instance()->Get_Skill_Inven()->Set_SkillUI_TotalInven(i);
@@ -387,6 +394,7 @@ void CTotal_Inven::Click_Icon()
 	{
 		if (m_pWeapon_Slot[i]->Pt_InRect() && g_pInput_Device->Get_DIMouseState(CInput_Device::DIM_LB))
 		{
+			CUI_Manager::Get_Instance()->Stop_Play_UISound(L"Slot_Regist.ogg", CSoundManager::CHANNELID::UI_Click, CSoundManager::Effect_Sound);
 			CWeapon_Inven* pWeapon_Inven = CUI_Manager::Get_Instance()->Get_Weapon_Inven();
 			pWeapon_Inven->Set_RegistIndex(i);
 			m_bIsActive = false;
@@ -396,21 +404,13 @@ void CTotal_Inven::Click_Icon()
 
 	if (m_pArmor_Slot->Pt_InRect() && g_pInput_Device->Get_DIMouseState(CInput_Device::DIM_LB))
 	{
+		CUI_Manager::Get_Instance()->Stop_Play_UISound(L"Slot_Regist.ogg", CSoundManager::CHANNELID::UI_Click, CSoundManager::Effect_Sound);
 		CArmor_Inven* pArmor_Inven = CUI_Manager::Get_Instance()->Get_Armor_Inven();
 		pArmor_Inven->Set_Active(true);
 		m_bIsActive = false;
 	}
 }
 
-void CTotal_Inven::SkillSlot_Touch_Sound(_uint i)
-{
-	if (i > 7)
-		return;
-
-	_uint iChannel = CSoundManager::CHANNELID::Total_Skill_Slot01 + i;
-
-	g_pSoundManager->Play_Sound(L"UI_CommonHover.wav", CSoundManager::CHANNELID(iChannel), CSoundManager::Effect_Sound);
-}
 
 void CTotal_Inven::SetUp_SubUI_Active(_bool bIsActive)
 {

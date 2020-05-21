@@ -186,6 +186,10 @@ HRESULT CRenderObject::Render_GameObject_SetPass(CShader* pShader, _int iPass, _
 	//============================================================================================
 	if (_bIsForMotionBlur)
 	{
+		//if (FAILED(pShader->Set_Value("g_matView", &matView, sizeof(_mat))))
+		//	return E_FAIL;
+		//if (FAILED(pShader->Set_Value("g_matProj", &matProj, sizeof(_mat))))
+		//	return E_FAIL;
 		if (FAILED(pShader->Set_Value("g_matLastWVP", &m_matLastWVP, sizeof(_mat))))
 			return E_FAIL;
 

@@ -202,8 +202,8 @@ void CMaterialSellUI::Click_SubUI()
 		{
 			m_iSellCnt--;
 
-			g_pSoundManager->Stop_Sound(CSoundManager::UI_SFX_01);
-			g_pSoundManager->Play_Sound(L"UI_Money_0.wav", CSoundManager::UI_SFX_01, CSoundManager::Effect_Sound);
+			CUI_Manager::Get_Instance()->Stop_Play_UISound(L"Slot_Regist.ogg", CSoundManager::CHANNELID::UI_Click, CSoundManager::Effect_Sound);
+			
 		}
 
 		else return;
@@ -214,15 +214,15 @@ void CMaterialSellUI::Click_SubUI()
 		{
 			m_iSellCnt++;
 
-			g_pSoundManager->Stop_Sound(CSoundManager::UI_SFX_01);
-			g_pSoundManager->Play_Sound(L"UI_Money_0.wav", CSoundManager::UI_SFX_01, CSoundManager::Effect_Sound);
+			
+			CUI_Manager::Get_Instance()->Stop_Play_UISound(L"Slot_Regist.ogg", CSoundManager::CHANNELID::UI_Click, CSoundManager::Effect_Sound);
 		}
 
 		else return;
 	}
 	else if (m_pDecisionOption->Pt_InRect() && g_pInput_Device->Get_DIMouseState(CInput_Device::DIM_LB))
 	{
-
+		CUI_Manager::Get_Instance()->Stop_Play_UISound(L"UI_Money_0.wav", CSoundManager::CHANNELID::UI_SFX_01, CSoundManager::Effect_Sound);
 		Sell_Item();
 	}
 }
@@ -266,7 +266,7 @@ void CMaterialSellUI::Sell_Item()
 											 // 인벤에서 삭제
 	CMaterial_Inven* pMtrl_Inven = CUI_Manager::Get_Instance()->Get_Material_Inven();
 
-	LOOP(m_iSellCnt)
+	LOOP(_int(m_iSellCnt))
 		pMtrl_Inven->Sell_Item(m_pSellSlot);
 
 	CHazeUI* pHazeUI = CUI_Manager::Get_Instance()->Get_HazeUI();

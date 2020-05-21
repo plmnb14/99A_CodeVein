@@ -40,7 +40,7 @@ extern Engine::CMyPhysx*			g_pPhysx;
 extern bool			g_bActiveCam;
 extern bool			g_bOnStage[8];
 extern bool			g_bReleaseMode;
-extern short		g_sStageIdx_Cur;
+extern short		g_eStageIdx_Cur;
 extern short		g_sPlayerLevel;
 
 namespace Client

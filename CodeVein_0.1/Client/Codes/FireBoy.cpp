@@ -132,6 +132,9 @@ _int CFireBoy::Update_GameObject(_double TimeDelta)
 		{
 			m_bFinishCamShake = true;
 			SHAKE_CAM_lv3;
+
+			g_pSoundManager->Stop_Sound(CSoundManager::Effect_SFX_01);
+			g_pSoundManager->Play_Sound(L"Boss_DeadEff.ogg", CSoundManager::Effect_SFX_01, CSoundManager::Effect_Sound);
 		}
 
 		return NO_EVENT;
@@ -1290,7 +1293,7 @@ void CFireBoy::Check_PhyCollider()
 			m_pMeshCom->SetUp_Animation(Ani_Death);	// 죽음처리 시작
 			Start_Dissolve(0.4f, false, true, 4.2f);
 			for (_int i = 0; i < 20; i++)
-				CObjectPool_Manager::Get_Instance()->Create_Object(L"GameObject_Haze", (void*)&CHaze::HAZE_INFO(100.f, m_pTransformCom->Get_Pos(), 4.3f + (i * 0.02f)));
+				CObjectPool_Manager::Get_Instance()->Create_Object(L"GameObject_Haze", (void*)&CHaze::HAZE_INFO(_float(CCalculater::Random_Num(100, 300)), m_pTransformCom->Get_Pos(), 4.3f + (i * 0.08f)));
 			CParticleMgr::Get_Instance()->Create_BossDeadParticle_Effect(m_pTransformCom->Get_Pos() + _v3(0.f, 1.3f, 0.f), 3.9f, 0.5f);
 			g_pManagement->Create_ParticleEffect_Delay(L"SpawnParticle_ForBoss", 2.5f, 4.2f, m_pTransformCom->Get_Pos() + _v3(0.f, 0.5f, 0.f));
 		}
@@ -1646,10 +1649,10 @@ HRESULT CFireBoy::Ready_NF(void * pArg)
 		_tchar szNavData[STR_128] = L"";
 
 		lstrcpy(szNavData, (
-			eTemp.sStageIdx == 0 ? L"Navmesh_Training.dat" :
-			eTemp.sStageIdx == 1 ? L"Navmesh_Stage_01.dat" :
-			eTemp.sStageIdx == 2 ? L"Navmesh_Stage_02.dat" :
-			eTemp.sStageIdx == 3 ? L"Navmesh_Stage_03.dat" : L"Navmesh_Stage_04.dat"));
+			eTemp.eStageIdx == 0 ? L"Navmesh_Training.dat" :
+			eTemp.eStageIdx == 1 ? L"Navmesh_Stage_01.dat" :
+			eTemp.eStageIdx == 2 ? L"Navmesh_Stage_02.dat" :
+			eTemp.eStageIdx == 3 ? L"Navmesh_Stage_03.dat" : L"Navmesh_Stage_04.dat"));
 
 		m_pNavMeshCom->Set_Index(-1);
 		m_pNavMeshCom->Ready_NaviMesh(m_pGraphic_Dev, szNavData);

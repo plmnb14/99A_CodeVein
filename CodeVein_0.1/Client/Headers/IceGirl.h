@@ -12,9 +12,9 @@ public:
 	typedef struct tagInitInfo
 	{
 		tagInitInfo(_float _fFov, _float _fMaxLength, _float _fMinLength,
-			_bool _bSpawn = false, _v3 vPos = V3_NULL, _v3 vAngle = V3_NULL, _ushort sStageIdx = 0)//, _ushort sSubsetIdx = 0, _ushort sCellIdx = 0)
+			_bool _bSpawn = false, _v3 vPos = V3_NULL, _v3 vAngle = V3_NULL, _ushort eStageIdx = 0)//, _ushort sSubsetIdx = 0, _ushort sCellIdx = 0)
 			: fFov(_fFov), fMaxLength(_fMaxLength), fMinLength(_fMinLength)
-			, bSpawnOnTrigger(_bSpawn), vPos(vPos), vAngle(vAngle), sStageIdx(sStageIdx)// , sSubSetIdx(sSubSetIdx), sCellIdx(sCellIdx)
+			, bSpawnOnTrigger(_bSpawn), vPos(vPos), vAngle(vAngle), eStageIdx(eStageIdx)// , sSubSetIdx(sSubSetIdx), sCellIdx(sCellIdx)
 		{}
 
 		_float					fFov = 0.f;
@@ -27,7 +27,7 @@ public:
 		_bool					bSpawnOnTrigger = false;
 		_v3						vPos = {};
 		_v3						vAngle = {};
-		_ushort					sStageIdx = 0;
+		_ushort					eStageIdx = 0;
 		//=======================================================
 	}INFO;
 
@@ -147,7 +147,7 @@ private:
 private:	// UI(지원)
 	CBossHP*			m_pBossUI = nullptr;
 	_bool				m_bUITrigger = false;
-
+	_float				m_fBGMFade = 1.f;
 private:	// 다운 상태를 위한 변수
 	_bool				m_bDown_Start = false;
 

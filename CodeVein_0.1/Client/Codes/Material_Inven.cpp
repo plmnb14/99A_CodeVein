@@ -74,11 +74,16 @@ _int CMaterial_Inven::Update_GameObject(_double TimeDelta)
 	}
 	else if (!m_bIsActive && m_bIsSubActive)
 	{
+		CUI_Manager::Get_Instance()->Get_MouseUI()->Set_Active(false);
+
 		SetUp_SubUI_Active(false);
 		m_bIsSubActive = false;
 	}
 	if (!m_bIsActive)
 		return NO_EVENT;
+	else
+		CUI_Manager::Get_Instance()->Get_MouseUI()->Set_Active(true);
+	
 	CUI::Update_GameObject(TimeDelta);
 
 	m_pRendererCom->Add_RenderList(RENDER_UI, this);
@@ -222,12 +227,12 @@ void CMaterial_Inven::Click_Inven()
 			if (!pSlot->Get_Select() && pSlot->Get_Size() > 0 && g_pInput_Device->Get_DIMouseState(CInput_Device::DIM_LB))
 			{
 				// 마우스 왼쪽 버튼 눌렀을 때
-				g_pSoundManager->Play_Sound(L"UI_CommonHover.wav", CSoundManager::UI_SFX_01, CSoundManager::Effect_Sound);
+				CUI_Manager::Get_Instance()->Stop_Play_UISound(L"Slot_Regist.ogg", CSoundManager::CHANNELID::UI_Click, CSoundManager::Effect_Sound);
 			}
 			else if (pSlot->Get_Select() && g_pInput_Device->Get_DIMouseState(CInput_Device::DIM_RB))
 			{
 				// 마우스 오른쪽 버튼 눌렀을 때
-				g_pSoundManager->Play_Sound(L"UI_CommonHover.wav", CSoundManager::UI_SFX_01, CSoundManager::Effect_Sound);
+				CUI_Manager::Get_Instance()->Stop_Play_UISound(L"Slot_Regist.ogg", CSoundManager::CHANNELID::UI_Click, CSoundManager::Effect_Sound);
 			}
 		}
 	}

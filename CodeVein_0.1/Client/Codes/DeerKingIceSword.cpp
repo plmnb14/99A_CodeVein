@@ -90,7 +90,9 @@ _int CDeerKingIceSword::Update_GameObject(_double TimeDelta)
 	
 	_mat matAttatch = m_pTarget_AIController->Get_MatValue(L"Mat_LeftHandAttach");
 	_mat matParent = m_pTarget_AIController->Get_MatValue(L"Self_Mat");
-	m_pTransformCom->Calc_ParentMat(&(matAttatch * matParent));
+	_mat matLast = (matAttatch * matParent);
+	_v3 vPos = _v3(matLast._41, matLast._42, matLast._43);
+	m_pTransformCom->Calc_ParentMat(&(matLast));
 
 	if (m_dCurTime > 0.5f)
 	{
@@ -109,15 +111,15 @@ _int CDeerKingIceSword::Update_GameObject(_double TimeDelta)
 		m_bDead = true;
 		m_pSwordEffect->Set_Dead();
 
-		CParticleMgr::Get_Instance()->Create_Effect(L"IceCrystal_01", m_pTransformCom->Get_Pos() + m_vDir * 1.3f, nullptr);
-		CParticleMgr::Get_Instance()->Create_Effect(L"IceCrystal_02", m_pTransformCom->Get_Pos() + m_vDir * 1.3f, nullptr);
-		CParticleMgr::Get_Instance()->Create_Effect(L"IceCrystal_03", m_pTransformCom->Get_Pos() + m_vDir * 1.3f, nullptr);
-		CParticleMgr::Get_Instance()->Create_Effect(L"IceBlock_Smoke_01", m_pTransformCom->Get_Pos() + m_vDir * 1.3f, nullptr);
-		CParticleMgr::Get_Instance()->Create_Effect(L"IceBlock_Smoke_01", m_pTransformCom->Get_Pos() + m_vDir * 1.3f, nullptr);
-		CParticleMgr::Get_Instance()->Create_Effect(L"IceBlock_Particle", m_pTransformCom->Get_Pos() + m_vDir * 1.3f, nullptr);
-		CParticleMgr::Get_Instance()->Create_Effect(L"IceBlock_Break", m_pTransformCom->Get_Pos() + m_vDir * 0.6f, nullptr);
-		CParticleMgr::Get_Instance()->Create_Effect(L"IceBlock_Break", m_pTransformCom->Get_Pos() + m_vDir * 1.3f, nullptr);
-		CParticleMgr::Get_Instance()->Create_Effect(L"IceBlock_Break", m_pTransformCom->Get_Pos() + m_vDir * 1.8f, nullptr);
+		CParticleMgr::Get_Instance()->Create_Effect(L"IceCrystal_01",vPos+ m_vDir * 1.3f, nullptr);
+		CParticleMgr::Get_Instance()->Create_Effect(L"IceCrystal_02",vPos+ m_vDir * 1.3f, nullptr);
+		CParticleMgr::Get_Instance()->Create_Effect(L"IceCrystal_03",vPos+ m_vDir * 1.3f, nullptr);
+		CParticleMgr::Get_Instance()->Create_Effect(L"IceBlock_Smoke_01",vPos + m_vDir * 1.3f, nullptr);
+		CParticleMgr::Get_Instance()->Create_Effect(L"IceBlock_Smoke_01",vPos + m_vDir * 1.3f, nullptr);
+		CParticleMgr::Get_Instance()->Create_Effect(L"IceBlock_Particle",vPos + m_vDir * 1.3f, nullptr);
+		CParticleMgr::Get_Instance()->Create_Effect(L"IceBlock_Break", vPos + m_vDir * 0.6f, nullptr);
+		CParticleMgr::Get_Instance()->Create_Effect(L"IceBlock_Break", vPos + m_vDir * 1.3f, nullptr);
+		CParticleMgr::Get_Instance()->Create_Effect(L"IceBlock_Break", vPos + m_vDir * 1.8f, nullptr);
 	}
 	else
 	{
@@ -125,9 +127,9 @@ _int CDeerKingIceSword::Update_GameObject(_double TimeDelta)
 		{
 			m_bEffect = true;
 
-			CParticleMgr::Get_Instance()->Create_Effect(L"IceBlock_Smoke_01", m_pTransformCom->Get_Pos() + m_vDir * 1.3f, nullptr);
-			CParticleMgr::Get_Instance()->Create_Effect(L"IceBlock_Smoke_02", m_pTransformCom->Get_Pos() + m_vDir * 1.3f, nullptr);
-			CParticleMgr::Get_Instance()->Create_Effect(L"IceBlock_Particle", m_pTransformCom->Get_Pos() + m_vDir * 1.3f, nullptr);
+			CParticleMgr::Get_Instance()->Create_Effect(L"IceBlock_Smoke_01",vPos + m_vDir * 1.3f, nullptr);
+			CParticleMgr::Get_Instance()->Create_Effect(L"IceBlock_Smoke_02",vPos + m_vDir * 1.3f, nullptr);
+			CParticleMgr::Get_Instance()->Create_Effect(L"IceBlock_Particle",vPos + m_vDir * 1.3f, nullptr);
 		}
 
 		m_fEffectOffset += _float(TimeDelta);
@@ -135,8 +137,8 @@ _int CDeerKingIceSword::Update_GameObject(_double TimeDelta)
 		{
 			m_fEffectOffset = 0.f;
 
-			CParticleMgr::Get_Instance()->Create_Effect(L"IceSmoke_01", m_pTransformCom->Get_Pos() + m_vDir * 1.3f, nullptr);
-			CParticleMgr::Get_Instance()->Create_Effect(L"IceSmoke_02", m_pTransformCom->Get_Pos() + m_vDir * 1.3f, nullptr);
+			CParticleMgr::Get_Instance()->Create_Effect(L"IceSmoke_01", vPos + m_vDir * 1.3f, nullptr);
+			CParticleMgr::Get_Instance()->Create_Effect(L"IceSmoke_02", vPos + m_vDir * 1.3f, nullptr);
 		}
 	}
 

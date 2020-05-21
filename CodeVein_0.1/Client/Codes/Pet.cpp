@@ -316,9 +316,7 @@ void CPet::Function_CalcMoveSpeed(_float _fMidDist)
 void CPet::Function_Find_Target()
 {
 	auto& MonsterContainer = g_pManagement->Get_GameObjectList(L"Layer_Monster", SCENE_STAGE);
-
 	auto& BossContainer = g_pManagement->Get_GameObjectList(L"Layer_Boss", SCENE_STAGE);
-
 	auto& ItemContainer = g_pManagement->Get_GameObjectList(L"Layer_Item", SCENE_STAGE);
 
 	_float	fOldLength = 99999.f;
@@ -326,6 +324,7 @@ void CPet::Function_Find_Target()
 	switch (m_eNowPetMode)
 	{
 	case PET_MODE_TYPE::PET_MODE_ATK:
+
 		for (auto& Monster_iter : MonsterContainer)
 		{
 			if (true == Monster_iter->Get_Dead())
@@ -334,6 +333,9 @@ void CPet::Function_Find_Target()
 				continue;
 			else if (nullptr == Monster_iter)
 				continue;
+			else if (Monster_iter->Get_Target_Hp() <= 0.f)
+				continue;
+
 
 			_float fLenth = V3_LENGTH(&(TARGET_TO_TRANS(Monster_iter)->Get_Pos() - m_pTransform->Get_Pos()));
 
@@ -346,6 +348,8 @@ void CPet::Function_Find_Target()
 			fOldLength = fLenth;
 			m_pTarget = Monster_iter;
 			m_eTarget = PET_TARGET_TYPE::PET_TARGET_MONSTER;
+
+			return;
 		}
 
 		IF_NOT_NULL_RETURN(m_pTarget);
@@ -357,6 +361,8 @@ void CPet::Function_Find_Target()
 			else if (false == Boss_iter->Get_Enable())
 				continue;
 			else if (nullptr == Boss_iter)
+				continue;
+			else if (Boss_iter->Get_Target_Hp() <= 0.f)
 				continue;
 
 			_float fLenth = V3_LENGTH(&(TARGET_TO_TRANS(Boss_iter)->Get_Pos() - m_pTransform->Get_Pos()));
@@ -370,6 +376,8 @@ void CPet::Function_Find_Target()
 			fOldLength = fLenth;
 			m_pTarget = Boss_iter;
 			m_eTarget = PET_TARGET_TYPE::PET_TARGET_BOSS;
+
+			return;
 		}
 
 		IF_NOT_NULL_RETURN(m_pTarget);
@@ -382,6 +390,8 @@ void CPet::Function_Find_Target()
 				continue;
 			else if (nullptr == Item_iter)
 				continue;
+			else if (Item_iter->Get_Target_Hp() <= 0.f)
+				continue;
 
 			_float fLenth = V3_LENGTH(&(TARGET_TO_TRANS(Item_iter)->Get_Pos() - m_pTransform->Get_Pos()));
 
@@ -393,6 +403,8 @@ void CPet::Function_Find_Target()
 			fOldLength = fLenth;
 			m_pTarget = Item_iter;
 			m_eTarget = PET_TARGET_TYPE::PET_TARGET_ITEM;
+
+			return;
 		}
 
 		IF_NOT_NULL_RETURN(m_pTarget);
@@ -408,6 +420,8 @@ void CPet::Function_Find_Target()
 				continue;
 			else if (nullptr == Item_iter)
 				continue;
+			else if (Item_iter->Get_Target_Hp() <= 0.f)
+				continue;
 
 			_float fLenth = V3_LENGTH(&(TARGET_TO_TRANS(Item_iter)->Get_Pos() - m_pTransform->Get_Pos()));
 
@@ -419,6 +433,8 @@ void CPet::Function_Find_Target()
 			fOldLength = fLenth;
 			m_pTarget = Item_iter;
 			m_eTarget = PET_TARGET_TYPE::PET_TARGET_ITEM;
+
+			return;
 		}
 
 		IF_NOT_NULL_RETURN(m_pTarget);
@@ -430,6 +446,8 @@ void CPet::Function_Find_Target()
 			else if (false == Monster_iter->Get_Enable())
 				continue;
 			else if (nullptr == Monster_iter)
+				continue;
+			else if (Monster_iter->Get_Target_Hp() <= 0.f)
 				continue;
 
 			_float fLenth = V3_LENGTH(&(TARGET_TO_TRANS(Monster_iter)->Get_Pos() - m_pTransform->Get_Pos()));
@@ -443,6 +461,8 @@ void CPet::Function_Find_Target()
 			fOldLength = fLenth;
 			m_pTarget = Monster_iter;
 			m_eTarget = PET_TARGET_TYPE::PET_TARGET_MONSTER;
+
+			return;
 		}
 
 		IF_NOT_NULL_RETURN(m_pTarget);
@@ -454,6 +474,8 @@ void CPet::Function_Find_Target()
 			else if (false == Boss_iter->Get_Enable())
 				continue;
 			else if (nullptr == Boss_iter)
+				continue;
+			else if (Boss_iter->Get_Target_Hp() <= 0.f)
 				continue;
 
 			_float fLenth = V3_LENGTH(&(TARGET_TO_TRANS(Boss_iter)->Get_Pos() - m_pTransform->Get_Pos()));
@@ -467,17 +489,16 @@ void CPet::Function_Find_Target()
 			fOldLength = fLenth;
 			m_pTarget = Boss_iter;
 			m_eTarget = PET_TARGET_TYPE::PET_TARGET_BOSS;
+
+			return;
 		}
 
 		IF_NOT_NULL_RETURN(m_pTarget);
 		break;
 	}
 
-	if (nullptr == m_pTarget)
-	{
-		m_pTarget = nullptr;
-		m_eTarget = PET_TARGET_TYPE::PET_TARGET_NONE;
-	}
+	m_pTarget = nullptr;
+	m_eTarget = PET_TARGET_TYPE::PET_TARGET_NONE;
 	
 	return;
 }

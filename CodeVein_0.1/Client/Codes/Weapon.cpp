@@ -325,7 +325,7 @@ void CWeapon::OnCollisionEvent(list<CGameObject*> plistGameObject, _bool _bIsPla
 					}
 
 					// 충돌하는 대상이 카운터중이면,
-					if (true == iter->Get_Target_IsCounter())
+					if (nullptr != m_pTarget && true == iter->Get_Target_IsCounter())
 					{
 						// 카운터하는 대상의 전방에 내가 포함되나 본다.
 						if (m_pBattleAgent->Check_TargetIsFrontOfMe(TARGET_TO_TRANS(iter), TARGET_TO_TRANS(m_pTarget)))
@@ -414,6 +414,7 @@ void CWeapon::OnCollisionEvent(list<CGameObject*> plistGameObject, _bool _bIsPla
 							}
 							
 							_int iRand = CCalculater::Random_Num(0, 2);
+
 							if (0 == iRand)
 							{
 								g_pSoundManager->Stop_Sound(CSoundManager::Effect_SFX_02);
@@ -840,7 +841,7 @@ HRESULT CWeapon::SetUp_WeaponData()
 	m_tWeaponParam[Wpn_SSword].iWeaponName = Wpn_SSword;
 	m_tWeaponParam[Wpn_SSword].iWeaponName_InShop = WpnAll_SSword_Red;
 	m_tWeaponParam[Wpn_SSword].iWeaponType = WEAPON_SSword;
-	m_tWeaponParam[Wpn_SSword].iPrice = 100;
+	m_tWeaponParam[Wpn_SSword].iPrice = 600;
 	m_tWeaponParam[Wpn_SSword].iReinforce = 0;
 	m_tWeaponParam[Wpn_SSword].fDamage = 1000.f;
 	m_tWeaponParam[Wpn_SSword].fPlusDamage = 100;
@@ -852,10 +853,10 @@ HRESULT CWeapon::SetUp_WeaponData()
 	m_tWeaponParam[Wpn_SSword_Black].iWeaponName = Wpn_SSword_Black;
 	m_tWeaponParam[Wpn_SSword_Black].iWeaponName_InShop = WpnAll_SSword_Executioner;
 	m_tWeaponParam[Wpn_SSword_Black].iWeaponType = WEAPON_SSword;
-	m_tWeaponParam[Wpn_SSword_Black].iPrice = 100;
+	m_tWeaponParam[Wpn_SSword_Black].iPrice = 700;
 	m_tWeaponParam[Wpn_SSword_Black].iReinforce = 0;
-	m_tWeaponParam[Wpn_SSword_Black].fDamage = 50.f;
-	m_tWeaponParam[Wpn_SSword_Black].fPlusDamage = 100;
+	m_tWeaponParam[Wpn_SSword_Black].fDamage = 500.f;
+	m_tWeaponParam[Wpn_SSword_Black].fPlusDamage = 100.f;
 	m_tWeaponParam[Wpn_SSword_Black].fRadius = 0.9f;
 	m_tWeaponParam[Wpn_SSword_Black].fTrail_Min = 0.6f;
 	m_tWeaponParam[Wpn_SSword_Black].fTrail_Max = 1.8f;
@@ -864,7 +865,7 @@ HRESULT CWeapon::SetUp_WeaponData()
 	m_tWeaponParam[Wpn_SSword_Military].iWeaponName = Wpn_SSword_Military;
 	m_tWeaponParam[Wpn_SSword_Military].iWeaponName_InShop = WpnAll_SSword_Nakil;
 	m_tWeaponParam[Wpn_SSword_Military].iWeaponType = WEAPON_SSword;
-	m_tWeaponParam[Wpn_SSword_Military].iPrice = 100;
+	m_tWeaponParam[Wpn_SSword_Military].iPrice = 800;
 	m_tWeaponParam[Wpn_SSword_Military].iReinforce = 0;
 	m_tWeaponParam[Wpn_SSword_Military].fDamage = 100.f;
 	m_tWeaponParam[Wpn_SSword_Military].fPlusDamage = 50.f;
@@ -876,7 +877,7 @@ HRESULT CWeapon::SetUp_WeaponData()
 	m_tWeaponParam[Wpn_SSword_Slave].iWeaponName = Wpn_SSword_Slave;
 	m_tWeaponParam[Wpn_SSword_Slave].iWeaponName_InShop = WpnAll_SSword_DarkBrodeSword;
 	m_tWeaponParam[Wpn_SSword_Slave].iWeaponType = WEAPON_SSword;
-	m_tWeaponParam[Wpn_SSword_Slave].iPrice = 100;
+	m_tWeaponParam[Wpn_SSword_Slave].iPrice = 950;
 	m_tWeaponParam[Wpn_SSword_Slave].iReinforce = 0;
 	m_tWeaponParam[Wpn_SSword_Slave].fDamage = 100.f;
 	m_tWeaponParam[Wpn_SSword_Slave].fPlusDamage = 50.f;
@@ -892,7 +893,7 @@ HRESULT CWeapon::SetUp_WeaponData()
 	m_tWeaponParam[Wpn_LSword].iWeaponName = Wpn_LSword;
 	m_tWeaponParam[Wpn_LSword].iWeaponName_InShop = WpnAll_LSword_Tsubai;
 	m_tWeaponParam[Wpn_LSword].iWeaponType = WEAPON_LSword;
-	m_tWeaponParam[Wpn_LSword].iPrice = 100;
+	m_tWeaponParam[Wpn_LSword].iPrice = 1500;
 	m_tWeaponParam[Wpn_LSword].iReinforce = 0;
 	m_tWeaponParam[Wpn_LSword].fDamage = 155.f;
 	m_tWeaponParam[Wpn_LSword].fPlusDamage = 75.f;
@@ -904,7 +905,7 @@ HRESULT CWeapon::SetUp_WeaponData()
 	m_tWeaponParam[Wpn_LSword_Black].iWeaponName = Wpn_LSword_Black;
 	m_tWeaponParam[Wpn_LSword_Black].iWeaponName_InShop = WpnAll_LSword_Black;
 	m_tWeaponParam[Wpn_LSword_Black].iWeaponType = WEAPON_LSword;
-	m_tWeaponParam[Wpn_LSword_Black].iPrice = 100;
+	m_tWeaponParam[Wpn_LSword_Black].iPrice = 1200;
 	m_tWeaponParam[Wpn_LSword_Black].iReinforce = 0;
 	m_tWeaponParam[Wpn_LSword_Black].fDamage = 155.f;
 	m_tWeaponParam[Wpn_LSword_Black].fPlusDamage = 75.f;
@@ -916,7 +917,7 @@ HRESULT CWeapon::SetUp_WeaponData()
 	m_tWeaponParam[Wpn_LSword_Military].iWeaponName = Wpn_LSword_Military;
 	m_tWeaponParam[Wpn_LSword_Military].iWeaponName_InShop = WpnAll_LSword_Nakil;
 	m_tWeaponParam[Wpn_LSword_Military].iWeaponType = WEAPON_LSword;
-	m_tWeaponParam[Wpn_LSword_Military].iPrice = 100;
+	m_tWeaponParam[Wpn_LSword_Military].iPrice = 1200;
 	m_tWeaponParam[Wpn_LSword_Military].iReinforce = 0;
 	m_tWeaponParam[Wpn_LSword_Military].fDamage = 155.f;
 	m_tWeaponParam[Wpn_LSword_Military].fPlusDamage = 75.f;
@@ -928,7 +929,7 @@ HRESULT CWeapon::SetUp_WeaponData()
 	m_tWeaponParam[Wpn_LSword_Slave].iWeaponName = Wpn_LSword_Slave;
 	m_tWeaponParam[Wpn_LSword_Slave].iWeaponName_InShop = WpnAll_LSword_DarkTsubai;
 	m_tWeaponParam[Wpn_LSword_Slave].iWeaponType = WEAPON_LSword;
-	m_tWeaponParam[Wpn_LSword_Slave].iPrice = 100;
+	m_tWeaponParam[Wpn_LSword_Slave].iPrice = 1300;
 	m_tWeaponParam[Wpn_LSword_Slave].iReinforce = 0;
 	m_tWeaponParam[Wpn_LSword_Slave].fDamage = 155.f;
 	m_tWeaponParam[Wpn_LSword_Slave].fPlusDamage = 75.f;
@@ -944,7 +945,7 @@ HRESULT CWeapon::SetUp_WeaponData()
 	m_tWeaponParam[Wpn_Halberd].iWeaponName = Wpn_Halberd;
 	m_tWeaponParam[Wpn_Halberd].iWeaponName_InShop = WpnAll_Halberd_SolidPiercer;
 	m_tWeaponParam[Wpn_Halberd].iWeaponType = WEAPON_Halberd;
-	m_tWeaponParam[Wpn_Halberd].iPrice = 100;
+	m_tWeaponParam[Wpn_Halberd].iPrice = 1100;
 	m_tWeaponParam[Wpn_Halberd].iReinforce = 0;
 	m_tWeaponParam[Wpn_Halberd].fDamage = 160.f;
 	m_tWeaponParam[Wpn_Halberd].fPlusDamage = 80.f;
@@ -956,7 +957,7 @@ HRESULT CWeapon::SetUp_WeaponData()
 	m_tWeaponParam[Wpn_Halberd_Black].iWeaponName = Wpn_Halberd_Black;
 	m_tWeaponParam[Wpn_Halberd_Black].iWeaponName_InShop = WpnAll_Halberd_Black;
 	m_tWeaponParam[Wpn_Halberd_Black].iWeaponType = WEAPON_Halberd;
-	m_tWeaponParam[Wpn_Halberd_Black].iPrice = 100;
+	m_tWeaponParam[Wpn_Halberd_Black].iPrice = 1150;
 	m_tWeaponParam[Wpn_Halberd_Black].iReinforce = 0;
 	m_tWeaponParam[Wpn_Halberd_Black].fDamage = 160.f;
 	m_tWeaponParam[Wpn_Halberd_Black].fPlusDamage = 80.f;
@@ -968,7 +969,7 @@ HRESULT CWeapon::SetUp_WeaponData()
 	m_tWeaponParam[Wpn_Halberd_Military].iWeaponName = Wpn_Halberd_Military;
 	m_tWeaponParam[Wpn_Halberd_Military].iWeaponName_InShop = WpnAll_Halberd_Nakil;
 	m_tWeaponParam[Wpn_Halberd_Military].iWeaponType = WEAPON_Halberd;
-	m_tWeaponParam[Wpn_Halberd_Military].iPrice = 100;
+	m_tWeaponParam[Wpn_Halberd_Military].iPrice = 1200;
 	m_tWeaponParam[Wpn_Halberd_Military].iReinforce = 0;
 	m_tWeaponParam[Wpn_Halberd_Military].fDamage = 160.f;
 	m_tWeaponParam[Wpn_Halberd_Military].fPlusDamage = 80.f;
@@ -980,7 +981,7 @@ HRESULT CWeapon::SetUp_WeaponData()
 	m_tWeaponParam[Wpn_Halberd_Slave].iWeaponName = Wpn_Halberd_Slave;
 	m_tWeaponParam[Wpn_Halberd_Slave].iWeaponName_InShop = WpnAll_Halberd_DarkBodish;
 	m_tWeaponParam[Wpn_Halberd_Slave].iWeaponType = WEAPON_Halberd;
-	m_tWeaponParam[Wpn_Halberd_Slave].iPrice = 100;
+	m_tWeaponParam[Wpn_Halberd_Slave].iPrice = 1100;
 	m_tWeaponParam[Wpn_Halberd_Slave].iReinforce = 0;
 	m_tWeaponParam[Wpn_Halberd_Slave].fDamage = 160.f;
 	m_tWeaponParam[Wpn_Halberd_Slave].fPlusDamage = 80.f;
@@ -996,7 +997,7 @@ HRESULT CWeapon::SetUp_WeaponData()
 	m_tWeaponParam[Wpn_Hammer].iWeaponName = Wpn_Hammer;
 	m_tWeaponParam[Wpn_Hammer].iWeaponName_InShop = WpnAll_Hammer_ImperseAnker;
 	m_tWeaponParam[Wpn_Hammer].iWeaponType = WEAPON_Hammer;
-	m_tWeaponParam[Wpn_Hammer].iPrice = 100;
+	m_tWeaponParam[Wpn_Hammer].iPrice = 1600;
 	m_tWeaponParam[Wpn_Hammer].iReinforce = 0;
 	m_tWeaponParam[Wpn_Hammer].fDamage = 155.f;
 	m_tWeaponParam[Wpn_Hammer].fPlusDamage = 75.f;
@@ -1008,7 +1009,7 @@ HRESULT CWeapon::SetUp_WeaponData()
 	m_tWeaponParam[Wpn_Hammer_Black].iWeaponName = Wpn_Hammer_Black;
 	m_tWeaponParam[Wpn_Hammer_Black].iWeaponName_InShop = WpnAll_Hammer_Black;
 	m_tWeaponParam[Wpn_Hammer_Black].iWeaponType = WEAPON_Hammer;
-	m_tWeaponParam[Wpn_Hammer_Black].iPrice = 100;
+	m_tWeaponParam[Wpn_Hammer_Black].iPrice = 1700;
 	m_tWeaponParam[Wpn_Hammer_Black].iReinforce = 0;
 	m_tWeaponParam[Wpn_Hammer_Black].fDamage = 155.f;
 	m_tWeaponParam[Wpn_Hammer_Black].fPlusDamage = 75.f;
@@ -1020,7 +1021,7 @@ HRESULT CWeapon::SetUp_WeaponData()
 	m_tWeaponParam[Wpn_Hammer_Military].iWeaponName = Wpn_Hammer_Military;
 	m_tWeaponParam[Wpn_Hammer_Military].iWeaponName_InShop = WpnAll_Hammer_Nakil;
 	m_tWeaponParam[Wpn_Hammer_Military].iWeaponType = WEAPON_Hammer;
-	m_tWeaponParam[Wpn_Hammer_Military].iPrice = 100;
+	m_tWeaponParam[Wpn_Hammer_Military].iPrice = 1800;
 	m_tWeaponParam[Wpn_Hammer_Military].iReinforce = 0;
 	m_tWeaponParam[Wpn_Hammer_Military].fDamage = 155.f;
 	m_tWeaponParam[Wpn_Hammer_Military].fPlusDamage = 75.f;
@@ -1032,7 +1033,7 @@ HRESULT CWeapon::SetUp_WeaponData()
 	m_tWeaponParam[Wpn_Hammer_Slave].iWeaponName = Wpn_Hammer_Slave;
 	m_tWeaponParam[Wpn_Hammer_Slave].iWeaponName_InShop = WpnAll_Hammer_DarkHeavyAxe;
 	m_tWeaponParam[Wpn_Hammer_Slave].iWeaponType = WEAPON_Hammer;
-	m_tWeaponParam[Wpn_Hammer_Slave].iPrice = 100;
+	m_tWeaponParam[Wpn_Hammer_Slave].iPrice = 1600;
 	m_tWeaponParam[Wpn_Hammer_Slave].iReinforce = 0;
 	m_tWeaponParam[Wpn_Hammer_Slave].fDamage = 155.f;
 	m_tWeaponParam[Wpn_Hammer_Slave].fPlusDamage = 75.f;
@@ -1048,7 +1049,7 @@ HRESULT CWeapon::SetUp_WeaponData()
 	m_tWeaponParam[Wpn_Gun].iWeaponName = Wpn_Gun;
 	m_tWeaponParam[Wpn_Gun].iWeaponName_InShop = WpnAll_Gun_Bayonet;
 	m_tWeaponParam[Wpn_Gun].iWeaponType = WEAPON_Gun;
-	m_tWeaponParam[Wpn_Gun].iPrice = 100;
+	m_tWeaponParam[Wpn_Gun].iPrice = 1700;
 	m_tWeaponParam[Wpn_Gun].iReinforce = 0;
 	m_tWeaponParam[Wpn_Gun].fDamage = 70.f;
 	m_tWeaponParam[Wpn_Gun].fPlusDamage = 30.f;
@@ -1060,7 +1061,7 @@ HRESULT CWeapon::SetUp_WeaponData()
 	m_tWeaponParam[Wpn_Gun_Black].iWeaponName = Wpn_Gun_Black;
 	m_tWeaponParam[Wpn_Gun_Black].iWeaponName_InShop = WpnAll_Gun_ReverTardor;
 	m_tWeaponParam[Wpn_Gun_Black].iWeaponType = WEAPON_Gun;
-	m_tWeaponParam[Wpn_Gun_Black].iPrice = 100;
+	m_tWeaponParam[Wpn_Gun_Black].iPrice = 1850;
 	m_tWeaponParam[Wpn_Gun_Black].iReinforce = 0;
 	m_tWeaponParam[Wpn_Gun_Black].fDamage = 70.f;
 	m_tWeaponParam[Wpn_Gun_Black].fPlusDamage = 30.f;
@@ -1072,7 +1073,7 @@ HRESULT CWeapon::SetUp_WeaponData()
 	m_tWeaponParam[Wpn_Gun_Military].iWeaponName = Wpn_Gun_Military;
 	m_tWeaponParam[Wpn_Gun_Military].iWeaponName_InShop = WpnAll_Gun_Nakil;
 	m_tWeaponParam[Wpn_Gun_Military].iWeaponType = WEAPON_Gun;
-	m_tWeaponParam[Wpn_Gun_Military].iPrice = 100;
+	m_tWeaponParam[Wpn_Gun_Military].iPrice = 1900;
 	m_tWeaponParam[Wpn_Gun_Military].iReinforce = 0;
 	m_tWeaponParam[Wpn_Gun_Military].fDamage = 70.f;
 	m_tWeaponParam[Wpn_Gun_Military].fPlusDamage = 30.f;
@@ -1084,7 +1085,7 @@ HRESULT CWeapon::SetUp_WeaponData()
 	m_tWeaponParam[Wpn_Gun_Slave].iWeaponName = Wpn_Gun_Slave;
 	m_tWeaponParam[Wpn_Gun_Slave].iWeaponName_InShop = WpnAll_Gun_DarkBayonet;
 	m_tWeaponParam[Wpn_Gun_Slave].iWeaponType = WEAPON_Gun;
-	m_tWeaponParam[Wpn_Gun_Slave].iPrice = 100;
+	m_tWeaponParam[Wpn_Gun_Slave].iPrice = 1850;
 	m_tWeaponParam[Wpn_Gun_Slave].iReinforce = 0;
 	m_tWeaponParam[Wpn_Gun_Slave].fDamage = 70.f;
 	m_tWeaponParam[Wpn_Gun_Slave].fPlusDamage = 30.f;
@@ -1100,7 +1101,7 @@ HRESULT CWeapon::SetUp_WeaponData()
 	m_tWeaponParam[WPN_Shield_Normal].iWeaponName = WPN_Shield_Normal;
 	m_tWeaponParam[WPN_Shield_Normal].iWeaponName_InShop = WpnAll_END;
 	m_tWeaponParam[WPN_Shield_Normal].iWeaponType = WEAPON_Shield;
-	m_tWeaponParam[WPN_Shield_Normal].iPrice = 100;
+	m_tWeaponParam[WPN_Shield_Normal].iPrice = 1000;
 	m_tWeaponParam[WPN_Shield_Normal].iReinforce = 0;
 	m_tWeaponParam[WPN_Shield_Normal].fDamage = 25.f;
 	m_tWeaponParam[WPN_Shield_Normal].fPlusDamage = 10.f;
@@ -1114,7 +1115,7 @@ HRESULT CWeapon::SetUp_WeaponData()
 	m_tWeaponParam[WPN_QueenLance].iWeaponName = WPN_QueenLance;
 	m_tWeaponParam[WPN_QueenLance].iWeaponName_InShop = WpnAll_END;
 	m_tWeaponParam[WPN_QueenLance].iWeaponType = WEAPON_SSword;
-	m_tWeaponParam[WPN_QueenLance].iPrice = 100;
+	m_tWeaponParam[WPN_QueenLance].iPrice = 1000;
 	m_tWeaponParam[WPN_QueenLance].iReinforce = 0;
 	m_tWeaponParam[WPN_QueenLance].fDamage = 25.f;
 	m_tWeaponParam[WPN_QueenLance].fPlusDamage = 10.f;
@@ -1126,7 +1127,7 @@ HRESULT CWeapon::SetUp_WeaponData()
 	m_tWeaponParam[WPN_QueenShield].iWeaponName = WPN_QueenShield;
 	m_tWeaponParam[WPN_QueenShield].iWeaponName_InShop = WpnAll_END;
 	m_tWeaponParam[WPN_QueenShield].iWeaponType = WEAPON_Shield;
-	m_tWeaponParam[WPN_QueenShield].iPrice = 100;
+	m_tWeaponParam[WPN_QueenShield].iPrice = 1000;
 	m_tWeaponParam[WPN_QueenShield].iReinforce = 0;
 	m_tWeaponParam[WPN_QueenShield].fDamage = 25.f;
 	m_tWeaponParam[WPN_QueenShield].fPlusDamage = 10.f;
@@ -1140,7 +1141,7 @@ HRESULT CWeapon::SetUp_WeaponData()
 	m_tWeaponParam[WPN_FrostBlood_IceGirl].iWeaponName = WPN_FrostBlood_IceGirl;
 	m_tWeaponParam[WPN_FrostBlood_IceGirl].iWeaponName_InShop = WpnAll_END;
 	m_tWeaponParam[WPN_FrostBlood_IceGirl].iWeaponType = WEAPON_SSword;
-	m_tWeaponParam[WPN_FrostBlood_IceGirl].iPrice = 100;
+	m_tWeaponParam[WPN_FrostBlood_IceGirl].iPrice = 1000;
 	m_tWeaponParam[WPN_FrostBlood_IceGirl].iReinforce = 0;
 	m_tWeaponParam[WPN_FrostBlood_IceGirl].fDamage = 25.f;
 	m_tWeaponParam[WPN_FrostBlood_IceGirl].fPlusDamage = 10.f;
@@ -1154,7 +1155,7 @@ HRESULT CWeapon::SetUp_WeaponData()
 	m_tWeaponParam[WPN_DeerKingShield].iWeaponName = WPN_DeerKingShield;
 	m_tWeaponParam[WPN_DeerKingShield].iWeaponName_InShop = WpnAll_END;
 	m_tWeaponParam[WPN_DeerKingShield].iWeaponType = WEAPON_Shield;
-	m_tWeaponParam[WPN_DeerKingShield].iPrice = 100;
+	m_tWeaponParam[WPN_DeerKingShield].iPrice = 1000;
 	m_tWeaponParam[WPN_DeerKingShield].iReinforce = 0;
 	m_tWeaponParam[WPN_DeerKingShield].fDamage = 25.f;
 	m_tWeaponParam[WPN_DeerKingShield].fPlusDamage = 10.f;
@@ -1259,10 +1260,6 @@ void CWeapon::Free()
 {
 	m_pmatAttach = nullptr;
 	m_pmatParent = nullptr;
-
-	//Safe_Release(m_pTrailEffect);
-	//Safe_Release(m_pStaticTrailEffect);
-	//Safe_Release(m_pDistortionEffect);
 
 	Safe_Release(m_pTransform);
 	Safe_Release(m_pMesh_Static);

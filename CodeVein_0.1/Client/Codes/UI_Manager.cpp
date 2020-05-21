@@ -256,6 +256,7 @@ HRESULT CUI_Manager::SetUp_UILayer()
 		return E_FAIL;
 	if (FAILED(g_pManagement->Add_Layer(SCENE_STATIC, L"Layer_StaticUI")))
 		return E_FAIL;
+
 	// 마우스 UI
 	m_pMouseUI = static_cast<CMouseUI*>(g_pManagement->Get_GameObjectBack(L"Layer_MouseUI", SCENE_STATIC));
 
@@ -341,11 +342,9 @@ HRESULT CUI_Manager::SetUp_UILayer()
 	// 소비, 재료 상점 UI (구매)
 	m_pGeneralStoreUI = static_cast<CGeneralStoreUI*>(g_pManagement->Clone_GameObject_Return(L"GameObject_GeneralStoreUI", nullptr));
 	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pGeneralStoreUI, SCENE_MORTAL, L"Layer_PlayerUI", nullptr);
-
 	// 잡화점 판매
 	m_pGeneralStoreSellUI = static_cast<CGeneralStoreSellUI*>(g_pManagement->Clone_GameObject_Return(L"GameObject_GeneralStoreSellUI", nullptr));
 	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pGeneralStoreSellUI, SCENE_MORTAL, L"Layer_PlayerUI", nullptr);
-
 	// 잡화점 NPC UI(요쿠모_잡화점NPC)
 	m_pGeneralStoreNPCUI = static_cast<CGeneralStoreNPCUI*>(g_pManagement->Clone_GameObject_Return(L"GameObject_GeneralStoreNPCUI", nullptr));
 	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pGeneralStoreNPCUI, SCENE_MORTAL, L"Layer_PlayerUI", nullptr);
@@ -371,48 +370,27 @@ HRESULT CUI_Manager::SetUp_UILayer()
 	m_pPickUP_ItemUIMgr = static_cast<CPickUp_ItemUIManager*>(g_pManagement->Clone_GameObject_Return(L"GameObject_PIckUP_ItemUIMgr", nullptr));
 	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pPickUP_ItemUIMgr, SCENE_MORTAL, L"Layer_PickUP_ItemUIMgr", nullptr);
 
-	//m_pGet_ItemUI = static_cast<CGet_ItemUI*>(g_pManagement->Clone_GameObject_Return(L"GameObject_Get_ItemUI", nullptr));
-	//g_pManagement->Add_GameOject_ToLayer_NoClone(m_pGet_ItemUI, SCENE_MORTAL, L"Layer_Get_ItemUI", nullptr);
-
 	// 동료 활성화/비활성화 UI
 	m_pCalling_Colleague = static_cast<CCalling_Colleague*>(g_pManagement->Clone_GameObject_Return(L"GameObject_Calling_Colleague", nullptr));
 	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pCalling_Colleague, SCENE_MORTAL, L"Layer_Calling_ColleagueUI", nullptr);
 
-	//// 코스튬
-	//m_pCustomCategory = static_cast<CCustomCategory*>(g_pManagement->Clone_GameObject_Return(L"GameObject_CustomCategory", nullptr));
-	//g_pManagement->Add_GameOject_ToLayer_NoClone(m_pCustomCategory, SCENE_MORTAL, L"Layer_Custom", nullptr);
+	// 코스튬
+	m_pCustomCategory = static_cast<CCustomCategory*>(g_pManagement->Clone_GameObject_Return(L"GameObject_CustomCategory", nullptr));
+	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pCustomCategory, SCENE_MORTAL, L"Layer_Custom", nullptr);
 	
 	return NOERROR;
 }
 
 _int CUI_Manager::Update_UI()
 {
-	/*if (g_pInput_Device->Key_Up(DIK_O))
-	{
-		m_bTest = !m_bTest;
-		m_pMistletoeUI->Set_Active(m_bTest);
-	}*/
-	//if (g_pInput_Device->Key_Up(DIK_P))
-	//{
-	//	m_pMistletoeUI->Active_SubUI(); // 선택된 항목의 UI On/Off
-	//}
-	//if (g_pInput_Device->Key_Up(DIK_LEFT))
-	//	m_pStageSelectUI->Move_Left(); // 스테이지UI 왼쪽이동
-	//if (g_pInput_Device->Key_Up(DIK_RIGHT))
-	//	m_pStageSelectUI->Move_Right(); // 스테이지UI 오른쪽 이동
-	//if (g_pInput_Device->Key_Up(DIK_G))
-	//	m_pStageSelectUI->MoveUp_SubStage(); // 스테이지UI 위 이동
-	//if (g_pInput_Device->Key_Up(DIK_H))
-	//	m_pStageSelectUI->MoveDown_SubStage(); // 스테이지UI 아래 이동
-
-	//if (g_pInput_Device->Key_Up(DIK_J))
-	//	m_pMistletoeUI->Move_Up();
-	//if (g_pInput_Device->Key_Up(DIK_K))
-	//	m_pMistletoeUI->Move_Down();
-	//
-
-	//if (g_pInput_Device->Key_Up(DIK_RETURN))
-	//	cout << m_pStageSelectUI->Teleport_Stage() << endl; // 스테이지 선택시, 각각 다른 _uint값 반환
+	// 마우스 Active 키는 경우
+	/*
+	1. 인벤토리-Total, Expend, Material, Weapon, Armor, Pet, Skill;
+	2. 겨우살이 UI, StageUI, BloodCodeSelectUI, SkillReleaseUI;
+	3. 상점 : NPC UI, WeaponShop, GeneralStoreUI, GeneralStoreSellUI;
+	하나라도 켜져 있으면 Active = true;
+	모두 꺼져 있으면 Active = false;
+	*/
 
 	
 	return 0;
@@ -426,6 +404,12 @@ void CUI_Manager::Set_BossUI_Active(_bool bIsActive)
 	{
 		static_cast<CBossHP*>(iter)->Set_Active(bIsActive);
 	}
+}
+
+void CUI_Manager::Stop_Play_UISound(TCHAR * pSoundKey, CSoundManager::CHANNELID eID, CSoundManager::SOUND _eSoundGroup)
+{
+	g_pSoundManager->Stop_Sound(eID);
+	g_pSoundManager->Play_Sound(pSoundKey, eID, _eSoundGroup);
 }
 
 void CUI_Manager::Free()

@@ -32,7 +32,7 @@ HRESULT CMouseUI::Ready_GameObject(void * pArg)
 	m_fViewZ = -3.f;
 
 	ShowCursor(FALSE);
-	m_bIsActive = true;
+	m_bIsActive = false;
 
 	return NOERROR;
 }

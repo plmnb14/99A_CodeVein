@@ -1304,7 +1304,7 @@ void CPet_DeerKing::Play_Move()
 		{
 			m_bCanChase = false;
 			m_eState = PET_DEERKING_ANI::Run;
-			m_fSkillMoveSpeed_Cur = 8.f;
+			m_fSkillMoveSpeed_Cur = 2.317597f;
 			m_fSkillMoveAccel_Cur = 0.f;
 			m_fSkillMoveMultiply = 0.5f;
 		}

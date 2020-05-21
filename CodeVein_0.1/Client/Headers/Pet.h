@@ -137,7 +137,7 @@ public:
 		}
 
 		PET_TYPE		ePetType = PET_TYPE::PET_TYPE_END;
-		_ushort			sStageIdx = 0;
+		_ushort			eStageIdx = 0;
 	};
 
 	struct PET_BULLET_STATUS

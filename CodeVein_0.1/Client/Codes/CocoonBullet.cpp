@@ -103,8 +103,8 @@ _int CCocoonBullet::Update_GameObject(_double TimeDelta)
 				g_pManagement->Create_Effect(L"FireBoy_FireBullet_Particle_02", m_pTransformCom->Get_Pos(), nullptr);
 				break;
 			case MONSTER_BULLET_TYPE::BULLET_ICE:
-				g_pManagement->Create_Effect(L"DeerKing_IceSmoke_0", m_pTransformCom->Get_Pos(), nullptr);
-				g_pManagement->Create_Effect(L"DeerKing_IceSmoke_1", m_pTransformCom->Get_Pos(), nullptr);
+				g_pManagement->Create_Effect(L"DeerKing_IceSmoke_Small_0", m_pTransformCom->Get_Pos(), nullptr);
+				g_pManagement->Create_Effect(L"DeerKing_IceSmoke_Small_1", m_pTransformCom->Get_Pos(), nullptr);
 				break; 
 			}
 		}

@@ -57,6 +57,14 @@ _int CScene_Logo::Update_Scene(_double TimeDelta)
 		}
 		if (m_pLoadingScreen->Get_Load())
 			m_bIsChangeStage = true;
+		
+		if (m_pLoadingScreen->Get_Active())
+		{
+			m_fBGMFade -= _float(TimeDelta) * 0.8f;
+			if (m_fBGMFade <= 0.f)
+				m_fBGMFade = 0.f;
+			g_pSoundManager->Set_Volume(CSoundManager::BGM_Volume, m_fBGMFade);
+		}
 	}
 	else
 	{
@@ -69,7 +77,7 @@ _int CScene_Logo::Update_Scene(_double TimeDelta)
 		if (g_bReleaseMode)
 		{
 			// 베이스 스테이지 고정
-			g_sStageIdx_Cur = 1;
+			g_eStageIdx_Cur = 1;
 			m_eSceneChange = Stage_Base;
 		}
 		
@@ -232,7 +240,7 @@ HRESULT CScene_Logo::Ready_BGM()
 {
 	g_pSoundManager->Load_Directory_SouneFile_W(L"BGM");
 
-	g_pSoundManager->Stop_Sound(CSoundManager::Background_01);
+	g_pSoundManager->Stop_Sound(CSoundManager::Background_Loop);
 	g_pSoundManager->Play_BGM(L"07_Main.ogg");
 
 	return S_OK;
@@ -253,7 +261,7 @@ HRESULT CScene_Logo::Late_Init(_double TimeDelta)
 	pEff->Set_Desc(_v3(0, 0, 0), nullptr);
 	pEff->Set_UI_Layer();
 	pEff->Reset_Init();
-
+	
 	return S_OK;
 }
 
@@ -316,42 +324,42 @@ void CScene_Logo::Logo_KeyInput()
 		cout << "트레이닝" << endl;
 		m_eSceneChange = Stage_Training;
 		//Update_DebugStage_Console();
-		g_sStageIdx_Cur = 0;
+		g_eStageIdx_Cur = 0;
 	}
 
 	if (g_pInput_Device->Key_Down(DIK_2))
 	{
 		m_eSceneChange = Stage_Base;
 		//Update_DebugStage_Console();
-		g_sStageIdx_Cur = 1;
+		g_eStageIdx_Cur = 1;
 	}
 
 	else if (g_pInput_Device->Key_Down(DIK_3))
 	{
 		m_eSceneChange = Stage_01;
 		//Update_DebugStage_Console();
-		g_sStageIdx_Cur = 2;
+		g_eStageIdx_Cur = 2;
 	}
 
 	else if (g_pInput_Device->Key_Down(DIK_4))
 	{
 		m_eSceneChange = Stage_02;
 		//Update_DebugStage_Console();
-		g_sStageIdx_Cur = 3;
+		g_eStageIdx_Cur = 3;
 	}
 
 	else if (g_pInput_Device->Key_Down(DIK_5))
 	{
 		m_eSceneChange = Stage_03;
 		//Update_DebugStage_Console();
-		g_sStageIdx_Cur = 4;
+		g_eStageIdx_Cur = 4;
 	}
 
 	else if (g_pInput_Device->Key_Down(DIK_6))
 	{
 		m_eSceneChange = Stage_04;
 		//Update_DebugStage_Console();
-		g_sStageIdx_Cur = 5;
+		g_eStageIdx_Cur = 5;
 	}
 
 	else if (g_pInput_Device->Key_Down(DIK_8))

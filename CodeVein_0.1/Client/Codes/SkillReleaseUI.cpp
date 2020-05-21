@@ -34,6 +34,25 @@ HRESULT CSkillReleaseUI::Ready_GameObject(void * pArg)
 
 _int CSkillReleaseUI::Update_GameObject(_double TimeDelta)
 {
+	if (m_bIsActive && !m_bIsSubActive)
+	{
+		for (auto& iter : m_vecSkillSlot)
+			iter->Set_Active(true);
+		m_bIsSubActive = true;
+	}
+	else if (!m_bIsActive && m_bIsSubActive)
+	{
+		CUI_Manager::Get_Instance()->Get_MouseUI()->Set_Active(false);
+		for (auto& iter : m_vecSkillSlot)
+			iter->Set_Active(false);
+		m_bIsSubActive = false;
+	}
+
+	if (!m_bIsActive)
+		return NO_EVENT;
+	else
+		CUI_Manager::Get_Instance()->Get_MouseUI()->Set_Active(true);
+
 	CUI::Update_GameObject(TimeDelta);
 	m_pRendererCom->Add_RenderList(RENDER_3DUI, this);
 
@@ -63,7 +82,7 @@ _int CSkillReleaseUI::Update_GameObject(_double TimeDelta)
 	{
 		m_iIndex = 2;
 
-		m_vecSkillSlot[0]->Set_SkillID(Fusillade_Rondo);
+		m_vecSkillSlot[0]->Set_SkillID(Skill_ID::Circulating_Pulse);
 		m_vecSkillSlot[1]->Set_SkillID(SkillID_End);
 		m_vecSkillSlot[2]->Set_SkillID(SkillID_End);
 		m_vecSkillSlot[3]->Set_SkillID(SkillID_End);
@@ -73,8 +92,8 @@ _int CSkillReleaseUI::Update_GameObject(_double TimeDelta)
 	case BloodCode_DarkKnight:
 	{
 		m_iIndex = 4;
-		m_vecSkillSlot[0]->Set_SkillID(Chariot_Rush);
-		m_vecSkillSlot[1]->Set_SkillID(SkillID_End);
+		m_vecSkillSlot[0]->Set_SkillID(Skill_ID::Dragon_Lunge);
+		m_vecSkillSlot[1]->Set_SkillID(Skill_ID::Tormenting_Blast);
 		m_vecSkillSlot[2]->Set_SkillID(SkillID_End);
 		m_vecSkillSlot[3]->Set_SkillID(SkillID_End);
 		m_vecSkillSlot[4]->Set_SkillID(SkillID_End);
@@ -83,7 +102,7 @@ _int CSkillReleaseUI::Update_GameObject(_double TimeDelta)
 	case BloodCode_Queen:
 	{
 		m_iIndex = 5;
-		m_vecSkillSlot[0]->Set_SkillID(SkillID_End);
+		m_vecSkillSlot[0]->Set_SkillID(Skill_ID::Shadow_Assault);
 		m_vecSkillSlot[1]->Set_SkillID(SkillID_End);
 		m_vecSkillSlot[2]->Set_SkillID(SkillID_End);
 		m_vecSkillSlot[3]->Set_SkillID(SkillID_End);
@@ -93,11 +112,11 @@ _int CSkillReleaseUI::Update_GameObject(_double TimeDelta)
 	case BloodCode_Fighter:
 	{
 		m_iIndex = 8;
-		m_vecSkillSlot[0]->Set_SkillID(Dragon_Lunge);
-		m_vecSkillSlot[1]->Set_SkillID(Triple_Annihilator);
-		m_vecSkillSlot[2]->Set_SkillID(Swallow_Cutter);
-		m_vecSkillSlot[3]->Set_SkillID(Vanishing_Hollow);
-		m_vecSkillSlot[4]->Set_SkillID(Legion_Punisher);
+		m_vecSkillSlot[0]->Set_SkillID(Skill_ID::Severing_Abyss);
+		m_vecSkillSlot[1]->Set_SkillID(Skill_ID::Phantom_Assault);
+		m_vecSkillSlot[2]->Set_SkillID(SkillID_End);
+		m_vecSkillSlot[3]->Set_SkillID(SkillID_End);
+		m_vecSkillSlot[4]->Set_SkillID(SkillID_End);
 
 		
 	}
@@ -105,11 +124,11 @@ _int CSkillReleaseUI::Update_GameObject(_double TimeDelta)
 	case BloodCode_Prometheus:
 	{
 		m_iIndex = 12;
-		m_vecSkillSlot[0]->Set_SkillID(Circulating_Pulse);
-		m_vecSkillSlot[1]->Set_SkillID(Shadow_Assault);
-		m_vecSkillSlot[2]->Set_SkillID(Tormenting_Blast);
-		m_vecSkillSlot[3]->Set_SkillID(Severing_Abyss);
-		m_vecSkillSlot[4]->Set_SkillID(Phantom_Assault);
+		m_vecSkillSlot[0]->Set_SkillID(Skill_ID::Triple_Annihilator);
+		m_vecSkillSlot[1]->Set_SkillID(SkillID_End);
+		m_vecSkillSlot[2]->Set_SkillID(SkillID_End);
+		m_vecSkillSlot[3]->Set_SkillID(SkillID_End);
+		m_vecSkillSlot[4]->Set_SkillID(SkillID_End);
 
 		
 	}	
@@ -269,7 +288,7 @@ void CSkillReleaseUI::Click_SkillSlot()
 				m_pQuestionUI->Set_Active(true);
 				m_pQuestionUI->Set_BloodInfo(m_eID, iter->Get_Skill_ID());
 
-				Click_BloodSkillSlot_Sound(iIdx);
+				CUI_Manager::Get_Instance()->Stop_Play_UISound(L"Slot_Regist.ogg", CSoundManager::CHANNELID::UI_Click, CSoundManager::Effect_Sound);
 			}
 
 		}
@@ -286,16 +305,6 @@ void CSkillReleaseUI::Reset_Select()
 {
 	for (auto& iter : m_vecSkillSlot)
 		iter->Set_Select(false);
-}
-
-void CSkillReleaseUI::Click_BloodSkillSlot_Sound(_uint iIdx)
-{
-	if (iIdx > 4)
-		return;
-
-	_uint iChannel = CSoundManager::CHANNELID::BloodSkill_Slot01 + iIdx;
-
-	g_pSoundManager->Play_Sound(L"UI_CommonClick.wav", CSoundManager::CHANNELID(iChannel), CSoundManager::Effect_Sound);
 }
 
 void CSkillReleaseUI::Back_To_BloodCodeUI()

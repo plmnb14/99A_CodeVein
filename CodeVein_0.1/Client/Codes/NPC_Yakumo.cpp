@@ -338,13 +338,18 @@ void CNPC_Yakumo::Check_Dist()
 		// 거리젠다.
 		_float fLen = D3DXVec3Length(&_v3(TARGET_TO_TRANS(m_pPlayer)->Get_Pos() - m_pTransformCom->Get_Pos()));
 
-		const _float MIN_DIST = 2.f;
+		const _float MIN_DIST = 1.f;
+		const _float MAX_DIST = 2.f;
 
 		// 거리 이내가 아닐 경우, 
-		if (fLen > MIN_DIST)
+		if (fLen > MAX_DIST || fLen < MIN_DIST)
 		{
-			m_pInteractionButton->Set_Active(false);
-
+			// 요쿠모가 활성화 아닐 경우,
+			if (false == m_pPlayer->Get_YokumoUI())
+			{
+				m_pInteractionButton->Set_Active(false);
+				m_pPlayer->Set_OnNPCUI(false);
+			}
 			// 아이들이 아닐 경우, 아이들 만들어줌
 			if (Idle != m_eState)
 			{
@@ -352,7 +357,6 @@ void CNPC_Yakumo::Check_Dist()
 					m_eState = Idle;
 			}
 
-			m_pPlayer->Set_OnNPCUI(false);
 			m_pPlayer->Set_YakumoUI(false);
 
 			m_bActive = false;
@@ -390,12 +394,6 @@ void CNPC_Yakumo::Check_Dist()
 
 		// 최초 1번만 말하고,
 		m_bCanActive = false;
-
-		//// 대화 활성화 되어 있고,
-		//m_bActive = true;
-		//
-		//// 새로 들어왔으니, 인사 준비하고,
-		//m_bByeCheck = false;
 
 		// 상태 바꿔주고,
 		m_eState = Shrug;
@@ -452,6 +450,8 @@ void CNPC_Yakumo::Check_Bye()
 		!m_pWeaponShoUI->Get_OtherPopupOn() &&
 		m_pInteractionButton->Get_ReactConversation())
 	{
+		cout << "앙ㄴ뇽" << endl;
+			 
 		m_pTransformCom->Set_Angle(AXIS_Y, m_fOriginAngle);
 
 		m_pInteractionButton->Set_ReactConverSation(false);

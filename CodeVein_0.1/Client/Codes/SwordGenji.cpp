@@ -202,7 +202,7 @@ _int CSwordGenji::Update_GameObject(_double TimeDelta)
 
 		Give_Mana_To_Player(5);
 		Check_DropItem(MONSTER_NAMETYPE::M_SwordGenji);
-		CObjectPool_Manager::Get_Instance()->Create_Object(L"GameObject_Haze", (void*)&CHaze::HAZE_INFO(100.f, m_pTransformCom->Get_Pos(), 0.f));
+		CObjectPool_Manager::Get_Instance()->Create_Object(L"GameObject_Haze", (void*)&CHaze::HAZE_INFO(_float(CCalculater::Random_Num(100, 300)), m_pTransformCom->Get_Pos(), 0.f));
 	}
 
 	if (m_bReadyDead)
@@ -1525,7 +1525,7 @@ void CSwordGenji::Check_PhyCollider()
 			m_pSword->Start_Dissolve(0.45f, false, false, 0.5f);
 
 			m_fDeadEffect_Delay = 0.5f;
-			//CObjectPool_Manager::Get_Instance()->Create_Object(L"GameObject_Haze", (void*)&CHaze::HAZE_INFO(100.f, m_pTransformCom->Get_Pos(), 0.5f));		
+			//CObjectPool_Manager::Get_Instance()->Create_Object(L"GameObject_Haze", (void*)&CHaze::HAZE_INFO(_float(CCalculater::Random_Num(100, 300)), m_pTransformCom->Get_Pos(), 0.5f));		
 		}
 	}
 	// 맞았을 때
@@ -1860,10 +1860,10 @@ HRESULT CSwordGenji::Ready_NF(void * pArg)
 		_tchar szNavData[STR_128] = L"";
 
 		lstrcpy(szNavData, (
-			eTemp.sStageIdx == 0 ? L"Navmesh_Training.dat" :
-			eTemp.sStageIdx == 1 ? L"Navmesh_Stage_01.dat" :
-			eTemp.sStageIdx == 2 ? L"Navmesh_Stage_02.dat" :
-			eTemp.sStageIdx == 3 ? L"Navmesh_Stage_03.dat" : L"Navmesh_Stage_04.dat"));
+			eTemp.eStageIdx == 0 ? L"Navmesh_Training.dat" :
+			eTemp.eStageIdx == 1 ? L"Navmesh_Stage_01.dat" :
+			eTemp.eStageIdx == 2 ? L"Navmesh_Stage_02.dat" :
+			eTemp.eStageIdx == 3 ? L"Navmesh_Stage_03.dat" : L"Navmesh_Stage_04.dat"));
 
 		m_pNavMeshCom->Set_Index(-1);
 		m_pNavMeshCom->Ready_NaviMesh(m_pGraphic_Dev, szNavData);

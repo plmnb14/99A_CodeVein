@@ -58,6 +58,7 @@ void CExpendCollectionUI::SetUp_Default()
 
 	m_pInfoUI = static_cast<CExpend_InfoUI*>(g_pManagement->Clone_GameObject_Return(L"GameObject_Expend_InfoUI", nullptr));
 	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pInfoUI, SCENE_MORTAL, L"Layer_PlayerUI", nullptr);
+	m_pInfoUI->Set_Type(CExpendables::Expend_MaximumUp);
 
 	m_pBuyUI = static_cast<CExpendBuyUI*>(g_pManagement->Clone_GameObject_Return(L"GameObject_ExpendBuyUI", nullptr));
 	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pBuyUI, SCENE_MORTAL, L"Layer_PlayerUI", nullptr);
@@ -93,21 +94,13 @@ void CExpendCollectionUI::Click_SubUI()
 				m_pBuyUI->Set_Active(true);
 				m_pBuyUI->Set_Type(iter->Get_Type());
 
-				Click_ExpendSlot_Sound(iIdx);
+				CUI_Manager::Get_Instance()->Stop_Play_UISound(L"Slot_Regist.ogg", CSoundManager::CHANNELID::UI_Click, CSoundManager::Effect_Sound);
 			}
 		}
 		iIdx++;
 	}
 }
 
-void CExpendCollectionUI::Click_ExpendSlot_Sound(_uint iIdx)
-{
-	if (iIdx > 5)
-		return;
-	_uint iChannel = CSoundManager::CHANNELID::Purchase_GeneralShop_ExpendSlot01 + iIdx;
-
-	g_pSoundManager->Play_Sound(L"UI_CommonClick.wav", CSoundManager::CHANNELID(iChannel), CSoundManager::Ambient_Sound);
-}
 
 
 CExpendCollectionUI * CExpendCollectionUI::Create(_Device pGraphic_Device)

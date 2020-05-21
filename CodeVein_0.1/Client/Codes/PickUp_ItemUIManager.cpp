@@ -55,16 +55,18 @@ _int CPickUp_ItemUIManager::Update_GameObject(_double TimeDelta)
 	_uint iIndex = 0;
 
 
-	for (auto& vec_iter : m_vecPickUp_Item)
+	auto& iter_begin = m_vecPickUp_Item.begin();
+	auto& iter_end = m_vecPickUp_Item.end();
+
+	for (; iter_begin != iter_end;)
 	{
-		vec_iter->Set_UI_Pos(m_fPosX, m_fPosY + 50.f * iIndex);
+		(*iter_begin)->Set_UI_Pos(m_fPosX, m_fPosY + 50.f * iIndex);
 		iIndex++;
 
-		if (false == vec_iter->Get_Active() || false == vec_iter->Get_Active())
-		{
-			m_fPosX = 1100.f;
-			m_fPosY = 200.f;
-		}
+		if (false == (*iter_begin)->Get_Active())
+			iter_begin = m_vecPickUp_Item.erase(iter_begin);
+		else
+			iter_begin++;
 	}
 
 	return NO_EVENT;

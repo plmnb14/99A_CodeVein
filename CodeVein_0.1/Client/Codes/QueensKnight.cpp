@@ -141,7 +141,15 @@ _int CQueensKnight::Update_GameObject(_double TimeDelta)
 		{
 			m_bFinishCamShake = true;
 			SHAKE_CAM_lv3;
+
+			g_pSoundManager->Stop_Sound(CSoundManager::Effect_SFX_01);
+			g_pSoundManager->Play_Sound(L"Boss_DeadEff.ogg", CSoundManager::Effect_SFX_01, CSoundManager::Effect_Sound);
 		}
+
+		m_fBGMFade -= _float(TimeDelta) * 0.25f;
+		if (m_fBGMFade <= 0.f)
+			m_fBGMFade = 0.f;
+		g_pSoundManager->Set_Volume(CSoundManager::BGM_Volume, m_fBGMFade);
 
 		return NO_EVENT;
 	}
@@ -165,21 +173,6 @@ _int CQueensKnight::Update_GameObject(_double TimeDelta)
 
 		if (true == m_bAIController)
 			m_pAIControllerCom->Update_AIController(TimeDelta);
-
-		if (!m_bUITrigger)
-		{
-			m_bUITrigger = true;
-
-			// 플레이어 발견 시, UI 활성화(지원)
-			m_pBossUI->Set_Active(true);
-
-			CMassageUI* pMassageUI = static_cast<CMassageUI*>(g_pManagement->Get_GameObjectBack(L"Layer_BossMassageUI", SCENE_STAGE));
-			pMassageUI->Set_BossName(BOSS_NAME::Queens_Knight);
-			pMassageUI->Set_Check_Play_BossnameUI(true);
-
-			g_pSoundManager->Stop_Sound(CSoundManager::Background_01);
-			g_pSoundManager->Play_BGM(L"Boss_QueensKnight_BGM.ogg");
-		}
 
 		// 보스UI 업데이트
 		// 체력이 0이 되었을때 밀림현상 방지.
@@ -2602,6 +2595,22 @@ HRESULT CQueensKnight::Update_NF()
 			// 가까운 녀석 어그로 끌림.
 			Set_Target_Auto();
 		}
+
+		if (!m_bUITrigger)
+		{
+			m_bUITrigger = true;
+
+			// 플레이어 발견 시, UI 활성화(지원)
+			m_pBossUI->Set_Active(true);
+
+			CMassageUI* pMassageUI = static_cast<CMassageUI*>(g_pManagement->Get_GameObjectBack(L"Layer_BossMassageUI", SCENE_STAGE));
+			pMassageUI->Set_BossName(BOSS_NAME::Queens_Knight);
+			pMassageUI->Set_Check_Play_BossnameUI(true);
+
+			g_pSoundManager->Stop_Sound(CSoundManager::Background_Loop);
+			g_pSoundManager->Play_BGM(L"Boss_QueensKnight_BGM.ogg", true);
+		}
+
 	}
 
 	return S_OK;
@@ -2706,7 +2715,7 @@ void CQueensKnight::Check_PhyCollider()
 			m_pSword->Start_Dissolve(	0.4f, false, false	, 2.7f);
 			m_pShield->Start_Dissolve(	0.4f, false, false	, 2.7f);
 			for (_int i = 0; i < 20; i++)
-				CObjectPool_Manager::Get_Instance()->Create_Object(L"GameObject_Haze", (void*)&CHaze::HAZE_INFO(100.f, m_pTransformCom->Get_Pos(), 2.3f + (i * 0.1f)));
+				CObjectPool_Manager::Get_Instance()->Create_Object(L"GameObject_Haze", (void*)&CHaze::HAZE_INFO(_float(CCalculater::Random_Num(100, 300)), m_pTransformCom->Get_Pos(), 2.3f + (i * 0.1f)));
 			CParticleMgr::Get_Instance()->Create_BossDeadParticle_Effect(m_pTransformCom->Get_Pos() + _v3(0.f, 1.3f, 0.f), 2.5f, 0.02f);
 			g_pManagement->Create_ParticleEffect_Delay(L"SpawnParticle_ForBoss"	, 2.5f	,  3.f, m_pTransformCom->Get_Pos() + _v3(0.f, 0.5f, 0.f));
 		}
@@ -3077,10 +3086,10 @@ HRESULT CQueensKnight::Ready_NF(void * pArg)
 		_tchar szNavData[STR_128] = L"";
 
 		lstrcpy(szNavData, (
-			eTemp.sStageIdx == 0 ? L"Navmesh_Training.dat" :
-			eTemp.sStageIdx == 1 ? L"Navmesh_Stage_01.dat" :
-			eTemp.sStageIdx == 2 ? L"Navmesh_Stage_02.dat" :
-			eTemp.sStageIdx == 3 ? L"Navmesh_Stage_03.dat" : L"Navmesh_Stage_04.dat"));
+			eTemp.eStageIdx == 0 ? L"Navmesh_Training.dat" :
+			eTemp.eStageIdx == 1 ? L"Navmesh_Stage_01.dat" :
+			eTemp.eStageIdx == 2 ? L"Navmesh_Stage_02.dat" :
+			eTemp.eStageIdx == 3 ? L"Navmesh_Stage_03.dat" : L"Navmesh_Stage_04.dat"));
 
 		m_pNavMeshCom->Set_Index(-1);
 		m_pNavMeshCom->Ready_NaviMesh(m_pGraphic_Dev, szNavData);

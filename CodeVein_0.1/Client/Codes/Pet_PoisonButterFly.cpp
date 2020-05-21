@@ -1322,9 +1322,9 @@ void CPet_PoisonButterFly::Play_Move()
 		{
 			m_bCanChase = false;
 			m_eState = PET_POISIONBUTTERFLY_ANI::Walk_F;
-			m_fSkillMoveSpeed_Cur = 8.f;
+			m_fSkillMoveSpeed_Cur = 3.f;
 			m_fSkillMoveAccel_Cur = 0.f;
-			m_fSkillMoveMultiply = 0.5f;
+			m_fSkillMoveMultiply = 1.0f;
 		}
 		switch (m_eTarget)
 		{
