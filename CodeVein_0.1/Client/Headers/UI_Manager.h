@@ -116,6 +116,7 @@
 
 #include "LockOn_UI.h"
 #include "CustomCategory.h"
+#include "ExpendSellCollectionUI.h"
 
 #include "NPC_InteractionUI.h"
 
