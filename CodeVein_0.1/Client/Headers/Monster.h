@@ -180,7 +180,7 @@ protected:
 	HRESULT Draw_Collider();
 
 protected:
-	virtual void Check_DropItem();
+	virtual void Check_DropItem(MONSTER_NAMETYPE eMonsterName);
 	virtual void Check_CollisionEvent();
 	virtual void Check_CollisionPush();
 	virtual void Check_CollisionHit(list<CGameObject*> plistGameObject);

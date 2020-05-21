@@ -183,6 +183,8 @@ private:
 	void Check_PhyCollider();
 	void Push_Collider();
 
+	void Check_TargetDist();	// 초기상태로 돌아가기 위한 함수.
+
 private:
 	void Check_DeadEffect(_double TimeDelta);
 

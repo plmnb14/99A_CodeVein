@@ -1073,6 +1073,8 @@ void CUrchin::Play_Dead()
 				Start_Dissolve(0.7f, false, true, 0.0f);
 				m_fDeadEffect_Delay = 0.f;
 
+				Check_DropItem(MONSTER_NAMETYPE::M_Urchin);
+
 				CObjectPool_Manager::Get_Instance()->Create_Object(L"GameObject_Haze", (void*)&CHaze::HAZE_INFO(100.f, m_pTransformCom->Get_Pos(), 0.f));
 			}
 		}

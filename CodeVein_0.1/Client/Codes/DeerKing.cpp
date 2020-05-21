@@ -35,7 +35,7 @@ HRESULT CDeerKing::Ready_GameObject(void * pArg)
 	Ready_Sound();
 
 	m_tObjParam.bCanHit = true;
-	m_tObjParam.fHp_Cur = 10000.f;
+	m_tObjParam.fHp_Cur = 1.f;
 	m_tObjParam.fHp_Max = m_tObjParam.fHp_Cur;
 	m_tObjParam.fDamage = 20.f;
 
@@ -125,6 +125,8 @@ _int CDeerKing::Update_GameObject(_double TimeDelta)
 	{
 		m_bEnable = false;
 		g_pPhysx->Get_Scene()->removeActor(*m_pCloth);
+
+		Check_DropItem(MONSTER_NAMETYPE::M_DeerKing);
 	}
 
 	// 죽음 애니메이션
@@ -217,7 +219,7 @@ _int CDeerKing::Late_Update_GameObject(_double TimeDelta)
 	}
 
 	else
-	{
+	{ 
 		if (FAILED(m_pRendererCom->Add_RenderList(RENDER_ALPHA, this)))
 			return E_FAIL;
 	}
@@ -2155,6 +2157,7 @@ void CDeerKing::Check_PhyCollider()
 		m_dHitTime = 0;	// 피격가능 타임 초기화
 
 		//m_bFight = true;		// 싸움 시작
+		m_bFindPlayer = true;
 
 		if (m_tObjParam.fHp_Cur > 0.f)
 		{

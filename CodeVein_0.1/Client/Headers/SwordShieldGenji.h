@@ -172,6 +172,8 @@ private:
 	HRESULT Update_NF();
 	HRESULT Update_Collider();
 
+	void Check_TargetDist();	// 초기상태로 돌아가기 위한 함수.
+
 private:
 	void Skill_Movement(_float _fspeed, _v3 _vDir = { 0.f , 0.f , 0.f });
 	void Decre_Skill_Movement(_float _fMutiply = 1.f);

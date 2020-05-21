@@ -4940,6 +4940,8 @@ void CYachaMan::Play_Dead()
 					Start_Dissolve(0.7f, false, true);
 					m_pWeapon->Start_Dissolve(0.5f, false, true);
 
+					Check_DropItem(MONSTER_NAMETYPE::M_YachaMan);
+
 					CObjectPool_Manager::Get_Instance()->Create_Object(L"GameObject_Haze", (void*)&CHaze::HAZE_INFO(100.f, m_pTransformCom->Get_Pos(), 0.f));
 				}
 			}

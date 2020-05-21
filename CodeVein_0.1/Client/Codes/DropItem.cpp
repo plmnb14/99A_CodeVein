@@ -21,8 +21,13 @@ HRESULT CDropItem::Ready_GameObject_Prototype()
 
 HRESULT CDropItem::Ready_GameObject(void * pArg)
 {
-	if (FAILED(Add_Component(pArg)))
-		return E_FAIL;
+	if (nullptr == pArg)
+	{
+		if (FAILED(Add_Component(pArg)))
+			return E_FAIL;
+
+		return S_OK;
+	}
 
 	Ready_Status(pArg);
 
@@ -190,7 +195,7 @@ _int CDropItem::Update_GameObject(_double TimeDelta)
 				}
 				case NAMETYPE_WpnAll_Gun_DarkBayonet:
 				{
-					//CUI_Manager::Get_Instance()->Get_Weapon_Inven()->Add_Weapon(pWeapon->Get_WeaponParam(Wpn_Gun_Black));
+					CUI_Manager::Get_Instance()->Get_Weapon_Inven()->Add_Weapon(pWeapon->Get_WeaponParam(Wpn_Gun_Black));
 					m_iRenderIndex = 3;
 					//pItem_Mgr->Set_PickUp_Number(m_iRenderIndex);
 					pPickUp->Set_ItemNumber_Index(m_iRenderIndex);
@@ -491,11 +496,23 @@ _int CDropItem::Update_GameObject(_double TimeDelta)
 					m_pPickUpMgr->Set_vecPickUp_Item(pPickUp);
 					break;
 				}
+				case NAMETYPE_Pet_PoisonButterfly:
+				{
+					CUI_Manager::Get_Instance()->Get_Pet_Inven()->Add_Pet(CPet::PET_TYPE::PET_POISONBUTTERFLY);
+					m_bCanGetItem = true;
+					break;
+				}
+				case NAMETYPE_Pet_DeerKing:
+				{
+					CUI_Manager::Get_Instance()->Get_Pet_Inven()->Add_Pet(CPet::PET_TYPE::PET_DEERKING);
+					m_bCanGetItem = true;
+					break;
+				}
 				case NAMETYPE_End:
 				{
-					m_bCanGetItem = false;
+					/*m_bCanGetItem = false;
 					m_iCount_GetItem = 0;
-					m_pPickUpMgr->Set_Count_GetItem(m_iCount_GetItem);
+					m_pPickUpMgr->Set_Count_GetItem(m_iCount_GetItem);*/
 					break;
 				}
 			}
