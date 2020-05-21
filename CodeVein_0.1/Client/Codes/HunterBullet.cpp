@@ -111,6 +111,17 @@ _int CHunterBullet::Update_GameObject(_double TimeDelta)
 
 		m_pTrailEffect->Set_Dead();
 
+		if (0 == CCalculater::Random_Num(0, 1))
+		{
+			g_pSoundManager->Stop_Sound(CSoundManager::Effect_SFX_03);
+			g_pSoundManager->Play_Sound(L"SE_THUNDER_ELEMENTS_001.ogg", CSoundManager::Effect_SFX_03, CSoundManager::Effect_Sound);
+		}
+		else
+		{
+			g_pSoundManager->Stop_Sound(CSoundManager::Effect_SFX_03);
+			g_pSoundManager->Play_Sound(L"SE_THUNDER_ELEMENTS_002.ogg", CSoundManager::Effect_SFX_03, CSoundManager::Effect_Sound);
+		}
+		
 		m_bDead = true;
 	}
 	// ม๘วเม฿

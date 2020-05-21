@@ -1551,7 +1551,10 @@ void CParticleMgr::Clear_Fog()
 	{
 		if (nullptr != pGameObject)
 		{
-			if (!lstrcmp(pGameObject->Get_ParticleName(), L"MapFog_0"))
+			if (
+				!lstrcmp(pGameObject->Get_ParticleName(), L"MapFog_0") ||
+				!lstrcmp(pGameObject->Get_ParticleName(), L"FloorPlane_Black")
+				)
 			{
 				pGameObject->Set_Dead();
 			}
