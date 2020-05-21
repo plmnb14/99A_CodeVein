@@ -21,7 +21,7 @@
 #include "FireBoy.h"
 // =================================
 #include "UI_Manager.h"
-#include "MassageUI.h"
+
 
 IMPLEMENT_SINGLETON(CScriptManager)
 
@@ -332,22 +332,6 @@ void CScriptManager::St01_Sub5()
 
 void CScriptManager::St01_Sub6()
 {
-	switch (m_dwCellIdx)
-	{
-	case 0:
-	{
-		if (m_bEventTrigger[Script_Stage01][10] == false)
-		{
-			m_bEventTrigger[Script_Stage01][10] = true;
-			m_bTimer = true;
-
-			CMassageUI* pMassageUI = static_cast<CMassageUI*>(g_pManagement->Get_GameObjectBack(L"Layer_BossMassageUI", SCENE_STAGE));
-			pMassageUI->Set_Check_Play_BossnameUI(true);
-		}
-
-		break;
-	}
-	}
 }
 
 void CScriptManager::St02_Sub0()
@@ -368,6 +352,7 @@ void CScriptManager::St02_Sub3()
 
 void CScriptManager::St02_Sub4()
 {
+
 }
 
 void CScriptManager::St03_Sub0()
@@ -463,7 +448,6 @@ void CScriptManager::St04_Sub0()
 		if (m_bEventTrigger[Script_Stage04][0] == false)
 		{
 			m_bEventTrigger[Script_Stage04][0] = true;
-			m_bTimer = true;
 
 			m_vecObjectPool[2]->Set_Enable(true);
 			m_vecObjectPool[3]->Set_Enable(true);
@@ -509,23 +493,7 @@ void CScriptManager::St04_Sub1()
 
 void CScriptManager::St04_Sub2()
 {
-	switch (m_dwCellIdx)
-	{
-	case 106:
-	{
-		// 보스 등장 UI
-		if (m_bEventTrigger[Script_Stage04][2] == false)
-		{
-			m_bEventTrigger[Script_Stage04][2] = true;
-			m_bTimer = true;
 
-			CMassageUI* pMassageUI = static_cast<CMassageUI*>(g_pManagement->Get_GameObjectBack(L"Layer_BossMassageUI", SCENE_STAGE));
-			pMassageUI->Set_Check_Play_BossnameUI(true);
-		}
-
-		break;
-	}
-	}
 }
 
 void CScriptManager::Stage_Base_Scripts()

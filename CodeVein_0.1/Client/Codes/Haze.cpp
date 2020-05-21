@@ -60,6 +60,9 @@ HRESULT CHaze::Ready_GameObject(void* pArg)
 
 	m_pTargetTrans = TARGET_TO_TRANS(g_pManagement->Get_GameObjectBack(L"Layer_Player", SCENE_MORTAL));
 
+	g_pSoundManager->Stop_Sound(CSoundManager::Effect_SFX_03);
+	g_pSoundManager->Play_Sound(L"SE_VESTIGE_REPAIR_000.ogg", CSoundManager::Effect_SFX_03, CSoundManager::Effect_Sound);
+
 	return NOERROR;
 }
 

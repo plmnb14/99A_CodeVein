@@ -77,6 +77,9 @@ _int CFireSphere::Update_GameObject(_double TimeDelta)
 
 		if(m_pBulletBody) m_pBulletBody->Set_Dead();
 
+		g_pSoundManager->Stop_Sound(CSoundManager::Effect_SFX_03);
+		g_pSoundManager->Play_Sound(L"SE_EXPLOSION000.ogg", CSoundManager::Effect_SFX_03, CSoundManager::Effect_Sound);
+
 		m_bDead = true;
 	}
 	// ม๘วเม฿

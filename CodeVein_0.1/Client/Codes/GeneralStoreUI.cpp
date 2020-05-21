@@ -36,13 +36,29 @@ HRESULT CGeneralStoreUI::Ready_GameObject(void * pArg)
 
 _int CGeneralStoreUI::Update_GameObject(_double TimeDelta)
 {
+	if (m_bIsActive && !m_bIsSubActive)
+	{
+		m_pExpendCollectionUI->Set_Active(true);
+		SetUp_SubUI_Active(true);
+		m_bIsSubActive = true;
+	}
+	else if (!m_bIsActive && m_bIsSubActive)
+	{
+		m_pExpendCollectionUI->Set_Active(false);
+		m_pMaterialCollectionUI->Set_Active(false);
+		SetUp_SubUI_Active(false);
+		m_bIsSubActive = false;
+	}
+
+	if (!m_bIsActive)
+		return NO_EVENT;
 	CUI::Update_GameObject(TimeDelta);
 
 	m_pRendererCom->Add_RenderList(RENDER_UI, this);
 
 	D3DXMatrixOrthoLH(&m_matProj, WINCX, WINCY, 0.f, 1.f);
 	
-	Update_SubUI();
+	//Update_SubUI();
 	Click_SubUI();
 	
 	return NO_EVENT;
@@ -50,6 +66,8 @@ _int CGeneralStoreUI::Update_GameObject(_double TimeDelta)
 
 _int CGeneralStoreUI::Late_Update_GameObject(_double TimeDelta)
 {
+	if (!m_bIsActive)
+		return NO_EVENT;
 	D3DXMatrixIdentity(&m_matWorld);
 	D3DXMatrixIdentity(&m_matView);
 
@@ -135,8 +153,8 @@ void CGeneralStoreUI::SetUp_Default()
 	{
 		m_pShopIcon[i] = static_cast<CInventory_Icon*>(g_pManagement->Clone_GameObject_Return(L"GameObject_InvenIcon", nullptr));
 		g_pManagement->Add_GameOject_ToLayer_NoClone(m_pShopIcon[i], SCENE_MORTAL, L"Layer_PlayerUI", nullptr);
-		m_pShopIcon[i]->Set_UI_Size(30.f, 30.f);
-		m_pShopIcon[i]->Set_UI_Pos(50.f + 100.f * i, 100.f);
+		m_pShopIcon[i]->Set_UI_Pos(80.f + 80.f * i, 130.f);
+		m_pShopIcon[i]->Set_UI_Size(40.f, 40.f);
 	}
 	m_pShopIcon[0]->Set_Type(CInventory_Icon::ICON_TYPE::ICON_EXPEND);
 	m_pShopIcon[1]->Set_Type(CInventory_Icon::ICON_TYPE::ICON_MTRL);
@@ -152,12 +170,7 @@ void CGeneralStoreUI::SetUp_Default()
 
 void CGeneralStoreUI::Update_SubUI()
 {
-	LOOP(2)
-	{
-		m_pShopIcon[i]->Set_Active(m_bIsActive);
-		m_pShopIcon[i]->Set_UI_Pos(80.f + 80.f * i, 130.f);
-		m_pShopIcon[i]->Set_UI_Size(40.f, 40.f);
-	}
+	
 
 	if (!m_bIsActive)
 	{
@@ -201,6 +214,15 @@ void CGeneralStoreUI::Click_SubUI()
 	if (g_pInput_Device->Get_DIMouseState(CInput_Device::DIM_RB))
 	{
 		m_bIsActive = false;
+	}
+}
+
+void CGeneralStoreUI::SetUp_SubUI_Active(_bool bIsActive)
+{
+	LOOP(2)
+	{
+		m_pShopIcon[i]->Set_Active(bIsActive);
+
 	}
 }
 

@@ -24,6 +24,7 @@ public:
 	void Set_UI_Layer();
 	void Set_ViewZ(_float fViewZ);
 	void Set_Active(_bool bActive);
+	void Set_Alpha(_float fAlpha);
 
 public:
 	HRESULT SetUp_ConstantTable_Instance(CShader* pShader);

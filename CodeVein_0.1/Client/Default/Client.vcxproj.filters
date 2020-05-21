@@ -634,11 +634,17 @@
     <Filter Include="02.GameObject\Stage\5%29 UI\UI\18. GeneralStoreUI%28잡화점%29\05. GeneralStoreSellUI">
       <UniqueIdentifier>{05d6ac3c-8d9d-4fde-b24e-30376f054051}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02.GameObject\Stage\5%29 UI\UI\18. GeneralStoreUI%28잡화점%29\05. GeneralStoreSellUI\00. ExpendSellUI">
+    <Filter Include="02.GameObject\Stage\5%29 UI\UI\18. GeneralStoreUI%28잡화점%29\05. GeneralStoreSellUI\01. ExpendSellUI">
+      <UniqueIdentifier>{c93d86be-abf6-4a33-8562-deda35922f38}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Stage\5%29 UI\UI\18. GeneralStoreUI%28잡화점%29\05. GeneralStoreSellUI\00. ExpendSellCollectionUI">
       <UniqueIdentifier>{99d07ac5-8b8b-4a3b-beab-301a5f99644a}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02.GameObject\Stage\5%29 UI\UI\18. GeneralStoreUI%28잡화점%29\05. GeneralStoreSellUI\01.">
-      <UniqueIdentifier>{c93d86be-abf6-4a33-8562-deda35922f38}</UniqueIdentifier>
+    <Filter Include="02.GameObject\Stage\5%29 UI\UI\18. GeneralStoreUI%28잡화점%29\05. GeneralStoreSellUI\02. MaterialSellCollectionUI">
+      <UniqueIdentifier>{b09c4581-c9c7-432b-8fbc-0cf9ec5b709c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Stage\5%29 UI\UI\18. GeneralStoreUI%28잡화점%29\05. GeneralStoreSellUI\03. MaterialSellUI">
+      <UniqueIdentifier>{e7188671-adf6-4330-af61-32f0aacb0c8c}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -1339,7 +1345,16 @@
       <Filter>02.GameObject\Stage\5%29 UI\UI\18. GeneralStoreUI%28잡화점%29\05. GeneralStoreSellUI</Filter>
     </ClInclude>
     <ClInclude Include="..\Headers\ExpendSellCollectionUI.h">
-      <Filter>02.GameObject\Stage\5%29 UI\UI\18. GeneralStoreUI%28잡화점%29\05. GeneralStoreSellUI\00. ExpendSellUI</Filter>
+      <Filter>02.GameObject\Stage\5%29 UI\UI\18. GeneralStoreUI%28잡화점%29\05. GeneralStoreSellUI\00. ExpendSellCollectionUI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\ExpendSellUI.h">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\18. GeneralStoreUI%28잡화점%29\05. GeneralStoreSellUI\01. ExpendSellUI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\MaterialSellCollectionUI.h">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\18. GeneralStoreUI%28잡화점%29\05. GeneralStoreSellUI\02. MaterialSellCollectionUI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\MaterialSellUI.h">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\18. GeneralStoreUI%28잡화점%29\05. GeneralStoreSellUI\03. MaterialSellUI</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -2025,7 +2040,16 @@
       <Filter>02.GameObject\Stage\5%29 UI\UI\18. GeneralStoreUI%28잡화점%29\05. GeneralStoreSellUI</Filter>
     </ClCompile>
     <ClCompile Include="..\Codes\ExpendSellCollectionUI.cpp">
-      <Filter>02.GameObject\Stage\5%29 UI\UI\18. GeneralStoreUI%28잡화점%29\05. GeneralStoreSellUI\00. ExpendSellUI</Filter>
+      <Filter>02.GameObject\Stage\5%29 UI\UI\18. GeneralStoreUI%28잡화점%29\05. GeneralStoreSellUI\00. ExpendSellCollectionUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\ExpendSellUI.cpp">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\18. GeneralStoreUI%28잡화점%29\05. GeneralStoreSellUI\01. ExpendSellUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\MaterialSellCollectionUI.cpp">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\18. GeneralStoreUI%28잡화점%29\05. GeneralStoreSellUI\02. MaterialSellCollectionUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\MaterialSellUI.cpp">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\18. GeneralStoreUI%28잡화점%29\05. GeneralStoreSellUI\03. MaterialSellUI</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

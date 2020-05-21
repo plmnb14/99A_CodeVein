@@ -233,7 +233,7 @@ HRESULT CScene_Logo::Ready_BGM()
 	g_pSoundManager->Load_Directory_SouneFile_W(L"BGM");
 
 	g_pSoundManager->Stop_Sound(CSoundManager::Background_01);
-	g_pSoundManager->Play_Sound(L"07_Main.ogg", CSoundManager::Background_01, CSoundManager::BGM_Sound);
+	g_pSoundManager->Play_BGM(L"07_Main.ogg");
 
 	return S_OK;
 }
@@ -254,50 +254,46 @@ HRESULT CScene_Logo::Late_Init(_double TimeDelta)
 	pEff->Set_UI_Layer();
 	pEff->Reset_Init();
 
-	m_pLoadingScripts->Set_Enable(true);
-
-	cout << "뻔쪅" << endl;
-
 	return S_OK;
 }
 
 void CScene_Logo::Update_DebugStage_Console()
 {
-	system("cls");
-	cout << "===============================================================================" << endl;
-	cout << " 1. 위 숫자 키를 누르면 옵션이 활성화 됩니다." << endl;
-	cout << " 2. (Load_StaticMesh) 가 (false) 이면 스테이지 들어가도 생성 안됩니다." << endl;
-	cout << " 3. Space 를 누르면 다음 스테이지로 넘어갑니다." << endl;
-	cout << " 4. 트레이닝 맵은 별도로 Load_StaticMesh 안해도 넘어갑니다." << endl;
-	cout << " 5. 기본 설정된 맵은 Stage_Traing 입니다." << endl;
-	cout << "-------------------------------------------------------------------------------" << endl;
-	cout << " #  [ 릴리즈 모드 ] 는 메쉬로드와 스테이지 진행이 실제 게임처럼 됩니다." << endl;
-	cout << " #  [ 릴리즈 모드 ] 는 강제로 [ Stage_Base ] 부터 시작하게 됩니다." << endl;
-	cout << "-------------------------------------------------------------------------------" << endl;
-	cout << "[1] Stage_Training = ";
-	cout << (m_eSceneChange == CScene_Logo::Stage_Training ? "true" : "false") << endl;
-
-	cout << "[2] Stage_Base = ";
-	cout << (m_eSceneChange == CScene_Logo::Stage_Base ? "true" : "false") << endl;
-
-	cout << "[3] Stage_01 = ";
-	cout << (m_eSceneChange == CScene_Logo::Stage_01 ? "true" : "false") << endl;
-
-	cout << "[4] Stage_02 = ";
-	cout << (m_eSceneChange == CScene_Logo::Stage_02 ? "true" : "false") << endl;
-
-	cout << "[5] Stage_03 = ";
-	cout << (m_eSceneChange == CScene_Logo::Stage_03 ? "true" : "false") << endl;
-
-	cout << "[6] Stage_04 = ";
-	cout << (m_eSceneChange == CScene_Logo::Stage_04 ? "true" : "false") << endl;
-	cout << "-------------------------------------------------------------------------------" << endl;
-	cout << "[8] Load_StaticMesh = ";
-	cout << (m_bLoadStaticMesh ? "true" : "false") << endl;
-	cout << "-------------------------------------------------------------------------------" << endl;
-	cout << "[9] # 릴리즈 모드 # ";
-	cout << (g_bReleaseMode ? "true" : "false") << endl;
-	cout << "-------------------------------------------------------------------------------" << endl;
+	//system("cls");
+	//cout << "===============================================================================" << endl;
+	//cout << " 1. 위 숫자 키를 누르면 옵션이 활성화 됩니다." << endl;
+	//cout << " 2. (Load_StaticMesh) 가 (false) 이면 스테이지 들어가도 생성 안됩니다." << endl;
+	//cout << " 3. Space 를 누르면 다음 스테이지로 넘어갑니다." << endl;
+	//cout << " 4. 트레이닝 맵은 별도로 Load_StaticMesh 안해도 넘어갑니다." << endl;
+	//cout << " 5. 기본 설정된 맵은 Stage_Traing 입니다." << endl;
+	//cout << "-------------------------------------------------------------------------------" << endl;
+	//cout << " #  [ 릴리즈 모드 ] 는 메쉬로드와 스테이지 진행이 실제 게임처럼 됩니다." << endl;
+	//cout << " #  [ 릴리즈 모드 ] 는 강제로 [ Stage_Base ] 부터 시작하게 됩니다." << endl;
+	//cout << "-------------------------------------------------------------------------------" << endl;
+	//cout << "[1] Stage_Training = ";
+	//cout << (m_eSceneChange == CScene_Logo::Stage_Training ? "true" : "false") << endl;
+	//
+	//cout << "[2] Stage_Base = ";
+	//cout << (m_eSceneChange == CScene_Logo::Stage_Base ? "true" : "false") << endl;
+	//
+	//cout << "[3] Stage_01 = ";
+	//cout << (m_eSceneChange == CScene_Logo::Stage_01 ? "true" : "false") << endl;
+	//
+	//cout << "[4] Stage_02 = ";
+	//cout << (m_eSceneChange == CScene_Logo::Stage_02 ? "true" : "false") << endl;
+	//
+	//cout << "[5] Stage_03 = ";
+	//cout << (m_eSceneChange == CScene_Logo::Stage_03 ? "true" : "false") << endl;
+	//
+	//cout << "[6] Stage_04 = ";
+	//cout << (m_eSceneChange == CScene_Logo::Stage_04 ? "true" : "false") << endl;
+	//cout << "-------------------------------------------------------------------------------" << endl;
+	//cout << "[8] Load_StaticMesh = ";
+	//cout << (m_bLoadStaticMesh ? "true" : "false") << endl;
+	//cout << "-------------------------------------------------------------------------------" << endl;
+	//cout << "[9] # 릴리즈 모드 # ";
+	//cout << (g_bReleaseMode ? "true" : "false") << endl;
+	//cout << "-------------------------------------------------------------------------------" << endl;
 }
 
 void CScene_Logo::Check_Active(_double TimeDelta)
@@ -310,6 +306,7 @@ void CScene_Logo::Check_Active(_double TimeDelta)
 	m_pTitleBG->Set_Active(true);
 	m_pGlitterEffect_0->Set_Active(true);
 	m_pGlitterEffect_1->Set_Active(true);
+	m_pLoadingScripts->Set_Enable(true);
 }
 
 void CScene_Logo::Logo_KeyInput()
@@ -318,42 +315,42 @@ void CScene_Logo::Logo_KeyInput()
 	{
 		cout << "트레이닝" << endl;
 		m_eSceneChange = Stage_Training;
-		Update_DebugStage_Console();
+		//Update_DebugStage_Console();
 		g_sStageIdx_Cur = 0;
 	}
 
 	if (g_pInput_Device->Key_Down(DIK_2))
 	{
 		m_eSceneChange = Stage_Base;
-		Update_DebugStage_Console();
+		//Update_DebugStage_Console();
 		g_sStageIdx_Cur = 1;
 	}
 
 	else if (g_pInput_Device->Key_Down(DIK_3))
 	{
 		m_eSceneChange = Stage_01;
-		Update_DebugStage_Console();
+		//Update_DebugStage_Console();
 		g_sStageIdx_Cur = 2;
 	}
 
 	else if (g_pInput_Device->Key_Down(DIK_4))
 	{
 		m_eSceneChange = Stage_02;
-		Update_DebugStage_Console();
+		//Update_DebugStage_Console();
 		g_sStageIdx_Cur = 3;
 	}
 
 	else if (g_pInput_Device->Key_Down(DIK_5))
 	{
 		m_eSceneChange = Stage_03;
-		Update_DebugStage_Console();
+		//Update_DebugStage_Console();
 		g_sStageIdx_Cur = 4;
 	}
 
 	else if (g_pInput_Device->Key_Down(DIK_6))
 	{
 		m_eSceneChange = Stage_04;
-		Update_DebugStage_Console();
+		//Update_DebugStage_Console();
 		g_sStageIdx_Cur = 5;
 	}
 
@@ -361,14 +358,14 @@ void CScene_Logo::Logo_KeyInput()
 	{
 		m_bLoadStaticMesh = (m_bLoadStaticMesh ? false : true);
 
-		Update_DebugStage_Console();
+		//Update_DebugStage_Console();
 	}
 
 	else if (g_pInput_Device->Key_Down(DIK_9))
 	{
 		g_bReleaseMode = (g_bReleaseMode ? false : true);
 
-		Update_DebugStage_Console();
+		//Update_DebugStage_Console();
 	}
 }
 

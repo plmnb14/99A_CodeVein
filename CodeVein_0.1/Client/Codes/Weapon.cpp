@@ -371,8 +371,8 @@ void CWeapon::OnCollisionEvent(list<CGameObject*> plistGameObject, _bool _bIsPla
 							m_tObjParam.fDamage = m_tWeaponParam[m_eWeaponData].fDamage;
 						
 							// 무기 공격력의 +-20%까지 랜덤범위
-							_uint min = (_uint)(m_tObjParam.fDamage - (m_tObjParam.fDamage * 0.2f));
-							_uint max = (_uint)(m_tObjParam.fDamage + (m_tObjParam.fDamage * 0.2f));
+							_uint min = (_uint)(m_tObjParam.fDamage - (m_tObjParam.fDamage * 0.2f) + m_tWeaponParam[m_eWeaponData].fPlusDamage);
+							_uint max = (_uint)(m_tObjParam.fDamage + (m_tObjParam.fDamage * 0.2f) + m_tWeaponParam[m_eWeaponData].fPlusDamage);
 						
 							//피격시 밀림처리..... ( 무기니까 부모의 위치값 )
 							memcpy(vHitDir, &(m_pmatParent->_41), sizeof(_v3));
@@ -393,6 +393,34 @@ void CWeapon::OnCollisionEvent(list<CGameObject*> plistGameObject, _bool _bIsPla
 							iter->Add_Target_Hp(-(_float)CALC::Random_Num(min , max) * m_fSkillPercent);
 							g_pManagement->Create_Hit_Effect(vecIter, vecCol, pIterTransform);
 						
+							if (0 == CCalculater::Random_Num(0, 1))
+							{
+								g_pSoundManager->Stop_Sound(CSoundManager::Effect_SFX_01);
+								g_pSoundManager->Play_Sound(L"SE_Blood_000.ogg", CSoundManager::Effect_SFX_01, CSoundManager::Effect_Sound);
+							}
+							else
+							{
+								g_pSoundManager->Stop_Sound(CSoundManager::Effect_SFX_01);
+								g_pSoundManager->Play_Sound(L"SE_Blood_001.ogg", CSoundManager::Effect_SFX_01, CSoundManager::Effect_Sound);
+							}
+							
+							_int iRand = CCalculater::Random_Num(0, 2);
+							if (0 == iRand)
+							{
+								g_pSoundManager->Stop_Sound(CSoundManager::Effect_SFX_02);
+								g_pSoundManager->Play_Sound(L"HIT01.ogg", CSoundManager::Effect_SFX_02, CSoundManager::Effect_Sound);
+							}
+							else if(1 == iRand)
+							{
+								g_pSoundManager->Stop_Sound(CSoundManager::Effect_SFX_02);
+								g_pSoundManager->Play_Sound(L"HIT03.ogg", CSoundManager::Effect_SFX_02, CSoundManager::Effect_Sound);
+							}
+							else
+							{
+								g_pSoundManager->Stop_Sound(CSoundManager::Effect_SFX_02);
+								g_pSoundManager->Play_Sound(L"HIT05.ogg", CSoundManager::Effect_SFX_02, CSoundManager::Effect_Sound);
+							}
+
 							Create_PointLight(vecIter->Get_CenterPos());
 						
 							if (m_bRecordCollision)
@@ -482,7 +510,7 @@ void CWeapon::Set_SkillMode(_bool _bSkill)
 
 void CWeapon::Set_TrailIndex(_int iIdx, _bool bStaticTrail)
 {
-	m_bSingleTrail = true;
+	//m_bSingleTrail = true;
 
 	if (!m_pTrailEffect || !m_pStaticTrailEffect)
 		return;
@@ -544,7 +572,7 @@ void CWeapon::Change_WeaponMesh(const _tchar* _MeshName)
 	m_vecAttackCol[0]->Set_Radius(_v3(fRadius, fRadius, fRadius));
 
 	// 공격력도 업데이트
-	m_tObjParam.fDamage = m_tWeaponParam->fDamage;
+	m_tObjParam.fDamage = m_tWeaponParam->fDamage * 20.f;
 }
 
 void CWeapon::Update_Collider()

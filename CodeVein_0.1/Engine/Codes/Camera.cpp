@@ -498,83 +498,188 @@ HRESULT CCamera::SetUp_ViewType(CameraView _CameraViewType)
 		_v3 vLerpTargetPos, vLerpTargetAt;
 		_float fLerpAngle = 0.f;
 
-		// 에이밍 중이 아닐 때
-		if (false == m_bOnAiming)
+		if (false == m_bOnCustomizeMode)
 		{
-			Tps_Aiming();
-
-			(m_bReverseRight ?
-				vRightextra = _v3{ vRight_2.x * 2.f  , 0.f , vRight_2.z * 2.f } :
-				vRightextra = _v3{ vRight_2.x * -2.f  , 0.f , vRight_2.z * -2.f });
-
-			vEyePos = -WORLD_LOOK;
-			V3_NORMAL_SELF(&vEyePos);
-
-			vEyePos *= m_fDistance;
-			
-			CALC::V3_Axis_Normal(&matRotAxis, &vEyePos, &WORLD_RIGHT, m_fY_LockAngle, true);
-			CALC::V3_Axis_Normal(&matRotAxis, &vEyePos, &WORLD_UP, m_fX_LockAngle, true);
-
-			vEyePos += vTransPos + _v3{ 0,1,0 } +(vRight * m_fOSCAxis_Gap[AXIS_X]) + (WORLD_UP * m_fOSCAxis_Gap[AXIS_Y]);
-			vAt = vTransPos + (WORLD_UP * 1.5f) + (vRight * m_fOSCAxis_Gap[AXIS_X]) + (WORLD_UP * m_fOSCAxis_Gap[AXIS_Y]);
-
-
-			if (m_bOnLerpAt)
+			// 에이밍 중이 아닐 때
+			if (false == m_bOnAiming)
 			{
-				if (m_fAtLerpValue >= 1.f)
-				{
-					m_fAtLerpValue = 0.f;
-					m_bOnLerpAt = false;
+				Tps_Aiming();
 
+				(m_bReverseRight ?
+					vRightextra = _v3{ vRight_2.x * 2.f  , 0.f , vRight_2.z * 2.f } :
+					vRightextra = _v3{ vRight_2.x * -2.f  , 0.f , vRight_2.z * -2.f });
+
+				vEyePos = -WORLD_LOOK;
+				V3_NORMAL_SELF(&vEyePos);
+
+				vEyePos *= m_fDistance;
+
+				CALC::V3_Axis_Normal(&matRotAxis, &vEyePos, &WORLD_RIGHT, m_fY_LockAngle, true);
+				CALC::V3_Axis_Normal(&matRotAxis, &vEyePos, &WORLD_UP, m_fX_LockAngle, true);
+
+				vEyePos += vTransPos + _v3{ 0,1,0 } +(vRight * m_fOSCAxis_Gap[AXIS_X]) + (WORLD_UP * m_fOSCAxis_Gap[AXIS_Y]);
+				vAt = vTransPos + (WORLD_UP * 1.5f) + (vRight * m_fOSCAxis_Gap[AXIS_X]) + (WORLD_UP * m_fOSCAxis_Gap[AXIS_Y]);
+
+
+				if (m_bOnLerpAt)
+				{
+					if (m_fAtLerpValue >= 1.f)
+					{
+						m_fAtLerpValue = 0.f;
+						m_bOnLerpAt = false;
+
+						vLerpTargetAt = vAt;
+					}
+
+					else
+					{
+						m_fAtLerpValue += Engine::CTimer_Manager::Get_Instance()->Get_DeltaTime(L"Timer_Fps_60_2") * 2.f;
+						D3DXVec3Lerp(&vLerpTargetAt, &m_vOldAt, &vAt, m_fAtLerpValue);
+						m_vOldAt = vLerpTargetAt;
+					}
+				}
+
+				else
+				{
 					vLerpTargetAt = vAt;
 				}
 
+				if (m_bOnLerpPos)
+				{
+					if (m_fPosLerpValue >= 1.f)
+					{
+						m_fPosLerpValue = 0.f;
+						m_bOnLerpPos = false;
+
+						vLerpTargetPos = vEyePos;
+					}
+
+					else
+					{
+						m_fPosLerpValue += Engine::CTimer_Manager::Get_Instance()->Get_DeltaTime(L"Timer_Fps_60_2") * 2.f;
+						D3DXVec3Lerp(&vLerpTargetPos, &m_vOldPos, &vEyePos, m_fPosLerpValue);
+
+						//V3_NORMAL_SELF(&vLerpTargetPos);
+						//vLerpTargetPos *= m_fDistance;
+					}
+				}
+
 				else
 				{
-					m_fAtLerpValue += Engine::CTimer_Manager::Get_Instance()->Get_DeltaTime(L"Timer_Fps_60_2") * 2.f;
-					D3DXVec3Lerp(&vLerpTargetAt, &m_vOldAt, &vAt, m_fAtLerpValue);
-					m_vOldAt = vLerpTargetAt;
-				}
-			}
-
-			else
-			{
-				vLerpTargetAt = vAt;
-			}
-
-			if (m_bOnLerpPos)
-			{
-				if (m_fPosLerpValue >= 1.f)
-				{
-					m_fPosLerpValue = 0.f;
-					m_bOnLerpPos = false;
-
 					vLerpTargetPos = vEyePos;
 				}
 
+				m_pTransform->Set_Pos(vLerpTargetPos);
+				m_pTransform->Set_At(vLerpTargetAt);
+
+				//cout << "카메라 x 축 : " << m_fX_LockAngle << endl;
+			}
+
+			// 에이밍 중일 때
+			else if (true == m_bOnAiming)
+			{
+				Tps_Aiming();
+
+				_v3 vAimAt;
+				_v3 vOwnerDir = vTrans->Get_Axis(AXIS_Z);
+				_v3 vOwnerRight = vTrans->Get_Axis(AXIS_X);
+				_v3 vLerpTargetPos, vLerpTargetAt;
+
+				if (false == m_bAimUI)
+				{
+					if (nullptr == m_pTargetBoneMatrix)
+					{
+						CMesh_Dynamic*	pMeshDynamic = static_cast<Engine::CMesh_Dynamic*>((m_pAimingTarget)->Get_Component(L"Com_Mesh"));
+						CTransform*		pTargettransform = TARGET_TO_TRANS(m_pAimingTarget);
+
+						LPCSTR tmpChar = "Hips";
+
+						D3DXFRAME_DERIVED*	pFamre = (D3DXFRAME_DERIVED*)pMeshDynamic->Get_BonInfo(tmpChar, 0);
+
+						m_pTargetBoneMatrix = &pFamre->CombinedTransformationMatrix;
+						m_pTargetWorldMatrix = &pTargettransform->Get_WorldMat();
+
+						_mat tmpMat = *m_pTargetBoneMatrix * *m_pTargetWorldMatrix;
+
+						memcpy(vAimAt, &tmpMat._41, sizeof(_v3));
+					}
+
+					else
+					{
+						_mat tmpMat = *m_pTargetBoneMatrix * *m_pTargetWorldMatrix;
+
+						memcpy(vAimAt, &tmpMat._41, sizeof(_v3));
+					}
+				}
+
 				else
 				{
-					m_fPosLerpValue += Engine::CTimer_Manager::Get_Instance()->Get_DeltaTime(L"Timer_Fps_60_2") * 2.f;
-					D3DXVec3Lerp(&vLerpTargetPos, &m_vOldPos, &vEyePos, m_fPosLerpValue);
-
-					//V3_NORMAL_SELF(&vLerpTargetPos);
-					//vLerpTargetPos *= m_fDistance;
+					vAimAt = TARGET_TO_TRANS(m_pAimingTarget)->Get_Pos();
 				}
+
+				vEyePos = vOwnerDir *= -1.f;
+				vEyePos *= m_fDistance;
+
+				vEyePos.y = m_bAimUI ? vEyePos.y + m_fAim_YPos : vEyePos.y;
+
+				CALC::V3_Axis_Normal(&matRotAxis, &vEyePos, &vOwnerRight, 22.5f, true);
+
+				vOwnerRight = m_bAimUI ? vOwnerRight * m_fAim_XPosMulti : vOwnerRight * 1.f;
+
+				vEyePos += vTransPos + _v3{ 0,1,0 } +vOwnerRight;
+
+				if (m_bOnLerpAt)
+				{
+					if (m_fAtLerpValue >= 1.f)
+					{
+						m_fAtLerpValue = 0.f;
+						m_bOnLerpAt = false;
+
+						vLerpTargetAt = vAimAt;
+					}
+
+					else
+					{
+						m_fAtLerpValue += Engine::CTimer_Manager::Get_Instance()->Get_DeltaTime(L"Timer_Fps_60_2");
+						D3DXVec3Lerp(&vLerpTargetAt, &m_vOldAt, &vAimAt, m_fAtLerpValue);
+						m_vOldAt = vLerpTargetAt;
+					}
+				}
+
+				else
+				{
+					vLerpTargetAt = vAimAt;
+				}
+
+				if (m_bOnLerpPos)
+				{
+					if (m_fPosLerpValue >= 1.f)
+					{
+						m_fPosLerpValue = 0.f;
+						m_bOnLerpPos = false;
+
+						vLerpTargetPos = vEyePos;
+					}
+
+					else
+					{
+						m_fPosLerpValue += Engine::CTimer_Manager::Get_Instance()->Get_DeltaTime(L"Timer_Fps_60_2") * 2.f;
+						D3DXVec3Lerp(&vLerpTargetPos, &m_vOldPos, &vEyePos, m_fPosLerpValue);
+						m_vOldPos = vLerpTargetPos;
+					}
+				}
+
+				else
+				{
+					vLerpTargetPos = vEyePos;
+				}
+
+				m_pTransform->Set_Pos(vLerpTargetPos + (vRight * m_fOSCAxis_Gap[AXIS_X]) + (WORLD_UP * m_fOSCAxis_Gap[AXIS_Y]));
+				m_pTransform->Set_At(vLerpTargetAt + (vRight * m_fOSCAxis_Gap[AXIS_X]) + (WORLD_UP * m_fOSCAxis_Gap[AXIS_Y]));
 			}
-
-			else
-			{
-				vLerpTargetPos = vEyePos;
-			}
-
-			m_pTransform->Set_Pos(vLerpTargetPos);
-			m_pTransform->Set_At(vLerpTargetAt);
-
-			//cout << "카메라 x 축 : " << m_fX_LockAngle << endl;
 		}
 
-		// 에이밍 중일 때
-		else if (true == m_bOnAiming)
+		else if (true == m_bOnCustomizeMode)
 		{
 			Tps_Aiming();
 
@@ -583,48 +688,44 @@ HRESULT CCamera::SetUp_ViewType(CameraView _CameraViewType)
 			_v3 vOwnerRight = vTrans->Get_Axis(AXIS_X);
 			_v3 vLerpTargetPos, vLerpTargetAt;
 
-			if (false == m_bAimUI)
+			if (nullptr == m_pTargetBoneMatrix)
 			{
-				if (nullptr == m_pTargetBoneMatrix)
-				{
-					CMesh_Dynamic*	pMeshDynamic = static_cast<Engine::CMesh_Dynamic*>((m_pAimingTarget)->Get_Component(L"Com_Mesh"));
-					CTransform*		pTargettransform = TARGET_TO_TRANS(m_pAimingTarget);
+				CMesh_Dynamic*	pMeshDynamic = static_cast<Engine::CMesh_Dynamic*>((m_pTarget)->Get_Component(L"Com_MeshDynamic"));
 
-					LPCSTR tmpChar = "Hips";
+				//Custom_Hair, Custom_Head, Custom_Mask, Custom_Body, Custom_ShowAll
 
-					D3DXFRAME_DERIVED*	pFamre = (D3DXFRAME_DERIVED*)pMeshDynamic->Get_BonInfo(tmpChar, 0);
+				LPCSTR tmpChar = 
+					m_dwCustomIdx == 0 ? "Head" :
+					m_dwCustomIdx == 1 ? "Head" :
+					m_dwCustomIdx == 2 ? "Neck1" :
+					m_dwCustomIdx == 3 ? "Spine3" : "Spine";
 
-					m_pTargetBoneMatrix = &pFamre->CombinedTransformationMatrix;
-					m_pTargetWorldMatrix = &pTargettransform->Get_WorldMat();
+				D3DXFRAME_DERIVED*	pFamre = (D3DXFRAME_DERIVED*)pMeshDynamic->Get_BonInfo(tmpChar, 1);
 
-					_mat tmpMat = *m_pTargetBoneMatrix * *m_pTargetWorldMatrix;
+				m_pTargetBoneMatrix = &pFamre->CombinedTransformationMatrix;
+				m_pTargetWorldMatrix = &vTrans->Get_WorldMat();
 
-					memcpy(vAimAt, &tmpMat._41, sizeof(_v3));
-				}
+				_mat tmpMat = *m_pTargetBoneMatrix * *m_pTargetWorldMatrix;
 
-				else
-				{
-					_mat tmpMat = *m_pTargetBoneMatrix * *m_pTargetWorldMatrix;
-
-					memcpy(vAimAt, &tmpMat._41, sizeof(_v3));
-				}
+				memcpy(vAimAt, &tmpMat._41, sizeof(_v3));
 			}
 
 			else
-			{
-				vAimAt = TARGET_TO_TRANS(m_pAimingTarget)->Get_Pos();
-			}
+				{
+					_mat tmpMat = *m_pTargetBoneMatrix * *m_pTargetWorldMatrix;
 
-			vEyePos = vOwnerDir *= -1.f;
+					memcpy(vAimAt, &tmpMat._41, sizeof(_v3));
+				}
+			
+
+			vEyePos = vOwnerDir * 1.f;
 			vEyePos *= m_fDistance;
 
-			vEyePos.y = m_bAimUI ? vEyePos.y + m_fAim_YPos : vEyePos.y;
+			CALC::V3_Axis_Normal(&matRotAxis, &vEyePos, &vOwnerRight, 0.f, true);
 
-			CALC::V3_Axis_Normal(&matRotAxis, &vEyePos, &vOwnerRight, 22.5f, true);
+			vOwnerRight = vOwnerRight * 1.f;
 
-			vOwnerRight = m_bAimUI ? vOwnerRight * m_fAim_XPosMulti : vOwnerRight * 1.f;
-
-			vEyePos += vTransPos + _v3{ 0,1,0 } + vOwnerRight;
+			vEyePos += vAimAt;
 
 			if (m_bOnLerpAt)
 			{
@@ -644,7 +745,7 @@ HRESULT CCamera::SetUp_ViewType(CameraView _CameraViewType)
 				}
 			}
 
-			else 
+			else
 			{
 				vLerpTargetAt = vAimAt;
 			}
@@ -658,7 +759,7 @@ HRESULT CCamera::SetUp_ViewType(CameraView _CameraViewType)
 
 					vLerpTargetPos = vEyePos;
 				}
-			
+
 				else
 				{
 					m_fPosLerpValue += Engine::CTimer_Manager::Get_Instance()->Get_DeltaTime(L"Timer_Fps_60_2") * 2.f;
@@ -924,6 +1025,9 @@ HRESULT CCamera::SetUp_MouseRotate()
 
 	else if (m_eCamView != CINEMA_VIEW)
 	{
+		if (m_bOnCustomizeMode)
+			return S_OK;
+
 		if (m_bOnAiming)
 			return S_OK;
 
@@ -1300,6 +1404,38 @@ void CCamera::KeyInput()
 		m_pTransform->Add_Pos(-fMoveSpeed, _v3(0, 1, 0));
 		m_pTransform->Add_At(-fMoveSpeed, _v3(0, 1, 0));
 	}
+}
+
+void CCamera::Set_CustomizeCamIdx(_ulong _dwCosIdx)
+{
+	if (m_dwCustomIdx != _dwCosIdx)
+	{
+		m_pTargetBoneMatrix = nullptr;
+		m_pTargetWorldMatrix = nullptr;
+	}
+
+	m_dwCustomIdx = _dwCosIdx;
+}
+
+void CCamera::Set_CustomizeCamMode(_bool _bCos)
+{
+	if (false == _bCos)
+	{
+		m_dwCustomIdx = 0;
+		m_pTargetBoneMatrix = nullptr;
+		m_pTargetWorldMatrix = nullptr;
+	}
+
+	m_vOldPos = m_pTransform->Get_Pos();
+	m_vOldAt = m_pTransform->Get_At();
+
+	m_bOnLerpPos = true;
+	m_bOnLerpAt = true;
+
+	m_fAtLerpValue = 0.f;
+	m_fPosLerpValue = 0.f;
+
+	m_bOnCustomizeMode = _bCos;
 }
 
 _int CCamera::Update_GameObject()

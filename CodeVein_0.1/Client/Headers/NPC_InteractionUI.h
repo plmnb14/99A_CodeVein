@@ -12,9 +12,12 @@ private:
 	virtual ~CNPC_InteractionUI() = default;
 
 public:
+	_bool	Get_ReactConversation() { return m_bReact; }
+public:
 	void	Set_Alpha(_float fAlpha);
 	void	Set_Active(_bool bIsActive);
 	void	Set_Interaction(_bool bInteraction) {	m_bInteraction = bInteraction;	}
+	void	Set_ReactConverSation(_bool bReact) {  m_bReact = bReact;}
 
 public:
 	virtual HRESULT Ready_GameObject_Prototype();
@@ -39,6 +42,7 @@ private:
 private:
 	_bool				m_bLateInit = false;
 	_bool				m_bInteraction = false;
+	_bool				m_bReact = false;
 	_int				m_iTexIdx = 0;
 	_float				m_fAlpha = 0.f;
 

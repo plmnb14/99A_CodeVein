@@ -148,8 +148,8 @@ PS_OUT PS_MAIN_DIRECTIONAL(PS_IN In)
 
 	if (vHeightValue.x > 0.99f)
 	{
-		if (Out.vShade.x < 0.8f)
-			Out.vShade.xyz = 0.8f;
+		if (Out.vShade.x < 0.6f)
+			Out.vShade.xyz = 0.6f;
 	
 		//if (vHeightValue.z > 0.99f)
 		//{
@@ -165,11 +165,10 @@ PS_OUT PS_MAIN_DIRECTIONAL(PS_IN In)
 	
 		//Out.vShade.xyz = (fLightIntencity + 0.1f);
 	
-		//Out.vShade.xyz = ceil(Out.vShade.xyz * 2.f) / 2.f;
-		//Out.vSpecular.a = 1.f;
+		Out.vShade.xyz = ceil(Out.vShade.xyz * 2.f) / 2.f;
 	
 		Out.vSpecular.xyz = smoothstep(0.0, 0.025, Out.vSpecular.xyz);
-		Out.vSpecular.xyz *= 0.01f;
+		Out.vSpecular.xyz *= 0.05f;
 	}
 
 	return Out;

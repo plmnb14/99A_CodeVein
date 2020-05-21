@@ -26,6 +26,7 @@ private:
 	void	SetUp_Default();
 	void	Update_SubUI();
 	void	Click_SubUI();
+	void	SetUp_SubUI_Active(_bool bIsActive);
 
 private:
 	CTransform*				m_pTransformCom = nullptr;
@@ -39,6 +40,7 @@ private:
 	CMaterialCollectionUI*		m_pMaterialCollectionUI = nullptr;
 	CExpendCollectionUI*		m_pExpendCollectionUI = nullptr;
 	_bool						m_bIsOpen = false;
+	_bool						m_bIsSubActive = false;
 
 public:
 	static CGeneralStoreUI*	Create(_Device pGraphic_Device);

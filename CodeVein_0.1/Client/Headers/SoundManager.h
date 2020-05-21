@@ -12,8 +12,8 @@ class CSoundManager : public CBase
 public:
 	enum CHANNELID 
 	{ 
-	Ambient_01, Ambient_02, Ambient_03,
-	Background_01, Background_02,
+	Ambient_01, Ambient_02, Ambient_03, Ambient_Loop,
+	Background_01, Background_02, Background_Loop,
 	//===============================================================
 
 	GunGenji_SFX_01, GunGenji_SFX_02, GunGenji_Voice,
@@ -111,7 +111,8 @@ public:
 
 public: 
 	virtual void Play_Sound(TCHAR* pSoundKey, CHANNELID eID, SOUND _eSoundGroup);
-	virtual void Play_BGM(TCHAR* pSoundKey);
+	virtual void Play_BGM(TCHAR* pSoundKey, _bool _bIsAmbient = false);
+	virtual void Play_BGM_Type(TCHAR* pSoundKey , _bool _bIsAmbient);
 	virtual void Stop_Sound(CHANNELID eID);
 	virtual void Stop_All();
 	virtual void Update_SoundManager();
@@ -137,7 +138,7 @@ private:
 	// 재생하고 있는 사운드를 관리할 객체 
 	FMOD_CHANNEL* m_pChannelArr[MAX_CHANNEL] = { nullptr, };
 
-	FMOD_CHANNELGROUP* m_pChannelGroup[3] = { nullptr, };
+	FMOD_CHANNELGROUP* m_pChannelGroup[4] = { nullptr, };
 
 	FMOD_CHANNELGROUP* m_pMasterChannelGroup = nullptr;
 

@@ -4,6 +4,8 @@
 #include "..\Headers\BossHP.h"
 #include "ClothManager.h"
 
+#include "MassageUI.h"
+
 using namespace physx;
 
 CDeerKing::CDeerKing(LPDIRECT3DDEVICE9 pGraphic_Device)
@@ -169,8 +171,20 @@ _int CDeerKing::Update_GameObject(_double TimeDelta)
 		if (true == m_bAIController)
 			m_pAIControllerCom->Update_AIController(TimeDelta);
 
-		// 플레이어 발견 시, UI 활성화(지원)
-		m_pBossUI->Set_Active(true);
+		if (!m_bUITrigger)
+		{
+			m_bUITrigger = true;
+
+			// 플레이어 발견 시, UI 활성화(지원)
+			m_pBossUI->Set_Active(true);
+
+			CMassageUI* pMassageUI = static_cast<CMassageUI*>(g_pManagement->Get_GameObjectBack(L"Layer_BossMassageUI", SCENE_STAGE));
+			pMassageUI->Set_BossName(BOSS_NAME::Deer_King);
+			pMassageUI->Set_Check_Play_BossnameUI(true);
+
+			g_pSoundManager->Stop_Sound(CSoundManager::Background_01);
+			g_pSoundManager->Play_BGM(L"Boss_DeerKing_BGM.ogg");
+		}
 
 		// 보스UI 업데이트
 		// 체력이 0이 되었을때 밀림현상 방지.

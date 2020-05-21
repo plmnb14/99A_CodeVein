@@ -48,6 +48,9 @@ HRESULT CWeaponShopUI::Ready_GameObject(void * pArg)
 
 _int CWeaponShopUI::Update_GameObject(_double TimeDelta)
 {
+	if (false == m_bIsActive)
+		return NO_EVENT;
+
 	CUI::Update_GameObject(TimeDelta);
 	m_pRendererCom->Add_RenderList(RENDER_ALPHA_UI, this);
 
@@ -466,6 +469,14 @@ void CWeaponShopUI::Setup_AfterClone()
 	m_pArmorUpgradeInven = static_cast<CWeapon_Inven_InShop*>(g_pManagement->Clone_GameObject_Return(L"GameObject_Weapon_Inven_InShop", nullptr));
 	m_pArmorUpgradeInven->Setup_InvenType(CWeapon_Inven_InShop::INVEN_SHOP_OPTION::SHOP_ARMOR_UPGRADE);
 	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pArmorUpgradeInven, SCENE_MORTAL, L"Layer_PlayerUI", nullptr);
+}
+
+void CWeaponShopUI::Set_Active(_bool bActive)
+{
+	m_bIsActive = bActive;
+
+	for (auto& iter : m_vecOption)
+		iter->Set_Active(bActive);
 }
 
 CWeaponShopUI * CWeaponShopUI::Create(_Device pGraphic_Device)

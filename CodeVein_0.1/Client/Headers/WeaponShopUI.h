@@ -28,6 +28,7 @@ public:
 public:
 	void Set_PopupOn(_bool bPopup) { m_bPopupOn = bPopup; }
 	void Setup_AfterClone();
+	void Set_Active(_bool bActive);
 
 public:
 	virtual HRESULT Ready_GameObject_Prototype();

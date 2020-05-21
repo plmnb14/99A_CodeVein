@@ -114,6 +114,7 @@ CRigidBody* CRigidBody::Create(_Device _pGraphicDev)
 
 	if (FAILED(pComponent->Ready_Component()))
 	{
+
 		Safe_Release(pComponent);
 		return nullptr;
 	}

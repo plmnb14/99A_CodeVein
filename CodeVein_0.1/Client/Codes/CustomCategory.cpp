@@ -51,14 +51,6 @@ HRESULT CCustomCategory::Ready_GameObject(void * pArg)
 
 _int CCustomCategory::Update_GameObject(_double TimeDelta)
 {
-	if (g_pInput_Device->Key_Down(DIK_T))
-	{
-		Set_Active(!m_bIsActive);
-		m_pCustomInven->Set_Active(m_bIsActive);
-		if(m_bIsActive)
-			m_pCustomInven->Set_ActiveSlot(CCustomInven::TYPE_HAIR);
-	}
-
 	CUI::Update_GameObject(TimeDelta);
 	m_fPosX = WINCX * 0.1f;
 
@@ -131,6 +123,15 @@ HRESULT CCustomCategory::Render_GameObject()
 	return NOERROR;
 }
 
+void CCustomCategory::Active_CustomUIs()
+{
+	Set_Active(!m_bIsActive);
+	m_pCustomInven->Set_Active(m_bIsActive);
+
+	if (m_bIsActive)
+		m_pCustomInven->Set_ActiveSlot(CCustomInven::TYPE_HAIR);
+}
+
 
 void CCustomCategory::Click_Option()
 {
@@ -149,6 +150,8 @@ void CCustomCategory::Click_Option()
 			if (g_pInput_Device->Get_DIMouseState(CInput_Device::DIM_LB))
 			{
 				m_pCustomInven->Set_ActiveSlot(CCustomInven::INVEN_TYPE(iIdx));
+
+				m_dwCurentActiveUI = iIdx;
 
 				g_pSoundManager->Stop_Sound(CSoundManager::UI_SFX_01);
 				g_pSoundManager->Play_Sound(L"UI_CommonClick.wav", CSoundManager::UI_SFX_01, CSoundManager::Effect_Sound);

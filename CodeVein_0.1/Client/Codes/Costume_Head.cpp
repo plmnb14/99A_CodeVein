@@ -166,15 +166,6 @@ _int CCostume_Head::Update_GameObject(_double TimeDelta)
 
 	Calc_AttachBoneTransform();
 
-	if (g_pInput_Device->Key_Down(DIK_M))
-	{
-		m_dwDebugValue += 1;
-
-		if (m_dwDebugValue >= 10)
-			m_dwDebugValue = 0;
-		Change_HeadMesh((CHAR_HEAD)m_dwDebugValue);
-	}
-
 	return NO_EVENT;
 }
 

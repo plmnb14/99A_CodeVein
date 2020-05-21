@@ -232,6 +232,7 @@ void CWeaponUpgradeSuccessPopupUI::Click_Option()
 				if (0 == iIdx)
 				{
 					Set_Active(false);
+
 				}
 			}
 		}
@@ -362,7 +363,7 @@ void CWeaponUpgradeSuccessPopupUI::Check_ItemIcon()
 {
 	m_pShopItemIcon->Set_Active(m_bIsActive);
 	m_pShopItemIcon->Set_Alpha(m_fAlpha);
-	cout <<"Icon Alpha"<< m_fAlpha << endl;
+	//cout <<"Icon Alpha"<< m_fAlpha << endl;
 
 	CWeapon_Slot* pWeaponSlot = m_pInven->Get_SelectedSlot_Weapon();
 	if (pWeaponSlot)

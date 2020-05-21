@@ -250,8 +250,6 @@ const _float CTransform::Chase_Target_Angle(const _v3 * pTargetPos)
 	if (vRight.z > 0)
 		fDot *= -1.f;
 
-	cout << fDot << endl;
-
 	return fDot;
 }
 
@@ -260,6 +258,8 @@ const _float CTransform::Calc_HitTarget_Angle(const _v3 pHitTargetPos)
 	_v3 vMyPos = m_tInfo.vPos;
 	_v3 vTargetPos = pHitTargetPos;
 	_v3 vMyLook = m_tInfo.vAxisDir[AXIS_Z];
+
+	V3_NORMAL_SELF(&vMyLook);
 
 	// 내 위치로 부터 대상 까지의 방향 벡터
 	_v3 vDirection = vTargetPos - vMyPos;
@@ -270,6 +270,8 @@ const _float CTransform::Calc_HitTarget_Angle(const _v3 pHitTargetPos)
 	_v3 vVertical;
 	D3DXVec3Cross(&vVertical, &vMyLook, &vDirection);
 	V3_NORMAL_SELF(&vVertical);
+
+	cout << "도트 : " << fDotRadian << endl;
 
 	if (vVertical.y < 0)
 		fDotRadian *= -1.f;
