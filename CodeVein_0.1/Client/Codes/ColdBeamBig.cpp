@@ -53,7 +53,7 @@ HRESULT CColdBeamBig::Ready_GameObject(void * pArg)
 	m_pTransformCom->Set_Angle(_v3(0.f, fDot, 0.f));
 
 	m_tObjParam.bCanAttack = true;
-	m_tObjParam.fDamage = 250.f * pow(1.5f, g_sStageIdx_Cur - 1);
+	m_tObjParam.fDamage = 250.f * pow(1.5f, g_eStageIdx_Cur - 1);
 
 	m_pBulletBody_01 = static_cast<CEffect*>(g_pManagement->Clone_GameObject_Return(L"IceBlock_Main_Big", nullptr));
 	m_pBulletBody_01->Set_Desc(_v3(0, 0, 0), nullptr);

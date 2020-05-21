@@ -3465,9 +3465,9 @@ HRESULT CThaiMan::Ready_Status(void * pArg)
 		m_pTransformCom->Set_Angle(Info.vAngle);
 	}
 
-	m_tObjParam.fDamage = 350.f * pow(1.5f, g_sStageIdx_Cur - 1);
-	m_tObjParam.fHp_Max = 3000.f * pow(1.5f, g_sStageIdx_Cur - 1);
-	m_tObjParam.fArmor_Max = 25.f * pow(1.5f, g_sStageIdx_Cur - 1);
+	m_tObjParam.fDamage = 350.f * pow(1.5f, g_eStageIdx_Cur - 1);
+	m_tObjParam.fHp_Max = 3000.f * pow(1.5f, g_eStageIdx_Cur - 1);
+	m_tObjParam.fArmor_Max = 25.f * pow(1.5f, g_eStageIdx_Cur - 1);
 
 	m_fRecognitionRange = 15.f;
 	m_fShotRange = 10.f;

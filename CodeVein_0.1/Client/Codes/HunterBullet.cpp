@@ -49,7 +49,7 @@ HRESULT CHunterBullet::Ready_GameObject(void * pArg)
 	m_pTransformCom->Set_Angle(_v3(0.f, fDot, 0.f));
 
 	m_tObjParam.bCanAttack = true;
-	m_tObjParam.fDamage = 300.f * pow(1.5f, g_sStageIdx_Cur - 1);
+	m_tObjParam.fDamage = 300.f * pow(1.5f, g_eStageIdx_Cur - 1);
 
 	m_dCurTime = 0;
 	m_bDead = false;

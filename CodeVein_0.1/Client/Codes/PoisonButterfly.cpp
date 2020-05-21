@@ -31,10 +31,10 @@ HRESULT CPoisonButterfly::Ready_GameObject(void * pArg)
 	Ready_Sound();
 
 	m_tObjParam.bCanHit = true;
-	m_tObjParam.fHp_Cur = 10000.f * pow(1.5f, g_sStageIdx_Cur - 1);
+	m_tObjParam.fHp_Cur = 10000.f * pow(1.5f, g_eStageIdx_Cur - 1);
 	m_tObjParam.fHp_Max = m_tObjParam.fHp_Cur;
-	m_tObjParam.fDamage = 500.f * pow(1.5f, g_sStageIdx_Cur - 1);
-	m_tObjParam.fArmor_Cur = 100.f * pow(1.5f, g_sStageIdx_Cur - 1);
+	m_tObjParam.fDamage = 500.f * pow(1.5f, g_eStageIdx_Cur - 1);
+	m_tObjParam.fArmor_Cur = 100.f * pow(1.5f, g_eStageIdx_Cur - 1);
 
 	m_pTransformCom->Set_Scale(_v3(1.f, 1.f, 1.f));
 

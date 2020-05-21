@@ -38,7 +38,7 @@ HRESULT CDarkMidCol::Ready_GameObject(void * pArg)
 	m_pTransformCom->Set_Scale(_v3(1.f, 1.f, 1.f));
 
 	m_tObjParam.bCanAttack = true;
-	m_tObjParam.fDamage = 250.f * pow(1.5f, g_sStageIdx_Cur - 1);
+	m_tObjParam.fDamage = 250.f * pow(1.5f, g_eStageIdx_Cur - 1);
 
 	//g_pManagement->Create_Effect(L"QueensKnight_DarkBoom_Sphere_0", m_pTransformCom->Get_Pos(), nullptr);
 	g_pManagement->Create_Effect(L"QueensKnight_JumpDown_Particle_Red", m_pTransformCom->Get_Pos() + _v3(0.f, 0.25f, 0.f), nullptr);
