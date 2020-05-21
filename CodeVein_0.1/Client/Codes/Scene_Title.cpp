@@ -40,7 +40,7 @@ HRESULT CScene_Title::Ready_Scene()
 	if (FAILED(Ready_Layer_LoadingUI(L"Layer_LoadingUI")))
 		return E_FAIL;
 
-	g_pSoundManager->Stop_Sound(CSoundManager::Background_01);
+	g_pSoundManager->Stop_Sound(CSoundManager::Background_Loop);
 
 	m_pLoading = CLoading::Create(m_pGraphic_Device, SCENE_STAGE);
 

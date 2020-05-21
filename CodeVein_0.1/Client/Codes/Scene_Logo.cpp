@@ -60,7 +60,7 @@ _int CScene_Logo::Update_Scene(_double TimeDelta)
 		
 		if (m_pLoadingScreen->Get_Active())
 		{
-			m_fBGMFade -= _float(TimeDelta);
+			m_fBGMFade -= _float(TimeDelta) * 0.8f;
 			if (m_fBGMFade <= 0.f)
 				m_fBGMFade = 0.f;
 			g_pSoundManager->Set_Volume(CSoundManager::BGM_Volume, m_fBGMFade);
@@ -240,7 +240,7 @@ HRESULT CScene_Logo::Ready_BGM()
 {
 	g_pSoundManager->Load_Directory_SouneFile_W(L"BGM");
 
-	g_pSoundManager->Stop_Sound(CSoundManager::Background_01);
+	g_pSoundManager->Stop_Sound(CSoundManager::Background_Loop);
 	g_pSoundManager->Play_BGM(L"07_Main.ogg");
 
 	return S_OK;

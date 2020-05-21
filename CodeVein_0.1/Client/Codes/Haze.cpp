@@ -41,10 +41,6 @@ HRESULT CHaze::Ready_GameObject(void* pArg)
 	m_fDelay = tInfo.fDelay;
 	m_fHazeValue = tInfo.fHazeValue;
 
-	m_pBulletBody = CParticleMgr::Get_Instance()->Create_EffectReturn(L"Haze_Body");
-	m_pBulletBody->Set_Desc(V3_NULL, m_pTransformCom);
-	m_pBulletBody->Reset_Init();
-
 	m_pTrailEffect = g_pManagement->Create_Trail();
 	m_pTrailEffect->Set_TrailIdx(4);
 
@@ -60,9 +56,6 @@ HRESULT CHaze::Ready_GameObject(void* pArg)
 
 	m_pTargetTrans = TARGET_TO_TRANS(g_pManagement->Get_GameObjectBack(L"Layer_Player", SCENE_MORTAL));
 
-	g_pSoundManager->Stop_Sound(CSoundManager::Effect_SFX_03);
-	g_pSoundManager->Play_Sound(L"SE_VESTIGE_REPAIR_000.ogg", CSoundManager::Effect_SFX_03, CSoundManager::Effect_Sound);
-
 	return NOERROR;
 }
 
@@ -76,6 +69,25 @@ _int CHaze::Update_GameObject(_double TimeDelta)
 	Check_Delay(TimeDelta);
 	if (m_fDelay > 0.f)
 		return NO_EVENT;
+	else if (!m_bDelay)
+	{
+		m_bDelay = true;
+
+		m_pBulletBody = CParticleMgr::Get_Instance()->Create_EffectReturn(L"Haze_Body");
+		m_pBulletBody->Set_Desc(V3_NULL, m_pTransformCom);
+		m_pBulletBody->Reset_Init();
+
+		if (0 == CCalculater::Random_Num(0, 1))
+		{
+			g_pSoundManager->Stop_Sound(CSoundManager::Effect_SFX_03);
+			g_pSoundManager->Play_Sound(L"SE_VESTIGE_REPAIR_000.ogg", CSoundManager::Effect_SFX_03, CSoundManager::Effect_Sound);
+		}
+		else
+		{
+			g_pSoundManager->Stop_Sound(CSoundManager::Effect_SFX_02);
+			g_pSoundManager->Play_Sound(L"SE_VESTIGE_REPAIR_000.ogg", CSoundManager::Effect_SFX_02, CSoundManager::Effect_Sound);
+		}
+	}
 
 	Update_Trails(TimeDelta);
 	Check_Move(TimeDelta);

@@ -41,8 +41,9 @@ HRESULT CScene_Stage_01::Ready_Scene()
 
 	g_pManagement->LoadCreateObject_FromPath(m_pGraphic_Device, L"Object_Stage_01.dat");
 
-	g_pSoundManager->Stop_Sound(CSoundManager::Background_01);
-	g_pSoundManager->Play_BGM(L"SE_AMB_St01_Base_Out.ogg");
+	g_pSoundManager->Set_Volume(CSoundManager::BGM_Volume, 1.f);
+	g_pSoundManager->Stop_Sound(CSoundManager::Ambient_Loop);
+	g_pSoundManager->Play_BGM(L"SE_AMB_St01_Base_Out.ogg", true);
 
 	CParticleMgr::Get_Instance()->Clear_Fog();
 

@@ -59,8 +59,9 @@ HRESULT CScene_Stage_Training::Ready_Scene()
 
 	g_pManagement->LoadCreateObject_FromPath(m_pGraphic_Device, L"Object_Stage_Training.dat");
 
-	g_pSoundManager->Stop_Sound(CSoundManager::Background_01);
-	g_pSoundManager->Play_BGM(L"SE_AMB_St01_Base_Out.ogg");
+	g_pSoundManager->Set_Volume(CSoundManager::BGM_Volume, 1.f);
+	g_pSoundManager->Stop_Sound(CSoundManager::Ambient_Loop);
+	g_pSoundManager->Play_BGM(L"SE_AMB_St01_Base_Out.ogg", true);
 
 	return S_OK;
 }
@@ -264,11 +265,11 @@ HRESULT CScene_Stage_Training::Ready_Layer_Enemies()
 	//		true, _v3(-8.f, 0.f, 3.f), V3_NULL, 0));
 	//g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Boss", nullptr);
 
-	// 얼음여자
-	pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_IceGirl",
-		&CIceGirl::INFO(10.f, 5.f, 2.f,
-			true, _v3(3.f, 0.f, -8.f), V3_NULL, 0));
-	g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Boss", nullptr);
+	//// 얼음여자
+	//pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_IceGirl",
+	//	&CIceGirl::INFO(10.f, 5.f, 2.f,
+	//		true, _v3(3.f, 0.f, -8.f), V3_NULL, 0));
+	//g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Boss", nullptr);
 
 	////// 불남자
 	//pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_FireBoy",
@@ -277,10 +278,10 @@ HRESULT CScene_Stage_Training::Ready_Layer_Enemies()
 	//g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Boss", nullptr);
 
 	// 사슴왕
-	//pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_DeerKing",
-	//	&CDeerKing::INFO(10.f, 5.f, 2.f,
-	//		true, _v3(8.f, 0.f, -8.f), V3_NULL, 0));
-	//g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Boss", nullptr);
+	pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_DeerKing",
+		&CDeerKing::INFO(10.f, 5.f, 2.f,
+			true, _v3(8.f, 0.f, -8.f), V3_NULL, 0));
+	g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Boss", nullptr);
 
 
 	return S_OK;
