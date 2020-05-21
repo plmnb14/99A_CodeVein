@@ -4,6 +4,7 @@
 #include "UI.h"
 
 BEGIN(Client)
+
 class CPlayer;
 class CWeapon;
 class CWeapon_Slot;
@@ -17,7 +18,7 @@ private:
 	virtual ~CWeapon_Inven() = default;
 
 public:
-	//WPN_PARAM Get_UseWeaponParam(_uint iIndex) { return m_UseWeaponParam[iIndex]; }
+	WPN_PARAM Get_UseWeaponParam(_uint iIndex) { return m_UseWeaponParam[iIndex]; }
 	vector<CWeapon_Slot*>* Get_VecWeaponSlot() { return &m_vecWeaponSlot; }
 
 public:

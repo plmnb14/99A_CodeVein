@@ -1200,11 +1200,6 @@ HRESULT CLoading::Ready_Effect(void)
 	if (FAILED(g_pManagement->Add_Prototype(L"Ortho_Smoke_1", COrthoEffect::Create(m_pGraphicDev, Read_EffectData(L"../../Data/EffectData/Ortho_Smoke_1.dat")))))
 		return E_FAIL;
 
-	if (FAILED(g_pManagement->Add_Prototype(L"Ortho_Smoke_0", COrthoEffect::Create(m_pGraphicDev, Read_EffectData(L"../../Data/EffectData/Ortho_Smoke_0.dat")))))
-		return E_FAIL;
-	if (FAILED(g_pManagement->Add_Prototype(L"Ortho_Smoke_1", COrthoEffect::Create(m_pGraphicDev, Read_EffectData(L"../../Data/EffectData/Ortho_Smoke_1.dat")))))
-		return E_FAIL;
-
 	return S_OK;
 }
 
@@ -1326,25 +1321,20 @@ _uint CLoading::Loading_Title()
 	//============================================================================================================
 	// 필수 메쉬 불러오는중
 	//============================================================================================================
-	//cout << "Essential Static Mesh 불러오는 중 . . ." << endl;
 	g_pManagement->LoadMesh_FilesFromPath_AddProtoRenderObj(m_pGraphicDev, L"../../Data/Load_MeshData/Mesh_Essential_Path.dat");
 	//============================================================================================================
 	// 다이나믹 메쉬 불러오는 중
 	//============================================================================================================
 	++m_dwLoadingCnt;
-	//cout << "Costume Static Mesh 불러오는 중 . . ." << endl;
 	g_pManagement->LoadMesh_FromPath(m_pGraphicDev, L"../../Data/Load_MeshData/Mesh_Costume_Static_Path.dat");
 
 	++m_dwLoadingCnt;
-	//cout << "Costume Dynamic Mesh 불러오는 중 . . ." << endl;
 	g_pManagement->LoadMesh_FromPath(m_pGraphicDev, L"../../Data/Load_MeshData/Mesh_Costume_Dynamic_Path.dat");
 
 	++m_dwLoadingCnt;
-	//cout << " Costume Cloth Making . . ." << endl;
-	//g_pClothManager->Ready_ClothManager();
+	g_pClothManager->Ready_ClothManager();
 
 	++m_dwLoadingCnt;
-	//cout << "Dynamic Mesh 불러오는 중 . . ." << endl;
 	g_pManagement->LoadMesh_FromPath(m_pGraphicDev, L"../../Data/Load_MeshData/Mesh_NPC_Path.dat");
 	g_pManagement->LoadMesh_FromPath(m_pGraphicDev, L"../../Data/Load_MeshData/Mesh_Dynamic_Path.dat");
 
@@ -1352,56 +1342,47 @@ _uint CLoading::Loading_Title()
 	// 무기 불러오는 중
 	//============================================================================================================
 	++m_dwLoadingCnt;
-	//cout << "Essential Weapon Mesh 불러오는 중 . . ." << endl;
 	g_pManagement->LoadMesh_FromPath(m_pGraphicDev, L"../../Data/Load_MeshData/Mesh_Weapon_Path.dat");
 
 	++m_dwLoadingCnt;
-	//cout << "DrainWeapon Mesh 불러오는 중 . . ." << endl;
 	g_pManagement->LoadMesh_FromPath(m_pGraphicDev, L"../../Data/Load_MeshData/Mesh_DrainWeapon_Path.dat");
 	//============================================================================================================
 	// 텍스쳐 불러오는 중
 	//============================================================================================================
 	++m_dwLoadingCnt;
-	//cout << "All Texture 불러오는 중 . . ." << endl;
 	g_pManagement->LoadTex_FromPath(m_pGraphicDev, L"../../Data/Load_TexData/Tex_Path.dat");
 	//============================================================================================================
 	// 이펙트 메쉬 불러오는중
 	//============================================================================================================
 	++m_dwLoadingCnt;
-	//cout << "Effect Mesh 불러오는 중 . . ." << endl;
 	g_pManagement->LoadMesh_FromPath(m_pGraphicDev, L"../../Data/Load_MeshData/Mesh_Effect_Path.dat");
 	//============================================================================================================
 	// 이펙트 원형 생성
 	//============================================================================================================
 	++m_dwLoadingCnt;
-	//cout << "Effect 원형 생성중" << endl;
 	Ready_Effect();
 	//============================================================================================================
 	// 필수 파티클 생성
 	//============================================================================================================
 	++m_dwLoadingCnt;
-	//cout << "Particle Essential 불러오는 중 . . ." << endl;
 	if (FAILED(CParticleMgr::Get_Instance()->Ready_ParticleManager_Essential()))
 		return E_FAIL;
 	//============================================================================================================
 	// 플레이어 스킬, 보스 이펙트 포함
 	//============================================================================================================
 	++m_dwLoadingCnt;
-	//cout << "Particle Etc 불러오는 중 . . ." << endl;
 	if (FAILED(CParticleMgr::Get_Instance()->Ready_ParticleManager()))
 		return E_FAIL;
 	//============================================================================================================
 	// UI 원형 생성
 	//============================================================================================================
 	++m_dwLoadingCnt;
-	//cout << " UI 원형 생성 중 . . ." << endl;
 	CUI_Manager::Get_Instance()->Add_UI_Prototype(m_pGraphicDev);
 	CItem_Manager::Get_Instance()->Add_Item_Prototype(m_pGraphicDev);
 	//============================================================================================================
 	// 기타
 	//============================================================================================================
 	++m_dwLoadingCnt;
-	//cout << "Essential Protorypes 추가 중 . . ."  << endl;
 	//============================================================================================================
 	// Costume Head
 	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_Costume_Head", CCostume_Head::Create(m_pGraphicDev))))
@@ -1480,30 +1461,30 @@ _uint CLoading::Loading_Title()
 
 	m_bFinish = true;
 
-	//system("cls");
-	//cout << "===============================================================================" << endl;
-	//cout << " 1. 위 숫자 키를 누르면 옵션이 활성화 됩니다." << endl;
-	//cout << " 2. (Load_StaticMesh) 가 (false) 이면 스테이지 들어가도 생성 안됩니다." << endl;
-	//cout << " 3. Space 를 누르면 다음 스테이지로 넘어갑니다." << endl;
-	//cout << " 4. 트레이닝 맵은 별도로 Load_StaticMesh 안해도 넘어갑니다." << endl;
-	//cout << " 5. 기본 설정된 맵은 Stage_Traing 입니다." << endl;
-	//cout << "-------------------------------------------------------------------------------" << endl;
-	//cout << " #  [ 릴리즈 모드 ] 는 메쉬로드와 스테이지 진행이 실제 게임처럼 됩니다." << endl;
-	//cout << " #  [ 릴리즈 모드 ] 는 강제로 [ Stage_Base ] 부터 시작하게 됩니다." << endl;
-	//cout << "-------------------------------------------------------------------------------" << endl;
-	//cout << "[1] Stage_Training = true " << endl;
-	//cout << "[2] Stage_Base = false " << endl;
-	//cout << "[3] Stage_01 = false " << endl;
-	//cout << "[4] Stage_02 = false " << endl;
-	//cout << "[5] Stage_03 = false " << endl;
-	//cout << "[6] Stage_04 = false " << endl;
-	//cout << "-------------------------------------------------------------------------------" << endl;
-	//cout << "[8] Load_StaticMesh = ";
-	//cout << (m_bLoadStaticMesh ? "true" : "false") << endl;
-	//cout << "-------------------------------------------------------------------------------" << endl;
-	//cout << "[9] # 릴리즈 모드 # ";
-	//cout << (g_bReleaseMode ? "true" : "false") << endl;
-	//cout << "-------------------------------------------------------------------------------" << endl;
+	system("cls");
+	cout << "===============================================================================" << endl;
+	cout << " 1. 위 숫자 키를 누르면 옵션이 활성화 됩니다." << endl;
+	cout << " 2. (Load_StaticMesh) 가 (false) 이면 스테이지 들어가도 생성 안됩니다." << endl;
+	cout << " 3. Space 를 누르면 다음 스테이지로 넘어갑니다." << endl;
+	cout << " 4. 트레이닝 맵은 별도로 Load_StaticMesh 안해도 넘어갑니다." << endl;
+	cout << " 5. 기본 설정된 맵은 Stage_Traing 입니다." << endl;
+	cout << "-------------------------------------------------------------------------------" << endl;
+	cout << " #  [ 릴리즈 모드 ] 는 메쉬로드와 스테이지 진행이 실제 게임처럼 됩니다." << endl;
+	cout << " #  [ 릴리즈 모드 ] 는 강제로 [ Stage_Base ] 부터 시작하게 됩니다." << endl;
+	cout << "-------------------------------------------------------------------------------" << endl;
+	cout << "[1] Stage_Training = true " << endl;
+	cout << "[2] Stage_Base = false " << endl;
+	cout << "[3] Stage_01 = false " << endl;
+	cout << "[4] Stage_02 = false " << endl;
+	cout << "[5] Stage_03 = false " << endl;
+	cout << "[6] Stage_04 = false " << endl;
+	cout << "-------------------------------------------------------------------------------" << endl;
+	cout << "[8] Load_StaticMesh = ";
+	cout << (m_bLoadStaticMesh ? "true" : "false") << endl;
+	cout << "-------------------------------------------------------------------------------" << endl;
+	cout << "[9] # 릴리즈 모드 # ";
+	cout << (g_bReleaseMode ? "true" : "false") << endl;
+	cout << "-------------------------------------------------------------------------------" << endl;
 	
 	//====================================================================================================
 	// 사운드 재생 방법
@@ -2049,10 +2030,9 @@ HRESULT CLoading::Ready_Intro_MonsterPrototype()
 	{
 		if (FAILED(g_pManagement->Add_Prototype(L"Monster_Yeti", CYeti::Create(m_pGraphicDev))))
 			return E_FAIL;
-
-		//if (FAILED(g_pManagement->Add_Prototype(L"GameObject_YetiTrap", CYetiTrap::Create(m_pGraphicDev))))
-		//	return E_FAIL;
-
+		//예티 트랩
+		if (FAILED(g_pManagement->Add_Prototype(L"GameObject_YetiTrap", CYetiTrap::Create(m_pGraphicDev))))
+			return E_FAIL;
 		// 예티 총알
 		if (FAILED(g_pManagement->Add_Prototype(L"Monster_YetiBullet", CYetiBullet::Create(m_pGraphicDev))))
 			return E_FAIL;

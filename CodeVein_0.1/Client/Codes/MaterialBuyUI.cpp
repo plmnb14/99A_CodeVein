@@ -196,7 +196,7 @@ void CMaterialBuyUI::Click_SubUI()
 		{
 			m_iBuyCnt--;
 
-			g_pSoundManager->Play_Sound(L"UI_Money_0.wav", CSoundManager::CHANNELID::Material_Buy_Left, CSoundManager::Ambient_Sound);
+			CUI_Manager::Get_Instance()->Stop_Play_UISound(L"Slot_Regist.ogg", CSoundManager::CHANNELID::UI_Click, CSoundManager::Effect_Sound);
 		}			
 		else return;
 	}
@@ -206,7 +206,7 @@ void CMaterialBuyUI::Click_SubUI()
 		{
 			m_iBuyCnt++;
 
-			g_pSoundManager->Play_Sound(L"UI_Money_0.wav", CSoundManager::CHANNELID::Material_Buy_Right, CSoundManager::Ambient_Sound);
+			CUI_Manager::Get_Instance()->Stop_Play_UISound(L"Slot_Regist.ogg", CSoundManager::CHANNELID::UI_Click, CSoundManager::Effect_Sound);
 		}
 		else return;
 	}
@@ -260,7 +260,7 @@ void CMaterialBuyUI::Buy_Item()
 
 		m_bIsActive = false;
 
-		g_pSoundManager->Play_Sound(L"UI_WeaponBuy.wav", CSoundManager::CHANNELID::Material_Buy_Purchase, CSoundManager::Ambient_Sound);
+		CUI_Manager::Get_Instance()->Stop_Play_UISound(L"UI_Money_0.wav", CSoundManager::CHANNELID::UI_SFX_01, CSoundManager::Effect_Sound);
 	}
 	// 가지고 있는 헤이즈보다 구매 총 비용이 더 클 경우 -> 돈 부족함 -> 구매X
 	else
@@ -270,7 +270,7 @@ void CMaterialBuyUI::Buy_Item()
 
 		m_pBuyFailUI->Set_Active(true);
 
-		g_pSoundManager->Play_Sound(L"UI_ShopActionFailed.wav", CSoundManager::CHANNELID::Material_Buy_Fail, CSoundManager::Ambient_Sound);
+		CUI_Manager::Get_Instance()->Stop_Play_UISound(L"UI_ShopActionFailed.wav", CSoundManager::CHANNELID::UI_SFX_01, CSoundManager::Effect_Sound);
 		return;
 	}
 }

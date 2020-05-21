@@ -10,6 +10,8 @@
 
 #include "Player.h"
 
+#include "Player_Colleague.h"
+
 #include "Scene_Stage_Base.h"
 
 CScene_Stage_02::CScene_Stage_02(LPDIRECT3DDEVICE9 pGraphic_Device)
@@ -34,6 +36,8 @@ HRESULT CScene_Stage_02::Ready_Scene()
 	m_pRenderer->Set_FogDestiny(0.04f);
 	m_pRenderer->Set_UseLinearFog(false);
 
+	m_pScriptManager = CScriptManager::Get_Instance();
+
 	g_pSoundManager->Set_Volume(CSoundManager::BGM_Volume, 1.f);
 	g_pSoundManager->Stop_Sound(CSoundManager::Ambient_Loop);
 	g_pSoundManager->Play_BGM(L"BGM_MT_SNOW.ogg", true);
@@ -57,10 +61,17 @@ _int CScene_Stage_02::Update_Scene(_double TimeDelta)
 	Create_Dust(TimeDelta);
 	Check_Effect_Fade();
 
-	if (g_pInput_Device->Key_Down(DIK_B))
+	if (g_pInput_Device->Key_Down(DIK_I))
 	{
-		m_pRenderer->Start_FogFadeOut();
-		m_bFadeOutStart = true;
+		CGameObject* pInstance = nullptr;
+
+		pInstance = g_pManagement->Clone_GameObject_Return(L"GameObject_Colleague",
+			&CPlayer_Colleague::JACK_INFO(_v3(0.f, 0.f, 0.f), 0.f, 2));
+
+		if (nullptr != pInstance)
+			g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Colleague", nullptr);
+		else
+			cout << "소환할 수 없는 위치입니다" << endl;
 	}
 
 	return _int();
@@ -271,6 +282,12 @@ void CScene_Stage_02::Create_Snow(_double TimeDelta)
 
 void CScene_Stage_02::Check_Effect_Fade()
 {
+	if (m_pScriptManager->Get_FogOff())
+	{
+		m_pRenderer->Start_FogFadeOut();
+		m_bFadeOutStart = true;
+	}
+
 	if (m_bFadeInStart && m_fFade < 1.f)
 	{
 		m_bFadeOutStart = false;

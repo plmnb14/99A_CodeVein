@@ -148,8 +148,8 @@ PS_OUT PS_MAIN_DIRECTIONAL(PS_IN In)
 
 	if (vHeightValue.x > 0.99f)
 	{
-		if (Out.vShade.x < 0.6f)
-			Out.vShade.xyz = 0.6f;
+		if (Out.vShade.x < 0.5f)
+			Out.vShade.xyz = 0.5f;
 	
 		//if (vHeightValue.z > 0.99f)
 		//{
