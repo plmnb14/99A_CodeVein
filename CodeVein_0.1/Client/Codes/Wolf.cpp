@@ -1477,9 +1477,9 @@ HRESULT CWolf::Ready_Status(void * pArg)
 		if (MONSTER_COLOR_TYPE::WHITE == Info.eMonsterColor)
 		{
 			m_eMonsterColor = Info.eMonsterColor;
-			m_tObjParam.fDamage = 120.f * pow(1.5f, g_sStageIdx_Cur - 1);
-			m_tObjParam.fHp_Max = 1200.f * pow(1.5f, g_sStageIdx_Cur - 1);
-			m_tObjParam.fArmor_Max = 30.f * pow(1.5f, g_sStageIdx_Cur - 1);
+			m_tObjParam.fDamage = 120.f * pow(1.5f, g_eStageIdx_Cur - 1);
+			m_tObjParam.fHp_Max = 1200.f * pow(1.5f, g_eStageIdx_Cur - 1);
+			m_tObjParam.fArmor_Max = 30.f * pow(1.5f, g_eStageIdx_Cur - 1);
 
 			m_fRecognitionRange = 15.f;
 			m_fShotRange = 10.f;
@@ -1490,9 +1490,9 @@ HRESULT CWolf::Ready_Status(void * pArg)
 		else
 		{
 			m_eMonsterColor = MONSTER_COLOR_TYPE::BLACK;
-			m_tObjParam.fDamage = 120.f * pow(1.5f, g_sStageIdx_Cur - 1);
-			m_tObjParam.fHp_Max = 1200.f * pow(1.5f, g_sStageIdx_Cur - 1);
-			m_tObjParam.fArmor_Max = 30.f * pow(1.5f, g_sStageIdx_Cur - 1);
+			m_tObjParam.fDamage = 120.f * pow(1.5f, g_eStageIdx_Cur - 1);
+			m_tObjParam.fHp_Max = 1200.f * pow(1.5f, g_eStageIdx_Cur - 1);
+			m_tObjParam.fArmor_Max = 30.f * pow(1.5f, g_eStageIdx_Cur - 1);
 
 			m_fRecognitionRange = 15.f;
 			m_fShotRange = 10.f;

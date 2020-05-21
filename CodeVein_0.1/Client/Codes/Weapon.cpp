@@ -397,7 +397,7 @@ void CWeapon::OnCollisionEvent(list<CGameObject*> plistGameObject, _bool _bIsPla
 								iter->Hit_Target((m_tObjParam.fDamage + m_tWeaponParam[m_eWeaponData].fPlusDamage) * m_fSkillPercent);
 							// 몬스터의 공격
 							else
-								iter->Hit_Target((m_tObjParam.fDamage + m_tWeaponParam[m_eWeaponData].fPlusDamage) * m_fSkillPercent * pow(1.5f, g_sStageIdx_Cur - 1));
+								iter->Hit_Target((m_tObjParam.fDamage + m_tWeaponParam[m_eWeaponData].fPlusDamage) * m_fSkillPercent * pow(1.5f, g_eStageIdx_Cur - 1));
 
 
 							g_pManagement->Create_Hit_Effect(vecIter, vecCol, pIterTransform);

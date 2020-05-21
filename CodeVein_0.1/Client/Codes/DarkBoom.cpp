@@ -38,7 +38,7 @@ HRESULT CDarkBoom::Ready_GameObject(void * pArg)
 	m_pTransformCom->Set_Scale(_v3(1.f, 1.f, 1.f));
 
 	m_tObjParam.bCanAttack = true;
-	m_tObjParam.fDamage = 250.f * pow(1.5f, g_sStageIdx_Cur - 1);
+	m_tObjParam.fDamage = 250.f * pow(1.5f, g_eStageIdx_Cur - 1);
 
 	m_dCurTime = 0;
 	m_bDead = false;

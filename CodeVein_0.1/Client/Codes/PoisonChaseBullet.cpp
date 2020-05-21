@@ -38,7 +38,7 @@ HRESULT CPoisonChaseBullet::Ready_GameObject(void * pArg)
 
 	m_tObjParam.bCanHit = true;
 	m_tObjParam.bCanAttack = true;
-	m_tObjParam.fDamage = 250.f * pow(1.5f, g_sStageIdx_Cur - 1);
+	m_tObjParam.fDamage = 250.f * pow(1.5f, g_eStageIdx_Cur - 1);
 	m_tObjParam.fHp_Cur = 1.f;
 
 	m_dCurTime = 0;

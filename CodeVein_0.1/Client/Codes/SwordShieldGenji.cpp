@@ -36,10 +36,10 @@ HRESULT CSwordShieldGenji::Ready_GameObject(void * pArg)
 	m_tObjParam.bCanCounter = true;			// 반격가능성
 	m_tObjParam.bCanExecution = true;		// 처형
 	m_tObjParam.bCanHit = true;
-	m_tObjParam.fHp_Cur = 1800.f * pow(1.5f, g_sStageIdx_Cur - 1);
+	m_tObjParam.fHp_Cur = 1800.f * pow(1.5f, g_eStageIdx_Cur - 1);
 	m_tObjParam.fHp_Max = m_tObjParam.fHp_Cur;
-	m_tObjParam.fDamage = 200.f * pow(1.5f, g_sStageIdx_Cur - 1);;
-	m_tObjParam.fArmor_Cur = 200.f * pow(1.5f, g_sStageIdx_Cur - 1);;
+	m_tObjParam.fDamage = 200.f * pow(1.5f, g_eStageIdx_Cur - 1);;
+	m_tObjParam.fArmor_Cur = 200.f * pow(1.5f, g_eStageIdx_Cur - 1);;
 
 	m_pTransformCom->Set_Scale(_v3(1.f, 1.f, 1.f));
 
@@ -1174,10 +1174,10 @@ void CSwordShieldGenji::Check_PhyCollider()
 		if (false == m_pAIControllerCom->Get_BoolValue(L"BlockOn"))
 		{
 			m_pAIControllerCom->Reset_BT();
-			m_tObjParam.fArmor_Cur = 400.f * pow(1.5f, g_sStageIdx_Cur - 1);;
+			m_tObjParam.fArmor_Cur = 400.f * pow(1.5f, g_eStageIdx_Cur - 1);;
 		}
 
-		m_tObjParam.fArmor_Cur = 200.f * pow(1.5f, g_sStageIdx_Cur - 1);;
+		m_tObjParam.fArmor_Cur = 200.f * pow(1.5f, g_eStageIdx_Cur - 1);;
 
 		m_pAIControllerCom->Set_Value_Of_BlackBoard(L"TrailOff", true);
 

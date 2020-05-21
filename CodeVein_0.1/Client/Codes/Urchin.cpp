@@ -1249,15 +1249,15 @@ HRESULT CUrchin::Ready_Status(void * pArg)
 	if (MONSTER_COLOR_TYPE::WHITE == Info.eMonsterColor)
 	{
 		m_eMonsterColor = Info.eMonsterColor;
-		m_tObjParam.fDamage = 200.f * pow(1.5f, g_sStageIdx_Cur - 1);
-		m_tObjParam.fHp_Max = 2200 * pow(1.5f, g_sStageIdx_Cur - 1);
+		m_tObjParam.fDamage = 200.f * pow(1.5f, g_eStageIdx_Cur - 1);
+		m_tObjParam.fHp_Max = 2200 * pow(1.5f, g_eStageIdx_Cur - 1);
 		m_tObjParam.fArmor_Max = 50.f;
 	}
 	else
 	{
 		m_eMonsterColor = MONSTER_COLOR_TYPE::BLACK;
-		m_tObjParam.fDamage = 200.f * pow(1.5f, g_sStageIdx_Cur - 1);
-		m_tObjParam.fHp_Max = 2200 * pow(1.5f, g_sStageIdx_Cur - 1);
+		m_tObjParam.fDamage = 200.f * pow(1.5f, g_eStageIdx_Cur - 1);
+		m_tObjParam.fHp_Max = 2200 * pow(1.5f, g_eStageIdx_Cur - 1);
 		m_tObjParam.fArmor_Max = 50.f;
 	}
 
