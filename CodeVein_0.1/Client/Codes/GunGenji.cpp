@@ -166,7 +166,7 @@ _int CGunGenji::Update_GameObject(_double TimeDelta)
 		m_bEnable = false;
 
 		Check_DropItem(MONSTER_NAMETYPE::M_GunGenji);
-		CObjectPool_Manager::Get_Instance()->Create_Object(L"GameObject_Haze", (void*)&CHaze::HAZE_INFO(100.f, m_pTransformCom->Get_Pos(), 0.f));
+		CObjectPool_Manager::Get_Instance()->Create_Object(L"GameObject_Haze", (void*)&CHaze::HAZE_INFO(_float(CCalculater::Random_Num(100, 300)), m_pTransformCom->Get_Pos(), 0.f));
 	}
 
 	if (m_bReadyDead)
@@ -1209,7 +1209,7 @@ void CGunGenji::Check_PhyCollider()
 			m_pGun->Start_Dissolve();
 
 			m_fDeadEffect_Delay = 0.5f;
-			//CObjectPool_Manager::Get_Instance()->Create_Object(L"GameObject_Haze", (void*)&CHaze::HAZE_INFO(100.f, m_pTransformCom->Get_Pos(), 0.5f));
+			//CObjectPool_Manager::Get_Instance()->Create_Object(L"GameObject_Haze", (void*)&CHaze::HAZE_INFO(_float(CCalculater::Random_Num(100, 300)), m_pTransformCom->Get_Pos(), 0.5f));
 		}
 	}
 	// 맞았을 때

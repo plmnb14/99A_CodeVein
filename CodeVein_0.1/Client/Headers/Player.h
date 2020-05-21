@@ -123,7 +123,7 @@ public:
 
 public:
 	void Set_WeaponSlot(ACTIVE_WEAPON_SLOT eType, WEAPON_DATA eData);
-	void Set_ArmorSlot(ARMOR_All_DATA eType);
+	void Set_ArmorSlot(ARMOR_All_DATA eType, _float fMaxHP);
 	void Set_Target_UI(CGameObject* pGameObject);
 
 public:

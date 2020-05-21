@@ -8,7 +8,7 @@
 #include "Management.h"
 
 BEGIN(Client)
-
+class CScriptManager;
 class CScene_Stage_02 final : public CScene
 {
 private:
@@ -50,7 +50,7 @@ private:
 	COrthoEffect*		m_pSmokeEffect_1 = nullptr;
 
 	CRenderer*			m_pRenderer = nullptr;
-
+	CScriptManager*		m_pScriptManager = nullptr;
 private:
 	HRESULT Ready_LightDesc();
 

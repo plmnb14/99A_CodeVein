@@ -36,6 +36,8 @@ HRESULT CScene_Stage_02::Ready_Scene()
 	m_pRenderer->Set_FogDestiny(0.04f);
 	m_pRenderer->Set_UseLinearFog(false);
 
+	m_pScriptManager = CScriptManager::Get_Instance();
+
 	g_pSoundManager->Set_Volume(CSoundManager::BGM_Volume, 1.f);
 	g_pSoundManager->Stop_Sound(CSoundManager::Ambient_Loop);
 	g_pSoundManager->Play_BGM(L"BGM_MT_SNOW.ogg", true);
@@ -58,12 +60,6 @@ _int CScene_Stage_02::Update_Scene(_double TimeDelta)
 	Create_Fog(TimeDelta);
 	Create_Dust(TimeDelta);
 	Check_Effect_Fade();
-
-	if (g_pInput_Device->Key_Down(DIK_B))
-	{
-		m_pRenderer->Start_FogFadeOut();
-		m_bFadeOutStart = true;
-	}
 
 	if (g_pInput_Device->Key_Down(DIK_I))
 	{
@@ -286,6 +282,12 @@ void CScene_Stage_02::Create_Snow(_double TimeDelta)
 
 void CScene_Stage_02::Check_Effect_Fade()
 {
+	if (m_pScriptManager->Get_FogOff())
+	{
+		m_pRenderer->Start_FogFadeOut();
+		m_bFadeOutStart = true;
+	}
+
 	if (m_bFadeInStart && m_fFade < 1.f)
 	{
 		m_bFadeOutStart = false;

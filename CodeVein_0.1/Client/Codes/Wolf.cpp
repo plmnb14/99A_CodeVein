@@ -1314,7 +1314,7 @@ void CWolf::Play_Dead()
 
 				Check_DropItem(MONSTER_NAMETYPE::M_Wolf);
 
-				CObjectPool_Manager::Get_Instance()->Create_Object(L"GameObject_Haze", (void*)&CHaze::HAZE_INFO(100.f, m_pTransformCom->Get_Pos(), 0.3f));
+				CObjectPool_Manager::Get_Instance()->Create_Object(L"GameObject_Haze", (void*)&CHaze::HAZE_INFO(_float(CCalculater::Random_Num(100, 300)), m_pTransformCom->Get_Pos(), 0.3f));
 			}
 		}
 	}

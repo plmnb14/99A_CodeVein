@@ -163,7 +163,7 @@ _int CSwordShieldGenji::Update_GameObject(_double TimeDelta)
 
 		Check_DropItem(MONSTER_NAMETYPE::M_SwordShieldGenji);
 
-		CObjectPool_Manager::Get_Instance()->Create_Object(L"GameObject_Haze", (void*)&CHaze::HAZE_INFO(100.f, m_pTransformCom->Get_Pos(), 0.f));
+		CObjectPool_Manager::Get_Instance()->Create_Object(L"GameObject_Haze", (void*)&CHaze::HAZE_INFO(_float(CCalculater::Random_Num(100, 300)), m_pTransformCom->Get_Pos(), 0.f));
 	}
 
 	if (m_bReadyDead)
@@ -1218,7 +1218,7 @@ void CSwordShieldGenji::Check_PhyCollider()
 			m_pShield->Start_Dissolve(0.6f, false, false, 0.5f);
 
 			m_fDeadEffect_Delay = 0.5f;
-			//CObjectPool_Manager::Get_Instance()->Create_Object(L"GameObject_Haze", (void*)&CHaze::HAZE_INFO(100.f, m_pTransformCom->Get_Pos(), 0.5f));
+			//CObjectPool_Manager::Get_Instance()->Create_Object(L"GameObject_Haze", (void*)&CHaze::HAZE_INFO(_float(CCalculater::Random_Num(100, 300)), m_pTransformCom->Get_Pos(), 0.5f));
 		}
 	}
 	else

@@ -67,12 +67,15 @@ void CPlayer::Set_WeaponSlot(ACTIVE_WEAPON_SLOT eType, WEAPON_DATA eData)
 
 }
 
-void CPlayer::Set_ArmorSlot(ARMOR_All_DATA eType)
+void CPlayer::Set_ArmorSlot(ARMOR_All_DATA eType, _float fMaxHP)
 {
 	//if (m_pOuter->Get_OuterType() + 1 == eType)
 	//	return;
 
 	m_pOuter->Change_OuterMesh(CClothManager::Cloth_Dynamic(eType + 1));
+	m_tObjParam.fHp_Max = fMaxHP;
+	if (fMaxHP < m_tObjParam.fHp_Cur)
+		m_tObjParam.fHp_Cur = fMaxHP;
 }
 
 void CPlayer::Set_Target_UI(CGameObject * pGameObject)
@@ -1530,7 +1533,7 @@ void CPlayer::KeyDown()
 			}
 		}
 
-		if (g_pInput_Device->Key_Down(DIK_T))
+		if (g_pInput_Device->Key_Down(DIK_C))
 		{
 			m_pCamManager->Set_CustomizeCamIdx(0);
 			m_pCamManager->Set_CustomizeCamMode(false);
@@ -1551,7 +1554,7 @@ void CPlayer::KeyDown()
 
 	else
 	{
-		if (g_pInput_Device->Key_Down(DIK_T))
+		if (g_pInput_Device->Key_Down(DIK_C))
 		{
 			if (false == m_pUIManager->Get_CustomCategory()->Get_Active())
 			{
@@ -2462,9 +2465,6 @@ void CPlayer::Key_UI_n_Utiliy(_bool _bActiveUI)
 
 			else if (m_bOnUI_NPCTalk)
 			{
-				cout << "야쿠모 : " << m_bOnYakumo_UI << endl;
-				cout << "요오쿠모 : " << m_bOnYokumo_UI << endl;
-
 				m_pUIManager->Get_NPC_InteractionUI()->Set_Interaction(true);
 				m_pUIManager->Get_NPC_InteractionUI()->Set_ReactConverSation(true);
 
@@ -2473,9 +2473,14 @@ void CPlayer::Key_UI_n_Utiliy(_bool _bActiveUI)
 					Active_UI_WeaponShop_Yakumo();
 				}
 
-				else if (m_bOnYokumo_UI)
+				else if (m_bOnYakumo_UI)
 				{
-					Active_UI_MaterialShop_Yokumo();
+					Active_UI_WeaponShop_Yakumo();
+				}
+
+				else if (m_bOnJack_UI)
+				{
+
 				}
 			}
 		}
@@ -11216,8 +11221,6 @@ void CPlayer::Active_UI_BloodCode(_bool _bResetUI)
 
 void CPlayer::Active_UI_WeaponShop_Yakumo(_bool _bResetUI)
 {
-	cout << " 야쿠모 샵" << endl;
-
 	// 활성 상태에 따라 On/Off 판단
 	_bool bUIActive = m_bActiveUI = m_pUIManager->Get_WeaponShopUI()->Get_Active() ? false : true;
 
@@ -11268,13 +11271,11 @@ void CPlayer::Active_UI_WeaponShop_Yakumo(_bool _bResetUI)
 
 void CPlayer::Active_UI_MaterialShop_Yokumo(_bool _bResetUI)
 {
-	cout << "요쿠모 샵" << endl;
-
 	// 활성 상태에 따라 On/Off 판단
-	_bool bUIActive = m_bActiveUI = m_pUIManager->Get_Yokumo_NPCUI()->Get_Active() ? false : true;
+	_bool bUIActive = m_bActiveUI = m_pUIManager->Get_GeneralStoreUI()->Get_Active() ? false : true;
 
 	// 스테이지 선택 UI 를 On/Off 시킨다.
-	m_pUIManager->Get_Yokumo_NPCUI()->Set_Active(bUIActive);
+	m_pUIManager->Get_GeneralStoreUI()->Set_Active(bUIActive);
 
 	// 선택이 됫는지 안됫는지
 	m_bOnYokumo_UI = bUIActive;
@@ -11305,7 +11306,7 @@ void CPlayer::Active_UI_MaterialShop_Yokumo(_bool _bResetUI)
 	// 카메라 에임 상태 설정
 	m_pCamManager->Set_OnAimingTarget(bUIActive);
 	m_pCamManager->Set_AimUI(true);
-	m_pCamManager->Set_AimingTarget(m_pUIManager->Get_Yokumo_NPCUI());
+	m_pCamManager->Set_AimingTarget(m_pUIManager->Get_GeneralStoreUI());
 
 	m_pCamManager->Set_MidDistance(1.5f);
 	m_pCamManager->Set_AimXPosMulti(-0.5f);
