@@ -1200,11 +1200,6 @@ HRESULT CLoading::Ready_Effect(void)
 	if (FAILED(g_pManagement->Add_Prototype(L"Ortho_Smoke_1", COrthoEffect::Create(m_pGraphicDev, Read_EffectData(L"../../Data/EffectData/Ortho_Smoke_1.dat")))))
 		return E_FAIL;
 
-	if (FAILED(g_pManagement->Add_Prototype(L"Ortho_Smoke_0", COrthoEffect::Create(m_pGraphicDev, Read_EffectData(L"../../Data/EffectData/Ortho_Smoke_0.dat")))))
-		return E_FAIL;
-	if (FAILED(g_pManagement->Add_Prototype(L"Ortho_Smoke_1", COrthoEffect::Create(m_pGraphicDev, Read_EffectData(L"../../Data/EffectData/Ortho_Smoke_1.dat")))))
-		return E_FAIL;
-
 	return S_OK;
 }
 
@@ -1720,9 +1715,6 @@ _uint CLoading::Loading_Stage()
 		if (FAILED(g_pManagement->Add_Prototype(L"GameObject_DropItem", CDropItem::Create(m_pGraphicDev))))
 			return E_FAIL;
 		CObjectPool_Manager::Get_Instance()->Create_ObjectPool(L"GameObject_DropItem", L"GameObject_DropItem", 200);
-
-		if (FAILED(g_pManagement->Add_Prototype(L"GameObject_YetiTrap", CYetiTrap::Create(m_pGraphicDev))))
-			return E_FAIL;
 
 		//============================================================================================================
 		// NPC
