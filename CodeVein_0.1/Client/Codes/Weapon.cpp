@@ -325,7 +325,7 @@ void CWeapon::OnCollisionEvent(list<CGameObject*> plistGameObject, _bool _bIsPla
 					}
 
 					// 충돌하는 대상이 카운터중이면,
-					if (true == iter->Get_Target_IsCounter())
+					if (nullptr != m_pTarget && true == iter->Get_Target_IsCounter())
 					{
 						// 카운터하는 대상의 전방에 내가 포함되나 본다.
 						if (m_pBattleAgent->Check_TargetIsFrontOfMe(TARGET_TO_TRANS(iter), TARGET_TO_TRANS(m_pTarget)))
@@ -405,6 +405,7 @@ void CWeapon::OnCollisionEvent(list<CGameObject*> plistGameObject, _bool _bIsPla
 							}
 							
 							_int iRand = CCalculater::Random_Num(0, 2);
+
 							if (0 == iRand)
 							{
 								g_pSoundManager->Stop_Sound(CSoundManager::Effect_SFX_02);
@@ -845,8 +846,8 @@ HRESULT CWeapon::SetUp_WeaponData()
 	m_tWeaponParam[Wpn_SSword_Black].iWeaponType = WEAPON_SSword;
 	m_tWeaponParam[Wpn_SSword_Black].iPrice = 700;
 	m_tWeaponParam[Wpn_SSword_Black].iReinforce = 0;
-	m_tWeaponParam[Wpn_SSword_Black].fDamage = 50.f;
-	m_tWeaponParam[Wpn_SSword_Black].fPlusDamage = 100;
+	m_tWeaponParam[Wpn_SSword_Black].fDamage = 500.f;
+	m_tWeaponParam[Wpn_SSword_Black].fPlusDamage = 100.f;
 	m_tWeaponParam[Wpn_SSword_Black].fRadius = 0.9f;
 	m_tWeaponParam[Wpn_SSword_Black].fTrail_Min = 0.6f;
 	m_tWeaponParam[Wpn_SSword_Black].fTrail_Max = 1.8f;
@@ -1250,10 +1251,6 @@ void CWeapon::Free()
 {
 	m_pmatAttach = nullptr;
 	m_pmatParent = nullptr;
-
-	//Safe_Release(m_pTrailEffect);
-	//Safe_Release(m_pStaticTrailEffect);
-	//Safe_Release(m_pDistortionEffect);
 
 	Safe_Release(m_pTransform);
 	Safe_Release(m_pMesh_Static);

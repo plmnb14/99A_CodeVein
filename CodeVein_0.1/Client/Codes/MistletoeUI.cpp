@@ -54,6 +54,7 @@ _int CMistletoeUI::Update_GameObject(_double TimeDelta)
 {
 	if (m_bIsActive && !m_bIsSubActive)
 	{
+		CUI_Manager::Get_Instance()->Stop_Play_UISound(L"3D_UI_Open.ogg", CSoundManager::CHANNELID::UI_Open_Close, CSoundManager::Effect_Sound);
 		SetUp_SubUI_Active(true);
 		m_bIsSubActive = true;
 	}
@@ -239,6 +240,7 @@ void CMistletoeUI::Click_Option()
 
 			if (g_pInput_Device->Get_DIMouseState(CInput_Device::DIM_LB))
 			{
+				CUI_Manager::Get_Instance()->Stop_Play_UISound(L"Slot_Regist.ogg", CSoundManager::CHANNELID::UI_Click, CSoundManager::Effect_Sound);
 				// 0번은 스테이지
 				if (0 == iIdx)
 				{

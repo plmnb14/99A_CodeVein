@@ -113,7 +113,7 @@ void CInventory::Click_Icon()
 			{
 			case CInventory_Icon::ICON_EXPEND:
 			{
-				g_pSoundManager->Play_Sound(L"UI_CommonHover.wav", CSoundManager::Inven_Icon_Expend, CSoundManager::Effect_Sound);
+				CUI_Manager::Get_Instance()->Stop_Play_UISound(L"Slot_Regist.ogg", CSoundManager::CHANNELID::UI_Click, CSoundManager::Effect_Sound);
 
 				m_pExpInven->Set_Active(true);
 				m_pMtrInven->Set_Active(false);
@@ -123,7 +123,7 @@ void CInventory::Click_Icon()
 				break;
 			case CInventory_Icon::ICON_MTRL:
 			{
-				g_pSoundManager->Play_Sound(L"UI_CommonHover.wav", CSoundManager::Inven_Icon_Material, CSoundManager::Effect_Sound);
+				CUI_Manager::Get_Instance()->Stop_Play_UISound(L"Slot_Regist.ogg", CSoundManager::CHANNELID::UI_Click, CSoundManager::Effect_Sound);
 
 				m_pExpInven->Set_Active(false);
 				m_pMtrInven->Set_Active(true);
@@ -153,7 +153,7 @@ void CInventory::Click_Icon()
 				break;*/
 			case CInventory_Icon::ICON_ALL:
 			{
-				g_pSoundManager->Play_Sound(L"UI_CommonHover.wav", CSoundManager::Inven_Icon_All, CSoundManager::Effect_Sound);
+				CUI_Manager::Get_Instance()->Stop_Play_UISound(L"UI_Open.ogg", CSoundManager::CHANNELID::UI_Open_Close, CSoundManager::Effect_Sound);
 
 				m_pTotalInven->Set_Active(true);
 				m_bIsDetail = false;

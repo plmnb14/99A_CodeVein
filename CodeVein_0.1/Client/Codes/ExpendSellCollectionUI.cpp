@@ -40,7 +40,7 @@ _int CExpendSellCollectionUI::Update_GameObject(_double TimeDelta)
 {
 	if (m_bIsActive && !m_bIsSubActive)
 	{
-
+		
 		SetUp_SlotPos();
 		SetUp_SubUI_Active(true);
 
@@ -50,6 +50,7 @@ _int CExpendSellCollectionUI::Update_GameObject(_double TimeDelta)
 	{
 		SetUp_SubUI_Active(false);
 		m_bIsSubActive = false;
+	
 	}
 	if (!m_bIsActive)
 		return NO_EVENT;
@@ -159,6 +160,8 @@ void CExpendSellCollectionUI::Click_SubUI()
 		{
 			if (g_pInput_Device->Get_DIMouseState(CInput_Device::DIM_LB))
 			{
+				CUI_Manager::Get_Instance()->Stop_Play_UISound(L"Slot_Regist.ogg", CSoundManager::CHANNELID::UI_Click, CSoundManager::Effect_Sound);
+
 				m_pExpendSellUI->Set_SellSlot(iter);
 				m_pExpendSellUI->Set_Active(true);
 			}

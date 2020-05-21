@@ -128,7 +128,7 @@ _int CPlayer_Colleague::Update_GameObject(_double TimeDelta)
 	//	m_eMovetype = CPlayer_Colleague::Coll_Heal;
 	//	m_eColl_HealMoment = CPlayer_Colleague::My_Heal;
 	//}
-	if ((true == m_bNest_Skil_CoolTImer && 100.f >= m_pTarget->Get_Target_Hp()) &&
+	if ((true == m_bNest_Skil_CoolTImer && m_pTarget->Get_Target_Hp() * 0.3f >= m_pTarget->Get_Target_Hp()) &&
 		m_eMovetype != CPlayer_Colleague::Coll_Dead)
 	{
 		m_fCoolTimer_Skil_limit = 5.f;

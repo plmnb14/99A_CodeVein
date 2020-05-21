@@ -47,16 +47,7 @@ _int CBloodCodeOwner::Update_GameObject(_double TimeDelta)
 		0.f < m_fAlpha)
 		m_fAlpha -= _float(TimeDelta) * 1.2f;
 
-	if (m_bIsSelect)
-	{
-		if (!m_bIsSound)
-		{
-			g_pSoundManager->Play_Sound(L"BloodCode_Select.ogg", CSoundManager::CHANNELID::BloodCode_Select, CSoundManager::Ambient_Sound);
-			m_bIsSound = true;
-		}
-	}
-	else
-		m_bIsSound = false;
+	
 
 	return NO_EVENT;
 }
