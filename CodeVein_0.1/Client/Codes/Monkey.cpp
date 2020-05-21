@@ -2432,7 +2432,8 @@ void CMonkey::Play_Dead()
 					}
 				}
 			}
-			else if (3.233f <= AniTime)
+			
+			if (3.233f <= AniTime)
 			{
 				if (false == m_bEventTrigger[0])
 				{
@@ -2479,7 +2480,8 @@ void CMonkey::Play_Dead()
 					}
 				}
 			}
-			else if (3.167f <= AniTime)
+			
+			if (3.167f <= AniTime)
 			{
 				if (false == m_bEventTrigger[0])
 				{
@@ -2524,7 +2526,8 @@ void CMonkey::Play_Dead()
 					}
 				}
 			}
-			else if (2.867f <= AniTime)
+			
+			if (2.867f <= AniTime)
 			{
 				if (false == m_bEventTrigger[0])
 				{

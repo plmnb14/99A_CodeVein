@@ -852,7 +852,8 @@ void CCocoon::Play_Dead()
 				g_pSoundManager->Play_Sound(L"Cocoon_Death.ogg", CSoundManager::Cocoon_Voice, CSoundManager::Effect_Sound);
 			}
 		}
-		else if (3.733f <= AniTime)
+
+		if (3.733f <= AniTime)
 		{
 			if (false == m_bEventTrigger[0])
 			{
