@@ -158,7 +158,7 @@ HRESULT CMeshEffect::Render_GameObject_SetShader(CShader * pShader)
 
 	if (m_iPass == 0)
 	{
-		cout << "J : Mesh Pass is Zero" << endl;
+		//cout << "J : Mesh Pass is Zero" << endl;
 		return NOERROR;
 	}
 
