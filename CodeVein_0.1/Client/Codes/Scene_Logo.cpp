@@ -69,7 +69,7 @@ _int CScene_Logo::Update_Scene(_double TimeDelta)
 		if (g_bReleaseMode)
 		{
 			// 베이스 스테이지 고정
-			g_sStageIdx_Cur = 1;
+			g_eStageIdx_Cur = 1;
 			m_eSceneChange = Stage_Base;
 		}
 		
@@ -316,42 +316,42 @@ void CScene_Logo::Logo_KeyInput()
 		cout << "트레이닝" << endl;
 		m_eSceneChange = Stage_Training;
 		//Update_DebugStage_Console();
-		g_sStageIdx_Cur = 0;
+		g_eStageIdx_Cur = 0;
 	}
 
 	if (g_pInput_Device->Key_Down(DIK_2))
 	{
 		m_eSceneChange = Stage_Base;
 		//Update_DebugStage_Console();
-		g_sStageIdx_Cur = 1;
+		g_eStageIdx_Cur = 1;
 	}
 
 	else if (g_pInput_Device->Key_Down(DIK_3))
 	{
 		m_eSceneChange = Stage_01;
 		//Update_DebugStage_Console();
-		g_sStageIdx_Cur = 2;
+		g_eStageIdx_Cur = 2;
 	}
 
 	else if (g_pInput_Device->Key_Down(DIK_4))
 	{
 		m_eSceneChange = Stage_02;
 		//Update_DebugStage_Console();
-		g_sStageIdx_Cur = 3;
+		g_eStageIdx_Cur = 3;
 	}
 
 	else if (g_pInput_Device->Key_Down(DIK_5))
 	{
 		m_eSceneChange = Stage_03;
 		//Update_DebugStage_Console();
-		g_sStageIdx_Cur = 4;
+		g_eStageIdx_Cur = 4;
 	}
 
 	else if (g_pInput_Device->Key_Down(DIK_6))
 	{
 		m_eSceneChange = Stage_04;
 		//Update_DebugStage_Console();
-		g_sStageIdx_Cur = 5;
+		g_eStageIdx_Cur = 5;
 	}
 
 	else if (g_pInput_Device->Key_Down(DIK_8))

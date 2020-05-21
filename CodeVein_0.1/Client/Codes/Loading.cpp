@@ -1195,6 +1195,10 @@ HRESULT CLoading::Ready_Effect(void)
 		return E_FAIL;
 	if (FAILED(g_pManagement->Add_Prototype(L"Ortho_UpgradeParticle_1", COrthoEffect::Create(m_pGraphicDev, Read_EffectData(L"../../Data/EffectData/Ortho_UpgradeParticle_1.dat")))))
 		return E_FAIL;
+	if (FAILED(g_pManagement->Add_Prototype(L"Ortho_Smoke_0", COrthoEffect::Create(m_pGraphicDev, Read_EffectData(L"../../Data/EffectData/Ortho_Smoke_0.dat")))))
+		return E_FAIL;
+	if (FAILED(g_pManagement->Add_Prototype(L"Ortho_Smoke_1", COrthoEffect::Create(m_pGraphicDev, Read_EffectData(L"../../Data/EffectData/Ortho_Smoke_1.dat")))))
+		return E_FAIL;
 
 	if (FAILED(g_pManagement->Add_Prototype(L"Ortho_Smoke_0", COrthoEffect::Create(m_pGraphicDev, Read_EffectData(L"../../Data/EffectData/Ortho_Smoke_0.dat")))))
 		return E_FAIL;
@@ -1543,7 +1547,7 @@ _uint CLoading::Loading_Stage()
 	//============================================================================================================
 	// 트레이닝이면 안불러와요
 	//============================================================================================================
-	if (0 != g_sStageIdx_Cur)
+	if (0 != g_eStageIdx_Cur)
 	{
 		// 공통 스태틱 메쉬
 		//cout << "Common Static Mesh 불러오는 중 . . ." << endl;
@@ -1556,7 +1560,7 @@ _uint CLoading::Loading_Stage()
 	//============================================================================================================
 	// 스테이지 별 로드
 	//============================================================================================================
-	switch (g_sStageIdx_Cur)
+	switch (g_eStageIdx_Cur)
 	{
 	// 스테이지 - 트레이닝
 	case 0:

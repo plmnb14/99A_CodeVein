@@ -16,12 +16,12 @@ public:
 	typedef struct tagInitInfo
 	{
 		tagInitInfo(_v3 vPos, _float fYAngle, _ushort StageIdx)
-			: vPos(vPos), fYAngle(fYAngle), sStageIdx(g_eSceneID_Cur)
+			: vPos(vPos), fYAngle(fYAngle), eStageIdx(g_eSceneID_Cur)
 		{}
 
 		_v3			vPos = {};
 		_float		fYAngle = 0.f;
-		_ushort		sStageIdx = 0;
+		_ushort		eStageIdx = 0;
 	}JACK_INFO;
 
 public:
