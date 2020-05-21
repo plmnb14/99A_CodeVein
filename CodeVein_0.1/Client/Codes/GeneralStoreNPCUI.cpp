@@ -69,10 +69,14 @@ _int CGeneralStoreNPCUI::Update_GameObject(_double TimeDelta)
 			iter->Set_Active(false);
 			m_bIsSubActive = false;
 		}
+
+		CUI_Manager::Get_Instance()->Get_MouseUI()->Set_Active(false);
 	}
 
 	if (m_bIsActive)
 	{
+		CUI_Manager::Get_Instance()->Get_MouseUI()->Set_Active(true);
+
 		CTransform* pTargetTrans = TARGET_TO_TRANS(m_pTarget);
 
 		_v3 vLook = pTargetTrans->Get_Axis(AXIS_Z);
