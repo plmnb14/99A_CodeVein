@@ -46,7 +46,7 @@ public:
 	//===============================================================
 	Obj_SFX_01, Obj_SFX_02, Obj_SFX_03,
 	//===============================================================
-	UI_SFX_01, UI_SFX_02, UI_SFX_03, Inven_Icon_Expend, Inven_Icon_Material,
+	UI_SFX_01, UI_SFX_02, UI_SFX_03, /*Inven_Icon_Expend, Inven_Icon_Material,
 	Inven_Icon_Weapon, Inven_Icon_All, Inven_Icon_Armor, Total_Inven_All, Total_Inven_Pet,
 	Inven_Icon_Exit, Inven_Expend_Slot, Inven_Mtrl_Slot, Inven_Weapon_Slot, Inven_Armor_Slot,
 	Total_Skill_Slot01, Total_Skill_Slot02, Total_Skill_Slot03, Total_Skill_Slot04,
@@ -76,7 +76,8 @@ public:
 	Material_Buy_Left, Material_Buy_Right, Material_Buy_Purchase, Material_Buy_Fail,
 	BloodCode_Slot01, BloodCode_Slot02, BloodCode_Slot03, BloodCode_Slot04, BloodCode_Slot05,
 	BloodSkill_Slot01, BloodSkill_Slot02, BloodSkill_Slot03, BloodSkill_Slot04, BloodSkill_Slot05,
-	BloodCode_Select, Skill_Release_Question, Skill_Release_OK, Skill_Release_Cancel, 
+	BloodCode_Select, Skill_Release_Question, Skill_Release_OK, Skill_Release_Cancel, */
+	UI_Touch, UI_Click, UI_Regist, UI_Open_Close, UI_QuickSlot_Use, 
 	//===============================================================
 	MAX_CHANNEL
 	};

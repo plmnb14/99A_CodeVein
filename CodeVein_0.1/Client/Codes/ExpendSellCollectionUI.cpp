@@ -159,6 +159,8 @@ void CExpendSellCollectionUI::Click_SubUI()
 		{
 			if (g_pInput_Device->Get_DIMouseState(CInput_Device::DIM_LB))
 			{
+				CUI_Manager::Get_Instance()->Stop_Play_UISound(L"Slot_Regist.ogg", CSoundManager::CHANNELID::UI_Click, CSoundManager::Effect_Sound);
+
 				m_pExpendSellUI->Set_SellSlot(iter);
 				m_pExpendSellUI->Set_Active(true);
 			}

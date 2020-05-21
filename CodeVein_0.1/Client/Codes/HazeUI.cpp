@@ -26,12 +26,15 @@ HRESULT CHazeUI::Ready_GameObject(void * pArg)
 	
 	SetUp_Default();
 	m_uHazeCnt = 2000;
+
+	Set_Active(true);
+	m_pHazeCntFont->Set_Active(true);
 	return NOERROR;
 }
 
 _int CHazeUI::Update_GameObject(_double TimeDelta)
 {
-	if (g_eSceneID_Cur == SCENE_STAGE_BASE)
+	/*if (g_eSceneID_Cur == SCENE_STAGE_BASE)
 	{
 		Set_Active(false);
 		m_pHazeCntFont->Set_Active(false);
@@ -41,7 +44,7 @@ _int CHazeUI::Update_GameObject(_double TimeDelta)
 	{
 		Set_Active(true);
 		m_pHazeCntFont->Set_Active(true);
-	}
+	}*/
 
 	CUI::Update_GameObject(TimeDelta);
 
@@ -55,8 +58,8 @@ _int CHazeUI::Update_GameObject(_double TimeDelta)
 		m_pHazeCntFont->Set_Active(m_bIsActive);
 		m_pHazeCntFont->Update_NumberValue(_float(m_uHazeCnt));
 	}	
-	if (g_pInput_Device->Key_Pressing(DIK_J))
-		m_uHazeCnt = m_uHazeCnt + 10;
+	/*if (g_pInput_Device->Key_Pressing(DIK_J))
+		m_uHazeCnt = m_uHazeCnt + 10;*/
 	return NO_EVENT;
 }
 

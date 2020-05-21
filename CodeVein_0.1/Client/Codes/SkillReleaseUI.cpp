@@ -269,7 +269,7 @@ void CSkillReleaseUI::Click_SkillSlot()
 				m_pQuestionUI->Set_Active(true);
 				m_pQuestionUI->Set_BloodInfo(m_eID, iter->Get_Skill_ID());
 
-				Click_BloodSkillSlot_Sound(iIdx);
+				CUI_Manager::Get_Instance()->Stop_Play_UISound(L"Slot_Regist.ogg", CSoundManager::CHANNELID::UI_Click, CSoundManager::Effect_Sound);
 			}
 
 		}
@@ -286,16 +286,6 @@ void CSkillReleaseUI::Reset_Select()
 {
 	for (auto& iter : m_vecSkillSlot)
 		iter->Set_Select(false);
-}
-
-void CSkillReleaseUI::Click_BloodSkillSlot_Sound(_uint iIdx)
-{
-	if (iIdx > 4)
-		return;
-
-	_uint iChannel = CSoundManager::CHANNELID::BloodSkill_Slot01 + iIdx;
-
-	g_pSoundManager->Play_Sound(L"UI_CommonClick.wav", CSoundManager::CHANNELID(iChannel), CSoundManager::Effect_Sound);
 }
 
 void CSkillReleaseUI::Back_To_BloodCodeUI()

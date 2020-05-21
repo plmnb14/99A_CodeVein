@@ -59,6 +59,8 @@ _int CGeneralStoreNPCUI::Update_GameObject(_double TimeDelta)
 			iter->Set_Active(true);
 			m_bIsSubActive = true;
 		}
+
+		CUI_Manager::Get_Instance()->Get_NPC_InteractionUI()->Set_Active(false);
 	}
 	else if (!m_bIsActive && m_bIsSubActive)
 	{
@@ -211,6 +213,8 @@ void CGeneralStoreNPCUI::Click_Option()
 
 		if (g_pInput_Device->Get_DIMouseState(CInput_Device::DIM_LB))
 		{
+			CUI_Manager::Get_Instance()->Stop_Play_UISound(L"Slot_Regist.ogg", CSoundManager::CHANNELID::UI_Click, CSoundManager::Effect_Sound);
+
 			CGeneralStoreUI* pStoreUI = CUI_Manager::Get_Instance()->Get_GeneralStoreUI();
 			
 			m_bIsActive = false;
@@ -223,6 +227,8 @@ void CGeneralStoreNPCUI::Click_Option()
 
 	if (CCollisionMgr::Collision_Ray(m_vecOption[1], g_pInput_Device->Get_Ray(), &m_fCross))
 	{
+		CUI_Manager::Get_Instance()->Stop_Play_UISound(L"Slot_Regist.ogg", CSoundManager::CHANNELID::UI_Click, CSoundManager::Effect_Sound);
+
 		m_vecOption[1]->Set_Select(true);
 
 		if (g_pInput_Device->Get_DIMouseState(CInput_Device::DIM_LB))
@@ -241,7 +247,11 @@ void CGeneralStoreNPCUI::Click_Option()
 		m_vecOption[2]->Set_Select(true);
 
 		if (g_pInput_Device->Get_DIMouseState(CInput_Device::DIM_LB))
+		{
 			m_bIsActive = false;
+			CUI_Manager::Get_Instance()->Stop_Play_UISound(L"UI_Open.ogg", CSoundManager::CHANNELID::UI_Open_Close, CSoundManager::Effect_Sound);
+		}
+			
 
 	}
 	else

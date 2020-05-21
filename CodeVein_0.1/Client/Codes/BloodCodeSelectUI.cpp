@@ -103,7 +103,9 @@ void CBloodCodeSelectUI::Click_BloodCodeSlot()
 			if (g_pInput_Device->Get_DIMouseState(CInput_Device::DIM_LB)/* && iter->Get_Release()*/)
 			{
 				// 블러드 코드 선택 시, 연혈 릴리즈 창 활성화 & 블러드 코드 선택 창 비활성화
-				
+				CUI_Manager::Get_Instance()->Stop_Play_UISound(L"Slot_Regist.ogg", CSoundManager::CHANNELID::UI_Click, CSoundManager::Effect_Sound);
+				CUI_Manager::Get_Instance()->Stop_Play_UISound(L"UI_Open2.ogg", CSoundManager::CHANNELID::UI_SFX_01, CSoundManager::Effect_Sound);
+
 				CUI_Manager::Get_Instance()->Get_Total_Inven()->Set_PlayerBloodCodeType(m_eID);
 				CUI_Manager::Get_Instance()->Get_BloodCode_Menu()->Set_IsChoise(true);	
 				CUI_Manager::Get_Instance()->Get_BloodCode_Owner()->Set_Alpha(0.2f);

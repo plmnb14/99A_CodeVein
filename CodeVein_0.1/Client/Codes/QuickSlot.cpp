@@ -263,7 +263,7 @@ void CQuickSlot::Use_QuickSlot_Item()
 	OBJECT_PARAM tPlayerParam = pPlayer->Get_Target_Param();
 	CExpendables_Inven* pExpendInven = CUI_Manager::Get_Instance()->Get_Expendables_Inven();
 
-	g_pSoundManager->Play_Sound(L"UI_UpgradeSuccess.wav", CSoundManager::CHANNELID::QuickSlot_Use_Item, CSoundManager::Ambient_Sound);
+	CUI_Manager::Get_Instance()->Stop_Play_UISound(L"Item_Use.ogg", CSoundManager::CHANNELID::UI_QuickSlot_Use, CSoundManager::Effect_Sound);
 
 	switch (m_vecQuickSlot[m_iSelect]->Get_Type())
 	{

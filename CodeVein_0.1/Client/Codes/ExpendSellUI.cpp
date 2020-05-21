@@ -203,7 +203,7 @@ void CExpendSellUI::Click_SubUI()
 		{
 			m_iSellCnt--;
 
-			g_pSoundManager->Play_Sound(L"UI_Money_0.wav", CSoundManager::CHANNELID::Expend_Buy_Left, CSoundManager::Ambient_Sound);
+			CUI_Manager::Get_Instance()->Stop_Play_UISound(L"Slot_Regist.ogg", CSoundManager::CHANNELID::UI_Click, CSoundManager::Effect_Sound);
 		}
 
 		else return;
@@ -214,14 +214,14 @@ void CExpendSellUI::Click_SubUI()
 		{
 			m_iSellCnt++;
 
-			g_pSoundManager->Play_Sound(L"UI_Money_0.wav", CSoundManager::CHANNELID::Expend_Buy_Right, CSoundManager::Ambient_Sound);
+			CUI_Manager::Get_Instance()->Stop_Play_UISound(L"Slot_Regist.ogg", CSoundManager::CHANNELID::UI_Click, CSoundManager::Effect_Sound);
 		}
 
 		else return;
 	}
 	else if (m_pDecisionOption->Pt_InRect() && g_pInput_Device->Get_DIMouseState(CInput_Device::DIM_LB))
 	{
-		
+		CUI_Manager::Get_Instance()->Stop_Play_UISound(L"UI_Money_0.wav", CSoundManager::CHANNELID::UI_SFX_01, CSoundManager::Effect_Sound);
 		Sell_Item();
 	}
 }
@@ -279,7 +279,7 @@ void CExpendSellUI::Sell_Item()
 	// 인벤에서 삭제
 	CExpendables_Inven* pExpend_Inven = CUI_Manager::Get_Instance()->Get_Expendables_Inven();
 
-	LOOP(m_iSellCnt)
+	LOOP(_int(m_iSellCnt))
 		pExpend_Inven->Sell_Item(m_pSellSlot);
 
 	CHazeUI* pHazeUI = CUI_Manager::Get_Instance()->Get_HazeUI();
