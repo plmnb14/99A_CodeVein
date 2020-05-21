@@ -534,8 +534,7 @@ _bool CWeaponUpgradeUI::Get_UpgradeSuccess(_int iReinforce)
 _int CWeaponUpgradeUI::Get_UpgradeSuccessPercentage(_int iReinforce)
 {
 	_int iSuccessPercentage = 100;
-	for (_int i = 0; i < iReinforce; i++)
-		iSuccessPercentage = _int(iSuccessPercentage * 0.5f);
+	iSuccessPercentage -= _int(iReinforce * 10);
 
 	return iSuccessPercentage;
 }
@@ -1005,7 +1004,7 @@ void CWeaponUpgradeUI::Check_ItemOption_Armor()
 
 	if (!m_pFontPlusDamageAfterDesc)
 		return;
-	_float fPlus = m_pInven->Get_PlusDamage(tParam.fPlusDef, tParam.iReinforce + 1);
+	_float fPlus = m_pInven->Get_PlusDef(tParam.fPlusDef, tParam.iReinforce + 1);
 	m_pFontPlusDamageAfterDesc->Update_NumberValue(fPlus);
 	m_pFontPlusDamageAfterDesc->Set_Active(true);
 

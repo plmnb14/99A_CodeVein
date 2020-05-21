@@ -57,12 +57,17 @@ _int CWeaponShopUI::Update_GameObject(_double TimeDelta)
 		CUI_Manager::Get_Instance()->Get_MouseUI()->Set_Active(false);
 		m_bIsSubActive = false;
 	}
+
+	CUI::Update_GameObject(TimeDelta);
+
+	Check_Key();
+
+
 	if (false == m_bIsActive)
 		return NO_EVENT;
 	else
 		CUI_Manager::Get_Instance()->Get_MouseUI()->Set_Active(true);
 
-	CUI::Update_GameObject(TimeDelta);
 	m_pRendererCom->Add_RenderList(RENDER_ALPHA_UI, this);
 
 	if (nullptr == m_pTarget)
@@ -159,7 +164,6 @@ _int CWeaponShopUI::Update_GameObject(_double TimeDelta)
 	Compute_ViewZ(&vWorldPos);
 
 	Click_Option();
-	Check_Key();
 
 	return NO_EVENT;
 }
@@ -264,8 +268,8 @@ HRESULT CWeaponShopUI::SetUp_ConstantTable(CShader* pShader)
 
 void CWeaponShopUI::Click_Option()
 {
-	if (!m_bIsActive)
-		return;
+	//if (!m_bIsActive)
+	//	return;
 
 	_int iIdx = 0;
 

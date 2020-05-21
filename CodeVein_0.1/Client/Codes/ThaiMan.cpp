@@ -3234,7 +3234,7 @@ void CThaiMan::Play_Dead()
 					Start_Dissolve(0.7f, false, true);
 					m_fDeadEffect_Delay = 0.f;
 
-					CObjectPool_Manager::Get_Instance()->Create_Object(L"GameObject_Haze", (void*)&CHaze::HAZE_INFO(100.f, m_pTransformCom->Get_Pos(), 0.f));
+					CObjectPool_Manager::Get_Instance()->Create_Object(L"GameObject_Haze", (void*)&CHaze::HAZE_INFO(_float(CCalculater::Random_Num(100, 300)), m_pTransformCom->Get_Pos(), 0.f));
 				}
 			}
 			break;
@@ -3280,7 +3280,7 @@ void CThaiMan::Play_Dead()
 
 					Check_DropItem(MONSTER_NAMETYPE::M_ThaiMan);
 
-					CObjectPool_Manager::Get_Instance()->Create_Object(L"GameObject_Haze", (void*)&CHaze::HAZE_INFO(100.f, m_pTransformCom->Get_Pos(), 0.f));
+					CObjectPool_Manager::Get_Instance()->Create_Object(L"GameObject_Haze", (void*)&CHaze::HAZE_INFO(_float(CCalculater::Random_Num(100, 300)), m_pTransformCom->Get_Pos(), 0.f));
 				}
 			}
 			break;
@@ -3324,7 +3324,7 @@ void CThaiMan::Play_Dead()
 					Start_Dissolve(0.7f, false, true);
 					m_fDeadEffect_Delay = 0.f;
 
-					CObjectPool_Manager::Get_Instance()->Create_Object(L"GameObject_Haze", (void*)&CHaze::HAZE_INFO(100.f, m_pTransformCom->Get_Pos(), 0.f));
+					CObjectPool_Manager::Get_Instance()->Create_Object(L"GameObject_Haze", (void*)&CHaze::HAZE_INFO(_float(CCalculater::Random_Num(100, 300)), m_pTransformCom->Get_Pos(), 0.f));
 				}
 			}
 			break;

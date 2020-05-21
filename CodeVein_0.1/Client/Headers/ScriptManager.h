@@ -20,12 +20,15 @@ class CScriptManager : public CBase
 private:
 	typedef enum Script_Info
 	{
-		Script_Base , Script_Stage01, Script_Stage02, Script_Stage03, Script_Stage04, Script_Stage_End,
+		Script_Base , Script_Stage01, Script_Stage02, Script_Stage03, Script_Stage04, Script_Stage_End
 	}SCRIPT_SCENE;
 
 private:
 	explicit CScriptManager();
 	virtual ~CScriptManager() = default;
+
+public:
+	_bool Get_FogOff() { return m_bFogOff; }
 
 public:
 	virtual void Set_StageIdx(_ulong _dwStageIdx) { m_eStageIdx = (SCRIPT_SCENE)_dwStageIdx; }
@@ -66,6 +69,8 @@ private:
 private:
 	_bool			m_bTimer = false;
 	_float			m_fTimer = 0.f;
+
+	_bool			m_bFogOff = false;
 
 private:
 	virtual void St01_Sub0();

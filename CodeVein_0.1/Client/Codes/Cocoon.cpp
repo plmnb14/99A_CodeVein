@@ -569,8 +569,8 @@ void CCocoon::Play_Shot()
 			if (MONSTER_COLOR_TYPE::WHITE == m_eMonsterColor)
 			{
 				g_pManagement->Create_Effect_Offset(L"Totem_Ice_Ready", 0.05f, vBirth, nullptr);
-				g_pManagement->Create_Effect_Offset(L"DeerKing_IceSmoke_0", 0.1f, vBirth, nullptr);
-				g_pManagement->Create_Effect_Offset(L"DeerKing_IceSmoke_1", 0.1f, vBirth, nullptr);
+				g_pManagement->Create_Effect_Offset(L"DeerKing_IceSmoke_Small_0", 0.1f, vBirth, nullptr);
+				g_pManagement->Create_Effect_Offset(L"DeerKing_IceSmoke_Small_1", 0.1f, vBirth, nullptr);
 			}
 			else
 			{
@@ -660,7 +660,7 @@ void CCocoon::Play_Mist()
 					g_pSoundManager->Play_Sound(L"Cocoon_Bark.ogg", CSoundManager::Cocoon_Voice, CSoundManager::Effect_Sound);
 
 					CObjectPool_Manager::Get_Instance()->Create_Object(L"Monster_CocoonBullet", &MONSTER_BULLET_STATUS(
-						MONSTER_BULLET_TYPE::BULLET_ICE, vBirth, vShotDir, 4.f, 1.f));
+						MONSTER_BULLET_TYPE::BULLET_ICE, vBirth, vShotDir, 7.f, 1.f));
 				}
 				else
 				{
@@ -681,8 +681,8 @@ void CCocoon::Play_Mist()
 			if (MONSTER_COLOR_TYPE::WHITE == m_eMonsterColor)
 			{
 				g_pManagement->Create_Effect_Offset(L"Totem_Ice_Ready", 0.05f, vBirth, nullptr);
-				g_pManagement->Create_Effect_Offset(L"DeerKing_IceSmoke_0", 0.1f, vBirth, nullptr);
-				g_pManagement->Create_Effect_Offset(L"DeerKing_IceSmoke_1", 0.1f, vBirth, nullptr);
+				g_pManagement->Create_Effect_Offset(L"DeerKing_IceSmoke_Small_0", 0.1f, vBirth, nullptr);
+				g_pManagement->Create_Effect_Offset(L"DeerKing_IceSmoke_Small_1", 0.1f, vBirth, nullptr);
 			}
 			else
 			{
@@ -848,11 +848,12 @@ void CCocoon::Play_Dead()
 			{
 				m_bEventTrigger[1] = true;
 
-				g_pSoundManager->Stop_Sound(CSoundManager::Hunter_Voice);
+				g_pSoundManager->Stop_Sound(CSoundManager::Cocoon_Voice);
 				g_pSoundManager->Play_Sound(L"Cocoon_Death.ogg", CSoundManager::Cocoon_Voice, CSoundManager::Effect_Sound);
 			}
 		}
-		else if (3.733f <= AniTime)
+
+		if (3.733f <= AniTime)
 		{
 			if (false == m_bEventTrigger[0])
 			{
@@ -863,7 +864,7 @@ void CCocoon::Play_Dead()
 
 				Check_DropItem(MONSTER_NAMETYPE::M_Cocoon);
 
-				CObjectPool_Manager::Get_Instance()->Create_Object(L"GameObject_Haze", (void*)&CHaze::HAZE_INFO(100.f, m_pTransformCom->Get_Pos(), 0.f));
+				CObjectPool_Manager::Get_Instance()->Create_Object(L"GameObject_Haze", (void*)&CHaze::HAZE_INFO(_float(CCalculater::Random_Num(100, 300)), m_pTransformCom->Get_Pos(), 0.f));
 			}
 		}
 	}

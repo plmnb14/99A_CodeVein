@@ -623,7 +623,12 @@ _float CWeapon_Inven_InShop::Get_UpgradePrice(_int iReinforce)
 
 _float CWeapon_Inven_InShop::Get_PlusDamage(_float fDamage, _int iReinforce)
 {
-	return fDamage + (iReinforce * 1.5f) * (fDamage * 0.15f);
+	return fDamage + (fDamage * 0.3f * iReinforce);
+}
+
+_float CWeapon_Inven_InShop::Get_PlusDef(_float fDef, _int iReinforce)
+{
+	return fDef + (fDef * 0.1 * iReinforce);
 }
 
 HRESULT CWeapon_Inven_InShop::SetUp_WeaponData(INVEN_SHOP_OPTION eShop)
@@ -645,7 +650,7 @@ HRESULT CWeapon_Inven_InShop::SetUp_WeaponData(INVEN_SHOP_OPTION eShop)
 		break;
 	case Client::CWeapon_Inven_InShop::SHOP_ARMOR_BUY:
 	{
-		// юс╫ц
+		// 
 		ARMOR_PARAM tParam;
 
 		tParam.iArmorType = ARMOR_Drape;
@@ -653,19 +658,19 @@ HRESULT CWeapon_Inven_InShop::SetUp_WeaponData(INVEN_SHOP_OPTION eShop)
 		tParam.iReinforce = 0;
 		tParam.fDef = 100;
 		tParam.fPlusDef = 30;
-		tParam.fHP = 730;
+		tParam.fHP = 930;
 		tParam.fPlusHP = 60;
-		tParam.iPrice = 2000;
+		tParam.iPrice = 700;
 		m_tArmorParam[tParam.iArmorName] = tParam;
 
 		tParam.iArmorType = ARMOR_Gauntlet;
 		tParam.iArmorName = ArmorAll_Gauntlet_DarkNightHook;
 		tParam.iReinforce = 0;
-		tParam.fDef = 100;
-		tParam.fPlusDef = 20;
-		tParam.fHP = 100;
-		tParam.fPlusHP = 50;
-		tParam.iPrice = 1000;
+		tParam.fDef = 120;
+		tParam.fPlusDef = 10;
+		tParam.fHP = 1000;
+		tParam.fPlusHP = 100;
+		tParam.iPrice = 1200;
 		m_tArmorParam[tParam.iArmorName] = tParam;
 
 		tParam.iArmorType = ARMOR_Gauntlet;
@@ -673,18 +678,18 @@ HRESULT CWeapon_Inven_InShop::SetUp_WeaponData(INVEN_SHOP_OPTION eShop)
 		tParam.iReinforce = 0;
 		tParam.fDef = 105;
 		tParam.fPlusDef = 30;
-		tParam.fHP = 95;
+		tParam.fHP = 1095;
 		tParam.fPlusHP = 60;
-		tParam.iPrice = 1000;
+		tParam.iPrice = 1200;
 		m_tArmorParam[tParam.iArmorName] = tParam;
 
 		tParam.iArmorType = ARMOR_LongCoat;
 		tParam.iArmorName = ArmorAll_LongCoat_DarkNightSpear;
 		tParam.iReinforce = 0;
-		tParam.fDef = 150;
+		tParam.fDef = 110;
 		tParam.fPlusDef = 30;
-		tParam.fHP = 100;
-		tParam.fPlusHP = 60;
+		tParam.fHP = 1400;
+		tParam.fPlusHP = 160;
 		tParam.iPrice = 1500;
 		m_tArmorParam[tParam.iArmorName] = tParam;
 
@@ -693,8 +698,8 @@ HRESULT CWeapon_Inven_InShop::SetUp_WeaponData(INVEN_SHOP_OPTION eShop)
 		tParam.iReinforce = 0;
 		tParam.fDef = 120;
 		tParam.fPlusDef = 30;
-		tParam.fHP = 130;
-		tParam.fPlusHP = 60;
+		tParam.fHP = 1300;
+		tParam.fPlusHP = 120;
 		tParam.iPrice = 1500;
 		m_tArmorParam[tParam.iArmorName] = tParam;
 
@@ -703,28 +708,28 @@ HRESULT CWeapon_Inven_InShop::SetUp_WeaponData(INVEN_SHOP_OPTION eShop)
 		tParam.iReinforce = 0;
 		tParam.fDef = 100;
 		tParam.fPlusDef = 30;
-		tParam.fHP = 200;
-		tParam.fPlusHP = 60;
+		tParam.fHP = 1900;
+		tParam.fPlusHP = 110;
 		tParam.iPrice = 1500;
 		m_tArmorParam[tParam.iArmorName] = tParam;
 
 		tParam.iArmorType = ARMOR_Muffler;
 		tParam.iArmorName = ArmorAll_Muffler_DarkNightSpike;
 		tParam.iReinforce = 0;
-		tParam.fDef = 150;
+		tParam.fDef = 160;
 		tParam.fPlusDef = 30;
-		tParam.fHP = 590;
-		tParam.fPlusHP = 60;
+		tParam.fHP = 1590;
+		tParam.fPlusHP = 140;
 		tParam.iPrice = 2000;
 		m_tArmorParam[tParam.iArmorName] = tParam;
 
 		tParam.iArmorType = ARMOR_Muffler;
 		tParam.iArmorName = ArmorAll_Muffler_WhiteGraze;
 		tParam.iReinforce = 0;
-		tParam.fDef = 180;
+		tParam.fDef = 140;
 		tParam.fPlusDef = 30;
-		tParam.fHP = 550;
-		tParam.fPlusHP = 60;
+		tParam.fHP = 1550;
+		tParam.fPlusHP = 200;
 		tParam.iPrice = 2000;
 		m_tArmorParam[tParam.iArmorName] = tParam;
 

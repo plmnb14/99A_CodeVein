@@ -1407,7 +1407,7 @@ void CPlayer_Colleague::Play_Start_Game()
 					Start_Dissolve(0.8f, false, true, 0.0f);
 					m_fDeadEffect_Delay = 0.f;
 					CObjectPool_Manager::Get_Instance()->Create_Object(L"GameObject_Haze",
-						(void*)&CHaze::HAZE_INFO(100.f, m_pTransformCom->Get_Pos(), 0.f));
+						(void*)&CHaze::HAZE_INFO(_float(CCalculater::Random_Num(100, 300)), m_pTransformCom->Get_Pos(), 0.f));
 				}
 			}
 		}
@@ -1441,7 +1441,7 @@ void CPlayer_Colleague::Play_Dead()
 
 		//		Start_Dissolve(0.8f, false, true, 0.0f);
 		//		m_fDeadEffect_Delay = 0.f;
-		//	//	CObjectPool_Manager::Get_Instance()->Create_Object(L"GameObject_Haze", (void*)&CHaze::HAZE_INFO(100.f, m_pTransformCom->Get_Pos(), 0.f));
+		//	//	CObjectPool_Manager::Get_Instance()->Create_Object(L"GameObject_Haze", (void*)&CHaze::HAZE_INFO(_float(CCalculater::Random_Num(100, 300)), m_pTransformCom->Get_Pos(), 0.f));
 		//	}
 		//}
 	}

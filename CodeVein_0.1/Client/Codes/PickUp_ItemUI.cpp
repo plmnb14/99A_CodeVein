@@ -175,8 +175,10 @@ void CPickUp_ItemUI::SetUp_State(_double TimeDelta)
 		m_fPickup_Itembar = m_fSizeX;
 		m_bOne_PickupUIEnd = true;
 	}
+
 	if(true == m_bOne_PickupUIEnd)
 		m_fTimer += (_float)TimeDelta;
+
 	if (1.45f <= m_fTimer)
 	{
 		m_bOne_PickupUIEnd = false;

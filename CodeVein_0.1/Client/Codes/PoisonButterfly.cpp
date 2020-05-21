@@ -1765,7 +1765,7 @@ void CPoisonButterfly::Check_PhyCollider()
 			m_pMeshCom->SetUp_Animation(Ani_Death);	// 죽음처리 시작
 			Start_Dissolve(0.7f, false, true, 0.6f);
 			for (_int i = 0; i < 20; i++)
-				CObjectPool_Manager::Get_Instance()->Create_Object(L"GameObject_Haze", (void*)&CHaze::HAZE_INFO(100.f, m_pTransformCom->Get_Pos(), 0.3f + (i * 0.08f)));
+				CObjectPool_Manager::Get_Instance()->Create_Object(L"GameObject_Haze", (void*)&CHaze::HAZE_INFO(_float(CCalculater::Random_Num(100, 300)), m_pTransformCom->Get_Pos(), 0.3f + (i * 0.08f)));
 			CParticleMgr::Get_Instance()->Create_BossDeadParticle_Effect(m_pTransformCom->Get_Pos() + _v3(0.f, 1.3f, 0.f), 0.6f, 0.5f);
 			g_pManagement->Create_ParticleEffect_Delay(L"SpawnParticle_ForBoss", 1.f, 0.6f, m_pTransformCom->Get_Pos() + _v3(0.f, 1.3f, 0.f));
 			 
