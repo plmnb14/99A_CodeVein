@@ -384,7 +384,7 @@ void CNPC_Yakumo::Check_Dist()
 		// 오리진 각도 받아옴
 		m_fOriginAngle = m_pTransformCom->Get_Angle(AXIS_Y);
 
-		m_pTransformCom->Set_Angle(AXIS_Y, m_fConvertAngle);
+		//m_pTransformCom->Set_Angle(AXIS_Y, m_fConvertAngle);
 
 		m_pInteractionButton->Set_Active(false);
 

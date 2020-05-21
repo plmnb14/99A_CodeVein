@@ -7,7 +7,7 @@
 #include "ParticleMgr.h"
 #include "ScriptManager.h"
 #include "ObjectPool_Manager.h"
-#include "SoundManager.h".
+#include "SoundManager.h"
 
 CMainApp::CMainApp()
 {

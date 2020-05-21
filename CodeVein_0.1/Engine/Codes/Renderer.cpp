@@ -545,7 +545,7 @@ void CRenderer::DOF_On(_bool bOn)
 	if (m_bDOF)
 	{
 		m_fFocus = 0.5f;
-		m_fRange = 0.065f;
+		m_fRange = 0.055f;
 	}
 	else
 	{
@@ -864,6 +864,30 @@ HRESULT CRenderer::Render_DistortionTarget()
 
 	if (FAILED(m_pTarget_Manager->End_MRT(L"MRT_Distortion")))
 		return E_FAIL;
+
+	return NOERROR;
+}
+
+HRESULT CRenderer::Render_Decal()
+{
+	m_pShader_Effect->Begin_Shader();
+
+	for (auto& pGameObject : m_RenderList[RENDER_DECAL])
+	{
+		if (nullptr != pGameObject)
+		{
+			if (FAILED(pGameObject->Render_GameObject_SetShader(m_pShader_Effect)))
+			{
+				Safe_Release(pGameObject);
+				return E_FAIL;
+			}
+			Safe_Release(pGameObject);
+		}
+	}
+
+	m_RenderList[RENDER_DECAL].clear();
+
+	m_pShader_Effect->End_Shader();
 
 	return NOERROR;
 }
@@ -1342,6 +1366,10 @@ HRESULT CRenderer::Render_Blend()
 	//m_pShader_Blend->End_Pass();
 	//m_pShader_Blend->End_Shader();
 
+	// Decal
+	if (FAILED(Render_Decal()))
+		return E_FAIL;
+
 	// Alpha
 	if (FAILED(Render_Alpha()))
 		return E_FAIL;
@@ -1776,15 +1804,7 @@ HRESULT CRenderer::Render_ColorGrading()
 	if (FAILED(m_pShader_Blend->Set_Texture("g_DiffuseTexture", m_pTarget_Manager->Get_Texture(L"Target_DOFAfter"))))
 		return E_FAIL;
 
-	if (GetAsyncKeyState('M') & 0x8000)
-	{
-		m_pGradingTextureTest->SetUp_OnShader("g_GradingTexture", m_pShader_Blend, 0);
-	}
-	else
-	{
-		// GradingTexture
-		m_pGradingTexture->SetUp_OnShader("g_GradingTexture", m_pShader_Blend, 0);
-	}
+	m_pGradingTexture->SetUp_OnShader("g_GradingTexture", m_pShader_Blend, 0);
 
 	// 장치에 백버퍼가 셋팅되어있다.	
 	m_pShader_Blend->Begin_Shader();

@@ -104,7 +104,7 @@ _int CDecalEffect::Update_GameObject(_double TimeDelta)
 	if (m_bIsDead || m_fCreateDelay > 0.f)
 		return S_OK;
 
-	RENDERID eGroup = RENDERID::RENDER_EFFECT;
+	RENDERID eGroup = RENDERID::RENDER_DECAL;
 	
 	if (FAILED(m_pRendererCom->Add_RenderList(eGroup, this)))
 		return E_FAIL;

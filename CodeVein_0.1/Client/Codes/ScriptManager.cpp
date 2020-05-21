@@ -343,6 +343,9 @@ void CScriptManager::St01_Sub6()
 
 			CMassageUI* pMassageUI = static_cast<CMassageUI*>(g_pManagement->Get_GameObjectBack(L"Layer_BossMassageUI", SCENE_STAGE));
 			pMassageUI->Set_Check_Play_BossnameUI(true);
+
+			g_pSoundManager->Stop_Sound(CSoundManager::Background_01);
+			g_pSoundManager->Play_BGM(L"Boss_Butterfly_BGM.ogg");
 		}
 
 		break;
@@ -520,7 +523,11 @@ void CScriptManager::St04_Sub2()
 			m_bTimer = true;
 
 			CMassageUI* pMassageUI = static_cast<CMassageUI*>(g_pManagement->Get_GameObjectBack(L"Layer_BossMassageUI", SCENE_STAGE));
+			pMassageUI->Set_BossName(BOSS_NAME::Queens_Knight);
 			pMassageUI->Set_Check_Play_BossnameUI(true);
+
+			g_pSoundManager->Stop_Sound(CSoundManager::Background_01);
+			g_pSoundManager->Play_BGM(L"Boss_QueensKnight_BGM.ogg");
 		}
 
 		break;

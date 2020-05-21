@@ -1359,6 +1359,9 @@ void CPlayer::Target_AimChasing()
 			if (true == iter->Get_Dead())
 				continue;
 
+			if (iter->Get_Target_Hp() <= 0.f)
+				continue;
+
 			pTargetTransPos = TARGET_TO_TRANS(iter)->Get_Pos();
 
 			_float fLength = D3DXVec3Length(&(pTargetTransPos - m_pTransform->Get_Pos()));

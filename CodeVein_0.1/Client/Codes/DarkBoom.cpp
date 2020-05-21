@@ -57,6 +57,9 @@ HRESULT CDarkBoom::Ready_GameObject(void * pArg)
 	g_pManagement->Create_Effect_Delay(L"QueensKnight_DarkBoom_RingBottom", 0.95f, m_pTransformCom->Get_Pos(), nullptr);
 	g_pManagement->Create_Effect_Delay(L"QueensKnight_DarkBoom_RingBottom", 1.f, m_pTransformCom->Get_Pos(), nullptr);
 	g_pManagement->Create_Effect_Delay(L"QueensKnight_DarkBoom_RingBottom", 1.1f, m_pTransformCom->Get_Pos(), nullptr);
+	
+	g_pSoundManager->Stop_Sound(CSoundManager::QueenKnight_SFX_01);
+	g_pSoundManager->Play_Sound(L"SE_GOD_CHILD_SERVANT_SHIELD_PLASMA_000.ogg", CSoundManager::QueenKnight_SFX_01, CSoundManager::Effect_Sound);
 
 	return NOERROR;
 }
@@ -77,6 +80,9 @@ _int CDarkBoom::Update_GameObject(_double TimeDelta)
 	{
 		m_bDead = true;
 		OnCollisionEnter();
+
+		g_pSoundManager->Stop_Sound(CSoundManager::QueenKnight_SFX_01);
+		g_pSoundManager->Play_Sound(L"SE_GOD_CHILD_SERVANT_SHIELD_WARP_END_001.ogg", CSoundManager::QueenKnight_SFX_01, CSoundManager::Effect_Sound);
 	}
 	// ม๘วเม฿
 	else
