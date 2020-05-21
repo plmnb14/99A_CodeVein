@@ -75,14 +75,11 @@ _int CMassageUI::Late_Update_GameObject(_double TimeDelta)
 	case BOSS_NAME::Deer_King:
 		m_iIndex = 4;
 		break;
-	case BOSS_NAME::Fire_Boy:
+	case BOSS_NAME::Fire_Boy_Ice_Girl:
 		m_iIndex = 5;
 		break;
-	case BOSS_NAME::Ice_Girl:
-		m_iIndex = 6;
-		break;
 	case BOSS_NAME::Queens_Knight:
-		m_iIndex = 7;
+		m_iIndex = 6;
 		break;
 	}
 	return S_OK;
