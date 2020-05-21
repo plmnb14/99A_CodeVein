@@ -185,7 +185,12 @@ HRESULT CYetiTrap::Render_GameObject_Instancing_SetPass(CShader * pShader)
 	if (FAILED(SetUp_ConstantTable(m_pShader)))
 		return E_FAIL;
 
+	_v4 vRimcolor = _v4(0.f, 0.f, 1.f, 1.f);
+
 	_ulong dwNum = m_pMesh_Static->Get_NumMaterials();
+
+	if (FAILED(pShader->Set_Value("g_vRimColor", &vRimcolor, sizeof(_v4))))
+		return E_FAIL;
 
 	for (_ulong i = 0; i < dwNum; ++i)
 	{
@@ -202,6 +207,11 @@ HRESULT CYetiTrap::Render_GameObject_Instancing_SetPass(CShader * pShader)
 		pShader->End_Pass();
 	}
 
+	vRimcolor = _v4(1.f, 1.f, 1.f, 1.f);
+
+	if (FAILED(pShader->Set_Value("g_vRimColor", &vRimcolor, sizeof(_v4))))
+		return E_FAIL;
+
 	return S_OK;
 }
 
@@ -213,8 +223,6 @@ void CYetiTrap::Check_Dist()
 
 		if (fDist < 1.f)
 			m_bCanSummonYeti = true;
-		else
-			m_bCanSummonYeti = false;
 	}
 
 	return;
@@ -308,6 +316,7 @@ HRESULT CYetiTrap::Ready_Default(void * pArg)
 	m_pTransform->Set_Angle(Info.vAngle);
 	m_pTransform->Set_Pos(Info.vPos);
 
+	m_bCanSummonYeti = false;
 	m_iIndex = Info.iIndex;
 
 	m_pBattleAgent->Set_RimColor(_v4(0.f, 0.f, 1.f, 0.f));

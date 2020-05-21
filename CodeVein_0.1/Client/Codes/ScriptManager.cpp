@@ -349,7 +349,6 @@ void CScriptManager::St02_Sub0()
 			m_vecTrapPool[0]->Set_Enable(true); //1¹ø ¿¹Æ¼
 			m_vecTrapPool[1]->Set_Enable(true); //2¹ø ¿¹Æ¼
 			m_vecObjectPool[3]->Set_Enable(true); //´Á´ë
-			//m_vecObjectPool[4]->Set_Enable(true); //°ÕÁöÃÑ
 		}
 
 
@@ -362,9 +361,7 @@ void CScriptManager::St02_Sub0()
 		{
 			m_bEventTrigger[Script_Stage02][1] = true;
 
-			m_vecTrapPool[2]->Set_Enable(true); //5¹ø ¿¹Æ¼
-			//m_vecObjectPool[6]->Set_Enable(true); //ÅäÅÛ
-			//m_vecObjectPool[7]->Set_Enable(true); //ÅäÅÛ
+			m_vecTrapPool[2]->Set_Enable(true); //4¹ø ¿¹Æ¼
 		}
 
 	}
@@ -372,25 +369,25 @@ void CScriptManager::St02_Sub0()
 
 	}
 
-	if (true == m_vecTrapPool[0]->Get_Enable() && true == m_vecTrapPool[0]->Get_SummonYeti())
+	if (true == m_vecTrapPool[0]->Get_SummonYeti())
 	{
 		m_vecObjectPool[m_vecTrapPool[0]->Get_YetiIndex()]->Set_Enable(true);
-		m_vecTrapPool[0]->Set_Enable(false);
 		m_vecTrapPool[0]->Set_SummonYeti(false);
+		m_vecTrapPool[0]->Set_Enable(false);
 	}
 
-	if (true == m_vecTrapPool[1]->Get_Enable() && true == m_vecTrapPool[1]->Get_SummonYeti())
+	if (true == m_vecTrapPool[1]->Get_SummonYeti())
 	{
-		m_vecTrapPool[1]->Set_Enable(false);
-		m_vecTrapPool[1]->Set_SummonYeti(false);
 		m_vecObjectPool[m_vecTrapPool[1]->Get_YetiIndex()]->Set_Enable(true);
+		m_vecTrapPool[1]->Set_SummonYeti(false);
+		m_vecTrapPool[1]->Set_Enable(false);
 	}
 
-	if (true == m_vecTrapPool[2]->Get_Enable() && true == m_vecTrapPool[2]->Get_SummonYeti())
+	if (true == m_vecTrapPool[2]->Get_SummonYeti())
 	{
-		m_vecTrapPool[2]->Set_Enable(false);
-		m_vecTrapPool[2]->Set_SummonYeti(false);
 		m_vecObjectPool[m_vecTrapPool[2]->Get_YetiIndex()]->Set_Enable(true);
+		m_vecTrapPool[2]->Set_SummonYeti(false);
+		m_vecTrapPool[2]->Set_Enable(false);
 	}
 }
 
@@ -404,23 +401,20 @@ void CScriptManager::St02_Sub1()
 		{
 			m_bEventTrigger[Script_Stage02][2] = true;
 
-			//m_vecObjectPool[8]->Set_Enable(true);//´Á´ë
-			m_vecObjectPool[9]->Set_Enable(true); //´Á´ë
-			m_vecTrapPool[3]->Set_Enable(true); //10¹ø ¿¹Æ¼
+			m_vecObjectPool[5]->Set_Enable(true); //´Á´ë
+			m_vecTrapPool[3]->Set_Enable(true); //6¹ø ¿¹Æ¼
+			m_vecObjectPool[7]->Set_Enable(true); //ÅäÅÛ
+			m_vecObjectPool[8]->Set_Enable(true);//°ÕÁöÃÑ
+			m_vecObjectPool[9]->Set_Enable(true);//°ÕÁöÃ¢¹æ
 
-			m_vecObjectPool[11]->Set_Enable(true); //ÅäÅÛ
-			//m_vecObjectPool[12]->Set_Enable(true);//ÅäÅÛ
-			m_vecObjectPool[13]->Set_Enable(true);//°ÕÁöÃÑ
-			m_vecObjectPool[14]->Set_Enable(true);//°ÕÁöÃ¢¹æ
-			m_vecObjectPool[15]->Set_Enable(true); //ÅäÅÛ
+			m_vecObjectPool[10]->Set_Enable(true); //ÅäÅÛ
+			m_vecTrapPool[4]->Set_Enable(true); //11¹ø ¿¹Æ¼
+			m_vecObjectPool[12]->Set_Enable(true); //¼º°Ô
+			m_vecObjectPool[13]->Set_Enable(true); //ÅäÅÛ
+			m_vecTrapPool[5]->Set_Enable(true); //14¹ø ¿¹Æ¼
 
-			m_vecTrapPool[4]->Set_Enable(true); //16¹ø ¿¹Æ¼
-			m_vecObjectPool[17]->Set_Enable(true); //¼º°Ô
-			m_vecObjectPool[18]->Set_Enable(true); //ÅäÅÛ
-
-			m_vecTrapPool[5]->Set_Enable(true); //19¹ø ¿¹Æ¼
-			m_vecObjectPool[20]->Set_Enable(true); //°ÕÁöÃÑ
-			m_vecTrapPool[6]->Set_Enable(true);  //21¹ø ¿¹Æ¼
+			m_vecObjectPool[15]->Set_Enable(true); //°ÕÁöÃÑ
+			m_vecTrapPool[6]->Set_Enable(true);  //16¹ø ¿¹Æ¼
 		}
 
 	}
@@ -428,25 +422,32 @@ void CScriptManager::St02_Sub1()
 
 	}
 
-	if (true == m_vecTrapPool[3]->Get_Enable() && true == m_vecTrapPool[3]->Get_SummonYeti())
+	if (true == m_vecTrapPool[3]->Get_SummonYeti())
 	{
-		m_vecTrapPool[3]->Set_Enable(false);
-		m_vecTrapPool[3]->Set_SummonYeti(false);
 		m_vecObjectPool[m_vecTrapPool[3]->Get_YetiIndex()]->Set_Enable(true);
+		m_vecTrapPool[3]->Set_SummonYeti(false);
+		m_vecTrapPool[3]->Set_Enable(false);
 	}
 
-	if (true == m_vecTrapPool[4]->Get_Enable() && true == m_vecTrapPool[4]->Get_SummonYeti())
+	if (true == m_vecTrapPool[4]->Get_SummonYeti())
 	{
-		m_vecTrapPool[4]->Set_Enable(false);
-		m_vecTrapPool[4]->Set_SummonYeti(false);
 		m_vecObjectPool[m_vecTrapPool[4]->Get_YetiIndex()]->Set_Enable(true);
+		m_vecTrapPool[4]->Set_SummonYeti(false);
+		m_vecTrapPool[4]->Set_Enable(false);
 	}
 
-	if (true == m_vecTrapPool[5]->Get_Enable() && true == m_vecTrapPool[5]->Get_SummonYeti())
+	if ( true == m_vecTrapPool[5]->Get_SummonYeti())
 	{
-		m_vecTrapPool[5]->Set_Enable(false);
-		m_vecTrapPool[5]->Set_SummonYeti(false);
 		m_vecObjectPool[m_vecTrapPool[5]->Get_YetiIndex()]->Set_Enable(true);
+		m_vecTrapPool[5]->Set_SummonYeti(false);
+		m_vecTrapPool[5]->Set_Enable(false);
+	}
+
+	if (true == m_vecTrapPool[6]->Get_SummonYeti())
+	{
+		m_vecObjectPool[m_vecTrapPool[6]->Get_YetiIndex()]->Set_Enable(true);
+		m_vecTrapPool[6]->Set_SummonYeti(false);
+		m_vecTrapPool[6]->Set_Enable(false);
 	}
 }
 
@@ -460,30 +461,31 @@ void CScriptManager::St02_Sub2()
 		{
 			m_bEventTrigger[Script_Stage02][3] = true;
 
-			m_vecTrapPool[7]->Set_Enable(true);  //22¹ø ¿¹Æ¼
-			m_vecObjectPool[23]->Set_Enable(true); //ÅäÅÛ
-			m_vecObjectPool[24]->Set_Enable(true); //¼º°Ô
-			m_vecObjectPool[25]->Set_Enable(true); //ÅäÅÛ
+			m_vecTrapPool[7]->Set_Enable(true);  //17¹ø ¿¹Æ¼
+			m_vecObjectPool[18]->Set_Enable(true); //ÅäÅÛ
+			m_vecObjectPool[19]->Set_Enable(true); //¼º°Ô
+			m_vecObjectPool[20]->Set_Enable(true); //ÅäÅÛ
 
-			m_vecTrapPool[8]->Set_Enable(true);  //26¹ø ¿¹Æ¼
-			m_vecObjectPool[27]->Set_Enable(true); //°ÕÄ¡ÃÑ
-			m_vecObjectPool[28]->Set_Enable(true); //¼º°Ô
+			m_vecTrapPool[8]->Set_Enable(true);  //21¹ø ¿¹Æ¼
+			m_vecObjectPool[22]->Set_Enable(true); //°ÕÄ¡ÃÑ
+			m_vecObjectPool[23]->Set_Enable(true); //¼º°Ô
 		}
 	}
 		break;
 	}
-	if (true == m_vecTrapPool[6]->Get_Enable() && true == m_vecTrapPool[6]->Get_SummonYeti())
+
+	if (true == m_vecTrapPool[7]->Get_SummonYeti())
 	{
-		m_vecTrapPool[6]->Set_Enable(false);
-		m_vecTrapPool[6]->Set_SummonYeti(false);
-		m_vecObjectPool[m_vecTrapPool[6]->Get_YetiIndex()]->Set_Enable(true);
+		m_vecObjectPool[m_vecTrapPool[7]->Get_YetiIndex()]->Set_Enable(true);
+		m_vecTrapPool[7]->Set_SummonYeti(false);
+		m_vecTrapPool[7]->Set_Enable(false);
 	}
 
-	if (true == m_vecTrapPool[7]->Get_Enable() && true == m_vecTrapPool[7]->Get_SummonYeti())
+	if (true == m_vecTrapPool[8]->Get_SummonYeti())
 	{
-		m_vecTrapPool[7]->Set_Enable(false);
-		m_vecTrapPool[7]->Set_SummonYeti(false);
-		m_vecObjectPool[m_vecTrapPool[7]->Get_YetiIndex()]->Set_Enable(true);
+		m_vecObjectPool[m_vecTrapPool[8]->Get_YetiIndex()]->Set_Enable(true);
+		m_vecTrapPool[8]->Set_SummonYeti(false);
+		m_vecTrapPool[8]->Set_Enable(false);
 	}
 }
 
@@ -1152,52 +1154,50 @@ void CScriptManager::Ready_Stage01_DynamicObject()
 
 void CScriptManager::Ready_Stage02_DynamicObject()
 {
-	m_vecObjectPool.reserve(30);
+	m_vecObjectPool.reserve(26);
 	m_vecTrapPool.reserve(10);
 
-	_v4 vPos[30] =
+	_v4 vPos[26] =
 	{ 
-		//Subset0 TriggerIdx17 °ÕÁö(°Ë¹æ) ¿¹Æ¼ ¿¹Æ¼ ´Á´ë °ÕÁö(ÃÑ)
+		//Subset0 TriggerIdx17 °ÕÁö(°Ë¹æ) ¿¹Æ¼ ¿¹Æ¼ ´Á´ë 4
 		_v4(41.398f, 3.096f, -192.382f, 41.398f),
 		_v4(32.243f, 2.672f, -219.018f, 32.243f),
 		_v4(38.303f, 2.863f, -205.344f, 38.303f),
 		_v4(63.997f, 2.969f, -216.479f, 63.997f),
-		_v4(51.65f, 3.2f, -193.928f, 51.65f), //¿À·ù
 
-		//Subset0 TriggerIdx17 ¿¹Æ¼ ÅäÅÛ ÅäÅÛ
+		//Subset0 TriggerIdx17 ¿¹Æ¼ 1
 		_v4(104.147f, 3.85f, -211.804f, 104.147f),
-		_v4(112.755f, 3.826f, -43.789f, 112.755f),
-		_v4(107.271f, 3.775f, -218.127f, 107.271f),
-		_v4(128.826f, 4.f, -183.542f, 128.826f),
 
-		//Subset1 TriggerIdx42 ´Á´ë ´Á´ë ¿¹Æ¼ ÅäÅÛ ÅäÅÛ °ÕÁö(ÃÑ) °ÕÁö(Ã¢¹æ) ÅäÅÛ ¿¹Æ¼ ¼º°Ô ÅäÅÛ ¿¹Æ¼ °ÕÁö(ÃÑ) ¿¹Æ¼
+		//Subset1 TriggerIdx42 ´Á´ë ¿¹Æ¼ ÅäÅÛ °ÕÁö(ÃÑ) °ÕÁö(Ã¢¹æ) 5
+		//ÅäÅÛ ¿¹Æ¼ ¼º°Ô ÅäÅÛ ¿¹Æ¼ 5
+		//°ÕÁö(ÃÑ) ¿¹Æ¼ 2
 		_v4(131.906f, 4.01535f, -187.868f, 131.906f),
 		_v4(143.767f, 4.f, -179.792f, 143.767f),
 		_v4(131.515f, 4.f, -168.277f, 131.515f),
-		_v4(150.414f, 4.f, -173.471f, 150.414f),
 		_v4(143.148f, 4.f, -143.535f, 143.148f),
-
 		_v4(137.213f, 4.f, -145.73f, 137.213f),
+	
 		_v4(122.463f, 4.f, -156.413f, 122.463f),
 		_v4(130.221f, 4.f, -126.726f, 130.221f),
 		_v4(108.823f, 4.f, -126.748f, 108.823f),
-
 		_v4(91.882f, 3.562f, -121.391f, 91.882f),
 		_v4(101.699f, 4.f, -116.463f, 101.699f),
-		_v4(98.238f, 3.849f, -122.223f, 98.238f),
-		_v4(85.896f, 4.019f, -103.512f, 85.896f),
 
-		//Subset2 TriggerIdx60 ¿¹Æ¼ ÅäÅÛ ¼º°Ô ÅäÅÛ ¿¹Æ¼ °ÕÁö(ÃÑ) ¼º°Ô
+		_v4(98.238f, 3.849f, -122.223f, 98.238f), //°ÕÁöÃÑ
+		_v4(85.896f, 4.019f, -103.512f, 85.896f), //¿¹Æ¼
+
+		//Subset2 TriggerIdx60 ¿¹Æ¼ ÅäÅÛ ¼º°Ô 3
+		//ÅäÅÛ ¿¹Æ¼ °ÕÁö(ÃÑ) ¼º°Ô 4
 		_v4(56.034f, -0.244f, -67.926f, 56.034f),
 		_v4(44.555f, 0.f, -59.188f, 44.555f),
 		_v4(59.717f, 0.f, -56.3345f, 59.717f),
-		_v4(57.916f, 0.f, -49.487f, 57.916f),
 
+		_v4(57.916f, 0.f, -49.487f, 57.916f),
 		_v4(41.947f, 0.255f, 2.428f, 41.947f),
 		_v4(37.5246f, 0.1f, -4.49077f, 37.5246f),
 		_v4(37.2138f, 0.1f, -8.83999f, 37.2138f),
 
-		//Subset3 TriggerIdx52 º¸½º
+		//Subset3 TriggerIdx52 º¸½º 1
 		_v4(-10.3593f, -0.833f, -1.846f, -10.3593f),
 
 	};
@@ -1207,7 +1207,7 @@ void CScriptManager::Ready_Stage02_DynamicObject()
 	_uint		iTestNaviIdx = 0;
 
 	// ================================================================================================================
-	//Subset0 TriggerIdx17 °ÕÁö(°Ë¹æ) ¿¹Æ¼ ¿¹Æ¼ ´Á´ë °ÕÁö(ÃÑ)
+	//Subset0 TriggerIdx17 °ÕÁö(°Ë¹æ) ¿¹Æ¼ ¿¹Æ¼ ´Á´ë
 	{
 		//°ÕÁö °Ë¹æ
 		pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_SwordGenji",
@@ -1265,20 +1265,10 @@ void CScriptManager::Ready_Stage02_DynamicObject()
 		++iIndex;
 		iTestNaviIdx = TARGET_TO_NAV(pInstance)->Get_CellIndex();
 
-		// ÃÑ°Õ
-		pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_GunGenji",
-			&CGunGenji::INFO(CGunGenji::Jungle, CGunGenji::NF_Ani::Sit2, 10.f, 10.f, 2.f,
-				true, _v3(vPos[iIndex].x, vPos[iIndex].y, vPos[iIndex].z), _v3(0.f, D3DXToRadian(vPos[iIndex].w), 0.f), 1));
-		pInstance->Set_Enable(false);
-		m_vecObjectPool.push_back(pInstance);
-		Safe_AddRef(pInstance);
-		g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Monster", nullptr);
-		++iIndex;
-		iTestNaviIdx = TARGET_TO_NAV(pInstance)->Get_CellIndex();
 	}
 
 	// ================================================================================================================
-	//SubsetÃ³À½ºÎÅÍ TriggerIdx ¿¹Æ¼ ÅäÅÛ ÅäÅÛ
+	//Subset0 TriggerIdx110 ¿¹Æ¼
 	{
 		//¿¹Æ¼ Æ®·¦
 		pInstance = g_pManagement->Clone_GameObject_Return(L"GameObject_YetiTrap", &CYetiTrap::YETITRAPINFO(iIndex, _v3(vPos[iIndex].x, vPos[iIndex].y, vPos[iIndex].z), V3_NULL));
@@ -1297,47 +1287,17 @@ void CScriptManager::Ready_Stage02_DynamicObject()
 		++iIndex;
 		iTestNaviIdx = TARGET_TO_NAV(pInstance)->Get_CellIndex();
 
-		//ÅäÅÛ
-		pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_Cocoon",
-			&CMonster::MONSTER_STATUS(CMonster::MONSTER_COLOR_TYPE::WHITE, WEAPON_STATE::WEAPON_None,
-				true, _v3(vPos[iIndex].x, vPos[iIndex].y, vPos[iIndex].z), V3_NULL, 3));
-		pInstance->Set_Enable(false);
-		m_vecObjectPool.push_back(pInstance);
-		Safe_AddRef(pInstance);
-		g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Monster", nullptr);
-		++iIndex;
-		iTestNaviIdx = TARGET_TO_NAV(pInstance)->Get_CellIndex();
-
-		//ÅäÅÛ
-		pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_Cocoon",
-			&CMonster::MONSTER_STATUS(CMonster::MONSTER_COLOR_TYPE::WHITE, WEAPON_STATE::WEAPON_None,
-				true, _v3(vPos[iIndex].x, vPos[iIndex].y, vPos[iIndex].z), V3_NULL, 3));
-		pInstance->Set_Enable(false);
-		m_vecObjectPool.push_back(pInstance);
-		Safe_AddRef(pInstance);
-		g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Monster", nullptr);
-		++iIndex;
-		iTestNaviIdx = TARGET_TO_NAV(pInstance)->Get_CellIndex();
 	}
 
 	// ================================================================================================================
-	//Subset1 TriggerIdx42 ´Á´ë ´Á´ë ¿¹Æ¼ ÅäÅÛ ÅäÅÛ °ÕÁö(ÃÑ) °ÕÁö(Ã¢¹æ)
-	//ÅäÅÛ ¿¹Æ¼ ¼º°Ô ÅäÅÛ ¿¹Æ¼ °ÕÁö(ÃÑ) ¿¹Æ¼
+	//Subset1 TriggerIdx42 ´Á´ë ¿¹Æ¼ ÅäÅÛ °ÕÁö(ÃÑ) °ÕÁö(Ã¢¹æ)
+	//ÅäÅÛ ¿¹Æ¼ ¼º°Ô ÅäÅÛ ¿¹Æ¼ 
+	//°ÕÁö(ÃÑ) ¿¹Æ¼
 	{
 		//´Á´ë
 		pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_Wolf",
 			&CMonster::MONSTER_STATUS(CMonster::MONSTER_COLOR_TYPE::WHITE, WEAPON_STATE::WEAPON_None,
 				true, _v3(vPos[iIndex].x, vPos[iIndex].y, vPos[iIndex].z), V3_NULL, 3));
-		pInstance->Set_Enable(false);
-		m_vecObjectPool.push_back(pInstance);
-		Safe_AddRef(pInstance);
-		g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Monster", nullptr);
-		++iIndex;
-		iTestNaviIdx = TARGET_TO_NAV(pInstance)->Get_CellIndex();
-		//´Á´ë
-		pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_Wolf",
-			&CMonster::MONSTER_STATUS(CMonster::MONSTER_COLOR_TYPE::WHITE, WEAPON_STATE::WEAPON_None,
-				true, _v3(vPos[iIndex].x, vPos[iIndex].y, vPos[iIndex].z), V3_NULL, 2));
 		pInstance->Set_Enable(false);
 		m_vecObjectPool.push_back(pInstance);
 		Safe_AddRef(pInstance);
@@ -1362,16 +1322,6 @@ void CScriptManager::Ready_Stage02_DynamicObject()
 		++iIndex;
 		iTestNaviIdx = TARGET_TO_NAV(pInstance)->Get_CellIndex();
 
-		//ÅäÅÛ
-		pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_Cocoon",
-			&CMonster::MONSTER_STATUS(CMonster::MONSTER_COLOR_TYPE::WHITE, WEAPON_STATE::WEAPON_None,
-				true, _v3(vPos[iIndex].x, vPos[iIndex].y, vPos[iIndex].z), V3_NULL, 2));
-		pInstance->Set_Enable(false);
-		m_vecObjectPool.push_back(pInstance);
-		Safe_AddRef(pInstance);
-		g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Monster", nullptr);
-		++iIndex;
-		iTestNaviIdx = TARGET_TO_NAV(pInstance)->Get_CellIndex();
 		//ÅäÅÛ
 		pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_Cocoon",
 			&CMonster::MONSTER_STATUS(CMonster::MONSTER_COLOR_TYPE::WHITE, WEAPON_STATE::WEAPON_None,
@@ -1443,6 +1393,7 @@ void CScriptManager::Ready_Stage02_DynamicObject()
 		g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Monster", nullptr);
 		++iIndex;
 		iTestNaviIdx = TARGET_TO_NAV(pInstance)->Get_CellIndex();
+
 		//ÅäÅÛ
 		pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_Cocoon",
 			&CMonster::MONSTER_STATUS(CMonster::MONSTER_COLOR_TYPE::WHITE, WEAPON_STATE::WEAPON_None,
@@ -1470,6 +1421,7 @@ void CScriptManager::Ready_Stage02_DynamicObject()
 		g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Monster", nullptr);
 		++iIndex;
 		iTestNaviIdx = TARGET_TO_NAV(pInstance)->Get_CellIndex();
+
 		// ÃÑ°Õ
 		pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_GunGenji",
 			&CGunGenji::INFO(CGunGenji::Normal, CGunGenji::NF_Ani::CheckGun, 10.f, 10.f, 2.f,
@@ -1480,6 +1432,7 @@ void CScriptManager::Ready_Stage02_DynamicObject()
 		g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Monster", nullptr);
 		++iIndex;
 		iTestNaviIdx = TARGET_TO_NAV(pInstance)->Get_CellIndex();
+
 		//¿¹Æ¼ Æ®·¦
 		pInstance = g_pManagement->Clone_GameObject_Return(L"GameObject_YetiTrap", &CYetiTrap::YETITRAPINFO(iIndex, _v3(vPos[iIndex].x, vPos[iIndex].y, vPos[iIndex].z), V3_NULL));
 		pInstance->Set_Enable(true);
@@ -1500,7 +1453,7 @@ void CScriptManager::Ready_Stage02_DynamicObject()
 
 	// ================================================================================================================
 	//Subset2 TriggerIdx60 ¿¹Æ¼ ÅäÅÛ ¼º°Ô ÅäÅÛ ¿¹Æ¼ °ÕÁö(ÃÑ) ¼º°Ô
-	{
+	{	
 		//¿¹Æ¼ Æ®·¦
 		pInstance = g_pManagement->Clone_GameObject_Return(L"GameObject_YetiTrap", &CYetiTrap::YETITRAPINFO(iIndex, _v3(vPos[iIndex].x, vPos[iIndex].y, vPos[iIndex].z), V3_NULL));
 		pInstance->Set_Enable(true);
@@ -1517,6 +1470,7 @@ void CScriptManager::Ready_Stage02_DynamicObject()
 		g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Monster", nullptr);
 		++iIndex;
 		iTestNaviIdx = TARGET_TO_NAV(pInstance)->Get_CellIndex();
+
 		//ÅäÅÛ
 		pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_Cocoon",
 			&CMonster::MONSTER_STATUS(CMonster::MONSTER_COLOR_TYPE::WHITE, WEAPON_STATE::WEAPON_None,
@@ -1566,6 +1520,7 @@ void CScriptManager::Ready_Stage02_DynamicObject()
 		g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Monster", nullptr);
 		++iIndex;
 		iTestNaviIdx = TARGET_TO_NAV(pInstance)->Get_CellIndex();
+
 		// ÃÑ°Õ
 		pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_GunGenji",
 			&CGunGenji::INFO(CGunGenji::Normal, CGunGenji::NF_Ani::CheckGun, 10.f, 10.f, 2.f,
@@ -1586,6 +1541,7 @@ void CScriptManager::Ready_Stage02_DynamicObject()
 		g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Monster", nullptr);
 		++iIndex;
 		iTestNaviIdx = TARGET_TO_NAV(pInstance)->Get_CellIndex();
+
 	}
 
 	// ================================================================================================================
@@ -1664,7 +1620,7 @@ void CScriptManager::Ready_Stage03_DynamicObject()
 		Safe_AddRef(pInstance);
 		g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Monster", nullptr);
 		++iIndex;
-
+		iTestNaviIdx = TARGET_TO_NAV(pInstance)->Get_CellIndex();
 		//ÇåÅÍ(Ã¢)
 		pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_Hunter",
 			&CMonster::MONSTER_STATUS(CMonster::MONSTER_COLOR_TYPE::COLOR_NONE, WEAPON_STATE::WEAPON_Halberd,
@@ -1674,7 +1630,7 @@ void CScriptManager::Ready_Stage03_DynamicObject()
 		Safe_AddRef(pInstance);
 		g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Monster", nullptr);
 		++iIndex;
-
+		iTestNaviIdx = TARGET_TO_NAV(pInstance)->Get_CellIndex();
 	}
 
 	// ================================================================================================================
@@ -1689,7 +1645,7 @@ void CScriptManager::Ready_Stage03_DynamicObject()
 		Safe_AddRef(pInstance);
 		g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Monster", nullptr);
 		++iIndex;
-
+		iTestNaviIdx = TARGET_TO_NAV(pInstance)->Get_CellIndex();
 		//ÇåÅÍ(ÃÑ)
 		pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_Hunter",
 			&CMonster::MONSTER_STATUS(CMonster::MONSTER_COLOR_TYPE::COLOR_NONE, WEAPON_STATE::WEAPON_Gun,
@@ -1699,7 +1655,7 @@ void CScriptManager::Ready_Stage03_DynamicObject()
 		Safe_AddRef(pInstance);
 		g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Monster", nullptr);
 		++iIndex;
-
+		iTestNaviIdx = TARGET_TO_NAV(pInstance)->Get_CellIndex();
 		//ÇåÅÍ(ÃÑ)
 		pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_Hunter",
 			&CMonster::MONSTER_STATUS(CMonster::MONSTER_COLOR_TYPE::COLOR_NONE, WEAPON_STATE::WEAPON_Gun,
@@ -1709,7 +1665,7 @@ void CScriptManager::Ready_Stage03_DynamicObject()
 		Safe_AddRef(pInstance);
 		g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Monster", nullptr);
 		++iIndex;
-
+		iTestNaviIdx = TARGET_TO_NAV(pInstance)->Get_CellIndex();
 	}
 
 	 // ================================================================================================================
@@ -1724,7 +1680,7 @@ void CScriptManager::Ready_Stage03_DynamicObject()
 		Safe_AddRef(pInstance);
 		g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Monster", nullptr);
 		++iIndex;
-
+		iTestNaviIdx = TARGET_TO_NAV(pInstance)->Get_CellIndex();
 		// ÅäÅÛ
 		pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_Cocoon",
 			&CMonster::MONSTER_STATUS(CMonster::MONSTER_COLOR_TYPE::COLOR_NONE, WEAPON_STATE::WEAPON_None,
@@ -1734,7 +1690,7 @@ void CScriptManager::Ready_Stage03_DynamicObject()
 		Safe_AddRef(pInstance);
 		g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Monster", nullptr);
 		++iIndex;
-
+		iTestNaviIdx = TARGET_TO_NAV(pInstance)->Get_CellIndex();
 		//¿ø¼þÀÌ
 		pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_Monkey",
 			&CMonster::MONSTER_STATUS(CMonster::MONSTER_COLOR_TYPE::COLOR_NONE, WEAPON_STATE::WEAPON_None,
@@ -1744,7 +1700,7 @@ void CScriptManager::Ready_Stage03_DynamicObject()
 		Safe_AddRef(pInstance);
 		g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Monster", nullptr);
 		++iIndex;
-
+		iTestNaviIdx = TARGET_TO_NAV(pInstance)->Get_CellIndex();
 		//ÇåÅÍ(¸ÁÄ¡)
 		pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_Hunter",
 			&CMonster::MONSTER_STATUS(CMonster::MONSTER_COLOR_TYPE::COLOR_NONE, WEAPON_STATE::WEAPON_Hammer,
@@ -1754,7 +1710,7 @@ void CScriptManager::Ready_Stage03_DynamicObject()
 		Safe_AddRef(pInstance);
 		g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Monster", nullptr);
 		++iIndex;
-
+		iTestNaviIdx = TARGET_TO_NAV(pInstance)->Get_CellIndex();
 		//ÇåÅÍ(´ë°Ë)
 		pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_Hunter",
 			&CMonster::MONSTER_STATUS(CMonster::MONSTER_COLOR_TYPE::COLOR_NONE, WEAPON_STATE::WEAPON_LSword,
@@ -1764,7 +1720,7 @@ void CScriptManager::Ready_Stage03_DynamicObject()
 		Safe_AddRef(pInstance);
 		g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Monster", nullptr);
 		++iIndex;
-
+		iTestNaviIdx = TARGET_TO_NAV(pInstance)->Get_CellIndex();
 	}
 
 	 // ================================================================================================================
@@ -1779,7 +1735,7 @@ void CScriptManager::Ready_Stage03_DynamicObject()
 		Safe_AddRef(pInstance);
 		g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Monster", nullptr);
 		++iIndex;
-
+		iTestNaviIdx = TARGET_TO_NAV(pInstance)->Get_CellIndex();
 		//¿ø¼þÀÌ
 		pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_Monkey",
 			&CMonster::MONSTER_STATUS(CMonster::MONSTER_COLOR_TYPE::COLOR_NONE, WEAPON_STATE::WEAPON_None,
@@ -1789,7 +1745,7 @@ void CScriptManager::Ready_Stage03_DynamicObject()
 		Safe_AddRef(pInstance);
 		g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Monster", nullptr);
 		++iIndex;
-
+		iTestNaviIdx = TARGET_TO_NAV(pInstance)->Get_CellIndex();
 		//¾ßÂ÷¸Ç
 		pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_YachaMan",
 			&CMonster::MONSTER_STATUS(CMonster::MONSTER_COLOR_TYPE::COLOR_NONE, WEAPON_STATE::WEAPON_None,
@@ -1799,7 +1755,7 @@ void CScriptManager::Ready_Stage03_DynamicObject()
 		Safe_AddRef(pInstance);
 		g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Monster", nullptr);
 		++iIndex;
-
+		iTestNaviIdx = TARGET_TO_NAV(pInstance)->Get_CellIndex();
 		//ÇåÅÍ(°Ë)
 		pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_Hunter",
 			&CMonster::MONSTER_STATUS(CMonster::MONSTER_COLOR_TYPE::COLOR_NONE, WEAPON_STATE::WEAPON_SSword,
@@ -1809,7 +1765,7 @@ void CScriptManager::Ready_Stage03_DynamicObject()
 		Safe_AddRef(pInstance);
 		g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Monster", nullptr);
 		++iIndex;
-
+		iTestNaviIdx = TARGET_TO_NAV(pInstance)->Get_CellIndex();
 	}
 
 	// ================================================================================================================
@@ -1856,12 +1812,8 @@ void CScriptManager::Ready_Stage04_DynamicObject()
 {
 	m_vecObjectPool.reserve(8);
 
-	_v3 vPos[8] =
+	_v3 vPos[6] =
 	{
-		//SubsetÃ³À½ºÎÅÍ TriggerIdx ÅäÅÛx2
-		_v3(26.516f, -3.883f, 75.362f),
-		_v3(21.919f, -3.883f, 79.166f),
-
 		//Subset0 TriggerIdx46 µûÀÌ¸Ç, ÅäÅÛx4
 		_v3(-1.625f, -3.883f, 77.897f),
 		_v3(-8.819f, -3.883f, 70.1f),
@@ -1885,30 +1837,7 @@ void CScriptManager::Ready_Stage04_DynamicObject()
 
 	CGameObject* pInstance = nullptr;
 	_uint		iIndex = 0;
-
-	// // ================================================================================================================
-	//SubsetÃ³À½ºÎÅÍ TriggerIdx ÅäÅÛx2
-	{
-		//ÅäÅÛ
-		pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_Cocoon",
-			&CMonster::MONSTER_STATUS(CMonster::MONSTER_COLOR_TYPE::COLOR_NONE, WEAPON_STATE::WEAPON_None,
-				true, _v3(vPos[iIndex].x, vPos[iIndex].y, vPos[iIndex].z), V3_NULL, 3));
-		pInstance->Set_Enable(false);
-		m_vecObjectPool.push_back(pInstance);
-		Safe_AddRef(pInstance);
-		g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Monster", nullptr);
-		++iIndex;
-
-		//ÅäÅÛ
-		pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_Cocoon",
-			&CMonster::MONSTER_STATUS(CMonster::MONSTER_COLOR_TYPE::COLOR_NONE, WEAPON_STATE::WEAPON_None,
-				true, _v3(vPos[iIndex].x, vPos[iIndex].y, vPos[iIndex].z), V3_NULL, 3));
-		pInstance->Set_Enable(false);
-		m_vecObjectPool.push_back(pInstance);
-		Safe_AddRef(pInstance);
-		g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Monster", nullptr);
-		++iIndex;
-	}
+	_uint		iTestNaviIdx = 0;
 
 	// // ================================================================================================================
 	//Subset0 TriggerIdx46 µûÀÌ¸Ç, ÅäÅÛx4
@@ -1922,7 +1851,7 @@ void CScriptManager::Ready_Stage04_DynamicObject()
 		Safe_AddRef(pInstance);
 		g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Monster", nullptr);
 		++iIndex;
-
+		iTestNaviIdx = TARGET_TO_NAV(pInstance)->Get_CellIndex();
 		//ÅäÅÛ
 		pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_Cocoon",
 			&CMonster::MONSTER_STATUS(CMonster::MONSTER_COLOR_TYPE::COLOR_NONE, WEAPON_STATE::WEAPON_None,
@@ -1932,7 +1861,7 @@ void CScriptManager::Ready_Stage04_DynamicObject()
 		Safe_AddRef(pInstance);
 		g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Monster", nullptr);
 		++iIndex;
-
+		iTestNaviIdx = TARGET_TO_NAV(pInstance)->Get_CellIndex();
 		//ÅäÅÛ
 		pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_Cocoon",
 			&CMonster::MONSTER_STATUS(CMonster::MONSTER_COLOR_TYPE::COLOR_NONE, WEAPON_STATE::WEAPON_None,
@@ -1942,7 +1871,7 @@ void CScriptManager::Ready_Stage04_DynamicObject()
 		Safe_AddRef(pInstance);
 		g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Monster", nullptr);
 		++iIndex;
-
+		iTestNaviIdx = TARGET_TO_NAV(pInstance)->Get_CellIndex();
 		//ÅäÅÛ
 		pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_Cocoon",
 			&CMonster::MONSTER_STATUS(CMonster::MONSTER_COLOR_TYPE::COLOR_NONE, WEAPON_STATE::WEAPON_None,
@@ -1952,7 +1881,7 @@ void CScriptManager::Ready_Stage04_DynamicObject()
 		Safe_AddRef(pInstance);
 		g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Monster", nullptr);
 		++iIndex;
-
+		iTestNaviIdx = TARGET_TO_NAV(pInstance)->Get_CellIndex();
 		//ÅäÅÛ
 		pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_Cocoon",
 			&CMonster::MONSTER_STATUS(CMonster::MONSTER_COLOR_TYPE::COLOR_NONE, WEAPON_STATE::WEAPON_None,
@@ -1962,7 +1891,7 @@ void CScriptManager::Ready_Stage04_DynamicObject()
 		Safe_AddRef(pInstance);
 		g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Monster", nullptr);
 		++iIndex;
-
+		iTestNaviIdx = TARGET_TO_NAV(pInstance)->Get_CellIndex();
 	}
 
 	// // ================================================================================================================
@@ -1975,50 +1904,9 @@ void CScriptManager::Ready_Stage04_DynamicObject()
 		Safe_AddRef(pInstance);
 		g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Monster", nullptr);
 		++iIndex;
+		iTestNaviIdx = TARGET_TO_NAV(pInstance)->Get_CellIndex();
 	}
 
-	// // ================================================================================================================
-	//// 4 ¸¶¸® + ¾ð´ö 1¸¶¸®
-	//{
-	//	pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_Hunter", &CMonster::MONSTER_STATUS(CMonster::MONSTER_COLOR_TYPE::BLACK, WEAPON_STATE::WEAPON_Halberd));
-	//	TARGET_TO_NAV(pInstance)->Set_SubsetIndex(1);
-	//	TARGET_TO_NAV(pInstance)->Set_Index(46);
-	//	m_vecObjectPool.push_back(pInstance);
-	//	Safe_AddRef(pInstance);
-
-	//	pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_Hunter", &CMonster::MONSTER_STATUS(CMonster::MONSTER_COLOR_TYPE::BLACK, WEAPON_STATE::WEAPON_Halberd));
-	//	TARGET_TO_NAV(pInstance)->Set_SubsetIndex(1);
-	//	TARGET_TO_NAV(pInstance)->Set_Index(33);
-	//	m_vecObjectPool.push_back(pInstance);
-	//	Safe_AddRef(pInstance);
-
-	//	pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_Hunter", &CMonster::MONSTER_STATUS(CMonster::MONSTER_COLOR_TYPE::BLACK, WEAPON_STATE::WEAPON_Halberd));
-	//	TARGET_TO_NAV(pInstance)->Set_SubsetIndex(1);
-	//	TARGET_TO_NAV(pInstance)->Set_Index(76);
-	//	m_vecObjectPool.push_back(pInstance);
-	//	Safe_AddRef(pInstance);
-
-	//	pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_Hunter", &CMonster::MONSTER_STATUS(CMonster::MONSTER_COLOR_TYPE::BLACK, WEAPON_STATE::WEAPON_Halberd));
-	//	TARGET_TO_NAV(pInstance)->Set_SubsetIndex(1);
-	//	TARGET_TO_NAV(pInstance)->Set_Index(66);
-	//	m_vecObjectPool.push_back(pInstance);
-	//	Safe_AddRef(pInstance);
-
-	//	pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_Hunter", &CMonster::MONSTER_STATUS(CMonster::MONSTER_COLOR_TYPE::BLACK, WEAPON_STATE::WEAPON_Halberd));
-	//	TARGET_TO_NAV(pInstance)->Set_SubsetIndex(1);
-	//	TARGET_TO_NAV(pInstance)->Set_Index(88);
-	//	m_vecObjectPool.push_back(pInstance);
-	//	Safe_AddRef(pInstance);
-	//}
-	// // ================================================================================================================
-	//// º¸½º 1¸¶¸®
-	//{
-	//	pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_QueensKnight", &CQueensKnight::INFO(45.f, 20.f, 2.f));
-	//	TARGET_TO_NAV(pInstance)->Set_SubsetIndex(2);
-	//	TARGET_TO_NAV(pInstance)->Set_Index(10);
-	//	m_vecObjectPool.push_back(pInstance);
-	//	Safe_AddRef(pInstance);
-	//}
 }
 
 void CScriptManager::Free()

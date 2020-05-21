@@ -168,7 +168,7 @@ _int CIceGirl::Update_GameObject(_double TimeDelta)
 			m_pBossUI->Set_Active(true);
 
 			CMassageUI* pMassageUI = static_cast<CMassageUI*>(g_pManagement->Get_GameObjectBack(L"Layer_BossMassageUI", SCENE_STAGE));
-			pMassageUI->Set_BossName(BOSS_NAME::Ice_Girl);
+			pMassageUI->Set_BossName(BOSS_NAME::Fire_Boy_Ice_Girl);
 			pMassageUI->Set_Check_Play_BossnameUI(true);
 
 			g_pSoundManager->Stop_Sound(CSoundManager::Background_01);

@@ -39,9 +39,10 @@ HRESULT CScene_Stage_02::Ready_Scene()
 
 	g_pManagement->LoadCreateObject_FromPath(m_pGraphic_Device, L"Object_Stage_02.dat");
 
-	//인덱스 잘 찾는지 테스트
-	CScriptManager::Get_Instance()->Set_StageIdx(2);
-	CScriptManager::Get_Instance()->Ready_Script_DynamicObject(2);
+	////인덱스 잘 찾는지 테스트
+	//CScriptManager::Get_Instance()->Set_StageIdx(2);
+	//CScriptManager::Get_Instance()->Ready_Script_DynamicObject(2);
+
 	CParticleMgr::Get_Instance()->Clear_Fog();
 
 	return S_OK;
