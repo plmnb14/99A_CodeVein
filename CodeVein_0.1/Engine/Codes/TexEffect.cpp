@@ -229,7 +229,17 @@ HRESULT CTexEffect::Render_GameObject_SetShader(CShader* pShader)
 		nullptr == m_pBufferCom)
 		return E_FAIL;
 		
-	pShader->Begin_Pass(m_iPass);
+	_int iPass = m_iPass;
+	if (!m_pInfo->bDistortion && m_pInfo->bUseRGBA && (m_pInfo->fMaskIndex != -1.f))
+		iPass = 10;
+	else if (!m_pInfo->bDistortion && m_pInfo->bUseRGBA && (m_pInfo->fMaskIndex == -1.f))
+		iPass = 11;
+	else if (!m_pInfo->bDistortion && m_pInfo->bUseColorTex && (m_pInfo->fMaskIndex != -1.f))
+		iPass = 12;
+	else if (!m_pInfo->bDistortion && m_pInfo->bUseColorTex && (m_pInfo->fMaskIndex == -1.f))
+		iPass = 13;
+
+	pShader->Begin_Pass(iPass);
 	
 	// Set Texture
 	if (FAILED(SetUp_ConstantTable(pShader)))

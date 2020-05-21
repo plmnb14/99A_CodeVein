@@ -344,7 +344,8 @@ _int CCostume_Outer::Late_Update_GameObject(_double TimeDelta)
 
 HRESULT CCostume_Outer::Render_GameObject()
 {
-	if (false == m_bEnable)
+	if (false == m_bEnable ||
+		m_bInvisible)
 		return S_OK;
 
 	if (nullptr == m_pShader ||
@@ -427,7 +428,8 @@ HRESULT CCostume_Outer::Render_GameObject_Instancing_SetPass(CShader * pShader)
 
 	//m_pDynamicMesh->Play_Animation(g_pTimer_Manager->Get_DeltaTime(L"Timer_Fps_60") * m_fAnimMultiply);
 
-	if (m_tObjParam.bInvisible)
+	if (m_tObjParam.bInvisible ||
+		m_bInvisible)
 		return S_OK;
 
 	if (FAILED(SetUp_ConstantTable(pShader)))
@@ -468,7 +470,8 @@ HRESULT CCostume_Outer::Render_GameObject_Instancing_SetPass(CShader * pShader)
 
 HRESULT CCostume_Outer::Render_GameObject_SetPass(CShader * pShader, _int iPass, _bool _bIsForMotionBlur)
 {
-	if (false == m_bEnable)
+	if (false == m_bEnable ||
+		m_bInvisible)
 		return S_OK;
 
 	if (nullptr == pShader ||

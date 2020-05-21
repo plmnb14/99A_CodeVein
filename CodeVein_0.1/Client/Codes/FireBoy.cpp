@@ -158,11 +158,6 @@ _int CFireBoy::Update_GameObject(_double TimeDelta)
 
 		if (true == m_bAIController)
 			m_pAIControllerCom->Update_AIController(TimeDelta);
-
-
-
-		// 플레이어 발견 시, UI 활성화(지원)
-		m_pBossUI->Set_Active(true);
 			
 		// 보스UI 업데이트
 		// 체력이 0이 되었을때 밀림현상 방지.
@@ -1205,6 +1200,9 @@ HRESULT CFireBoy::Update_NF()
 			// 가까운 녀석 어그로 끌림.
 			Set_Target_Auto();
 		}
+
+		// 플레이어 발견 시, UI 활성화(지원)
+		m_pBossUI->Set_Active(true);
 	}
 
 	return S_OK;

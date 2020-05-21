@@ -140,7 +140,15 @@ HRESULT CPlayer::Ready_GameObject(void * pArg)
 	m_pStageAgent = CStageAgent::Get_Instance();
 	Safe_AddRef(m_pStageAgent);
 
-	m_tObjParam.sMana_Cur = 100;
+	m_tObjParam.sMana_Cur = 20;
+	m_tObjParam.sMana_Max = 20;
+	m_tObjParam.fStamina_Max = 100.f;
+	m_tObjParam.fStamina_Cur = 100.f;
+
+	m_fStaminaCost_Dodge = 20.f;
+	m_fStaminaCost_WeakAttack = 7.f;
+	m_fStaminaCost_HeavyAttack = 12.f;
+	m_fStamina_RecoverySpeed = 3.5f;
 
 	m_pHair = (CCostume_Hair*)g_pManagement->Clone_GameObject_Return(L"GameObject_Costume_Hair", 
 		&CCostume_Hair::_INFO(&m_pTransform->Get_WorldMat(), m_matBones[Bone_Head], _v4(1.f, 0.f, 0.f, 1.f)));
@@ -197,7 +205,7 @@ _int CPlayer::Update_GameObject(_double TimeDelta)
 	Parameter_Aiming();
 
 	Check_Mistletoe();
-
+	Check_Stamina(TimeDelta);
 
 	IF_NOT_NULL(m_pWeapon[m_eActiveSlot])
 		m_pWeapon[m_eActiveSlot]->Update_GameObject(TimeDelta);
@@ -253,8 +261,11 @@ _int CPlayer::Late_Update_GameObject(_double TimeDelta)
 	m_pHair->Late_Update_GameObject(TimeDelta);
 	m_pOuter->Late_Update_GameObject(TimeDelta);
 
-	m_pHead[m_eHeadType]->Late_Update_GameObject(TimeDelta);
-	m_pMask[m_eMaskType]->Late_Update_GameObject(TimeDelta);
+	if (!m_tObjParam.bInvisible)
+	{
+		m_pHead[m_eHeadType]->Late_Update_GameObject(TimeDelta);
+		m_pMask[m_eMaskType]->Late_Update_GameObject(TimeDelta);
+	}
 
 	m_pDynamicMesh->SetUp_Animation_Lower(m_eAnim_Lower , m_bOffLerp);
 	m_pDynamicMesh->SetUp_Animation_Upper(m_eAnim_Upper , m_bOffLerp);
@@ -1881,9 +1892,12 @@ void CPlayer::Key_Special()
 {
 	if (g_pInput_Device->Key_Down(DIK_SPACE))
 	{
-		if (m_bCanDodge)
+		if (m_bCanDodge &&
+			m_fStaminaCost_Dodge <= m_tObjParam.fStamina_Cur)
 		{
 			m_bOnDodge = false;
+
+			m_tObjParam.fStamina_Cur -= m_fStaminaCost_Dodge;
 
 			Reset_OldAnimations();
 
@@ -1940,7 +1954,8 @@ void CPlayer::Key_Attack()
 				}
 			}
 
-			if (m_bCanAttack == true)
+			if (m_bCanAttack == true &&
+				m_fStaminaCost_WeakAttack <= m_tObjParam.fStamina_Cur)
 			{
 				LOOP(16)
 					m_bEventTrigger[i] = false;
@@ -1955,6 +1970,8 @@ void CPlayer::Key_Attack()
 
 				m_tInfo.fMoveSpeed_Cur = 0.f;
 				m_tInfo.fMoveAccel_Cur = 0.f;
+
+				m_tObjParam.fStamina_Cur -= m_fStaminaCost_WeakAttack;
 
 				if (m_bSprint)
 				{
@@ -2026,10 +2043,13 @@ void CPlayer::Key_Attack()
 				}
 			}
 
-			if (m_bCanAttack == true)
+			if (m_bCanAttack == true &&
+				m_fStaminaCost_HeavyAttack <= m_tObjParam.fStamina_Cur)
 			{
 				LOOP(16)
 					m_bEventTrigger[i] = false;
+
+				m_tObjParam.fStamina_Cur -= m_fStaminaCost_HeavyAttack;
 
 				if (m_bSprint)
 				{
@@ -5901,7 +5921,7 @@ void CPlayer::Play_Skills()
 
 					m_tObjParam.bInvisible = false;
 					m_pWeapon[m_eActiveSlot]->Set_Invisible(false);
-
+					m_pOuter->Set_Invisible(false);
 					m_fAnimMutiply = 1.f;
 				}
 			}
@@ -5936,6 +5956,7 @@ void CPlayer::Play_Skills()
 
 					m_tObjParam.bInvisible = true;
 					m_pWeapon[m_eActiveSlot]->Set_Invisible(true);
+					m_pOuter->Set_Invisible(true);
 				}
 
 				if (m_bEventTrigger[1] == false)
@@ -11760,6 +11781,14 @@ _bool CPlayer::Check_CunterTarget()
 	}
 
 	return false;
+}
+
+void CPlayer::Check_Stamina(_double dTimeDelta)
+{
+	m_tObjParam.fStamina_Cur += m_fStamina_RecoverySpeed * _float(dTimeDelta);
+	if (m_tObjParam.fStamina_Cur > m_tObjParam.fStamina_Max)
+		m_tObjParam.fStamina_Cur = m_tObjParam.fStamina_Max;
+
 }
 
 void CPlayer::Change_PlayerBody(PLAYER_BODY _eBodyType)
