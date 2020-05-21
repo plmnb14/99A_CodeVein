@@ -358,6 +358,7 @@ void CNPC_Yokumo::Check_Dist()
 
 			m_bActive = false;
 
+			m_pInteractionButton->Set_Active(false);
 			return;
 		}
 
@@ -368,6 +369,7 @@ void CNPC_Yokumo::Check_Dist()
 			m_fConvertAngle = m_pTransformCom->Chase_Target_Angle(&vPos);
 			_float fHitAngle = D3DXToDegree(m_pTransformCom->Calc_HitTarget_Angle(vPos));
 
+			
 			if (fHitAngle >= -30.f && fHitAngle < 30.f)
 			{
 				// 상호작용 유아이가 뜨고, 플레이어가 누를 수 있게 해줌.
@@ -375,13 +377,22 @@ void CNPC_Yokumo::Check_Dist()
 				m_pPlayer->Set_OnNPCUI(true);
 				m_pPlayer->Set_YokumoUI(true);
 				m_bCanActive = true;
+
+				if (m_pUIManager->Get_GeneralStoreUI()->Get_Active() || m_pUIManager->Get_GeneralStoreSellUI()->Get_Active() || m_pUIManager->Get_Yokumo_NPCUI()->Get_Active())
+					m_pInteractionButton->Set_Active(false);
+				else
+					m_pInteractionButton->Set_Active(true);
 			}
+			
+			
 		}
 	}
 
 	// 플레이어에서 E를 누르면, 리액트 컨버세이션을 활성화 시킨다.
 	else if (m_pInteractionButton->Get_ReactConversation() && m_bCanActive == true)
 	{
+		// 상호작용 UI 비활성화
+		m_pInteractionButton->Set_Active(false);
 		// 오리진 각도 받아옴
 		m_fOriginAngle = m_pTransformCom->Get_Angle(AXIS_Y);
 

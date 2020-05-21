@@ -41,7 +41,7 @@ _int CGeneralStoreUI::Update_GameObject(_double TimeDelta)
 		m_pExpendCollectionUI->Set_Active(true);
 		SetUp_SubUI_Active(true);
 		m_bIsSubActive = true;
-		CUI_Manager::Get_Instance()->Get_NPC_InteractionUI()->Set_Active(false);
+		
 	}
 	else if (!m_bIsActive && m_bIsSubActive)
 	{
@@ -49,7 +49,7 @@ _int CGeneralStoreUI::Update_GameObject(_double TimeDelta)
 		m_pMaterialCollectionUI->Set_Active(false);
 		SetUp_SubUI_Active(false);
 		m_bIsSubActive = false;
-		CUI_Manager::Get_Instance()->Get_NPC_InteractionUI()->Set_Active(true);
+		
 	}
 
 	if (!m_bIsActive)

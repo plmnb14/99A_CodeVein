@@ -40,11 +40,7 @@ HRESULT CSkill_Inven::Ready_GameObject(void * pArg)
 	SetUp_Default();
 
 	
-	/*LOOP(12)
-	{
-		Add_Skill_Data(Skill_ID(i));
-	}*/
-	Add_Skill_Data(Dragon_Lunge);
+	
 
 	SetUp_SlotPos();
 

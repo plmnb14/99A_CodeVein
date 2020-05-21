@@ -253,7 +253,7 @@ HRESULT CScene_Logo::Late_Init(_double TimeDelta)
 	pEff->Set_Desc(_v3(0, 0, 0), nullptr);
 	pEff->Set_UI_Layer();
 	pEff->Reset_Init();
-
+	
 	return S_OK;
 }
 

@@ -40,7 +40,7 @@ _int CExpendSellCollectionUI::Update_GameObject(_double TimeDelta)
 {
 	if (m_bIsActive && !m_bIsSubActive)
 	{
-
+		
 		SetUp_SlotPos();
 		SetUp_SubUI_Active(true);
 
@@ -50,6 +50,7 @@ _int CExpendSellCollectionUI::Update_GameObject(_double TimeDelta)
 	{
 		SetUp_SubUI_Active(false);
 		m_bIsSubActive = false;
+	
 	}
 	if (!m_bIsActive)
 		return NO_EVENT;

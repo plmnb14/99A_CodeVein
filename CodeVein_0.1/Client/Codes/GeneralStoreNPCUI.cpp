@@ -60,7 +60,7 @@ _int CGeneralStoreNPCUI::Update_GameObject(_double TimeDelta)
 			m_bIsSubActive = true;
 		}
 
-		CUI_Manager::Get_Instance()->Get_NPC_InteractionUI()->Set_Active(false);
+		
 	}
 	else if (!m_bIsActive && m_bIsSubActive)
 	{
