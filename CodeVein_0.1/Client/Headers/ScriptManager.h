@@ -28,6 +28,9 @@ private:
 	virtual ~CScriptManager() = default;
 
 public:
+	_bool Get_FogOff() { return m_bFogOff; }
+
+public:
 	virtual void Set_StageIdx(_ulong _dwStageIdx) { m_eStageIdx = (SCRIPT_SCENE)_dwStageIdx; }
 
 public:
@@ -66,6 +69,8 @@ private:
 private:
 	_bool			m_bTimer = false;
 	_float			m_fTimer = 0.f;
+
+	_bool			m_bFogOff = false;
 
 private:
 	virtual void St01_Sub0();

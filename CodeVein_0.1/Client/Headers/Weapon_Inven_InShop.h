@@ -42,6 +42,7 @@ public:
 	_bool			Get_CheckCloseUpgradePopup() { return m_bCloseUpgradePopup; }
 	_float			Get_UpgradePrice(_int iReinforce);
 	_float			Get_PlusDamage(_float fDamage, _int iReinforce);
+	_float			Get_PlusDef(_float fDef, _int iReinforce);
 
 public:
 	void Set_CheckCloseUpgradePopup() { m_bCloseUpgradePopup = false; }
