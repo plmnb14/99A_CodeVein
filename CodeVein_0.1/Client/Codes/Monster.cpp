@@ -164,7 +164,7 @@ CGameObject * CMonster::Get_pTargetObject()
 	CGameObject* pObject = g_pManagement->Get_GameObjectBack(m_pLayerTag_Of_Target, SCENE_MORTAL);
 
 	// 못 찾았으면 동료를 찾으면됨.
-	if(nullptr == pObject)
+	if (nullptr == pObject)
 		pObject = g_pManagement->Get_GameObjectBack(m_pLayerTag_Of_Target, SCENE_STAGE);
 
 	return pObject;
@@ -181,42 +181,179 @@ HRESULT CMonster::Draw_Collider()
 	return S_OK;
 }
 
-void CMonster::Check_DropItem()
+void CMonster::Check_DropItem(MONSTER_NAMETYPE eMonsterName)
 {
-	CGameObject* pItem = nullptr;
+	ITEM_NAMETYPE eItem_Name = ITEM_NAMETYPE::NAMETYPE_Queen_Steel;
 
-	m_iRandom = CALC::Random_Num(0, 8);
-
-	switch (m_iRandom)
+	switch (eMonsterName)
 	{
-	case 0:
-		pItem = g_pManagement->Clone_GameObject_Return(L"GameObject_DropItem", &CDropItem::ITEM_STATUS(ITEM_GRADE_TYPE::ITEM_GRADE_NORMAL, ITEM_NAMETYPE::NAMETYPE_Expend_MaximumUp, m_pTransformCom->Get_Pos(), 120.f));
+		// 일반 몹 드랍
+	case M_Cocoon:
+	case M_Hunter:
+	case M_Monkey:
+	case M_Wolf:
+	case M_Yeti:
+	case M_ThaiMan:
+	case M_Urchin:
+	{
+		m_iRandom = CALC::Random_Num(0, 8);
+
+		switch (m_iRandom)
+		{
+		case 0:
+			eItem_Name = ITEM_NAMETYPE::NAMETYPE_Expend_Blood;
+			break;
+		case 1:
+			eItem_Name = ITEM_NAMETYPE::NAMETYPE_Expend_Cheet;
+			break;
+		case 2:
+			eItem_Name = ITEM_NAMETYPE::NAMETYPE_Expend_Hp;
+			break;
+		case 3:
+			eItem_Name = ITEM_NAMETYPE::NAMETYPE_Expend_MaximumUp;
+			break;
+		case 4:
+			eItem_Name = ITEM_NAMETYPE::NAMETYPE_Expend_Return;
+			break;
+		case 5:
+			eItem_Name = ITEM_NAMETYPE::NAMETYPE_Expend_SuperArmor;
+			break;
+		case 6:
+			eItem_Name = ITEM_NAMETYPE::NAMETYPE_Queen_Steel;
+			break;
+		case 7:
+			eItem_Name = ITEM_NAMETYPE::NAMETYPE_Queen_Titanium;
+			break;
+		case 8:
+			eItem_Name = ITEM_NAMETYPE::NAMETYPE_Queen_Tungsten;
+			break;
+		default:
+			eItem_Name = ITEM_NAMETYPE::NAMETYPE_Expend_Blood;
+			break;
+		}
+	}
+	break;
+
+	case M_GunGenji:
+	{
+		m_iRandom = CALC::Random_Num(0, 3);
+
+		switch (m_iRandom)
+		{
+		case 0:
+			eItem_Name = ITEM_NAMETYPE::NAMETYPE_WpnAll_Gun_Bayonet;
+			break;
+		case 1:
+			eItem_Name = ITEM_NAMETYPE::NAMETYPE_WpnAll_Gun_DarkBayonet;
+			break;
+		case 2:
+			eItem_Name = ITEM_NAMETYPE::NAMETYPE_WpnAll_Gun_Nakil;
+			break;
+		case 3:
+			//eItem_Name = ITEM_NAMETYPE::NAMETYPE_WpnAll_Gun_ReverTardor;
+			break;
+		}
+	}
+	break;
+
+	case M_SwordGenji:
+	{
+		m_iRandom = CALC::Random_Num(0, 7);
+
+		switch (m_iRandom)
+		{
+		case 0:
+			eItem_Name = ITEM_NAMETYPE::NAMETYPE_WpnAll_LSword_Black;
+			break;
+		case 1:
+			//eItem_Name = ITEM_NAMETYPE::NAMETYPE_WpnAll_LSword_DarkTsubai;
+			break;
+		case 2:
+			eItem_Name = ITEM_NAMETYPE::NAMETYPE_WpnAll_LSword_Nakil;
+			break;
+		case 3:
+			//eItem_Name = ITEM_NAMETYPE::NAMETYPE_WpnAll_LSword_Tsubai;
+			break;
+		case 4:
+			eItem_Name = ITEM_NAMETYPE::NAMETYPE_WpnAll_SSword_DarkBrodeSword;
+			break;
+		case 5:
+			//eItem_Name = ITEM_NAMETYPE::NAMETYPE_WpnAll_SSword_Executioner;
+			break;
+		case 6:
+			eItem_Name = ITEM_NAMETYPE::NAMETYPE_WpnAll_SSword_Nakil;
+			break;
+		case 7:
+			eItem_Name = ITEM_NAMETYPE::NAMETYPE_WpnAll_SSword_Red;
+			break;
+		}
+	}
+	break;
+
+	case M_SwordShieldGenji:
+	{
+		m_iRandom = CALC::Random_Num(0, 3);
+
+		switch (m_iRandom)
+		{
+		case 0:
+			eItem_Name = ITEM_NAMETYPE::NAMETYPE_WpnAll_Halberd_Black;
+			break;
+		case 1:
+			//eItem_Name = ITEM_NAMETYPE::NAMETYPE_WpnAll_Halberd_DarkBodish;
+			break;
+		case 2:
+			eItem_Name = ITEM_NAMETYPE::NAMETYPE_WpnAll_Halberd_Nakil;
+			break;
+		case 3:
+			//eItem_Name = ITEM_NAMETYPE::NAMETYPE_WpnAll_Halberd_SolidPiercer;
+			break;
+		}
+	}
+	break;
+
+	case M_YachaMan:
+	{
+		m_iRandom = CALC::Random_Num(0, 3);
+
+		switch (m_iRandom)
+		{
+		case 0:
+			eItem_Name = ITEM_NAMETYPE::NAMETYPE_WpnAll_Hammer_Black;
+			break;
+		case 1:
+			//eItem_Name = ITEM_NAMETYPE::NAMETYPE_WpnAll_Hammer_DarkHeavyAxe;
+			break;
+		case 2:
+			//eItem_Name = ITEM_NAMETYPE::NAMETYPE_WpnAll_Hammer_ImperseAnker;
+			break;
+		case 3:
+			eItem_Name = ITEM_NAMETYPE::NAMETYPE_WpnAll_Hammer_Nakil;
+			break;
+		}
+	}
+	break;
+
+	case M_DeerKing:
+		eItem_Name = ITEM_NAMETYPE::NAMETYPE_Pet_DeerKing;
 		break;
-	case 1:
-		pItem = g_pManagement->Clone_GameObject_Return(L"GameObject_DropItem", &CDropItem::ITEM_STATUS(ITEM_GRADE_TYPE::ITEM_GRADE_NORMAL, ITEM_NAMETYPE::NAMETYPE_Expend_Hp, m_pTransformCom->Get_Pos(), 120.f));
+
+	case M_FireBoy:
 		break;
-	case 2:
-		pItem = g_pManagement->Clone_GameObject_Return(L"GameObject_DropItem", &CDropItem::ITEM_STATUS(ITEM_GRADE_TYPE::ITEM_GRADE_NORMAL, ITEM_NAMETYPE::NAMETYPE_Expend_Return, m_pTransformCom->Get_Pos(), 120.f));
+	case M_IceGirl:
 		break;
-	case 3:
-		pItem = g_pManagement->Clone_GameObject_Return(L"GameObject_DropItem", &CDropItem::ITEM_STATUS(ITEM_GRADE_TYPE::ITEM_GRADE_NORMAL, ITEM_NAMETYPE::NAMETYPE_Expend_Blood, m_pTransformCom->Get_Pos(), 120.f));
+	case M_PoisonButterfly:
+		eItem_Name = ITEM_NAMETYPE::NAMETYPE_Pet_PoisonButterfly;
 		break;
-	case 4:
-		pItem = g_pManagement->Clone_GameObject_Return(L"GameObject_DropItem", &CDropItem::ITEM_STATUS(ITEM_GRADE_TYPE::ITEM_GRADE_NORMAL, ITEM_NAMETYPE::NAMETYPE_Expend_Cheet, m_pTransformCom->Get_Pos(), 120.f));
+
+	case M_QueensKnight:
 		break;
-	case 5:
-		pItem = g_pManagement->Clone_GameObject_Return(L"GameObject_DropItem", &CDropItem::ITEM_STATUS(ITEM_GRADE_TYPE::ITEM_GRADE_NORMAL, ITEM_NAMETYPE::NAMETYPE_Expend_SuperArmor, m_pTransformCom->Get_Pos(), 120.f));
-		break;
-	case 6:
-		pItem = g_pManagement->Clone_GameObject_Return(L"GameObject_DropItem", &CDropItem::ITEM_STATUS(ITEM_GRADE_TYPE::ITEM_GRADE_NORMAL, ITEM_NAMETYPE::NAMETYPE_Queen_Steel, m_pTransformCom->Get_Pos(), 120.f));
-		break;
-	case 7:
-		pItem = g_pManagement->Clone_GameObject_Return(L"GameObject_DropItem", &CDropItem::ITEM_STATUS(ITEM_GRADE_TYPE::ITEM_GRADE_NORMAL, ITEM_NAMETYPE::NAMETYPE_Queen_Titanium, m_pTransformCom->Get_Pos(), 120.f));
-		break;
-	case 8:
-		pItem = g_pManagement->Clone_GameObject_Return(L"GameObject_DropItem", &CDropItem::ITEM_STATUS(ITEM_GRADE_TYPE::ITEM_GRADE_NORMAL, ITEM_NAMETYPE::NAMETYPE_Queen_Tungsten, m_pTransformCom->Get_Pos(), 120.f));
+
+	default:
 		break;
 	}
+
+	CObjectPool_Manager::Get_Instance()->Create_Object(L"GameObject_DropItem", &CDropItem::ITEM_STATUS(ITEM_GRADE_TYPE::ITEM_GRADE_NORMAL, eItem_Name, m_pTransformCom->Get_Pos(), 120.f));
 
 	return;
 }

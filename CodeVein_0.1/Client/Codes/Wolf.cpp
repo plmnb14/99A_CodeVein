@@ -1312,6 +1312,8 @@ void CWolf::Play_Dead()
 				Start_Dissolve(0.9f, false, true, 0.3f);
 				m_fDeadEffect_Delay = 0.3f;
 
+				Check_DropItem(MONSTER_NAMETYPE::M_Wolf);
+
 				CObjectPool_Manager::Get_Instance()->Create_Object(L"GameObject_Haze", (void*)&CHaze::HAZE_INFO(100.f, m_pTransformCom->Get_Pos(), 0.3f));
 			}
 		}

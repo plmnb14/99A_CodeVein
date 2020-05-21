@@ -2442,6 +2442,8 @@ void CMonkey::Play_Dead()
 					m_pWeapon->Start_Dissolve(0.7f, false, true, 0.f);
 					m_fDeadEffect_Delay = 0.f;
 
+					Check_DropItem(MONSTER_NAMETYPE::M_Monkey);
+
 					CObjectPool_Manager::Get_Instance()->Create_Object(L"GameObject_Haze", (void*)&CHaze::HAZE_INFO(100.f, m_pTransformCom->Get_Pos(), 0.f));
 				}
 			}
