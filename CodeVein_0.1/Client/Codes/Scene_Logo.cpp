@@ -233,7 +233,7 @@ HRESULT CScene_Logo::Ready_BGM()
 	g_pSoundManager->Load_Directory_SouneFile_W(L"BGM");
 
 	g_pSoundManager->Stop_Sound(CSoundManager::Background_01);
-	g_pSoundManager->Play_Sound(L"07_Main.ogg", CSoundManager::Background_01, CSoundManager::BGM_Sound);
+	g_pSoundManager->Play_BGM(L"07_Main.ogg");
 
 	return S_OK;
 }
@@ -253,10 +253,6 @@ HRESULT CScene_Logo::Late_Init(_double TimeDelta)
 	pEff->Set_Desc(_v3(0, 0, 0), nullptr);
 	pEff->Set_UI_Layer();
 	pEff->Reset_Init();
-
-	m_pLoadingScripts->Set_Enable(true);
-
-	cout << "»·¥y" << endl;
 
 	return S_OK;
 }
@@ -310,6 +306,7 @@ void CScene_Logo::Check_Active(_double TimeDelta)
 	m_pTitleBG->Set_Active(true);
 	m_pGlitterEffect_0->Set_Active(true);
 	m_pGlitterEffect_1->Set_Active(true);
+	m_pLoadingScripts->Set_Enable(true);
 }
 
 void CScene_Logo::Logo_KeyInput()

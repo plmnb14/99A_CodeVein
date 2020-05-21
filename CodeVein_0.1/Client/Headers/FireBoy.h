@@ -136,7 +136,7 @@ private:
 	D3DXFRAME_DERIVED*	m_pRightHandFrame = nullptr;
 
 	_bool				m_bFinishCamShake = false;
-
+	_bool				m_bHello = true;
 private:	// 최초상태 세팅
 	_float				m_fFov = 0.f;
 	_float				m_fMaxLength = 0.f;

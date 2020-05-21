@@ -107,6 +107,9 @@
 #include "GeneralStoreOption.h"
 #include "ExpendSellCollectionUI.h"
 #include "GeneralStoreSellUI.h"
+#include "ExpendSellUI.h"
+#include "MaterialSellCollectionUI.h"
+#include "MaterialSellUI.h"
 
 #include "Get_ItemUI.h"
 #include "PickUp_ItemUI.h"
@@ -167,6 +170,9 @@ public:
 	CNPC_InteractionUI* Get_NPC_InteractionUI() { return m_pNPC_InterActionUI; }
 	CCustomCategory* Get_CustomCategory() { return m_pCustomCategory;}
 	CGeneralStoreSellUI* Get_GeneralStoreSellUI() { return m_pGeneralStoreSellUI; }
+	CGeneralStoreNPCUI* Get_Yokumo_NPCUI() { return m_pGeneralStoreNPCUI; } // 요쿠모(소비, 재료 상점 NPC)!!
+
+	// 펫 인벤토리
 	CPet_Inven* Get_Pet_Inven() { return m_pPet_Inven; }
 
 

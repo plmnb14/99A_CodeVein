@@ -1204,6 +1204,7 @@ HRESULT CLoading::Ready_Effect(void)
 		return E_FAIL;
 	if (FAILED(g_pManagement->Add_Prototype(L"Ortho_Smoke_1", COrthoEffect::Create(m_pGraphicDev, Read_EffectData(L"../../Data/EffectData/Ortho_Smoke_1.dat")))))
 		return E_FAIL;
+
 	return S_OK;
 }
 
@@ -1340,7 +1341,7 @@ _uint CLoading::Loading_Title()
 
 	++m_dwLoadingCnt;
 	//cout << " Costume Cloth Making . . ." << endl;
-	g_pClothManager->Ready_ClothManager();
+	//g_pClothManager->Ready_ClothManager();
 
 	++m_dwLoadingCnt;
 	//cout << "Dynamic Mesh 불러오는 중 . . ." << endl;
