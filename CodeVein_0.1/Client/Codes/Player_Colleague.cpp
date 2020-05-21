@@ -2842,7 +2842,7 @@ void CPlayer_Colleague::CollHeal_ForPlayer()
 	_v3			vBirth, vLook;
 	_float		fLenght = 1.f;
 
-	if (0 < m_tObjParam.fHp_Cur && true == m_bNest_Skil_CoolTImer)
+	if (100 < m_tObjParam.fHp_Cur && true == m_bNest_Skil_CoolTImer)
 	{
 		_float PlusHP = (m_tObjParam.fHp_Cur / 10.f);
 
