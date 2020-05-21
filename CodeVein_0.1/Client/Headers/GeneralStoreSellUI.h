@@ -6,6 +6,7 @@
 BEGIN(Client)
 class CInventory_Icon;
 class CExpendSellCollectionUI;
+class CMaterialSellCollectionUI;
 class CGeneralStoreSellUI final : public CUI
 {
 private:
@@ -37,6 +38,7 @@ private:
 private:
 	CInventory_Icon*			m_pShopIcon[2];
 	CExpendSellCollectionUI*	m_pExpendSellUI = nullptr;
+	CMaterialSellCollectionUI*	m_pMtrlSellUI = nullptr;
 	_bool						m_bIsSubActive = false;
 
 public:

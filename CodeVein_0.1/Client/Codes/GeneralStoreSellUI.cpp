@@ -26,6 +26,11 @@ HRESULT CGeneralStoreSellUI::Ready_GameObject(void * pArg)
 		return E_FAIL;
 	CUI::Ready_GameObject(pArg);
 
+	m_fPosX = WINCX * 0.5f;
+	m_fPosY = WINCY * 0.5f;
+	m_fSizeX = 1280.f;
+	m_fSizeY = 700.f;
+
 	SetUp_Default();
 
 	return NOERROR;
@@ -33,11 +38,6 @@ HRESULT CGeneralStoreSellUI::Ready_GameObject(void * pArg)
 
 _int CGeneralStoreSellUI::Update_GameObject(_double TimeDelta)
 {
-	CUI::Update_GameObject(TimeDelta);
-	m_pRendererCom->Add_RenderList(RENDER_UI, this);
-
-	D3DXMatrixOrthoLH(&m_matProj, WINCX, WINCY, 0.f, 1.f);
-
 	if (m_bIsActive && !m_bIsSubActive)
 	{
 		m_pExpendSellUI->Set_Active(true);
@@ -47,10 +47,17 @@ _int CGeneralStoreSellUI::Update_GameObject(_double TimeDelta)
 	else if (!m_bIsActive && m_bIsSubActive)
 	{
 		m_pExpendSellUI->Set_Active(false);
+		m_pMtrlSellUI->Set_Active(false);
 		SetUp_SubUI_Active(false);
 		m_bIsSubActive = false;
 	}
-	
+	if (!m_bIsActive)
+		return NO_EVENT;
+	CUI::Update_GameObject(TimeDelta);
+	m_pRendererCom->Add_RenderList(RENDER_UI, this);
+
+	D3DXMatrixOrthoLH(&m_matProj, WINCX, WINCY, 0.f, 1.f);
+
 	Click_SubUI();
 	
 	return NO_EVENT;
@@ -58,6 +65,8 @@ _int CGeneralStoreSellUI::Update_GameObject(_double TimeDelta)
 
 _int CGeneralStoreSellUI::Late_Update_GameObject(_double TimeDelta)
 {
+	if (!m_bIsActive)
+		return NO_EVENT;
 	D3DXMatrixIdentity(&m_matWorld);
 	D3DXMatrixIdentity(&m_matView);
 
@@ -143,8 +152,8 @@ void CGeneralStoreSellUI::SetUp_Default()
 	{
 		m_pShopIcon[i] = static_cast<CInventory_Icon*>(g_pManagement->Clone_GameObject_Return(L"GameObject_InvenIcon", nullptr));
 		g_pManagement->Add_GameOject_ToLayer_NoClone(m_pShopIcon[i], SCENE_MORTAL, L"Layer_PlayerUI", nullptr);
-		m_pShopIcon[i]->Set_UI_Size(30.f, 30.f);
-		m_pShopIcon[i]->Set_UI_Pos(50.f + 100.f * i, 100.f);
+		m_pShopIcon[i]->Set_UI_Pos(80.f + 80.f * i, 130.f);
+		m_pShopIcon[i]->Set_UI_Size(40.f, 40.f);
 	}
 	m_pShopIcon[0]->Set_Type(CInventory_Icon::ICON_TYPE::ICON_EXPEND);
 	m_pShopIcon[1]->Set_Type(CInventory_Icon::ICON_TYPE::ICON_MTRL);
@@ -152,6 +161,10 @@ void CGeneralStoreSellUI::SetUp_Default()
 	// 소비템 판매
 	m_pExpendSellUI = static_cast<CExpendSellCollectionUI*>(g_pManagement->Clone_GameObject_Return(L"GameObject_ExpendSellCollectionUI", nullptr));
 	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pExpendSellUI, SCENE_MORTAL, L"Layer_PlayerUI", nullptr);
+
+	// 재료 판매
+	m_pMtrlSellUI = static_cast<CMaterialSellCollectionUI*>(g_pManagement->Clone_GameObject_Return(L"GameObject_MaterialSellCollectionUI", nullptr));
+	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pMtrlSellUI, SCENE_MORTAL, L"Layer_PlayerUI", nullptr);
 }
 
 void CGeneralStoreSellUI::Click_SubUI()
@@ -162,10 +175,12 @@ void CGeneralStoreSellUI::Click_SubUI()
 	if (m_pShopIcon[0]->Pt_InRect() && g_pInput_Device->Get_DIMouseState(CInput_Device::DIM_LB))
 	{
 		m_pExpendSellUI->Set_Active(true);
+		m_pMtrlSellUI->Set_Active(false);
 	}
 	else if (m_pShopIcon[1]->Pt_InRect() && g_pInput_Device->Get_DIMouseState(CInput_Device::DIM_LB))
 	{
-
+		m_pExpendSellUI->Set_Active(false);
+		m_pMtrlSellUI->Set_Active(true);
 	}
 
 	if (g_pInput_Device->Get_DIMouseState(CInput_Device::DIM_RB))

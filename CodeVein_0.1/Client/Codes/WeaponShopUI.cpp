@@ -471,6 +471,14 @@ void CWeaponShopUI::Setup_AfterClone()
 	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pArmorUpgradeInven, SCENE_MORTAL, L"Layer_PlayerUI", nullptr);
 }
 
+void CWeaponShopUI::Set_Active(_bool bActive)
+{
+	m_bIsActive = bActive;
+
+	for (auto& iter : m_vecOption)
+		iter->Set_Active(bActive);
+}
+
 CWeaponShopUI * CWeaponShopUI::Create(_Device pGraphic_Device)
 {
 	CWeaponShopUI* pInstance = new CWeaponShopUI(pGraphic_Device);

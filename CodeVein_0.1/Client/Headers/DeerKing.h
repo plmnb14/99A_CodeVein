@@ -146,6 +146,7 @@ private:
 
 private:	// UI(지원)
 	CBossHP*			m_pBossUI = nullptr;
+	_bool				m_bUITrigger = false;
 
 private:	// 다운 상태를 위한 변수
 	_bool				m_bDown_Start = false;

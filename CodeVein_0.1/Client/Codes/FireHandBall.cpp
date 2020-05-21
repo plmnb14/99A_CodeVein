@@ -57,6 +57,9 @@ HRESULT CFireHandBall::Ready_GameObject(void * pArg)
 	m_pFireSphere->Reset_Init();
 	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pFireSphere, SCENE_STAGE, L"Layer_Effect", nullptr);
 
+	g_pSoundManager->Stop_Sound(CSoundManager::Effect_SFX_03);
+	g_pSoundManager->Play_Sound(L"SE_GATE_KEEPER_MAN_KETSUGI_IMPACT_FIRE_000.ogg", CSoundManager::Effect_SFX_03, CSoundManager::Effect_Sound);
+
 	return NOERROR;
 }
 
@@ -110,7 +113,10 @@ _int CFireHandBall::Update_GameObject(_double TimeDelta)
 		g_pManagement->Create_Effect(L"FireBoy_FireHandBall_Dead_FireExplosion", m_pTransformCom->Get_Pos(), nullptr);
 		g_pManagement->Create_Effect(L"FireBoy_FireHandBall_Dead_Light", m_pTransformCom->Get_Pos(), nullptr);
 		g_pManagement->Create_Effect(L"FireBoy_FireSphere_BreakParticle", m_pTransformCom->Get_Pos(), nullptr);
-		
+
+		g_pSoundManager->Stop_Sound(CSoundManager::Effect_SFX_03);
+		g_pSoundManager->Play_Sound(L"SE_GATE_KEEPER_MAN_KETSUGI_IMPACT_FIRE_003.ogg", CSoundManager::Effect_SFX_03, CSoundManager::Effect_Sound);
+
 		m_bDead = true;
 		m_pFireSphere->Set_Dead();
 

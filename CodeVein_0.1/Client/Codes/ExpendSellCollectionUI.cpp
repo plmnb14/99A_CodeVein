@@ -23,12 +23,14 @@ HRESULT CExpendSellCollectionUI::Ready_GameObject(void * pArg)
 {
 	if (FAILED(Add_Component()))
 		return E_FAIL;
-
+	CUI::Ready_GameObject(pArg);
 	m_fPosX = 229.5f;
 	m_fPosY = 325.5f;
 	m_fSizeX = 280.f;
 	m_fSizeY = 471.f;
 	m_fViewZ = 4.f;
+
+	SetUp_Default();
 
 	SetUp_SlotPos();
 	return NOERROR;
@@ -36,11 +38,9 @@ HRESULT CExpendSellCollectionUI::Ready_GameObject(void * pArg)
 
 _int CExpendSellCollectionUI::Update_GameObject(_double TimeDelta)
 {
-	CUI::Update_GameObject(TimeDelta);
-
 	if (m_bIsActive && !m_bIsSubActive)
 	{
-		
+
 		SetUp_SlotPos();
 		SetUp_SubUI_Active(true);
 
@@ -51,6 +51,10 @@ _int CExpendSellCollectionUI::Update_GameObject(_double TimeDelta)
 		SetUp_SubUI_Active(false);
 		m_bIsSubActive = false;
 	}
+	if (!m_bIsActive)
+		return NO_EVENT;
+
+	CUI::Update_GameObject(TimeDelta);
 
 	m_vecSlot = *CUI_Manager::Get_Instance()->Get_Expendables_Inven()->Get_VecExpendSlot();
 	Click_SubUI();
@@ -61,6 +65,8 @@ _int CExpendSellCollectionUI::Update_GameObject(_double TimeDelta)
 
 _int CExpendSellCollectionUI::Late_Update_GameObject(_double TimeDelta)
 {
+	if (!m_bIsActive)
+		return NO_EVENT;
 	D3DXMatrixIdentity(&m_matWorld);
 	D3DXMatrixIdentity(&m_matView);
 
@@ -75,25 +81,7 @@ _int CExpendSellCollectionUI::Late_Update_GameObject(_double TimeDelta)
 
 HRESULT CExpendSellCollectionUI::Render_GameObject()
 {
-	/*if (!m_bIsActive)
-		return NOERROR;
-	if (nullptr == m_pShaderCom ||
-		nullptr == m_pBufferCom)
-		return E_FAIL;
-
-	g_pManagement->Set_Transform(D3DTS_WORLD, m_matWorld);
-	g_pManagement->Set_Transform(D3DTS_VIEW, m_matView);
-	g_pManagement->Set_Transform(D3DTS_PROJECTION, m_matProj);
-
-	if (FAILED(SetUp_ConstantTable(2)))
-		return E_FAIL;
-
-	m_pShaderCom->Begin_Shader();
-	m_pShaderCom->Begin_Pass(1);
-	m_pBufferCom->Render_VIBuffer();
-	m_pShaderCom->End_Pass();
-	m_pShaderCom->End_Shader();*/
-
+	
 	return NOERROR;
 }
 
@@ -169,11 +157,10 @@ void CExpendSellCollectionUI::Click_SubUI()
 	{
 		if (iter->Pt_InRect() && !iter->Get_Select())
 		{
-			// 디버그용
 			if (g_pInput_Device->Get_DIMouseState(CInput_Device::DIM_LB))
 			{
-				CExpendables_Inven* pInven = CUI_Manager::Get_Instance()->Get_Expendables_Inven();
-				pInven->Sell_Item(iter);
+				m_pExpendSellUI->Set_SellSlot(iter);
+				m_pExpendSellUI->Set_Active(true);
 			}
 		}
 	}
@@ -188,36 +175,42 @@ void CExpendSellCollectionUI::Click_SubUI()
 	}
 }
 
-void CExpendSellCollectionUI::Sell_ExpendItem(CExpendables_Slot * pSlot)
+void CExpendSellCollectionUI::SetUp_Default()
 {
-	if (nullptr == pSlot)
-		return;
-
-	
-
-	if (pSlot->Get_Size() == 0)
-	{		
-		
-
-		_uint iIdx = 0;
-		for (auto& iter : m_vecSlot)
-		{
-			if (iter == pSlot)
-			{
-				pSlot->Set_Dead();
-				m_vecSlot.erase(m_vecSlot.begin() + iIdx);
-				m_vecSlot.shrink_to_fit();
-			}
-			
-			iIdx++;
-		}
-	}
-	else
-		pSlot->Delete_Item();
-		
-
-	SetUp_SlotPos();
+	m_pExpendSellUI = static_cast<CExpendSellUI*>(g_pManagement->Clone_GameObject_Return(L"GameObject_ExpendSellUI", nullptr));
+	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pExpendSellUI, SCENE_MORTAL, L"Layer_PlayerUI", nullptr);
 }
+//
+//void CExpendSellCollectionUI::Sell_ExpendItem(CExpendables_Slot * pSlot)
+//{
+//	if (nullptr == pSlot)
+//		return;
+//
+//	
+//
+//	if (pSlot->Get_Size() == 0)
+//	{		
+//		
+//
+//		_uint iIdx = 0;
+//		for (auto& iter : m_vecSlot)
+//		{
+//			if (iter == pSlot)
+//			{
+//				pSlot->Set_Dead();
+//				m_vecSlot.erase(m_vecSlot.begin() + iIdx);
+//				m_vecSlot.shrink_to_fit();
+//			}
+//			
+//			iIdx++;
+//		}
+//	}
+//	else
+//		pSlot->Delete_Item();
+//		
+//
+//	SetUp_SlotPos();
+//}
 
 CExpendSellCollectionUI * CExpendSellCollectionUI::Create(_Device pGraphic_Device)
 {

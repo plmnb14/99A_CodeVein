@@ -50,6 +50,9 @@ HRESULT CScene_Stage_Training::Ready_Scene()
 	if (FAILED(Ready_Layer_Environment()))
 		return E_FAIL;
 
+	//if (FAILED(Ready_Layer_Custom(L"Layer_Custom")))
+	//	return E_FAIL;
+
 	CRenderer* pRenderer = static_cast<CRenderer*>(CManagement::Get_Instance()->Clone_Component(SCENE_STATIC, L"Renderer"));
 	pRenderer->Fog_On(false);
 	Safe_Release(pRenderer);

@@ -36,10 +36,12 @@ HRESULT CScene_Stage_02::Ready_Scene()
 	m_pRenderer->Set_FogDestiny(0.04f);
 	m_pRenderer->Set_UseLinearFog(false);
 
-	g_pSoundManager->Stop_Sound(CSoundManager::Ambient_01);
-	g_pSoundManager->Play_Sound(L"BGM_MT_SNOW.ogg", CSoundManager::Ambient_01, CSoundManager::Ambient_Sound);
+	g_pSoundManager->Stop_Sound(CSoundManager::Background_01);
+	g_pSoundManager->Play_BGM(L"BGM_MT_SNOW.ogg");
 
 	g_pManagement->LoadCreateObject_FromPath(m_pGraphic_Device, L"Object_Stage_02.dat");
+
+	CParticleMgr::Get_Instance()->Clear_Fog();
 
 	return S_OK;
 }
@@ -319,8 +321,6 @@ void CScene_Stage_02::Free()
 	m_pSnowEffect_0->Set_Dead();
 	m_pSmokeEffect_0->Set_Dead();
 	m_pSmokeEffect_1->Set_Dead();
-	
-	CParticleMgr::Get_Instance()->Clear_Fog();
 
 	Safe_Release(m_pRenderer);
 

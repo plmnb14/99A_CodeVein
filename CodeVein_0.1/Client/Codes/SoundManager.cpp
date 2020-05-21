@@ -63,6 +63,33 @@ void CSoundManager::Play_BGM(TCHAR * pSoundKey)
 	FMOD_Channel_SetMode(m_pChannelArr[Background_01], FMOD_LOOP_NORMAL);
 }
 
+void CSoundManager::Play_BGM_Type(TCHAR * pSoundKey, _bool _bIsAmbient)
+{
+	if (m_mapSound.empty())
+		return;
+
+	auto& iter = find_if(m_mapSound.begin(), m_mapSound.end(), CMyStrCmp(pSoundKey));
+
+	if (m_mapSound.end() == iter)
+		return;
+
+	if (false == _bIsAmbient)
+	{
+		FMOD_System_PlaySound(m_pSystem, iter->second, FALSE, false, &m_pChannelArr[Background_Loop]);
+		FMOD_Channel_SetChannelGroup(m_pChannelArr[Background_Loop], m_pChannelGroup[BGM_Sound]);
+
+		FMOD_Channel_SetMode(m_pChannelArr[Background_Loop], FMOD_LOOP_NORMAL);
+	}
+
+	else
+	{
+		FMOD_System_PlaySound(m_pSystem, iter->second, FALSE, false, &m_pChannelArr[Ambient_Loop]);
+		FMOD_Channel_SetChannelGroup(m_pChannelArr[Ambient_Loop], m_pChannelGroup[Ambient_Sound]);
+
+		FMOD_Channel_SetMode(m_pChannelArr[Ambient_Loop], FMOD_LOOP_NORMAL);
+	}
+}
+
 void CSoundManager::Stop_Sound(CHANNELID eID)
 {
 	FMOD_Channel_Stop(m_pChannelArr[eID]);

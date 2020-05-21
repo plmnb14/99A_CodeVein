@@ -44,6 +44,11 @@ HRESULT CScene_Stage_03::Ready_Scene()
 	//CScriptManager::Get_Instance()->Set_StageIdx(3);
 	//CScriptManager::Get_Instance()->Ready_Script_DynamicObject(3); //필요없으나 일단 예의상 넣었음
 
+	g_pSoundManager->Stop_Sound(CSoundManager::Background_01);
+	g_pSoundManager->Play_BGM(L"SE_AMB_St01_Base_Out.ogg");
+
+	CParticleMgr::Get_Instance()->Clear_Fog();
+
 	return S_OK;
 }
 

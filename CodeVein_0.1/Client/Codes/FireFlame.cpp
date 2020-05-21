@@ -38,6 +38,7 @@ HRESULT CFireFlame::Ready_GameObject(void * pArg)
 
 	m_dCurTime = 0;
 	m_fEffectOffset = 0.f;
+	m_fSoundOffset = 0.f;
 	m_bDead = false;
 	m_bFireMove = true;
 
@@ -97,6 +98,32 @@ _int CFireFlame::Update_GameObject(_double TimeDelta)
 
 			g_pManagement->Create_Effect(L"FireBoy_FireFlame", m_pTransformCom->Get_Pos(), nullptr);
 		}
+
+		//m_fSoundOffset += (_float)TimeDelta;
+		//if (m_fSoundOffset > 0.3f)
+		//{
+		//	m_fSoundOffset = 0.f;
+		//
+		//	if (2 < CCalculater::Random_Num(0, 10))
+		//	{
+		//		_int iRand = CCalculater::Random_Num(0, 2);
+		//		if (0 == iRand)
+		//		{
+		//			g_pSoundManager->Stop_Sound(CSoundManager::Effect_SFX_02);
+		//			g_pSoundManager->Play_Sound(L"SE_FIRE_ELEMENTS_000.ogg", CSoundManager::Effect_SFX_02, CSoundManager::Effect_Sound);
+		//		}
+		//		else if (1 == iRand)
+		//		{
+		//			g_pSoundManager->Stop_Sound(CSoundManager::Effect_SFX_01);
+		//			g_pSoundManager->Play_Sound(L"SE_FIRE_ELEMENTS_001.ogg", CSoundManager::Effect_SFX_01, CSoundManager::Effect_Sound);
+		//		}
+		//		else
+		//		{
+		//			g_pSoundManager->Stop_Sound(CSoundManager::Effect_SFX_03);
+		//			g_pSoundManager->Play_Sound(L"SE_FIRE_ELEMENTS_002.ogg", CSoundManager::Effect_SFX_03, CSoundManager::Effect_Sound);
+		//		}
+		//	}
+		//}
 
 		g_pManagement->Create_Effect_Offset(L"FireBoy_FireBullet_Particle_01", 0.1f, m_pTransformCom->Get_Pos(), nullptr);
 		g_pManagement->Create_Effect_Offset(L"FireBoy_FireBullet_Particle_02", 0.1f, m_pTransformCom->Get_Pos(), nullptr);

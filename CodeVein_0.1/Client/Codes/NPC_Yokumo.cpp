@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "..\Headers\NPC_Yokumo.h"
 
+#include "Player.h"
 #include "UI_Manager.h"
 
 CNPC_Yokumo::CNPC_Yokumo(LPDIRECT3DDEVICE9 pGraphic_Device)
@@ -31,7 +32,7 @@ HRESULT CNPC_Yokumo::Ready_GameObject(void * pArg)
 	m_pTransformCom->Set_Angle(V3_NULL);
 	m_pTransformCom->Set_Angle(AXIS_Y, pInfo.fYAngle);
 	
-	m_pPlayer = g_pManagement->Get_GameObjectBack(L"Layer_Player", SCENE_MORTAL);
+	m_pPlayer = (CPlayer*)g_pManagement->Get_GameObjectBack(L"Layer_Player", SCENE_MORTAL);
 	m_eState = Idle;
 	m_bByeCheck = true; // 시작하자마자 소리 방지
 
@@ -45,23 +46,28 @@ HRESULT CNPC_Yokumo::Ready_GameObject(void * pArg)
 	m_pBattleAgentCom->Set_RimAlpha(0.25f);
 	m_pBattleAgentCom->Set_RimValue(7.f);
 
+	m_pUIManager = CUI_Manager::Get_Instance();
+	Safe_AddRef(m_pUIManager);
+
 	return S_OK;
 }
 
 HRESULT CNPC_Yokumo::LateInit_GameObject()
 {
 	// UI
-	m_pShopUI = static_cast<CGeneralStoreNPCUI*>(g_pManagement->Clone_GameObject_Return(L"GameObject_GeneralStoreNPCUI", nullptr));
+	m_pShopUI = m_pUIManager->Get_Yokumo_NPCUI();
+	Safe_AddRef(m_pShopUI);
 	m_pShopUI->Set_Target(this);
-	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pShopUI, SCENE_MORTAL, L"Layer_PlayerUI", nullptr);
+	m_pShopUI->Set_Active(false);
 
-	m_pInteractionButton = static_cast<CNPC_InteractionUI*>(g_pManagement->Clone_GameObject_Return(L"GameObject_NPC_Interaction", nullptr));
+	m_pInteractionButton = m_pUIManager->Get_NPC_InteractionUI();
+	Safe_AddRef(m_pInteractionButton);
 	m_pInteractionButton->Set_Active(false);
-	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pInteractionButton, SCENE_MORTAL, L"Layer_PlayerUI", nullptr);
 
 	m_pScriptUI = CUI_Manager::Get_Instance()->Get_ScriptUI();
+	Safe_AddRef(m_pScriptUI);
 	m_pScriptUI->Set_Active(false);
-
+	
 	return S_OK;
 }
 
@@ -288,8 +294,6 @@ HRESULT CNPC_Yokumo::Render_GameObject_SetPass(CShader * pShader, _int iPass, _b
 
 		for (_uint j = 0; j < iNumSubSet; ++j)
 		{
-			_int tmpPass = m_pMeshCom->Get_MaterialPass(i, j);
-
 			pShader->Begin_Pass(iPass);
 
 			pShader->Commit_Changes();
@@ -328,38 +332,67 @@ void CNPC_Yokumo::Check_Dist()
 	if (!m_pShopUI)
 		return;
 
-	_float fLen = D3DXVec3Length(&_v3(TARGET_TO_TRANS(m_pPlayer)->Get_Pos() - m_pTransformCom->Get_Pos()));
+	// 이미 활성화 되 있으면 리턴
+	if (!m_pShopUI->Get_Active() &&
+		!m_pInteractionButton->Get_ReactConversation())
+	{
+		// 거리젠다.
+		_float fLen = D3DXVec3Length(&_v3(TARGET_TO_TRANS(m_pPlayer)->Get_Pos() - m_pTransformCom->Get_Pos()));
 
-	const _float MIN_DIST = 1.5f;
-	if (fLen <= MIN_DIST &&
-		!m_pShopUI->Get_Active()/* &&
-		!m_pShopUI->Get_OtherPopupOn()*/)
-	{
-		m_bCanActive = true;
-		m_pInteractionButton->Set_Active(true);
+		const _float MIN_DIST = 2.f;
+
+		// 거리 이내가 아닐 경우, 
+		if (fLen > MIN_DIST)
+		{
+			m_pInteractionButton->Set_Active(false);
+
+			// 아이들이 아닐 경우, 아이들 만들어줌
+			if (Idle != m_eState)
+			{
+				if (m_pMeshCom->Is_Finish_Animation(0.95f))
+					m_eState = Idle;
+			}
+
+			m_pPlayer->Set_OnNPCUI(false);
+			m_pPlayer->Set_YokumoUI(false);
+
+			m_bActive = false;
+
+			return;
+		}
+
+		else
+		{
+			_v3 vPos = TARGET_TO_TRANS(m_pPlayer)->Get_Pos();
+
+			m_fConvertAngle = m_pTransformCom->Chase_Target_Angle(&vPos);
+			_float fHitAngle = D3DXToDegree(m_pTransformCom->Calc_HitTarget_Angle(vPos));
+
+			if (fHitAngle >= -30.f && fHitAngle < 30.f)
+			{
+				// 상호작용 유아이가 뜨고, 플레이어가 누를 수 있게 해줌.
+				m_pInteractionButton->Set_Active(true);
+				m_pPlayer->Set_OnNPCUI(true);
+				m_pPlayer->Set_YokumoUI(true);
+				m_bCanActive = true;
+			}
+		}
 	}
-	else
+
+	// 플레이어에서 E를 누르면, 리액트 컨버세이션을 활성화 시킨다.
+	else if (m_pInteractionButton->Get_ReactConversation() && m_bCanActive == true)
 	{
-		m_bCanActive = false;
-		m_bActive = false;
+		// 오리진 각도 받아옴
+		m_fOriginAngle = m_pTransformCom->Get_Angle(AXIS_Y);
+
+		m_pTransformCom->Set_Angle(AXIS_Y, m_fConvertAngle);
+
 		m_pInteractionButton->Set_Active(false);
 
-		if(m_pMeshCom->Is_Finish_Animation(0.95f))
-			m_eState = Idle;
-	}
+		// 최초 1번만 말하고,
+		m_bCanActive = false;
 
-	if (g_pInput_Device->Key_Pressing(DIK_R))
-		m_pInteractionButton->Set_Interaction(true);
-
-	if (!m_bActive &&
-		m_bCanActive &&
-		g_pInput_Device->Key_Up(DIK_R))
-	{
-		m_bActive = true;
-		m_bByeCheck = false;
-
-		m_pShopUI->Set_Active(true);
-
+		// 상태 바꿔주고,
 		m_eState = Shrug;
 
 		if (0 == CCalculater::Random_Num(0, 1))
@@ -410,11 +443,15 @@ void CNPC_Yokumo::Check_Anim()
 
 void CNPC_Yokumo::Check_Bye()
 {
-	if (!m_bByeCheck && 
-		!m_pShopUI->Get_Active() /*&& 
-		!m_pShopUI->Get_OtherPopupOn()*/)
+	if (!m_pShopUI->Get_Active() &&
+		!m_pUIManager->Get_Yokumo_NPCUI()->Get_Active() &&
+		!m_pUIManager->Get_GeneralStoreSellUI()->Get_Active() &&
+		!m_pUIManager->Get_GeneralStoreUI()->Get_Active() &&
+		m_pInteractionButton->Get_ReactConversation())
 	{
-		m_bByeCheck = true;
+		m_pTransformCom->Set_Angle(AXIS_Y, m_fOriginAngle);
+
+		m_pInteractionButton->Set_ReactConverSation(false);
 
 		if (0 == CCalculater::Random_Num(0, 1))
 		{
@@ -624,6 +661,11 @@ CGameObject* CNPC_Yokumo::Clone_GameObject(void * pArg)
 
 void CNPC_Yokumo::Free()
 {
+	Safe_Release(m_pScriptUI);
+	Safe_Release(m_pShopUI);
+	Safe_Release(m_pInteractionButton);
+	Safe_Release(m_pUIManager);
+
 	Safe_Release(m_pTransformCom);
 	Safe_Release(m_pRendererCom);
 	Safe_Release(m_pShaderCom);
