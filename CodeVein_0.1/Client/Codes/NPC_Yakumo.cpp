@@ -455,7 +455,6 @@ void CNPC_Yakumo::Check_Bye()
 		m_pTransformCom->Set_Angle(AXIS_Y, m_fOriginAngle);
 
 		m_pInteractionButton->Set_ReactConverSation(false);
-		//m_bByeCheck = true;
 
 		if (0 == CCalculater::Random_Num(0, 1))
 		{
