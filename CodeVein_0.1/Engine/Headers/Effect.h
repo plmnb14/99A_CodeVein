@@ -45,6 +45,10 @@ public:
 	void Set_ZWrite() { m_bZwrite = true; }
 	void Set_EffectLayer(_int iLayerIdx) { m_iLayer = iLayerIdx; } // 클수록 위에 그려짐
 	void Set_ParentMatrix(_mat matParent) { m_bUseParentMat = true;  m_matParent = matParent; }
+	void Set_Scale(_v3 vScale) {
+		m_bUse_SetScale = true;
+		m_vMyScale = vScale;
+	};
 
 	void Reset_Init();
 
@@ -88,6 +92,7 @@ protected:
 	_float					m_fCurvePower = 0.f;
 	_v3						m_vLerpPos = { 1.f, 1.f, 1.f };
 	_v3						m_vLerpScale = { 1.f, 1.f, 1.f };
+	_v3						m_vMyScale = { 1.f, 1.f, 1.f };
 	_v3						m_vDir = { 0.f, 0.f, 0.f };
 	_v3						m_vMyDir = { 0.f, 0.f, 0.f }; // For MoveEffect
 	_v3						m_vRot = { 0.f, 0.f, 0.f };
@@ -109,6 +114,7 @@ protected:
 	_bool					m_bZwrite = false;
 	_bool					m_bCurve = false;
 	_bool					m_bUseParentMat = false;
+	_bool					m_bUse_SetScale = false;
 
 	_int					m_iPass = 0;
 	_int					m_iLayer = 0;

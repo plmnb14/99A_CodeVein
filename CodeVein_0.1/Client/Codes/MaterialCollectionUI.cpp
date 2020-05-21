@@ -91,22 +91,13 @@ void CMaterialCollectionUI::Click_SubUI()
 				m_pBuyUI->Set_Active(true);
 				m_pBuyUI->Set_Type(iter->Get_Type());
 
-				Click_MtrlSlot_Sound(iIdx);
+				CUI_Manager::Get_Instance()->Stop_Play_UISound(L"Slot_Regist.ogg", CSoundManager::CHANNELID::UI_Click, CSoundManager::Effect_Sound);
 			}
 		}
 		iIdx++;
 	}
 }
 
-void CMaterialCollectionUI::Click_MtrlSlot_Sound(_uint iIdx)
-{
-	if (iIdx > 2)
-		return;
-
-	_uint iChannel = CSoundManager::CHANNELID::Purchase_GeneralShop_MtrlSlot01 + iIdx;
-
-	g_pSoundManager->Play_Sound(L"UI_CommonClick.wav", CSoundManager::CHANNELID(iChannel), CSoundManager::Ambient_Sound);
-}
 
 CMaterialCollectionUI * CMaterialCollectionUI::Create(_Device pGraphic_Device)
 {

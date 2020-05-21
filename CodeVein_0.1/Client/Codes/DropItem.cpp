@@ -171,7 +171,7 @@ _int CDropItem::Update_GameObject(_double TimeDelta)
 				}
 				case NAMETYPE_WpnAll_Gun_ReverTardor:
 				{
-					//CUI_Manager::Get_Instance()->Get_Weapon_Inven()->Add_Weapon(pWeapon->Get_WeaponParam(Wpn));
+					CUI_Manager::Get_Instance()->Get_Weapon_Inven()->Add_Weapon(pWeapon->Get_WeaponParam(Wpn_Gun_Black));
 					m_iRenderIndex = 1;
 					//pItem_Mgr->Set_PickUp_Number(m_iRenderIndex);
 					pPickUp->Set_ItemNumber_Index(m_iRenderIndex);
@@ -195,7 +195,7 @@ _int CDropItem::Update_GameObject(_double TimeDelta)
 				}
 				case NAMETYPE_WpnAll_Gun_DarkBayonet:
 				{
-					CUI_Manager::Get_Instance()->Get_Weapon_Inven()->Add_Weapon(pWeapon->Get_WeaponParam(Wpn_Gun_Black));
+					CUI_Manager::Get_Instance()->Get_Weapon_Inven()->Add_Weapon(pWeapon->Get_WeaponParam(Wpn_Gun_Slave));
 					m_iRenderIndex = 3;
 					//pItem_Mgr->Set_PickUp_Number(m_iRenderIndex);
 					pPickUp->Set_ItemNumber_Index(m_iRenderIndex);
@@ -207,7 +207,7 @@ _int CDropItem::Update_GameObject(_double TimeDelta)
 				}
 				case NAMETYPE_WpnAll_Halberd_SolidPiercer:
 				{
-					//CUI_Manager::Get_Instance()->Get_Weapon_Inven()->Add_Weapon(pWeapon->Get_WeaponParam(Wpn_));
+					CUI_Manager::Get_Instance()->Get_Weapon_Inven()->Add_Weapon(pWeapon->Get_WeaponParam(Wpn_Halberd));
 					m_iRenderIndex = 4;
 					//pItem_Mgr->Set_PickUp_Number(m_iRenderIndex);
 					pPickUp->Set_ItemNumber_Index(m_iRenderIndex);
@@ -231,7 +231,7 @@ _int CDropItem::Update_GameObject(_double TimeDelta)
 				}
 				case NAMETYPE_WpnAll_Halberd_DarkBodish:
 				{
-					//CUI_Manager::Get_Instance()->Get_Weapon_Inven()->Add_Weapon(pWeapon->Get_WeaponParam(Wpn_Hal));
+					CUI_Manager::Get_Instance()->Get_Weapon_Inven()->Add_Weapon(pWeapon->Get_WeaponParam(Wpn_Halberd_Slave));
 					m_iRenderIndex = 6;
 					//pItem_Mgr->Set_PickUp_Number(m_iRenderIndex);
 					pPickUp->Set_ItemNumber_Index(m_iRenderIndex);
@@ -255,7 +255,7 @@ _int CDropItem::Update_GameObject(_double TimeDelta)
 				}
 				case NAMETYPE_WpnAll_Hammer_ImperseAnker:
 				{
-					//CUI_Manager::Get_Instance()->Get_Weapon_Inven()->Add_Weapon(pWeapon->Get_WeaponParam(Wpn_));
+					CUI_Manager::Get_Instance()->Get_Weapon_Inven()->Add_Weapon(pWeapon->Get_WeaponParam(Wpn_Hammer));
 					m_iRenderIndex = 8;
 					pItem_Mgr->Set_PickUp_Number(m_iRenderIndex);
 					m_bCanGetItem = true;
@@ -277,7 +277,7 @@ _int CDropItem::Update_GameObject(_double TimeDelta)
 				}
 				case NAMETYPE_WpnAll_Hammer_DarkHeavyAxe:
 				{
-					//CUI_Manager::Get_Instance()->Get_Weapon_Inven()->Add_Weapon(pWeapon->Get_WeaponParam(Wpn_Hammer));
+					CUI_Manager::Get_Instance()->Get_Weapon_Inven()->Add_Weapon(pWeapon->Get_WeaponParam(Wpn_Hammer_Slave));
 					m_iRenderIndex = 10;
 					pItem_Mgr->Set_PickUp_Number(m_iRenderIndex);
 					m_bCanGetItem = true;
@@ -299,7 +299,7 @@ _int CDropItem::Update_GameObject(_double TimeDelta)
 				}
 				case NAMETYPE_WpnAll_LSword_Tsubai:
 				{
-					//CUI_Manager::Get_Instance()->Get_Weapon_Inven()->Add_Weapon(pWeapon->Get_WeaponParam(Wpn_LSword_));
+					CUI_Manager::Get_Instance()->Get_Weapon_Inven()->Add_Weapon(pWeapon->Get_WeaponParam(Wpn_LSword));
 					m_iRenderIndex = 12;
 					pItem_Mgr->Set_PickUp_Number(m_iRenderIndex);
 					m_bCanGetItem = true;
@@ -332,7 +332,7 @@ _int CDropItem::Update_GameObject(_double TimeDelta)
 				}
 				case NAMETYPE_WpnAll_LSword_DarkTsubai:
 				{
-					//CUI_Manager::Get_Instance()->Get_Weapon_Inven()->Add_Weapon(pWeapon->Get_WeaponParam(Wpn_LSword_));
+					CUI_Manager::Get_Instance()->Get_Weapon_Inven()->Add_Weapon(pWeapon->Get_WeaponParam(Wpn_LSword_Slave));
 					m_iRenderIndex = 15;
 					pItem_Mgr->Set_PickUp_Number(m_iRenderIndex);
 					m_bCanGetItem = true;
@@ -354,7 +354,7 @@ _int CDropItem::Update_GameObject(_double TimeDelta)
 				}
 				case NAMETYPE_WpnAll_SSword_Executioner:
 				{
-					//CUI_Manager::Get_Instance()->Get_Weapon_Inven()->Add_Weapon(pWeapon->Get_WeaponParam(Wpn_SSword_));
+					CUI_Manager::Get_Instance()->Get_Weapon_Inven()->Add_Weapon(pWeapon->Get_WeaponParam(Wpn_SSword_Black));
 					m_iRenderIndex = 17;
 					pItem_Mgr->Set_PickUp_Number(m_iRenderIndex);
 					m_bCanGetItem = true;
@@ -365,6 +365,7 @@ _int CDropItem::Update_GameObject(_double TimeDelta)
 				}
 				case NAMETYPE_WpnAll_SSword_Nakil:
 				{
+					CUI_Manager::Get_Instance()->Get_Weapon_Inven()->Add_Weapon(pWeapon->Get_WeaponParam(Wpn_SSword_Military));
 					m_iRenderIndex = 18;
 					pItem_Mgr->Set_PickUp_Number(m_iRenderIndex);
 					m_bCanGetItem = true;
@@ -375,7 +376,7 @@ _int CDropItem::Update_GameObject(_double TimeDelta)
 				}
 				case NAMETYPE_WpnAll_SSword_DarkBrodeSword:
 				{
-					CUI_Manager::Get_Instance()->Get_Weapon_Inven()->Add_Weapon(pWeapon->Get_WeaponParam(Wpn_SSword_Black));
+					CUI_Manager::Get_Instance()->Get_Weapon_Inven()->Add_Weapon(pWeapon->Get_WeaponParam(Wpn_SSword_Slave));
 					m_iRenderIndex = 19;
 					pItem_Mgr->Set_PickUp_Number(m_iRenderIndex);
 					m_bCanGetItem = true;
@@ -496,16 +497,147 @@ _int CDropItem::Update_GameObject(_double TimeDelta)
 					m_pPickUpMgr->Set_vecPickUp_Item(pPickUp);
 					break;
 				}
+				case NAMETYPE_BloodCode_Artemis:
+				{
+					CUI_Manager::Get_Instance()->Get_BloodCode_SelectUI()->Release_BloodCode(BloodCode_ID::BloodCode_Artemis);
+					m_iRenderIndex = 29;
+					m_bCanGetItem = true;
+					++m_iCount_GetItem;
+					pPickUp->Set_ItemNumber_Index(m_iRenderIndex);
+					m_pPickUpMgr->Set_Count_GetItem(m_iCount_GetItem);
+					m_pPickUpMgr->Set_vecPickUp_Item(pPickUp);
+					break;
+				}
+				case NAMETYPE_BloodCode_Assassin:
+				{
+					CUI_Manager::Get_Instance()->Get_BloodCode_SelectUI()->Release_BloodCode(BloodCode_ID::BloodCode_Assassin);
+					m_iRenderIndex = 30;
+					m_bCanGetItem = true;
+					++m_iCount_GetItem;
+					pPickUp->Set_ItemNumber_Index(m_iRenderIndex);
+					m_pPickUpMgr->Set_Count_GetItem(m_iCount_GetItem);
+					m_pPickUpMgr->Set_vecPickUp_Item(pPickUp);
+					break;
+				}
+				case NAMETYPE_BloodCode_DarkKnight:
+				{
+					CUI_Manager::Get_Instance()->Get_BloodCode_SelectUI()->Release_BloodCode(BloodCode_ID::BloodCode_DarkKnight);
+					m_iRenderIndex = 31;
+					m_bCanGetItem = true;
+					++m_iCount_GetItem;
+					pPickUp->Set_ItemNumber_Index(m_iRenderIndex);
+					m_pPickUpMgr->Set_Count_GetItem(m_iCount_GetItem);
+					m_pPickUpMgr->Set_vecPickUp_Item(pPickUp);
+					break;
+				}
+				case NAMETYPE_BloodCode_Queen:
+				{
+					CUI_Manager::Get_Instance()->Get_BloodCode_SelectUI()->Release_BloodCode(BloodCode_ID::BloodCode_Queen);
+					m_iRenderIndex = 32;
+					m_bCanGetItem = true;
+					++m_iCount_GetItem;
+					pPickUp->Set_ItemNumber_Index(m_iRenderIndex);
+					m_pPickUpMgr->Set_Count_GetItem(m_iCount_GetItem);
+					m_pPickUpMgr->Set_vecPickUp_Item(pPickUp);
+					break;
+				}
+				case NAMETYPE_BloodCode_Berserker:
+				{
+					CUI_Manager::Get_Instance()->Get_BloodCode_SelectUI()->Release_BloodCode(BloodCode_ID::BloodCode_Berserker);
+					m_iRenderIndex = 33;
+					m_bCanGetItem = true;
+					++m_iCount_GetItem;
+					pPickUp->Set_ItemNumber_Index(m_iRenderIndex);
+					m_pPickUpMgr->Set_Count_GetItem(m_iCount_GetItem);
+					m_pPickUpMgr->Set_vecPickUp_Item(pPickUp);
+					break;
+				}
+				case NAMETYPE_BloodCode_Hephaestus:
+				{
+					CUI_Manager::Get_Instance()->Get_BloodCode_SelectUI()->Release_BloodCode(BloodCode_ID::BloodCode_Hephaestus);
+					m_iRenderIndex = 34;
+					m_bCanGetItem = true;
+					++m_iCount_GetItem;
+					pPickUp->Set_ItemNumber_Index(m_iRenderIndex);
+					m_pPickUpMgr->Set_Count_GetItem(m_iCount_GetItem);
+					m_pPickUpMgr->Set_vecPickUp_Item(pPickUp);
+					break;
+				}
+				case NAMETYPE_BloodCode_Fighter:
+				{
+					CUI_Manager::Get_Instance()->Get_BloodCode_SelectUI()->Release_BloodCode(BloodCode_ID::BloodCode_Fighter);
+					m_iRenderIndex = 35;
+					m_bCanGetItem = true;
+					++m_iCount_GetItem;
+					pPickUp->Set_ItemNumber_Index(m_iRenderIndex);
+					m_pPickUpMgr->Set_Count_GetItem(m_iCount_GetItem);
+					m_pPickUpMgr->Set_vecPickUp_Item(pPickUp);
+					break;
+				}
+				case NAMETYPE_BloodCode_Heimdal:
+				{
+					CUI_Manager::Get_Instance()->Get_BloodCode_SelectUI()->Release_BloodCode(BloodCode_ID::BloodCode_Heimdal);
+					m_iRenderIndex = 36;
+					m_bCanGetItem = true;
+					++m_iCount_GetItem;
+					pPickUp->Set_ItemNumber_Index(m_iRenderIndex);
+					m_pPickUpMgr->Set_Count_GetItem(m_iCount_GetItem);
+					m_pPickUpMgr->Set_vecPickUp_Item(pPickUp);
+					break;
+				}
+				case NAMETYPE_BloodCode_Hermes:
+				{
+					CUI_Manager::Get_Instance()->Get_BloodCode_SelectUI()->Release_BloodCode(BloodCode_ID::BloodCode_Hermes);
+					m_iRenderIndex = 37;
+					m_bCanGetItem = true;
+					++m_iCount_GetItem;
+					pPickUp->Set_ItemNumber_Index(m_iRenderIndex);
+					m_pPickUpMgr->Set_Count_GetItem(m_iCount_GetItem);
+					m_pPickUpMgr->Set_vecPickUp_Item(pPickUp);
+					break;
+				}
+				case NAMETYPE_BloodCode_Atlas:
+				{
+					CUI_Manager::Get_Instance()->Get_BloodCode_SelectUI()->Release_BloodCode(BloodCode_ID::BloodCode_Atlas);
+					m_iRenderIndex = 38;
+					m_bCanGetItem = true;
+					++m_iCount_GetItem;
+					pPickUp->Set_ItemNumber_Index(m_iRenderIndex);
+					m_pPickUpMgr->Set_Count_GetItem(m_iCount_GetItem);
+					m_pPickUpMgr->Set_vecPickUp_Item(pPickUp);
+					break;
+				}
+				case NAMETYPE_BloodCode_Prometheus:
+				{
+					CUI_Manager::Get_Instance()->Get_BloodCode_SelectUI()->Release_BloodCode(BloodCode_ID::BloodCode_Prometheus);
+					m_iRenderIndex = 39;
+					m_bCanGetItem = true;
+					++m_iCount_GetItem;
+					pPickUp->Set_ItemNumber_Index(m_iRenderIndex);
+					m_pPickUpMgr->Set_Count_GetItem(m_iCount_GetItem);
+					m_pPickUpMgr->Set_vecPickUp_Item(pPickUp);
+					break;
+				}
 				case NAMETYPE_Pet_PoisonButterfly:
 				{
 					CUI_Manager::Get_Instance()->Get_Pet_Inven()->Add_Pet(CPet::PET_TYPE::PET_POISONBUTTERFLY);
+					m_iRenderIndex = 40;
 					m_bCanGetItem = true;
+					++m_iCount_GetItem;
+					pPickUp->Set_ItemNumber_Index(m_iRenderIndex);
+					m_pPickUpMgr->Set_Count_GetItem(m_iCount_GetItem);
+					m_pPickUpMgr->Set_vecPickUp_Item(pPickUp);
 					break;
 				}
 				case NAMETYPE_Pet_DeerKing:
 				{
 					CUI_Manager::Get_Instance()->Get_Pet_Inven()->Add_Pet(CPet::PET_TYPE::PET_DEERKING);
+					m_iRenderIndex = 41;
 					m_bCanGetItem = true;
+					++m_iCount_GetItem;
+					pPickUp->Set_ItemNumber_Index(m_iRenderIndex);
+					m_pPickUpMgr->Set_Count_GetItem(m_iCount_GetItem);
+					m_pPickUpMgr->Set_vecPickUp_Item(pPickUp);
 					break;
 				}
 				case NAMETYPE_End:

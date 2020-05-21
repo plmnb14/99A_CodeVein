@@ -67,6 +67,8 @@ public:
 	// 무기를 렌더할지 말지
 	virtual void			Set_Invisible(_bool _bInvisible) { m_tObjParam.bInvisible = _bInvisible; }
 
+	virtual void			Set_WeaponParam(WPN_PARAM _tParam , _ulong _dwSlotIdx) { m_tWeaponParam[_dwSlotIdx] = _tParam; }
+
 private:
 	list<CGameObject*>		m_listCollisionRecord;
 

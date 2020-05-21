@@ -1326,25 +1326,20 @@ _uint CLoading::Loading_Title()
 	//============================================================================================================
 	// 필수 메쉬 불러오는중
 	//============================================================================================================
-	//cout << "Essential Static Mesh 불러오는 중 . . ." << endl;
 	g_pManagement->LoadMesh_FilesFromPath_AddProtoRenderObj(m_pGraphicDev, L"../../Data/Load_MeshData/Mesh_Essential_Path.dat");
 	//============================================================================================================
 	// 다이나믹 메쉬 불러오는 중
 	//============================================================================================================
 	++m_dwLoadingCnt;
-	//cout << "Costume Static Mesh 불러오는 중 . . ." << endl;
 	g_pManagement->LoadMesh_FromPath(m_pGraphicDev, L"../../Data/Load_MeshData/Mesh_Costume_Static_Path.dat");
 
 	++m_dwLoadingCnt;
-	//cout << "Costume Dynamic Mesh 불러오는 중 . . ." << endl;
 	g_pManagement->LoadMesh_FromPath(m_pGraphicDev, L"../../Data/Load_MeshData/Mesh_Costume_Dynamic_Path.dat");
 
 	++m_dwLoadingCnt;
-	//cout << " Costume Cloth Making . . ." << endl;
-	//g_pClothManager->Ready_ClothManager();
+	g_pClothManager->Ready_ClothManager();
 
 	++m_dwLoadingCnt;
-	//cout << "Dynamic Mesh 불러오는 중 . . ." << endl;
 	g_pManagement->LoadMesh_FromPath(m_pGraphicDev, L"../../Data/Load_MeshData/Mesh_NPC_Path.dat");
 	g_pManagement->LoadMesh_FromPath(m_pGraphicDev, L"../../Data/Load_MeshData/Mesh_Dynamic_Path.dat");
 
@@ -1352,56 +1347,47 @@ _uint CLoading::Loading_Title()
 	// 무기 불러오는 중
 	//============================================================================================================
 	++m_dwLoadingCnt;
-	//cout << "Essential Weapon Mesh 불러오는 중 . . ." << endl;
 	g_pManagement->LoadMesh_FromPath(m_pGraphicDev, L"../../Data/Load_MeshData/Mesh_Weapon_Path.dat");
 
 	++m_dwLoadingCnt;
-	//cout << "DrainWeapon Mesh 불러오는 중 . . ." << endl;
 	g_pManagement->LoadMesh_FromPath(m_pGraphicDev, L"../../Data/Load_MeshData/Mesh_DrainWeapon_Path.dat");
 	//============================================================================================================
 	// 텍스쳐 불러오는 중
 	//============================================================================================================
 	++m_dwLoadingCnt;
-	//cout << "All Texture 불러오는 중 . . ." << endl;
 	g_pManagement->LoadTex_FromPath(m_pGraphicDev, L"../../Data/Load_TexData/Tex_Path.dat");
 	//============================================================================================================
 	// 이펙트 메쉬 불러오는중
 	//============================================================================================================
 	++m_dwLoadingCnt;
-	//cout << "Effect Mesh 불러오는 중 . . ." << endl;
 	g_pManagement->LoadMesh_FromPath(m_pGraphicDev, L"../../Data/Load_MeshData/Mesh_Effect_Path.dat");
 	//============================================================================================================
 	// 이펙트 원형 생성
 	//============================================================================================================
 	++m_dwLoadingCnt;
-	//cout << "Effect 원형 생성중" << endl;
 	Ready_Effect();
 	//============================================================================================================
 	// 필수 파티클 생성
 	//============================================================================================================
 	++m_dwLoadingCnt;
-	//cout << "Particle Essential 불러오는 중 . . ." << endl;
 	if (FAILED(CParticleMgr::Get_Instance()->Ready_ParticleManager_Essential()))
 		return E_FAIL;
 	//============================================================================================================
 	// 플레이어 스킬, 보스 이펙트 포함
 	//============================================================================================================
 	++m_dwLoadingCnt;
-	//cout << "Particle Etc 불러오는 중 . . ." << endl;
 	if (FAILED(CParticleMgr::Get_Instance()->Ready_ParticleManager()))
 		return E_FAIL;
 	//============================================================================================================
 	// UI 원형 생성
 	//============================================================================================================
 	++m_dwLoadingCnt;
-	//cout << " UI 원형 생성 중 . . ." << endl;
 	CUI_Manager::Get_Instance()->Add_UI_Prototype(m_pGraphicDev);
 	CItem_Manager::Get_Instance()->Add_Item_Prototype(m_pGraphicDev);
 	//============================================================================================================
 	// 기타
 	//============================================================================================================
 	++m_dwLoadingCnt;
-	//cout << "Essential Protorypes 추가 중 . . ."  << endl;
 	//============================================================================================================
 	// Costume Head
 	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_Costume_Head", CCostume_Head::Create(m_pGraphicDev))))
@@ -1476,6 +1462,7 @@ _uint CLoading::Loading_Title()
 	g_pSoundManager->Load_Directory_SouneFile_W(L"UI/UI_WeaponShop");
 	g_pSoundManager->Load_Directory_SouneFile_W(L"NPC/Yakumo");
 	g_pSoundManager->Load_Directory_SouneFile_W(L"Boss_Genji");
+	g_pSoundManager->Load_Directory_SouneFile_W(L"Jack");
 
 	m_bFinish = true;
 
@@ -1733,6 +1720,9 @@ _uint CLoading::Loading_Stage()
 		if (FAILED(g_pManagement->Add_Prototype(L"GameObject_DropItem", CDropItem::Create(m_pGraphicDev))))
 			return E_FAIL;
 		CObjectPool_Manager::Get_Instance()->Create_ObjectPool(L"GameObject_DropItem", L"GameObject_DropItem", 200);
+
+		if (FAILED(g_pManagement->Add_Prototype(L"GameObject_YetiTrap", CYetiTrap::Create(m_pGraphicDev))))
+			return E_FAIL;
 
 		//============================================================================================================
 		// NPC

@@ -131,15 +131,17 @@ public:
 	virtual HRESULT Ready_GameObject(void* pArg);
 	virtual _int	Update_GameObject(_double TimeDelta);
 	virtual _int	Late_Update_GameObject(_double TimeDelta);
-	//virtual HRESULT mist();
 	virtual HRESULT Render_GameObject_Instancing_SetPass(CShader* pShader);
 	virtual HRESULT Render_GameObject_SetPass(CShader* pShader, _int iPass, _bool _bIsForMotionBlur = false);
 
 public:
 	virtual void Set_OnNPCUI(_bool _bOnNPCUI) { m_bOnUI_NPCTalk = _bOnNPCUI;}
 	virtual void Set_YakumoUI(_bool _bYakumoUI) { m_bOnYakumo_UI = _bYakumoUI; };
-	virtual void Set_YokumoUI(_bool _bYokumoUI) { m_bOnYakumo_UI = _bYokumoUI; };
+	virtual void Set_YokumoUI(_bool _bYokumoUI) { m_bOnYokumo_UI = _bYokumoUI; };
 	virtual void Set_Jack(_bool _bJacKUI) { m_bOnJack_UI = _bJacKUI; };
+
+	virtual _bool Get_YakumoUI() { return m_bOnYakumo_UI; }
+	virtual _bool Get_YokumoUI() { return m_bOnYokumo_UI; }
 
 public:
 	virtual void Reset_OldAnimations();
@@ -153,6 +155,9 @@ private:
 	WEAPON_STATE			m_eSubWpnState = WEAPON_SSword;
 	DRAIN_STATE				m_eDrainState = DRAIN_END;
 	ACTIVE_WEAPON_SLOT		m_eActiveSlot = WPN_SLOT_A;
+
+private:
+	_bool					m_bOldMoveDierection[MOVE_End] = {};
 
 private:
 	CStageAgent*			m_pStageAgent = nullptr;
@@ -324,149 +329,145 @@ private:
 	HRESULT SetUp_ConstantTable(CShader* pShader);
 
 private:
-	virtual void Movement_Aiming(_float _fAngle, _float _fMoveSpeed);
-	virtual void Movement_NonAiming(_float _fRecover, _float _fAngle, _float _fRadian, _float _fMoveSpeed);
+	void Movement_Aiming(_float _fAngle, _float _fMoveSpeed);
+	void Movement_NonAiming(_float _fRecover, _float _fAngle, _float _fRadian, _float _fMoveSpeed);
 
 private:
-	virtual void Target_AimChasing();
+	void Target_AimChasing();
 
 private:
-	virtual void OnCollisionEnter();
+	void OnCollisionEnter();
 
 private:
-	virtual void Update_Collider();
+	void Update_Collider();
 
 private:
-	virtual void Reset_BattleState();
+	void Reset_BattleState();
 
 private:
-	virtual void Check_NPC();
-	virtual void Check_Mistletoe();
-	virtual _int Check_HitDirection();
-	virtual _bool Check_CunterAngle(CGameObject* pObj);
-	virtual _bool Check_CunterTarget();
+	void Check_NPC();
+	void Check_Mistletoe();
+	_int Check_HitDirection();
+	_bool Check_CunterAngle(CGameObject* pObj);
+	_bool Check_CunterTarget();
 
 private:
-	virtual void Change_PlayerBody(PLAYER_BODY _eBodyType);
-	virtual void Update_OuterAnim();
+	void Change_PlayerBody(PLAYER_BODY _eBodyType);
+	void Update_OuterAnim();
 
 private:
-	virtual void Parameter_State();
-	virtual void Parameter_State_Upper();
-	virtual void Parameter_Atk();
-	virtual void Parameter_Movement();
-	virtual void Parameter_HeavyCharging();
-	virtual void Parameter_YPos(_double dTimeDelta);
-	virtual void Parameter_Collision();
-	virtual void Parameter_Aiming();
-	virtual void Parameter_HitCheck();
-	virtual void Parameter_CheckActiveSkill();
-	virtual void Parameter_CheckActiveWeapon();
+	void Parameter_State();
+	void Parameter_State_Upper();
+	void Parameter_Atk();
+	void Parameter_Movement();
+	void Parameter_HeavyCharging();
+	void Parameter_YPos(_double dTimeDelta);
+	void Parameter_Collision();
+	void Parameter_Aiming();
+	void Parameter_HitCheck();
+	void Parameter_CheckActiveSkill();
+	void Parameter_CheckActiveWeapon();
 
 private:
-	virtual void KeyInput();
-	virtual void KeyDown();
-	virtual void KeyUp();
-	virtual void Key_Movement_Down();
-	virtual void Key_Movement_Up();
-	virtual void Key_ChangeWeapon();
-	virtual void Key_Special();
-	virtual void Key_Attack();
-	virtual void Key_Skill();
-	virtual void Key_Utility();
-	virtual void Key_InterAct();
-	virtual void Key_BloodSuck();
-	virtual void Key_UI_n_Utiliy(_bool _bActiveUI);
+	void KeyInput();
+	void KeyDown();
+	void KeyUp();
+	void Key_Movement_Down();
+	void Key_Movement_Up();
+	void Key_ChangeWeapon();
+	void Key_Special();
+	void Key_Attack();
+	void Key_Skill();
+	void Key_Utility();
+	void Key_InterAct();
+	void Key_BloodSuck();
+	void Key_UI_n_Utiliy(_bool _bActiveUI);
 
 private:
-	virtual void Play_Idle();
-	virtual void Play_Run();
-	virtual void Play_Dash();
-	virtual void Play_MoveDelay();
-	virtual void Play_Dodge();
-	virtual void Play_WeakAtk();
-	virtual void Play_HeavyAtk();
-	virtual void Play_Buff();
-	virtual void Play_Hit();
-	virtual void Play_Dead();
-	virtual void Play_WeaponChange();
-	virtual void Play_Spawn();
-	virtual void Play_PickUp();
-	virtual void Play_Down();
+	void Play_Idle();
+	void Play_Run();
+	void Play_Dash();
+	void Play_MoveDelay();
+	void Play_Dodge();
+	void Play_WeakAtk();
+	void Play_HeavyAtk();
+	void Play_Buff();
+	void Play_Hit();
+	void Play_Dead();
+	void Play_WeaponChange();
+	void Play_Spawn();
+	void Play_PickUp();
+	void Play_Down();
 
 private:
-	virtual void Play_Summon();
-	virtual void Play_Disappear();
+	void Play_Summon();
+	void Play_Disappear();
 
 private:
-	virtual void Play_BloodSuck();
-	virtual void Play_BloodSuckCount();
-	virtual void Play_BloodSuckCombo();
-	virtual void Play_BloodSuckExecution();
+	void Play_BloodSuck();
+	void Play_BloodSuckCount();
+	void Play_BloodSuckCombo();
+	void Play_BloodSuckExecution();
 
 private:
-	virtual void Play_Skills();
-	virtual void Play_Buffs();
-	virtual void Play_Enchants();
+	void Play_Skills();
+	void Play_Buffs();
+	void Play_Enchants();
 
 private:
-	virtual void Play_OneHandSkill_01();
-	virtual void Play_OneHandSkill_02();
-	virtual void Play_OneHandskill_03();
+	void Play_OneHandSkill_01();
+	void Play_OneHandSkill_02();
+	void Play_OneHandskill_03();
 
 private:
-	virtual void Play_TwoHandSkill_01();
-	virtual void Play_TwoHandSkill_02();
-	virtual void Play_TwoHandSkill_03();
+	void Play_TwoHandSkill_01();
+	void Play_TwoHandSkill_02();
+	void Play_TwoHandSkill_03();
 
 private:
 	virtual void Play_GunSkill();
 
 private:
-	virtual void Play_Ssword_WeakAtk();
-	virtual void Play_Ssword_HeavyAtk();
-	virtual void Play_Ssword_DownAtk();
-	virtual void Play_Ssword_DashAtk();
+	void Play_Ssword_WeakAtk();
+	void Play_Ssword_HeavyAtk();
+	void Play_Ssword_DownAtk();
+	void Play_Ssword_DashAtk();
 
 private:
-	virtual void Play_Gun_WeakAtk();
-	virtual void Play_Gun_HeavyAtk();
-	virtual void Play_Gun_DownAtk();
-	virtual void Play_Gun_DashAtk();
+	void Play_Gun_WeakAtk();
+	void Play_Gun_HeavyAtk();
+	void Play_Gun_DownAtk();
+	void Play_Gun_DashAtk();
 
 private:
-	virtual void Play_Halverd_WeakAtk();
-	virtual void Play_Halverd_HeavyAtk();
-	virtual void Play_Halverd_DownAtk();
-	virtual void Play_Halverd_DashAtk();
+	void Play_Halverd_WeakAtk();
+	void Play_Halverd_HeavyAtk();
+	void Play_Halverd_DownAtk();
+	void Play_Halverd_DashAtk();
 
 private:
-	virtual void Play_Hammer_WeakAtk();
-	virtual void Play_Hammer_HeavyAtk();
-	virtual void Play_Hammer_DownAtk();
-	virtual void Play_Hammer_DashAtk();
+	void Play_Hammer_WeakAtk();
+	void Play_Hammer_HeavyAtk();
+	void Play_Hammer_DownAtk();
+	void Play_Hammer_DashAtk();
 
 private:
-	virtual void Play_Lsword_WeakAtk();
-	virtual void Play_Lsword_HeavyAtk();
-	virtual void Play_Lsword_DownAtk();
-	virtual void Play_Lsword_DashAtk();
+	void Play_Lsword_WeakAtk();
+	void Play_Lsword_HeavyAtk();
+	void Play_Lsword_DownAtk();
+	void Play_Lsword_DashAtk();
 
 private:
-	virtual void Ready_Bodys();
-	virtual void Ready_Heads();
-	virtual void Ready_Masks();
-	virtual void Ready_Weapon();
-	virtual void Ready_DrainWeapon();
-	virtual void Ready_BoneMatrix();
-	virtual void Ready_Collider();
-	virtual void Ready_Skills();
-	virtual void Ready_Rigid();
-	virtual void Temp_ActiveSkills();
-
-private:
-	// 캐릭 커스텀
-	//virtual void Awesome_CharaCustom();
+	void Ready_Bodys();
+	void Ready_Heads();
+	void Ready_Masks();
+	void Ready_Weapon();
+	void Ready_DrainWeapon();
+	void Ready_BoneMatrix();
+	void Ready_Collider();
+	void Ready_Skills();
+	void Ready_Rigid();
+	void Temp_ActiveSkills();
 
 private:
 	virtual void Reset_BloodSuck_Options();
@@ -486,18 +487,18 @@ private:
 	virtual void Reset_All();
 
 public:
-	virtual void Active_UI_Mistletoe(_bool _bResetUI = false);		// 겨우살이
-	virtual void Active_UI_Inventory(_bool _bResetUI = false);		// 인벤토리
-	virtual void Active_UI_StageSelect(_bool _bResetUI = false);	// 스테이지 선택
-	virtual void Active_UI_NPC(_bool _bResetUI = false);			// NPC 와의 대화
-	virtual void Active_UI_BloodCode(_bool _bResetUI = false);			// NPC 와의 대화
-	virtual void Active_UI_WeaponShop_Yakumo(_bool _bResetUI = false);
-	virtual void Active_UI_MaterialShop_Yokumo(_bool _bResetUI = false);
+	void Active_UI_Mistletoe(_bool _bResetUI = false);		// 겨우살이
+	void Active_UI_Inventory(_bool _bResetUI = false);		// 인벤토리
+	void Active_UI_StageSelect(_bool _bResetUI = false);	// 스테이지 선택
+	void Active_UI_NPC(_bool _bResetUI = false);			// NPC 와의 대화
+	void Active_UI_BloodCode(_bool _bResetUI = false);			// NPC 와의 대화
+	void Active_UI_WeaponShop_Yakumo(_bool _bResetUI = false);
+	void Active_UI_MaterialShop_Yokumo(_bool _bResetUI = false);
 
 public:
-	virtual void Active_UI_LockOn(_bool _bResetUI = false);
+	void Active_UI_LockOn(_bool _bResetUI = false);
 
-	virtual void UI_Check();
+	void UI_Check();
 
 public:
 	static	CPlayer* Create(_Device pGraphic_Device);
@@ -507,427 +508,6 @@ public:
 	virtual void Free();
 
 private:
-	/*
-	typedef enum Player_Anim
-	{
-		Cmn_Idle,
-		Cmn_Idle_Look,
-		Cmn_Walk_F,
-		Cmn_Walk_FL_LockOn,
-		Cmn_Walk_FL,
-		Cmn_Walk_L,
-		Cmn_Walk_R,
-		Cmn_Walk_BR_LockOn,
-		Cmn_Walk_BR,
-		Cmn_Walk_B,
-		Cmn_Run_F,
-		Cmn_Run_F_End_L,
-		Cmn_Run_F_End_R,
-		Cmn_Run_FL_L,
-		Cmn_Run_FL_L_End,
-		Cmn_Run_FL_R,
-		Cmn_Run_FL_R_End_L,
-		Cmn_Run_FL_R_End_R,
-		Cmn_Run_FR,
-		Cmn_Run_FR_End_L,
-		Cmn_Run_FR_End_R,
-		Cmn_Run_L,
-		Cmn_Run_L_End_L,
-		Cmn_Run_L_End_R,
-		Cmn_Run_R,
-		Cmn_Run_R_End_L,
-		Cmn_Run_R_End_R,
-		Cmn_Run_B,
-		Cmn_Run_B_End_L,
-		Cmn_Run_B_End_R,
-		Cmn_Run_BL,
-		Cmn_Run_BL_End_R,
-		Cmn_Run_BR_L,
-		Cmn_Run_BR_L_End_L,
-		Cmn_Run_BR_L_End_R,
-		Cmn_Run_BR_R,
-		Cmn_Run_BR_End_L,
-		Cmn_UseItem,
-		Cmn_UseEnchant,
-		Cmn_UseInject,
-		Cmn_UseThrow,
-		Cmn_Stun,
-		Cmn_Stun_End,
-		Cmn_PickItem,
-		Cmn_CheckPoint,
-		Cmn_Hit01_F,
-		Cmn_Hit01_FL,
-		Cmn_Hit01_FR,
-		Cmn_Hit01_L,
-		Cmn_Hit01_R,
-		Cmn_Hit01_B,
-		Cmn_Hit01_BL,
-		Cmn_Hit01_BR,
-		Cmn_Hit_Ground,
-		Cmn_Hit02_F,
-		Cmn_Hit02_L,
-		Cmn_Hit02_R,
-		Cmn_Hit02_B,
-		Cmn_Hit03_F,
-		Cmn_Hit03_L,
-		Cmn_Hit03_R,
-		Cmn_Hit03_B,
-		Cmn_Hit04_F,
-		Cmn_Hit04_L,
-		Cmn_Hit04_R,
-		Cmn_Hit04_B,
-		Cmn_HitStun,
-		Cmn_HitBlow_F,
-		Cmn_HitBlow_L,
-		Cmn_HitBlow_R,
-		Cmn_HitBlow_B,
-		Cmn_Hit_RaiseUp,
-		Cmn_Hit_RaiseDown,
-		Cmn_Hit_Strike_F,
-		Cmn_Hit_Strike_B,
-		Cmn_Dash,
-		Cmn_Dash_End_L,
-		Cmn_Dash_End_R,
-		Cmn_DeadIdle,
-		Cmn_DodgeLight_F,
-		Cmn_DodgeLight_FL,
-		Cmn_DodgeLight_FR,
-		Cmn_DodgeLight_L,
-		Cmn_DodgeLight_R,
-		Cmn_DodgeLight_B,
-		Cmn_DodgeLight_BL,
-		Cmn_DodgeLight_BR,
-		Cmn_DoorOpen_Lift,
-		Cmn_DoorOpen_Pull,
-		Cmn_DoorOpen_Push,
-		Cmn_DoorOpen_Pull_H,
-		Cmn_DoorOpen_Push_H,
-		Cmn_Down_01,
-		Cmn_Down_01_End,
-		Cmn_Down_02,
-		Cmn_Down_02_End,
-		Cmn_Down_Death_01,
-		Cmn_Down_Death_02,
-		Cmn_Down_WakeUp_01,
-		Cmn_Down_WakeUp_02,
-		Cmn_Drop_Item,
-		Cmn_Dying_Loop,
-		Cmn_Dying_End,
-		Cmn_Dying_Live,
-		Cmn_Fall,
-		Cmn_Fall_End,
-		Cmn_GameStart,
-		Cmn_WeaponChange,
-		Ssword_WeakAtk_01,
-		Ssword_WeakAtk_02,
-		Ssword_WeakAtk_03,
-		Ssword_WeakAtk_04,
-		Ssword_WeakAtk_05,
-		Ssword_WeakAtk_06,
-		Ssword_WeakAtk_07,
-		Ssword_WeakAtk_08,
-		Ssword_WeakAtk_09,
-		Ssword_WeakAtk_10,
-		Ssword_WeakAtk_11,
-		Ssword_WeakAtk_12,
-		Ssword_WeakAtk_13,
-		Ssword_WeakAtk_14,
-		Ssword_WeakAtk_15,
-		Ssword_WeakAtk_16,
-		Ssword_Atk_Repel,
-		Ssword_DownAtk_01,
-		Ssword_DownAtk_02,
-		Ssword_DownAtk_03,
-		Ssword_DownAtk_04,
-		Ssword_SpecialLaunch,
-		Ssword_Charge,
-		Ssword_Charge_Attack_01_A,
-		Ssword_Charge_Attack_01_B,
-		Ssword_HeavyAtk_01_A,
-		Ssword_HeavyAtk_01_B,
-		Ssword_HeavyAtk_02_A,
-		Ssword_HeavyAtk_04_B,
-		Ssword_HeavyAtk_06_A,
-		Ssword_HeavyAtk_06_B,
-		Ssword_HeavyAtk_07_A,
-		Ssword_HeavyAtk_07_B,
-		Ssword_HeavyAtk_08_B,
-		Ssword_HeavyAtk_09_A,
-		Ssword_HeavyAtk_10_B,
-		Ssword_HeavyAtk_12_B,
-		Ssword_HeavyAtk_14_A,
-		Ssword_HeavyAtk_14_B,
-		Ssword_HeavyAtk_16_A,
-		Ssword_Guard_Start,
-		Ssword_Guard_Loop,
-		Ssword_Guard_End,
-		Ssword_Guard_Break,
-		Ssword_Guard_Hit,
-		Ssword_Attack_Charging,
-		Halverd_Idle_Loop,
-		Halverd_Dash_Blend,
-		Halverd_Run_Blend,
-		Halverd_Walk_Blend,
-		Halverd_Dodge_F,
-		Halverd_Dodge_LF,
-		Halverd_Dodge_RF,
-		Halverd_Dodge_L,
-		Halverd_Dodge_R,
-		Halverd_Dodge_B,
-		Halverd_Dodge_LB,
-		Halverd_Dodge_RB,
-		Halverd_WeakAtk_01,
-		Halverd_WeakAtk_02,
-		Halverd_WeakAtk_03,
-		Halverd_WeakAtk_04,
-		Halverd_WeakAtk_05,
-		Halverd_WeakAtk_06,
-		Halverd_WeakAtk_07,
-		Halverd_WeakAtk_08,
-		//Halverd_Charge,
-		//Halverd_Charge_Attack_01_A,
-		//Halverd_Charge_Attack_01_B,
-		Halverd_HeavyAtk_01_A,
-		Halverd_HeavyAtk_01_B,
-		Halverd_HeavyAtk_03_A,
-		Halverd_HeavyAtk_04_A,
-		Halverd_HeavyAtk_05_A,
-		Halverd_HeavyAtk_06_A,
-		Halverd_HeavyAtk_07_A,
-		Halverd_HeavyAtk_08_A,
-		Halverd_HeavyAtk_09_A,
-		Halverd_HeavyAtk_10_A,
-		Halverd_HeavyAtk_11_A,
-		Halverd_HeavyAtk_12_A,
-		Halverd_HeavyAtk_13_A,
-		Halverd_HeavyAtk_14_A,
-		Halverd_HeavyAtk_16_A,
-		Halverd_Guard_Start,
-		Halverd_Guard_Loop,
-		Halverd_Guard_End,
-		Halverd_Guard_Hit,
-		Halverd_Guard_Break,
-		Halverd_SpecialDown_01,
-		Halverd_SpecialDown_02,
-		Halverd_SpecialDown_03,
-		Halverd_SpecialLaunch,
-		Halverd_Skill_Heavy_01,
-		Halverd_Fall_Start,
-		Halverd_Fall_End,
-		Halverd_Atk_Dodge_F,
-		Halverd_Atk_Dodge_B,
-		Halverd_Atk_Dodge_R,
-		Hammer_Idle_Loop,
-		Hammer_Blend_Walk,
-		Hammer_Blend_Run,
-		Hammer_Blend_Dash,
-		Hammer_Atk_Dodge_F,
-		Hammer_Atk_Dodge_B,
-		Hammer_Atk_Dodge_R,
-		Hammer_Fall_Start,
-		Hammer_Fall_End,
-		Hammer_Dodge_F,
-		Hammer_Dodge_FL,
-		Hammer_Dodge_FR,
-		Hammer_Dodge_L,
-		Hammer_Dodge_R,
-		Hammer_Dodge_B,
-		Hammer_Dodge_BL,
-		Hammer_Dodge_BR,
-		Hammer_WeakAtk_01,
-		Hammer_WeakAtk_02,
-		Hammer_WeakAtk_04,
-		Hammer_WeakAtk_05,
-		Hammer_WeakAtk_06,
-		Hammer_WeakAtk_07,
-		//Hammer_Charge,
-		//Hammer_Charge_Attack_01_A,
-		//Hammer_Charge_Attack_01_B,
-		Hammer_HeavyAtk_01_A,
-		Hammer_HeavyAtk_01_B,
-		Hammer_HeavyAtk_03_A,
-		Hammer_HeavyAtk_04_B,
-		Hammer_HeavyAtk_05_A,
-		Hammer_HeavyAtk_06_B,
-		Hammer_HeavyAtk_08_A,
-		Hammer_HeavyAtk_08_B,
-		Hammer_HeavyAtk_10_A,
-		Hammer_HeavyAtk_10_B,
-		Hammer_HeavyAtk_12_B,
-		Hammer_HeavyAtk_14_B,
-		Hammer_Guard_Start,
-		Hammer_Guard_Loop,
-		Hammer_Guard_End,
-		Hammer_Guard_Hit,
-		Hammer_Guard_Break,
-		Gun_Idle_Loop,
-		Gun_Blend_Walk,
-		Gun_Blend_Run,
-		Gun_Blend_Dash,
-		Gun_DodgeAtk_F,
-		Gun_DodgeAtk_B,
-		Gun_DodgeAtk_R,
-		Gun_DodgeRoll_F,
-		Gun_DodgeRoll_FL,
-		Gun_DodgeRoll_FR,
-		Gun_DodgeRoll_L,
-		Gun_DodgeRoll_R,
-		Gun_DodgeRoll_B,
-		Gun_DodgeRoll_BL,
-		Gun_DodgeRoll_BR,
-		Gun_Fall_Start,
-		Gun_Fall_End,
-		Gun_WeakAtk_01,
-		Gun_WeakAtk_02,
-		Gun_WeakAtk_03,
-		Gun_WeakAtk_04,
-		Gun_WeakAtk_05,
-		Gun_WeakAtk_06,
-		Gun_WeakAtk_07,
-		Gun_WeakAtk_08,
-		Gun_WeakAtk_09,
-		Gun_WeakAtk_10,
-		Gun_Charge,
-		Gun_Charge_Attack_01_A,
-		Gun_Charge_Attack_01_B,
-		Gun_HeavyAtk_01_A,
-		Gun_HeavyAtk_01_B,
-		Gun_HeavyAtk_02_B,
-		Gun_HeavyAtk_03_A,
-		Gun_HeavyAtk_04_B,
-		Gun_HeavyAtk_05_B,
-		Gun_HeavyAtk_06_A,
-		Gun_HeavyAtk_06_B,
-		Gun_HeavyAtk_07_A,
-		Gun_HeavyAtk_08_A,
-		Gun_Guard_Start,
-		Gun_Guard_Loop,
-		Gun_Guard_End,
-		Gun_Guard_Hit,
-		Gun_Guard_Break,
-		Lsword_Idle_Loop,
-		Lsword_Blend_Walk,
-		Lsword_Blend_Run,
-		Lsword_Blend_Dash,
-		Lsword_Dodge_Atk_F,
-		Lsword_Dodge_Atk_B,
-		Lsword_Dodge_Atk_R,
-		Lsword_Dodge_F,
-		Lsword_Dodge_FL,
-		Lsword_Dodge_FR,
-		Lsword_Dodge_L,
-		Lsword_Dodge_R,
-		Lsword_Dodge_B,
-		Lsword_Dodge_BL,
-		Lsword_Dodge_BR,  //
-		Lsword_WeakAtk_01,
-		Lsword_WeakAtk_02,
-		Lsword_WeakAtk_03,
-		Lsword_WeakAtk_04,
-		Lsword_WeakAtk_05,
-		Lsword_WeakAtk_07,
-		Lsword_WeakAtk_08,
-		Lsword_WeakAtk_09,
-		Lsword_DownAtk_01,
-		Lsword_DownAtk_02,
-		Lsword_DownAtk_03,
-		Lsword_DownAtk_Launch,
-		Lsword_Charge,
-		Lsword_Charge_Attack_01_A,
-		Lsword_Charge_Attack_01_B,
-		Lsword_HeavyAtk_01_A,
-		Lsword_HeavyAtk_01_B,
-		Lsword_HeavyAtk_03_A,
-		Lsword_HeavyAtk_04_B,
-		Lsword_HeavyAtk_05_A,
-		Lsword_HeavyAtk_06_B,
-		Lsword_HeavyAtk_07_A,
-		Lsword_HeavyAtk_08_B,
-		Lsword_HeavyAtk_09_A,
-		Lsword_HeavyAtk_10_B,
-		Lsword_HeavyAtk_11_A,
-		Lsword_HeavyAtk_12_B,
-		Lsword_HeavyAtk_13_B,
-		Lsword_HeavyAtk_14_B,
-		Lsword_HeavyAtk_16_B,
-		Lsword_HeavyAtk_18_B,
-		Lsword_Guard_Start,
-		Lsword_Guard_Loop,
-		Lsword_Guard_End,
-		Lsword_Guard_Hit,
-		Lsword_Guard_Break,
-		Renketsu_PowerfulBuff,
-		Renketsu_Buff,
-		Renketsu_Blade,
-		Renketsu_StrongAtk_01,
-		Renketsu_StrongAtk_02,	// 검 날리고 휘두르기 (대검)
-		Renketsu_StrongAtk_03,	// 검 날리고 휘두르기 (대검)
-		Renketsu_StrongAtk_04,	// 2타 후 공중 내려찍기
-		Renketsu_StrongAtk_05,	// 차지 크러쉬 (잠룡복호)
-		Renketsu_StrongAtk_06,	// 발로 내려치기
-		Renketsu_StrongAtk_07,	// 제비 떨어뜨리기? (대검)
-		Renketsu_StrongAtk_09,  // 제비 떨어뜨리기? (대검)
-		Renketsu_StrongAtk_10,	// 낙엽 떨어뜨리기
-		Renketsu_StrongAtk_11,  // 회전 2회
-		Renketsu_StrongAtk_12,	// 회전 1회
-		Renketsu_Wave,
-		Renketsu_Throw,
-		Renketsu_Search,
-		Renketsu_Mid_Shoot,
-		Renketsu_Max_Shoot,
-		Renketsu_High_Shoot,
-		Renketsu_GroundUpper,
-		Renketsu_Ground,
-		Renketsu_Enchant,
-		Renketsu_DodgeShot,
-		Renketsu_Create_01,
-		Renketsu_Create_02,
-		Renketsu_Barrier,
-		Renketsu_AllRangeShoot,
-		Renketsu_AimShoot_00,
-		Renketsu_AimShoot_01,
-		Cmn_BackStab,
-		Cmc_CheckPoint_Start,
-		Cmc_CheckPoint_Loop,
-		Cmc_CheckPoint_End,
-		Cmn_BoxOpen,
-		LongCoat_Parry,
-		LongCoat_ChargeSuck_Start,
-		LongCoat_ChargeSuck_End,
-		LongCoat_ComboSuck,
-		LongCoat_GroundSuck,
-		LongCoat_SpecialSuck_01,
-		LongCoat_SpecialSuck_02,
-		Drape_Parry,
-		Drape_ChargeSDuck_Start,
-		Drape_ChargeSDuck_End,
-		Drape_ComboSuck,
-		Drape_Ground,
-		Drape_SpecialSuck_01,
-		Cmn_Renketsu_Dodge_F,
-		Cmn_Renketsu_Dodge_FL,
-		Cmn_Renketsu_Dodge_FR,
-		Cmn_Renketsu_Dodge_L,
-		Cmn_Renketsu_Dodge_R,
-		Cmn_Renketsu_Dodge_B,
-		Cmn_Renketsu_Dodge_BL,
-		Cmn_Renketsu_Dodge_BR,
-		Cmn_Renketsu_Dodge_Start,
-		Cmn_RealLightDodge_F,
-		Cmn_RealLightDodge_FL,
-		Cmn_RealLightDodge_FR,
-		Cmn_RealLightDodge_L,
-		Cmn_RealLightDodge_R,
-		Cmn_RealLightDodge_B,
-		Cmn_RealLightDodge_BL,
-		Cmn_RealLightDodge_BR,
-		Hammer_Launch,
-		Hammer_Down_01,
-		Hammer_Down_02
-
-	}P_ANI;
-	*/
-
 	typedef enum tagPlayerNewAni
 	{
 		Cmn_Active_Mistletoe,
