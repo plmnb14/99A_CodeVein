@@ -4,6 +4,8 @@
 #include "..\Headers\BossHP.h"
 #include "ClothManager.h"
 
+#include "MassageUI.h"
+
 using namespace physx;
 
 CDeerKing::CDeerKing(LPDIRECT3DDEVICE9 pGraphic_Device)
@@ -35,7 +37,7 @@ HRESULT CDeerKing::Ready_GameObject(void * pArg)
 	Ready_Sound();
 
 	m_tObjParam.bCanHit = true;
-	m_tObjParam.fHp_Cur = 10000.f;
+	m_tObjParam.fHp_Cur = 1.f;
 	m_tObjParam.fHp_Max = m_tObjParam.fHp_Cur;
 	m_tObjParam.fDamage = 20.f;
 
@@ -125,6 +127,8 @@ _int CDeerKing::Update_GameObject(_double TimeDelta)
 	{
 		m_bEnable = false;
 		g_pPhysx->Get_Scene()->removeActor(*m_pCloth);
+
+		Check_DropItem(MONSTER_NAMETYPE::M_DeerKing);
 	}
 
 	// 죽음 애니메이션
@@ -167,8 +171,20 @@ _int CDeerKing::Update_GameObject(_double TimeDelta)
 		if (true == m_bAIController)
 			m_pAIControllerCom->Update_AIController(TimeDelta);
 
-		// 플레이어 발견 시, UI 활성화(지원)
-		m_pBossUI->Set_Active(true);
+		if (!m_bUITrigger)
+		{
+			m_bUITrigger = true;
+
+			// 플레이어 발견 시, UI 활성화(지원)
+			m_pBossUI->Set_Active(true);
+
+			CMassageUI* pMassageUI = static_cast<CMassageUI*>(g_pManagement->Get_GameObjectBack(L"Layer_BossMassageUI", SCENE_STAGE));
+			pMassageUI->Set_BossName(BOSS_NAME::Deer_King);
+			pMassageUI->Set_Check_Play_BossnameUI(true);
+
+			g_pSoundManager->Stop_Sound(CSoundManager::Background_01);
+			g_pSoundManager->Play_BGM(L"Boss_DeerKing_BGM.ogg");
+		}
 
 		// 보스UI 업데이트
 		// 체력이 0이 되었을때 밀림현상 방지.
@@ -217,7 +233,7 @@ _int CDeerKing::Late_Update_GameObject(_double TimeDelta)
 	}
 
 	else
-	{
+	{ 
 		if (FAILED(m_pRendererCom->Add_RenderList(RENDER_ALPHA, this)))
 			return E_FAIL;
 	}
@@ -2155,6 +2171,7 @@ void CDeerKing::Check_PhyCollider()
 		m_dHitTime = 0;	// 피격가능 타임 초기화
 
 		//m_bFight = true;		// 싸움 시작
+		m_bFindPlayer = true;
 
 		if (m_tObjParam.fHp_Cur > 0.f)
 		{
@@ -2565,10 +2582,10 @@ HRESULT CDeerKing::Ready_NF(void * pArg)
 		_tchar szNavData[STR_128] = L"";
 
 		lstrcpy(szNavData, (
-			eTemp.sStageIdx == 0 ? L"Navmesh_Training.dat" :
-			eTemp.sStageIdx == 1 ? L"Navmesh_Stage_01.dat" :
-			eTemp.sStageIdx == 2 ? L"Navmesh_Stage_02.dat" :
-			eTemp.sStageIdx == 3 ? L"Navmesh_Stage_03.dat" : L"Navmesh_Stage_04.dat"));
+			eTemp.eStageIdx == 0 ? L"Navmesh_Training.dat" :
+			eTemp.eStageIdx == 1 ? L"Navmesh_Stage_01.dat" :
+			eTemp.eStageIdx == 2 ? L"Navmesh_Stage_02.dat" :
+			eTemp.eStageIdx == 3 ? L"Navmesh_Stage_03.dat" : L"Navmesh_Stage_04.dat"));
 
 		m_pNavMeshCom->Set_Index(-1);
 		m_pNavMeshCom->Ready_NaviMesh(m_pGraphic_Dev, szNavData);

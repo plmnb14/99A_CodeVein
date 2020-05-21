@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "..\Headers\IceGirl.h"
 #include "..\Headers\BossHP.h"
+#include "MassageUI.h"
 
 CIceGirl::CIceGirl(LPDIRECT3DDEVICE9 pGraphic_Device)
 	: CMonster(pGraphic_Device)
@@ -159,8 +160,20 @@ _int CIceGirl::Update_GameObject(_double TimeDelta)
 		if (true == m_bAIController)
 			m_pAIControllerCom->Update_AIController(TimeDelta);
 
-		// 플레이어 발견 시, UI 활성화(지원)
-		m_pBossUI->Set_Active(true);
+		if (!m_bUITrigger)
+		{
+			m_bUITrigger = true;
+
+			// 플레이어 발견 시, UI 활성화(지원)
+			m_pBossUI->Set_Active(true);
+
+			CMassageUI* pMassageUI = static_cast<CMassageUI*>(g_pManagement->Get_GameObjectBack(L"Layer_BossMassageUI", SCENE_STAGE));
+			pMassageUI->Set_BossName(BOSS_NAME::Fire_Boy_Ice_Girl);
+			pMassageUI->Set_Check_Play_BossnameUI(true);
+
+			g_pSoundManager->Stop_Sound(CSoundManager::Background_01);
+			g_pSoundManager->Play_BGM(L"Boss_FireIce_BGM.ogg");
+		}
 
 		// 보스UI 업데이트
 		// 체력이 0이 되었을때 밀림현상 방지.
@@ -2258,6 +2271,7 @@ void CIceGirl::Check_PhyCollider()
 		m_dHitTime = 0;	// 피격가능 타임 초기화
 
 		//m_bFight = true;		// 싸움 시작
+		m_bFindPlayer = true;
 
 		if (m_tObjParam.fHp_Cur > 0.f)
 		{
@@ -2281,6 +2295,8 @@ void CIceGirl::Check_PhyCollider()
 
 					m_pAIControllerCom->Set_Value_Of_BlackBoard(L"PushCol", true);
 					m_pAIControllerCom->Set_Value_Of_BlackBoard(L"TrailOff", true);
+
+					SHAKE_CAM_lv2;
 				}
 			}
 
@@ -2302,6 +2318,8 @@ void CIceGirl::Check_PhyCollider()
 
 					m_pAIControllerCom->Set_Value_Of_BlackBoard(L"PushCol", true);
 					m_pAIControllerCom->Set_Value_Of_BlackBoard(L"TrailOff", true);
+
+					SHAKE_CAM_lv2;
 				}
 			}
 
@@ -2669,10 +2687,10 @@ HRESULT CIceGirl::Ready_NF(void * pArg)
 		_tchar szNavData[STR_128] = L"";
 
 		lstrcpy(szNavData, (
-			eTemp.sStageIdx == 0 ? L"Navmesh_Training.dat" :
-			eTemp.sStageIdx == 1 ? L"Navmesh_Stage_01.dat" :
-			eTemp.sStageIdx == 2 ? L"Navmesh_Stage_02.dat" :
-			eTemp.sStageIdx == 3 ? L"Navmesh_Stage_03.dat" : L"Navmesh_Stage_04.dat"));
+			eTemp.eStageIdx == 0 ? L"Navmesh_Training.dat" :
+			eTemp.eStageIdx == 1 ? L"Navmesh_Stage_01.dat" :
+			eTemp.eStageIdx == 2 ? L"Navmesh_Stage_02.dat" :
+			eTemp.eStageIdx == 3 ? L"Navmesh_Stage_03.dat" : L"Navmesh_Stage_04.dat"));
 
 		m_pNavMeshCom->Set_Index(-1);
 		m_pNavMeshCom->Ready_NaviMesh(m_pGraphic_Dev, szNavData);

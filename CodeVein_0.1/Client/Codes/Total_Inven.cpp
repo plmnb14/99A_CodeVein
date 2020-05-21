@@ -80,11 +80,17 @@ _int CTotal_Inven::Update_GameObject(_double TimeDelta)
 
 		SetUp_SubUI_Active(true);
 		m_bIsSubActive = true;
+
+		g_pSoundManager->Stop_Sound(CSoundManager::UI_SFX_01);
+		g_pSoundManager->Play_Sound(L"UI_WindowToggle.ogg", CSoundManager::UI_SFX_01, CSoundManager::Effect_Sound);
 	}
 	else if (!m_bIsActive && m_bIsSubActive)
 	{
 		SetUp_SubUI_Active(false);
 		m_bIsSubActive = false;
+
+		g_pSoundManager->Stop_Sound(CSoundManager::UI_SFX_01);
+		g_pSoundManager->Play_Sound(L"UI_WindowToggle.ogg", CSoundManager::UI_SFX_01, CSoundManager::Effect_Sound);
 	}
 	if (!m_bIsActive)
 		return NO_EVENT;

@@ -67,6 +67,10 @@ enum ITEM_NAMETYPE
 	NAMETYPE_BloodCode_Atlas,
 	NAMETYPE_BloodCode_Prometheus,
 
+	// Æê
+	NAMETYPE_Pet_PoisonButterfly,
+	NAMETYPE_Pet_DeerKing,
+
 	NAMETYPE_End
 };
 

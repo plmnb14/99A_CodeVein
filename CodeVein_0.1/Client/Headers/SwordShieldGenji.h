@@ -16,9 +16,9 @@ public:
 	typedef struct tagInitInfo
 	{
 		tagInitInfo(CSwordShieldGenji::Color _eColor, NF_Ani _eNF_Ani, _float _fFov, _float _fMaxLength, _float _fMinLength,
-			_bool _bSpawn = false, _v3 vPos = V3_NULL, _v3 vAngle = V3_NULL, _ushort sStageIdx = 0)//, _ushort sSubsetIdx = 0, _ushort sCellIdx = 0)
+			_bool _bSpawn = false, _v3 vPos = V3_NULL, _v3 vAngle = V3_NULL, _ushort eStageIdx = 0)//, _ushort sSubsetIdx = 0, _ushort sCellIdx = 0)
 			: eColor(_eColor), eNF_Ani(_eNF_Ani), fFov(_fFov), fMaxLength(_fMaxLength), fMinLength(_fMinLength),
-			bSpawnOnTrigger(_bSpawn), vPos(vPos), vAngle(vAngle), sStageIdx(sStageIdx)// , sSubSetIdx(sSubSetIdx), sCellIdx(sCellIdx)
+			bSpawnOnTrigger(_bSpawn), vPos(vPos), vAngle(vAngle), eStageIdx(eStageIdx)// , sSubSetIdx(sSubSetIdx), sCellIdx(sCellIdx)
 		{}
 
 		CSwordShieldGenji::Color		eColor = Normal;
@@ -33,7 +33,7 @@ public:
 		_bool					bSpawnOnTrigger = false;
 		_v3						vPos = {};
 		_v3						vAngle = {};
-		_ushort					sStageIdx = 0;
+		_ushort					eStageIdx = 0;
 		//_ushort					sSubSetIdx = 0;
 		//_ushort					sCellIdx = 0;
 		//=======================================================
@@ -171,6 +171,8 @@ private:
 
 	HRESULT Update_NF();
 	HRESULT Update_Collider();
+
+	void Check_TargetDist();	// 초기상태로 돌아가기 위한 함수.
 
 private:
 	void Skill_Movement(_float _fspeed, _v3 _vDir = { 0.f , 0.f , 0.f });

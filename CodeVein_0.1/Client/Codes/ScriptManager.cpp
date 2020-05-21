@@ -15,13 +15,14 @@
 #include "Cocoon.h"
 #include "Yeti.h"
 // =================================
-#include "QueensKnight.h"
 #include "PoisonButterfly.h"
+#include "DeerKing.h"
 #include "IceGirl.h"
 #include "FireBoy.h"
+#include "QueensKnight.h"
 // =================================
 #include "UI_Manager.h"
-#include "MassageUI.h"
+
 
 IMPLEMENT_SINGLETON(CScriptManager)
 
@@ -332,52 +333,190 @@ void CScriptManager::St01_Sub5()
 
 void CScriptManager::St01_Sub6()
 {
-	switch (m_dwCellIdx)
-	{
-	case 0:
-	{
-		if (m_bEventTrigger[Script_Stage01][10] == false)
-		{
-			m_bEventTrigger[Script_Stage01][10] = true;
-			m_bTimer = true;
-
-			CMassageUI* pMassageUI = static_cast<CMassageUI*>(g_pManagement->Get_GameObjectBack(L"Layer_BossMassageUI", SCENE_STAGE));
-			pMassageUI->Set_Check_Play_BossnameUI(true);
-
-			g_pSoundManager->Stop_Sound(CSoundManager::Background_01);
-			g_pSoundManager->Play_BGM(L"Boss_Butterfly_BGM.ogg");
-		}
-
-		break;
-	}
-	}
 }
 
 void CScriptManager::St02_Sub0()
 {
+	switch (m_dwCellIdx)
+	{
+	case 17:
+	{
+		if (m_bEventTrigger[Script_Stage02][0] == false)
+		{
+			m_bEventTrigger[Script_Stage02][0] = true;
+
+			m_vecObjectPool[0]->Set_Enable(true); //겐지검방
+			m_vecTrapPool[0]->Set_Enable(true); //1번 예티
+			m_vecTrapPool[1]->Set_Enable(true); //2번 예티
+			m_vecObjectPool[3]->Set_Enable(true); //늑대
+		}
+
+
+	}
+		break;
+
+	case 110:
+	{
+		if (m_bEventTrigger[Script_Stage02][1] == false)
+		{
+			m_bEventTrigger[Script_Stage02][1] = true;
+
+			m_vecTrapPool[2]->Set_Enable(true); //4번 예티
+		}
+
+	}
+		break;
+
+	}
+
+	if (true == m_vecTrapPool[0]->Get_SummonYeti())
+	{
+		m_vecObjectPool[m_vecTrapPool[0]->Get_YetiIndex()]->Set_Enable(true);
+		m_vecTrapPool[0]->Set_SummonYeti(false);
+		m_vecTrapPool[0]->Set_Enable(false);
+	}
+
+	if (true == m_vecTrapPool[1]->Get_SummonYeti())
+	{
+		m_vecObjectPool[m_vecTrapPool[1]->Get_YetiIndex()]->Set_Enable(true);
+		m_vecTrapPool[1]->Set_SummonYeti(false);
+		m_vecTrapPool[1]->Set_Enable(false);
+	}
+
+	if (true == m_vecTrapPool[2]->Get_SummonYeti())
+	{
+		m_vecObjectPool[m_vecTrapPool[2]->Get_YetiIndex()]->Set_Enable(true);
+		m_vecTrapPool[2]->Set_SummonYeti(false);
+		m_vecTrapPool[2]->Set_Enable(false);
+	}
 }
 
 void CScriptManager::St02_Sub1()
 {
+	switch (m_dwCellIdx)
+	{
+	case 42:
+	{
+		if (m_bEventTrigger[Script_Stage02][2] == false)
+		{
+			m_bEventTrigger[Script_Stage02][2] = true;
+
+			m_vecObjectPool[5]->Set_Enable(true); //늑대
+			m_vecTrapPool[3]->Set_Enable(true); //6번 예티
+			m_vecObjectPool[7]->Set_Enable(true); //토템
+			m_vecObjectPool[8]->Set_Enable(true);//겐지총
+			m_vecObjectPool[9]->Set_Enable(true);//겐지창방
+
+			m_vecObjectPool[10]->Set_Enable(true); //토템
+			m_vecTrapPool[4]->Set_Enable(true); //11번 예티
+			m_vecObjectPool[12]->Set_Enable(true); //성게
+			m_vecObjectPool[13]->Set_Enable(true); //토템
+			m_vecTrapPool[5]->Set_Enable(true); //14번 예티
+
+			m_vecObjectPool[15]->Set_Enable(true); //겐지총
+			m_vecTrapPool[6]->Set_Enable(true);  //16번 예티
+		}
+
+	}
+	break;
+
+	}
+
+	if (true == m_vecTrapPool[3]->Get_SummonYeti())
+	{
+		m_vecObjectPool[m_vecTrapPool[3]->Get_YetiIndex()]->Set_Enable(true);
+		m_vecTrapPool[3]->Set_SummonYeti(false);
+		m_vecTrapPool[3]->Set_Enable(false);
+	}
+
+	if (true == m_vecTrapPool[4]->Get_SummonYeti())
+	{
+		m_vecObjectPool[m_vecTrapPool[4]->Get_YetiIndex()]->Set_Enable(true);
+		m_vecTrapPool[4]->Set_SummonYeti(false);
+		m_vecTrapPool[4]->Set_Enable(false);
+	}
+
+	if ( true == m_vecTrapPool[5]->Get_SummonYeti())
+	{
+		m_vecObjectPool[m_vecTrapPool[5]->Get_YetiIndex()]->Set_Enable(true);
+		m_vecTrapPool[5]->Set_SummonYeti(false);
+		m_vecTrapPool[5]->Set_Enable(false);
+	}
+
+	if (true == m_vecTrapPool[6]->Get_SummonYeti())
+	{
+		m_vecObjectPool[m_vecTrapPool[6]->Get_YetiIndex()]->Set_Enable(true);
+		m_vecTrapPool[6]->Set_SummonYeti(false);
+		m_vecTrapPool[6]->Set_Enable(false);
+	}
 }
 
 void CScriptManager::St02_Sub2()
 {
+	switch (m_dwCellIdx)
+	{
+	case 60:
+	{
+		if (m_bEventTrigger[Script_Stage02][3] == false)
+		{
+			m_bEventTrigger[Script_Stage02][3] = true;
+
+			m_vecTrapPool[7]->Set_Enable(true);  //17번 예티
+			m_vecObjectPool[18]->Set_Enable(true); //토템
+			m_vecObjectPool[19]->Set_Enable(true); //성게
+			m_vecObjectPool[20]->Set_Enable(true); //토템
+
+			m_vecTrapPool[8]->Set_Enable(true);  //21번 예티
+			m_vecObjectPool[22]->Set_Enable(true); //겐치총
+			m_vecObjectPool[23]->Set_Enable(true); //성게
+		}
+	}
+		break;
+	}
+
+	if (true == m_vecTrapPool[7]->Get_SummonYeti())
+	{
+		m_vecObjectPool[m_vecTrapPool[7]->Get_YetiIndex()]->Set_Enable(true);
+		m_vecTrapPool[7]->Set_SummonYeti(false);
+		m_vecTrapPool[7]->Set_Enable(false);
+	}
+
+	if (true == m_vecTrapPool[8]->Get_SummonYeti())
+	{
+		m_vecObjectPool[m_vecTrapPool[8]->Get_YetiIndex()]->Set_Enable(true);
+		m_vecTrapPool[8]->Set_SummonYeti(false);
+		m_vecTrapPool[8]->Set_Enable(false);
+	}
 }
 
 void CScriptManager::St02_Sub3()
 {
+	switch (m_dwCellIdx)
+	{
+	case 52:
+	{
+		if (m_bEventTrigger[Script_Stage03][4] == false)
+		{
+			m_bEventTrigger[Script_Stage03][4] = true;
+
+			m_vecObjectPool[29]->Set_Enable(true);
+		}
+
+	}
+		break;
+	}
 }
 
 void CScriptManager::St02_Sub4()
 {
+
 }
 
 void CScriptManager::St03_Sub0()
 {
 	switch (m_dwCellIdx)
 	{
-	case 6:
+	case 17:
 	{
 		if (m_bEventTrigger[Script_Stage03][0] == false)
 		{
@@ -385,20 +524,23 @@ void CScriptManager::St03_Sub0()
 
 			m_vecObjectPool[0]->Set_Enable(true);
 			m_vecObjectPool[1]->Set_Enable(true);
+			m_vecObjectPool[2]->Set_Enable(true);
+			m_vecObjectPool[3]->Set_Enable(true);
+			m_vecObjectPool[4]->Set_Enable(true);
 		}
 
 		break;
 	}
 
-	case 51:
+	case 110:
 	{
 		if (m_bEventTrigger[Script_Stage03][1] == false)
 		{
 			m_bEventTrigger[Script_Stage03][1] = true;
 
-			m_vecObjectPool[2]->Set_Enable(true);
-			m_vecObjectPool[3]->Set_Enable(true);
-			m_vecObjectPool[4]->Set_Enable(true);
+			m_vecObjectPool[5]->Set_Enable(true);
+			m_vecObjectPool[6]->Set_Enable(true);
+			m_vecObjectPool[7]->Set_Enable(true);
 		}
 
 		break;
@@ -451,6 +593,21 @@ void CScriptManager::St03_Sub2()
 
 void CScriptManager::St03_Sub3()
 {
+	switch (m_dwCellIdx)
+	{
+	case 5:
+	{
+		if (m_bEventTrigger[Script_Stage03][4] == false)
+		{
+			m_bEventTrigger[Script_Stage03][4] = true;
+
+			m_vecObjectPool[14]->Set_Enable(true);
+			m_vecObjectPool[15]->Set_Enable(true);
+		}
+
+		break;
+	}
+	}
 }
 
 void CScriptManager::St03_Sub4()
@@ -466,7 +623,6 @@ void CScriptManager::St04_Sub0()
 		if (m_bEventTrigger[Script_Stage04][0] == false)
 		{
 			m_bEventTrigger[Script_Stage04][0] = true;
-			m_bTimer = true;
 
 			m_vecObjectPool[2]->Set_Enable(true);
 			m_vecObjectPool[3]->Set_Enable(true);
@@ -479,9 +635,9 @@ void CScriptManager::St04_Sub0()
 	}
 	default:
 	{
-		if (m_bEventTrigger[Script_Stage04][3] == false)
+		if (m_bEventTrigger[Script_Stage04][1] == false)
 		{
-			m_bEventTrigger[Script_Stage04][3] = true;
+			m_bEventTrigger[Script_Stage04][1] = true;
 
 			m_vecObjectPool[0]->Set_Enable(true);
 			m_vecObjectPool[1]->Set_Enable(true);
@@ -497,9 +653,9 @@ void CScriptManager::St04_Sub1()
 	{
 	case 106: //114번 밟으면 소환으로 생각해둠
 	{
-		if (m_bEventTrigger[Script_Stage04][1] == false)
+		if (m_bEventTrigger[Script_Stage04][2] == false)
 		{
-			m_bEventTrigger[Script_Stage04][1] = true;
+			m_bEventTrigger[Script_Stage04][2] = true;
 
 			// 여왕의 기사
 			m_vecObjectPool[5]->Set_Enable(true);
@@ -512,27 +668,6 @@ void CScriptManager::St04_Sub1()
 
 void CScriptManager::St04_Sub2()
 {
-	switch (m_dwCellIdx)
-	{
-	case 106:
-	{
-		// 보스 등장 UI
-		if (m_bEventTrigger[Script_Stage04][2] == false)
-		{
-			m_bEventTrigger[Script_Stage04][2] = true;
-			m_bTimer = true;
-
-			CMassageUI* pMassageUI = static_cast<CMassageUI*>(g_pManagement->Get_GameObjectBack(L"Layer_BossMassageUI", SCENE_STAGE));
-			pMassageUI->Set_BossName(BOSS_NAME::Queens_Knight);
-			pMassageUI->Set_Check_Play_BossnameUI(true);
-
-			g_pSoundManager->Stop_Sound(CSoundManager::Background_01);
-			g_pSoundManager->Play_BGM(L"Boss_QueensKnight_BGM.ogg");
-		}
-
-		break;
-	}
-	}
 }
 
 void CScriptManager::Stage_Base_Scripts()
@@ -1019,15 +1154,408 @@ void CScriptManager::Ready_Stage01_DynamicObject()
 
 void CScriptManager::Ready_Stage02_DynamicObject()
 {
-	m_vecObjectPool.reserve(30);
+	m_vecObjectPool.reserve(26);
+	m_vecTrapPool.reserve(10);
 
-	_v4 vPos[30] =
-	{
+	_v4 vPos[26] =
+	{ 
+		//Subset0 TriggerIdx17 겐지(검방) 예티 예티 늑대 4
+		_v4(41.398f, 3.096f, -192.382f, 41.398f),
+		_v4(32.243f, 2.672f, -219.018f, 32.243f),
+		_v4(38.303f, 2.863f, -205.344f, 38.303f),
+		_v4(63.997f, 2.969f, -216.479f, 63.997f),
+
+		//Subset0 TriggerIdx17 예티 1
+		_v4(104.147f, 3.85f, -211.804f, 104.147f),
+
+		//Subset1 TriggerIdx42 늑대 예티 토템 겐지(총) 겐지(창방) 5
+		//토템 예티 성게 토템 예티 5
+		//겐지(총) 예티 2
+		_v4(131.906f, 4.01535f, -187.868f, 131.906f),
+		_v4(143.767f, 4.f, -179.792f, 143.767f),
+		_v4(131.515f, 4.f, -168.277f, 131.515f),
+		_v4(143.148f, 4.f, -143.535f, 143.148f),
+		_v4(137.213f, 4.f, -145.73f, 137.213f),
+	
+		_v4(122.463f, 4.f, -156.413f, 122.463f),
+		_v4(130.221f, 4.f, -126.726f, 130.221f),
+		_v4(108.823f, 4.f, -126.748f, 108.823f),
+		_v4(91.882f, 3.562f, -121.391f, 91.882f),
+		_v4(101.699f, 4.f, -116.463f, 101.699f),
+
+		_v4(98.238f, 3.849f, -122.223f, 98.238f), //겐지총
+		_v4(85.896f, 4.019f, -103.512f, 85.896f), //예티
+
+		//Subset2 TriggerIdx60 예티 토템 성게 3
+		//토템 예티 겐지(총) 성게 4
+		_v4(56.034f, -0.244f, -67.926f, 56.034f),
+		_v4(44.555f, 0.f, -59.188f, 44.555f),
+		_v4(59.717f, 0.f, -56.3345f, 59.717f),
+
+		_v4(57.916f, 0.f, -49.487f, 57.916f),
+		_v4(41.947f, 0.255f, 2.428f, 41.947f),
+		_v4(37.5246f, 0.1f, -4.49077f, 37.5246f),
+		_v4(37.2138f, 0.1f, -8.83999f, 37.2138f),
+
+		//Subset3 TriggerIdx52 보스 1
+		_v4(-10.3593f, -0.833f, -1.846f, -10.3593f),
+
 	};
 
 	CGameObject* pInstance = nullptr;
 	_uint		iIndex = 0;
+	_uint		iTestNaviIdx = 0;
 
+	// ================================================================================================================
+	//Subset0 TriggerIdx17 겐지(검방) 예티 예티 늑대
+	{
+		//겐지 검방
+		pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_SwordGenji",
+			&CSwordGenji::INFO(CSwordGenji::Normal, CSwordGenji::NF_Ani::Sit1, 10.f, 10.f, 2.f,
+				true, _v3(vPos[iIndex].x, vPos[iIndex].y, vPos[iIndex].z), _v3(0.f, D3DXToRadian(vPos[iIndex].w), 0.f), 2));
+		pInstance->Set_Enable(false);
+		m_vecObjectPool.push_back(pInstance);
+		Safe_AddRef(pInstance);
+		g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Monster", nullptr);
+		++iIndex;
+		iTestNaviIdx = TARGET_TO_NAV(pInstance)->Get_CellIndex();
+
+		//예티 트랩
+		pInstance = g_pManagement->Clone_GameObject_Return(L"GameObject_YetiTrap", &CYetiTrap::YETITRAPINFO(iIndex, _v3(vPos[iIndex].x, vPos[iIndex].y, vPos[iIndex].z), V3_NULL));
+		pInstance->Set_Enable(true);
+		m_vecTrapPool.push_back(static_cast<CYetiTrap*>(pInstance));
+		Safe_AddRef(pInstance);
+		g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Trap", nullptr);
+		//예티
+		pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_Yeti",
+			&CMonster::MONSTER_STATUS(CMonster::MONSTER_COLOR_TYPE::COLOR_NONE, WEAPON_STATE::WEAPON_None,
+				true, _v3(vPos[iIndex].x, vPos[iIndex].y, vPos[iIndex].z), V3_NULL, 2));
+		pInstance->Set_Enable(false);
+		m_vecObjectPool.push_back(pInstance);
+		Safe_AddRef(pInstance);
+		g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Monster", nullptr);
+		++iIndex;
+		iTestNaviIdx = TARGET_TO_NAV(pInstance)->Get_CellIndex();
+
+		//예티 트랩
+		pInstance = g_pManagement->Clone_GameObject_Return(L"GameObject_YetiTrap", &CYetiTrap::YETITRAPINFO(iIndex, _v3(vPos[iIndex].x, vPos[iIndex].y, vPos[iIndex].z), V3_NULL));
+		pInstance->Set_Enable(true);
+		m_vecTrapPool.push_back(static_cast<CYetiTrap*>(pInstance));
+		Safe_AddRef(pInstance);
+		g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Trap", nullptr);
+		//예티
+		pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_Yeti",
+			&CMonster::MONSTER_STATUS(CMonster::MONSTER_COLOR_TYPE::COLOR_NONE, WEAPON_STATE::WEAPON_None,
+				true, _v3(vPos[iIndex].x, vPos[iIndex].y, vPos[iIndex].z), V3_NULL, 2));
+		pInstance->Set_Enable(false);
+		m_vecObjectPool.push_back(pInstance);
+		Safe_AddRef(pInstance);
+		g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Monster", nullptr);
+		++iIndex;
+		iTestNaviIdx = TARGET_TO_NAV(pInstance)->Get_CellIndex();
+
+		//늑대
+		pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_Wolf",
+			&CMonster::MONSTER_STATUS(CMonster::MONSTER_COLOR_TYPE::WHITE, WEAPON_STATE::WEAPON_None,
+				true, _v3(vPos[iIndex].x, vPos[iIndex].y, vPos[iIndex].z), V3_NULL, 2));
+		pInstance->Set_Enable(false);
+		m_vecObjectPool.push_back(pInstance);
+		Safe_AddRef(pInstance);
+		g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Monster", nullptr);
+		++iIndex;
+		iTestNaviIdx = TARGET_TO_NAV(pInstance)->Get_CellIndex();
+
+	}
+
+	// ================================================================================================================
+	//Subset0 TriggerIdx110 예티
+	{
+		//예티 트랩
+		pInstance = g_pManagement->Clone_GameObject_Return(L"GameObject_YetiTrap", &CYetiTrap::YETITRAPINFO(iIndex, _v3(vPos[iIndex].x, vPos[iIndex].y, vPos[iIndex].z), V3_NULL));
+		pInstance->Set_Enable(true);
+		m_vecTrapPool.push_back(static_cast<CYetiTrap*>(pInstance));
+		Safe_AddRef(pInstance);
+		g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Trap", nullptr);
+		//예티
+		pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_Yeti",
+			&CMonster::MONSTER_STATUS(CMonster::MONSTER_COLOR_TYPE::COLOR_NONE, WEAPON_STATE::WEAPON_None,
+				true, _v3(vPos[iIndex].x, vPos[iIndex].y, vPos[iIndex].z), V3_NULL, 2));
+		pInstance->Set_Enable(false);
+		m_vecObjectPool.push_back(pInstance);
+		Safe_AddRef(pInstance);
+		g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Monster", nullptr);
+		++iIndex;
+		iTestNaviIdx = TARGET_TO_NAV(pInstance)->Get_CellIndex();
+
+	}
+
+	// ================================================================================================================
+	//Subset1 TriggerIdx42 늑대 예티 토템 겐지(총) 겐지(창방)
+	//토템 예티 성게 토템 예티 
+	//겐지(총) 예티
+	{
+		//늑대
+		pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_Wolf",
+			&CMonster::MONSTER_STATUS(CMonster::MONSTER_COLOR_TYPE::WHITE, WEAPON_STATE::WEAPON_None,
+				true, _v3(vPos[iIndex].x, vPos[iIndex].y, vPos[iIndex].z), V3_NULL, 3));
+		pInstance->Set_Enable(false);
+		m_vecObjectPool.push_back(pInstance);
+		Safe_AddRef(pInstance);
+		g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Monster", nullptr);
+		++iIndex;
+		iTestNaviIdx = TARGET_TO_NAV(pInstance)->Get_CellIndex();
+
+		//예티 트랩
+		pInstance = g_pManagement->Clone_GameObject_Return(L"GameObject_YetiTrap", &CYetiTrap::YETITRAPINFO(iIndex, _v3(vPos[iIndex].x, vPos[iIndex].y, vPos[iIndex].z), V3_NULL));
+		pInstance->Set_Enable(true);
+		m_vecTrapPool.push_back(static_cast<CYetiTrap*>(pInstance));
+		Safe_AddRef(pInstance);
+		g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Trap", nullptr);
+		//예티
+		pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_Yeti",
+			&CMonster::MONSTER_STATUS(CMonster::MONSTER_COLOR_TYPE::COLOR_NONE, WEAPON_STATE::WEAPON_None,
+				true, _v3(vPos[iIndex].x, vPos[iIndex].y, vPos[iIndex].z), V3_NULL, 2));
+		pInstance->Set_Enable(false);
+		m_vecObjectPool.push_back(pInstance);
+		Safe_AddRef(pInstance);
+		g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Monster", nullptr);
+		++iIndex;
+		iTestNaviIdx = TARGET_TO_NAV(pInstance)->Get_CellIndex();
+
+		//토템
+		pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_Cocoon",
+			&CMonster::MONSTER_STATUS(CMonster::MONSTER_COLOR_TYPE::WHITE, WEAPON_STATE::WEAPON_None,
+				true, _v3(vPos[iIndex].x, vPos[iIndex].y, vPos[iIndex].z), V3_NULL, 2));
+		pInstance->Set_Enable(false);
+		m_vecObjectPool.push_back(pInstance);
+		Safe_AddRef(pInstance);
+		g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Monster", nullptr);
+		++iIndex;
+		iTestNaviIdx = TARGET_TO_NAV(pInstance)->Get_CellIndex();
+
+		// 총겐
+		pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_GunGenji",
+			&CGunGenji::INFO(CGunGenji::Normal, CGunGenji::NF_Ani::CheckGun, 10.f, 10.f, 2.f,
+				true, _v3(vPos[iIndex].x, vPos[iIndex].y, vPos[iIndex].z), _v3(0.f, D3DXToRadian(vPos[iIndex].w), 0.f), 2));
+		pInstance->Set_Enable(false);
+		m_vecObjectPool.push_back(pInstance);
+		Safe_AddRef(pInstance);
+		g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Monster", nullptr);
+		++iIndex;
+		iTestNaviIdx = TARGET_TO_NAV(pInstance)->Get_CellIndex();
+
+		//겐지 창방
+		pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_SwordGenji",
+			&CSwordGenji::INFO(CSwordGenji::Normal, CSwordGenji::NF_Ani::Talk, 10.f, 10.f, 2.f,
+				true, _v3(vPos[iIndex].x, vPos[iIndex].y, vPos[iIndex].z), _v3(0.f, D3DXToRadian(vPos[iIndex].w), 0.f), 2));
+		pInstance->Set_Enable(false);
+		m_vecObjectPool.push_back(pInstance);
+		Safe_AddRef(pInstance);
+		g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Monster", nullptr);
+		++iIndex;
+		iTestNaviIdx = TARGET_TO_NAV(pInstance)->Get_CellIndex();
+
+		//토템
+		pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_Cocoon",
+			&CMonster::MONSTER_STATUS(CMonster::MONSTER_COLOR_TYPE::WHITE, WEAPON_STATE::WEAPON_None,
+				true, _v3(vPos[iIndex].x, vPos[iIndex].y, vPos[iIndex].z), V3_NULL, 2));
+		pInstance->Set_Enable(false);
+		m_vecObjectPool.push_back(pInstance);
+		Safe_AddRef(pInstance);
+		g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Monster", nullptr);
+		++iIndex;
+		iTestNaviIdx = TARGET_TO_NAV(pInstance)->Get_CellIndex();
+
+		//예티 트랩
+		pInstance = g_pManagement->Clone_GameObject_Return(L"GameObject_YetiTrap", &CYetiTrap::YETITRAPINFO(iIndex, _v3(vPos[iIndex].x, vPos[iIndex].y, vPos[iIndex].z), V3_NULL));
+		pInstance->Set_Enable(true);
+		m_vecTrapPool.push_back(static_cast<CYetiTrap*>(pInstance));
+		Safe_AddRef(pInstance);
+		g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Trap", nullptr);
+		//예티
+		pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_Yeti",
+			&CMonster::MONSTER_STATUS(CMonster::MONSTER_COLOR_TYPE::COLOR_NONE, WEAPON_STATE::WEAPON_None,
+				true, _v3(vPos[iIndex].x, vPos[iIndex].y, vPos[iIndex].z), V3_NULL, 2));
+		pInstance->Set_Enable(false);
+		m_vecObjectPool.push_back(pInstance);
+		Safe_AddRef(pInstance);
+		g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Monster", nullptr);
+		++iIndex;
+		iTestNaviIdx = TARGET_TO_NAV(pInstance)->Get_CellIndex();
+		
+		//성게
+		pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_Urchin",
+			&CMonster::MONSTER_STATUS(CMonster::MONSTER_COLOR_TYPE::WHITE, WEAPON_STATE::WEAPON_None,
+				true, _v3(vPos[iIndex].x, vPos[iIndex].y, vPos[iIndex].z), V3_NULL, 2));
+		pInstance->Set_Enable(false);
+		m_vecObjectPool.push_back(pInstance);
+		Safe_AddRef(pInstance);
+		g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Monster", nullptr);
+		++iIndex;
+		iTestNaviIdx = TARGET_TO_NAV(pInstance)->Get_CellIndex();
+
+		//토템
+		pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_Cocoon",
+			&CMonster::MONSTER_STATUS(CMonster::MONSTER_COLOR_TYPE::WHITE, WEAPON_STATE::WEAPON_None,
+				true, _v3(vPos[iIndex].x, vPos[iIndex].y, vPos[iIndex].z), V3_NULL, 2));
+		pInstance->Set_Enable(false);
+		m_vecObjectPool.push_back(pInstance);
+		Safe_AddRef(pInstance);
+		g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Monster", nullptr);
+		++iIndex;
+		iTestNaviIdx = TARGET_TO_NAV(pInstance)->Get_CellIndex();
+
+		//예티 트랩
+		pInstance = g_pManagement->Clone_GameObject_Return(L"GameObject_YetiTrap", &CYetiTrap::YETITRAPINFO(iIndex, _v3(vPos[iIndex].x, vPos[iIndex].y, vPos[iIndex].z), V3_NULL));
+		pInstance->Set_Enable(true);
+		m_vecTrapPool.push_back(static_cast<CYetiTrap*>(pInstance));
+		Safe_AddRef(pInstance);
+		g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Trap", nullptr);
+		//예티
+		pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_Yeti",
+			&CMonster::MONSTER_STATUS(CMonster::MONSTER_COLOR_TYPE::COLOR_NONE, WEAPON_STATE::WEAPON_None,
+				true, _v3(vPos[iIndex].x, vPos[iIndex].y, vPos[iIndex].z), V3_NULL, 2));
+		pInstance->Set_Enable(false);
+		m_vecObjectPool.push_back(pInstance);
+		Safe_AddRef(pInstance);
+		g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Monster", nullptr);
+		++iIndex;
+		iTestNaviIdx = TARGET_TO_NAV(pInstance)->Get_CellIndex();
+
+		// 총겐
+		pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_GunGenji",
+			&CGunGenji::INFO(CGunGenji::Normal, CGunGenji::NF_Ani::CheckGun, 10.f, 10.f, 2.f,
+				true, _v3(vPos[iIndex].x, vPos[iIndex].y, vPos[iIndex].z), _v3(0.f, D3DXToRadian(vPos[iIndex].w), 0.f), 2));
+		pInstance->Set_Enable(false);
+		m_vecObjectPool.push_back(pInstance);
+		Safe_AddRef(pInstance);
+		g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Monster", nullptr);
+		++iIndex;
+		iTestNaviIdx = TARGET_TO_NAV(pInstance)->Get_CellIndex();
+
+		//예티 트랩
+		pInstance = g_pManagement->Clone_GameObject_Return(L"GameObject_YetiTrap", &CYetiTrap::YETITRAPINFO(iIndex, _v3(vPos[iIndex].x, vPos[iIndex].y, vPos[iIndex].z), V3_NULL));
+		pInstance->Set_Enable(true);
+		m_vecTrapPool.push_back(static_cast<CYetiTrap*>(pInstance));
+		Safe_AddRef(pInstance);
+		g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Trap", nullptr);
+		//예티
+		pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_Yeti",
+			&CMonster::MONSTER_STATUS(CMonster::MONSTER_COLOR_TYPE::COLOR_NONE, WEAPON_STATE::WEAPON_None,
+				true, _v3(vPos[iIndex].x, vPos[iIndex].y, vPos[iIndex].z), V3_NULL, 2));
+		pInstance->Set_Enable(false);
+		m_vecObjectPool.push_back(pInstance);
+		Safe_AddRef(pInstance);
+		g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Monster", nullptr);
+		++iIndex;
+		iTestNaviIdx = TARGET_TO_NAV(pInstance)->Get_CellIndex();
+	}
+
+	// ================================================================================================================
+	//Subset2 TriggerIdx60 예티 토템 성게 토템 예티 겐지(총) 성게
+	{	
+		//예티 트랩
+		pInstance = g_pManagement->Clone_GameObject_Return(L"GameObject_YetiTrap", &CYetiTrap::YETITRAPINFO(iIndex, _v3(vPos[iIndex].x, vPos[iIndex].y, vPos[iIndex].z), V3_NULL));
+		pInstance->Set_Enable(true);
+		m_vecTrapPool.push_back(static_cast<CYetiTrap*>(pInstance));
+		Safe_AddRef(pInstance);
+		g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Trap", nullptr);
+		//예티
+		pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_Yeti",
+			&CMonster::MONSTER_STATUS(CMonster::MONSTER_COLOR_TYPE::COLOR_NONE, WEAPON_STATE::WEAPON_None,
+				true, _v3(vPos[iIndex].x, vPos[iIndex].y, vPos[iIndex].z), V3_NULL, 2));
+		pInstance->Set_Enable(false);
+		m_vecObjectPool.push_back(pInstance);
+		Safe_AddRef(pInstance);
+		g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Monster", nullptr);
+		++iIndex;
+		iTestNaviIdx = TARGET_TO_NAV(pInstance)->Get_CellIndex();
+
+		//토템
+		pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_Cocoon",
+			&CMonster::MONSTER_STATUS(CMonster::MONSTER_COLOR_TYPE::WHITE, WEAPON_STATE::WEAPON_None,
+				true, _v3(vPos[iIndex].x, vPos[iIndex].y, vPos[iIndex].z), V3_NULL, 2));
+		pInstance->Set_Enable(false);
+		m_vecObjectPool.push_back(pInstance);
+		Safe_AddRef(pInstance);
+		g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Monster", nullptr);
+		++iIndex;
+		iTestNaviIdx = TARGET_TO_NAV(pInstance)->Get_CellIndex();
+
+		//성게
+		pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_Urchin",
+			&CMonster::MONSTER_STATUS(CMonster::MONSTER_COLOR_TYPE::WHITE, WEAPON_STATE::WEAPON_None,
+				true, _v3(vPos[iIndex].x, vPos[iIndex].y, vPos[iIndex].z), V3_NULL, 2));
+		pInstance->Set_Enable(false);
+		m_vecObjectPool.push_back(pInstance);
+		Safe_AddRef(pInstance);
+		g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Monster", nullptr);
+		++iIndex;
+		iTestNaviIdx = TARGET_TO_NAV(pInstance)->Get_CellIndex();
+
+		//토템
+		pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_Cocoon",
+			&CMonster::MONSTER_STATUS(CMonster::MONSTER_COLOR_TYPE::WHITE, WEAPON_STATE::WEAPON_None,
+				true, _v3(vPos[iIndex].x, vPos[iIndex].y, vPos[iIndex].z), V3_NULL, 2));
+		pInstance->Set_Enable(false);
+		m_vecObjectPool.push_back(pInstance);
+		Safe_AddRef(pInstance);
+		g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Monster", nullptr);
+		++iIndex;
+		iTestNaviIdx = TARGET_TO_NAV(pInstance)->Get_CellIndex();
+
+		//예티 트랩
+		pInstance = g_pManagement->Clone_GameObject_Return(L"GameObject_YetiTrap", &CYetiTrap::YETITRAPINFO(iIndex, _v3(vPos[iIndex].x, vPos[iIndex].y, vPos[iIndex].z), V3_NULL));
+		pInstance->Set_Enable(true);
+		m_vecTrapPool.push_back(static_cast<CYetiTrap*>(pInstance));
+		Safe_AddRef(pInstance);
+		g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Trap", nullptr);
+		//예티
+		pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_Yeti",
+			&CMonster::MONSTER_STATUS(CMonster::MONSTER_COLOR_TYPE::COLOR_NONE, WEAPON_STATE::WEAPON_None,
+				true, _v3(vPos[iIndex].x, vPos[iIndex].y, vPos[iIndex].z), V3_NULL, 2));
+		pInstance->Set_Enable(false);
+		m_vecObjectPool.push_back(pInstance);
+		Safe_AddRef(pInstance);
+		g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Monster", nullptr);
+		++iIndex;
+		iTestNaviIdx = TARGET_TO_NAV(pInstance)->Get_CellIndex();
+
+		// 총겐
+		pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_GunGenji",
+			&CGunGenji::INFO(CGunGenji::Normal, CGunGenji::NF_Ani::CheckGun, 10.f, 10.f, 2.f,
+				true, _v3(vPos[iIndex].x, vPos[iIndex].y, vPos[iIndex].z), _v3(0.f, D3DXToRadian(vPos[iIndex].w), 0.f), 2));
+		pInstance->Set_Enable(false);
+		m_vecObjectPool.push_back(pInstance);
+		Safe_AddRef(pInstance);
+		g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Monster", nullptr);
+		++iIndex;
+		iTestNaviIdx = TARGET_TO_NAV(pInstance)->Get_CellIndex();
+		//성게
+		pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_Urchin", 
+			&CMonster::MONSTER_STATUS(CMonster::MONSTER_COLOR_TYPE::WHITE, WEAPON_STATE::WEAPON_None,
+				true, _v3(vPos[iIndex].x, vPos[iIndex].y, vPos[iIndex].z), V3_NULL, 2));
+		pInstance->Set_Enable(false);
+		m_vecObjectPool.push_back(pInstance);
+		Safe_AddRef(pInstance);
+		g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Monster", nullptr);
+		++iIndex;
+		iTestNaviIdx = TARGET_TO_NAV(pInstance)->Get_CellIndex();
+
+	}
+
+	// ================================================================================================================
+	//Subset3 TriggerIdx52 사슴왕
+	{
+		pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_DeerKing", &CDeerKing::INFO(80.f, 18.f, 1.f,
+				true, _v3(vPos[iIndex].x, vPos[iIndex].y, vPos[iIndex].z), _v3(0.f, D3DXToRadian(vPos[iIndex].w), 0.f), 2));
+		pInstance->Set_Enable(false);
+		m_vecObjectPool.push_back(pInstance);
+		Safe_AddRef(pInstance);
+		g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Boss", nullptr);
+
+		iTestNaviIdx = TARGET_TO_NAV(pInstance)->Get_CellIndex();
+	}
 }
 
 void CScriptManager::Ready_Stage03_DynamicObject()
@@ -1092,7 +1620,7 @@ void CScriptManager::Ready_Stage03_DynamicObject()
 		Safe_AddRef(pInstance);
 		g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Monster", nullptr);
 		++iIndex;
-
+		iTestNaviIdx = TARGET_TO_NAV(pInstance)->Get_CellIndex();
 		//헌터(창)
 		pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_Hunter",
 			&CMonster::MONSTER_STATUS(CMonster::MONSTER_COLOR_TYPE::COLOR_NONE, WEAPON_STATE::WEAPON_Halberd,
@@ -1102,7 +1630,7 @@ void CScriptManager::Ready_Stage03_DynamicObject()
 		Safe_AddRef(pInstance);
 		g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Monster", nullptr);
 		++iIndex;
-
+		iTestNaviIdx = TARGET_TO_NAV(pInstance)->Get_CellIndex();
 	}
 
 	// ================================================================================================================
@@ -1117,7 +1645,7 @@ void CScriptManager::Ready_Stage03_DynamicObject()
 		Safe_AddRef(pInstance);
 		g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Monster", nullptr);
 		++iIndex;
-
+		iTestNaviIdx = TARGET_TO_NAV(pInstance)->Get_CellIndex();
 		//헌터(총)
 		pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_Hunter",
 			&CMonster::MONSTER_STATUS(CMonster::MONSTER_COLOR_TYPE::COLOR_NONE, WEAPON_STATE::WEAPON_Gun,
@@ -1127,7 +1655,7 @@ void CScriptManager::Ready_Stage03_DynamicObject()
 		Safe_AddRef(pInstance);
 		g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Monster", nullptr);
 		++iIndex;
-
+		iTestNaviIdx = TARGET_TO_NAV(pInstance)->Get_CellIndex();
 		//헌터(총)
 		pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_Hunter",
 			&CMonster::MONSTER_STATUS(CMonster::MONSTER_COLOR_TYPE::COLOR_NONE, WEAPON_STATE::WEAPON_Gun,
@@ -1137,7 +1665,7 @@ void CScriptManager::Ready_Stage03_DynamicObject()
 		Safe_AddRef(pInstance);
 		g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Monster", nullptr);
 		++iIndex;
-
+		iTestNaviIdx = TARGET_TO_NAV(pInstance)->Get_CellIndex();
 	}
 
 	 // ================================================================================================================
@@ -1152,7 +1680,7 @@ void CScriptManager::Ready_Stage03_DynamicObject()
 		Safe_AddRef(pInstance);
 		g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Monster", nullptr);
 		++iIndex;
-
+		iTestNaviIdx = TARGET_TO_NAV(pInstance)->Get_CellIndex();
 		// 토템
 		pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_Cocoon",
 			&CMonster::MONSTER_STATUS(CMonster::MONSTER_COLOR_TYPE::COLOR_NONE, WEAPON_STATE::WEAPON_None,
@@ -1162,7 +1690,7 @@ void CScriptManager::Ready_Stage03_DynamicObject()
 		Safe_AddRef(pInstance);
 		g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Monster", nullptr);
 		++iIndex;
-
+		iTestNaviIdx = TARGET_TO_NAV(pInstance)->Get_CellIndex();
 		//원숭이
 		pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_Monkey",
 			&CMonster::MONSTER_STATUS(CMonster::MONSTER_COLOR_TYPE::COLOR_NONE, WEAPON_STATE::WEAPON_None,
@@ -1172,7 +1700,7 @@ void CScriptManager::Ready_Stage03_DynamicObject()
 		Safe_AddRef(pInstance);
 		g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Monster", nullptr);
 		++iIndex;
-
+		iTestNaviIdx = TARGET_TO_NAV(pInstance)->Get_CellIndex();
 		//헌터(망치)
 		pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_Hunter",
 			&CMonster::MONSTER_STATUS(CMonster::MONSTER_COLOR_TYPE::COLOR_NONE, WEAPON_STATE::WEAPON_Hammer,
@@ -1182,7 +1710,7 @@ void CScriptManager::Ready_Stage03_DynamicObject()
 		Safe_AddRef(pInstance);
 		g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Monster", nullptr);
 		++iIndex;
-
+		iTestNaviIdx = TARGET_TO_NAV(pInstance)->Get_CellIndex();
 		//헌터(대검)
 		pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_Hunter",
 			&CMonster::MONSTER_STATUS(CMonster::MONSTER_COLOR_TYPE::COLOR_NONE, WEAPON_STATE::WEAPON_LSword,
@@ -1192,7 +1720,7 @@ void CScriptManager::Ready_Stage03_DynamicObject()
 		Safe_AddRef(pInstance);
 		g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Monster", nullptr);
 		++iIndex;
-
+		iTestNaviIdx = TARGET_TO_NAV(pInstance)->Get_CellIndex();
 	}
 
 	 // ================================================================================================================
@@ -1207,7 +1735,7 @@ void CScriptManager::Ready_Stage03_DynamicObject()
 		Safe_AddRef(pInstance);
 		g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Monster", nullptr);
 		++iIndex;
-
+		iTestNaviIdx = TARGET_TO_NAV(pInstance)->Get_CellIndex();
 		//원숭이
 		pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_Monkey",
 			&CMonster::MONSTER_STATUS(CMonster::MONSTER_COLOR_TYPE::COLOR_NONE, WEAPON_STATE::WEAPON_None,
@@ -1217,7 +1745,7 @@ void CScriptManager::Ready_Stage03_DynamicObject()
 		Safe_AddRef(pInstance);
 		g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Monster", nullptr);
 		++iIndex;
-
+		iTestNaviIdx = TARGET_TO_NAV(pInstance)->Get_CellIndex();
 		//야차맨
 		pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_YachaMan",
 			&CMonster::MONSTER_STATUS(CMonster::MONSTER_COLOR_TYPE::COLOR_NONE, WEAPON_STATE::WEAPON_None,
@@ -1227,7 +1755,7 @@ void CScriptManager::Ready_Stage03_DynamicObject()
 		Safe_AddRef(pInstance);
 		g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Monster", nullptr);
 		++iIndex;
-
+		iTestNaviIdx = TARGET_TO_NAV(pInstance)->Get_CellIndex();
 		//헌터(검)
 		pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_Hunter",
 			&CMonster::MONSTER_STATUS(CMonster::MONSTER_COLOR_TYPE::COLOR_NONE, WEAPON_STATE::WEAPON_SSword,
@@ -1237,7 +1765,7 @@ void CScriptManager::Ready_Stage03_DynamicObject()
 		Safe_AddRef(pInstance);
 		g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Monster", nullptr);
 		++iIndex;
-
+		iTestNaviIdx = TARGET_TO_NAV(pInstance)->Get_CellIndex();
 	}
 
 	// ================================================================================================================
@@ -1284,12 +1812,8 @@ void CScriptManager::Ready_Stage04_DynamicObject()
 {
 	m_vecObjectPool.reserve(8);
 
-	_v3 vPos[8] =
+	_v3 vPos[6] =
 	{
-		//Subset처음부터 TriggerIdx 토템x2
-		_v3(26.516f, -3.883f, 75.362f),
-		_v3(21.919f, -3.883f, 79.166f),
-
 		//Subset0 TriggerIdx46 따이맨, 토템x4
 		_v3(-1.625f, -3.883f, 77.897f),
 		_v3(-8.819f, -3.883f, 70.1f),
@@ -1313,30 +1837,7 @@ void CScriptManager::Ready_Stage04_DynamicObject()
 
 	CGameObject* pInstance = nullptr;
 	_uint		iIndex = 0;
-
-	// // ================================================================================================================
-	//Subset처음부터 TriggerIdx 토템x2
-	{
-		//토템
-		pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_Cocoon",
-			&CMonster::MONSTER_STATUS(CMonster::MONSTER_COLOR_TYPE::COLOR_NONE, WEAPON_STATE::WEAPON_None,
-				true, _v3(vPos[iIndex].x, vPos[iIndex].y, vPos[iIndex].z), V3_NULL, 3));
-		pInstance->Set_Enable(false);
-		m_vecObjectPool.push_back(pInstance);
-		Safe_AddRef(pInstance);
-		g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Monster", nullptr);
-		++iIndex;
-
-		//토템
-		pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_Cocoon",
-			&CMonster::MONSTER_STATUS(CMonster::MONSTER_COLOR_TYPE::COLOR_NONE, WEAPON_STATE::WEAPON_None,
-				true, _v3(vPos[iIndex].x, vPos[iIndex].y, vPos[iIndex].z), V3_NULL, 3));
-		pInstance->Set_Enable(false);
-		m_vecObjectPool.push_back(pInstance);
-		Safe_AddRef(pInstance);
-		g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Monster", nullptr);
-		++iIndex;
-	}
+	_uint		iTestNaviIdx = 0;
 
 	// // ================================================================================================================
 	//Subset0 TriggerIdx46 따이맨, 토템x4
@@ -1350,7 +1851,7 @@ void CScriptManager::Ready_Stage04_DynamicObject()
 		Safe_AddRef(pInstance);
 		g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Monster", nullptr);
 		++iIndex;
-
+		iTestNaviIdx = TARGET_TO_NAV(pInstance)->Get_CellIndex();
 		//토템
 		pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_Cocoon",
 			&CMonster::MONSTER_STATUS(CMonster::MONSTER_COLOR_TYPE::COLOR_NONE, WEAPON_STATE::WEAPON_None,
@@ -1360,7 +1861,7 @@ void CScriptManager::Ready_Stage04_DynamicObject()
 		Safe_AddRef(pInstance);
 		g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Monster", nullptr);
 		++iIndex;
-
+		iTestNaviIdx = TARGET_TO_NAV(pInstance)->Get_CellIndex();
 		//토템
 		pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_Cocoon",
 			&CMonster::MONSTER_STATUS(CMonster::MONSTER_COLOR_TYPE::COLOR_NONE, WEAPON_STATE::WEAPON_None,
@@ -1370,7 +1871,7 @@ void CScriptManager::Ready_Stage04_DynamicObject()
 		Safe_AddRef(pInstance);
 		g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Monster", nullptr);
 		++iIndex;
-
+		iTestNaviIdx = TARGET_TO_NAV(pInstance)->Get_CellIndex();
 		//토템
 		pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_Cocoon",
 			&CMonster::MONSTER_STATUS(CMonster::MONSTER_COLOR_TYPE::COLOR_NONE, WEAPON_STATE::WEAPON_None,
@@ -1380,7 +1881,7 @@ void CScriptManager::Ready_Stage04_DynamicObject()
 		Safe_AddRef(pInstance);
 		g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Monster", nullptr);
 		++iIndex;
-
+		iTestNaviIdx = TARGET_TO_NAV(pInstance)->Get_CellIndex();
 		//토템
 		pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_Cocoon",
 			&CMonster::MONSTER_STATUS(CMonster::MONSTER_COLOR_TYPE::COLOR_NONE, WEAPON_STATE::WEAPON_None,
@@ -1390,7 +1891,7 @@ void CScriptManager::Ready_Stage04_DynamicObject()
 		Safe_AddRef(pInstance);
 		g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Monster", nullptr);
 		++iIndex;
-
+		iTestNaviIdx = TARGET_TO_NAV(pInstance)->Get_CellIndex();
 	}
 
 	// // ================================================================================================================
@@ -1403,63 +1904,9 @@ void CScriptManager::Ready_Stage04_DynamicObject()
 		Safe_AddRef(pInstance);
 		g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Monster", nullptr);
 		++iIndex;
+		iTestNaviIdx = TARGET_TO_NAV(pInstance)->Get_CellIndex();
 	}
 
-	// // ================================================================================================================
-	//// 4 마리 + 언덕 1마리
-	//{
-	//	pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_Hunter", &CMonster::MONSTER_STATUS(CMonster::MONSTER_COLOR_TYPE::BLACK, WEAPON_STATE::WEAPON_Halberd));
-	//	TARGET_TO_NAV(pInstance)->Set_SubsetIndex(1);
-	//	TARGET_TO_NAV(pInstance)->Set_Index(46);
-	//	m_vecObjectPool.push_back(pInstance);
-	//	Safe_AddRef(pInstance);
-
-	//	pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_Hunter", &CMonster::MONSTER_STATUS(CMonster::MONSTER_COLOR_TYPE::BLACK, WEAPON_STATE::WEAPON_Halberd));
-	//	TARGET_TO_NAV(pInstance)->Set_SubsetIndex(1);
-	//	TARGET_TO_NAV(pInstance)->Set_Index(33);
-	//	m_vecObjectPool.push_back(pInstance);
-	//	Safe_AddRef(pInstance);
-
-	//	pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_Hunter", &CMonster::MONSTER_STATUS(CMonster::MONSTER_COLOR_TYPE::BLACK, WEAPON_STATE::WEAPON_Halberd));
-	//	TARGET_TO_NAV(pInstance)->Set_SubsetIndex(1);
-	//	TARGET_TO_NAV(pInstance)->Set_Index(76);
-	//	m_vecObjectPool.push_back(pInstance);
-	//	Safe_AddRef(pInstance);
-
-	//	pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_Hunter", &CMonster::MONSTER_STATUS(CMonster::MONSTER_COLOR_TYPE::BLACK, WEAPON_STATE::WEAPON_Halberd));
-	//	TARGET_TO_NAV(pInstance)->Set_SubsetIndex(1);
-	//	TARGET_TO_NAV(pInstance)->Set_Index(66);
-	//	m_vecObjectPool.push_back(pInstance);
-	//	Safe_AddRef(pInstance);
-
-	//	pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_Hunter", &CMonster::MONSTER_STATUS(CMonster::MONSTER_COLOR_TYPE::BLACK, WEAPON_STATE::WEAPON_Halberd));
-	//	TARGET_TO_NAV(pInstance)->Set_SubsetIndex(1);
-	//	TARGET_TO_NAV(pInstance)->Set_Index(88);
-	//	m_vecObjectPool.push_back(pInstance);
-	//	Safe_AddRef(pInstance);
-	//}
-	// // ================================================================================================================
-	//// 보스 1마리
-	//{
-	//	pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_QueensKnight", &CQueensKnight::INFO(45.f, 20.f, 2.f));
-	//	TARGET_TO_NAV(pInstance)->Set_SubsetIndex(2);
-	//	TARGET_TO_NAV(pInstance)->Set_Index(10);
-	//	m_vecObjectPool.push_back(pInstance);
-	//	Safe_AddRef(pInstance);
-	//}
-
-	_ulong dwIndex = 0;
-
-	for (auto& iter : m_vecObjectPool)
-	{
-		iter->Set_Enable(false);
-		TARGET_TO_TRANS(iter)->Set_Pos(vPos[dwIndex]);
-		TARGET_TO_NAV(iter)->Ready_NaviMesh(m_pGraphicDev, L"Navmesh_Stage_04.dat");
-
-		g_pManagement->Add_GameOject_ToLayer_NoClone(iter, SCENE_STAGE, L"Layer_Monster", nullptr);
-
-		++dwIndex;
-	}
 }
 
 void CScriptManager::Free()

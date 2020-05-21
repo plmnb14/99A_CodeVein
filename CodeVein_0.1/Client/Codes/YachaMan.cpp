@@ -4940,6 +4940,8 @@ void CYachaMan::Play_Dead()
 					Start_Dissolve(0.7f, false, true);
 					m_pWeapon->Start_Dissolve(0.5f, false, true);
 
+					Check_DropItem(MONSTER_NAMETYPE::M_YachaMan);
+
 					CObjectPool_Manager::Get_Instance()->Create_Object(L"GameObject_Haze", (void*)&CHaze::HAZE_INFO(100.f, m_pTransformCom->Get_Pos(), 0.f));
 				}
 			}
@@ -5122,10 +5124,10 @@ HRESULT CYachaMan::Ready_Status(void * pArg)
 		_tchar szNavData[STR_128] = L"";
 
 		lstrcpy(szNavData, (
-			Info.sStageIdx == 0 ? L"Navmesh_Training.dat" :
-			Info.sStageIdx == 1 ? L"Navmesh_Stage_01.dat" :
-			Info.sStageIdx == 2 ? L"Navmesh_Stage_02.dat" :
-			Info.sStageIdx == 3 ? L"Navmesh_Stage_03.dat" : L"Navmesh_Stage_04.dat"));
+			Info.eStageIdx == 0 ? L"Navmesh_Training.dat" :
+			Info.eStageIdx == 1 ? L"Navmesh_Stage_01.dat" :
+			Info.eStageIdx == 2 ? L"Navmesh_Stage_02.dat" :
+			Info.eStageIdx == 3 ? L"Navmesh_Stage_03.dat" : L"Navmesh_Stage_04.dat"));
 
 		m_pNavMeshCom->Set_Index(-1);
 		m_pNavMeshCom->Ready_NaviMesh(m_pGraphic_Dev, szNavData);

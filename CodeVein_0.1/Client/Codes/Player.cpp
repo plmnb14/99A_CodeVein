@@ -154,16 +154,6 @@ _int CPlayer::Update_GameObject(_double TimeDelta)
 
 	m_pScreenCornerFade->Update_GameObject(TimeDelta);
 
-	if (g_pInput_Device->Key_Down(DIK_N))
-	{
-		m_lDebugValue += 1;
-		if (m_lDebugValue >= 4)
-			m_lDebugValue = 0;
-
-		//cout << m_lDebugValue << endl;
-
-		Change_PlayerBody((PLAYER_BODY)m_lDebugValue);
-	}
 
 	if (g_pInput_Device->Key_Down(DIK_Y))
 	{
@@ -286,13 +276,13 @@ HRESULT CPlayer::Render_GameObject_Instancing_SetPass(CShader * pShader)
 	m_pDynamicMesh->Play_Animation_RightArm(dDeltaTime * m_fAnimMutiply, false);
 	m_pDynamicMesh->Play_Animation_LeftArm(dDeltaTime * m_fAnimMutiply);
 
+	m_pHead[m_eHeadType]->Update_GameObject(dDeltaTime);
+	m_pMask[m_eMaskType]->Update_GameObject(dDeltaTime);
+
 	// 머리 위치 업데이트
 
 	m_pHair->Update_GameObject(dDeltaTime * m_fAnimMutiply, (m_eActState != ACT_Idle) && (m_eActState != ACT_Walk) && (m_eActState != ACT_Run) && (m_eActState != ACT_MoveDelay));
 	m_pOuter->Update_GameObject(dDeltaTime * m_fAnimMutiply, (m_eActState != ACT_Idle) && (m_eActState != ACT_Walk) && (m_eActState != ACT_Run) && (m_eActState != ACT_MoveDelay));
-
-	m_pHead[m_eHeadType]->Update_GameObject(dDeltaTime);
-	m_pMask[m_eMaskType]->Update_GameObject(dDeltaTime);
 
 	if (m_tObjParam.bInvisible)
 		return S_OK;
@@ -354,9 +344,6 @@ HRESULT CPlayer::Render_GameObject_Instancing_SetPass(CShader * pShader)
 	bOnToonRimLight = false;
 	pShader->Set_Value("g_bToonRimLight", &bOnToonRimLight, sizeof(_bool));
 
-#ifdef _DEBUG
-	//Draw_Collider();
-#endif
 
 	return NOERROR;
 }
@@ -2390,14 +2377,9 @@ void CPlayer::Key_UI_n_Utiliy(_bool _bActiveUI)
 					Active_UI_WeaponShop_Yakumo(true);
 				}
 
-				else if (m_bOnYakumo_UI)
+				else if (m_bOnYokumo_UI)
 				{
-
-				}
-
-				else if (m_bOnJack_UI)
-				{
-
+					Active_UI_MaterialShop_Yokumo(true);
 				}
 			}
 
@@ -2490,7 +2472,7 @@ void CPlayer::Key_UI_n_Utiliy(_bool _bActiveUI)
 
 				else if (m_bOnYakumo_UI)
 				{
-
+					Active_UI_WeaponShop_Yakumo();
 				}
 
 				else if (m_bOnJack_UI)
@@ -11286,6 +11268,50 @@ void CPlayer::Active_UI_WeaponShop_Yakumo(_bool _bResetUI)
 
 void CPlayer::Active_UI_MaterialShop_Yokumo(_bool _bResetUI)
 {
+	// 활성 상태에 따라 On/Off 판단
+	_bool bUIActive = m_bActiveUI = m_pUIManager->Get_GeneralStoreUI()->Get_Active() ? false : true;
+
+	// 스테이지 선택 UI 를 On/Off 시킨다.
+	m_pUIManager->Get_GeneralStoreUI()->Set_Active(bUIActive);
+
+	// 선택이 됫는지 안됫는지
+	m_bOnYokumo_UI = bUIActive;
+
+	// 비활성화면 리턴
+	if (!bUIActive)
+	{
+		m_bOnUI_NPCTalk = false;
+
+		m_pCamManager->Set_AimXPosMulti(1.f);
+		m_pCamManager->Set_AimYPos(0.f);
+
+		// 타겟도 Null 해줘요
+		m_pCamManager->Set_AimUI(false);
+		m_pCamManager->Set_OnAimingTarget(false);
+		m_pCamManager->Set_AimingTarget(nullptr);
+		m_pCamManager->Set_MidDistance(g_OriginCamPos);
+		m_pCamManager->Set_MouseCtrl(true);
+		m_pCamManager->Set_LockAngleX(D3DXToDegree(m_pTransform->Get_Angle(AXIS_Y)));
+
+		g_pInput_Device->Set_MouseLock(true);
+
+		m_pRenderer->DOF_On(false);
+
+		return;
+	}
+
+	// 카메라 에임 상태 설정
+	m_pCamManager->Set_OnAimingTarget(bUIActive);
+	m_pCamManager->Set_AimUI(true);
+	m_pCamManager->Set_AimingTarget(m_pUIManager->Get_GeneralStoreUI());
+
+	m_pCamManager->Set_MidDistance(1.5f);
+	m_pCamManager->Set_AimXPosMulti(-0.5f);
+	m_pCamManager->Set_AimYPos(0.5f);
+	m_pCamManager->Set_MouseCtrl(false);
+	g_pInput_Device->Set_MouseLock(false);
+
+	m_pRenderer->DOF_On(true);
 }
 
 void CPlayer::Active_UI_LockOn(_bool _bResetUI)
