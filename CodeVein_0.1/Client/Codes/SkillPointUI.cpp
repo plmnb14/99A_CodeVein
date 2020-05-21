@@ -68,8 +68,8 @@ _int CSkillPointUI::Update_GameObject(_double TimeDelta)
 
 	if (m_bIsActive)
 	{
-		m_pCurPointFont->Update_NumberValue(_float(m_iCurSkillPoint));
-		m_pMaxPointFont->Update_NumberValue(_float(m_iMaxSkillPoint));			
+		m_pCurPointFont->Update_NumberValue(_float(m_tObjParam.sMana_Cur));
+		m_pMaxPointFont->Update_NumberValue(_float(m_tObjParam.sMana_Max));
 		m_pCurPointFont->Set_Active(m_bIsActive);
 		m_pMaxPointFont->Set_Active(m_bIsActive);	
 	}
@@ -158,6 +158,19 @@ HRESULT CSkillPointUI::SetUp_ConstantTable()
 		return E_FAIL;
 
 	return NOERROR;
+}
+
+void CSkillPointUI::Late_Init()
+{
+	if (m_bLateInit)
+		return;
+	m_bLateInit = true;
+
+	m_pTarget = g_pManagement->Get_GameObjectBack(L"Layer_Player", SCENE_MORTAL);
+	if (nullptr == m_pTarget)
+		return;
+
+	m_tObjParam = m_pTarget->Get_Target_Param();
 }
 
 CSkillPointUI * CSkillPointUI::Create(_Device pGraphic_Device)

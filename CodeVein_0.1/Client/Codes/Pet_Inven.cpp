@@ -34,6 +34,7 @@ HRESULT CPet_Inven::Ready_GameObject(void* pArg)
 	Add_Pet(CPet::PET_TYPE::PET_POISONBUTTERFLY);
 
 	SetUp_SlotPos(); // 슬롯 위치 설정
+
 	return S_OK;
 }
 
@@ -54,7 +55,12 @@ _int CPet_Inven::Update_GameObject(_double TimeDelta)
 	{
 		SetUp_SubUI_Active(false);
 		m_bIsSubActive = false;
+
+		CUI_Manager::Get_Instance()->Get_MouseUI()->Set_Active(false);
 	}
+
+	if(m_bIsActive)
+		CUI_Manager::Get_Instance()->Get_MouseUI()->Set_Active(true);
 
 	Click_Inven();
 
@@ -107,6 +113,8 @@ void CPet_Inven::Click_Inven()
 {
 	if (!m_bIsActive)
 		return;
+
+	
 
 	if (m_pExitIcon->Pt_InRect() && g_pInput_Device->Get_DIMouseState(CInput_Device::DIM_LB))
 	{
@@ -217,9 +225,9 @@ void CPet_Inven::Check_Call_Pet(_bool _Check_Get_SlotSelect, _uint _Idx, CPet::P
 			//해당 펫을 찾았다면
 			else
 			{
+				pTempPet->Set_Enable(true);
 				static_cast<CPet*>(pTempPet)->Function_Check_Navi();
 				static_cast<CPet*>(pTempPet)->Play_Deformation();
-				pTempPet->Set_Enable(true);
 				pTempPet = nullptr;
 				return;
 			}
@@ -265,9 +273,9 @@ void CPet_Inven::Check_Call_Pet(_bool _Check_Get_SlotSelect, _uint _Idx, CPet::P
 				}
 				else
 				{
+					pTempPet->Set_Enable(true);
 					static_cast<CPet*>(pTempPet)->Function_Check_Navi();
 					static_cast<CPet*>(pTempPet)->Play_Deformation();
-					pTempPet->Set_Enable(true);
 					pTempPet = nullptr;
 					return;
 				}

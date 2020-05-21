@@ -41,6 +41,7 @@ private:
 	BloodCode_ID			m_eID = BloodCode_End;
 	vector<CBloodCodeSlot*>	m_vecBloodCodeSlot;
 	_float					m_fCross = 100.f;
+	_bool					m_bIsSubActive = false;
 
 public:
 	static CBloodCodeSelectUI*		Create(_Device pGraphic_Device);

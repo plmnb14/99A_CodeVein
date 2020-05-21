@@ -49,14 +49,14 @@ _int CRenderObject::Update_GameObject(_double _TimeDelta)
 	if (false == m_bUpdated)
 	{
 		// 스태틱은 한번만 배치되면 되서 계속 갱신할 필요없음
-		m_bUpdated = true;
+		//m_bUpdated = true;
 
 		CGameObject::LateInit_GameObject();
 		CGameObject::Update_GameObject(_TimeDelta);
 	}
 
 	//if (m_bOnTool)
-	//	Update_Collider();
+		Update_Collider();
 
 	return S_OK;
 }
@@ -121,10 +121,10 @@ HRESULT CRenderObject::Render_GameObject()
 
 	Safe_Release(pManagement);
 
-	//CGizmo::Get_Instance()->Draw_AABB(m_pCollider->Get_GizmoPos(), m_pCollider->Get_CenterPos(), m_pTransform->Get_Size());
-	//
-	//if (m_bIsSelected)
-	//	CGizmo::Get_Instance()->Draw_XYZ(m_pTransform->Get_Pos(), m_pTransform->Get_Axis(AXIS_Z), m_pTransform->Get_Axis(AXIS_X));
+	CGizmo::Get_Instance()->Draw_AABB(m_pCollider->Get_GizmoPos(), m_pCollider->Get_CenterPos(), m_pTransform->Get_Size());
+	
+	if (m_bIsSelected)
+		CGizmo::Get_Instance()->Draw_XYZ(m_pTransform->Get_Pos(), m_pTransform->Get_Axis(AXIS_Z), m_pTransform->Get_Axis(AXIS_X));
 
 	return S_OK;
 }
@@ -186,10 +186,10 @@ HRESULT CRenderObject::Render_GameObject_SetPass(CShader* pShader, _int iPass, _
 	//============================================================================================
 	if (_bIsForMotionBlur)
 	{
-		if (FAILED(pShader->Set_Value("g_matView", &matView, sizeof(_mat))))
-			return E_FAIL;
-		if (FAILED(pShader->Set_Value("g_matProj", &matProj, sizeof(_mat))))
-			return E_FAIL;
+		//if (FAILED(pShader->Set_Value("g_matView", &matView, sizeof(_mat))))
+		//	return E_FAIL;
+		//if (FAILED(pShader->Set_Value("g_matProj", &matProj, sizeof(_mat))))
+		//	return E_FAIL;
 		if (FAILED(pShader->Set_Value("g_matLastWVP", &m_matLastWVP, sizeof(_mat))))
 			return E_FAIL;
 

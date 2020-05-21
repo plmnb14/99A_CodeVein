@@ -34,8 +34,30 @@ HRESULT CBloodCodeSelectUI::Ready_GameObject(void * pArg)
 
 _int CBloodCodeSelectUI::Update_GameObject(_double TimeDelta)
 {
+	if (m_bIsActive && !m_bIsSubActive)
+	{
+		for (auto& iter : m_vecBloodCodeSlot)
+			iter->Set_Active(true);
+
+		m_bIsSubActive = true;
+	}
+	else if (!m_bIsActive && m_bIsSubActive)
+	{
+		CUI_Manager::Get_Instance()->Get_MouseUI()->Set_Active(false);
+
+		for (auto& iter : m_vecBloodCodeSlot)
+			iter->Set_Active(false);
+
+		m_bIsSubActive = false;
+	}
+
+	if (!m_bIsActive)
+		return NO_EVENT;
+	else
+		CUI_Manager::Get_Instance()->Get_MouseUI()->Set_Active(true);
+
 	CUI::Update_GameObject(TimeDelta);
-	
+
 	_v3 vWorldPos;
 	memcpy(vWorldPos, &m_pTransformCom->Get_WorldMat()._41, sizeof(_v3));
 	Compute_ViewZ(&vWorldPos);

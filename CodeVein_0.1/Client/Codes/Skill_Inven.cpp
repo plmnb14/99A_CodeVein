@@ -39,9 +39,6 @@ HRESULT CSkill_Inven::Ready_GameObject(void * pArg)
 
 	SetUp_Default();
 
-	
-	
-
 	SetUp_SlotPos();
 
 	return NOERROR;
@@ -67,11 +64,16 @@ _int CSkill_Inven::Update_GameObject(_double TimeDelta)
 
 		m_pExplainUI->Set_Type(SkillID_End);
 
+		CUI_Manager::Get_Instance()->Get_MouseUI()->Set_Active(false);
+
 		m_bIsSubActive = false;
 	}
 
 	if (!m_bIsActive)
 		return NO_EVENT;
+	else
+		CUI_Manager::Get_Instance()->Get_MouseUI()->Set_Active(true);
+	
 	CUI::Update_GameObject(TimeDelta);
 	m_pRendererCom->Add_RenderList(RENDER_UI, this);
 

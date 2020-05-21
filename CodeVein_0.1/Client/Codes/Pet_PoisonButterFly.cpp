@@ -43,7 +43,6 @@ _int CPet_PoisonButterFly::Update_GameObject(_double TimeDelta)
 
 	CGameObject::Update_GameObject(TimeDelta);
 
-	Play_Deformation();
 	Check_Dist();
 	Check_AniEvent();
 	Function_CoolDown();
@@ -132,10 +131,7 @@ HRESULT CPet_PoisonButterFly::Render_GameObject()
 	m_pShader->End_Shader();
 
 	if (PET_STATE_TYPE::DEAD != m_eFirstCategory)
-	{
 		Update_Collider();
-		Render_Collider();
-	}
 
 	return S_OK;
 }
@@ -181,10 +177,7 @@ HRESULT CPet_PoisonButterFly::Render_GameObject_Instancing_SetPass(CShader * pSh
 	}
 
 	if (PET_STATE_TYPE::DEAD != m_eFirstCategory)
-	{
 		Update_Collider();
-		Render_Collider();
-	}
 
 	return S_OK;
 }
@@ -305,17 +298,6 @@ void CPet_PoisonButterFly::Update_Collider()
 	return;
 }
 
-void CPet_PoisonButterFly::Render_Collider()
-{
-	for (auto& iter : m_vecAttackCol)
-		g_pManagement->Gizmo_Draw_Sphere(iter->Get_CenterPos(), iter->Get_Radius().x);
-
-	for (auto& iter : m_vecPhysicCol)
-		g_pManagement->Gizmo_Draw_Sphere(iter->Get_CenterPos(), iter->Get_Radius().x);
-
-	return;
-}
-
 void CPet_PoisonButterFly::Check_Dist()
 {
 	if (PET_STATE_TYPE::HIT == m_eFirstCategory ||
@@ -323,14 +305,13 @@ void CPet_PoisonButterFly::Check_Dist()
 		PET_STATE_TYPE::DEAD == m_eFirstCategory)
 		return;
 
-	//Function_Change_Mode();
-
-	if (true == m_bIsSummon||
-		true == m_bIsMoveAround ||
+	if (true == m_bIsSummon ||
 		true == m_tObjParam.bIsAttack ||
 		true == m_tObjParam.bIsDodge ||
 		true == m_tObjParam.bIsHit)
 		return;
+
+	Function_Find_Target();
 
 	_float fPlayerDist = V3_LENGTH(&(TARGET_TO_TRANS(m_pPlayer)->Get_Pos() - m_pTransform->Get_Pos()));
 
@@ -346,16 +327,14 @@ void CPet_PoisonButterFly::Check_Dist()
 			//목표 있음
 			if (nullptr != m_pTarget)
 			{
-				if (false == m_pTarget->Get_Enable() ||
+				if (0.f >= m_pTarget->Get_Target_Hp() ||
+					false == m_pTarget->Get_Enable() ||
 					true == m_pTarget->Get_Dead())
 				{
-					Safe_Release(m_pTarget);
 					m_pTarget = nullptr;
 
 					Function_ResetAfterAtk();
 					m_tObjParam.bCanAttack = true;
-					m_fCoolDownCur = 0.f;
-					m_fCoolDownMax = 0.f;
 
 					Function_Find_Target();
 
@@ -363,7 +342,7 @@ void CPet_PoisonButterFly::Check_Dist()
 						Check_Action();
 					else
 					{
-						Function_CalcMoveSpeed(m_fAtkRange);
+						Function_CalcMoveSpeed(m_fPersonalRange);
 
 						//특정거리보다 가까워진 경우, 속도를 잃고 idle
 						if (0.f >= m_fSkillMoveSpeed_Cur)
@@ -390,16 +369,15 @@ void CPet_PoisonButterFly::Check_Dist()
 
 				if (nullptr != m_pTarget)
 				{
-					if (false == m_pTarget->Get_Enable() ||
+					if (0.f >= m_pTarget->Get_Target_Hp() ||
+						false == m_pTarget->Get_Enable() ||
 						true == m_pTarget->Get_Dead())
 					{
-						Safe_Release(m_pTarget);
 						m_pTarget = nullptr;
 
 						Function_ResetAfterAtk();
 						m_tObjParam.bCanAttack = true;
-						m_fCoolDownCur = 0.f;
-						m_fCoolDownMax = 0.f;
+
 
 						Function_Find_Target();
 
@@ -407,7 +385,7 @@ void CPet_PoisonButterFly::Check_Dist()
 							Check_Action();
 						else
 						{
-							Function_CalcMoveSpeed(m_fAtkRange);
+							Function_CalcMoveSpeed(m_fPersonalRange);
 
 							//특정거리보다 가까워진 경우, 속도를 잃고 idle
 							if (0.f >= m_fSkillMoveSpeed_Cur)
@@ -429,7 +407,7 @@ void CPet_PoisonButterFly::Check_Dist()
 				}
 				else
 				{
-					Function_CalcMoveSpeed(m_fAtkRange);
+					Function_CalcMoveSpeed(m_fPersonalRange);
 
 					//특정거리보다 가까워진 경우, 속도를 잃고 idle
 					if (0.f >= m_fSkillMoveSpeed_Cur)
@@ -451,19 +429,17 @@ void CPet_PoisonButterFly::Check_Dist()
 		{
 			if (nullptr != m_pTarget)
 			{
-				if (false == m_pTarget->Get_Enable() ||
+				if (0.f >= m_pTarget->Get_Target_Hp() ||
+					false == m_pTarget->Get_Enable() ||
 					true == m_pTarget->Get_Dead())
 				{
-					Safe_Release(m_pTarget);
-					m_pTarget = nullptr;
 					m_eTarget = PET_TARGET_TYPE::PET_TARGET_NONE;
+					m_pTarget = nullptr;
 
 					Function_ResetAfterAtk();
 					m_tObjParam.bCanAttack = true;
-					m_fCoolDownCur = 0.f;
-					m_fCoolDownMax = 0.f;
 
-					Function_CalcMoveSpeed(m_fAtkRange);
+					Function_CalcMoveSpeed(m_fPersonalRange);
 
 					//특정거리보다 가까워진 경우, 속도를 잃고 idle
 					if (0.f >= m_fSkillMoveSpeed_Cur)
@@ -511,28 +487,11 @@ void CPet_PoisonButterFly::Check_Dist()
 		//항상 복귀, 타겟 초기화
 		if (nullptr != m_pTarget)
 		{
-			Safe_Release(m_pTarget);
 			m_pTarget = nullptr;
-
 			m_eTarget = PET_TARGET_TYPE::PET_TARGET_NONE;
 		}
 
-		//특정 거리
-		Function_CalcMoveSpeed(m_fPersonalRange);
-
-		//특정거리보다 가까워진 경우, 속도를 잃고 idle
-		if (0.f >= m_fSkillMoveSpeed_Cur)
-		{
-			m_eFirstCategory = PET_STATE_TYPE::IDLE;
-			m_eSecondCategory_IDLE = PET_IDLE_TYPE::IDLE_IDLE;
-		}
-		//특정거리보다 멀어진 경우, 여전히 달린다
-		else
-		{
-			m_bCanChase = true;
-			m_eFirstCategory = PET_STATE_TYPE::MOVE;
-			m_eSecondCategory_MOVE = PET_MOVE_TYPE::MOVE_RUN;
-		}
+		Function_Teleport_Near_Player();
 	}
 
 	return;
@@ -553,25 +512,25 @@ void CPet_PoisonButterFly::Check_Action()
 		//인지 범위 o
 		if (true == m_bInRecognitionRange)
 		{
-				//근거리 범위o
-				if (true == m_bInAtkRange)
-				{
-					//쿨타임x
-					if (true == m_tObjParam.bCanAttack)
-						m_eFirstCategory = PET_STATE_TYPE::ATTACK;
-					//쿨타임o
-					else
-					{
-						m_eFirstCategory = PET_STATE_TYPE::IDLE;
-						m_eSecondCategory_IDLE = PET_IDLE_TYPE::IDLE_IDLE;
-					}
-				}
-				//근거리 범위x
+			//근거리 범위o
+			if (true == m_bInAtkRange)
+			{
+				//쿨타임x
+				if (true == m_tObjParam.bCanAttack)
+					m_eFirstCategory = PET_STATE_TYPE::ATTACK;
+				//쿨타임o
 				else
 				{
-					m_eFirstCategory = PET_STATE_TYPE::MOVE;
-					m_eSecondCategory_MOVE = PET_MOVE_TYPE::MOVE_WALK;
+					m_eFirstCategory = PET_STATE_TYPE::IDLE;
+					m_eSecondCategory_IDLE = PET_IDLE_TYPE::IDLE_IDLE;
 				}
+			}
+			//근거리 범위x
+			else
+			{
+				m_eFirstCategory = PET_STATE_TYPE::MOVE;
+				m_eSecondCategory_MOVE = PET_MOVE_TYPE::MOVE_WALK;
+			}
 		}
 		//인지 범위x
 		else
@@ -594,10 +553,11 @@ void CPet_PoisonButterFly::Check_Action()
 				m_eSecondCategory_IDLE = PET_IDLE_TYPE::IDLE_IDLE;
 				if (nullptr != m_pTarget)
 				{
-					if (false == m_pTarget->Get_Enable() ||
+					if (0.f >= m_pTarget->Get_Target_Hp() ||
+						false == m_pTarget->Get_Enable() ||
 						true == m_pTarget->Get_Dead())
 					{
-						Safe_Release(m_pTarget);
+						m_eTarget = PET_TARGET_TYPE::PET_TARGET_NONE;
 						m_pTarget = nullptr;
 					}
 				}
@@ -606,6 +566,7 @@ void CPet_PoisonButterFly::Check_Action()
 			}
 			else
 			{
+				m_bCanChase = true;
 				m_eFirstCategory = PET_STATE_TYPE::MOVE;
 				m_eSecondCategory_MOVE = PET_MOVE_TYPE::MOVE_RUN;
 			}
@@ -656,9 +617,6 @@ void CPet_PoisonButterFly::Check_AniEvent()
 				case ATK_NORMAL_TYPE::NORMAL_5SHOT:
 					m_eState = PET_POISIONBUTTERFLY_ANI::Atk_5wayShoot;
 					break;
-				case ATK_NORMAL_TYPE::NORMAL_MIST:
-					m_eState = PET_POISIONBUTTERFLY_ANI::Atk_AllRangeShoot;
-					break;
 				case ATK_NORMAL_TYPE::NORMAL_POISONWHEELWIND:
 					m_eState = PET_POISIONBUTTERFLY_ANI::Atk_PoisonMine;
 					break;
@@ -673,9 +631,6 @@ void CPet_PoisonButterFly::Check_AniEvent()
 			{
 			case PET_POISIONBUTTERFLY_ANI::Atk_5wayShoot:
 				Play_5Shot();
-				break;
-			case PET_POISIONBUTTERFLY_ANI::Atk_AllRangeShoot:
-				Play_Mist();
 				break;
 			case PET_POISIONBUTTERFLY_ANI::Atk_PoisonMine:
 				Play_PoisonWheelWind();
@@ -743,7 +698,7 @@ void CPet_PoisonButterFly::Play_5Shot()
 		{
 			Function_ResetAfterAtk();
 			m_bCanCoolDown = true;
-			m_fCoolDownMax = 0.8f;
+			m_fCoolDownMax = CALC::Random_Num(5,10) * 0.1f;
 
 			return;
 		}
@@ -777,8 +732,7 @@ void CPet_PoisonButterFly::Play_5Shot()
 					m_tObjParam.bCanAttack = true;
 					m_bCanCoolDown = false;
 					m_bIsCoolDown = false;
-					m_fCoolDownCur = 0.f;
-					m_fCoolDownMax = 0.f;
+					m_eSecondCategory_IDLE = PET_IDLE_TYPE::IDLE_IDLE;
 
 					Play_Idle();
 
@@ -794,54 +748,11 @@ void CPet_PoisonButterFly::Play_5Shot()
 				m_tObjParam.bCanAttack = true;
 				m_bCanCoolDown = false;
 				m_bIsCoolDown = false;
-				m_fCoolDownCur = 0.f;
-				m_fCoolDownMax = 0.f;
+				m_eSecondCategory_IDLE = PET_IDLE_TYPE::IDLE_IDLE;
+
 				Play_Idle();
 
 				return;
-			}
-		}
-	}
-
-	return;
-}
-
-void CPet_PoisonButterFly::Play_Mist()
-{
-	_double AniTime = m_pMesh->Get_TrackInfo().Position;
-	_v3 vBirth, vLook;
-	_float fLength = 1.f;
-
-	if (true == m_tObjParam.bCanAttack)
-	{
-		m_tObjParam.bCanAttack = false;
-		m_tObjParam.bIsAttack = true;
-	}
-	else
-	{
-		//전 방향으로 발사, 기모아서 방출하는 느낌
-		if (m_pMesh->Is_Finish_Animation(0.955f))
-		{
-			Function_ResetAfterAtk();
-			m_bCanCoolDown = true;
-			m_fCoolDownMax = 1.0f;
-
-			return;
-		}
-		else if (6.800f <= AniTime)
-		{
-			if (false == m_bEventTrigger[0])
-			{
-				m_bEventTrigger[0] = true;
-				m_tObjParam.bSuperArmor = true;
-
-				_mat matTemp = *m_matBone[Bone_Tail6] * m_pTransform->Get_WorldMat(); //뼈위치* 월드
-
-				memcpy(&vBirth, &matTemp._41, sizeof(_v3)); //생성위치
-				memcpy(&vLook, &matTemp._21, sizeof(_v3)); //뼈의 룩
-				vBirth += (vLook * fLength); //생성위치 = 생성위치 +(룩*길이)
-
-				CObjectPool_Manager::Get_Instance()->Create_Object(L"Pet_Bullet", &PET_BULLET_STATUS(PET_BULLET_TYPE::PET_BULLET_POISON, vBirth, m_pTransform->Get_Axis(AXIS_Z), 6.f, 5.f));
 			}
 		}
 	}
@@ -866,7 +777,7 @@ void CPet_PoisonButterFly::Play_PoisonWheelWind()
 		{
 			Function_ResetAfterAtk();
 			m_bCanCoolDown = true;
-			m_fCoolDownMax = 1.0f;
+			m_fCoolDownMax = CALC::Random_Num(5, 10) * 0.1f;
 
 			return;
 		}
@@ -1163,9 +1074,18 @@ void CPet_PoisonButterFly::Play_Deformation()
 {
 	if (false == m_bCanSummon)
 	{
+		Function_ResetAfterAtk();
+
+		m_tObjParam.bCanAttack = true;
+
+		m_bCanCoolDown = false;
+		m_bIsCoolDown = false;
+
 		m_bCanSummon = true;
 		m_bIsSummon = true;
+
 		m_pMesh->Reset_OldIndx();
+
 		m_eFirstCategory = PET_STATE_TYPE::IDLE;
 		m_eSecondCategory_IDLE = PET_IDLE_TYPE::IDLE_STAND;
 		m_eState = PET_POISIONBUTTERFLY_ANI::Appearance_End;
@@ -1177,7 +1097,11 @@ void CPet_PoisonButterFly::Play_Deformation()
 	{
 		if (m_pMesh->Is_Finish_Animation(0.95f))
 		{
-			Function_ResetAfterAtk();
+
+			m_eFirstCategory = PET_STATE_TYPE::IDLE;
+			m_eSecondCategory_IDLE = PET_IDLE_TYPE::IDLE_IDLE;
+			m_eState = PET_POISIONBUTTERFLY_ANI::Idle;
+			m_bCanSummon = false;
 			m_bIsSummon = false;
 			return;
 		}
@@ -1188,30 +1112,18 @@ void CPet_PoisonButterFly::Play_Deformation()
 
 void CPet_PoisonButterFly::Play_Idle()
 {
-	if (PET_IDLE_TYPE::IDLE_STAND == m_eSecondCategory_IDLE)
+	switch (m_eSecondCategory_IDLE)
 	{
-		Play_Deformation();
-	}
-	else
-	{
+	case PET_IDLE_TYPE::IDLE_IDLE:
 		m_eState = PET_POISIONBUTTERFLY_ANI::Idle;
-
-		switch (m_eTarget)
-		{
-		case PET_TARGET_TYPE::PET_TARGET_BOSS:
-		case PET_TARGET_TYPE::PET_TARGET_MONSTER:
-			Function_RotateBody(m_pTarget);
-			break;
-
-		case PET_TARGET_TYPE::PET_TARGET_ITEM:
-			Function_RotateBody(m_pTarget);
-			break;
-
-		case PET_TARGET_TYPE::PET_TARGET_NONE:
+		if (PET_TARGET_TYPE::PET_TARGET_NONE == m_eTarget)
 			Function_RotateBody(m_pPlayer);
-			break;
-		}
-
+		else
+			Function_RotateBody(m_pTarget);
+		break;
+	case PET_IDLE_TYPE::IDLE_STAND:
+		Play_Deformation();
+		break;
 	}
 
 	return;
@@ -1243,80 +1155,6 @@ void CPet_PoisonButterFly::Play_Move()
 			break;
 		}
 		break;
-	case PET_MOVE_TYPE::MOVE_ALERT:
-		switch (m_eTarget)
-		{
-		case PET_TARGET_TYPE::PET_TARGET_BOSS:
-		case PET_TARGET_TYPE::PET_TARGET_MONSTER:
-			if (true == m_bCanMoveAround)
-			{
-				m_bCanMoveAround = false;
-				m_bIsMoveAround = true;
-
-				m_bCanCoolDown = true;
-				m_fCoolDownMax = CALC::Random_Num(1, 3) * 1.0f;
-
-				m_fSkillMoveSpeed_Cur = 2.5f;
-				m_fSkillMoveAccel_Cur = 0.f;
-				m_fSkillMoveMultiply = 0.5f;
-
-				switch (CALC::Random_Num(PET_POISIONBUTTERFLY_ANI::Walk_R, PET_POISIONBUTTERFLY_ANI::Walk_B))
-				{
-				case PET_POISIONBUTTERFLY_ANI::Walk_R:
-				case PET_POISIONBUTTERFLY_ANI::Walk_F:
-					m_eState = PET_POISIONBUTTERFLY_ANI::Walk_R;
-					break;
-				case PET_POISIONBUTTERFLY_ANI::Walk_L:
-				case PET_POISIONBUTTERFLY_ANI::Walk_B:
-					m_eState = PET_POISIONBUTTERFLY_ANI::Walk_L;
-					break;
-				}
-			}
-			else
-			{
-				if (PET_POISIONBUTTERFLY_ANI::Walk_R == m_eState)
-					Function_MoveAround(m_pTarget, m_fSkillMoveSpeed_Cur, m_pTransform->Get_Axis(AXIS_X));
-				else if (PET_POISIONBUTTERFLY_ANI::Walk_L == m_eState)
-					Function_MoveAround(m_pTarget, m_fSkillMoveSpeed_Cur, -m_pTransform->Get_Axis(AXIS_X));
-			}
-			break;
-		case PET_TARGET_TYPE::PET_TARGET_ITEM:
-			break;
-		case PET_TARGET_TYPE::PET_TARGET_NONE:
-			if (true == m_bCanMoveAround)
-			{
-				m_bCanMoveAround = false;
-				m_bIsMoveAround = true;
-
-				m_bCanCoolDown = true;
-				m_fCoolDownMax = CALC::Random_Num(2, 4) * 1.0f;
-
-				m_fSkillMoveSpeed_Cur = 2.5f;
-				m_fSkillMoveAccel_Cur = 0.f;
-				m_fSkillMoveMultiply = 0.5f;
-
-				switch (CALC::Random_Num(PET_POISIONBUTTERFLY_ANI::Walk_R, PET_POISIONBUTTERFLY_ANI::Walk_B))
-				{
-				case PET_POISIONBUTTERFLY_ANI::Walk_R:
-				case PET_POISIONBUTTERFLY_ANI::Walk_F:
-					m_eState = PET_POISIONBUTTERFLY_ANI::Walk_R;
-					break;
-				case PET_POISIONBUTTERFLY_ANI::Walk_L:
-				case PET_POISIONBUTTERFLY_ANI::Walk_B:
-					m_eState = PET_POISIONBUTTERFLY_ANI::Walk_L;
-					break;
-				}
-			}
-			else
-			{
-				if (PET_POISIONBUTTERFLY_ANI::Walk_R == m_eState)
-					Function_MoveAround(m_pPlayer, m_fSkillMoveSpeed_Cur, m_pTransform->Get_Axis(AXIS_X));
-				else if (PET_POISIONBUTTERFLY_ANI::Walk_L == m_eState)
-					Function_MoveAround(m_pPlayer, m_fSkillMoveSpeed_Cur, -m_pTransform->Get_Axis(AXIS_X));
-			}
-			break;
-		}
-		break;
 	case PET_MOVE_TYPE::MOVE_RUN:
 		if (true == m_bCanChase)
 		{
@@ -1326,6 +1164,7 @@ void CPet_PoisonButterFly::Play_Move()
 			m_fSkillMoveAccel_Cur = 0.f;
 			m_fSkillMoveMultiply = 1.0f;
 		}
+
 		switch (m_eTarget)
 		{
 		case PET_TARGET_TYPE::PET_TARGET_BOSS:
@@ -1338,40 +1177,6 @@ void CPet_PoisonButterFly::Play_Move()
 			Function_RotateBody(m_pPlayer);
 			Function_Movement(m_fSkillMoveSpeed_Cur, m_pTransform->Get_Axis(AXIS_Z));
 			break;
-		}
-		break;
-	case MOVE_DODGE:
-		if (true == m_tObjParam.bCanDodge)
-		{
-			Function_ResetAfterAtk();
-			m_tObjParam.bCanDodge = false;
-			m_tObjParam.bIsDodge = true;
-			m_eState = PET_POISIONBUTTERFLY_ANI::Dodge;
-		}
-		else
-		{
-			if (m_pMesh->Is_Finish_Animation(0.95f))
-			{
-				m_eFirstCategory = PET_STATE_TYPE::IDLE;
-				m_tObjParam.bCanAttack = true;
-				Function_ResetAfterAtk();
-
-				return;
-			}
-
-			if (0.900f < AniTime && 1.300f > AniTime)
-			{
-				if (m_bEventTrigger[0] == false)
-				{
-					m_bEventTrigger[0] = true;
-					m_fSkillMoveSpeed_Cur = 10.f;
-					m_fSkillMoveAccel_Cur = 0.f;
-					m_fSkillMoveMultiply = 0.25f;
-				}
-
-				Function_Movement(m_fSkillMoveSpeed_Cur, -m_pTransform->Get_Axis(AXIS_Z));
-				Function_DecreMoveMent(m_fSkillMoveMultiply);
-			}
 		}
 		break;
 	}
@@ -1499,8 +1304,6 @@ HRESULT CPet_PoisonButterFly::Ready_Status(void * pArg)
 	
 	m_eType = PET_TYPE::PET_POISONBUTTERFLY;
 	m_eFirstCategory = PET_STATE_TYPE::IDLE;
-	m_eNowPetMode = PET_MODE_TYPE::PET_MODE_ATK;
-	m_eOldPetMdoe = PET_MODE_TYPE::PET_MODE_END;
 	m_eTarget = PET_TARGET_TYPE::PET_TARGET_NONE;
 	m_eFBLR = FBLR::FRONT;
 
@@ -1523,8 +1326,6 @@ HRESULT CPet_PoisonButterFly::Ready_Status(void * pArg)
 	m_bIsCoolDown = false; //쿨타임 진행중 여부
 	m_bCanChooseAtkType = true; //공격타입 고정용
 	m_bIsCombo = false; //콤보 진행중
-	m_bCanMoveAround = true; //경계 여부
-	m_bIsMoveAround = false; //경게 진행중
 	m_bCanIdle = true; //일상 가능
 	m_bIsIdle = false; //일상 진행중 아님
 

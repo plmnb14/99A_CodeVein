@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "..\Headers\ExplainArmorUI.h"
+#include "UI_Manager.h"
 
 
 CExplainArmorUI::CExplainArmorUI(_Device pDevice)
@@ -23,93 +24,63 @@ HRESULT CExplainArmorUI::Ready_GameObject(void * pArg)
 	if (FAILED(Add_Component()))
 		return E_FAIL;
 	CUI::Ready_GameObject(pArg);
+
+	SetUp_Default();
 	return NOERROR;
 }
 
 _int CExplainArmorUI::Update_GameObject(_double TimeDelta)
 {
-	CUI::Update_GameObject(TimeDelta);
+	if (m_bIsActive && !m_bIsSubActive)
+	{
+		SetUp_SubUI_Active(true);
+		m_bIsSubActive = true;
+	}
+	else if (!m_bIsActive && m_bIsSubActive)
+	{
+		SetUp_SubUI_Active(false);
+		m_bIsSubActive = false;
+	}
 
-	m_pRendererCom->Add_RenderList(RENDER_UI, this);
-
-	D3DXMatrixOrthoLH(&m_matProj, WINCX, WINCY, 0.f, 1.0f);
-
-	//	ArmorAll_Drape_DarkNightHook,		// 암야의 낭아
-	//	ArmorAll_Gauntlet_DarkNightHook,	// 암야의 갈고리
-	//	ArmorAll_Gauntlet_MangSikHook,		// 망식의 갈고리
-	//	ArmorAll_LongCoat_DarkNightSpear,	// 암야의 돌격창
-	//	ArmorAll_LongCoat_WhiteSilver,		// 백은의 의장
-	//	ArmorAll_LongCoat_QueenKiller,		// 퀸 킬러(여왕 토벌대 아장)_가시형
-	//	ArmorAll_Muffler_DarkNightSpike,	// 암야의 가시
-	//	ArmorAll_Muffler_WhiteGraze,		// 화이트 그레이즈
-	//
-	//	ArmorAll_END
-
-	switch (m_tArmorParam.iArmorName)
-	{
-	case ArmorAll_Drape_DarkNightHook:
-	{
-		m_iInfoIdx = 1;
-		m_iArmorIconIdx = 9;
-	}
-		break;
-	case ArmorAll_Gauntlet_DarkNightHook:
-	{
-		m_iInfoIdx = 2;
-		m_iArmorIconIdx = 10;
-	}
-		break;
-	case ArmorAll_Gauntlet_MangSikHook:
-	{
-		m_iInfoIdx = 3;
-		m_iArmorIconIdx = 11;
-	}	
-		break;
-	case ArmorAll_LongCoat_DarkNightSpear:
-	{
-		m_iInfoIdx = 4;
-		m_iArmorIconIdx = 12;
-	}	
-		break;
-	case ArmorAll_LongCoat_WhiteSilver:
-	{
-		m_iInfoIdx = 5;
-		m_iArmorIconIdx = 13;
-	}
-	break;
-	case ArmorAll_LongCoat_QueenKiller:
-	{
-		m_iInfoIdx = 6;
-		m_iArmorIconIdx = 14;
-	}
-	break;
-	case ArmorAll_Muffler_DarkNightSpike:
-	{
-		m_iInfoIdx = 7;
-		m_iArmorIconIdx = 15;
-	}
-	break;
-	case ArmorAll_Muffler_WhiteGraze:
-	{
-		m_iInfoIdx = 8;
-		m_iArmorIconIdx = 16;
-	}
-	break;
-	}
 
 	if (!m_bIsActive)
 	{
 		m_tArmorParam.iArmorType = ARMOR_End;
 		m_tArmorParam.fDef = 0.f;
 		m_tArmorParam.iPrice = 0;
+
+		return NO_EVENT;
 	}
-		
+	else
+	{
+		m_pReinForceFont->Update_NumberValue(_float(m_tArmorParam.iReinforce));
+		m_pDefFont->Update_NumberValue(_float(m_tArmorParam.fDef));
+		m_pPlusDefFont->Update_NumberValue(_float(m_tArmorParam.fPlusDef));
+		m_pHPFont->Update_NumberValue(_float(m_tArmorParam.fHP));
+		m_pPlusHPFont->Update_NumberValue(_float(m_tArmorParam.fPlusHP));
+
+		m_pReinForceFont->Set_UI_Pos(600.f, 255.f);	
+		m_pPlusDefFont->Set_UI_Pos(600.f, 277.f);
+		m_pPlusHPFont->Set_UI_Pos(600.f, 299.f);	
+		m_pDefFont->Set_UI_Pos(600.f, 425.f);
+		m_pHPFont->Set_UI_Pos(600.f, 520.f);
+		SetUp_SubUI_Active(true);
+	}
+
+	CUI::Update_GameObject(TimeDelta);
+
+	m_pRendererCom->Add_RenderList(RENDER_UI, this);
+
+	D3DXMatrixOrthoLH(&m_matProj, WINCX, WINCY, 0.f, 1.0f);
 
 	return NO_EVENT;
 }
 
 _int CExplainArmorUI::Late_Update_GameObject(_double TimeDelta)
 {
+	if (!m_bIsActive)
+		return NO_EVENT;
+
 	D3DXMatrixIdentity(&m_matWorld);
 	D3DXMatrixIdentity(&m_matView);
 
@@ -135,6 +106,8 @@ HRESULT CExplainArmorUI::Render_GameObject()
 
 	g_pManagement->Set_Transform(D3DTS_VIEW, m_matView);
 	g_pManagement->Set_Transform(D3DTS_PROJECTION, m_matProj);
+
+	SetUp_TexIdx();
 
 	_uint iIndex = 0;
 	LOOP(3)
@@ -224,6 +197,109 @@ HRESULT CExplainArmorUI::SetUp_ConstantTable(_uint iIndex)
 		return E_FAIL;
 
 	return NOERROR;
+}
+
+void CExplainArmorUI::SetUp_Default()
+{
+	m_pReinForceFont = static_cast<CPlayerFontUI*>(g_pManagement->Clone_GameObject_Return(L"GameObject_PlayerFontUI", nullptr));
+	m_pReinForceFont->Set_UI_Size(15.f, 30.f);
+	m_pReinForceFont->Set_ViewZ(m_fViewZ - 0.1f);
+	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pReinForceFont, SCENE_MORTAL, L"Layer_PlayerUI", nullptr);
+
+	m_pDefFont = static_cast<CPlayerFontUI*>(g_pManagement->Clone_GameObject_Return(L"GameObject_PlayerFontUI", nullptr));
+	m_pDefFont->Set_UI_Size(15.f, 30.f);
+	m_pDefFont->Set_ViewZ(m_fViewZ - 0.1f);
+	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pDefFont, SCENE_MORTAL, L"Layer_PlayerUI", nullptr);
+
+	m_pPlusDefFont = static_cast<CPlayerFontUI*>(g_pManagement->Clone_GameObject_Return(L"GameObject_PlayerFontUI", nullptr));
+	m_pPlusDefFont->Set_UI_Size(15.f, 30.f);
+	m_pPlusDefFont->Set_ViewZ(m_fViewZ - 0.1f);
+	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pPlusDefFont, SCENE_MORTAL, L"Layer_PlayerUI", nullptr);
+
+	m_pHPFont = static_cast<CPlayerFontUI*>(g_pManagement->Clone_GameObject_Return(L"GameObject_PlayerFontUI", nullptr));
+	m_pHPFont->Set_UI_Size(15.f, 30.f);
+	m_pHPFont->Set_ViewZ(m_fViewZ - 0.1f);
+	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pHPFont, SCENE_MORTAL, L"Layer_PlayerUI", nullptr);
+
+	m_pPlusHPFont = static_cast<CPlayerFontUI*>(g_pManagement->Clone_GameObject_Return(L"GameObject_PlayerFontUI", nullptr));
+	m_pPlusHPFont->Set_UI_Size(15.f, 30.f);
+	m_pPlusHPFont->Set_ViewZ(m_fViewZ - 0.1f);
+	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pPlusHPFont, SCENE_MORTAL, L"Layer_PlayerUI", nullptr);
+}
+
+void CExplainArmorUI::SetUp_SubUI_Active(_bool bIsActive)
+{
+	m_pReinForceFont->Set_Active(bIsActive);
+	m_pDefFont->Set_Active(bIsActive);
+	m_pPlusDefFont->Set_Active(bIsActive);
+	m_pHPFont->Set_Active(bIsActive);
+	m_pPlusHPFont->Set_Active(bIsActive);
+}
+
+void CExplainArmorUI::SetUp_TexIdx()
+{
+	//	ArmorAll_Drape_DarkNightHook,		// 암야의 낭아
+	//	ArmorAll_Gauntlet_DarkNightHook,	// 암야의 갈고리
+	//	ArmorAll_Gauntlet_MangSikHook,		// 망식의 갈고리
+	//	ArmorAll_LongCoat_DarkNightSpear,	// 암야의 돌격창
+	//	ArmorAll_LongCoat_WhiteSilver,		// 백은의 의장
+	//	ArmorAll_LongCoat_QueenKiller,		// 퀸 킬러(여왕 토벌대 아장)_가시형
+	//	ArmorAll_Muffler_DarkNightSpike,	// 암야의 가시
+	//	ArmorAll_Muffler_WhiteGraze,		// 화이트 그레이즈
+	//
+	//	ArmorAll_END
+
+	switch (m_tArmorParam.iArmorName)
+	{
+	case ArmorAll_Drape_DarkNightHook:
+	{
+		m_iInfoIdx = 1;
+		m_iArmorIconIdx = 9;
+	}
+	break;
+	case ArmorAll_Gauntlet_DarkNightHook:
+	{
+		m_iInfoIdx = 2;
+		m_iArmorIconIdx = 10;
+	}
+	break;
+	case ArmorAll_Gauntlet_MangSikHook:
+	{
+		m_iInfoIdx = 3;
+		m_iArmorIconIdx = 11;
+	}
+	break;
+	case ArmorAll_LongCoat_DarkNightSpear:
+	{
+		m_iInfoIdx = 4;
+		m_iArmorIconIdx = 12;
+	}
+	break;
+	case ArmorAll_LongCoat_WhiteSilver:
+	{
+		m_iInfoIdx = 5;
+		m_iArmorIconIdx = 13;
+	}
+	break;
+	case ArmorAll_LongCoat_QueenKiller:
+	{
+		m_iInfoIdx = 6;
+		m_iArmorIconIdx = 14;
+	}
+	break;
+	case ArmorAll_Muffler_DarkNightSpike:
+	{
+		m_iInfoIdx = 7;
+		m_iArmorIconIdx = 15;
+	}
+	break;
+	case ArmorAll_Muffler_WhiteGraze:
+	{
+		m_iInfoIdx = 8;
+		m_iArmorIconIdx = 16;
+	}
+	break;
+	}
 }
 
 CExplainArmorUI * CExplainArmorUI::Create(_Device pGraphic_Device)
