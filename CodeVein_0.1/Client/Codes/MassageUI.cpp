@@ -236,10 +236,10 @@ void CMassageUI::SetUp_State(_double TimeDelta)
 	// 일정 값에 다다르면 불값을 false로 바꿔서 멈추게 한다.
 	// 전체 출력 시간이 약 3초 가량 되면 랜더를 멈춘다.
 
-	if (g_pInput_Device->Key_Down(DIK_O))
+	/*if (g_pInput_Device->Key_Down(DIK_O))
 	{
 		m_bCheck_Play_BossnameUI = true;
-	}
+	}*/
 	/*if (false == m_bPullAlpha)
 	{
 		if (true == m_bTestbool)

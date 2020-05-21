@@ -59,8 +59,10 @@ _int CScene_Stage_03::Update_Scene(_double TimeDelta)
 	Create_Fog(TimeDelta);
 	Create_Dust(TimeDelta);
 
-	if (g_pInput_Device->Key_Down(DIK_I))
+	if (false == m_fCheck_ColleagueSummons && g_pInput_Device->Key_Down(DIK_O))
 	{
+		m_fCheck_ColleagueSummons = true;
+
 		CGameObject* pInstance = nullptr;
 
 		pInstance = g_pManagement->Clone_GameObject_Return(L"GameObject_Colleague",
