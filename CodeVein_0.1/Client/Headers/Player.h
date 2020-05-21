@@ -156,6 +156,8 @@ private:
 	DRAIN_STATE				m_eDrainState = DRAIN_END;
 	ACTIVE_WEAPON_SLOT		m_eActiveSlot = WPN_SLOT_A;
 
+	_float					m_FallingTimer = 0.f;
+
 private:
 	_bool					m_bOldMoveDierection[MOVE_End] = {};
 
