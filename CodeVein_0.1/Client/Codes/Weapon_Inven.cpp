@@ -205,6 +205,7 @@ void CWeapon_Inven::Click_Inven()
 			if (g_pInput_Device->Get_DIMouseState(CInput_Device::DIM_LB) &&
 				!pSlot->Get_Select())
 			{
+				CUI_Manager::Get_Instance()->Stop_Play_UISound(L"Slot_Regist.ogg", CSoundManager::CHANNELID::UI_Click, CSoundManager::Effect_Sound);
 				Regist_Weapon(pSlot);			
 			}
 			/*if (g_pInput_Device->Get_DIMouseState(CInput_Device::DIM_RB) &&
@@ -299,7 +300,7 @@ void CWeapon_Inven::UnRegist_Weapon(CWeapon_Slot * pWeaponSlot)
 
 		m_pPlayer->Set_WeaponSlot((CPlayer::ACTIVE_WEAPON_SLOT)0, WEAPON_DATA::WPN_DATA_End);
 
-		g_pSoundManager->Play_Sound(L"UI_CommonClick.wav", CSoundManager::WeaponInven_UnRegist_Slot01, CSoundManager::Effect_Sound);
+		CUI_Manager::Get_Instance()->Stop_Play_UISound(L"Slot_Regist.ogg", CSoundManager::CHANNELID::UI_Click, CSoundManager::Effect_Sound);
 	}
 	else if (pWeaponSlot->Get_WeaponParam().iWeaponName == m_UseWeaponParam[1].iWeaponName)
 	{
@@ -317,7 +318,7 @@ void CWeapon_Inven::UnRegist_Weapon(CWeapon_Slot * pWeaponSlot)
 
 		m_pPlayer->Set_WeaponSlot((CPlayer::ACTIVE_WEAPON_SLOT)1, WEAPON_DATA::WPN_DATA_End);
 
-		g_pSoundManager->Play_Sound(L"UI_CommonClick.wav", CSoundManager::WeaponInven_UnRegist_Slot02, CSoundManager::Effect_Sound);
+		CUI_Manager::Get_Instance()->Stop_Play_UISound(L"Slot_Regist.ogg", CSoundManager::CHANNELID::UI_Click, CSoundManager::Effect_Sound);
 	}
 	else
 		return;
@@ -728,6 +729,7 @@ void CWeapon_Inven::Late_Init()
 
 	Add_Weapon(tWeaponParam);
 	Regist_Weapon(m_vecWeaponSlot[0]);
+
 	pTotal_Inven->Set_WeaponParam(0, tWeaponParam);
 	m_vecWeaponSlot[0]->Set_Select(true);
 

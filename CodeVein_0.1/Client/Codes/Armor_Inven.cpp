@@ -197,7 +197,7 @@ void CArmor_Inven::Click_Inven()
 				
 				m_pPlayer->Set_ArmorSlot((ARMOR_All_DATA)pSlot->Get_ArmorParam().iArmorName);
 				
-				g_pSoundManager->Play_Sound(L"UI_CommonHover.wav", CSoundManager::ArmorInven_Regist_Slot, CSoundManager::Effect_Sound);
+				CUI_Manager::Get_Instance()->Stop_Play_UISound(L"Slot_Regist.ogg", CSoundManager::CHANNELID::UI_Click, CSoundManager::Effect_Sound);
 			}			
 		}
 		

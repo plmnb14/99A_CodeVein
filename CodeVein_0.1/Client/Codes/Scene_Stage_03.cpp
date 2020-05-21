@@ -45,8 +45,9 @@ HRESULT CScene_Stage_03::Ready_Scene()
 	//CScriptManager::Get_Instance()->Set_StageIdx(3);
 	//CScriptManager::Get_Instance()->Ready_Script_DynamicObject(3);
 
-	g_pSoundManager->Stop_Sound(CSoundManager::Background_01);
-	g_pSoundManager->Play_BGM(L"SE_AMB_St01_Base_Out.ogg");
+	g_pSoundManager->Set_Volume(CSoundManager::BGM_Volume, 1.f);
+	g_pSoundManager->Stop_Sound(CSoundManager::Ambient_Loop);
+	g_pSoundManager->Play_BGM(L"SE_AMB_St01_Base_Out.ogg", true);
 
 	CParticleMgr::Get_Instance()->Clear_Fog();
 

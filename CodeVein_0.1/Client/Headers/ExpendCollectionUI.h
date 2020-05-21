@@ -23,7 +23,6 @@ private:
 	void	SetUp_Default();
 	void	Update_SubUI();
 	void	Click_SubUI();
-	void	Click_ExpendSlot_Sound(_uint iIdx);
 
 private:
 	vector<CExpendOptionUI*>	m_vecOption;

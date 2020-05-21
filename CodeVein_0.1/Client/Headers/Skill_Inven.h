@@ -34,8 +34,6 @@ private:
 	void					Click_SubUI();
 	void					Search_Regist_Skill();
 	void					Reset_Select_Slot();
-	void					Regist_Slot_Sound(_uint iIdx);
-	void					UnRegist_Slot_Sound(_uint iIdx);
 	void					SetUp_SlotPos();
 	void					SetUp_SubUI_Active(_bool bIsActive);
 

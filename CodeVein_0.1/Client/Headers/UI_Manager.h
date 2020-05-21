@@ -183,6 +183,9 @@ public:
 	// 동료 활성화/비활성화 UI
 	CCalling_Colleague*		Get_Calling_Colleague() { return m_pCalling_Colleague; }
 
+public:
+	void Stop_Play_UISound(TCHAR* pSoundKey, CSoundManager::CHANNELID eID, CSoundManager::SOUND _eSoundGroup);
+
 private:
 	_uint m_uiCoundItem = 0;
 	_bool m_bTest = false;

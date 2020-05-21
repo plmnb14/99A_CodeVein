@@ -188,7 +188,7 @@ void CReleaseQuestionUI::Click_Option()
 				
 				m_bIsRelease = true;
 
-				g_pSoundManager->Play_Sound(L"UI_SkillRelease.ogg", CSoundManager::CHANNELID::Skill_Release_OK, CSoundManager::Effect_Sound);
+				CUI_Manager::Get_Instance()->Stop_Play_UISound(L"Get_Skill.ogg", CSoundManager::CHANNELID::UI_Open_Close, CSoundManager::Effect_Sound);
 			}
 			else if ((1 == m_vecOption[i]->Get_UI_Index()) && g_pInput_Device->Get_DIMouseState(CInput_Device::DIM_LB))
 			{
@@ -196,7 +196,7 @@ void CReleaseQuestionUI::Click_Option()
 				m_bIsActive = false;
 				m_bIsRelease = false;
 
-				g_pSoundManager->Play_Sound(L"UI_UpgradeFailed.wav", CSoundManager::CHANNELID::Skill_Release_Cancel, CSoundManager::Effect_Sound);
+				CUI_Manager::Get_Instance()->Stop_Play_UISound(L"UI_Open.ogg", CSoundManager::CHANNELID::UI_Open_Close, CSoundManager::Effect_Sound);
 			}
 		}
 		else

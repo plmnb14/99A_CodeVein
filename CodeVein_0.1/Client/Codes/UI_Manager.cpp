@@ -424,6 +424,12 @@ void CUI_Manager::Set_BossUI_Active(_bool bIsActive)
 	}
 }
 
+void CUI_Manager::Stop_Play_UISound(TCHAR * pSoundKey, CSoundManager::CHANNELID eID, CSoundManager::SOUND _eSoundGroup)
+{
+	g_pSoundManager->Stop_Sound(eID);
+	g_pSoundManager->Play_Sound(pSoundKey, eID, _eSoundGroup);
+}
+
 void CUI_Manager::Free()
 {
 }

@@ -43,6 +43,7 @@ _int CGeneralStoreSellUI::Update_GameObject(_double TimeDelta)
 		m_pExpendSellUI->Set_Active(true);
 		SetUp_SubUI_Active(true);
 		m_bIsSubActive = true;
+		
 	}
 	else if (!m_bIsActive && m_bIsSubActive)
 	{
@@ -50,6 +51,7 @@ _int CGeneralStoreSellUI::Update_GameObject(_double TimeDelta)
 		m_pMtrlSellUI->Set_Active(false);
 		SetUp_SubUI_Active(false);
 		m_bIsSubActive = false;
+		
 	}
 	if (!m_bIsActive)
 		return NO_EVENT;
