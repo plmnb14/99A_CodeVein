@@ -61,26 +61,6 @@ _int CScene_Stage_01::Update_Scene(_double TimeDelta)
 
 HRESULT CScene_Stage_01::Render_Scene()
 {
-	if (g_pInput_Device->Key_Down(DIK_H))
-	{
-		g_eSceneID_Cur = SCENE_STAGE_BASE;
-		g_eSTeleportID_Cur = TeleportID_Home_1;
-
-		CGameObject* pInstance = g_pManagement->Get_GameObjectBack(L"Layer_Player", SCENE_MORTAL);
-
-		pInstance->Set_Enable(false);
-
-		g_pManagement->Clear_LightList();
-
-		if (FAILED(g_pManagement->Clear_Instance(SCENE_STAGE)))
-			return -1;
-
-		CScene* pScene = CScene_Stage_Base::Create(m_pGraphic_Device, m_bLoadStaticMesh);
-
-		if (FAILED(g_pManagement->SetUp_CurrentScene(pScene)))
-			return -1;
-	}
-
 	return S_OK;
 }
 
@@ -101,6 +81,8 @@ HRESULT CScene_Stage_01::Ready_Layer_Player(const _tchar * pLayerTag)
 	if (FAILED(g_pManagement->Add_Layer(SCENE_STAGE, L"Layer_Pet")))
 		return E_FAIL;
 	if (FAILED(g_pManagement->Add_Layer(SCENE_STAGE, L"Layer_Item")))
+		return E_FAIL;
+	if (FAILED(g_pManagement->Add_Layer(SCENE_STAGE, L"Layer_Trap")))
 		return E_FAIL;
 
 	CPlayer* pInstance = static_cast<CPlayer*>(g_pManagement->Get_GameObjectBack(L"Layer_Player", SCENE_MORTAL));

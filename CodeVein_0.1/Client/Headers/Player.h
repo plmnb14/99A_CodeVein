@@ -138,8 +138,11 @@ public:
 public:
 	virtual void Set_OnNPCUI(_bool _bOnNPCUI) { m_bOnUI_NPCTalk = _bOnNPCUI;}
 	virtual void Set_YakumoUI(_bool _bYakumoUI) { m_bOnYakumo_UI = _bYakumoUI; };
-	virtual void Set_YokumoUI(_bool _bYokumoUI) { m_bOnYakumo_UI = _bYokumoUI; };
+	virtual void Set_YokumoUI(_bool _bYokumoUI) { m_bOnYokumo_UI = _bYokumoUI; };
 	virtual void Set_Jack(_bool _bJacKUI) { m_bOnJack_UI = _bJacKUI; };
+
+	virtual _bool Get_YakumoUI() { return m_bOnYakumo_UI; }
+	virtual _bool Get_YokumoUI() { return m_bOnYokumo_UI; }
 
 public:
 	virtual void Reset_OldAnimations();

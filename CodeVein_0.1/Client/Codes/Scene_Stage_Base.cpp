@@ -126,6 +126,8 @@ HRESULT CScene_Stage_Base::Ready_Player()
 		return E_FAIL;
 	if (FAILED(g_pManagement->Add_Layer(SCENE_STAGE, L"Layer_Item")))
 		return E_FAIL;
+	if (FAILED(g_pManagement->Add_Layer(SCENE_STAGE, L"Layer_Trap")))
+		return E_FAIL;
 
 	CPlayer* pInstance = static_cast<CPlayer*>(g_pManagement->Get_GameObjectBack(L"Layer_Player", SCENE_MORTAL));
 
@@ -134,10 +136,10 @@ HRESULT CScene_Stage_Base::Ready_Player()
 
 	pInstance = nullptr;
 
-	if (FAILED(g_pManagement->Add_GameObject_ToLayer(L"GameObject_PlayerHP", SCENE_MORTAL, L"Layer_PlayerUI")))
-		return E_FAIL;
-	if (FAILED(g_pManagement->Add_GameObject_ToLayer(L"GameObject_PlayerST", SCENE_MORTAL, L"Layer_PlayerUI")))
-		return E_FAIL;
+	//if (FAILED(g_pManagement->Add_GameObject_ToLayer(L"GameObject_PlayerHP", SCENE_MORTAL, L"Layer_PlayerUI")))
+	//	return E_FAIL;
+	//if (FAILED(g_pManagement->Add_GameObject_ToLayer(L"GameObject_PlayerST", SCENE_MORTAL, L"Layer_PlayerUI")))
+	//	return E_FAIL;
 
 	return S_OK;
 }
