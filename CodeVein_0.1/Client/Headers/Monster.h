@@ -120,12 +120,12 @@ public:
 		_bool				bSpawnOnTrigger = false;
 		_v3					vPos = {};
 		_v3					vAngle = {};
-		_ushort				sStageIdx = 0;
+		_ushort				eStageIdx = 0;
 
 		MONSTER_STATUS(MONSTER_COLOR_TYPE _eColor, WEAPON_STATE _eWeapon, _bool _bSpawn = false,
-			_v3 vPos = V3_NULL, _v3 vAngle = V3_NULL, _ushort sStageIdx = 0)
+			_v3 vPos = V3_NULL, _v3 vAngle = V3_NULL, _ushort eStageIdx = 0)
 			:eMonsterColor(_eColor), eUseWhatWeapon(_eWeapon) ,bSpawnOnTrigger(_bSpawn),
-			vPos(vPos), vAngle(vAngle), sStageIdx(sStageIdx)
+			vPos(vPos), vAngle(vAngle), eStageIdx(eStageIdx)
 		{}
 	};
 
@@ -180,7 +180,7 @@ protected:
 	HRESULT Draw_Collider();
 
 protected:
-	virtual void Check_DropItem();
+	virtual void Check_DropItem(MONSTER_NAMETYPE eMonsterName);
 	virtual void Check_CollisionEvent();
 	virtual void Check_CollisionPush();
 	virtual void Check_CollisionHit(list<CGameObject*> plistGameObject);

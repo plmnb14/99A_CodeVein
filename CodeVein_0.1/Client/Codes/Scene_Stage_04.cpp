@@ -40,6 +40,10 @@ HRESULT CScene_Stage_04::Ready_Scene()
 
 	g_pManagement->LoadCreateObject_FromPath(m_pGraphic_Device, L"Object_Stage_04.dat");
 
+	////인덱스 잘 찾는지 테스트
+	//CScriptManager::Get_Instance()->Set_StageIdx(4);
+	//CScriptManager::Get_Instance()->Ready_Script_DynamicObject(4);
+
 	g_pSoundManager->Stop_Sound(CSoundManager::Background_01);
 	g_pSoundManager->Play_BGM(L"SE_AMB_St01_Base_Out.ogg");
 
@@ -54,6 +58,19 @@ _int CScene_Stage_04::Update_Scene(_double TimeDelta)
 
 	Create_Fog(TimeDelta);
 	Create_Dust(TimeDelta);
+
+	if (g_pInput_Device->Key_Down(DIK_I))
+	{
+		CGameObject* pInstance = nullptr;
+
+		pInstance = g_pManagement->Clone_GameObject_Return(L"GameObject_Colleague",
+			&CPlayer_Colleague::JACK_INFO(_v3(0.f, 0.f, 0.f), 0.f, 3));
+
+		if (nullptr != pInstance)
+			g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Colleague", nullptr);
+		else
+			cout << "소환할 수 없는 위치입니다" << endl;
+	}
 
 	return S_OK;
 }
@@ -136,7 +153,7 @@ HRESULT CScene_Stage_04::Ready_Layer_Colleague(const _tchar * pLayerTag)
 	CGameObject* pInstance = nullptr;
 
 	pInstance = g_pManagement->Clone_GameObject_Return(L"GameObject_Colleague",
-		&CPlayer_Colleague::JACK_INFO(_v3(-100.f, 50.f, 0.f), 0.f, 3));
+		&CPlayer_Colleague::JACK_INFO(_v3(-100.f, 50.f, 0.f), 0.f, 4));
 	g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Colleague", nullptr);
 
 	return S_OK;
