@@ -289,6 +289,8 @@ private:
 
 	_float	m_fDodge_CoolTime = 0.f;
 
+	_float	m_fMinPos_Test = 0.f;
+
 
 	_bool	m_bEventTrigger[20] = {};
 

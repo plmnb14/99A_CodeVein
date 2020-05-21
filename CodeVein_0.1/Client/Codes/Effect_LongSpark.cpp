@@ -63,10 +63,10 @@ HRESULT CEffect_LongSpark::Ready_GameObject(void* pArg)
 	else
 		wsprintf(szBuff, L"Hit_LongSpark_L_%d", CCalculater::Random_Num(0, 2));
 
-	if (CCalculater::Random_Num(0, 2) == 0)
-	{
-		wsprintf(szBuff, L"Hit_LongSpark_Distortion_%d", 0);
-	}
+	//if (CCalculater::Random_Num(0, 2) == 0)
+	//{
+	//	wsprintf(szBuff, L"Hit_LongSpark_Distortion_%d", 0);
+	//}
 
 	m_pBulletBody = CParticleMgr::Get_Instance()->Create_EffectReturn(szBuff);
 	m_pBulletBody->Set_Desc(V3_NULL, nullptr);

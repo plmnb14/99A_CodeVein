@@ -122,12 +122,12 @@ _int CPlayer_Colleague::Update_GameObject(_double TimeDelta)
 	//}
 
 
-	if ((10.f >= m_tObjParam.fHp_Cur && 0 <= m_iMyHeal_Count) &&
-		m_eMovetype != CPlayer_Colleague::Coll_Dead)
-	{
-		m_eMovetype = CPlayer_Colleague::Coll_Heal;
-		m_eColl_HealMoment = CPlayer_Colleague::My_Heal;
-	}
+	//if ((10.f >= m_tObjParam.fHp_Cur && 0 <= m_iMyHeal_Count) &&
+	//	m_eMovetype != CPlayer_Colleague::Coll_Dead)
+	//{
+	//	m_eMovetype = CPlayer_Colleague::Coll_Heal;
+	//	m_eColl_HealMoment = CPlayer_Colleague::My_Heal;
+	//}
 	if ((true == m_bNest_Skil_CoolTImer && 100.f >= m_pTarget->Get_Target_Hp()) &&
 		m_eMovetype != CPlayer_Colleague::Coll_Dead)
 	{
@@ -144,10 +144,10 @@ _int CPlayer_Colleague::Update_GameObject(_double TimeDelta)
 		g_pSoundManager->Stop_Sound(CSoundManager::Jack_Voice);
 		g_pSoundManager->Play_Sound(L"Be_Careful_For_Enemy.ogg", CSoundManager::Jack_Voice, CSoundManager::Voice_Sound);
 	}
-	else if (false == m_bStart_Fighting && true == m_bCheck_Be_Careful)
-	{
-		m_bCheck_Be_Careful = false;
-	}
+	//else if (false == m_bStart_Fighting && true == m_bCheck_Be_Careful)
+	//{
+	//	m_bCheck_Be_Careful = false;
+	//}
 
 	Check_MyHit();
 
@@ -751,16 +751,17 @@ void CPlayer_Colleague::Check_Do_List(_double TimeDelta)
 		{
 			if (false == Bossiter->Get_Enable())
 			{
-				m_bStart_Fighting = false;
-				m_bNear_byMonster = false;
-				continue;
+				//m_bStart_Fighting = false;
+				//m_bNear_byMonster = false;
+				m_pObject_Mon = nullptr;
+				break;
 			}
 			if (true == Bossiter->Get_Dead())
 			{
 				if (m_pObject_Mon == Bossiter)
 				{
 					m_pObject_Mon = nullptr;
-					continue;
+					break;
 				}
 			}
 			fMonLength = D3DXVec3Length(&(m_pTransformCom->Get_Pos() - TARGET_TO_TRANS(Bossiter)->Get_Pos()));
@@ -782,7 +783,7 @@ void CPlayer_Colleague::Check_Do_List(_double TimeDelta)
 				}
 
 				if (nullptr == Bossiter)
-					continue;
+					break;
 
 				fMinPos = fMonLength;
 
@@ -797,7 +798,7 @@ void CPlayer_Colleague::Check_Do_List(_double TimeDelta)
 				}
 
 				if (nullptr == m_pObject_Mon)
-					continue;
+					break;
 			}
 			else if (!(fMinPos > fMonLength) && false == Bossiter->Get_Dead())
 			{
@@ -813,7 +814,7 @@ void CPlayer_Colleague::Check_Do_List(_double TimeDelta)
 					}
 
 				if (nullptr == Bossiter)
-					continue;
+					break;
 
 				fMinPos = fMonLength;
 
@@ -823,7 +824,7 @@ void CPlayer_Colleague::Check_Do_List(_double TimeDelta)
 					m_bMonDead = false;
 
 				if (nullptr == m_pObject_Mon)
-					continue;
+					break;
 			}
 
 			if (true == Bossiter->Get_Dead())
@@ -844,9 +845,10 @@ void CPlayer_Colleague::Check_Do_List(_double TimeDelta)
 		m_pObject_Mon = nullptr;
 
 
+
 	//=======================================================
 
-	if (nullptr == m_pObject_Mon)
+	if (nullptr == m_pObject_Mon || false == m_bStart_Fighting)
 	{
 		if (!(m_List_pMonTarget[0]->empty()))
 			fMinPos = 2000000.f;
@@ -865,7 +867,7 @@ void CPlayer_Colleague::Check_Do_List(_double TimeDelta)
 				if (m_pObject_Mon == iter)
 				{
 					m_pObject_Mon = nullptr;
-					continue;
+					break;
 				}
 			}
 
@@ -881,14 +883,14 @@ void CPlayer_Colleague::Check_Do_List(_double TimeDelta)
 						m_bStart_Fighting = false;
 						m_bNear_byMonster = false;
 						m_bMonDead = true;
-						continue;
+						break;
 					}
 
 				/*if (false == iter->Get_Enable())
 				continue;*/
 
 				if (nullptr == iter)
-					continue;
+					break;
 
 				fMinPos = fMonLength;
 
@@ -904,9 +906,9 @@ void CPlayer_Colleague::Check_Do_List(_double TimeDelta)
 
 
 				if (nullptr == m_pObject_Mon)
-					continue;
+					break;
 			}
-			else if (!(fMinPos > fMonLength) && false == iter->Get_Dead())
+			else if ((fMinPos > fMonLength) && false == iter->Get_Dead())
 			{
 				if (true == iter->Get_Dead())
 					if (m_pObject_Mon == iter)
@@ -916,14 +918,14 @@ void CPlayer_Colleague::Check_Do_List(_double TimeDelta)
 						m_bStart_Fighting = false;
 						m_bNear_byMonster = false;
 						m_bMonDead = true;
-						continue;
+						break;
 					}
 
 				/*	if (false == iter->Get_Enable())
 				continue;*/
 
 				if (nullptr == iter)
-					continue;
+					break;
 
 				fMinPos = fMonLength;
 
@@ -933,10 +935,11 @@ void CPlayer_Colleague::Check_Do_List(_double TimeDelta)
 					m_bMonDead = false;
 
 				if (nullptr == m_pObject_Mon)
-					continue;
+					break;
 			}
 		}
 	}
+	// Hit, Att, Dodge 이면 return 시킨다
 
 
 	//if (true == m_tObjParam.bIsHit/* || true == m_tObjParam.bIsDodge*/)
@@ -963,6 +966,7 @@ void CPlayer_Colleague::Check_Do_List(_double TimeDelta)
 			{
 				m_bNear_byMonster = true;
 
+				m_fMinPos_Test = fMinPos;
 
 				// 몬스터가 범위 내로 들어왔고 어떤 공격을 할건지
 
@@ -1328,8 +1332,8 @@ HRESULT CPlayer_Colleague::SetUp_Default()
 	m_List_pMonTarget[0] = &(g_pManagement->Get_GameObjectList(L"Layer_Monster", SCENE_STAGE));
 	m_List_pMonTarget[1] = &(g_pManagement->Get_GameObjectList(L"Layer_Boss", SCENE_STAGE));
 
-	m_tObjParam.fHp_Cur = 500.f;
-	m_tObjParam.fHp_Max = 1000.f;
+	m_tObjParam.fHp_Cur = 50000.f;
+	m_tObjParam.fHp_Max = 50000.f;
 	m_tObjParam.fDamage = 10.f;
 
 	m_tObjParam.bCanHit = true;		// 맞을 수 있는지
@@ -1790,7 +1794,10 @@ void CPlayer_Colleague::CollAtt_Normal()
 	for (auto& Bossiter : *m_List_pMonTarget[1])
 	{
 		if (true == m_List_pMonTarget[1]->empty())
-			continue;
+			break;
+
+		if (false == Bossiter->Get_Enable())
+			break;
 
 		if (Bossiter == m_pObject_Mon && false == Bossiter->Get_Dead())
 		{
@@ -1803,7 +1810,7 @@ void CPlayer_Colleague::CollAtt_Normal()
 			continue;
 		}
 		if (false == Bossiter->Get_Enable())
-			continue;
+			break;
 		if (m_pObject_Mon != Bossiter)
 		{
 			m_pObject_Mon = Bossiter;
@@ -1831,7 +1838,7 @@ void CPlayer_Colleague::CollAtt_Normal()
 	for (auto& iter : *m_List_pMonTarget[0])
 	{
 		if (true == m_List_pMonTarget[0]->empty())
-			continue;
+			break;
 
 		if (iter == m_pObject_Mon && false == iter->Get_Dead())
 		{
@@ -1845,12 +1852,13 @@ void CPlayer_Colleague::CollAtt_Normal()
 		}
 
 		if (false == iter->Get_Enable())
-			continue;
+			break;
 
 		if (m_pObject_Mon != iter)
 		{
 			m_pObject_Mon = iter;
 			fMonLenght = V3_LENGTH(&(m_pTransformCom->Get_Pos() - TARGET_TO_TRANS(iter)->Get_Pos()));
+			break;
 		}
 
 
@@ -1863,6 +1871,7 @@ void CPlayer_Colleague::CollAtt_Normal()
 			{
 				m_pObject_Mon = iter;
 				fMonLenght = V3_LENGTH(&(m_pTransformCom->Get_Pos() - TARGET_TO_TRANS(iter)->Get_Pos()));
+				break;
 			}
 			else
 				return;
@@ -1888,18 +1897,18 @@ void CPlayer_Colleague::CollAtt_Normal()
 		Funtion_RotateBody();
 
 
-	if (fMonLenght > 4.f)
+	if (m_fMinPos_Test > 4.f)
 	{
 		m_eMovetype = CPlayer_Colleague::Coll_Attack;
 		m_eColl_Sub_AttMoment = CPlayer_Colleague::Att_MonRun;
 	}
-	if (true == m_bNest_Att_CoolTimer && (7.3f >= fMonLenght && 4.f < fMonLenght))
+	if (true == m_bNest_Att_CoolTimer && (7.3f >= m_fMinPos_Test && 4.f < m_fMinPos_Test))
 	{
 		// 노멀에서 총을 쏜다
 		m_eMovetype = CPlayer_Colleague::Coll_Attack;
 		m_eColl_Sub_AttMoment = CPlayer_Colleague::Att_SlowGun;
 	}
-	else if ((fMonLenght <= 4.f && fMonLenght > 3.f))
+	else if ((m_fMinPos_Test <= 4.f && m_fMinPos_Test > 3.f))
 	{
 		m_eMovetype = CPlayer_Colleague::Coll_Attack;
 		m_eColl_Sub_AttMoment = CPlayer_Colleague::Att_MonWalk;
@@ -1909,7 +1918,7 @@ void CPlayer_Colleague::CollAtt_Normal()
 	m_eMovetype = CPlayer_Colleague::Coll_Attack;
 	m_eColl_Sub_AttMoment = CPlayer_Colleague::Att_MonBackWalk;
 	}*/
-	else if ((fMonLenght <= 3.f/* && false == m_bCheck_Attcing*/))
+	else if ((m_fMinPos_Test <= 3.f/* && false == m_bCheck_Attcing*/))
 	{
 		if (m_iNormalAtt_Count > 4)
 			m_iNormalAtt_Count = 0;
@@ -1981,7 +1990,7 @@ void CPlayer_Colleague::CollAtt_Normal()
 		}
 	}
 
-	if (0 == fMonLenght || 30.f < fMonLenght)
+	if (0 == m_fMinPos_Test || 30.f < m_fMinPos_Test)
 	{
 		m_bNear_byMonster = false;
 		m_bStart_Fighting = false;
@@ -2802,8 +2811,6 @@ void CPlayer_Colleague::CollHeal_ForMe()
 			if (false == m_bEventTrigger[0])
 			{
 				m_bEventTrigger[0] = true;
-				m_eMovetype = CPlayer_Colleague::Coll_Heal;
-				m_eColl_HealMoment = CPlayer_Colleague::My_Heal;
 				m_bCheck_HealMyHp = true;
 				m_tObjParam.fHp_Cur += m_tObjParam.fHp_Max / 0.8f;
 				if (m_tObjParam.fHp_Cur > m_tObjParam.fHp_Max)
@@ -2884,16 +2891,16 @@ void CPlayer_Colleague::Funtion_RotateBody()
 	for (auto& Bossiter : *m_List_pMonTarget[1])
 	{
 		if (true == (*m_List_pMonTarget[1]).empty())
-			continue;
+			break;
 
 		if (Bossiter == m_pObject_Mon && true == Bossiter->Get_Dead())
 		{
 			m_pObject_Mon = nullptr;
-			continue;
+			break;
 		}
 
 		if (m_List_pMonTarget[1]->empty())
-			continue;
+			break;
 
 		if (Bossiter == m_pObject_Mon)
 		{
@@ -2915,14 +2922,14 @@ void CPlayer_Colleague::Funtion_RotateBody()
 		if (true == (*m_List_pMonTarget[0]).empty())
 			continue;
 
+		if (false == iter->Get_Enable())
+			continue;
+
 		if (iter == m_pObject_Mon && true == iter->Get_Dead())
 		{
 			m_pObject_Mon = nullptr;
 			continue;
 		}
-
-		if (m_List_pMonTarget[0]->empty())
-			continue;
 
 		if (iter == m_pObject_Mon)
 		{
@@ -2930,13 +2937,21 @@ void CPlayer_Colleague::Funtion_RotateBody()
 			{
 				m_bLook_Monster = true;
 				fTargetAngle = m_pTransformCom->Chase_Target_Angle(&TARGET_TO_TRANS(m_pObject_Mon)->Get_Pos());
+				break;
 			}
 			else
 			{
 				m_bLook_Monster = false;
 				fTargetAngle = m_pTransformCom->Chase_Target_Angle(&m_pTargetTransformCom->Get_Pos());	// 없으면 플레이어
+				break;
 			}
 		}
+		/*else if (iter != m_pObject_Mon)
+		{
+			m_pObject_Mon = iter;
+			m_bLook_Monster = true;
+			break;
+		}*/
 	}
 
 	if (false == m_bLook_Monster)
