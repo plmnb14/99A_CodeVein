@@ -71,6 +71,8 @@ HRESULT CWeapon_Inven::Ready_GameObject(void * pArg)
 
 _int CWeapon_Inven::Update_GameObject(_double TimeDelta)
 {
+	Late_Init();
+
 	if (m_bIsActive && !m_bIsSubActive)
 	{
 		SetUp_SubUI_Active(true);
@@ -87,8 +89,6 @@ _int CWeapon_Inven::Update_GameObject(_double TimeDelta)
 		return NO_EVENT;
 
 	CUI::Update_GameObject(TimeDelta);
-
-	Late_Init();
 
 	m_pRendererCom->Add_RenderList(RENDER_UI, this);
 
@@ -667,29 +667,7 @@ void CWeapon_Inven::SetUp_Default()
 	m_pExitIcon->Set_UI_Size(40.f, 40.f);
 	m_pExitIcon->Set_Type(CInventory_Icon::ICON_EXIT);
 
-	m_vecWeaponSlot.reserve(2);
-
-	WPN_PARAM tWeaponParam = {};
-
-	tWeaponParam.iWeaponName = Wpn_SSword;
-	tWeaponParam.iWeaponName_InShop = WpnAll_SSword_Red;
-	tWeaponParam.iWeaponType = WEAPON_SSword;
-	tWeaponParam.iPrice = 100;
-	tWeaponParam.iReinforce = 0;
-	tWeaponParam.fDamage = 1000.f;
-	tWeaponParam.fPlusDamage = 100;
-	tWeaponParam.fRadius = 0.6f;
-	tWeaponParam.fTrail_Min = 0.6f;
-	tWeaponParam.fTrail_Max = 1.8f;
-	tWeaponParam.fCol_Height = 1.1f;
-
-
-	Add_Weapon(tWeaponParam);
-	Regist_Weapon(m_vecWeaponSlot[0]);
-	CTotal_Inven* pTotal_Inven = CUI_Manager::Get_Instance()->Get_Total_Inven();
-
-	pTotal_Inven->Set_WeaponParam(0, tWeaponParam);
-	m_vecWeaponSlot[0]->Set_Select(true);
+	
 }
 
 void CWeapon_Inven::SetUp_SlotPos()
@@ -725,7 +703,29 @@ void CWeapon_Inven::Late_Init()
 
 	m_pPlayer = static_cast<CPlayer*>(g_pManagement->Get_GameObjectBack(L"Layer_Player", SCENE_MORTAL));
 
-	
+	m_vecWeaponSlot.reserve(2);
+
+	WPN_PARAM tWeaponParam = {};
+
+	tWeaponParam.iWeaponName = Wpn_SSword;
+	tWeaponParam.iWeaponName_InShop = WpnAll_SSword_Red;
+	tWeaponParam.iWeaponType = WEAPON_SSword;
+	tWeaponParam.iPrice = 100;
+	tWeaponParam.iReinforce = 0;
+	tWeaponParam.fDamage = 1000.f;
+	tWeaponParam.fPlusDamage = 100;
+	tWeaponParam.fRadius = 0.6f;
+	tWeaponParam.fTrail_Min = 0.6f;
+	tWeaponParam.fTrail_Max = 1.8f;
+	tWeaponParam.fCol_Height = 1.1f;
+
+
+	Add_Weapon(tWeaponParam);
+	Regist_Weapon(m_vecWeaponSlot[0]);
+	CTotal_Inven* pTotal_Inven = CUI_Manager::Get_Instance()->Get_Total_Inven();
+
+	pTotal_Inven->Set_WeaponParam(0, tWeaponParam);
+	m_vecWeaponSlot[0]->Set_Select(true);
 }
 
 void CWeapon_Inven::Reset_SlotSelect()
