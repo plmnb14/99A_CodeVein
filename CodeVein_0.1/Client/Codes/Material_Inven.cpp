@@ -334,6 +334,29 @@ void CMaterial_Inven::Sell_Material(_uint iDelete)
 	SetUp_SlotPos();
 }
 
+void CMaterial_Inven::Sell_Item(CMaterial_Slot * pSlot)
+{
+	if (nullptr == pSlot || pSlot->Get_Size() <= 0)
+		return;
+
+	pSlot->Delete_Item();
+
+	if (pSlot->Get_Size() <= 0)
+	{
+		for (_uint i = 0; i < m_vecMaterialSlot.size(); ++i)
+		{
+			if (pSlot == m_vecMaterialSlot[i])
+			{
+				pSlot->Set_Dead();
+				m_vecMaterialSlot.erase(m_vecMaterialSlot.begin() + i);
+				m_vecMaterialSlot.shrink_to_fit();
+			}
+		}
+	}
+
+	SetUp_SlotPos();
+}
+
 CMaterial_Inven * CMaterial_Inven::Create(_Device pGraphic_Device)
 {
 	CMaterial_Inven* pInstance = new CMaterial_Inven(pGraphic_Device);

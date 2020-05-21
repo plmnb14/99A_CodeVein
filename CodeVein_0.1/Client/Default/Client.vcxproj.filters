@@ -1353,6 +1353,9 @@
     <ClInclude Include="..\Headers\MaterialSellCollectionUI.h">
       <Filter>02.GameObject\Stage\5%29 UI\UI\18. GeneralStoreUI%28잡화점%29\05. GeneralStoreSellUI\02. MaterialSellCollectionUI</Filter>
     </ClInclude>
+    <ClInclude Include="..\Headers\MaterialSellUI.h">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\18. GeneralStoreUI%28잡화점%29\05. GeneralStoreSellUI\03. MaterialSellUI</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -2044,6 +2047,9 @@
     </ClCompile>
     <ClCompile Include="..\Codes\MaterialSellCollectionUI.cpp">
       <Filter>02.GameObject\Stage\5%29 UI\UI\18. GeneralStoreUI%28잡화점%29\05. GeneralStoreSellUI\02. MaterialSellCollectionUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\MaterialSellUI.cpp">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\18. GeneralStoreUI%28잡화점%29\05. GeneralStoreSellUI\03. MaterialSellUI</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

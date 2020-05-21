@@ -55,24 +55,17 @@ HRESULT CWeapon_Inven::Ready_GameObject(void * pArg)
 	CUI::UI_DESC* pDesc = nullptr;
 	CWeapon_Slot* pSlot = nullptr;
 	
-	if (FAILED(SetUp_WeaponData()))
-		return E_FAIL;
+	
 	SetUp_Default();
+
 	LOOP(2)
 	{
 		ZeroMemory(&m_UseWeaponParam[i], sizeof(WPN_PARAM));
 		m_UseWeaponParam[i].iWeaponName = WPN_DATA_End;
 	}
 	
-
-	Add_Weapon(m_tWeaponParam[Wpn_SSword_Black]);
-	//Add_Weapon(m_tWeaponParam[Wpn_SSword_Military]);
-	//Add_Weapon(m_tWeaponParam[Wpn_SSword_Slave]);
-	Add_Weapon(m_tWeaponParam[Wpn_Gun_Military]);
-	//Add_Weapon(m_tWeaponParam[Wpn_Gun_Slave]);
-	Add_Weapon(m_tWeaponParam[Wpn_Hammer]);
-	//Add_Weapon(m_tWeaponParam[Wpn_LSword_Military]);
 	
+
 	return NOERROR;
 }
 
@@ -673,6 +666,30 @@ void CWeapon_Inven::SetUp_Default()
 	m_pExitIcon->Set_UI_Pos(m_fPosX + 120.f, m_fPosY - 203.f);
 	m_pExitIcon->Set_UI_Size(40.f, 40.f);
 	m_pExitIcon->Set_Type(CInventory_Icon::ICON_EXIT);
+
+	m_vecWeaponSlot.reserve(2);
+
+	WPN_PARAM tWeaponParam = {};
+
+	tWeaponParam.iWeaponName = Wpn_SSword;
+	tWeaponParam.iWeaponName_InShop = WpnAll_SSword_Red;
+	tWeaponParam.iWeaponType = WEAPON_SSword;
+	tWeaponParam.iPrice = 100;
+	tWeaponParam.iReinforce = 0;
+	tWeaponParam.fDamage = 1000.f;
+	tWeaponParam.fPlusDamage = 100;
+	tWeaponParam.fRadius = 0.6f;
+	tWeaponParam.fTrail_Min = 0.6f;
+	tWeaponParam.fTrail_Max = 1.8f;
+	tWeaponParam.fCol_Height = 1.1f;
+
+
+	Add_Weapon(tWeaponParam);
+	Regist_Weapon(m_vecWeaponSlot[0]);
+	CTotal_Inven* pTotal_Inven = CUI_Manager::Get_Instance()->Get_Total_Inven();
+
+	pTotal_Inven->Set_WeaponParam(0, tWeaponParam);
+	m_vecWeaponSlot[0]->Set_Select(true);
 }
 
 void CWeapon_Inven::SetUp_SlotPos()
@@ -708,12 +725,7 @@ void CWeapon_Inven::Late_Init()
 
 	m_pPlayer = static_cast<CPlayer*>(g_pManagement->Get_GameObjectBack(L"Layer_Player", SCENE_MORTAL));
 
-	m_vecWeaponSlot.reserve(2);
-	Add_Weapon(m_tWeaponParam[Wpn_SSword]);
-	Add_Weapon(m_tWeaponParam[Wpn_Halberd]);
-	Add_Weapon(m_tWeaponParam[Wpn_Gun]);
-	Add_Weapon(m_tWeaponParam[Wpn_LSword]);
-	Regist_Weapon(m_vecWeaponSlot[0]);
+	
 }
 
 void CWeapon_Inven::Reset_SlotSelect()

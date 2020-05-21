@@ -232,6 +232,7 @@
     <ClInclude Include="..\Headers\MaterialOptionUI.h" />
     <ClInclude Include="..\Headers\GeneralStoreUI.h" />
     <ClInclude Include="..\Headers\MaterialSellCollectionUI.h" />
+    <ClInclude Include="..\Headers\MaterialSellUI.h" />
     <ClInclude Include="..\Headers\Material_InfoUI.h" />
     <ClInclude Include="..\Headers\NPC_InteractionUI.h" />
     <ClInclude Include="..\Headers\NPC_Yakumo.h" />
@@ -457,6 +458,7 @@
     <ClCompile Include="..\Codes\MaterialOptionUI.cpp" />
     <ClCompile Include="..\Codes\GeneralStoreUI.cpp" />
     <ClCompile Include="..\Codes\MaterialSellCollectionUI.cpp" />
+    <ClCompile Include="..\Codes\MaterialSellUI.cpp" />
     <ClCompile Include="..\Codes\Material_InfoUI.cpp" />
     <ClCompile Include="..\Codes\NPC_InteractionUI.cpp" />
     <ClCompile Include="..\Codes\NPC_Yakumo.cpp" />

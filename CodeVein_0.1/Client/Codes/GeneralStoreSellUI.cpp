@@ -47,6 +47,7 @@ _int CGeneralStoreSellUI::Update_GameObject(_double TimeDelta)
 	else if (!m_bIsActive && m_bIsSubActive)
 	{
 		m_pExpendSellUI->Set_Active(false);
+		m_pMtrlSellUI->Set_Active(false);
 		SetUp_SubUI_Active(false);
 		m_bIsSubActive = false;
 	}
@@ -160,6 +161,10 @@ void CGeneralStoreSellUI::SetUp_Default()
 	// 소비템 판매
 	m_pExpendSellUI = static_cast<CExpendSellCollectionUI*>(g_pManagement->Clone_GameObject_Return(L"GameObject_ExpendSellCollectionUI", nullptr));
 	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pExpendSellUI, SCENE_MORTAL, L"Layer_PlayerUI", nullptr);
+
+	// 재료 판매
+	m_pMtrlSellUI = static_cast<CMaterialSellCollectionUI*>(g_pManagement->Clone_GameObject_Return(L"GameObject_MaterialSellCollectionUI", nullptr));
+	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pMtrlSellUI, SCENE_MORTAL, L"Layer_PlayerUI", nullptr);
 }
 
 void CGeneralStoreSellUI::Click_SubUI()
@@ -170,10 +175,12 @@ void CGeneralStoreSellUI::Click_SubUI()
 	if (m_pShopIcon[0]->Pt_InRect() && g_pInput_Device->Get_DIMouseState(CInput_Device::DIM_LB))
 	{
 		m_pExpendSellUI->Set_Active(true);
+		m_pMtrlSellUI->Set_Active(false);
 	}
 	else if (m_pShopIcon[1]->Pt_InRect() && g_pInput_Device->Get_DIMouseState(CInput_Device::DIM_LB))
 	{
 		m_pExpendSellUI->Set_Active(false);
+		m_pMtrlSellUI->Set_Active(true);
 	}
 
 	if (g_pInput_Device->Get_DIMouseState(CInput_Device::DIM_RB))

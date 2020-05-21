@@ -23,7 +23,7 @@ HRESULT CExpendSellCollectionUI::Ready_GameObject(void * pArg)
 {
 	if (FAILED(Add_Component()))
 		return E_FAIL;
-
+	CUI::Ready_GameObject(pArg);
 	m_fPosX = 229.5f;
 	m_fPosY = 325.5f;
 	m_fSizeX = 280.f;
@@ -180,37 +180,37 @@ void CExpendSellCollectionUI::SetUp_Default()
 	m_pExpendSellUI = static_cast<CExpendSellUI*>(g_pManagement->Clone_GameObject_Return(L"GameObject_ExpendSellUI", nullptr));
 	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pExpendSellUI, SCENE_MORTAL, L"Layer_PlayerUI", nullptr);
 }
-
-void CExpendSellCollectionUI::Sell_ExpendItem(CExpendables_Slot * pSlot)
-{
-	if (nullptr == pSlot)
-		return;
-
-	
-
-	if (pSlot->Get_Size() == 0)
-	{		
-		
-
-		_uint iIdx = 0;
-		for (auto& iter : m_vecSlot)
-		{
-			if (iter == pSlot)
-			{
-				pSlot->Set_Dead();
-				m_vecSlot.erase(m_vecSlot.begin() + iIdx);
-				m_vecSlot.shrink_to_fit();
-			}
-			
-			iIdx++;
-		}
-	}
-	else
-		pSlot->Delete_Item();
-		
-
-	SetUp_SlotPos();
-}
+//
+//void CExpendSellCollectionUI::Sell_ExpendItem(CExpendables_Slot * pSlot)
+//{
+//	if (nullptr == pSlot)
+//		return;
+//
+//	
+//
+//	if (pSlot->Get_Size() == 0)
+//	{		
+//		
+//
+//		_uint iIdx = 0;
+//		for (auto& iter : m_vecSlot)
+//		{
+//			if (iter == pSlot)
+//			{
+//				pSlot->Set_Dead();
+//				m_vecSlot.erase(m_vecSlot.begin() + iIdx);
+//				m_vecSlot.shrink_to_fit();
+//			}
+//			
+//			iIdx++;
+//		}
+//	}
+//	else
+//		pSlot->Delete_Item();
+//		
+//
+//	SetUp_SlotPos();
+//}
 
 CExpendSellCollectionUI * CExpendSellCollectionUI::Create(_Device pGraphic_Device)
 {

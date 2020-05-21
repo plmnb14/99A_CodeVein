@@ -29,7 +29,7 @@ private:
 	void	SetUp_Default();
 
 public:
-	void Sell_ExpendItem(CExpendables_Slot* pSlot);
+	//void Sell_ExpendItem(CExpendables_Slot* pSlot);
 
 private:
 	CTransform*				m_pTransformCom = nullptr;

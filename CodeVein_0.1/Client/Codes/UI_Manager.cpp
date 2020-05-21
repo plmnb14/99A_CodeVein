@@ -164,6 +164,10 @@ HRESULT CUI_Manager::Add_UI_Prototype(_Device pDevice)
 		return E_FAIL;
 	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_ExpendSellUI", CExpendSellUI::Create(pDevice))))
 		return E_FAIL;
+	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_MaterialSellCollectionUI", CMaterialSellCollectionUI::Create(pDevice))))
+		return E_FAIL;
+	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_MaterialSellUI", CMaterialSellUI::Create(pDevice))))
+		return E_FAIL;
 	
 	//////////////// Chae
 	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_BossMassageUI", CMassageUI::Create(pDevice))))
@@ -334,11 +338,15 @@ HRESULT CUI_Manager::SetUp_UILayer()
 	// 헤이즈 UI
 	m_pHazeUI = static_cast<CHazeUI*>(g_pManagement->Clone_GameObject_Return(L"GameObject_HazeUI", nullptr));
 	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pHazeUI, SCENE_MORTAL, L"Layer_HazeUI", nullptr);
-	// 소비, 재료 상점 UI
+	// 소비, 재료 상점 UI (구매)
 	m_pGeneralStoreUI = static_cast<CGeneralStoreUI*>(g_pManagement->Clone_GameObject_Return(L"GameObject_GeneralStoreUI", nullptr));
 	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pGeneralStoreUI, SCENE_MORTAL, L"Layer_PlayerUI", nullptr);
 
-	// 잡화점 NPC UI
+	// 잡화점 판매
+	m_pGeneralStoreSellUI = static_cast<CGeneralStoreSellUI*>(g_pManagement->Clone_GameObject_Return(L"GameObject_GeneralStoreSellUI", nullptr));
+	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pGeneralStoreSellUI, SCENE_MORTAL, L"Layer_PlayerUI", nullptr);
+
+	// 잡화점 NPC UI(요쿠모_잡화점NPC)
 	m_pGeneralStoreNPCUI = static_cast<CGeneralStoreNPCUI*>(g_pManagement->Clone_GameObject_Return(L"GameObject_GeneralStoreNPCUI", nullptr));
 	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pGeneralStoreNPCUI, SCENE_MORTAL, L"Layer_PlayerUI", nullptr);
 
@@ -348,9 +356,7 @@ HRESULT CUI_Manager::SetUp_UILayer()
 	m_pNPC_InterActionUI = static_cast<CNPC_InteractionUI*>(g_pManagement->Clone_GameObject_Return(L"GameObject_NPC_Interaction", nullptr));
 	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pNPC_InterActionUI, SCENE_MORTAL, L"Layer_PlayerUI", nullptr);
 
-	// 잡화점 판매
-	m_pGeneralStoreSellUI = static_cast<CGeneralStoreSellUI*>(g_pManagement->Clone_GameObject_Return(L"GameObject_GeneralStoreSellUI", nullptr));
-	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pGeneralStoreSellUI, SCENE_MORTAL, L"Layer_PlayerUI", nullptr);
+	
 
 	//////////////////////////////////// 펫 UI /////////////////////////////////////////////////////////////////////
 	// 펫 인벤토리

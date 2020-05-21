@@ -38,6 +38,7 @@ public:
 	void Add_Material(CMaterial::MATERIAL_TYPE eType);
 	void Add_MultiMaterial(CMaterial::MATERIAL_TYPE eType, _uint iCnt);
 	void Sell_Material(_uint iDelete);
+	void Sell_Item(CMaterial_Slot* pSlot);
 
 private:
 	CBuffer_RcTex*			m_pBufferCom = nullptr;

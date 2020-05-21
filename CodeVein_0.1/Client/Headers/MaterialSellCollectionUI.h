@@ -5,6 +5,7 @@
 
 BEGIN(Client)
 class CMaterial_Slot;
+class CMaterialSellUI;
 class CMaterialSellCollectionUI final : public CUI
 {
 private:
@@ -27,9 +28,6 @@ private:
 	void	Click_SubUI();
 	void	SetUp_Default();
 
-public:
-	void Sell_MtrlItem(CMaterial_Slot* pSlot);
-
 private:
 	CTransform*				m_pTransformCom = nullptr;
 	CRenderer*				m_pRendererCom = nullptr;
@@ -40,6 +38,7 @@ private:
 private:
 	_bool						m_bIsSubActive = false;
 	vector<CMaterial_Slot*>		m_vecSlot;
+	CMaterialSellUI*			m_pMtrlSellUI = nullptr;
 	
 public:
 	static CMaterialSellCollectionUI*	Create(_Device pGraphic_Device);
