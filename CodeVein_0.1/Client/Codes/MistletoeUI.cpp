@@ -68,7 +68,7 @@ _int CMistletoeUI::Update_GameObject(_double TimeDelta)
 
 	CUI::Update_GameObject(TimeDelta);
 	
-	m_pRendererCom->Add_RenderList(RENDER_ALPHA_UI, this);
+	m_pRendererCom->Add_RenderList(RENDER_UI_BACK, this);
 
 	m_pTarget = static_cast<CPlayer*>(g_pManagement->Get_GameObjectBack(L"Layer_Player", SCENE_MORTAL));
 	if (nullptr == m_pTarget)
@@ -144,7 +144,7 @@ HRESULT CMistletoeUI::Render_GameObject()
 		return E_FAIL;
 
 	m_pShaderCom->Begin_Shader();
-	m_pShaderCom->Begin_Pass(6);
+	m_pShaderCom->Begin_Pass(3);
 
 	m_pBufferCom->Render_VIBuffer();
 	m_pShaderCom->End_Pass();
@@ -165,7 +165,7 @@ HRESULT CMistletoeUI::Render_GameObject_Instancing_SetPass(CShader * pShader)
 		return E_FAIL;
 
 	pShader->Begin_Shader();
-	pShader->Begin_Pass(6);
+	pShader->Begin_Pass(3);
 
 	m_pBufferCom->Render_VIBuffer();
 	pShader->End_Pass();
@@ -210,6 +210,10 @@ HRESULT CMistletoeUI::SetUp_ConstantTable(CShader * pShader)
 	if (FAILED(pShader->Set_Value("g_matView", &m_matView, sizeof(_mat))))
 		return E_FAIL;
 	if (FAILED(pShader->Set_Value("g_matProj", &m_matProj, sizeof(_mat))))
+		return E_FAIL;
+
+	_float fAlpha = 0.7f;
+	if (FAILED(pShader->Set_Value("g_fAlpha", &fAlpha, sizeof(_float))))
 		return E_FAIL;
 
 	if (FAILED(m_pTextureCom->SetUp_OnShader("g_DiffuseTexture", pShader, _uint(0))))

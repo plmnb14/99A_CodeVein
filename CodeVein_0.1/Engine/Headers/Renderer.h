@@ -97,6 +97,7 @@ private:
 	HRESULT Render_Shadow();
 	HRESULT Render_MotionBlurTarget();
 	HRESULT Render_DistortionTarget();
+	HRESULT Render_Decal();
 	HRESULT Render_Alpha();
 	HRESULT Render_Effect();
 	HRESULT Render_Instance();

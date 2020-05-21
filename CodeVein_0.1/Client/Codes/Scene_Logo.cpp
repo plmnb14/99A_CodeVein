@@ -254,10 +254,6 @@ HRESULT CScene_Logo::Late_Init(_double TimeDelta)
 	pEff->Set_UI_Layer();
 	pEff->Reset_Init();
 
-	m_pLoadingScripts->Set_Enable(true);
-
-	cout << "»·¥y" << endl;
-
 	return S_OK;
 }
 
@@ -310,6 +306,7 @@ void CScene_Logo::Check_Active(_double TimeDelta)
 	m_pTitleBG->Set_Active(true);
 	m_pGlitterEffect_0->Set_Active(true);
 	m_pGlitterEffect_1->Set_Active(true);
+	m_pLoadingScripts->Set_Enable(true);
 }
 
 void CScene_Logo::Logo_KeyInput()

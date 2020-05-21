@@ -21,14 +21,19 @@ HRESULT CDropItem::Ready_GameObject_Prototype()
 
 HRESULT CDropItem::Ready_GameObject(void * pArg)
 {
-	if (FAILED(Add_Component(pArg)))
-		return E_FAIL;
+	if (pArg == nullptr)
+	{
+		if (FAILED(Add_Component(pArg)))
+			return E_FAIL;
+
+		return S_OK;
+	}
 
 	Ready_Status(pArg);
 
-	m_pEffect = CParticleMgr::Get_Instance()->Create_EffectReturn(L"Totem_Fire_BulletBody");
-	m_pEffect->Set_Desc(V3_NULL, m_pTransform);
-	m_pEffect->Reset_Init();
+	//m_pEffect = CParticleMgr::Get_Instance()->Create_EffectReturn(L"Totem_Fire_BulletBody");
+	//m_pEffect->Set_Desc(V3_NULL, m_pTransform);
+	//m_pEffect->Reset_Init();
 	 
 	//m_pGet_ItemUI = CUI_Manager::Get_Instance()->Get_Get_ItemUI();
 	m_pGet_ItemUI = static_cast<CGet_ItemUI*>(g_pManagement->Clone_GameObject_Return(L"GameObject_Get_ItemUI", pArg));
@@ -96,7 +101,7 @@ _int CDropItem::Update_GameObject(_double TimeDelta)
 		//g_pManagement->Create_Effect(L"Totem_Fire_Bullet_Dead_1", m_pTransform->Get_Pos());
 		//g_pManagement->Create_Effect(L"Totem_Fire_Bullet_Dead_Particle", m_pTransform->Get_Pos());
 		m_bEnable = false;
-		m_pEffect->Set_Dead();
+		//m_pEffect->Set_Dead();
 
 		//return DEAD_OBJ;
 	}
@@ -710,8 +715,8 @@ CGameObject* CDropItem::Clone_GameObject(void * pArg)
 
 void CDropItem::Free()
 {
-	IF_NOT_NULL(m_pEffect)
-		m_pEffect->Set_Dead();
+	//IF_NOT_NULL(m_pEffect)
+	//	m_pEffect->Set_Dead();
 
 	IF_NOT_NULL(m_pTrailEffect)
 		m_pTrailEffect->Set_Dead();

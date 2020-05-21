@@ -43,8 +43,8 @@ HRESULT CScene_Stage_Base::Ready_Scene()
 	pRenderer->Set_UseLinearFog(true);
 	Safe_Release(pRenderer);
 
-	g_pSoundManager->Stop_Sound(CSoundManager::Ambient_01);
-	g_pSoundManager->Play_Sound(L"AMB_BASE_000.ogg", CSoundManager::Ambient_01, CSoundManager::Ambient_Sound);
+	g_pSoundManager->Stop_Sound(CSoundManager::Background_01);
+	g_pSoundManager->Play_BGM(L"AMB_BASE_000.ogg");
 
 	// 플레이어의 네비 메쉬도 바꿔줍니다.
 	Ready_Player();
@@ -69,12 +69,21 @@ HRESULT CScene_Stage_Base::Ready_Scene()
 	//// NPC 2
 	//g_pManagement->Add_GameObject_ToLayer(L"GameObject_NPC_Yakumo", SCENE_STAGE, L"Layer_NPC", &CNPC_Yakumo::NPC_INFO(_v3(6.283f, -1.37f, -14.75f), D3DXToRadian(-45.f)));
 
+	CParticleMgr::Get_Instance()->Clear_Fog();
+
 	return S_OK;
 }
 
 _int CScene_Stage_Base::Update_Scene(_double TimeDelta)
 {
 	Create_Fog(TimeDelta);
+
+	//임시
+	if (true == m_pLoading->Get_Finish())
+	{
+		g_pSoundManager->Stop_Sound(CSoundManager::UI_SFX_01);
+		g_pSoundManager->Play_Sound(L"UI_UpgradeSuccess.wav", CSoundManager::UI_SFX_01, CSoundManager::Effect_Sound);
+	}
 
 	//====================================================================================================
 	// 만약에 하나의 사운드를 계속해서 재생하고 싶다면
