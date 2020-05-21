@@ -334,8 +334,15 @@ void CWolf::Render_Collider()
 
 void CWolf::Check_PosY()
 {
-	m_pTransformCom->Set_Pos(m_pNavMeshCom->Axis_Y_OnNavMesh(m_pTransformCom->Get_Pos()));
+	if (m_pRigidCom->Get_IsFall() == false)
+		m_pTransformCom->Set_Pos(m_pNavMeshCom->Axis_Y_OnNavMesh(m_pTransformCom->Get_Pos()));
+	else
+	{
+		_float fYSpeed = m_pRigidCom->Set_Fall(m_pTransformCom->Get_Pos(), _float(m_dTimeDelta));
 
+		D3DXVECTOR3 JumpLength = { 0, -fYSpeed, 0 };
+		m_pTransformCom->Add_Pos(JumpLength);
+	}
 	return;
 }
 
@@ -1312,8 +1319,8 @@ void CWolf::Play_Dead()
 				Start_Dissolve(0.9f, false, true, 0.3f);
 				m_fDeadEffect_Delay = 0.3f;
 
+				Give_Mana_To_Player(5);
 				Check_DropItem(MONSTER_NAMETYPE::M_Wolf);
-
 				CObjectPool_Manager::Get_Instance()->Create_Object(L"GameObject_Haze", (void*)&CHaze::HAZE_INFO(100.f, m_pTransformCom->Get_Pos(), 0.3f));
 			}
 		}
@@ -1470,9 +1477,9 @@ HRESULT CWolf::Ready_Status(void * pArg)
 		if (MONSTER_COLOR_TYPE::WHITE == Info.eMonsterColor)
 		{
 			m_eMonsterColor = Info.eMonsterColor;
-			m_tObjParam.fDamage = -300.f;
-			m_tObjParam.fHp_Max = 900.f;
-			m_tObjParam.fArmor_Max = 10.f;
+			m_tObjParam.fDamage = 120.f * pow(1.5f, g_sStageIdx_Cur - 1);
+			m_tObjParam.fHp_Max = 1200.f * pow(1.5f, g_sStageIdx_Cur - 1);
+			m_tObjParam.fArmor_Max = 30.f * pow(1.5f, g_sStageIdx_Cur - 1);
 
 			m_fRecognitionRange = 15.f;
 			m_fShotRange = 10.f;
@@ -1483,9 +1490,9 @@ HRESULT CWolf::Ready_Status(void * pArg)
 		else
 		{
 			m_eMonsterColor = MONSTER_COLOR_TYPE::BLACK;
-			m_tObjParam.fDamage = -250.f;
-			m_tObjParam.fHp_Max = 750.f;
-			m_tObjParam.fArmor_Max = 10.f;
+			m_tObjParam.fDamage = 120.f * pow(1.5f, g_sStageIdx_Cur - 1);
+			m_tObjParam.fHp_Max = 1200.f * pow(1.5f, g_sStageIdx_Cur - 1);
+			m_tObjParam.fArmor_Max = 30.f * pow(1.5f, g_sStageIdx_Cur - 1);
 
 			m_fRecognitionRange = 15.f;
 			m_fShotRange = 10.f;

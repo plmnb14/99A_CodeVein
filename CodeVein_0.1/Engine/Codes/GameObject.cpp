@@ -190,6 +190,12 @@ void CGameObject::Compute_ViewZ(const _v3* pPos)
 	m_fViewZ = D3DXVec3Length(&(vCamPos - *pPos));
 }
 
+
+void CGameObject::Hit_Target(_float _fDamage)
+{
+	m_tObjParam.fHp_Cur -= _fDamage * (1 - ((m_tObjParam.fArmor_Cur * 0.006f) / (1 + m_tObjParam.fArmor_Cur * 0.006f))) * _float(CALC::Random_Num_Double(0.8, 1.2));
+}
+
 void CGameObject::Check_Dissolve(_double TimeDelta)
 {
 	if (false == m_bDissolve)

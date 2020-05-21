@@ -30,9 +30,10 @@ HRESULT CQueensKnight::Ready_GameObject(void * pArg)
 	Ready_Sound();
 
 	m_tObjParam.bCanHit = true;
-	m_tObjParam.fHp_Cur = 10000.f;
+	m_tObjParam.fHp_Cur = 10000.f * pow(1.5f, g_sStageIdx_Cur - 1);
 	m_tObjParam.fHp_Max = m_tObjParam.fHp_Cur;
-	m_tObjParam.fDamage = 20.f;
+	m_tObjParam.fDamage = 500.f * pow(1.5f, g_sStageIdx_Cur - 1);
+	m_tObjParam.fArmor_Cur = 100.f * pow(1.5f, g_sStageIdx_Cur - 1);
 
 	m_pTransformCom->Set_Scale(_v3(1.f, 1.f, 1.f));
 
@@ -1128,6 +1129,54 @@ CBT_Composite_Node * CQueensKnight::LeakField()
 	return Root_Parallel;
 }
 
+CBT_Composite_Node * CQueensKnight::MoveAround()
+{
+	CBT_Selector* Move_Sel = Node_Selector_Random("서성이기");
+
+	Move_Sel->Add_Child(LeftMoveAround());
+	Move_Sel->Add_Child(RightMoveAround());
+
+	return Move_Sel;
+}
+
+CBT_Composite_Node * CQueensKnight::LeftMoveAround()
+{
+	CBT_Simple_Parallel* Root_Parallel = Node_Parallel_Immediate("왼쪽 이동 서성임");
+
+	CBT_Sequence* MainSeq = Node_Sequence("왼쪽 이동 서성임");
+	CBT_Play_Ani* Show_Ani6 = Node_Ani("왼쪽 이동", 6, 0.f);
+	CBT_MoveAround*	MoveAround0 = Node_MoveAround("왼쪽으로 서성 이동", L"Player_Pos", L"Monster_Speed", L"Monster_Dir", 2.f, 3, 1);
+
+	CBT_ChaseDir* ChaseDir0 = Node_ChaseDir("플레이어 추적", L"Player_Pos", 5, 0);
+
+	Root_Parallel->Set_Main_Child(MainSeq);
+	MainSeq->Add_Child(Show_Ani6);
+	MainSeq->Add_Child(MoveAround0);
+
+	Root_Parallel->Set_Sub_Child(ChaseDir0);
+
+	return Root_Parallel;
+}
+
+CBT_Composite_Node * CQueensKnight::RightMoveAround()
+{
+	CBT_Simple_Parallel* Root_Parallel = Node_Parallel_Immediate("오른쪽 이동 서성임");
+
+	CBT_Sequence* MainSeq = Node_Sequence("오른쪽 이동 서성임");
+	CBT_Play_Ani* Show_Ani5 = Node_Ani("오른쪽 이동", 5, 0.f);
+	CBT_MoveAround*	MoveAround0 = Node_MoveAround("왼쪽으로 서성 이동", L"Player_Pos", L"Monster_Speed", L"Monster_Dir", -2.f, 3, 1);
+
+	CBT_ChaseDir* ChaseDir0 = Node_ChaseDir("플레이어 추적", L"Player_Pos", 5, 0);
+
+	Root_Parallel->Set_Main_Child(MainSeq);
+	MainSeq->Add_Child(Show_Ani5);
+	MainSeq->Add_Child(MoveAround0);
+
+	Root_Parallel->Set_Sub_Child(ChaseDir0);
+
+	return Root_Parallel;
+}
+
 CBT_Composite_Node * CQueensKnight::Flash()
 {
 	CBT_Sequence* MainSeq = Node_Sequence("이동");
@@ -2014,7 +2063,8 @@ CBT_Composite_Node * CQueensKnight::FarAttack_More_Than_HP70()
 	CBT_Selector* Root_Sel = Node_Selector_Random("랜덤 원거리 공격");
 
 	Root_Sel->Add_Child(Rush());
-
+	Root_Sel->Add_Child(MoveAround());
+	
 	return Root_Sel;
 }
 
@@ -2059,7 +2109,8 @@ CBT_Composite_Node * CQueensKnight::FarAttack_More_Than_HP40()
 	Root_Sel->Add_Child(Flash_Jump_Attack());
 	Root_Sel->Add_Child(Flash_Cut());
 	Root_Sel->Add_Child(Flash());
-
+	Root_Sel->Add_Child(MoveAround());
+	
 	return Root_Sel;
 }
 
@@ -2604,6 +2655,8 @@ void CQueensKnight::Check_PhyCollider()
 		//m_bFight = true;		// 싸움 시작
 		m_bFindPlayer = true;
 
+		Give_Mana_To_Player(2);
+
 		if (m_tObjParam.fHp_Cur > 0.f)
 		{
 			// 체력 비율 70 이하되면 스턴
@@ -2768,7 +2821,7 @@ void CQueensKnight::OnCollisionEvent(list<CGameObject*> plistGameObject)
 						if (iter->Get_Target_IsHit())
 							iter->Set_HitAgain(true);
 
-						iter->Add_Target_Hp(-m_tObjParam.fDamage);
+						iter->Hit_Target(m_tObjParam.fDamage);
 					}
 
 					m_tObjParam.bCanAttack = false;

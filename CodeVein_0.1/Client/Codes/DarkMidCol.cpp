@@ -38,7 +38,7 @@ HRESULT CDarkMidCol::Ready_GameObject(void * pArg)
 	m_pTransformCom->Set_Scale(_v3(1.f, 1.f, 1.f));
 
 	m_tObjParam.bCanAttack = true;
-	m_tObjParam.fDamage = 20.f;
+	m_tObjParam.fDamage = 250.f * pow(1.5f, g_sStageIdx_Cur - 1);
 
 	//g_pManagement->Create_Effect(L"QueensKnight_DarkBoom_Sphere_0", m_pTransformCom->Get_Pos(), nullptr);
 	g_pManagement->Create_Effect(L"QueensKnight_JumpDown_Particle_Red", m_pTransformCom->Get_Pos() + _v3(0.f, 0.25f, 0.f), nullptr);
@@ -177,7 +177,7 @@ void CDarkMidCol::OnCollisionEvent(list<CGameObject*> plistGameObject)
 						if (iter->Get_Target_IsHit())
 							iter->Set_HitAgain(true);
 
-						iter->Add_Target_Hp(-m_tObjParam.fDamage);
+						iter->Hit_Target(m_tObjParam.fDamage);
 					}
 
 					//m_dCurTime = 100000;	// 충돌하면 충돌체 제거

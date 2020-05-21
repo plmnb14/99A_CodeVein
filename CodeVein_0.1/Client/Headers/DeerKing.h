@@ -74,6 +74,12 @@ private:	// 패턴들
 
 	// 8. 투사체 원형으로 8개 던지기
 	CBT_Composite_Node* Throwing();
+	// 9. 랜덤 서성이기
+	CBT_Composite_Node*	MoveAround();
+
+	CBT_Composite_Node*	LeftMoveAround();
+	CBT_Composite_Node*	RightMoveAround();
+
 
 	// 2페이지, 방패 던졌음
 	// 1. 제자리 점프 후 내려찍기, 큰 폭발

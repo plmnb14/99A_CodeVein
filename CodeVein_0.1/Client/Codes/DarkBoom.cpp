@@ -38,7 +38,7 @@ HRESULT CDarkBoom::Ready_GameObject(void * pArg)
 	m_pTransformCom->Set_Scale(_v3(1.f, 1.f, 1.f));
 
 	m_tObjParam.bCanAttack = true;
-	m_tObjParam.fDamage = 20.f;
+	m_tObjParam.fDamage = 250.f * pow(1.5f, g_sStageIdx_Cur - 1);
 
 	m_dCurTime = 0;
 	m_bDead = false;
@@ -229,7 +229,7 @@ void CDarkBoom::OnCollisionEvent(list<CGameObject*> plistGameObject)
 						if (iter->Get_Target_IsHit())
 							iter->Set_HitAgain(true);
 
-						iter->Add_Target_Hp(-m_tObjParam.fDamage);
+						iter->Hit_Target(m_tObjParam.fDamage);
 					}
 
 					break;

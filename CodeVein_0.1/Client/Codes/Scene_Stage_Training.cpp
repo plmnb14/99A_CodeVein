@@ -118,10 +118,13 @@ HRESULT CScene_Stage_Training::Ready_Layer_Enemies()
 	if (FAILED(g_pManagement->Add_Layer(SCENE_STAGE, L"Layer_NPC")))
 		return E_FAIL;
 
+	// 보스 ui를 위해 남겨둠.
+	if (FAILED(g_pManagement->Add_GameObject_ToLayer(L"GameObject_BossMassageUI", SCENE_STAGE, L"Layer_BossMassageUI")))
+		return E_FAIL;
+
 	CGameObject* pInstance = nullptr;
 
-	//if (FAILED(g_pManagement->Add_GameObject_ToLayer(L"GameObject_BossMassageUI", SCENE_STAGE, L"Layer_BossMassageUI")))
-	//	return E_FAIL;
+
 
 	//pInstance = g_pManagement->Clone_GameObject_Return(L"GameObject_DropItem", &CDropItem::ITEM_STATUS(
 	//	ITEM_GRADE_TYPE::ITEM_GRADE_LEGEND, ITEM_NAMETYPE::NAMETYPE_Queen_Steel, _v3(5.f, 0.f, 5.f), 5000.f));
@@ -248,8 +251,8 @@ HRESULT CScene_Stage_Training::Ready_Layer_Enemies()
 	//
 	//if (FAILED(g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Monster", nullptr)))
 	//	return E_FAIL;
-
-	//// 독나방
+	
+	// 독나방
 	//pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_PoisonButterfly",
 	//	&CPoisonButterfly::INFO(10.f, 5.f, 2.f,
 	//		true, _v3(-5.f, 0.f, 8.f), V3_NULL, 0));
@@ -280,8 +283,18 @@ HRESULT CScene_Stage_Training::Ready_Layer_Enemies()
 	//		true, _v3(8.f, 0.f, -8.f), V3_NULL, 0));
 	//g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Boss", nullptr);
 
+	////CActiveObject
+	//pInstance = g_pManagement->Clone_GameObject_Return(L"Mesh_Itembox",
+	//	&CActiveObject::ACTOBJ_INFO(L"Mesh_Itembox", _v3(0.f, 0.f, 0.f), _v3(0.f, 0.f, 0.f), _v3(1.f, 1.f, 1.f),
+	//		0, 2/*박스*/));
+	//g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Boss", nullptr);
 
-	return S_OK;
+	////CActiveObject
+	//pInstance = g_pManagement->Clone_GameObject_Return(L"Mesh_Itembox_Lid",
+	//	&CActiveObject::ACTOBJ_INFO(L"Mesh_Itembox_Lid", _v3(0.f, 0.f, 0.f),  _v3(0.f, 0.f, 0.f), _v3(1.f, 1.f, 1.f),
+	//		0, 3/*박스 Lid*/));
+	//g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Boss", nullptr);
+
 }
 
 HRESULT CScene_Stage_Training::Ready_Layer_Environment()

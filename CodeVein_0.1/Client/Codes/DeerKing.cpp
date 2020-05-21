@@ -37,9 +37,11 @@ HRESULT CDeerKing::Ready_GameObject(void * pArg)
 	Ready_Sound();
 
 	m_tObjParam.bCanHit = true;
+	//m_tObjParam.fHp_Cur = 10000.f * pow(1.5f, g_sStageIdx_Cur - 1);
 	m_tObjParam.fHp_Cur = 1.f;
 	m_tObjParam.fHp_Max = m_tObjParam.fHp_Cur;
-	m_tObjParam.fDamage = 20.f;
+	m_tObjParam.fDamage = 500.f * pow(1.5f, g_sStageIdx_Cur - 1);
+	m_tObjParam.fArmor_Cur = 100.f * pow(1.5f, g_sStageIdx_Cur - 1);
 
 	m_pTransformCom->Set_Scale(_v3(1.f, 1.f, 1.f));
 
@@ -89,7 +91,7 @@ HRESULT CDeerKing::Ready_GameObject(void * pArg)
 
 	// 패턴 확인용,  각 패턴 함수를 아래에 넣으면 재생됨
 
-	//Start_Sel->Add_Child(Jump_In_Place());
+	//Start_Sel->Add_Child(MoveAround());
 	
 	//CBT_RotationDir* Rotation0 = Node_RotationDir("돌기", L"Player_Pos", 0.2);
 	//Start_Sel->Add_Child(Rotation0);
@@ -137,7 +139,7 @@ _int CDeerKing::Update_GameObject(_double TimeDelta)
 		// 죽기전 UI 비활성화
 		m_pBossUI->Set_Active(false);
 
-		if (false == m_bFinishCamShake && m_pMeshCom->Is_Finish_Animation(0.5f))
+		if (false == m_bFinishCamShake && m_pMeshCom->Is_Finish_Animation(0.7f))
 		{
 			m_bFinishCamShake = true;
 			SHAKE_CAM_lv3;
@@ -1043,6 +1045,54 @@ CBT_Composite_Node * CDeerKing::Throwing()
 	return Root_Parallel;
 }
 
+CBT_Composite_Node * CDeerKing::MoveAround()
+{
+	CBT_Selector* Move_Sel = Node_Selector_Random("서성이기");
+
+	Move_Sel->Add_Child(LeftMoveAround());
+	Move_Sel->Add_Child(RightMoveAround());
+
+	return Move_Sel;
+}
+
+CBT_Composite_Node * CDeerKing::LeftMoveAround()
+{
+	CBT_Simple_Parallel* Root_Parallel = Node_Parallel_Immediate("왼쪽 이동 서성임");
+
+	CBT_Sequence* MainSeq = Node_Sequence("왼쪽 이동 서성임");
+	CBT_Play_Ani* Show_Ani6 = Node_Ani("왼쪽 이동", 6, 0.f);
+	CBT_MoveAround*	MoveAround0 = Node_MoveAround("왼쪽으로 서성 이동", L"Player_Pos", L"Monster_Speed", L"Monster_Dir", 2.f, 3, 1);
+
+	CBT_ChaseDir* ChaseDir0 = Node_ChaseDir("플레이어 추적", L"Player_Pos", 5, 0);
+
+	Root_Parallel->Set_Main_Child(MainSeq);
+	MainSeq->Add_Child(Show_Ani6);
+	MainSeq->Add_Child(MoveAround0);
+	
+	Root_Parallel->Set_Sub_Child(ChaseDir0);
+
+	return Root_Parallel;
+}
+
+CBT_Composite_Node * CDeerKing::RightMoveAround()
+{
+	CBT_Simple_Parallel* Root_Parallel = Node_Parallel_Immediate("오른쪽 이동 서성임");
+
+	CBT_Sequence* MainSeq = Node_Sequence("오른쪽 이동 서성임");
+	CBT_Play_Ani* Show_Ani5 = Node_Ani("오른쪽 이동", 5, 0.f);
+	CBT_MoveAround*	MoveAround0 = Node_MoveAround("왼쪽으로 서성 이동", L"Player_Pos", L"Monster_Speed", L"Monster_Dir", -2.f, 3, 1);
+
+	CBT_ChaseDir* ChaseDir0 = Node_ChaseDir("플레이어 추적", L"Player_Pos", 5, 0);
+
+	Root_Parallel->Set_Main_Child(MainSeq);
+	MainSeq->Add_Child(Show_Ani5);
+	MainSeq->Add_Child(MoveAround0);
+
+	Root_Parallel->Set_Sub_Child(ChaseDir0);
+
+	return Root_Parallel;
+}
+
 CBT_Composite_Node * CDeerKing::Jump_In_Place()
 {
 	CBT_Simple_Parallel* Root_Parallel = Node_Parallel_Immediate("병렬");
@@ -1593,7 +1643,8 @@ CBT_Composite_Node * CDeerKing::FarAttack_More_Than_HP60()
 	Root_Sel->Add_Child(Throwing());
 	Root_Sel->Add_Child(Slide_Attack());
 	Root_Sel->Add_Child(Smart_JumpAttack());
-
+	Root_Sel->Add_Child(MoveAround());
+	
 	return Root_Sel;
 }
 
@@ -1631,7 +1682,8 @@ CBT_Composite_Node * CDeerKing::FarAttack_Fianl()
 	Root_Sel->Add_Child(Rush_Body());
 	Root_Sel->Add_Child(Throwing());
 	Root_Sel->Add_Child(Blade_Attack());
-	
+	Root_Sel->Add_Child(MoveAround());
+
 	return Root_Sel;
 }
 
@@ -2173,6 +2225,8 @@ void CDeerKing::Check_PhyCollider()
 		//m_bFight = true;		// 싸움 시작
 		m_bFindPlayer = true;
 
+		Give_Mana_To_Player(2);
+
 		if (m_tObjParam.fHp_Cur > 0.f)
 		{
 			// 체력 비율 70 이하되면 스턴
@@ -2337,7 +2391,7 @@ void CDeerKing::OnCollisionEvent(list<CGameObject*> plistGameObject)
 						if (iter->Get_Target_IsHit())
 							iter->Set_HitAgain(true);
 
-						iter->Add_Target_Hp(-m_tObjParam.fDamage);
+						iter->Hit_Target(m_tObjParam.fDamage);
 					}
 
 					m_tObjParam.bCanAttack = false;

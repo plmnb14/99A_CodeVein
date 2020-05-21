@@ -180,19 +180,21 @@ protected:
 	HRESULT Draw_Collider();
 
 protected:
-	virtual void Check_DropItem(MONSTER_NAMETYPE eMonsterName);
-	virtual void Check_CollisionEvent();
-	virtual void Check_CollisionPush();
-	virtual void Check_CollisionHit(list<CGameObject*> plistGameObject);
+	void Check_DropItem(MONSTER_NAMETYPE eMonsterName);
+	void Check_CollisionEvent();
+	void Check_CollisionPush();
+	void Check_CollisionHit(list<CGameObject*> plistGameObject);
 
-	virtual void Function_FBLR(CGameObject* _pGameObject);
-	virtual void Function_RotateBody(CGameObject* _pGameObject);
-	virtual void Function_MoveAround(CGameObject* _pGameObject, _float _fSpeed, _v3 _vDir = { V3_NULL });
-	virtual void Function_CoolDown();
-	virtual void Function_Movement(_float _fspeed, _v3 _vDir = { V3_NULL });
-	virtual void Function_DecreMoveMent(_float _fMutiply = 1.f);
-	virtual void Function_Find_Target();
-	virtual void Function_ResetAfterAtk();
+	void Function_FBLR(CGameObject* _pGameObject);
+	void Function_RotateBody(CGameObject* _pGameObject);
+	void Function_MoveAround(CGameObject* _pGameObject, _float _fSpeed, _v3 _vDir = { V3_NULL });
+	void Function_CoolDown();
+	void Function_Movement(_float _fspeed, _v3 _vDir = { V3_NULL });
+	void Function_DecreMoveMent(_float _fMutiply = 1.f);
+	void Function_Find_Target();
+	void Function_ResetAfterAtk();
+
+	void Give_Mana_To_Player(_byte _Mana);
 
 protected:
 	virtual CGameObject* Clone_GameObject(void* pArg) PURE;
