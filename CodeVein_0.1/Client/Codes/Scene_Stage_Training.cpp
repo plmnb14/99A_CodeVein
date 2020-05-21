@@ -254,6 +254,7 @@ HRESULT CScene_Stage_Training::Ready_Layer_Enemies()
 	//		true, _v3(-5.f, 0.f, 8.f), V3_NULL, 0));
 	//g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Boss", nullptr);
 
+
 	//// ¿©¿ÕÀÇ ±â»ç
 	//pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_QueensKnight",
 	//	&CQueensKnight::INFO(10.f, 5.f, 2.f,

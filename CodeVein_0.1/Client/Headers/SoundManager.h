@@ -111,7 +111,7 @@ public:
 
 public: 
 	virtual void Play_Sound(TCHAR* pSoundKey, CHANNELID eID, SOUND _eSoundGroup);
-	virtual void Play_BGM(TCHAR* pSoundKey);
+	virtual void Play_BGM(TCHAR* pSoundKey, _bool _bIsAmbient = false);
 	virtual void Play_BGM_Type(TCHAR* pSoundKey , _bool _bIsAmbient);
 	virtual void Stop_Sound(CHANNELID eID);
 	virtual void Stop_All();

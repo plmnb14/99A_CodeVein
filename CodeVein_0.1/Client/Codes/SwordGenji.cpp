@@ -37,7 +37,7 @@ HRESULT CSwordGenji::Ready_GameObject(void * pArg)
 	m_tObjParam.bCanCounter = true;			// 반격가능성
 	m_tObjParam.bCanExecution = true;		// 처형
 	m_tObjParam.bCanHit = true;
-	m_tObjParam.fHp_Cur = 9999.f;
+	m_tObjParam.fHp_Cur = 5000.f;
 	m_tObjParam.fHp_Max = m_tObjParam.fHp_Cur;
 
 	m_pTransformCom->Set_Scale(_v3(1.f, 1.f, 1.f));
@@ -187,14 +187,19 @@ _int CSwordGenji::Update_GameObject(_double TimeDelta)
 
 	// 떨어지면 2초 뒤 죽임.
 	if (m_pRigidCom->Get_CurTime() > 1.f)
+	{
 		m_bIsDead = true;
+		g_pSoundManager->Stop_Sound(CSoundManager::CHANNELID::SwordGenji_SFX_02);
+		g_pSoundManager->Play_Sound(const_cast<TCHAR*>(L"SE_NEW_BARK_DEATH_MV_V3_003.ogg"), CSoundManager::CHANNELID::SwordGenji_SFX_02, CSoundManager::SOUND::Effect_Sound);
+	}
 
 	// 죽었을 경우
 	if (m_bIsDead)
 	{
 		m_bEnable = false;
 
-		Check_DropItem();
+		Check_DropItem(MONSTER_NAMETYPE::M_SwordGenji);
+
 		CObjectPool_Manager::Get_Instance()->Create_Object(L"GameObject_Haze", (void*)&CHaze::HAZE_INFO(100.f, m_pTransformCom->Get_Pos(), 0.f));
 	}
 
@@ -232,6 +237,9 @@ _int CSwordGenji::Update_GameObject(_double TimeDelta)
 
 			if (true == m_bAIController)
 				m_pAIControllerCom->Update_AIController(TimeDelta);
+
+			// 타겟과 거리 측정 후 초기상태로 돌아갈지 정함.
+			Check_TargetDist();
 		}
 	}
 	else
@@ -955,6 +963,7 @@ CBT_Composite_Node * CSwordGenji::Sting_Attack()
 	CBT_Sequence* SubSeq = Node_Sequence("이동");
 	CBT_Wait* Wait0 = Node_Wait("대기", 0.917, 0);
 	CBT_MoveDirectly* Move0 = Node_MoveDirectly_Rush("이동", L"Monster_Speed", L"Monster_Dir", 2, 0.716, 0);
+	CBT_Wait* Wait1 = Node_Wait("대기", 0.05, 0);
 	CBT_SetValue* Sound1Stop = Node_BOOL_SetValue("소리1 재생", L"SFX_01_Stop", true);
 	CBT_SetValue* Sound1Play = Node_BOOL_SetValue("소리1 재생", L"SFX_01_Play", true);
 	CBT_SetValue* Sound1Tag = Node_INT_SetValue("소리1 이름 설정", L"SFX_01_Tag", 0);
@@ -966,6 +975,7 @@ CBT_Composite_Node * CSwordGenji::Sting_Attack()
 	Root_Parallel->Set_Sub_Child(SubSeq);
 	SubSeq->Add_Child(Wait0);
 	SubSeq->Add_Child(Move0);
+	SubSeq->Add_Child(Wait1);
 	SubSeq->Add_Child(Sound1Stop);
 	SubSeq->Add_Child(Sound1Play);
 	SubSeq->Add_Child(Sound1Tag);
@@ -1567,6 +1577,30 @@ void CSwordGenji::Push_Collider()
 				pTrans->Set_Pos(pNav->Move_OnNaviMesh(m_pRigidCom, &pTrans->Get_Pos(), &vDir, m_pColliderCom->Get_Length().x));
 			}
 		}
+	}
+}
+
+void CSwordGenji::Check_TargetDist()
+{
+	// 현재 타겟 가져옴
+	CGameObject* pPlayer = CMonster::Get_pTargetObject();
+
+	if (nullptr == pPlayer)
+		return;
+
+	CTransform* pPlayer_Trans = TARGET_TO_TRANS(pPlayer);
+
+	// 타겟과 몬스터의 거리
+	_v3 vLengthTemp = pPlayer_Trans->Get_Pos() - m_pTransformCom->Get_Pos();
+	_float fLength = D3DXVec3Length(&vLengthTemp);
+
+	// 초기상태로 돌림.
+	if (fLength > 15.f)
+	{
+		m_bFight = false;
+		m_bFindPlayer = false;
+		m_pAIControllerCom->Reset_BT();
+		m_pAIControllerCom->Set_Value_Of_BlackBoard(L"TrailOff", true);
 	}
 }
 

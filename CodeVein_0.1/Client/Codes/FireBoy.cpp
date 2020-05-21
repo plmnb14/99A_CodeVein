@@ -1253,6 +1253,7 @@ void CFireBoy::Check_PhyCollider()
 		m_dHitTime = 0;	// 피격가능 타임 초기화
 
 		//m_bFight = true;		// 싸움 시작
+		m_bFindPlayer = true;
 
 		if (m_tObjParam.fHp_Cur > 0.f)
 		{

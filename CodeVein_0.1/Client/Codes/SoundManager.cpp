@@ -46,7 +46,7 @@ void CSoundManager::Play_Sound(TCHAR * pSoundKey, CHANNELID eID, SOUND _eSoundGr
 	FMOD_System_Update(m_pSystem);
 }
 
-void CSoundManager::Play_BGM(TCHAR * pSoundKey)
+void CSoundManager::Play_BGM(TCHAR * pSoundKey,  _bool _bIsAmbient)
 {
 	if (m_mapSound.empty())
 		return;
@@ -55,12 +55,22 @@ void CSoundManager::Play_BGM(TCHAR * pSoundKey)
 
 	if (m_mapSound.end() == iter)
 		return;
-	 
 
-	FMOD_System_PlaySound(m_pSystem, iter->second, FALSE, false, &m_pChannelArr[Background_01]);
-	FMOD_Channel_SetChannelGroup(m_pChannelArr[Background_01], m_pChannelGroup[BGM_Sound]);
+	if (false == _bIsAmbient)
+	{
+		FMOD_System_PlaySound(m_pSystem, iter->second, FALSE, false, &m_pChannelArr[Background_Loop]);
+		FMOD_Channel_SetChannelGroup(m_pChannelArr[Background_Loop], m_pChannelGroup[BGM_Sound]);
 
-	FMOD_Channel_SetMode(m_pChannelArr[Background_01], FMOD_LOOP_NORMAL);
+		FMOD_Channel_SetMode(m_pChannelArr[Background_Loop], FMOD_LOOP_NORMAL);
+	}
+
+	else
+	{
+		FMOD_System_PlaySound(m_pSystem, iter->second, FALSE, false, &m_pChannelArr[Ambient_Loop]);
+		FMOD_Channel_SetChannelGroup(m_pChannelArr[Ambient_Loop], m_pChannelGroup[Ambient_Sound]);
+
+		FMOD_Channel_SetMode(m_pChannelArr[Ambient_Loop], FMOD_LOOP_NORMAL);
+	}
 }
 
 void CSoundManager::Play_BGM_Type(TCHAR * pSoundKey, _bool _bIsAmbient)
