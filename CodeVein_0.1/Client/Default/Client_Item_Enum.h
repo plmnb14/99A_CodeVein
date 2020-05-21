@@ -20,26 +20,26 @@ enum ITEM_GRADE_TYPE
 enum ITEM_NAMETYPE
 {
 	// 무기
-	NAMETYPE_WpnAll_Gun_Bayonet,
-	NAMETYPE_WpnAll_Gun_ReverTardor,
-	NAMETYPE_WpnAll_Gun_Nakil,
-	NAMETYPE_WpnAll_Gun_DarkBayonet,
-	NAMETYPE_WpnAll_Halberd_SolidPiercer,
-	NAMETYPE_WpnAll_Halberd_Black,
-	NAMETYPE_WpnAll_Halberd_DarkBodish,
-	NAMETYPE_WpnAll_Halberd_Nakil,
-	NAMETYPE_WpnAll_Hammer_ImperseAnker,
-	NAMETYPE_WpnAll_Hammer_Black,
-	NAMETYPE_WpnAll_Hammer_DarkHeavyAxe,
-	NAMETYPE_WpnAll_Hammer_Nakil,
-	NAMETYPE_WpnAll_LSword_Tsubai,
-	NAMETYPE_WpnAll_LSword_Black,
-	NAMETYPE_WpnAll_LSword_Nakil,
-	NAMETYPE_WpnAll_LSword_DarkTsubai,
-	NAMETYPE_WpnAll_SSword_Red,
-	NAMETYPE_WpnAll_SSword_Executioner,
-	NAMETYPE_WpnAll_SSword_Nakil,
-	NAMETYPE_WpnAll_SSword_DarkBrodeSword,
+	NAMETYPE_WpnAll_Gun_Bayonet,	// 바요네트
+	NAMETYPE_WpnAll_Gun_ReverTardor,// 리베르타도르
+	NAMETYPE_WpnAll_Gun_Nakil,		// 낙일의 총검
+	NAMETYPE_WpnAll_Gun_DarkBayonet,// 타락한 바요네트
+	NAMETYPE_WpnAll_Halberd_SolidPiercer,// 솔리드피어서
+	NAMETYPE_WpnAll_Halberd_Black,	// 흑의의 도끼창
+	NAMETYPE_WpnAll_Halberd_DarkBodish,// 타락한 바디시
+	NAMETYPE_WpnAll_Halberd_Nakil,	// 낙일의 도끼창
+	NAMETYPE_WpnAll_Hammer_ImperseAnker,// 임펄스 앵커
+	NAMETYPE_WpnAll_Hammer_Black,	// 불굴의 대형 해머
+	NAMETYPE_WpnAll_Hammer_DarkHeavyAxe,// 타락한 헤비 액스
+	NAMETYPE_WpnAll_Hammer_Nakil, // 낙일의 대형 워해머
+	NAMETYPE_WpnAll_LSword_Tsubai,// 츠바이헨더
+	NAMETYPE_WpnAll_LSword_Black, // 흑의의 대검
+	NAMETYPE_WpnAll_LSword_Nakil, // 낙일의 양손검
+	NAMETYPE_WpnAll_LSword_DarkTsubai, //타락한 츠바이헨더
+	NAMETYPE_WpnAll_SSword_Red,// 진홍의 장검
+	NAMETYPE_WpnAll_SSword_Executioner,// 엑스큐셔너
+	NAMETYPE_WpnAll_SSword_Nakil, // 낙일의 검
+	NAMETYPE_WpnAll_SSword_DarkBrodeSword, // 타락한 브로드 소드
 
 	// 아이템
 	NAMETYPE_Expend_MaximumUp,		// 아이템 최대 소지 개수 증가
