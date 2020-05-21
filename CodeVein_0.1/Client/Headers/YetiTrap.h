@@ -11,14 +11,13 @@ class CYetiTrap :public CGameObject
 public:
 	struct YETITRAPINFO
 	{
-		YETITRAPINFO(_uint _Idx, _v3 _vPos, _v3 _vAngle, _v3 _vScale)
-			:iIndex(_Idx), vPos(_vPos), vAngle(_vAngle), vScale(_vScale)
+		YETITRAPINFO(_uint _Idx, _v3 _vPos, _v3 _vAngle)
+			:iIndex(_Idx), vPos(_vPos), vAngle(_vAngle)
 		{
 		}
-		_v3 vPos;
-		_v3 vAngle;
-		_v3 vScale;
-		_uint iIndex;
+		_uint iIndex = 0;
+		_v3 vPos = {};
+		_v3 vAngle = {};
 	};
 
 protected:
@@ -37,6 +36,7 @@ public:
 
 	_uint	Get_YetiIndex() { return m_iIndex; }
 	_bool	Get_SummonYeti() { return m_bCanSummonYeti; }
+	void	Set_SummonYeti(_bool _bSummon) { m_bCanSummonYeti = _bSummon; }
 
 private:
 	void Check_Dist();

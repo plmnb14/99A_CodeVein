@@ -40,10 +40,7 @@ HRESULT CYetiTrap::Ready_GameObject(void * pArg)
 _int CYetiTrap::Update_GameObject(_double _TimeDelta)
 {
 	if (false == m_bEnable)
-	{
-		m_bCanSummonYeti = true;
 		return NO_EVENT;
-	}
 
 	CGameObject::Update_GameObject(_TimeDelta);
 
@@ -182,6 +179,9 @@ HRESULT CYetiTrap::Render_GameObject_SetPass(CShader * pShader, _int iPass, _boo
 
 HRESULT CYetiTrap::Render_GameObject_Instancing_SetPass(CShader * pShader)
 {
+	if (false == m_bEnable)
+		return S_OK;
+
 	if (FAILED(SetUp_ConstantTable(m_pShader)))
 		return E_FAIL;
 
@@ -207,10 +207,15 @@ HRESULT CYetiTrap::Render_GameObject_Instancing_SetPass(CShader * pShader)
 
 void CYetiTrap::Check_Dist()
 {
-	_float fDist = V3_LENGTH(&(TARGET_TO_TRANS(m_pPlayer)->Get_Pos() - m_pTransform->Get_Pos()));
+	if (nullptr != m_pPlayer)
+	{
+		_float fDist = V3_LENGTH(&(TARGET_TO_TRANS(m_pPlayer)->Get_Pos() - m_pTransform->Get_Pos()));
 
-	if (fDist < 1.f)
-		m_bEnable = false;
+		if (fDist < 1.f)
+			m_bCanSummonYeti = true;
+		else
+			m_bCanSummonYeti = false;
+	}
 
 	return;
 }
@@ -299,11 +304,10 @@ HRESULT CYetiTrap::Ready_Default(void * pArg)
 {
 	YETITRAPINFO Info = *(YETITRAPINFO*)pArg;
 
-	m_pTransform->Set_Scale(Info.vScale);
+	m_pTransform->Set_Scale(V3_ONE);
 	m_pTransform->Set_Angle(Info.vAngle);
 	m_pTransform->Set_Pos(Info.vPos);
 
-	m_bCanSummonYeti = false;
 	m_iIndex = Info.iIndex;
 
 	m_pBattleAgent->Set_RimColor(_v4(0.f, 0.f, 1.f, 0.f));

@@ -39,6 +39,9 @@ HRESULT CScene_Stage_02::Ready_Scene()
 
 	g_pManagement->LoadCreateObject_FromPath(m_pGraphic_Device, L"Object_Stage_02.dat");
 
+	CScriptManager::Get_Instance()->Set_StageIdx(2);
+	CScriptManager::Get_Instance()->Ready_Script_DynamicObject(2); //필요없으나 일단 예의상 넣었음
+
 	return S_OK;
 }
 
@@ -101,6 +104,8 @@ HRESULT CScene_Stage_02::Ready_Layer_Player(const _tchar * pLayerTag)
 	if (FAILED(g_pManagement->Add_Layer(SCENE_STAGE, L"Layer_Pet")))
 		return E_FAIL;
 	if (FAILED(g_pManagement->Add_Layer(SCENE_STAGE, L"Layer_Item")))
+		return E_FAIL;
+	if (FAILED(g_pManagement->Add_Layer(SCENE_STAGE, L"Layer_Trap")))
 		return E_FAIL;
 
 	CPlayer* pInstance = static_cast<CPlayer*>(g_pManagement->Get_GameObjectBack(L"Layer_Player", SCENE_MORTAL));
