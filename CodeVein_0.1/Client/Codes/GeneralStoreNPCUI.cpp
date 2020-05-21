@@ -227,12 +227,14 @@ void CGeneralStoreNPCUI::Click_Option()
 
 	if (CCollisionMgr::Collision_Ray(m_vecOption[1], g_pInput_Device->Get_Ray(), &m_fCross))
 	{
-		CUI_Manager::Get_Instance()->Stop_Play_UISound(L"Slot_Regist.ogg", CSoundManager::CHANNELID::UI_Click, CSoundManager::Effect_Sound);
+		
 
 		m_vecOption[1]->Set_Select(true);
 
 		if (g_pInput_Device->Get_DIMouseState(CInput_Device::DIM_LB))
 		{
+			CUI_Manager::Get_Instance()->Stop_Play_UISound(L"Slot_Regist.ogg", CSoundManager::CHANNELID::UI_Click, CSoundManager::Effect_Sound);
+
 			CGeneralStoreSellUI* pStoreSellUI = CUI_Manager::Get_Instance()->Get_GeneralStoreSellUI();
 			
 			m_bIsActive = false;
