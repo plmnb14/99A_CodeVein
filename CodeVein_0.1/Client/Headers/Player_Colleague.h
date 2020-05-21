@@ -16,12 +16,12 @@ public:
 	typedef struct tagInitInfo
 	{
 		tagInitInfo(_v3 vPos, _float fYAngle, _ushort StageIdx)
-			: vPos(vPos), fYAngle(fYAngle), sStageIdx(g_eSceneID_Cur)
+			: vPos(vPos), fYAngle(fYAngle), eStageIdx(g_eSceneID_Cur)
 		{}
 
 		_v3			vPos = {};
 		_float		fYAngle = 0.f;
-		_ushort		sStageIdx = 0;
+		_ushort		eStageIdx = 0;
 	}JACK_INFO;
 
 public:
@@ -205,7 +205,7 @@ private:
 	void	Function_FBRL();
 
 public:
-	void Teleport_ResetOptions(void * pArg/*_int eSceneID, _int eTeleportID*/);
+	HRESULT Teleport_ResetOptions(void * pArg/*_int eSceneID, _int eTeleportID*/);
 
 private:
 	CTransform*				m_pTransformCom = nullptr;
@@ -288,6 +288,8 @@ private:
 	_float	m_fAccumulateDamage = 0.f;
 
 	_float	m_fDodge_CoolTime = 0.f;
+
+	_float	m_fMinPos_Test = 0.f;
 
 
 	_bool	m_bEventTrigger[20] = {};

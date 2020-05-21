@@ -135,12 +135,11 @@ HRESULT CScene_Stage_Training::Ready_Layer_Enemies()
 	//	ITEM_GRADE_TYPE::ITEM_GRADE_LEGEND, ITEM_NAMETYPE::NAMETYPE_Queen_Titanium, _v3(-15.f, 0.f, -15.f), 5000.f));
 	//g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_MORTAL, L"Layer_Item", nullptr);
 
-	//// ±èÀç±¸
-	//pInstance = g_pManagement->Clone_GameObject_Return(L"GameObject_Colleague", nullptr);
-	//TARGET_TO_NAV(pInstance)->Reset_NaviMesh();
-	//TARGET_TO_NAV(pInstance)->Ready_NaviMesh(m_pGraphic_Device, L"Navmesh_Training.dat");
-	//TARGET_TO_NAV(pInstance)->Check_OnNavMesh(_v3(0.f, 0.f, 0.f));
+	// ±èÀç±¸ 
+	//pInstance = g_pManagement->Clone_GameObject_Return(L"GameObject_Colleague",
+	//	&CPlayer_Colleague::JACK_INFO(_v3(0.f, 0.f, 0.f), 0.f, 0));
 	//g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Colleague", nullptr);
+
 
 	// ¾ßÄí¸ð
 	//g_pManagement->Add_GameObject_ToLayer(L"GameObject_NPC_Yakumo", SCENE_STAGE, L"Layer_NPC", &CNPC_Yakumo::NPC_INFO(_v3(-4.46f, 0.f, -5.294f), D3DXToRadian(90.f)));
@@ -149,11 +148,11 @@ HRESULT CScene_Stage_Training::Ready_Layer_Enemies()
 	//g_pManagement->Add_GameObject_ToLayer(L"GameObject_NPC_Yokumo", SCENE_STAGE, L"Layer_NPC", &CNPC_Yokumo::NPC_INFO(_v3(-1.46f, 0.f, -1.294f), D3DXToRadian(90.f)));
 
 
-	//// ÅäÅÛ
-	//pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_Cocoon",
-	//	&CMonster::MONSTER_STATUS(CMonster::MONSTER_COLOR_TYPE::COLOR_NONE, WEAPON_STATE::WEAPON_None,
-	//		true, _v3(8.f, 0.f, -8.f), V3_NULL, 0));
-	//g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Monster", nullptr);
+	// ÅäÅÛ
+	pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_Cocoon",
+		&CMonster::MONSTER_STATUS(CMonster::MONSTER_COLOR_TYPE::COLOR_NONE, WEAPON_STATE::WEAPON_None,
+			true, _v3(8.f, 0.f, -8.f), V3_NULL, 0));
+	g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Monster", nullptr);
 
 	// ÅäÅÛ
 	//pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_Cocoon",
@@ -258,6 +257,7 @@ HRESULT CScene_Stage_Training::Ready_Layer_Enemies()
 	//	&CPoisonButterfly::INFO(10.f, 5.f, 2.f,
 	//		true, _v3(-5.f, 0.f, 8.f), V3_NULL, 0));
 	//g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Boss", nullptr);
+
 
 	//// ¿©¿ÕÀÇ ±â»ç
 	//pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_QueensKnight",

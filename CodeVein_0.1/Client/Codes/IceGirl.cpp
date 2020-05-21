@@ -2279,6 +2279,7 @@ void CIceGirl::Check_PhyCollider()
 		m_dHitTime = 0;	// 피격가능 타임 초기화
 
 		//m_bFight = true;		// 싸움 시작
+		m_bFindPlayer = true;
 
 		if (m_tObjParam.fHp_Cur > 0.f)
 		{
@@ -2302,6 +2303,8 @@ void CIceGirl::Check_PhyCollider()
 
 					m_pAIControllerCom->Set_Value_Of_BlackBoard(L"PushCol", true);
 					m_pAIControllerCom->Set_Value_Of_BlackBoard(L"TrailOff", true);
+
+					SHAKE_CAM_lv2;
 				}
 			}
 
@@ -2323,6 +2326,8 @@ void CIceGirl::Check_PhyCollider()
 
 					m_pAIControllerCom->Set_Value_Of_BlackBoard(L"PushCol", true);
 					m_pAIControllerCom->Set_Value_Of_BlackBoard(L"TrailOff", true);
+
+					SHAKE_CAM_lv2;
 				}
 			}
 
@@ -2690,10 +2695,10 @@ HRESULT CIceGirl::Ready_NF(void * pArg)
 		_tchar szNavData[STR_128] = L"";
 
 		lstrcpy(szNavData, (
-			eTemp.sStageIdx == 0 ? L"Navmesh_Training.dat" :
-			eTemp.sStageIdx == 1 ? L"Navmesh_Stage_01.dat" :
-			eTemp.sStageIdx == 2 ? L"Navmesh_Stage_02.dat" :
-			eTemp.sStageIdx == 3 ? L"Navmesh_Stage_03.dat" : L"Navmesh_Stage_04.dat"));
+			eTemp.eStageIdx == 0 ? L"Navmesh_Training.dat" :
+			eTemp.eStageIdx == 1 ? L"Navmesh_Stage_01.dat" :
+			eTemp.eStageIdx == 2 ? L"Navmesh_Stage_02.dat" :
+			eTemp.eStageIdx == 3 ? L"Navmesh_Stage_03.dat" : L"Navmesh_Stage_04.dat"));
 
 		m_pNavMeshCom->Set_Index(-1);
 		m_pNavMeshCom->Ready_NaviMesh(m_pGraphic_Dev, szNavData);

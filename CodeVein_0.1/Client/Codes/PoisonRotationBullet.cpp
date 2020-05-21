@@ -97,6 +97,7 @@ _int CPoisonRotationBullet::Update_GameObject(_double TimeDelta)
 
 	m_dCurTime += TimeDelta;
 
+
 	// 시간 초과
 	if (m_dCurTime > m_dLifeTime)
 	{
@@ -113,6 +114,9 @@ _int CPoisonRotationBullet::Update_GameObject(_double TimeDelta)
 
 		m_pBulletBody1->Set_Dead();
 		m_pBulletBody2->Set_Dead();
+
+		//g_pSoundManager->Stop_Sound(CSoundManager::CHANNELID::Butterfly_SFX_02);
+
 		m_bDead = true;
 	}
 	// 진행중
@@ -121,6 +125,9 @@ _int CPoisonRotationBullet::Update_GameObject(_double TimeDelta)
 		if (m_bEffect)
 		{
 			m_bEffect = false;
+			g_pSoundManager->Stop_Sound(CSoundManager::CHANNELID::Butterfly_SFX_02);
+			g_pSoundManager->Play_Sound(L"SE_GODDESS_KETSUGI_IMPACT_002.ogg", CSoundManager::CHANNELID::Butterfly_SFX_02, CSoundManager::SOUND::Effect_Sound);
+
 		}
 
 		m_fEffectCreateOffset_Check += _float(TimeDelta);

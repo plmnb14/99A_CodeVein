@@ -35,7 +35,7 @@ HRESULT CGunGenji::Ready_GameObject(void * pArg)
 	m_tObjParam.bCanCounter = true;			// 반격가능성
 	m_tObjParam.bCanExecution = true;		// 처형
 	m_tObjParam.bCanHit = true;
-	m_tObjParam.fHp_Cur = 9999.f;
+	m_tObjParam.fHp_Cur = 5000.f;
 	m_tObjParam.fHp_Max = m_tObjParam.fHp_Cur;
 
 	m_pTransformCom->Set_Scale(_v3(1.f, 1.f, 1.f));
@@ -153,14 +153,19 @@ _int CGunGenji::Update_GameObject(_double TimeDelta)
 
 	// 떨어지면 1초 뒤 죽임.
 	if (m_pRigidCom->Get_CurTime() > 1.f)
+	{
 		m_bIsDead = true;
+
+		g_pSoundManager->Stop_Sound(CSoundManager::CHANNELID::GunGenji_SFX_02);
+		g_pSoundManager->Play_Sound(const_cast<TCHAR*>(L"SE_NEW_BARK_DEATH_MV_V3_002.ogg"), CSoundManager::CHANNELID::GunGenji_SFX_02, CSoundManager::SOUND::Effect_Sound);
+	}
 
 	// 죽었을 경우
 	if (m_bIsDead)
 	{
 		m_bEnable = false;
 
-		Check_DropItem();
+		Check_DropItem(MONSTER_NAMETYPE::M_GunGenji);
 		CObjectPool_Manager::Get_Instance()->Create_Object(L"GameObject_Haze", (void*)&CHaze::HAZE_INFO(100.f, m_pTransformCom->Get_Pos(), 0.f));
 	}
 
@@ -197,6 +202,9 @@ _int CGunGenji::Update_GameObject(_double TimeDelta)
 
 			if (true == m_bAIController)
 				m_pAIControllerCom->Update_AIController(TimeDelta);
+
+			// 타겟과 거리 측정 후 초기상태로 돌아갈지 정함.
+			Check_TargetDist();
 		}
 	}
 
@@ -224,6 +232,7 @@ _int CGunGenji::Update_GameObject(_double TimeDelta)
 		Check_PhyCollider();
 	else
 		Check_DeadEffect(TimeDelta);
+
 
 	m_pTransformCom->Set_Pos(m_pNavMeshCom->Axis_Y_OnNavMesh(m_pTransformCom->Get_Pos()));
 
@@ -404,6 +413,10 @@ HRESULT CGunGenji::Render_GameObject_SetPass(CShader* pShader, _int iPass, _bool
 	//============================================================================================
 	if (_bIsForMotionBlur)
 	{
+		if (FAILED(pShader->Set_Value("g_matView", &ViewMatrix, sizeof(_mat))))
+			return E_FAIL;
+		if (FAILED(pShader->Set_Value("g_matProj", &ProjMatrix, sizeof(_mat))))
+			return E_FAIL;
 		if (FAILED(pShader->Set_Value("g_matLastWVP", &m_matLastWVP, sizeof(_mat))))
 			return E_FAIL;
 
@@ -1261,6 +1274,30 @@ void CGunGenji::Push_Collider()
 	}
 }
 
+void CGunGenji::Check_TargetDist()
+{
+	// 현재 타겟 가져옴
+	CGameObject* pPlayer = CMonster::Get_pTargetObject();
+
+	if (nullptr == pPlayer)
+		return;
+
+	CTransform* pPlayer_Trans = TARGET_TO_TRANS(pPlayer);
+
+	// 타겟과 몬스터의 거리
+	_v3 vLengthTemp = pPlayer_Trans->Get_Pos() - m_pTransformCom->Get_Pos();
+	_float fLength = D3DXVec3Length(&vLengthTemp);
+
+	// 초기상태로 돌림.
+	if (fLength > 15.f)
+	{
+		m_bFight = false;
+		m_bFindPlayer = false;
+		m_pAIControllerCom->Reset_BT();
+		m_pAIControllerCom->Set_Value_Of_BlackBoard(L"TrailOff", true);
+	}
+}
+
 void CGunGenji::Check_DeadEffect(_double TimeDelta)
 {
 	m_fDeadEffect_Delay -= _float(TimeDelta);
@@ -1522,10 +1559,10 @@ HRESULT CGunGenji::Ready_NF(void * pArg)
 		_tchar szNavData[STR_128] = L"";
 
 		lstrcpy(szNavData, (
-			eTemp.sStageIdx == 0 ? L"Navmesh_Training.dat" :
-			eTemp.sStageIdx == 1 ? L"Navmesh_Stage_01.dat" : 
-			eTemp.sStageIdx == 2 ? L"Navmesh_Stage_02.dat" : 
-			eTemp.sStageIdx == 3 ? L"Navmesh_Stage_03.dat" : L"Navmesh_Stage_04.dat"));
+			eTemp.eStageIdx == 0 ? L"Navmesh_Training.dat" :
+			eTemp.eStageIdx == 1 ? L"Navmesh_Stage_01.dat" : 
+			eTemp.eStageIdx == 2 ? L"Navmesh_Stage_02.dat" : 
+			eTemp.eStageIdx == 3 ? L"Navmesh_Stage_03.dat" : L"Navmesh_Stage_04.dat"));
 
 		m_pNavMeshCom->Set_Index(-1);
 		m_pNavMeshCom->Ready_NaviMesh(m_pGraphic_Dev, szNavData);
