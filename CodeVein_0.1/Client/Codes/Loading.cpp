@@ -2050,8 +2050,8 @@ HRESULT CLoading::Ready_Intro_MonsterPrototype()
 		if (FAILED(g_pManagement->Add_Prototype(L"Monster_Yeti", CYeti::Create(m_pGraphicDev))))
 			return E_FAIL;
 
-		if (FAILED(g_pManagement->Add_Prototype(L"GameObject_YetiTrap", CYetiTrap::Create(m_pGraphicDev))))
-			return E_FAIL;
+		//if (FAILED(g_pManagement->Add_Prototype(L"GameObject_YetiTrap", CYetiTrap::Create(m_pGraphicDev))))
+		//	return E_FAIL;
 
 		// ¿¹Æ¼ ÃÑ¾Ë
 		if (FAILED(g_pManagement->Add_Prototype(L"Monster_YetiBullet", CYetiBullet::Create(m_pGraphicDev))))
