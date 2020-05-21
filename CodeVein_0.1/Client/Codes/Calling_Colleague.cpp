@@ -53,17 +53,17 @@ _int CCalling_Colleague::Update_GameObject(_double TimeDelta)
 
 	D3DXMatrixOrthoLH(&m_matProj, WINCX, WINCY, 0.f, 1.f);
 
-	if (g_pInput_Device->Key_Down(DIK_F2))
-	{
-		//m_bIsSelect = true;
-		Check_Calling_Colleague(true);
-	}
-		
-	else if (g_pInput_Device->Key_Down(DIK_F3))
-	{
-		//m_bIsSelect = false;
-		Check_Calling_Colleague(false);
-	}
+	//if (g_pInput_Device->Key_Down(DIK_F2))
+	//{
+	//	//m_bIsSelect = true;
+	//	Check_Calling_Colleague(true);
+	//}
+	//	
+	//else if (g_pInput_Device->Key_Down(DIK_F3))
+	//{
+	//	//m_bIsSelect = false;
+	//	Check_Calling_Colleague(false);
+	//}
 		
 
 	return S_OK;
@@ -199,6 +199,8 @@ void CCalling_Colleague::Check_Calling_Colleague(_bool Check_Call_Colleague)
 			pTempColleague = g_pManagement->Clone_GameObject_Return(L"GameObject_Colleague",
 				&CPlayer_Colleague::JACK_INFO(_v3(10.f, 0.f, 5.f), 0.f, 0));
 			g_pManagement->Add_GameOject_ToLayer_NoClone(pTempColleague, SCENE_STAGE, L"Layer_Colleague", nullptr);
+
+			
 		}
 		else
 		{

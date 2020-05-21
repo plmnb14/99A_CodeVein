@@ -205,7 +205,7 @@ private:
 	void	Function_FBRL();
 
 public:
-	void Teleport_ResetOptions(void * pArg/*_int eSceneID, _int eTeleportID*/);
+	HRESULT Teleport_ResetOptions(void * pArg/*_int eSceneID, _int eTeleportID*/);
 
 private:
 	CTransform*				m_pTransformCom = nullptr;
@@ -288,6 +288,8 @@ private:
 	_float	m_fAccumulateDamage = 0.f;
 
 	_float	m_fDodge_CoolTime = 0.f;
+
+	_float	m_fMinPos_Test = 0.f;
 
 
 	_bool	m_bEventTrigger[20] = {};

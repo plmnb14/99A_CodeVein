@@ -77,15 +77,13 @@ _int CNPC_Yokumo::Update_GameObject(_double TimeDelta)
 		return NO_EVENT;
 
 	CGameObject::LateInit_GameObject();
+	CGameObject::Update_GameObject(TimeDelta);
 	//====================================================================================================
 	// 컬링
 	//====================================================================================================
 	m_bInFrustum = m_pOptimizationCom->Check_InFrustumforObject(&m_pTransformCom->Get_Pos(), 2.f);
 	//====================================================================================================
 
-	CGameObject::Update_GameObject(TimeDelta);
-
-	//========================
 	Check_Dist();
 	Check_Anim();
 	Check_Bye();
@@ -329,7 +327,8 @@ void CNPC_Yokumo::Render_Collider()
 
 void CNPC_Yokumo::Check_Dist()
 {
-	if (!m_pShopUI)
+	// 샵이 없어도 리턴
+	if (!m_pUIManager->Get_GeneralStoreUI())
 		return;
 
 	// 이미 활성화 되 있으면 리턴
@@ -339,12 +338,18 @@ void CNPC_Yokumo::Check_Dist()
 		// 거리젠다.
 		_float fLen = D3DXVec3Length(&_v3(TARGET_TO_TRANS(m_pPlayer)->Get_Pos() - m_pTransformCom->Get_Pos()));
 
-		const _float MIN_DIST = 2.f;
+		const _float MIN_DIST = 1.f;
+		const _float MAX_DIST = 2.f;
 
 		// 거리 이내가 아닐 경우, 
-		if (fLen > MIN_DIST)
+		if (fLen > MAX_DIST || fLen < MIN_DIST)
 		{
-			m_pInteractionButton->Set_Active(false);
+			// 요쿠모가 활성화 아닐 경우,
+			if (false == m_pPlayer->Get_YakumoUI())
+			{
+				m_pInteractionButton->Set_Active(false);
+				m_pPlayer->Set_OnNPCUI(false);
+			}
 
 			// 아이들이 아닐 경우, 아이들 만들어줌
 			if (Idle != m_eState)
@@ -353,7 +358,9 @@ void CNPC_Yokumo::Check_Dist()
 					m_eState = Idle;
 			}
 
-			m_pPlayer->Set_OnNPCUI(false);
+			if(false == m_pPlayer->Get_YakumoUI())
+				m_pPlayer->Set_OnNPCUI(false);
+
 			m_pPlayer->Set_YokumoUI(false);
 
 			m_bActive = false;
@@ -460,6 +467,8 @@ void CNPC_Yokumo::Check_Bye()
 		!m_pUIManager->Get_GeneralStoreUI()->Get_Active() &&
 		m_pInteractionButton->Get_ReactConversation())
 	{
+		cout << "앙ㄴ뇽" << endl;
+
 		m_pTransformCom->Set_Angle(AXIS_Y, m_fOriginAngle);
 
 		m_pInteractionButton->Set_ReactConverSation(false);

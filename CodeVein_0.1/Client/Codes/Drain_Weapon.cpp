@@ -53,6 +53,9 @@ _int CDrain_Weapon::Late_Update_GameObject(_double TimeDelta)
 		nullptr == m_pMesh_Dynamic)
 		return E_FAIL;
 
+	if (false == m_bEnable)
+		return E_FAIL;
+
 	if (m_bActive)
 	{
 		m_pMesh_Dynamic->SetUp_Animation(m_eAnimnum);
@@ -141,26 +144,63 @@ HRESULT CDrain_Weapon::Render_GameObject()
 	return NOERROR;
 }
 
-HRESULT CDrain_Weapon::Render_GameObject_SetPass(CShader * pShader, _int iPass)
+HRESULT CDrain_Weapon::Render_GameObject_SetPass(CShader * pShader, _int iPass, _bool _bIsForMotionBlur)
 {
+	if (false == m_bEnable)
+		return S_OK;
+
 	if (nullptr == pShader ||
 		nullptr == m_pMesh_Dynamic)
 		return E_FAIL;
 
-	_mat		ViewMatrix = CManagement::Get_Instance()->Get_Transform(D3DTS_VIEW);
-	_mat		ProjMatrix = CManagement::Get_Instance()->Get_Transform(D3DTS_PROJECTION);
+	//============================================================================================
+	// 공통 변수
+	//============================================================================================
 
-	if (FAILED(pShader->Set_Value("g_matView", &ViewMatrix, sizeof(_mat))))
-		return E_FAIL;
-	if (FAILED(pShader->Set_Value("g_matProj", &ProjMatrix, sizeof(_mat))))
-		return E_FAIL;
-	if (FAILED(pShader->Set_Value("g_matWorld", &m_pTransform->Get_WorldMat(), sizeof(_mat))))
-		return E_FAIL;
-	if (FAILED(pShader->Set_Value("g_matLastWVP", &m_matLastWVP, sizeof(_mat))))
+	_mat	ViewMatrix = g_pManagement->Get_Transform(D3DTS_VIEW);
+	_mat	ProjMatrix = g_pManagement->Get_Transform(D3DTS_PROJECTION);
+	_mat	WorldMatrix = m_pTransform->Get_WorldMat();
+
+	if (FAILED(pShader->Set_Value("g_matWorld", &WorldMatrix, sizeof(_mat))))
 		return E_FAIL;
 
-	m_matLastWVP = m_pTransform->Get_WorldMat() * ViewMatrix * ProjMatrix;
+	//============================================================================================
+	// 모션 블러 상수
+	//============================================================================================
+	if (_bIsForMotionBlur)
+	{
+		if (FAILED(pShader->Set_Value("g_matLastWVP", &m_matLastWVP, sizeof(_mat))))
+			return E_FAIL;
 
+		m_matLastWVP = WorldMatrix * ViewMatrix * ProjMatrix;
+
+		_bool bMotionBlur = true;
+		if (FAILED(pShader->Set_Bool("g_bMotionBlur", bMotionBlur)))
+			return E_FAIL;
+
+		_bool bDecalTarget = false;
+		if (FAILED(pShader->Set_Bool("g_bDecalTarget", bDecalTarget)))
+			return E_FAIL;
+
+		_float fBloomPower = 10.f;
+		if (FAILED(pShader->Set_Value("g_fBloomPower", &fBloomPower, sizeof(_float))))
+			return E_FAIL;
+	}
+
+	//============================================================================================
+	// 기타 상수
+	//============================================================================================
+	else
+	{
+		_mat matWVP = WorldMatrix * ViewMatrix * ProjMatrix;
+
+		if (FAILED(pShader->Set_Value("g_matWVP", &matWVP, sizeof(_mat))))
+			return E_FAIL;
+	}
+
+	//============================================================================================
+	// 쉐이더 실행
+	//============================================================================================
 	_uint iNumMeshContainer = _uint(m_pMesh_Dynamic->Get_NumMeshContainer());
 
 	for (_uint i = 0; i < _uint(iNumMeshContainer); ++i)
@@ -169,12 +209,7 @@ HRESULT CDrain_Weapon::Render_GameObject_SetPass(CShader * pShader, _int iPass)
 
 		for (_uint j = 0; j < iNumSubSet; ++j)
 		{
-			m_iPass = m_pMesh_Dynamic->Get_MaterialPass(i, j);
-
 			pShader->Begin_Pass(iPass);
-
-			pShader->Set_DynamicTexture_Auto(m_pMesh_Dynamic, i, j);
-
 			pShader->Commit_Changes();
 
 			m_pMesh_Dynamic->Render_Mesh(i, j);
@@ -183,7 +218,9 @@ HRESULT CDrain_Weapon::Render_GameObject_SetPass(CShader * pShader, _int iPass)
 		}
 	}
 
-	return NOERROR;
+	//============================================================================================
+
+	return S_OK;
 }
 
 HRESULT CDrain_Weapon::Render_GameObject_Instancing_SetPass(CShader * pShader)
@@ -264,7 +301,7 @@ void CDrain_Weapon::Set_Active(_bool _bActiveDrain)
 
 		else if (Drain_Charge_Start == m_eAnimnum)
 		{
-			Start_Dissolve(2.f, true);
+			Start_Dissolve(1.f, true);
 		}
 		// 활성화 되면, 디졸브 효과
 	}
@@ -285,49 +322,49 @@ void CDrain_Weapon::Set_AnimIdx(_ulong _eAnimState)
 	switch (_eAnimState)
 	{
 		// Parry
-	case 375:
+	case 213:
 	{
 		m_eAnimnum = Drain_Parry;
 		break;
 	}
 
 	// Suck_Charge_Start
-	case 376:
+	case 214:
 	{
 		m_eAnimnum = Drain_Charge_Start;
 		break;
 	}
 
 	// Suck_Charge_End
-	case 377:
+	case 215:
 	{
 		m_eAnimnum = Drain_Charge_End;
 		break;
 	}
 
 	// Suck_Combo
-	case 378:
+	case 216:
 	{
 		m_eAnimnum = Drain_ComboSuck;
 		break;
 	}
 
 	// Suck_Ground
-	case 379:
+	case 217:
 	{
 		m_eAnimnum = Drain_GroundSuck;
 		break;
 	}
 
 	// Suck_Special_01
-	case 380:
+	case 218:
 	{
 		m_eAnimnum = Drain_SpecialSuck_01;
 		break;
 	}
 
 	// Suck_Special_02
-	case 381:
+	case 219:
 	{
 		m_eAnimnum = Drain_SpecialSuck_02;
 		break;

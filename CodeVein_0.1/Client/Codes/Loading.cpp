@@ -1476,6 +1476,7 @@ _uint CLoading::Loading_Title()
 	g_pSoundManager->Load_Directory_SouneFile_W(L"UI/UI_WeaponShop");
 	g_pSoundManager->Load_Directory_SouneFile_W(L"NPC/Yakumo");
 	g_pSoundManager->Load_Directory_SouneFile_W(L"Boss_Genji");
+	g_pSoundManager->Load_Directory_SouneFile_W(L"Jack");
 
 	m_bFinish = true;
 
