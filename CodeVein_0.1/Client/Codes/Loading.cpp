@@ -1721,9 +1721,6 @@ _uint CLoading::Loading_Stage()
 			return E_FAIL;
 		CObjectPool_Manager::Get_Instance()->Create_ObjectPool(L"GameObject_DropItem", L"GameObject_DropItem", 200);
 
-		if (FAILED(g_pManagement->Add_Prototype(L"GameObject_YetiTrap", CYetiTrap::Create(m_pGraphicDev))))
-			return E_FAIL;
-
 		//============================================================================================================
 		// NPC
 		//============================================================================================================
