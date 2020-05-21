@@ -47,6 +47,7 @@ HRESULT CArmor_Inven::Ready_GameObject(void * pArg)
 
 _int CArmor_Inven::Update_GameObject(_double TimeDelta)
 {
+	Late_Init();
 	if (m_bIsActive && !m_bIsSubActive)
 	{
 		SetUp_SubUI_Active(true);
@@ -63,7 +64,7 @@ _int CArmor_Inven::Update_GameObject(_double TimeDelta)
 
 	CUI::Update_GameObject(TimeDelta);
 	
-	Late_Init();
+	
 
 	m_pRendererCom->Add_RenderList(RENDER_UI, this);
 

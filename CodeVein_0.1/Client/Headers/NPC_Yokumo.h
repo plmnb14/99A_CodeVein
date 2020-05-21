@@ -8,6 +8,8 @@ BEGIN(Client)
 class CNPC_InteractionUI;
 class CScriptUI;
 class CGeneralStoreNPCUI;
+class CPlayer;
+class CUI_Manager;
 class CNPC_Yokumo final : public CGameObject
 {
 public:
@@ -84,6 +86,7 @@ public:
 	virtual void Free();
 
 private:
+	CUI_Manager*			m_pUIManager = nullptr;
 	CGeneralStoreNPCUI*		m_pShopUI = nullptr;
 	CScriptUI*				m_pScriptUI = nullptr;
 	CNPC_InteractionUI*		m_pInteractionButton = nullptr;
@@ -91,13 +94,16 @@ private:
 	_mat*					m_matBone[Bone_End];
 	NPC_ANI					m_eState;
 
-	CGameObject*			m_pPlayer = nullptr;
+	CPlayer*				m_pPlayer = nullptr;
 
 	_double					m_dAniPlayMul = 0.0;
 
 	_bool					m_bCanActive = false;
 	_bool					m_bActive = false;
 	_bool					m_bByeCheck = false;
+
+	_float					m_fOriginAngle = 0.f;
+	_float					m_fConvertAngle = 0.f;
 };
 
 END
