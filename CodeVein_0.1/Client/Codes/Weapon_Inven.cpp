@@ -41,6 +41,7 @@ HRESULT CWeapon_Inven::Ready_GameObject(void * pArg)
 {
 	if (FAILED(Add_Component()))
 		return E_FAIL;
+
 	CUI::Ready_GameObject(pArg);
 
 	m_fPosX = 229.5f;
@@ -254,6 +255,8 @@ void CWeapon_Inven::Regist_Weapon(CWeapon_Slot* pWeaponSlot)
 	if (!pWeaponSlot)
 		return;
 	
+	m_UseWeaponParam[m_iRegistIndex] = pWeaponSlot->Get_WeaponParam();
+
 	pWeaponSlot->Set_Select(true);
 	m_pRegistSlot[m_iRegistIndex] = pWeaponSlot;
 	Reset_SlotSelect();
@@ -332,7 +335,7 @@ HRESULT CWeapon_Inven::SetUp_WeaponData()
 	m_tWeaponParam[Wpn_SSword].iWeaponType = WEAPON_SSword;
 	m_tWeaponParam[Wpn_SSword].iPrice = 100;
 	m_tWeaponParam[Wpn_SSword].iReinforce = 0;
-	m_tWeaponParam[Wpn_SSword].fDamage = 1000.f;
+	m_tWeaponParam[Wpn_SSword].fDamage = 2500.f;		//테스트용 5배
 	m_tWeaponParam[Wpn_SSword].fPlusDamage = 100;
 	m_tWeaponParam[Wpn_SSword].fRadius = 0.6f;
 	m_tWeaponParam[Wpn_SSword].fTrail_Min = 0.6f;
@@ -344,7 +347,7 @@ HRESULT CWeapon_Inven::SetUp_WeaponData()
 	m_tWeaponParam[Wpn_SSword_Black].iWeaponType = WEAPON_SSword;
 	m_tWeaponParam[Wpn_SSword_Black].iPrice = 100;
 	m_tWeaponParam[Wpn_SSword_Black].iReinforce = 0;
-	m_tWeaponParam[Wpn_SSword_Black].fDamage = 50.f;
+	m_tWeaponParam[Wpn_SSword_Black].fDamage = 300.f;
 	m_tWeaponParam[Wpn_SSword_Black].fPlusDamage = 100;
 	m_tWeaponParam[Wpn_SSword_Black].fRadius = 0.9f;
 	m_tWeaponParam[Wpn_SSword_Black].fTrail_Min = 0.6f;
@@ -356,7 +359,7 @@ HRESULT CWeapon_Inven::SetUp_WeaponData()
 	m_tWeaponParam[Wpn_SSword_Military].iWeaponType = WEAPON_SSword;
 	m_tWeaponParam[Wpn_SSword_Military].iPrice = 100;
 	m_tWeaponParam[Wpn_SSword_Military].iReinforce = 0;
-	m_tWeaponParam[Wpn_SSword_Military].fDamage = 100.f;
+	m_tWeaponParam[Wpn_SSword_Military].fDamage = 200.f;
 	m_tWeaponParam[Wpn_SSword_Military].fPlusDamage = 50.f;
 	m_tWeaponParam[Wpn_SSword_Military].fRadius = 0.6f;
 	m_tWeaponParam[Wpn_SSword_Military].fTrail_Min = 0.6f;
@@ -368,7 +371,7 @@ HRESULT CWeapon_Inven::SetUp_WeaponData()
 	m_tWeaponParam[Wpn_SSword_Slave].iWeaponType = WEAPON_SSword;
 	m_tWeaponParam[Wpn_SSword_Slave].iPrice = 100;
 	m_tWeaponParam[Wpn_SSword_Slave].iReinforce = 0;
-	m_tWeaponParam[Wpn_SSword_Slave].fDamage = 100.f;
+	m_tWeaponParam[Wpn_SSword_Slave].fDamage = 350.f;
 	m_tWeaponParam[Wpn_SSword_Slave].fPlusDamage = 50.f;
 	m_tWeaponParam[Wpn_SSword_Slave].fRadius = 0.7f;
 	m_tWeaponParam[Wpn_SSword_Slave].fTrail_Min = 0.6f;
@@ -460,7 +463,7 @@ HRESULT CWeapon_Inven::SetUp_WeaponData()
 	m_tWeaponParam[Wpn_Halberd_Military].iWeaponType = WEAPON_Halberd;
 	m_tWeaponParam[Wpn_Halberd_Military].iPrice = 100;
 	m_tWeaponParam[Wpn_Halberd_Military].iReinforce = 0;
-	m_tWeaponParam[Wpn_Halberd_Military].fDamage = 160.f;
+	m_tWeaponParam[Wpn_Halberd_Military].fDamage = 350.f;
 	m_tWeaponParam[Wpn_Halberd_Military].fPlusDamage = 80.f;
 	m_tWeaponParam[Wpn_Halberd_Military].fRadius = 0.7f;
 	m_tWeaponParam[Wpn_Halberd_Military].fTrail_Min = 1.2f;
@@ -705,27 +708,50 @@ void CWeapon_Inven::Late_Init()
 
 	m_vecWeaponSlot.reserve(2);
 
+	CTotal_Inven* pTotal_Inven = CUI_Manager::Get_Instance()->Get_Total_Inven();
+
 	WPN_PARAM tWeaponParam = {};
 
 	tWeaponParam.iWeaponName = Wpn_SSword;
-	tWeaponParam.iWeaponName_InShop = WpnAll_SSword_Red;
+	tWeaponParam.iWeaponName_InShop = WpnAll_SSword_Executioner;
 	tWeaponParam.iWeaponType = WEAPON_SSword;
-	tWeaponParam.iPrice = 100;
+	tWeaponParam.iPrice = 1000;
 	tWeaponParam.iReinforce = 0;
-	tWeaponParam.fDamage = 1000.f;
-	tWeaponParam.fPlusDamage = 100;
+	tWeaponParam.fDamage = 1500.f;
+	tWeaponParam.fPlusDamage = 100.f;
 	tWeaponParam.fRadius = 0.6f;
 	tWeaponParam.fTrail_Min = 0.6f;
 	tWeaponParam.fTrail_Max = 1.8f;
 	tWeaponParam.fCol_Height = 1.1f;
 
+	m_iRegistIndex = 0;
 
 	Add_Weapon(tWeaponParam);
 	Regist_Weapon(m_vecWeaponSlot[0]);
-	CTotal_Inven* pTotal_Inven = CUI_Manager::Get_Instance()->Get_Total_Inven();
-
 	pTotal_Inven->Set_WeaponParam(0, tWeaponParam);
 	m_vecWeaponSlot[0]->Set_Select(true);
+
+
+	tWeaponParam = {};
+
+	tWeaponParam.iWeaponName = Wpn_Hammer;
+	tWeaponParam.iWeaponName_InShop = WpnAll_Hammer_ImperseAnker;
+	tWeaponParam.iWeaponType = WEAPON_Hammer;
+	tWeaponParam.iPrice = 1000;
+	tWeaponParam.iReinforce = 0;
+	tWeaponParam.fDamage = 3000.f;
+	tWeaponParam.fPlusDamage = 500.f;
+	tWeaponParam.fRadius = 0.6f;
+	tWeaponParam.fTrail_Min = 0.6f;
+	tWeaponParam.fTrail_Max = 1.8f;
+	tWeaponParam.fCol_Height = 1.1f;
+
+	m_iRegistIndex = 1;
+
+	Add_Weapon(tWeaponParam);
+	Regist_Weapon(m_vecWeaponSlot[1]);
+	pTotal_Inven->Set_WeaponParam(1, tWeaponParam);
+	m_vecWeaponSlot[1]->Set_Select(true);
 }
 
 void CWeapon_Inven::Reset_SlotSelect()

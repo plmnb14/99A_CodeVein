@@ -58,18 +58,18 @@ _int CScene_Stage_03::Update_Scene(_double TimeDelta)
 	Create_Fog(TimeDelta);
 	Create_Dust(TimeDelta);
 
-	if (g_pInput_Device->Key_Down(DIK_I))
-	{
-		CGameObject* pInstance = nullptr;
-
-		pInstance = g_pManagement->Clone_GameObject_Return(L"GameObject_Colleague",
-			&CPlayer_Colleague::JACK_INFO(_v3(0.f, 0.f, 0.f), 0.f, 3));
-
-		if (nullptr != pInstance)
-			g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Colleague", nullptr);
-		else
-			cout << "소환할 수 없는 위치입니다" << endl;
-	}
+	//if (g_pInput_Device->Key_Down(DIK_I))
+	//{
+	//	CGameObject* pInstance = nullptr;
+	//
+	//	pInstance = g_pManagement->Clone_GameObject_Return(L"GameObject_Colleague",
+	//		&CPlayer_Colleague::JACK_INFO(_v3(0.f, 0.f, 0.f), 0.f, 3));
+	//
+	//	if (nullptr != pInstance)
+	//		g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Colleague", nullptr);
+	//	else
+	//		cout << "소환할 수 없는 위치입니다" << endl;
+	//}
 
 	return S_OK;
 }

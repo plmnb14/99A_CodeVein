@@ -271,8 +271,6 @@ const _float CTransform::Calc_HitTarget_Angle(const _v3 pHitTargetPos)
 	D3DXVec3Cross(&vVertical, &vMyLook, &vDirection);
 	V3_NORMAL_SELF(&vVertical);
 
-	cout << "µµÆ® : " << fDotRadian << endl;
-
 	if (vVertical.y < 0)
 		fDotRadian *= -1.f;
 	//_v3	vRight = *D3DXVec3Cross(&vRight, &WORLD_UP, &vDirection);
