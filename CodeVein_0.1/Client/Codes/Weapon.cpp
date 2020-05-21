@@ -371,8 +371,8 @@ void CWeapon::OnCollisionEvent(list<CGameObject*> plistGameObject, _bool _bIsPla
 							m_tObjParam.fDamage = m_tWeaponParam[m_eWeaponData].fDamage;
 						
 							// 무기 공격력의 +-20%까지 랜덤범위
-							_uint min = (_uint)(m_tObjParam.fDamage - (m_tObjParam.fDamage * 0.2f) + m_tWeaponParam[m_eWeaponData].fPlusDamage);
-							_uint max = (_uint)(m_tObjParam.fDamage + (m_tObjParam.fDamage * 0.2f) + m_tWeaponParam[m_eWeaponData].fPlusDamage);
+							//_uint min = (_uint)(m_tObjParam.fDamage - (m_tObjParam.fDamage * 0.2f) + m_tWeaponParam[m_eWeaponData].fPlusDamage);
+							//_uint max = (_uint)(m_tObjParam.fDamage + (m_tObjParam.fDamage * 0.2f) + m_tWeaponParam[m_eWeaponData].fPlusDamage);
 						
 							//피격시 밀림처리..... ( 무기니까 부모의 위치값 )
 							memcpy(vHitDir, &(m_pmatParent->_41), sizeof(_v3));
@@ -390,7 +390,16 @@ void CWeapon::OnCollisionEvent(list<CGameObject*> plistGameObject, _bool _bIsPla
 							CCameraMgr::Get_Instance()->MainCamera_Oscillatation_SetUp(2.f, 20.f, 0.5f, 0.6f, CCamera::CAM_OSC_TYPE::POS_OSC);
 						
 							// HP 감소
-							iter->Add_Target_Hp(-(_float)CALC::Random_Num(min , max) * m_fSkillPercent);
+							//iter->Add_Target_Hp(-(_float)CALC::Random_Num(min , max) * m_fSkillPercent);
+							
+							// 플레이어의 공격
+							if(m_bPlayerFriendly)
+								iter->Hit_Target((m_tObjParam.fDamage + m_tWeaponParam[m_eWeaponData].fPlusDamage) * m_fSkillPercent);
+							// 몬스터의 공격
+							else
+								iter->Hit_Target((m_tObjParam.fDamage + m_tWeaponParam[m_eWeaponData].fPlusDamage) * m_fSkillPercent * pow(1.5f, g_sStageIdx_Cur - 1));
+
+
 							g_pManagement->Create_Hit_Effect(vecIter, vecCol, pIterTransform);
 						
 							if (0 == CCalculater::Random_Num(0, 1))

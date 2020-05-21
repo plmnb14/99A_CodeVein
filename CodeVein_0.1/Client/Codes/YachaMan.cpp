@@ -340,8 +340,15 @@ void CYachaMan::Render_Collider()
 
 void CYachaMan::Check_PosY()
 {
-	m_pTransformCom->Set_Pos(m_pNavMeshCom->Axis_Y_OnNavMesh(m_pTransformCom->Get_Pos()));
+	if (m_pRigidCom->Get_IsFall() == false)
+		m_pTransformCom->Set_Pos(m_pNavMeshCom->Axis_Y_OnNavMesh(m_pTransformCom->Get_Pos()));
+	else
+	{
+		_float fYSpeed = m_pRigidCom->Set_Fall(m_pTransformCom->Get_Pos(), _float(m_dTimeDelta));
 
+		D3DXVECTOR3 JumpLength = { 0, -fYSpeed, 0 };
+		m_pTransformCom->Add_Pos(JumpLength);
+	}
 	return;
 }
 
@@ -4936,8 +4943,8 @@ void CYachaMan::Play_Dead()
 					Start_Dissolve(0.7f, false, true);
 					m_pWeapon->Start_Dissolve(0.5f, false, true);
 
+					Give_Mana_To_Player(5);
 					Check_DropItem(MONSTER_NAMETYPE::M_YachaMan);
-
 					CObjectPool_Manager::Get_Instance()->Create_Object(L"GameObject_Haze", (void*)&CHaze::HAZE_INFO(_float(CCalculater::Random_Num(100, 300)), m_pTransformCom->Get_Pos(), 0.f));
 				}
 			}
@@ -5135,9 +5142,9 @@ HRESULT CYachaMan::Ready_Status(void * pArg)
 	if (MONSTER_COLOR_TYPE::RED == Info.eMonsterColor)
 	{
 		m_eMonsterColor = Info.eMonsterColor;
-		m_tObjParam.fDamage = -850.f;
-		m_tObjParam.fHp_Max = 2100.f;
-		m_tObjParam.fArmor_Max = 10.f;
+		m_tObjParam.fDamage = 350.f * pow(1.5f, g_sStageIdx_Cur - 1);
+		m_tObjParam.fHp_Max = 2500.f * pow(1.5f, g_sStageIdx_Cur - 1);
+		m_tObjParam.fArmor_Max = 30.f * pow(1.5f, g_sStageIdx_Cur - 1);
 
 		m_fRecognitionRange = 15.f;
 		m_fShotRange = 10.f;
@@ -5148,9 +5155,9 @@ HRESULT CYachaMan::Ready_Status(void * pArg)
 	else
 	{
 		m_eMonsterColor = MONSTER_COLOR_TYPE::BLACK;
-		m_tObjParam.fDamage = -750.f;
-		m_tObjParam.fHp_Max = 1800.f;
-		m_tObjParam.fArmor_Max = 10.f;
+		m_tObjParam.fDamage = 350.f * pow(1.5f, g_sStageIdx_Cur - 1);
+		m_tObjParam.fHp_Max = 2500.f * pow(1.5f, g_sStageIdx_Cur - 1);
+		m_tObjParam.fArmor_Max = 30.f * pow(1.5f, g_sStageIdx_Cur - 1);
 
 		m_fRecognitionRange = 15.f;
 		m_fShotRange = 10.f;

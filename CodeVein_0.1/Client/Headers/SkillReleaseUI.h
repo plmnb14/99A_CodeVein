@@ -49,6 +49,7 @@ private:
 	_float					m_fCross = 100.f;
 	CReleaseQuestionUI*		m_pQuestionUI = nullptr;
 	vector<Skill_ID>		m_vecData;
+	_bool					m_bIsSubActive = false;
 
 public:
 	static CSkillReleaseUI*		Create(_Device pGraphic_Device);

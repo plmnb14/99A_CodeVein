@@ -64,6 +64,8 @@ _int CBloodCodeMenuUI::Update_GameObject(_double TimeDelta)
 		CUI_Manager::Get_Instance()->Get_BloodCode_Owner()->Set_Select(false);
 		CUI_Manager::Get_Instance()->Get_Skill_AcquisitionUI()->Set_Active(false);
 		m_bIsChoiseBloodCode = false;
+
+		
 	}
 	else // È°¼ºÈ­
 	{
@@ -79,6 +81,8 @@ _int CBloodCodeMenuUI::Update_GameObject(_double TimeDelta)
 			CUI_Manager::Get_Instance()->Get_Skill_ReleaseUI()->Set_Active(true);
 			CUI_Manager::Get_Instance()->Get_BloodCode_Owner()->Set_Select(true);
 		}
+
+		
 	}
 	
 	TARGET_TO_TRANS(CUI_Manager::Get_Instance()->Get_BloodCode_Owner())->Set_Pos(m_pTransformCom->Get_Pos()

@@ -36,8 +36,10 @@ HRESULT CSwordShieldGenji::Ready_GameObject(void * pArg)
 	m_tObjParam.bCanCounter = true;			// 반격가능성
 	m_tObjParam.bCanExecution = true;		// 처형
 	m_tObjParam.bCanHit = true;
-	m_tObjParam.fHp_Cur = 5000.f;
+	m_tObjParam.fHp_Cur = 1800.f * pow(1.5f, g_sStageIdx_Cur - 1);
 	m_tObjParam.fHp_Max = m_tObjParam.fHp_Cur;
+	m_tObjParam.fDamage = 200.f * pow(1.5f, g_sStageIdx_Cur - 1);;
+	m_tObjParam.fArmor_Cur = 200.f * pow(1.5f, g_sStageIdx_Cur - 1);;
 
 	m_pTransformCom->Set_Scale(_v3(1.f, 1.f, 1.f));
 
@@ -161,8 +163,8 @@ _int CSwordShieldGenji::Update_GameObject(_double TimeDelta)
 	{
 		m_bEnable = false;
 
+		Give_Mana_To_Player(5);
 		Check_DropItem(MONSTER_NAMETYPE::M_SwordShieldGenji);
-
 		CObjectPool_Manager::Get_Instance()->Create_Object(L"GameObject_Haze", (void*)&CHaze::HAZE_INFO(_float(CCalculater::Random_Num(100, 300)), m_pTransformCom->Get_Pos(), 0.f));
 	}
 
@@ -228,7 +230,15 @@ _int CSwordShieldGenji::Update_GameObject(_double TimeDelta)
 	else
 		Check_DeadEffect(TimeDelta);
 
-	m_pTransformCom->Set_Pos(m_pNavMeshCom->Axis_Y_OnNavMesh(m_pTransformCom->Get_Pos()));
+	if (m_pRigidCom->Get_IsFall() == false)
+		m_pTransformCom->Set_Pos(m_pNavMeshCom->Axis_Y_OnNavMesh(m_pTransformCom->Get_Pos()));
+	else
+	{
+		_float fYSpeed = m_pRigidCom->Set_Fall(m_pTransformCom->Get_Pos(), _float(TimeDelta));
+
+		D3DXVECTOR3 JumpLength = { 0, -fYSpeed, 0 };
+		m_pTransformCom->Add_Pos(JumpLength);
+	}
 
 	//====================================================================================================
 	// 컬링
@@ -419,12 +429,15 @@ HRESULT CSwordShieldGenji::Render_GameObject_SetPass(CShader * pShader, _int iPa
 
 		m_matLastWVP = WorldMatrix * ViewMatrix * ProjMatrix;
 
+		////// 삭제할 것 
 		_bool bMotionBlur = true;
 		if (FAILED(pShader->Set_Bool("g_bMotionBlur", bMotionBlur)))
 			return E_FAIL;
 		_bool bDecalTarget = false;
 		if (FAILED(pShader->Set_Bool("g_bDecalTarget", bDecalTarget)))
 			return E_FAIL;
+		//////
+
 		_float fBloomPower = 0.5f;
 		if (FAILED(pShader->Set_Value("g_fBloomPower", &fBloomPower, sizeof(_float))))
 			return E_FAIL;
@@ -720,9 +733,9 @@ CBT_Composite_Node * CSwordShieldGenji::LGuard_MoveAround()
 {
 	CBT_Sequence* Root_Seq = Node_Sequence("왼쪽 가드 서성임");
 
-	CBT_SetValue* BlockOn = Node_BOOL_SetValue("Block On", L"Block", true);
+	CBT_SetValue* BlockOn = Node_BOOL_SetValue("BlockOn", L"Block", true);
 	CBT_Play_Ani* Show_Ani19 = Node_Ani("왼쪽으로 가드이동", 19, 0.1f);//8
-	CBT_SetValue* BlockOff = Node_BOOL_SetValue("Block Off", L"Block", false);
+	CBT_SetValue* BlockOff = Node_BOOL_SetValue("BlockOn", L"Block", false);
 
 	Root_Seq->Add_Child(BlockOn);
 	Root_Seq->Add_Child(Show_Ani19);
@@ -736,9 +749,9 @@ CBT_Composite_Node * CSwordShieldGenji::RGuard_MoveAround()
 {
 	CBT_Sequence* Root_Seq = Node_Sequence("오른쪽 가드 서성임");
 
-	CBT_SetValue* BlockOn = Node_BOOL_SetValue("Block On", L"Block", true);
+	CBT_SetValue* BlockOn = Node_BOOL_SetValue("BlockOn", L"Block", true);
 	CBT_Play_Ani* Show_Ani18 = Node_Ani("오른쪽으로 가드이동", 18, 0.1f);//7
-	CBT_SetValue* BlockOff = Node_BOOL_SetValue("Block Off", L"Block", false);
+	CBT_SetValue* BlockOff = Node_BOOL_SetValue("BlockOn", L"Block", false);
 
 	Root_Seq->Add_Child(BlockOn);
 	Root_Seq->Add_Child(Show_Ani18);
@@ -1158,7 +1171,14 @@ void CSwordShieldGenji::Check_PhyCollider()
 		m_fSkillMoveAccel_Cur = 0.f;
 		m_fSkillMoveMultiply = 0.5f;
 
-		m_pAIControllerCom->Reset_BT();
+		if (false == m_pAIControllerCom->Get_BoolValue(L"BlockOn"))
+		{
+			m_pAIControllerCom->Reset_BT();
+			m_tObjParam.fArmor_Cur = 400.f * pow(1.5f, g_sStageIdx_Cur - 1);;
+		}
+
+		m_tObjParam.fArmor_Cur = 200.f * pow(1.5f, g_sStageIdx_Cur - 1);;
+
 		m_pAIControllerCom->Set_Value_Of_BlackBoard(L"TrailOff", true);
 
 		_mat matPlayer = TARGET_TO_TRANS(CMonster::Get_pTargetObject())->Get_WorldMat();

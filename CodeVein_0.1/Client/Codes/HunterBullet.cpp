@@ -49,7 +49,7 @@ HRESULT CHunterBullet::Ready_GameObject(void * pArg)
 	m_pTransformCom->Set_Angle(_v3(0.f, fDot, 0.f));
 
 	m_tObjParam.bCanAttack = true;
-	m_tObjParam.fDamage = 20.f;
+	m_tObjParam.fDamage = 300.f * pow(1.5f, g_sStageIdx_Cur - 1);
 
 	m_dCurTime = 0;
 	m_bDead = false;
@@ -245,10 +245,7 @@ void CHunterBullet::Check_CollisionHit(list<CGameObject*> plistGameObject)
 
 						if (false == iter->Get_Target_IsDodge())
 						{
-							_uint min = (_uint)(m_tObjParam.fDamage - (m_tObjParam.fDamage * 0.2f));
-							_uint max = (_uint)(m_tObjParam.fDamage + (m_tObjParam.fDamage * 0.2f));
-
-							iter->Add_Target_Hp(-(_float)CALC::Random_Num(min, max));
+							iter->Hit_Target(m_tObjParam.fDamage);
 							g_pManagement->Create_Hit_Effect(vecIter, vecCol, TARGET_TO_TRANS(iter));
 
 							m_dCurTime = 100;

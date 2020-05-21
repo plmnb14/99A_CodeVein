@@ -806,10 +806,22 @@ void CPlayer::Parameter_YPos(_double dTimeDelta)
 		m_pTransform->Set_Pos(m_pNavMesh->Axis_Y_OnNavMesh(m_pTransform->Get_Pos()));
 	else
 	{
-		_float fYSpeed = m_pRigid->Set_Fall(m_pTransform->Get_Pos(), _float(dTimeDelta));
+		if (m_FallingTimer > 1.5f)
+		{
+			Teleport_ResetOptions(g_eSceneID_Cur, g_eSTeleportID_Cur);
 
-		D3DXVECTOR3 JumpLength = { 0, -fYSpeed, 0 };
-		m_pTransform->Add_Pos(JumpLength);
+			m_pRigid->Set_IsFall(false);
+			m_FallingTimer = 0.f;
+		}
+		else
+		{
+			m_FallingTimer += _float(dTimeDelta);
+
+			_float fYSpeed = m_pRigid->Set_Fall(m_pTransform->Get_Pos(), _float(dTimeDelta));
+
+			D3DXVECTOR3 JumpLength = { 0, -fYSpeed, 0 };
+			m_pTransform->Add_Pos(JumpLength);
+		}
 	}
 }
 

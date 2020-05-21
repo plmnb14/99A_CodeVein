@@ -35,8 +35,10 @@ HRESULT CGunGenji::Ready_GameObject(void * pArg)
 	m_tObjParam.bCanCounter = true;			// 반격가능성
 	m_tObjParam.bCanExecution = true;		// 처형
 	m_tObjParam.bCanHit = true;
-	m_tObjParam.fHp_Cur = 5000.f;
+	m_tObjParam.fHp_Cur = 1800.f * pow(1.5f, g_sStageIdx_Cur - 1);
 	m_tObjParam.fHp_Max = m_tObjParam.fHp_Cur;
+	m_tObjParam.fDamage = 200.f * pow(1.5f, g_sStageIdx_Cur - 1);;
+	m_tObjParam.fArmor_Cur = 50.f * pow(1.5f, g_sStageIdx_Cur - 1);;
 
 	m_pTransformCom->Set_Scale(_v3(1.f, 1.f, 1.f));
 
@@ -165,6 +167,7 @@ _int CGunGenji::Update_GameObject(_double TimeDelta)
 	{
 		m_bEnable = false;
 
+		Give_Mana_To_Player(5);
 		Check_DropItem(MONSTER_NAMETYPE::M_GunGenji);
 		CObjectPool_Manager::Get_Instance()->Create_Object(L"GameObject_Haze", (void*)&CHaze::HAZE_INFO(_float(CCalculater::Random_Num(100, 300)), m_pTransformCom->Get_Pos(), 0.f));
 	}
@@ -233,8 +236,15 @@ _int CGunGenji::Update_GameObject(_double TimeDelta)
 	else
 		Check_DeadEffect(TimeDelta);
 
+	if (m_pRigidCom->Get_IsFall() == false)
+		m_pTransformCom->Set_Pos(m_pNavMeshCom->Axis_Y_OnNavMesh(m_pTransformCom->Get_Pos()));
+	else
+	{
+		_float fYSpeed = m_pRigidCom->Set_Fall(m_pTransformCom->Get_Pos(), _float(TimeDelta));
 
-	m_pTransformCom->Set_Pos(m_pNavMeshCom->Axis_Y_OnNavMesh(m_pTransformCom->Get_Pos()));
+		D3DXVECTOR3 JumpLength = { 0, -fYSpeed, 0 };
+		m_pTransformCom->Add_Pos(JumpLength);
+	}
 
 	//====================================================================================================
 	// 컬링

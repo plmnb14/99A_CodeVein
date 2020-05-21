@@ -55,7 +55,12 @@ _int CPet_Inven::Update_GameObject(_double TimeDelta)
 	{
 		SetUp_SubUI_Active(false);
 		m_bIsSubActive = false;
+
+		CUI_Manager::Get_Instance()->Get_MouseUI()->Set_Active(false);
 	}
+
+	if(m_bIsActive)
+		CUI_Manager::Get_Instance()->Get_MouseUI()->Set_Active(true);
 
 	Click_Inven();
 
@@ -108,6 +113,8 @@ void CPet_Inven::Click_Inven()
 {
 	if (!m_bIsActive)
 		return;
+
+	
 
 	if (m_pExitIcon->Pt_InRect() && g_pInput_Device->Get_DIMouseState(CInput_Device::DIM_LB))
 	{

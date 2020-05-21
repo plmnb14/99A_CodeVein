@@ -37,8 +37,10 @@ HRESULT CSwordGenji::Ready_GameObject(void * pArg)
 	m_tObjParam.bCanCounter = true;			// 반격가능성
 	m_tObjParam.bCanExecution = true;		// 처형
 	m_tObjParam.bCanHit = true;
-	m_tObjParam.fHp_Cur = 5000.f;
+	m_tObjParam.fHp_Cur = 1800.f * pow(1.5f, g_sStageIdx_Cur - 1);
 	m_tObjParam.fHp_Max = m_tObjParam.fHp_Cur;
+	m_tObjParam.fDamage = 200.f * pow(1.5f, g_sStageIdx_Cur - 1);
+	m_tObjParam.fArmor_Cur = 50.f * pow(1.5f, g_sStageIdx_Cur - 1);;
 
 	m_pTransformCom->Set_Scale(_v3(1.f, 1.f, 1.f));
 
@@ -198,8 +200,8 @@ _int CSwordGenji::Update_GameObject(_double TimeDelta)
 	{
 		m_bEnable = false;
 
+		Give_Mana_To_Player(5);
 		Check_DropItem(MONSTER_NAMETYPE::M_SwordGenji);
-
 		CObjectPool_Manager::Get_Instance()->Create_Object(L"GameObject_Haze", (void*)&CHaze::HAZE_INFO(_float(CCalculater::Random_Num(100, 300)), m_pTransformCom->Get_Pos(), 0.f));
 	}
 
@@ -265,7 +267,15 @@ _int CSwordGenji::Update_GameObject(_double TimeDelta)
 	else
 		Check_DeadEffect(TimeDelta);
 
-	m_pTransformCom->Set_Pos(m_pNavMeshCom->Axis_Y_OnNavMesh(m_pTransformCom->Get_Pos()));
+	if (m_pRigidCom->Get_IsFall() == false)
+		m_pTransformCom->Set_Pos(m_pNavMeshCom->Axis_Y_OnNavMesh(m_pTransformCom->Get_Pos()));
+	else
+	{
+		_float fYSpeed = m_pRigidCom->Set_Fall(m_pTransformCom->Get_Pos(), _float(TimeDelta));
+
+		D3DXVECTOR3 JumpLength = { 0, -fYSpeed, 0 };
+		m_pTransformCom->Add_Pos(JumpLength);
+	}
 
 	//====================================================================================================
 	// 컬링
@@ -779,10 +789,11 @@ CBT_Composite_Node * CSwordGenji::Run_Straight_Cut()
 	//서브 병렬
 	CBT_Sequence* MoveSeq = Node_Sequence("돌진");
 	CBT_Wait* RunWaitF = Node_Wait("RunWait0", 0.367, 0);
+	CBT_MoveDirectly* Move = Node_MoveDirectly_Rush("돌진", L"Monster_Speed", L"Monster_Dir", 6.4f, 0.5, 0);
 	CBT_SetValue* Sound1Stop = Node_BOOL_SetValue("소리1 재생", L"SFX_01_Stop", true);
 	CBT_SetValue* Sound1Play = Node_BOOL_SetValue("소리1 재생", L"SFX_01_Play", true);
 	CBT_SetValue* Sound1Tag = Node_INT_SetValue("소리1 이름 설정", L"SFX_01_Tag", 0);
-	CBT_MoveDirectly* Move = Node_MoveDirectly_Rush("돌진", L"Monster_Speed", L"Monster_Dir", 6.4f, 0.7, 0);
+	CBT_MoveDirectly* Move1 = Node_MoveDirectly_Rush("돌진", L"Monster_Speed", L"Monster_Dir", 6.4f, 0.2, 0);
 
 	Root_Parallel->Set_Main_Child(Run_Cut_Seq);
 	Run_Cut_Seq->Add_Child(Show_Ani83);
@@ -792,10 +803,11 @@ CBT_Composite_Node * CSwordGenji::Run_Straight_Cut()
 
 	Root_Parallel->Set_Sub_Child(MoveSeq);
 	MoveSeq->Add_Child(RunWaitF);
+	MoveSeq->Add_Child(Move);
 	MoveSeq->Add_Child(Sound1Stop);
 	MoveSeq->Add_Child(Sound1Play);
 	MoveSeq->Add_Child(Sound1Tag);
-	MoveSeq->Add_Child(Move);
+	MoveSeq->Add_Child(Move1);
 
 	CBT_UpdateParam* pHitCol = Node_UpdateParam("무기 히트 On", m_pSword->Get_pTarget_Param(), CBT_UpdateParam::Collider, 0.868, 1, 0.1, 0);
 	Root_Parallel->Add_Service(pHitCol);
@@ -962,11 +974,11 @@ CBT_Composite_Node * CSwordGenji::Sting_Attack()
 
 	CBT_Sequence* SubSeq = Node_Sequence("이동");
 	CBT_Wait* Wait0 = Node_Wait("대기", 0.917, 0);
-	CBT_MoveDirectly* Move0 = Node_MoveDirectly_Rush("이동", L"Monster_Speed", L"Monster_Dir", 2, 0.716, 0);
-	CBT_Wait* Wait1 = Node_Wait("대기", 0.05, 0);
+	CBT_MoveDirectly* Move0 = Node_MoveDirectly_Rush("이동", L"Monster_Speed", L"Monster_Dir", 2, 0.616, 0);
 	CBT_SetValue* Sound1Stop = Node_BOOL_SetValue("소리1 재생", L"SFX_01_Stop", true);
 	CBT_SetValue* Sound1Play = Node_BOOL_SetValue("소리1 재생", L"SFX_01_Play", true);
 	CBT_SetValue* Sound1Tag = Node_INT_SetValue("소리1 이름 설정", L"SFX_01_Tag", 0);
+	CBT_MoveDirectly* Move1 = Node_MoveDirectly_Rush("이동", L"Monster_Speed", L"Monster_Dir", 2, 0.1, 0);
 
 	Root_Parallel->Set_Main_Child(MainSeq);
 	MainSeq->Add_Child(Show_Ani87);
@@ -975,10 +987,10 @@ CBT_Composite_Node * CSwordGenji::Sting_Attack()
 	Root_Parallel->Set_Sub_Child(SubSeq);
 	SubSeq->Add_Child(Wait0);
 	SubSeq->Add_Child(Move0);
-	SubSeq->Add_Child(Wait1);
 	SubSeq->Add_Child(Sound1Stop);
 	SubSeq->Add_Child(Sound1Play);
 	SubSeq->Add_Child(Sound1Tag);
+	SubSeq->Add_Child(Move1);
 
 	CBT_UpdateParam* pHitCol = Node_UpdateParam("무기 히트 On", m_pSword->Get_pTarget_Param(), CBT_UpdateParam::Collider, 1.6, 1, 0.117, 0);
 	Root_Parallel->Add_Service(pHitCol);

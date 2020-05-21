@@ -45,7 +45,7 @@ HRESULT CFireGround::Ready_GameObject(void * pArg)
 	m_fEffectOffset = 0.f;
 
 	m_tObjParam.bCanAttack = true;
-	m_tObjParam.fDamage = 20.f;
+	m_tObjParam.fDamage = 250.f * pow(1.5f, g_sStageIdx_Cur - 1);
 
 	return NOERROR;
 }
@@ -267,7 +267,7 @@ void CFireGround::OnCollisionEvent(list<CGameObject*> plistGameObject)
 							if (iter->Get_Target_IsHit())
 								iter->Set_HitAgain(true);
 
-							iter->Add_Target_Hp(-m_tObjParam.fDamage);
+							iter->Hit_Target(m_tObjParam.fDamage);
 						}
 
 						m_bFinishCol = true;	// 충돌 완료
@@ -277,7 +277,7 @@ void CFireGround::OnCollisionEvent(list<CGameObject*> plistGameObject)
 					// 장판 충돌
 					else
 					{
-						iter->Add_Target_Hp(_float(-m_tObjParam.fDamage * m_dTimeDelta));
+						iter->Hit_Target(m_tObjParam.fDamage * _float(m_dTimeDelta));
 					}
 				}
 

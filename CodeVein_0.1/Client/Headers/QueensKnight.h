@@ -77,6 +77,12 @@ private:	// 패턴들
 	// 10. 리크 필드
 	CBT_Composite_Node* LeakField();
 
+	// 9. 랜덤 서성이기
+	CBT_Composite_Node*	MoveAround();
+
+	CBT_Composite_Node*	LeftMoveAround();
+	CBT_Composite_Node*	RightMoveAround();
+
 	// 점멸 패턴
 	// 1. 점멸
 	CBT_Composite_Node* Flash();
