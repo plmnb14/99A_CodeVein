@@ -56,6 +56,7 @@ void CMaterialCollectionUI::SetUp_Default()
 	// 아이템 설명 UI 생성
 	m_pInfoUI = static_cast<CMaterial_InfoUI*>(g_pManagement->Clone_GameObject_Return(L"GameObject_Material_InfoUI", nullptr));
 	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pInfoUI, SCENE_MORTAL, L"Layer_PlayerUI", nullptr);
+	m_pInfoUI->Set_Type(CMaterial::MATERIAL_TYPE::Queen_Steel);
 
 	// 아이템 구매 UI 생성
 	m_pBuyUI = static_cast<CMaterialBuyUI*>(g_pManagement->Clone_GameObject_Return(L"GameObject_MaterialBuyUI", nullptr));

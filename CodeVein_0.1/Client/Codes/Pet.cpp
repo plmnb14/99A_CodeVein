@@ -265,8 +265,6 @@ void CPet::Function_CoolDown()
 			m_bCanCoolDown = false;
 			m_bIsCoolDown = false;
 
-			m_bIsMoveAround = false;
-
 			m_tObjParam.bCanAttack = true;
 		}
 	}
@@ -315,187 +313,97 @@ void CPet::Function_CalcMoveSpeed(_float _fMidDist)
 
 void CPet::Function_Find_Target()
 {
+	_float	fOldLength = 99999.f;
+
+	if (nullptr != m_pTarget)
+		m_pTarget = nullptr;
+
 	auto& MonsterContainer = g_pManagement->Get_GameObjectList(L"Layer_Monster", SCENE_STAGE);
 	auto& BossContainer = g_pManagement->Get_GameObjectList(L"Layer_Boss", SCENE_STAGE);
 	auto& ItemContainer = g_pManagement->Get_GameObjectList(L"Layer_Item", SCENE_STAGE);
 
-	_float	fOldLength = 99999.f;
-
-	switch (m_eNowPetMode)
+	for (auto& Item_iter : ItemContainer)
 	{
-	case PET_MODE_TYPE::PET_MODE_ATK:
+		if (true == Item_iter->Get_Dead())
+			continue;
+		else if (false == Item_iter->Get_Enable())
+			continue;
+		else if (nullptr == Item_iter)
+			continue;
+		else if (Item_iter->Get_Target_Hp() <= 0.f)
+			continue;
 
-		for (auto& Monster_iter : MonsterContainer)
-		{
-			if (true == Monster_iter->Get_Dead())
-				continue;
-			else if (false == Monster_iter->Get_Enable())
-				continue;
-			else if (nullptr == Monster_iter)
-				continue;
-			else if (Monster_iter->Get_Target_Hp() <= 0.f)
-				continue;
+		_float fLenth = V3_LENGTH(&(TARGET_TO_TRANS(Item_iter)->Get_Pos() - m_pTransform->Get_Pos()));
 
+		if (fLenth > m_fRecognitionRange)
+			continue;
+		if (fOldLength <= fLenth)
+			continue;
 
-			_float fLenth = V3_LENGTH(&(TARGET_TO_TRANS(Monster_iter)->Get_Pos() - m_pTransform->Get_Pos()));
+		fOldLength = fLenth;
+		m_pTarget = Item_iter;
+		m_eTarget = PET_TARGET_TYPE::PET_TARGET_ITEM;
 
-			if (fLenth > m_fRecognitionRange)
-				continue;
-
-			if (fOldLength <= fLenth)
-				continue;
-
-			fOldLength = fLenth;
-			m_pTarget = Monster_iter;
-			m_eTarget = PET_TARGET_TYPE::PET_TARGET_MONSTER;
-
-			return;
-		}
-
-		IF_NOT_NULL_RETURN(m_pTarget);
-
-		for (auto& Boss_iter : BossContainer)
-		{
-			if (true == Boss_iter->Get_Dead())
-				continue;
-			else if (false == Boss_iter->Get_Enable())
-				continue;
-			else if (nullptr == Boss_iter)
-				continue;
-			else if (Boss_iter->Get_Target_Hp() <= 0.f)
-				continue;
-
-			_float fLenth = V3_LENGTH(&(TARGET_TO_TRANS(Boss_iter)->Get_Pos() - m_pTransform->Get_Pos()));
-
-			if (fLenth > m_fRecognitionRange)
-				continue;
-
-			if (fOldLength <= fLenth)
-				continue;
-
-			fOldLength = fLenth;
-			m_pTarget = Boss_iter;
-			m_eTarget = PET_TARGET_TYPE::PET_TARGET_BOSS;
-
-			return;
-		}
-
-		IF_NOT_NULL_RETURN(m_pTarget);
-
-		for (auto& Item_iter : ItemContainer)
-		{
-			if (true == Item_iter->Get_Dead())
-				continue;
-			else if (false == Item_iter->Get_Enable())
-				continue;
-			else if (nullptr == Item_iter)
-				continue;
-			else if (Item_iter->Get_Target_Hp() <= 0.f)
-				continue;
-
-			_float fLenth = V3_LENGTH(&(TARGET_TO_TRANS(Item_iter)->Get_Pos() - m_pTransform->Get_Pos()));
-
-			if (fLenth > m_fRecognitionRange)
-				continue;
-			if (fOldLength <= fLenth)
-				continue;
-
-			fOldLength = fLenth;
-			m_pTarget = Item_iter;
-			m_eTarget = PET_TARGET_TYPE::PET_TARGET_ITEM;
-
-			return;
-		}
-
-		IF_NOT_NULL_RETURN(m_pTarget);
-
-		break;
-
-	case PET_MODE_TYPE::PET_MODE_UTILL:
-		for (auto& Item_iter : ItemContainer)
-		{
-			if (true == Item_iter->Get_Dead())
-				continue;
-			else if (false == Item_iter->Get_Enable())
-				continue;
-			else if (nullptr == Item_iter)
-				continue;
-			else if (Item_iter->Get_Target_Hp() <= 0.f)
-				continue;
-
-			_float fLenth = V3_LENGTH(&(TARGET_TO_TRANS(Item_iter)->Get_Pos() - m_pTransform->Get_Pos()));
-
-			if (fLenth > m_fRecognitionRange)
-				continue;
-			if (fOldLength <= fLenth)
-				continue;
-
-			fOldLength = fLenth;
-			m_pTarget = Item_iter;
-			m_eTarget = PET_TARGET_TYPE::PET_TARGET_ITEM;
-
-			return;
-		}
-
-		IF_NOT_NULL_RETURN(m_pTarget);
-
-		for (auto& Monster_iter : MonsterContainer)
-		{
-			if (true == Monster_iter->Get_Dead())
-				continue;
-			else if (false == Monster_iter->Get_Enable())
-				continue;
-			else if (nullptr == Monster_iter)
-				continue;
-			else if (Monster_iter->Get_Target_Hp() <= 0.f)
-				continue;
-
-			_float fLenth = V3_LENGTH(&(TARGET_TO_TRANS(Monster_iter)->Get_Pos() - m_pTransform->Get_Pos()));
-
-			if (fLenth > m_fRecognitionRange)
-				continue;
-
-			if (fOldLength <= fLenth)
-				continue;
-
-			fOldLength = fLenth;
-			m_pTarget = Monster_iter;
-			m_eTarget = PET_TARGET_TYPE::PET_TARGET_MONSTER;
-
-			return;
-		}
-
-		IF_NOT_NULL_RETURN(m_pTarget);
-
-		for (auto& Boss_iter : BossContainer)
-		{
-			if (true == Boss_iter->Get_Dead())
-				continue;
-			else if (false == Boss_iter->Get_Enable())
-				continue;
-			else if (nullptr == Boss_iter)
-				continue;
-			else if (Boss_iter->Get_Target_Hp() <= 0.f)
-				continue;
-
-			_float fLenth = V3_LENGTH(&(TARGET_TO_TRANS(Boss_iter)->Get_Pos() - m_pTransform->Get_Pos()));
-
-			if (fLenth > m_fRecognitionRange)
-				continue;
-
-			if (fOldLength <= fLenth)
-				continue;
-
-			fOldLength = fLenth;
-			m_pTarget = Boss_iter;
-			m_eTarget = PET_TARGET_TYPE::PET_TARGET_BOSS;
-
-			return;
-		}
-
-		IF_NOT_NULL_RETURN(m_pTarget);
-		break;
+		return;
 	}
+
+	IF_NOT_NULL_RETURN(m_pTarget);
+
+	for (auto& Monster_iter : MonsterContainer)
+	{
+		if (true == Monster_iter->Get_Dead())
+			continue;
+		else if (false == Monster_iter->Get_Enable())
+			continue;
+		else if (nullptr == Monster_iter)
+			continue;
+		else if (Monster_iter->Get_Target_Hp() <= 0.f)
+			continue;
+
+		_float fLenth = V3_LENGTH(&(TARGET_TO_TRANS(Monster_iter)->Get_Pos() - m_pTransform->Get_Pos()));
+
+		if (fLenth > m_fRecognitionRange)
+			continue;
+
+		if (fOldLength <= fLenth)
+			continue;
+
+		fOldLength = fLenth;
+		m_pTarget = Monster_iter;
+		m_eTarget = PET_TARGET_TYPE::PET_TARGET_MONSTER;
+
+		return;
+	}
+
+	IF_NOT_NULL_RETURN(m_pTarget);
+
+	for (auto& Boss_iter : BossContainer)
+	{
+		if (true == Boss_iter->Get_Dead())
+			continue;
+		else if (false == Boss_iter->Get_Enable())
+			continue;
+		else if (nullptr == Boss_iter)
+			continue;
+		else if (Boss_iter->Get_Target_Hp() <= 0.f)
+			continue;
+
+		_float fLenth = V3_LENGTH(&(TARGET_TO_TRANS(Boss_iter)->Get_Pos() - m_pTransform->Get_Pos()));
+
+		if (fLenth > m_fRecognitionRange)
+			continue;
+
+		if (fOldLength <= fLenth)
+			continue;
+
+		fOldLength = fLenth;
+		m_pTarget = Boss_iter;
+		m_eTarget = PET_TARGET_TYPE::PET_TARGET_BOSS;
+
+		return;
+	}
+
+	IF_NOT_NULL_RETURN(m_pTarget);
 
 	m_pTarget = nullptr;
 	m_eTarget = PET_TARGET_TYPE::PET_TARGET_NONE;
@@ -520,9 +428,6 @@ void CPet::Function_ResetAfterAtk()
 	m_bCanIdle = true;
 	m_bIsIdle = false;
 
-	m_bCanMoveAround = true;
-	m_bIsMoveAround = false;
-
 	m_bCanChooseAtkType = true;
 	m_bIsCombo = false;
 
@@ -531,63 +436,6 @@ void CPet::Function_ResetAfterAtk()
 
 	LOOP(30)
 		m_bEventTrigger[i] = false;
-
-	return;
-}
-
-void CPet::Function_Change_Mode()
-{	
-	////p버튼 누름으로 몬스터 우선, 아이템우선으로 바뀌는 부분
-	//if (g_pInput_Device->Key_Down(DIK_P))
-	//{
-	//	//2개 뿐이므로 bool 가능하나 추후 가능성을 위해 enum값 지정
-	//	if (m_iCount >= 2)
-	//		m_iCount = 0;
-
-	//	++m_iCount;
-
-	//	switch (m_iCount)
-	//	{
-	//	case 1:
-	//		m_eNowPetMode = PET_MODE_TYPE::PET_MODE_ATK;
-	//		break;
-	//	case 2:
-	//		m_eNowPetMode = PET_MODE_TYPE::PET_MODE_UTILL;
-	//		break;
-	//	}
-
-	//	if (m_eNowPetMode != m_eOldPetMdoe)
-	//	{
-	//		//모드 다름, 타겟 있음
-	//		if (nullptr != m_pTarget)
-	//		{
-	//			m_eOldPetMdoe = m_eNowPetMode;
-
-	//			Safe_Release(m_pTarget);
-	//			m_pTarget = nullptr;
-
-	//			//행동 초기화, 쿨타임 초기화, 공격 가능 초기화->펫에서는 사실상 bCanActive 처럼 사용됨
-	//			Function_ResetAfterAtk();
-	//			m_tObjParam.bCanAttack = true;
-	//			m_fCoolDownCur = 0.f;
-	//			m_fCoolDownMax = 0.f;
-
-	//			Function_Find_Target();
-	//		}
-	//		//모드 다름, 타겟 없음
-	//		else
-	//		{
-	//			m_eOldPetMdoe = m_eNowPetMode;
-
-	//			Function_ResetAfterAtk();
-	//			m_tObjParam.bCanAttack = true;
-	//			m_fCoolDownCur = 0.f;
-	//			m_fCoolDownMax = 0.f;
-
-	//			Function_Find_Target();
-	//		}
-	//	}
-	//}
 
 	return;
 }

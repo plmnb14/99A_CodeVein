@@ -26,6 +26,8 @@ public:
 private:
 	HRESULT					Add_Component();
 	HRESULT					SetUp_ConstantTable(_uint iIndex);
+	void					SetUp_SubUI_Active(_bool bIsActive);
+	void					SetUp_TexIdx();
 
 private:
 	CBuffer_RcTex*			m_pBufferCom = nullptr;
@@ -42,6 +44,7 @@ private:
 	CPlayerFontUI*			m_pAttackFont = nullptr;
 	CPlayerFontUI*			m_pAddDamageFont = nullptr;
 	CPlayerFontUI*			m_pReinForceFont = nullptr;
+	_bool					m_bIsSubActive = false;
 
 public:
 	static CExplainWeaponUI*	Create(_Device pGraphic_Device);

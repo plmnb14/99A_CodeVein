@@ -57,177 +57,15 @@ HRESULT CExplainWeaponUI::Ready_GameObject(void * pArg)
 
 _int CExplainWeaponUI::Update_GameObject(_double TimeDelta)
 {
-	CUI::Update_GameObject(TimeDelta);
-	m_pRendererCom->Add_RenderList(RENDER_UI, this);
-
-	m_pTarget = static_cast<CPlayer*>(g_pManagement->Get_GameObjectBack(L"Layer_Player", SCENE_MORTAL));
-	if (!m_pTarget)		
-		return NO_EVENT;
-	
-	
-	if (m_tWeaponParam.iWeaponName == WPN_DATA_End)
+	if (m_bIsActive && !m_bIsSubActive)
 	{
-		m_pAttackFont->Set_Active(false);
-		m_pAddDamageFont->Set_Active(false);
-		m_pReinForceFont->Set_Active(false);
+		SetUp_SubUI_Active(true);
+		m_bIsSubActive = true;
 	}
-	else
+	else if (!m_bIsActive && m_bIsSubActive)
 	{
-		m_pAttackFont->Set_Active(m_bIsActive);
-		m_pAddDamageFont->Set_Active(m_bIsActive);
-		m_pReinForceFont->Set_Active(m_bIsActive);
-	}
-	D3DXMatrixOrthoLH(&m_matProj, WINCX, WINCY, 0.f, 1.0f);
-	
-	switch (m_tWeaponParam.iWeaponName)
-	{
-	case Wpn_SSword:
-	{
-		m_iInfoIdx = 1;
-		m_iWeaponIconIdx = 21;
-		m_iWeaponMoveIdx = 43;
-	}
-		break;
-	case Wpn_SSword_Black:
-	{
-		m_iInfoIdx = 2;
-		m_iWeaponIconIdx = 22;
-		m_iWeaponMoveIdx = 43;
-	}
-		break;
-	case Wpn_SSword_Military:
-	{
-		m_iInfoIdx = 3;
-		m_iWeaponIconIdx = 23;
-		m_iWeaponMoveIdx = 43;
-	}
-		break;
-	case Wpn_SSword_Slave:
-	{
-		m_iInfoIdx = 4;
-		m_iWeaponIconIdx = 24;
-		m_iWeaponMoveIdx = 43;
-	}
-		break;
-	case Wpn_LSword:
-	{
-		m_iInfoIdx = 5;
-		m_iWeaponIconIdx = 25;
-		m_iWeaponMoveIdx = 44;
-	}
-		break;
-	case Wpn_LSword_Black:
-	{
-		m_iInfoIdx = 6;
-		m_iWeaponIconIdx = 26;
-		m_iWeaponMoveIdx = 44;
-	}
-		break;
-	case Wpn_LSword_Military:
-	{
-		m_iInfoIdx = 7;
-		m_iWeaponIconIdx = 27;
-		m_iWeaponMoveIdx = 44;
-	}
-		break;
-	case Wpn_LSword_Slave:
-	{
-		m_iInfoIdx = 8;
-		m_iWeaponIconIdx = 28;
-		m_iWeaponMoveIdx = 44;
-	}
-		break;
-	case Wpn_Halberd:
-	{
-		m_iInfoIdx = 9;
-		m_iWeaponIconIdx = 29;
-		m_iWeaponMoveIdx = 42;
-	}
-		break;
-	case Wpn_Halberd_Black:
-	{
-		m_iInfoIdx = 10;
-		m_iWeaponIconIdx = 30;
-		m_iWeaponMoveIdx = 42;
-	}
-		break;
-	case Wpn_Halberd_Military:
-	{
-		m_iInfoIdx = 11;
-		m_iWeaponIconIdx = 31;
-		m_iWeaponMoveIdx = 42;
-	}
-		break;
-	case Wpn_Halberd_Slave:
-	{
-		m_iInfoIdx = 12;
-		m_iWeaponIconIdx = 32;
-		m_iWeaponMoveIdx = 42;
-	}
-		break;
-	case Wpn_Hammer:
-	{
-		m_iInfoIdx = 13;
-		m_iWeaponIconIdx = 33;
-		m_iWeaponMoveIdx = 44;
-	}
-		break;
-	case Wpn_Hammer_Black:
-	{
-		m_iInfoIdx = 14;
-		m_iWeaponIconIdx = 34;
-		m_iWeaponMoveIdx = 44;
-	}
-		break;
-	case Wpn_Hammer_Military:
-	{
-		m_iInfoIdx = 15;
-		m_iWeaponIconIdx = 35;
-		m_iWeaponMoveIdx = 44;
-	}
-		break;
-	case Wpn_Hammer_Slave:
-	{
-		m_iInfoIdx = 16;
-		m_iWeaponIconIdx = 36;
-		m_iWeaponMoveIdx = 44;
-	}
-		break;
-	case Wpn_Gun:
-	{
-		m_iInfoIdx = 17;
-		m_iWeaponIconIdx = 37;
-		m_iWeaponMoveIdx = 43;
-	}
-		break;
-	case Wpn_Gun_Black:
-	{
-		m_iInfoIdx = 18;
-		m_iWeaponIconIdx = 38;
-		m_iWeaponMoveIdx = 43;
-	}
-		break;
-	case Wpn_Gun_Military:
-	{
-		m_iInfoIdx = 19;
-		m_iWeaponIconIdx = 39;
-		m_iWeaponMoveIdx = 43;
-	}
-		break;
-	case Wpn_Gun_Slave:
-	{
-		m_iInfoIdx = 20;
-		m_iWeaponIconIdx = 40;
-		m_iWeaponMoveIdx = 43;
-	}
-		break;
-	default:
-	{
-		m_iInfoIdx = 41;
-		m_iWeaponIconIdx = 41;
-		m_iWeaponMoveIdx = 41;
-	}
-		break;
+		SetUp_SubUI_Active(false);
+		m_bIsSubActive = false;
 	}
 
 	
@@ -241,22 +79,43 @@ _int CExplainWeaponUI::Update_GameObject(_double TimeDelta)
 		m_tWeaponParam.fTrail_Min = 0.f;
 		m_tWeaponParam.fTrail_Max = 0.f;
 		m_tWeaponParam.fCol_Height = 0.f;
-	}
 
+		return NO_EVENT;
+	}
+		
+
+	CUI::Update_GameObject(TimeDelta);
+	m_pRendererCom->Add_RenderList(RENDER_UI, this);
+
+	m_pTarget = static_cast<CPlayer*>(g_pManagement->Get_GameObjectBack(L"Layer_Player", SCENE_MORTAL));
+	if (!m_pTarget)		
+		return NO_EVENT;
+	
+	
+	
+	D3DXMatrixOrthoLH(&m_matProj, WINCX, WINCY, 0.f, 1.0f);
+	
+	m_pAttackFont->Set_Active(m_bIsActive);
+	m_pAddDamageFont->Set_Active(m_bIsActive);
+	m_pReinForceFont->Set_Active(m_bIsActive);
+	
 	m_pAttackFont->Update_NumberValue(_float(m_tWeaponParam.fDamage));
-	m_pAttackFont->Set_UI_Pos(600.f, 370.f);
+	m_pAttackFont->Set_UI_Pos(630.f, 392.f);
 
 	m_pAddDamageFont->Update_NumberValue(_float(m_tWeaponParam.fPlusDamage));
-	m_pAddDamageFont->Set_UI_Pos(600.f, 290.f);
+	m_pAddDamageFont->Set_UI_Pos(630.f, 288.f);
 	
 	m_pReinForceFont->Update_NumberValue(_float(m_tWeaponParam.iReinforce));
-	m_pReinForceFont->Set_UI_Pos(600.f, 240.f);
+	m_pReinForceFont->Set_UI_Pos(630.f, 263.f);
 
 	return NO_EVENT;
 }
 
 _int CExplainWeaponUI::Late_Update_GameObject(_double TimeDelta)
 {
+	if (!m_bIsActive)
+		return NO_EVENT;
+
 	D3DXMatrixIdentity(&m_matWorld);
 	D3DXMatrixIdentity(&m_matView);
 
@@ -282,6 +141,8 @@ HRESULT CExplainWeaponUI::Render_GameObject()
 
 	g_pManagement->Set_Transform(D3DTS_VIEW, m_matView);
 	g_pManagement->Set_Transform(D3DTS_PROJECTION, m_matProj);
+
+	SetUp_TexIdx();
 
 	_uint iIndex = 0;
 	LOOP(4)
@@ -379,6 +240,176 @@ HRESULT CExplainWeaponUI::SetUp_ConstantTable(_uint iIndex)
 		return E_FAIL;
 
 	return NOERROR;
+}
+
+void CExplainWeaponUI::SetUp_SubUI_Active(_bool bIsActive)
+{
+	/*if (m_tWeaponParam.iWeaponName == WPN_DATA_End)
+	{
+		m_pAttackFont->Set_Active(false);
+		m_pAddDamageFont->Set_Active(false);
+		m_pReinForceFont->Set_Active(false);
+	}
+	else*/
+	{
+		m_pAttackFont->Set_Active(bIsActive);
+		m_pAddDamageFont->Set_Active(bIsActive);
+		m_pReinForceFont->Set_Active(bIsActive);
+	}
+}
+
+void CExplainWeaponUI::SetUp_TexIdx()
+{
+	switch (m_tWeaponParam.iWeaponName)
+	{
+	case Wpn_SSword:
+	{
+		m_iInfoIdx = 1;
+		m_iWeaponIconIdx = 21;
+		m_iWeaponMoveIdx = 43;
+	}
+	break;
+	case Wpn_SSword_Black:
+	{
+		m_iInfoIdx = 2;
+		m_iWeaponIconIdx = 22;
+		m_iWeaponMoveIdx = 43;
+	}
+	break;
+	case Wpn_SSword_Military:
+	{
+		m_iInfoIdx = 3;
+		m_iWeaponIconIdx = 23;
+		m_iWeaponMoveIdx = 43;
+	}
+	break;
+	case Wpn_SSword_Slave:
+	{
+		m_iInfoIdx = 4;
+		m_iWeaponIconIdx = 24;
+		m_iWeaponMoveIdx = 43;
+	}
+	break;
+	case Wpn_LSword:
+	{
+		m_iInfoIdx = 5;
+		m_iWeaponIconIdx = 25;
+		m_iWeaponMoveIdx = 44;
+	}
+	break;
+	case Wpn_LSword_Black:
+	{
+		m_iInfoIdx = 6;
+		m_iWeaponIconIdx = 26;
+		m_iWeaponMoveIdx = 44;
+	}
+	break;
+	case Wpn_LSword_Military:
+	{
+		m_iInfoIdx = 7;
+		m_iWeaponIconIdx = 27;
+		m_iWeaponMoveIdx = 44;
+	}
+	break;
+	case Wpn_LSword_Slave:
+	{
+		m_iInfoIdx = 8;
+		m_iWeaponIconIdx = 28;
+		m_iWeaponMoveIdx = 44;
+	}
+	break;
+	case Wpn_Halberd:
+	{
+		m_iInfoIdx = 9;
+		m_iWeaponIconIdx = 29;
+		m_iWeaponMoveIdx = 42;
+	}
+	break;
+	case Wpn_Halberd_Black:
+	{
+		m_iInfoIdx = 10;
+		m_iWeaponIconIdx = 30;
+		m_iWeaponMoveIdx = 42;
+	}
+	break;
+	case Wpn_Halberd_Military:
+	{
+		m_iInfoIdx = 11;
+		m_iWeaponIconIdx = 31;
+		m_iWeaponMoveIdx = 42;
+	}
+	break;
+	case Wpn_Halberd_Slave:
+	{
+		m_iInfoIdx = 12;
+		m_iWeaponIconIdx = 32;
+		m_iWeaponMoveIdx = 42;
+	}
+	break;
+	case Wpn_Hammer:
+	{
+		m_iInfoIdx = 13;
+		m_iWeaponIconIdx = 33;
+		m_iWeaponMoveIdx = 44;
+	}
+	break;
+	case Wpn_Hammer_Black:
+	{
+		m_iInfoIdx = 14;
+		m_iWeaponIconIdx = 34;
+		m_iWeaponMoveIdx = 44;
+	}
+	break;
+	case Wpn_Hammer_Military:
+	{
+		m_iInfoIdx = 15;
+		m_iWeaponIconIdx = 35;
+		m_iWeaponMoveIdx = 44;
+	}
+	break;
+	case Wpn_Hammer_Slave:
+	{
+		m_iInfoIdx = 16;
+		m_iWeaponIconIdx = 36;
+		m_iWeaponMoveIdx = 44;
+	}
+	break;
+	case Wpn_Gun:
+	{
+		m_iInfoIdx = 17;
+		m_iWeaponIconIdx = 37;
+		m_iWeaponMoveIdx = 43;
+	}
+	break;
+	case Wpn_Gun_Black:
+	{
+		m_iInfoIdx = 18;
+		m_iWeaponIconIdx = 38;
+		m_iWeaponMoveIdx = 43;
+	}
+	break;
+	case Wpn_Gun_Military:
+	{
+		m_iInfoIdx = 19;
+		m_iWeaponIconIdx = 39;
+		m_iWeaponMoveIdx = 43;
+	}
+	break;
+	case Wpn_Gun_Slave:
+	{
+		m_iInfoIdx = 20;
+		m_iWeaponIconIdx = 40;
+		m_iWeaponMoveIdx = 43;
+	}
+	break;
+	default:
+	{
+		m_iInfoIdx = 41;
+		m_iWeaponIconIdx = 41;
+		m_iWeaponMoveIdx = 41;
+	}
+	break;
+	}
 }
 
 CExplainWeaponUI * CExplainWeaponUI::Create(_Device pGraphic_Device)
