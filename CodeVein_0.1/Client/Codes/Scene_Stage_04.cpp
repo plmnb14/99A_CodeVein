@@ -40,12 +40,13 @@ HRESULT CScene_Stage_04::Ready_Scene()
 
 	g_pManagement->LoadCreateObject_FromPath(m_pGraphic_Device, L"Object_Stage_04.dat");
 
+	g_pSoundManager->Set_Volume(CSoundManager::BGM_Volume, 1.f);
+	g_pSoundManager->Stop_Sound(CSoundManager::Ambient_Loop);
+	g_pSoundManager->Play_BGM(L"SE_AMB_St01_Base_Out.ogg", true);
+
 	////인덱스 잘 찾는지 테스트
 	//CScriptManager::Get_Instance()->Set_StageIdx(4);
 	//CScriptManager::Get_Instance()->Ready_Script_DynamicObject(4);
-
-	g_pSoundManager->Stop_Sound(CSoundManager::Background_01);
-	g_pSoundManager->Play_BGM(L"SE_AMB_St01_Base_Out.ogg");
 
 	CParticleMgr::Get_Instance()->Clear_Fog();
 
@@ -117,6 +118,8 @@ HRESULT CScene_Stage_04::Ready_Layer_Player(const _tchar * pLayerTag)
 	if (FAILED(g_pManagement->Add_Layer(SCENE_STAGE, L"Layer_Pet")))
 		return E_FAIL;
 	if (FAILED(g_pManagement->Add_Layer(SCENE_STAGE, L"Layer_Item")))
+		return E_FAIL;
+	if (FAILED(g_pManagement->Add_Layer(SCENE_STAGE, L"Layer_Trap")))
 		return E_FAIL;
 
 	CPlayer* pInstance = static_cast<CPlayer*>(g_pManagement->Get_GameObjectBack(L"Layer_Player", SCENE_MORTAL));

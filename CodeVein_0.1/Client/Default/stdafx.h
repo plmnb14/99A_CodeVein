@@ -38,7 +38,7 @@
 #pragma comment(lib, "PhysX3Cooking_x64.lib")
 #endif
 
-//#include <iostream>
-//#pragma comment(linker,"/entry:wWinMainCRTStartup /subsystem:console")
+#include <iostream>
+#pragma comment(linker,"/entry:wWinMainCRTStartup /subsystem:console")
 
 #include "SoundManager.h"

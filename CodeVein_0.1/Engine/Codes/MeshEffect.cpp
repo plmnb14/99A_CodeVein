@@ -464,6 +464,11 @@ void CMeshEffect::Check_Move(_double TimeDelta)
 		m_pTransformCom->Set_Scale(m_vLerpScale);
 	}
 
+	if (m_bUse_SetScale)
+	{
+		m_pTransformCom->Set_Scale(m_vMyScale);
+	}
+
 	if (m_pInfo->bRotMove)
 	{
 		if (m_pInfo->bRandomRot)

@@ -36,8 +36,9 @@ HRESULT CScene_Stage_02::Ready_Scene()
 	m_pRenderer->Set_FogDestiny(0.04f);
 	m_pRenderer->Set_UseLinearFog(false);
 
-	g_pSoundManager->Stop_Sound(CSoundManager::Background_01);
-	g_pSoundManager->Play_BGM(L"BGM_MT_SNOW.ogg");
+	g_pSoundManager->Set_Volume(CSoundManager::BGM_Volume, 1.f);
+	g_pSoundManager->Stop_Sound(CSoundManager::Ambient_Loop);
+	g_pSoundManager->Play_BGM(L"BGM_MT_SNOW.ogg", true);
 
 	g_pManagement->LoadCreateObject_FromPath(m_pGraphic_Device, L"Object_Stage_02.dat");
 

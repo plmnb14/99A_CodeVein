@@ -133,9 +133,17 @@ _int CIceGirl::Update_GameObject(_double TimeDelta)
 
 		if (false == m_bFinishCamShake && m_pMeshCom->Is_Finish_Animation(0.5f))
 		{
-			m_bFinishCamShake = true;
+			m_bFinishCamShake = true; 
 			SHAKE_CAM_lv3;
+
+			g_pSoundManager->Stop_Sound(CSoundManager::Effect_SFX_01);
+			g_pSoundManager->Play_Sound(L"Boss_DeadEff.ogg", CSoundManager::Effect_SFX_01, CSoundManager::Effect_Sound);
 		}
+
+		m_fBGMFade -= _float(TimeDelta) * 0.25f;
+		if (m_fBGMFade <= 0.f)
+			m_fBGMFade = 0.f;
+		g_pSoundManager->Set_Volume(CSoundManager::BGM_Volume, m_fBGMFade);
 
 		return NO_EVENT;
 	}
@@ -159,21 +167,6 @@ _int CIceGirl::Update_GameObject(_double TimeDelta)
 
 		if (true == m_bAIController)
 			m_pAIControllerCom->Update_AIController(TimeDelta);
-
-		if (!m_bUITrigger)
-		{
-			m_bUITrigger = true;
-
-			// 플레이어 발견 시, UI 활성화(지원)
-			m_pBossUI->Set_Active(true);
-
-			CMassageUI* pMassageUI = static_cast<CMassageUI*>(g_pManagement->Get_GameObjectBack(L"Layer_BossMassageUI", SCENE_STAGE));
-			pMassageUI->Set_BossName(BOSS_NAME::Fire_Boy_Ice_Girl);
-			pMassageUI->Set_Check_Play_BossnameUI(true);
-
-			g_pSoundManager->Stop_Sound(CSoundManager::Background_01);
-			g_pSoundManager->Play_BGM(L"Boss_FireIce_BGM.ogg");
-		}
 
 		// 보스UI 업데이트
 		// 체력이 0이 되었을때 밀림현상 방지.
@@ -2227,6 +2220,21 @@ HRESULT CIceGirl::Update_NF()
 			// 가까운 녀석 어그로 끌림.
 			Set_Target_Auto();
 		}
+
+		if (!m_bUITrigger)
+		{
+			m_bUITrigger = true;
+
+			// 플레이어 발견 시, UI 활성화(지원)
+			m_pBossUI->Set_Active(true);
+
+			CMassageUI* pMassageUI = static_cast<CMassageUI*>(g_pManagement->Get_GameObjectBack(L"Layer_BossMassageUI", SCENE_STAGE));
+			pMassageUI->Set_BossName(BOSS_NAME::Fire_Boy_Ice_Girl);
+			pMassageUI->Set_Check_Play_BossnameUI(true);
+
+			g_pSoundManager->Stop_Sound(CSoundManager::Background_Loop);
+			g_pSoundManager->Play_BGM(L"Boss_FireIce_BGM.ogg");
+		}
 	}
 
 	return S_OK;
@@ -2335,7 +2343,7 @@ void CIceGirl::Check_PhyCollider()
 			Start_Dissolve(0.4f, false, true, 4.2f);
 			m_pSword->Start_Dissolve(0.4f, false, false, 4.2f);
 			for (_int i = 0; i < 20; i++)
-				CObjectPool_Manager::Get_Instance()->Create_Object(L"GameObject_Haze", (void*)&CHaze::HAZE_INFO(100.f, m_pTransformCom->Get_Pos(), 4.5f + (i * 0.02f)));
+				CObjectPool_Manager::Get_Instance()->Create_Object(L"GameObject_Haze", (void*)&CHaze::HAZE_INFO(100.f, m_pTransformCom->Get_Pos(), 4.5f + (i * 0.08f)));
 			CParticleMgr::Get_Instance()->Create_BossDeadParticle_Effect(m_pTransformCom->Get_Pos() + _v3(0.f, 1.3f, 0.f), 3.9f, 0.5f);
 			g_pManagement->Create_ParticleEffect_Delay(L"SpawnParticle_ForBoss", 2.5f, 4.2f, m_pTransformCom->Get_Pos() + _v3(0.f, 0.5f, 0.f));
 		}

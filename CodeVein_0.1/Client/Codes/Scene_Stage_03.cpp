@@ -45,8 +45,9 @@ HRESULT CScene_Stage_03::Ready_Scene()
 	//CScriptManager::Get_Instance()->Set_StageIdx(3);
 	//CScriptManager::Get_Instance()->Ready_Script_DynamicObject(3);
 
-	g_pSoundManager->Stop_Sound(CSoundManager::Background_01);
-	g_pSoundManager->Play_BGM(L"SE_AMB_St01_Base_Out.ogg");
+	g_pSoundManager->Set_Volume(CSoundManager::BGM_Volume, 1.f);
+	g_pSoundManager->Stop_Sound(CSoundManager::Ambient_Loop);
+	g_pSoundManager->Play_BGM(L"SE_AMB_St01_Base_Out.ogg", true);
 
 	CParticleMgr::Get_Instance()->Clear_Fog();
 
@@ -96,6 +97,8 @@ HRESULT CScene_Stage_03::Ready_Layer_Player(const _tchar * pLayerTag)
 	if (FAILED(g_pManagement->Add_Layer(SCENE_STAGE, L"Layer_Pet")))
 		return E_FAIL;
 	if (FAILED(g_pManagement->Add_Layer(SCENE_STAGE, L"Layer_Item")))
+		return E_FAIL;
+	if (FAILED(g_pManagement->Add_Layer(SCENE_STAGE, L"Layer_Trap")))
 		return E_FAIL;
 
 	CPlayer* pInstance = static_cast<CPlayer*>(g_pManagement->Get_GameObjectBack(L"Layer_Player", SCENE_MORTAL));
