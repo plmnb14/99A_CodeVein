@@ -136,6 +136,8 @@ void CMaterialSellCollectionUI::SetUp_SubUI_Active(_bool bIsActive)
 	{
 		iter->Set_Active(bIsActive);
 	}
+
+	m_pInfoUI->Set_Active(bIsActive);
 }
 
 void CMaterialSellCollectionUI::SetUp_SlotPos()
@@ -161,6 +163,7 @@ void CMaterialSellCollectionUI::Click_SubUI()
 		{
 			if (g_pInput_Device->Get_DIMouseState(CInput_Device::DIM_LB))
 			{
+				m_pInfoUI->Set_Type(CMaterial::MATERIAL_TYPE(iter->Get_Type()));
 				CUI_Manager::Get_Instance()->Stop_Play_UISound(L"Slot_Regist.ogg", CSoundManager::CHANNELID::UI_Click, CSoundManager::Effect_Sound);
 
 				m_pMtrlSellUI->Set_SellSlot(iter);
@@ -183,6 +186,11 @@ void CMaterialSellCollectionUI::SetUp_Default()
 {
 	m_pMtrlSellUI = static_cast<CMaterialSellUI*>(g_pManagement->Clone_GameObject_Return(L"GameObject_MaterialSellUI", nullptr));
 	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pMtrlSellUI, SCENE_MORTAL, L"Layer_PlayerUI", nullptr);
+
+	// 아이템 설명 UI 생성
+	m_pInfoUI = static_cast<CMaterial_InfoUI*>(g_pManagement->Clone_GameObject_Return(L"GameObject_Material_InfoUI", nullptr));
+	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pInfoUI, SCENE_MORTAL, L"Layer_PlayerUI", nullptr);
+	m_pInfoUI->Set_Type(CMaterial::MATERIAL_TYPE::Queen_Steel);
 }
 
 CMaterialSellCollectionUI * CMaterialSellCollectionUI::Create(_Device pGraphic_Device)

@@ -91,7 +91,12 @@ _int CExplainWeaponUI::Update_GameObject(_double TimeDelta)
 	if (!m_pTarget)		
 		return NO_EVENT;
 	
-	
+	if (m_tWeaponParam.iWeaponName == WPN_DATA_End)
+	{
+		m_pAttackFont->Set_Active(false);
+		m_pReinForceFont->Set_Active(false);
+		m_pAddDamageFont->Set_Active(false);
+	}
 	
 	D3DXMatrixOrthoLH(&m_matProj, WINCX, WINCY, 0.f, 1.0f);
 	
@@ -244,18 +249,16 @@ HRESULT CExplainWeaponUI::SetUp_ConstantTable(_uint iIndex)
 
 void CExplainWeaponUI::SetUp_SubUI_Active(_bool bIsActive)
 {
-	/*if (m_tWeaponParam.iWeaponName == WPN_DATA_End)
+	if (m_tWeaponParam.iWeaponName = WPN_DATA_End)
 	{
 		m_pAttackFont->Set_Active(false);
 		m_pAddDamageFont->Set_Active(false);
 		m_pReinForceFont->Set_Active(false);
 	}
-	else*/
-	{
-		m_pAttackFont->Set_Active(bIsActive);
-		m_pAddDamageFont->Set_Active(bIsActive);
-		m_pReinForceFont->Set_Active(bIsActive);
-	}
+	
+	m_pAttackFont->Set_Active(bIsActive);
+	m_pAddDamageFont->Set_Active(bIsActive);
+	m_pReinForceFont->Set_Active(bIsActive);
 }
 
 void CExplainWeaponUI::SetUp_TexIdx()
