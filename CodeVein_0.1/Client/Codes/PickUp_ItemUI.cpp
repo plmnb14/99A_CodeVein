@@ -163,6 +163,7 @@ HRESULT CPickUp_ItemUI::SetUp_ConstantTable(_uint TextureIndex)
 void CPickUp_ItemUI::SetUp_State(_double TimeDelta)
 {
 	CUI_Manager* pUIManager = CUI_Manager::Get_Instance();
+	CDropItem* pDropItem = static_cast<CDropItem*>(g_pManagement->Get_GameObjectBack(L"Layer_Item", SCENE_STAGE));
 
 	if (false == m_bOne_PickupUIEnd)
 	{
@@ -183,7 +184,8 @@ void CPickUp_ItemUI::SetUp_State(_double TimeDelta)
 	{
 		m_bOne_PickupUIEnd = false;
 		m_fPickup_Itembar = 0.f;
-		pUIManager->Get_PickUP_ItemUIMgr()->Get_vecPickUp_Item().pop_back(); 
+		if(true == pDropItem->Get_Dead())
+			pUIManager->Get_PickUP_ItemUIMgr()->Get_vecPickUp_Item().pop_back(); 
 		m_bIsActive = false;
 	}
 }
