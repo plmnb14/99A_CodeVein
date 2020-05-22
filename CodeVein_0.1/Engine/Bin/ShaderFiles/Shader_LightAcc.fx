@@ -139,6 +139,10 @@ PS_OUT PS_MAIN_DIRECTIONAL(PS_IN In)
 	// Shadow ====================================================================
 
 	float fShadow = tex2D(ShadowMapSampler, In.vTexUV).x;
+
+
+	fShadow = vHeightValue.z < 0.99f ? fShadow : 1.f;
+
 	Out.vShade.rgb *= fShadow;
 
 	if (fShadow < 1.f)
@@ -148,16 +152,8 @@ PS_OUT PS_MAIN_DIRECTIONAL(PS_IN In)
 
 	if (vHeightValue.x > 0.99f)
 	{
-		if (Out.vShade.x < 0.5f)
-			Out.vShade.xyz = 0.5f;
-	
-		//if (vHeightValue.z > 0.99f)
-		//{
-		//	//if (fShadow < 0.8f)
-		//	//	fShadow = 0.8f;
-		//
-		//	Out.vShade.xyz = 0.3f;
-		//}
+		if (Out.vShade.x < 0.3f)
+			Out.vShade.xyz = 0.3f;
 
 		//float NdotL = dot(g_vLightDir, vNormal);
 	
@@ -206,13 +202,13 @@ PS_OUT PS_MAIN_POINT(PS_IN In)
 
 	vector		vReflect = reflect(normalize(vLightDir), vNormal);
 
-	Out.vShade = fAtt * g_vLightDiffuse * saturate(dot(normalize(g_vLightDir) * -1.f, vNormal)) + saturate(g_vLightAmbient * g_vMtrlAmbient);
+	Out.vShade = fAtt * g_vLightDiffuse * saturate(dot(normalize(g_vLightDir) * -1.f, vNormal));// +saturate(g_vLightAmbient * g_vMtrlAmbient);
 	//Out.vShade = fAtt * g_vLightDiffuse * saturate(dot(normalize(vLightDir) * -1.f, vNormal));
 	Out.vShade.a = 1.f;
 
 	vector		vLook = vWorldPos - g_vCamPosition;
 
-	Out.vSpecular = (fAtt * g_vLightDiffuse * pow(saturate(dot(normalize(vLook) * -1.f, vReflect)), 20.f * Roughness)) * Metalness;
+	Out.vSpecular = (fAtt * g_vLightDiffuse * pow(saturate(dot(normalize(vLook) * -1.f, vReflect)), 5.f * Roughness)) * Metalness;
 	Out.vSpecular.a = AO;
 
 	return Out;

@@ -182,7 +182,7 @@ void CSoundManager::Load_Directory_SouneFile_W(_tchar * _szFolderName)
 
 	if (hFind == INVALID_HANDLE_VALUE)
 	{
-		cout << "( " << szFolderFolderName << " ) 경로에 파일이 없습니다." << endl;
+		//cout << "( " << szFolderFolderName << " ) 경로에 파일이 없습니다." << endl;
 		return;
 	}
 
