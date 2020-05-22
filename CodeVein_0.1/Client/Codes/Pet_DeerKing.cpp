@@ -43,6 +43,7 @@ _int CPet_DeerKing::Update_GameObject(_double TimeDelta)
 
 	CGameObject::Update_GameObject(TimeDelta);
 
+	Check_PosY();
 	Check_Dist();
 	Check_AniEvent();
 	Function_CoolDown();
@@ -283,6 +284,13 @@ void CPet_DeerKing::Update_Collider()
 	}
 
 	m_pCollider->Update(m_pTransform->Get_Pos() + _v3(0.f, m_pCollider->Get_Radius().y, 0.f));
+
+	return;
+}
+
+void CPet_DeerKing::Check_PosY()
+{
+	m_pTransform->Set_Pos(m_pNavMesh->Axis_Y_OnNavMesh(m_pTransform->Get_Pos()));
 
 	return;
 }

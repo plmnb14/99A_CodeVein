@@ -285,7 +285,7 @@ void CScene_Stage_02::Create_Snow(_double TimeDelta)
 
 void CScene_Stage_02::Check_Effect_Fade()
 {
-	if (m_pScriptManager->Get_FogOff())
+	if (!m_bFadeOutStart && m_pScriptManager->Get_FogOff())
 	{
 		m_pRenderer->Start_FogFadeOut();
 		m_bFadeOutStart = true;

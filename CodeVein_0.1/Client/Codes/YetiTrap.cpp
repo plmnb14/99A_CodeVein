@@ -221,7 +221,7 @@ void CYetiTrap::Check_Dist()
 	{
 		_float fDist = V3_LENGTH(&(TARGET_TO_TRANS(m_pPlayer)->Get_Pos() - m_pTransform->Get_Pos()));
 
-		if (fDist < 1.f)
+		if (fDist < 2.5f)
 		{
 			m_bCanSummonYeti = true;
 			if (!m_bEffect)
