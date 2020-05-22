@@ -131,28 +131,16 @@ void CPet_Inven::Click_Inven()
 		{
 			if (true == iter->Pt_InRect())
 			{
-				Reset_SlotSelect();
-				iter->Set_Select(true);
-
-				Check_Call_Pet(iter->Get_Select(), iTempNum, iter->Get_PetType());
-			}
-
-			++iTempNum;
-		}
-	}
-	
-	iTempNum = 0;
-
-	//해제
-	if (g_pInput_Device->Get_DIMouseState(CInput_Device::DIM_RB))
-	{
-		for (auto& iter : m_vecPetSlot)
-		{
-			if (true == iter->Pt_InRect())
-			{
 				if (true == iter->Get_Select())
 				{
 					iter->Set_Select(false);
+					Check_Call_Pet(iter->Get_Select(), iTempNum, iter->Get_PetType());
+				}
+				else
+				{
+					Reset_SlotSelect();
+					iter->Set_Select(true);
+
 					Check_Call_Pet(iter->Get_Select(), iTempNum, iter->Get_PetType());
 				}
 			}
@@ -160,6 +148,26 @@ void CPet_Inven::Click_Inven()
 			++iTempNum;
 		}
 	}
+	
+	//iTempNum = 0;
+
+	////해제
+	//if (g_pInput_Device->Get_DIMouseState(CInput_Device::DIM_RB))
+	//{
+	//	for (auto& iter : m_vecPetSlot)
+	//	{
+	//		if (true == iter->Pt_InRect())
+	//		{
+	//			if (true == iter->Get_Select())
+	//			{
+	//				iter->Set_Select(false);
+	//				Check_Call_Pet(iter->Get_Select(), iTempNum, iter->Get_PetType());
+	//			}
+	//		}
+
+	//		++iTempNum;
+	//	}
+	//}
 }
 
 void CPet_Inven::Reset_SlotSelect()
@@ -174,7 +182,7 @@ void CPet_Inven::Check_Call_Pet(_bool _Check_Get_SlotSelect, _uint _Idx, CPet::P
 {
 	CGameObject* pTempPet = nullptr;
 
-	auto& PetContainer = g_pManagement->Get_GameObjectList(L"Layer_Pet", SCENE_STAGE);
+	auto& PetContainer = g_pManagement->Get_GameObjectList(L"Layer_Pet", SCENE_MORTAL);
 	//기존 소환물 체크
 	for (auto& list_iter : PetContainer)
 	{
@@ -212,13 +220,13 @@ void CPet_Inven::Check_Call_Pet(_bool _Check_Get_SlotSelect, _uint _Idx, CPet::P
 				if (CPet::PET_TYPE::PET_POISONBUTTERFLY == _eType)
 				{
 					pTempPet = g_pManagement->Clone_GameObject_Return(L"Pet_PoisonButterFly", &CPet::PET_STATUS(_eType));
-					g_pManagement->Add_GameOject_ToLayer_NoClone(pTempPet, SCENE_STAGE, L"Layer_Pet", nullptr);
+					g_pManagement->Add_GameOject_ToLayer_NoClone(pTempPet, SCENE_MORTAL, L"Layer_Pet", nullptr);
 					return;
 				}
 				else if (CPet::PET_TYPE::PET_DEERKING == _eType)
 				{
 					pTempPet = g_pManagement->Clone_GameObject_Return(L"Pet_DeerKing", &CPet::PET_STATUS(_eType));
-					g_pManagement->Add_GameOject_ToLayer_NoClone(pTempPet, SCENE_STAGE, L"Layer_Pet", nullptr);
+					g_pManagement->Add_GameOject_ToLayer_NoClone(pTempPet, SCENE_MORTAL, L"Layer_Pet", nullptr);
 					return;
 				}
 			}
@@ -261,13 +269,13 @@ void CPet_Inven::Check_Call_Pet(_bool _Check_Get_SlotSelect, _uint _Idx, CPet::P
 					if (CPet::PET_TYPE::PET_POISONBUTTERFLY == _eType)
 					{
 						pTempPet = g_pManagement->Clone_GameObject_Return(L"Pet_PoisonButterFly", &CPet::PET_STATUS(_eType));
-						g_pManagement->Add_GameOject_ToLayer_NoClone(pTempPet, SCENE_STAGE, L"Layer_Pet", nullptr);
+						g_pManagement->Add_GameOject_ToLayer_NoClone(pTempPet, SCENE_MORTAL, L"Layer_Pet", nullptr);
 						return;
 					}
 					else if (CPet::PET_TYPE::PET_DEERKING == _eType)
 					{
 						pTempPet = g_pManagement->Clone_GameObject_Return(L"Pet_DeerKing", &CPet::PET_STATUS(_eType));
-						g_pManagement->Add_GameOject_ToLayer_NoClone(pTempPet, SCENE_STAGE, L"Layer_Pet", nullptr);
+						g_pManagement->Add_GameOject_ToLayer_NoClone(pTempPet, SCENE_MORTAL, L"Layer_Pet", nullptr);
 						return;
 					}
 				}

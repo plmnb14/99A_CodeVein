@@ -216,6 +216,9 @@ HRESULT CScene_Title::Ready_Player()
 	if (FAILED(g_pManagement->Add_Layer(SCENE_STAGE, L"Layer_MonsterProjectile")))
 		return E_FAIL;
 
+	if (FAILED(g_pManagement->Add_Layer(SCENE_MORTAL, L"Layer_Pet")))
+		return E_FAIL;
+
 	//========================================================================================0
 
 	// 플레이어 원형 생성

@@ -275,6 +275,7 @@ void CPet::Function_CoolDown()
 void CPet::Function_Movement(_float _fspeed, _v3 _vDir)
 {
 	V3_NORMAL(&_vDir, &_vDir);
+
 	m_pTransform->Set_Pos((m_pNavMesh->Move_OnNaviMesh(NULL, &m_pTransform->Get_Pos(), &_vDir, _fspeed * g_pTimer_Manager->Get_DeltaTime(L"Timer_Fps_60"))));
 
 	return;
@@ -536,6 +537,7 @@ void CPet::Free()
 	IF_NOT_NULL(m_pPlayer)
 		Safe_Release(m_pPlayer);
 
+	Safe_Release(m_pBattleAgent);
 	Safe_Release(m_pOptimization);
 	Safe_Release(m_pCollider);
 	Safe_Release(m_pNavMesh);
