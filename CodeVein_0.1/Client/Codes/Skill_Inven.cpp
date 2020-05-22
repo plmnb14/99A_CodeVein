@@ -82,7 +82,7 @@ _int CSkill_Inven::Update_GameObject(_double TimeDelta)
 	Click_SubUI();
 	//Search_Regist_Skill();
 
-	
+	Search_Regist_Skill();
 
 	/*if (!m_bIsActive)
 	{
