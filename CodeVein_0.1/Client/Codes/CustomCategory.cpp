@@ -51,6 +51,16 @@ HRESULT CCustomCategory::Ready_GameObject(void * pArg)
 
 _int CCustomCategory::Update_GameObject(_double TimeDelta)
 {
+	if (m_bIsActive && !m_bIsSubActive)
+	{
+		m_bIsSubActive = true;
+	}
+	else if (!m_bIsActive && m_bIsSubActive)
+	{
+		CUI_Manager::Get_Instance()->Get_MouseUI()->Set_Active(false);
+		m_bIsSubActive = false;
+	}
+
 	CUI::Update_GameObject(TimeDelta);
 	m_fPosX = WINCX * 0.1f;
 
@@ -77,6 +87,11 @@ _int CCustomCategory::Update_GameObject(_double TimeDelta)
 	D3DXMatrixOrthoLH(&m_matProj, WINCX, WINCY, 0.f, 1.f);
 
 	m_pRendererCom->Add_RenderList(RENDER_UI, this);
+
+	if (false == m_bIsActive)
+		return NO_EVENT;
+	else
+		CUI_Manager::Get_Instance()->Get_MouseUI()->Set_Active(true);
 	return NO_EVENT;
 }
 

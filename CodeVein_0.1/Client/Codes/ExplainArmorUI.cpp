@@ -42,13 +42,14 @@ _int CExplainArmorUI::Update_GameObject(_double TimeDelta)
 		m_bIsSubActive = false;
 	}
 
-
+	if (m_tArmorParam.iArmorName == ArmorAll_END)
+		m_bIsActive = false;
 	if (!m_bIsActive)
 	{
-		m_tArmorParam.iArmorType = ARMOR_End;
+		m_tArmorParam.iArmorName = ArmorAll_END;
 		m_tArmorParam.fDef = 0.f;
 		m_tArmorParam.iPrice = 0;
-
+		SetUp_SubUI_Active(false);
 		return NO_EVENT;
 	}
 	else
