@@ -43,7 +43,7 @@ public:
 	void Create_Hit_Effect(CCollider* pAttackCol, CCollider* pHittedCol, CTransform* pHittedTrans, _float fPower = 1.5f);
 	void Create_Spawn_Effect(_float fDelay, _v3 vPos, _v3 vFinishPos, CTransform* pFollowTrans = nullptr);
 	void Create_FootSmoke_Effect(_v3 vPos, _float fOffset); // 지금은 한 객체만 사용가능
-	void Create_BossDeadParticle_Effect(_v3 vPos, _float fDelay, _float fLength);
+	void Create_BossDeadParticle_Effect(_v3 vPos, _float fDelay, _float fLength, _bool bText = true);
 	void Create_BossDead_Text(_float fDelay);
 	void Create_Skill_Start_Effect(_v3 vPos, _v3 vEffPos, CTransform* pFollowTrans = nullptr);
 public:

@@ -315,6 +315,12 @@ private: // For Dissolve
 	_float					m_fDissolveY = 0.f;
 
 private:
+	_float					m_fStaminaCost_Dodge = 0.f;
+	_float					m_fStaminaCost_WeakAttack = 0.f;
+	_float					m_fStaminaCost_HeavyAttack = 0.f;
+	_float					m_fStamina_RecoverySpeed = 0.f;
+
+private:
 	_bool				m_arrbActiveSkillOn[8] = {};
 	SKILL_INFO			m_arrSkillInfo[8] = {};
 
@@ -352,6 +358,7 @@ private:
 	_int Check_HitDirection();
 	_bool Check_CunterAngle(CGameObject* pObj);
 	_bool Check_CunterTarget();
+	void Check_Stamina(_double dTimeDelta);
 
 private:
 	void Change_PlayerBody(PLAYER_BODY _eBodyType);

@@ -29,9 +29,10 @@ HRESULT CFireBoy::Ready_GameObject(void * pArg)
 	Ready_Sound();
 
 	m_tObjParam.bCanHit = true;
-	m_tObjParam.fHp_Cur = 10000.f;
+	m_tObjParam.fHp_Cur = 10000.f * pow(1.5f, g_eStageIdx_Cur - 1);
 	m_tObjParam.fHp_Max = m_tObjParam.fHp_Cur;
-	m_tObjParam.fDamage = 20.f;
+	m_tObjParam.fDamage = 500.f * pow(1.5f, g_eStageIdx_Cur - 1);
+	m_tObjParam.fArmor_Cur = 100.f * pow(1.5f, g_eStageIdx_Cur - 1);
 
 	m_pTransformCom->Set_Scale(_v3(1.f, 1.f, 1.f));
 
@@ -158,11 +159,6 @@ _int CFireBoy::Update_GameObject(_double TimeDelta)
 
 		if (true == m_bAIController)
 			m_pAIControllerCom->Update_AIController(TimeDelta);
-
-
-
-		// 플레이어 발견 시, UI 활성화(지원)
-		m_pBossUI->Set_Active(true);
 			
 		// 보스UI 업데이트
 		// 체력이 0이 되었을때 밀림현상 방지.
@@ -1205,6 +1201,9 @@ HRESULT CFireBoy::Update_NF()
 			// 가까운 녀석 어그로 끌림.
 			Set_Target_Auto();
 		}
+
+		// 플레이어 발견 시, UI 활성화(지원)
+		m_pBossUI->Set_Active(true);
 	}
 
 	return S_OK;
@@ -1257,6 +1256,8 @@ void CFireBoy::Check_PhyCollider()
 
 		//m_bFight = true;		// 싸움 시작
 		m_bFindPlayer = true;
+
+		Give_Mana_To_Player(2);
 
 		if (m_tObjParam.fHp_Cur > 0.f)
 		{
@@ -1405,7 +1406,7 @@ void CFireBoy::OnCollisionEvent(list<CGameObject*> plistGameObject)
 						if (iter->Get_Target_IsHit())
 							iter->Set_HitAgain(true);
 
-						iter->Add_Target_Hp(-m_tObjParam.fDamage);
+						iter->Hit_Target(m_tObjParam.fDamage);
 					}
 
 					m_tObjParam.bCanAttack = false;

@@ -10,7 +10,6 @@ public:
 	enum ATK_NORMAL_TYPE
 	{
 		NORMAL_5SHOT,
-		NORMAL_MIST,
 		NORMAL_POISONWHEELWIND,
 	};
 
@@ -78,7 +77,6 @@ public:
 
 private:
 	void Update_Collider();
-	void Render_Collider();
 
 	void Check_Dist();
 	void Check_Action();
@@ -86,7 +84,6 @@ private:
 	void Check_DeadEffect(_double TimeDelta);
 
 	void Play_5Shot(); // Atk_5wayShoot
-	void Play_Mist(); //allrangeshot
 	void Play_PoisonWheelWind(); //atk_poisonmine
 
 protected:

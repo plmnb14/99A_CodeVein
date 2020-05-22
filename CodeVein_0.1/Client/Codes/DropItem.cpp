@@ -656,6 +656,10 @@ _int CDropItem::Update_GameObject(_double TimeDelta)
 			{
 				m_bEnable = false;
 				m_bCanGetItem = false;
+
+				g_pSoundManager->Stop_Sound(CSoundManager::Effect_SFX_01);
+				g_pSoundManager->Play_Sound(L"ItemGetSound.ogg", CSoundManager::Effect_SFX_01, CSoundManager::Effect_Sound);
+
 				return DEAD_OBJ;
 			}
 	}

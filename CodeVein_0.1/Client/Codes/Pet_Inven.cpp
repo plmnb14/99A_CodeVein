@@ -34,6 +34,7 @@ HRESULT CPet_Inven::Ready_GameObject(void* pArg)
 	Add_Pet(CPet::PET_TYPE::PET_POISONBUTTERFLY);
 
 	SetUp_SlotPos(); // 슬롯 위치 설정
+
 	return S_OK;
 }
 
@@ -224,9 +225,9 @@ void CPet_Inven::Check_Call_Pet(_bool _Check_Get_SlotSelect, _uint _Idx, CPet::P
 			//해당 펫을 찾았다면
 			else
 			{
+				pTempPet->Set_Enable(true);
 				static_cast<CPet*>(pTempPet)->Function_Check_Navi();
 				static_cast<CPet*>(pTempPet)->Play_Deformation();
-				pTempPet->Set_Enable(true);
 				pTempPet = nullptr;
 				return;
 			}
@@ -272,9 +273,9 @@ void CPet_Inven::Check_Call_Pet(_bool _Check_Get_SlotSelect, _uint _Idx, CPet::P
 				}
 				else
 				{
+					pTempPet->Set_Enable(true);
 					static_cast<CPet*>(pTempPet)->Function_Check_Navi();
 					static_cast<CPet*>(pTempPet)->Play_Deformation();
-					pTempPet->Set_Enable(true);
 					pTempPet = nullptr;
 					return;
 				}
