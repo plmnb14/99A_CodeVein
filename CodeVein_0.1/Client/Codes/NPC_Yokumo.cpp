@@ -360,8 +360,8 @@ void CNPC_Yokumo::Check_Dist()
 					m_eState = Idle;
 			}
 
-			if(false == m_pPlayer->Get_YakumoUI())
-				m_pPlayer->Set_OnNPCUI(false);
+			//if(false == m_pPlayer->Get_YakumoUI())
+			//	m_pPlayer->Set_OnNPCUI(false);
 
 			m_pPlayer->Set_YokumoUI(false);
 
@@ -385,11 +385,6 @@ void CNPC_Yokumo::Check_Dist()
 				m_pPlayer->Set_OnNPCUI(true);
 				m_pPlayer->Set_YokumoUI(true);
 				m_bCanActive = true;
-
-				if (m_pUIManager->Get_GeneralStoreUI()->Get_Active() || m_pUIManager->Get_GeneralStoreSellUI()->Get_Active() || m_pUIManager->Get_Yokumo_NPCUI()->Get_Active())
-					m_pInteractionButton->Set_Active(false);
-				else
-					m_pInteractionButton->Set_Active(true);
 			}
 			
 			
@@ -397,10 +392,8 @@ void CNPC_Yokumo::Check_Dist()
 	}
 
 	// 플레이어에서 E를 누르면, 리액트 컨버세이션을 활성화 시킨다.
-	if (m_pInteractionButton->Get_ReactConversation() && m_bCanActive == true)
+	else if (m_pInteractionButton->Get_ReactConversation() && m_bCanActive == true)
 	{
-		// 상호작용 UI 비활성화
-		m_pInteractionButton->Set_Active(false);
 		// 오리진 각도 받아옴
 		m_fOriginAngle = m_pTransformCom->Get_Angle(AXIS_Y);
 
@@ -408,6 +401,8 @@ void CNPC_Yokumo::Check_Dist()
 
 		m_pInteractionButton->Set_Active(false);
 
+		//m_pPlayer->Active_UI_MaterialShop_Yokumo();
+		
 		// 최초 1번만 말하고,
 		m_bCanActive = false;
 
@@ -416,7 +411,7 @@ void CNPC_Yokumo::Check_Dist()
 
 		if (0 == CCalculater::Random_Num(0, 1))
 		{
-			m_pScriptUI->Set_Script(CScriptUI::Talker_Yakumo, CScriptUI::Yakumo_Hello_0_WhatsUp);
+			m_pScriptUI->Set_Script(CScriptUI::Talker_Yokumo, CScriptUI::Yakumo_Hello_0_WhatsUp);
 			m_pScriptUI->Set_Active(true);
 			m_pScriptUI->Set_LifeTime(1.f);
 
@@ -425,7 +420,7 @@ void CNPC_Yokumo::Check_Dist()
 		}
 		else
 		{
-			m_pScriptUI->Set_Script(CScriptUI::Talker_Yakumo, CScriptUI::Yakumo_Hello_1_WhatsUp);
+			m_pScriptUI->Set_Script(CScriptUI::Talker_Yokumo, CScriptUI::Yakumo_Hello_1_WhatsUp);
 			m_pScriptUI->Set_Active(true);
 			m_pScriptUI->Set_LifeTime(1.f);
 
@@ -481,11 +476,12 @@ void CNPC_Yokumo::Check_Bye()
 
 		m_pInteractionButton->Set_ReactConverSation(false);
 
+		
 		if (0 == CCalculater::Random_Num(0, 1))
 		{
 			m_eState = Gloomy;
 
-			m_pScriptUI->Set_Script(CScriptUI::Talker_Yakumo, CScriptUI::Yakumo_Bye_0_SeeYouAround);
+			m_pScriptUI->Set_Script(CScriptUI::Talker_Yokumo, CScriptUI::Yakumo_Bye_0_SeeYouAround);
 			m_pScriptUI->Set_Active(true);
 			m_pScriptUI->Set_LifeTime(1.f);
 
@@ -496,7 +492,7 @@ void CNPC_Yokumo::Check_Bye()
 		{
 			m_eState = LookDown;
 
-			m_pScriptUI->Set_Script(CScriptUI::Talker_Yakumo, CScriptUI::Yakumo_Bye_1_MakeSure);
+			m_pScriptUI->Set_Script(CScriptUI::Talker_Yokumo, CScriptUI::Yakumo_Bye_1_MakeSure);
 			m_pScriptUI->Set_Active(true);
 			m_pScriptUI->Set_LifeTime(1.f);
 

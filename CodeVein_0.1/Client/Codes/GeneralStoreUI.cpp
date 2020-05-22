@@ -50,6 +50,7 @@ _int CGeneralStoreUI::Update_GameObject(_double TimeDelta)
 		SetUp_SubUI_Active(false);
 		m_bIsSubActive = false;
 		
+		CUI_Manager::Get_Instance()->Get_Yokumo_NPCUI()->Set_Active(true);
 		CUI_Manager::Get_Instance()->Get_MouseUI()->Set_Active(false);
 	}
 

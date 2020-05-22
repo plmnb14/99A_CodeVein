@@ -464,6 +464,7 @@ void CNPC_Yakumo::Check_Bye()
 
 		m_pInteractionButton->Set_ReactConverSation(false);
 
+		
 		if (0 == CCalculater::Random_Num(0, 1))
 		{
 			m_eState = Gloomy;

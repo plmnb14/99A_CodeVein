@@ -53,6 +53,9 @@ _int CScriptUI::Update_GameObject(_double TimeDelta)
 	case Talker_Yakumo:
 		m_iTalkerIndex = 4;
 		break;
+	case Talker_Yokumo:
+		m_iTalkerIndex = 9;
+		break;
 	case Talker_End:
 		break;
 	}

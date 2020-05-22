@@ -95,7 +95,7 @@ _int CGeneralStoreNPCUI::Update_GameObject(_double TimeDelta)
 		_float fAdditionalYRadian = fOriginYRadian + D3DXToRadian(160.f);
 		m_pTransformCom->Set_Angle(AXIS_Y, fAdditionalYRadian);
 
-		LOOP(3)
+		LOOP(2)
 		{
 			TARGET_TO_TRANS(m_vecOption[i])->Set_Angle(m_pTransformCom->Get_Angle());
 			TARGET_TO_TRANS(m_vecOption[i])->Set_Scale(_v3(0.87f, 0.2476f, 1.f));
@@ -193,7 +193,7 @@ void CGeneralStoreNPCUI::SetUp_Default()
 {
 	CGeneralStoreOption* pOption = nullptr;
 
-	LOOP(3)
+	LOOP(2)
 	{
 		pOption = static_cast<CGeneralStoreOption*>(g_pManagement->Clone_GameObject_Return(L"GameObject_GeneralStoreOption", nullptr));
 		TARGET_TO_TRANS(pOption)->Set_Scale(_v3(0.87f, 0.2476f, 1.f));
@@ -203,7 +203,7 @@ void CGeneralStoreNPCUI::SetUp_Default()
 
 	m_vecOption[0]->Set_OptionType(CGeneralStoreOption::OPTION_PURCHASE);
 	m_vecOption[1]->Set_OptionType(CGeneralStoreOption::OPTION_SELL);
-	m_vecOption[2]->Set_OptionType(CGeneralStoreOption::OPTION_BYE);
+	//m_vecOption[2]->Set_OptionType(CGeneralStoreOption::OPTION_BYE);
 }
 
 void CGeneralStoreNPCUI::Click_Option()
@@ -232,8 +232,6 @@ void CGeneralStoreNPCUI::Click_Option()
 
 	if (CCollisionMgr::Collision_Ray(m_vecOption[1], g_pInput_Device->Get_Ray(), &m_fCross))
 	{
-		
-
 		m_vecOption[1]->Set_Select(true);
 
 		if (g_pInput_Device->Get_DIMouseState(CInput_Device::DIM_LB))
@@ -249,20 +247,21 @@ void CGeneralStoreNPCUI::Click_Option()
 	else
 		m_vecOption[1]->Set_Select(false);
 
-	if (CCollisionMgr::Collision_Ray(m_vecOption[2], g_pInput_Device->Get_Ray(), &m_fCross))
+	/*if (CCollisionMgr::Collision_Ray(m_vecOption[2], g_pInput_Device->Get_Ray(), &m_fCross))
 	{
 		m_vecOption[2]->Set_Select(true);
 
 		if (g_pInput_Device->Get_DIMouseState(CInput_Device::DIM_LB))
 		{
 			m_bIsActive = false;
+			
 			CUI_Manager::Get_Instance()->Stop_Play_UISound(L"UI_Open.ogg", CSoundManager::CHANNELID::UI_Open_Close, CSoundManager::Effect_Sound);
 		}
 			
 
 	}
 	else
-		m_vecOption[2]->Set_Select(false);
+		m_vecOption[2]->Set_Select(false);*/
 }
 
 CGeneralStoreNPCUI * CGeneralStoreNPCUI::Create(_Device pGraphic_Device)
