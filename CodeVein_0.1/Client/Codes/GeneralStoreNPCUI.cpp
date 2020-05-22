@@ -51,6 +51,7 @@ _int CGeneralStoreNPCUI::Update_GameObject(_double TimeDelta)
 
 	if (nullptr == m_pTarget)
 		return NO_EVENT;
+	
 
 	if (m_bIsActive && !m_bIsSubActive)
 	{

@@ -5,6 +5,7 @@
 
 BEGIN(Client)
 class CReleaseOption;
+class CPurchaseFailUI;
 class CReleaseQuestionUI final : public CUI
 {
 private:
@@ -49,6 +50,7 @@ private:
 	BloodCode_ID			m_eReleaseBloodCode = BloodCode_End;
 	Skill_ID				m_eReleaseSkill = SkillID_End;
 	_bool					m_bIsRelease = false;
+	CPurchaseFailUI*		m_pBuyFailUI = nullptr;
 
 public:
 	static CReleaseQuestionUI*	Create(_Device pGraphic_Device);

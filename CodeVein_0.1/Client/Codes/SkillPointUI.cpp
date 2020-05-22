@@ -49,6 +49,11 @@ _int CSkillPointUI::Update_GameObject(_double TimeDelta)
 {
 	Late_Init();
 
+	m_pTarget = g_pManagement->Get_GameObjectBack(L"Layer_Player", SCENE_MORTAL);
+	if (!m_pTarget)
+		return S_OK;
+	m_tObjParam = m_pTarget->Get_Target_Param();
+
 	if (g_eSceneID_Cur == SCENE_STAGE_BASE)
 	{
 		Set_Active(false);
@@ -168,11 +173,6 @@ void CSkillPointUI::Late_Init()
 		return;
 	m_bLateInit = true;
 
-	m_pTarget = g_pManagement->Get_GameObjectBack(L"Layer_Player", SCENE_MORTAL);
-	if (nullptr == m_pTarget)
-		return;
-
-	m_tObjParam = m_pTarget->Get_Target_Param();
 }
 
 CSkillPointUI * CSkillPointUI::Create(_Device pGraphic_Device)

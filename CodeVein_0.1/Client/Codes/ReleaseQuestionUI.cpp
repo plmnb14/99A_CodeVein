@@ -147,11 +147,14 @@ void CReleaseQuestionUI::SetUp_Default()
 	LOOP(2)
 	{
 		pInstance = static_cast<CReleaseOption*>(g_pManagement->Clone_GameObject_Return(L"GameObject_ReleaseOption", nullptr));
-		g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_MORTAL, L"Layer_StageUI", nullptr);
+		g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_MORTAL, L"Layer_PlayerUI", nullptr);
 		TARGET_TO_TRANS(pInstance)->Set_Scale(_v3(1.2f, 0.3f, 1.f));
 		pInstance->Set_UI_Index(i);
 		m_vecOption.push_back(pInstance);
 	}
+
+	m_pBuyFailUI = static_cast<CPurchaseFailUI*>(g_pManagement->Clone_GameObject_Return(L"GameObject_PurchaseFailUI", nullptr));
+	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pBuyFailUI, SCENE_MORTAL, L"Layer_PlayerUI", nullptr);
 }
 
 void CReleaseQuestionUI::Click_Option()
@@ -166,29 +169,26 @@ void CReleaseQuestionUI::Click_Option()
 
 			if ((0 == m_vecOption[i]->Get_UI_Index()) && g_pInput_Device->Get_DIMouseState(CInput_Device::DIM_LB))
 			{
-				// Ω¿µÊ«—¥Ÿ
-				m_bIsActive = false;
-				CUI_Manager::Get_Instance()->Get_Skill_Inven()->Add_Skill_Data(m_eReleaseSkill);
-				CUI_Manager::Get_Instance()->Get_Skill_AcquisitionUI()->Set_Skill(m_eReleaseSkill);
-				CUI_Manager::Get_Instance()->Get_Skill_AcquisitionUI()->Set_Active(true);
+				// µ∑¿Ã √Ê∫–
+				if (1000 <= CUI_Manager::Get_Instance()->Get_HazeUI()->Get_Haze_Cnt())
+				{
+					// Ω¿µÊ«—¥Ÿ
+					m_bIsActive = false;
 
-				/*switch (m_eReleaseBloodCode)
-				{
-				case BloodCode_Fighter:
-				{
-					CUI_Manager::Get_Instance()->Get_FigherBlood()->Add_FighterBlood(m_eReleaseSkill);
+					CUI_Manager::Get_Instance()->Get_Skill_Inven()->Add_Skill_Data(m_eReleaseSkill);
+					CUI_Manager::Get_Instance()->Get_Skill_AcquisitionUI()->Set_Skill(m_eReleaseSkill);
+					CUI_Manager::Get_Instance()->Get_Skill_AcquisitionUI()->Set_Active(true);
+					CUI_Manager::Get_Instance()->Get_HazeUI()->Accumulate_Haze(-1000);
+					m_bIsRelease = true;
+					CUI_Manager::Get_Instance()->Stop_Play_UISound(L"Get_Skill.ogg", CSoundManager::CHANNELID::UI_Open_Close, CSoundManager::Effect_Sound);
 				}
-					break;
-				case BloodCode_Prometheus:
+				// µ∑¿Ã æ¯¿Ω
+				else
 				{
-					CUI_Manager::Get_Instance()->Get_PrometheusBlood()->Add_PrometheusBlood(m_eReleaseSkill);
+					// Ω¿µÊ Ω«∆– UI
+					m_pBuyFailUI->Set_Active(true);
+					CUI_Manager::Get_Instance()->Stop_Play_UISound(L"Acquisition_UI.ogg", CSoundManager::CHANNELID::UI_Open_Close, CSoundManager::Effect_Sound);
 				}
-					break;
-				}*/
-				
-				m_bIsRelease = true;
-
-				CUI_Manager::Get_Instance()->Stop_Play_UISound(L"Get_Skill.ogg", CSoundManager::CHANNELID::UI_Open_Close, CSoundManager::Effect_Sound);
 			}
 			else if ((1 == m_vecOption[i]->Get_UI_Index()) && g_pInput_Device->Get_DIMouseState(CInput_Device::DIM_LB))
 			{

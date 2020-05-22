@@ -127,9 +127,9 @@ HRESULT CRenderer::Ready_Component_Prototype()
 	if (FAILED(m_pTarget_Manager->Add_Render_Target(m_pGraphic_Dev, L"Target_Bloom", ViewPort.Width, ViewPort.Height, D3DFMT_A8R8G8B8, D3DXCOLOR(0.0f, 0.0f, 0.0f, 0.f))))
 		return E_FAIL;
 
-	// Target_Rim
-	if (FAILED(m_pTarget_Manager->Add_Render_Target(m_pGraphic_Dev, L"Target_Rim", ViewPort.Width, ViewPort.Height, D3DFMT_A8R8G8B8, D3DXCOLOR(0.0f, 0.0f, 0.0f, 0.f))))
-		return E_FAIL;
+	//// Target_Rim
+	//if (FAILED(m_pTarget_Manager->Add_Render_Target(m_pGraphic_Dev, L"Target_Rim", ViewPort.Width, ViewPort.Height, D3DFMT_A8R8G8B8, D3DXCOLOR(0.0f, 0.0f, 0.0f, 0.f))))
+	//	return E_FAIL;
 
 	// Target_ToneMapping
 	if (FAILED(m_pTarget_Manager->Add_Render_Target(m_pGraphic_Dev, L"Target_ToneMapping", ViewPort.Width, ViewPort.Height, D3DFMT_A8R8G8B8, D3DXCOLOR(0.f, 0.f, 0.f, 0.f))))
@@ -178,8 +178,8 @@ HRESULT CRenderer::Ready_Component_Prototype()
 		return E_FAIL;
 	if (FAILED(m_pTarget_Manager->Add_MRT(L"MRT_LightAcc", L"Target_Specular")))
 		return E_FAIL;
-	if (FAILED(m_pTarget_Manager->Add_MRT(L"MRT_LightAcc", L"Target_Rim")))
-		return E_FAIL;
+	//if (FAILED(m_pTarget_Manager->Add_MRT(L"MRT_LightAcc", L"Target_Rim")))
+	//	return E_FAIL;
 
 	// For.MRT_SSAO
 	if (FAILED(m_pTarget_Manager->Add_MRT(L"MRT_SSAO", L"Target_SSAO")))
@@ -289,7 +289,7 @@ HRESULT CRenderer::Ready_Component_Prototype()
 
 	//=====================================================================================================================
 
-	_float fTargetSize = 120.f;
+	_float fTargetSize = 150.f;
 
 	// For.Target_Diffuse`s Debug Buffer
 	if (FAILED(m_pTarget_Manager->Ready_Debug_Buffer(L"Target_Diffuse", 0.0f, 0.0f, fTargetSize, fTargetSize)))
@@ -339,9 +339,9 @@ HRESULT CRenderer::Ready_Component_Prototype()
 	if (FAILED(m_pTarget_Manager->Ready_Debug_Buffer(L"Target_Specular", fTargetSize * 2.f, fTargetSize * 3, fTargetSize, fTargetSize)))
 		return E_FAIL;
 
-	// For.Target_Rim`s Debug Buffer
-	if (FAILED(m_pTarget_Manager->Ready_Debug_Buffer(L"Target_Rim", fTargetSize * 2.f, fTargetSize * 4, fTargetSize, fTargetSize)))
-		return E_FAIL;
+	//// For.Target_Rim`s Debug Buffer
+	//if (FAILED(m_pTarget_Manager->Ready_Debug_Buffer(L"Target_Rim", fTargetSize * 2.f, fTargetSize * 4, fTargetSize, fTargetSize)))
+	//	return E_FAIL;
 
 	//=====================================================================================================================
 
@@ -367,41 +367,44 @@ HRESULT CRenderer::Ready_Component_Prototype()
 	if (FAILED(m_pTarget_Manager->Ready_Debug_Buffer(L"Target_MotionBlurObj", fTargetSize * 4, fTargetSize * 2, fTargetSize, fTargetSize)))
 		return E_FAIL;
 
+	// For.Target_BlurSky`s Debug Buffer
+	if (FAILED(m_pTarget_Manager->Ready_Debug_Buffer(L"Target_BlurSky", fTargetSize * 4, fTargetSize * 3, fTargetSize, fTargetSize)))
+		return E_FAIL;
 	//=====================================================================================================================
 
-	// For.Target_Blend`s Debug Buffer // Åæ¸ÅÇÎ Á÷Àü
-	if (FAILED(m_pTarget_Manager->Ready_Debug_Buffer(L"Target_Blend", fTargetSize * 5, 0.f, fTargetSize, fTargetSize)))
-		return E_FAIL;
+	//// For.Target_ColorGradingAfter`s Debug Buffer
+	//if (FAILED(m_pTarget_Manager->Ready_Debug_Buffer(L"Target_ColorGradingAfter", fTargetSize * 5, 0.f, fTargetSize, fTargetSize)))
+	//	return E_FAIL;
 
 	// For.Target_Bloom`s Debug Buffer
-	if (FAILED(m_pTarget_Manager->Ready_Debug_Buffer(L"Target_Bloom", fTargetSize * 5, fTargetSize, fTargetSize, fTargetSize)))
+	if (FAILED(m_pTarget_Manager->Ready_Debug_Buffer(L"Target_Bloom", fTargetSize * 5, 0.f, fTargetSize, fTargetSize)))
 		return E_FAIL;
 
 	// For.Target_ToneMapping`s Debug Buffer
-	if (FAILED(m_pTarget_Manager->Ready_Debug_Buffer(L"Target_ToneMapping", fTargetSize * 5, fTargetSize * 2.f, fTargetSize, fTargetSize)))
+	if (FAILED(m_pTarget_Manager->Ready_Debug_Buffer(L"Target_ToneMapping", fTargetSize * 5, fTargetSize, fTargetSize, fTargetSize)))
 		return E_FAIL;
 
 	// For.Target_BlurDOF`s Debug Buffer
-	if (FAILED(m_pTarget_Manager->Ready_Debug_Buffer(L"Target_BlurDOF", fTargetSize * 5, fTargetSize * 3, fTargetSize, fTargetSize)))
+	if (FAILED(m_pTarget_Manager->Ready_Debug_Buffer(L"Target_BlurDOF", fTargetSize * 5, fTargetSize * 2.f, fTargetSize, fTargetSize)))
 		return E_FAIL;
 	
-	//=====================================================================================================================
-	// For.Target_DistortionAfter`s Debug Buffer
-	if (FAILED(m_pTarget_Manager->Ready_Debug_Buffer(L"Target_DistortionAfter", fTargetSize * 6, 0.f, fTargetSize, fTargetSize)))
-		return E_FAIL;
-
-	// For.Target_DOFAfter`s Debug Buffer
-	if (FAILED(m_pTarget_Manager->Ready_Debug_Buffer(L"Target_DOFAfter", fTargetSize * 6, fTargetSize, fTargetSize, fTargetSize)))
-		return E_FAIL;
-
-	//// For.Target_ColorGradingAfter`s Debug Buffer
-	//if (FAILED(m_pTarget_Manager->Ready_Debug_Buffer(L"Target_ColorGradingAfter", fTargetSize * 6, fTargetSize * 2, fTargetSize, fTargetSize)))
+	////=====================================================================================================================
+	//// For.Target_DistortionAfter`s Debug Buffer
+	//if (FAILED(m_pTarget_Manager->Ready_Debug_Buffer(L"Target_DistortionAfter", fTargetSize * 6, 0.f, fTargetSize, fTargetSize)))
 	//	return E_FAIL;
-
-	//=====================================================================================================================
-	// For.Target_GodRay`s Debug Buffer
-	if (FAILED(m_pTarget_Manager->Ready_Debug_Buffer(L"Target_GodRay", fTargetSize * 7, 0, fTargetSize, fTargetSize)))
-		return E_FAIL;
+	//
+	//// For.Target_DOFAfter`s Debug Buffer
+	//if (FAILED(m_pTarget_Manager->Ready_Debug_Buffer(L"Target_DOFAfter", fTargetSize * 6, fTargetSize, fTargetSize, fTargetSize)))
+	//	return E_FAIL;
+	//
+	////// For.Target_ColorGradingAfter`s Debug Buffer
+	////if (FAILED(m_pTarget_Manager->Ready_Debug_Buffer(L"Target_ColorGradingAfter", fTargetSize * 6, fTargetSize * 2, fTargetSize, fTargetSize)))
+	////	return E_FAIL;
+	//
+	////=====================================================================================================================
+	//// For.Target_GodRay`s Debug Buffer
+	//if (FAILED(m_pTarget_Manager->Ready_Debug_Buffer(L"Target_GodRay", fTargetSize * 7, 0, fTargetSize, fTargetSize)))
+	//	return E_FAIL;
 //#endif
 
 	return NOERROR;
@@ -1311,8 +1314,8 @@ HRESULT CRenderer::Render_Blend()
 		return E_FAIL;
 	if (FAILED(m_pShader_Blend->Set_Texture("g_EmissiveTexture", m_pTarget_Manager->Get_Texture(L"Target_Emissive"))))
 		return E_FAIL;
-	if (FAILED(m_pShader_Blend->Set_Texture("g_RimTexture", m_pTarget_Manager->Get_Texture(L"Target_Rim"))))
-		return E_FAIL;
+	//if (FAILED(m_pShader_Blend->Set_Texture("g_RimTexture", m_pTarget_Manager->Get_Texture(L"Target_Rim"))))
+	//	return E_FAIL;
 	if (FAILED(m_pShader_Blend->Set_Texture("g_DepthTexture", m_pTarget_Manager->Get_Texture(L"Target_Depth"))))
 		return E_FAIL;
 	if (FAILED(m_pShader_Blend->Set_Texture("g_ShadowMapTexture", m_pTarget_Manager->Get_Texture(L"Target_Shadow"))))

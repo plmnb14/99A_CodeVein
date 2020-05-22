@@ -296,6 +296,17 @@ void CArmor_Inven::Late_Init()
 
 	CTotal_Inven* pTotal_Inven = CUI_Manager::Get_Instance()->Get_Total_Inven();
 	pTotal_Inven->Set_ArmorParam(m_tRegistParam);
+
+	m_tRegistParam.iArmorType = ARMOR_Drape;
+	m_tRegistParam.iArmorName = ArmorAll_Drape_DarkNightHook;
+	m_tRegistParam.fHP = 1000.f;
+	m_tRegistParam.fDef = 50.f;
+	m_tRegistParam.fPlusDef = 10.f;
+	m_tRegistParam.fPlusHP = 50.f;
+	m_tRegistParam.iPrice = 100;
+	m_tRegistParam.iReinforce = 0;
+
+	Add_Armor(m_tRegistParam);
 }
 
 void CArmor_Inven::Add_Armor(ARMOR_PARAM tArmorParam)

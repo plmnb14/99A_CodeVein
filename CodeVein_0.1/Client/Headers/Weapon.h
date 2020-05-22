@@ -69,6 +69,8 @@ public:
 
 	virtual void			Set_WeaponParam(WPN_PARAM _tParam , _ulong _dwSlotIdx) { m_tWeaponParam[_dwSlotIdx] = _tParam; }
 
+	void					Set_WeaponDamage(WEAPON_DATA _WeaponData, _float _fDamage) { m_tWeaponParam[_WeaponData].fDamage = _fDamage; }
+
 private:
 	list<CGameObject*>		m_listCollisionRecord;
 

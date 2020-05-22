@@ -363,9 +363,6 @@ void CNPC_Yokumo::Check_Dist()
 
 			m_pPlayer->Set_YokumoUI(false);
 
-			m_bActive = false;
-
-			m_pInteractionButton->Set_Active(false);
 			return;
 		}
 
@@ -467,8 +464,6 @@ void CNPC_Yokumo::Check_Bye()
 		!m_pUIManager->Get_GeneralStoreUI()->Get_Active() &&
 		m_pInteractionButton->Get_ReactConversation())
 	{
-		cout << "¾Ó¤¤´¨" << endl;
-
 		m_pTransformCom->Set_Angle(AXIS_Y, m_fOriginAngle);
 
 		m_pInteractionButton->Set_ReactConverSation(false);

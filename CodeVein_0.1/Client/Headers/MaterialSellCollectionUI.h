@@ -6,6 +6,7 @@
 BEGIN(Client)
 class CMaterial_Slot;
 class CMaterialSellUI;
+class CMaterial_InfoUI;
 class CMaterialSellCollectionUI final : public CUI
 {
 private:
@@ -39,6 +40,7 @@ private:
 	_bool						m_bIsSubActive = false;
 	vector<CMaterial_Slot*>		m_vecSlot;
 	CMaterialSellUI*			m_pMtrlSellUI = nullptr;
+	CMaterial_InfoUI*			m_pInfoUI = nullptr;
 	
 public:
 	static CMaterialSellCollectionUI*	Create(_Device pGraphic_Device);

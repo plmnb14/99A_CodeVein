@@ -359,8 +359,6 @@ void CNPC_Yakumo::Check_Dist()
 
 			m_pPlayer->Set_YakumoUI(false);
 
-			m_bActive = false;
-
 			return;
 		}
 
@@ -446,12 +444,20 @@ void CNPC_Yakumo::Check_Anim()
 
 void CNPC_Yakumo::Check_Bye()
 {
+	const _float MIN_DIST = 1.f;
+	const _float MAX_DIST = 2.f;
+
+	_float fLen = D3DXVec3Length(&_v3(TARGET_TO_TRANS(m_pPlayer)->Get_Pos() - m_pTransformCom->Get_Pos()));
+
+	// °Å¸® ÀÌ³»°¡ ¾Æ´Ò °æ¿ì, 
+	if (fLen > MAX_DIST || fLen < MIN_DIST)
+		return;
+
 	if (!m_pWeaponShoUI->Get_Active() &&
+		!m_pUIManager->Get_Yokumo_NPCUI()->Get_Active() &&
 		!m_pWeaponShoUI->Get_OtherPopupOn() &&
 		m_pInteractionButton->Get_ReactConversation())
 	{
-		cout << "¾Ó¤¤´¨" << endl;
-			 
 		m_pTransformCom->Set_Angle(AXIS_Y, m_fOriginAngle);
 
 		m_pInteractionButton->Set_ReactConverSation(false);

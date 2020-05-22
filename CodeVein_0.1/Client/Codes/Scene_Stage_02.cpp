@@ -38,6 +38,9 @@ HRESULT CScene_Stage_02::Ready_Scene()
 
 	m_pScriptManager = CScriptManager::Get_Instance();
 
+	g_pSoundManager->Stop_Sound(CSoundManager::Background_Loop);
+	g_pSoundManager->Stop_Sound(CSoundManager::Ambient_Loop);
+
 	g_pSoundManager->Set_Volume(CSoundManager::BGM_Volume, 1.f);
 	g_pSoundManager->Stop_Sound(CSoundManager::Ambient_Loop);
 	g_pSoundManager->Play_BGM(L"BGM_MT_SNOW.ogg", true);

@@ -43,6 +43,9 @@ HRESULT CScene_Stage_Base::Ready_Scene()
 	pRenderer->Set_UseLinearFog(true);
 	Safe_Release(pRenderer);
 
+	g_pSoundManager->Stop_Sound(CSoundManager::Background_Loop);
+	g_pSoundManager->Stop_Sound(CSoundManager::Ambient_Loop);
+
 	g_pSoundManager->Set_Volume(CSoundManager::BGM_Volume, 1.f);
 	g_pSoundManager->Stop_Sound(CSoundManager::Ambient_Loop);
 	g_pSoundManager->Play_BGM(L"AMB_BASE_000.ogg", true);
@@ -61,7 +64,7 @@ HRESULT CScene_Stage_Base::Ready_Scene()
 	// NPC
 	//////////////////////////////////////////////////////////////////////////
 	// 야쿠모
-	g_pManagement->Add_GameObject_ToLayer(L"GameObject_NPC_Yakumo", SCENE_STAGE, L"Layer_NPC", &CNPC_Yakumo::NPC_INFO(_v3(-4.46f, -1.37f, -5.294f), D3DXToRadian(89.f)));
+	g_pManagement->Add_GameObject_ToLayer(L"GameObject_NPC_Yakumo", SCENE_STAGE, L"Layer_NPC", &CNPC_Yakumo::NPC_INFO(_v3(-4.46f, -1.37f, -5.294f), D3DXToRadian(88.f)));
 	
 	//NPC 1 요쿠모
 	g_pManagement->Add_GameObject_ToLayer(L"GameObject_NPC_Yokumo", SCENE_STAGE, L"Layer_NPC", &CNPC_Yokumo::NPC_INFO(_v3(-10.5f, -1.37f, -14.3f), D3DXToRadian(45.f)));
@@ -78,13 +81,6 @@ HRESULT CScene_Stage_Base::Ready_Scene()
 _int CScene_Stage_Base::Update_Scene(_double TimeDelta)
 {
 	Create_Fog(TimeDelta);
-
-	//임시
-	if (true == m_pLoading->Get_Finish())
-	{
-		g_pSoundManager->Stop_Sound(CSoundManager::UI_SFX_01);
-		g_pSoundManager->Play_Sound(L"UI_UpgradeSuccess.wav", CSoundManager::UI_SFX_01, CSoundManager::Effect_Sound);
-	}
 
 	//====================================================================================================
 	// 만약에 하나의 사운드를 계속해서 재생하고 싶다면

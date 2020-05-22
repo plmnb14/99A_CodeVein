@@ -62,6 +62,7 @@ private:
 
 	CGameObject*	m_pPlayer = nullptr;
 	_bool			m_bCanSummonYeti = false;
+	_bool			m_bEffect = false;
 	_uint			m_iIndex = 0;
 
 };

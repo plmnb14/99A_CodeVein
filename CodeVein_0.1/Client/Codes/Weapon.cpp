@@ -402,33 +402,103 @@ void CWeapon::OnCollisionEvent(list<CGameObject*> plistGameObject, _bool _bIsPla
 
 							g_pManagement->Create_Hit_Effect(vecIter, vecCol, pIterTransform);
 						
-							if (0 == CCalculater::Random_Num(0, 1))
+							_int iRandNum = CCalculater::Random_Num(0, 3);
+
+							switch (iRandNum)
 							{
-								g_pSoundManager->Stop_Sound(CSoundManager::Effect_SFX_01);
-								g_pSoundManager->Play_Sound(L"SE_Blood_000.ogg", CSoundManager::Effect_SFX_01, CSoundManager::Effect_Sound);
+							case 0:
+							{
+								g_pSoundManager->Stop_Sound(CSoundManager::Hit_SFX_01);
+								g_pSoundManager->Play_Sound(L"IMPT_Hit_Short_01.wav", CSoundManager::Hit_SFX_01, CSoundManager::Effect_Sound);
+
+								break;
 							}
-							else
+							case 1:
 							{
-								g_pSoundManager->Stop_Sound(CSoundManager::Effect_SFX_01);
-								g_pSoundManager->Play_Sound(L"SE_Blood_001.ogg", CSoundManager::Effect_SFX_01, CSoundManager::Effect_Sound);
+								g_pSoundManager->Stop_Sound(CSoundManager::Hit_SFX_01);
+								g_pSoundManager->Play_Sound(L"Slash_Sword_02_Short.wav", CSoundManager::Hit_SFX_01, CSoundManager::Effect_Sound);
+
+								break;
+							}
+							case 2:
+							{
+								g_pSoundManager->Stop_Sound(CSoundManager::Hit_SFX_01);
+								g_pSoundManager->Play_Sound(L"Slash_Sword_03.wav", CSoundManager::Hit_SFX_01, CSoundManager::Effect_Sound);
+
+								break;
+							}
+
+							case 3:
+							{
+								g_pSoundManager->Stop_Sound(CSoundManager::Hit_SFX_01);
+								g_pSoundManager->Play_Sound(L"Slash_Sword_04.wav", CSoundManager::Hit_SFX_01, CSoundManager::Effect_Sound);
+
+
+								break;
+							}
 							}
 							
-							_int iRand = CCalculater::Random_Num(0, 2);
+							iRandNum = CCalculater::Random_Num(0, 3);
 
-							if (0 == iRand)
+							switch (iRandNum)
 							{
-								g_pSoundManager->Stop_Sound(CSoundManager::Effect_SFX_02);
-								g_pSoundManager->Play_Sound(L"HIT01.ogg", CSoundManager::Effect_SFX_02, CSoundManager::Effect_Sound);
+							case 0:
+							{
+								g_pSoundManager->Stop_Sound(CSoundManager::Hit_SFX_02);
+								g_pSoundManager->Play_Sound(L"GORE_Gun_Gore_01.wav", CSoundManager::Hit_SFX_02, CSoundManager::Effect_Sound);
+
+								break;
 							}
-							else if(1 == iRand)
+							case 1:
 							{
-								g_pSoundManager->Stop_Sound(CSoundManager::Effect_SFX_02);
-								g_pSoundManager->Play_Sound(L"HIT03.ogg", CSoundManager::Effect_SFX_02, CSoundManager::Effect_Sound);
+								g_pSoundManager->Stop_Sound(CSoundManager::Hit_SFX_02);
+								g_pSoundManager->Play_Sound(L"GORE_Gun_Gore_02.wav", CSoundManager::Hit_SFX_02, CSoundManager::Effect_Sound);
+
+								break;
 							}
-							else
+							case 2:
 							{
-								g_pSoundManager->Stop_Sound(CSoundManager::Effect_SFX_02);
-								g_pSoundManager->Play_Sound(L"HIT05.ogg", CSoundManager::Effect_SFX_02, CSoundManager::Effect_Sound);
+								g_pSoundManager->Stop_Sound(CSoundManager::Hit_SFX_02);
+								g_pSoundManager->Play_Sound(L"GORE_Gun_Gore_03.wav", CSoundManager::Hit_SFX_02, CSoundManager::Effect_Sound);
+
+								break;
+							}
+							}
+
+							iRandNum = CCalculater::Random_Num(0, 3);
+
+							switch (iRandNum)
+							{
+							case 0:
+							{
+								g_pSoundManager->Stop_Sound(CSoundManager::Hit_SFX_03);
+								g_pSoundManager->Play_Sound(L"SE_METAL_CLASH_018.wav", CSoundManager::Hit_SFX_03, CSoundManager::Effect_Sound);
+
+								break;
+							}
+							case 1:
+							{
+								g_pSoundManager->Stop_Sound(CSoundManager::Hit_SFX_03);
+								g_pSoundManager->Play_Sound(L"SE_METAL_CLASH_022.wav", CSoundManager::Hit_SFX_03, CSoundManager::Effect_Sound);
+
+								break;
+							}
+							case 2:
+							{
+								g_pSoundManager->Stop_Sound(CSoundManager::Hit_SFX_03);
+								g_pSoundManager->Play_Sound(L"SE_METAL_CLASH_024.wav", CSoundManager::Hit_SFX_03, CSoundManager::Effect_Sound);
+
+								break;
+							}
+
+							case 3:
+							{
+								g_pSoundManager->Stop_Sound(CSoundManager::Hit_SFX_03);
+								g_pSoundManager->Play_Sound(L"SE_METAL_CLASH_028.wav", CSoundManager::Hit_SFX_03, CSoundManager::Effect_Sound);
+
+
+								break;
+							}
 							}
 
 							Create_PointLight(vecIter->Get_CenterPos());
@@ -843,8 +913,8 @@ HRESULT CWeapon::SetUp_WeaponData()
 	m_tWeaponParam[Wpn_SSword].iWeaponType = WEAPON_SSword;
 	m_tWeaponParam[Wpn_SSword].iPrice = 600;
 	m_tWeaponParam[Wpn_SSword].iReinforce = 0;
-	m_tWeaponParam[Wpn_SSword].fDamage = 1000.f;
-	m_tWeaponParam[Wpn_SSword].fPlusDamage = 100;
+	m_tWeaponParam[Wpn_SSword].fDamage = 350.f;
+	m_tWeaponParam[Wpn_SSword].fPlusDamage = 0.f;
 	m_tWeaponParam[Wpn_SSword].fRadius = 0.6f;
 	m_tWeaponParam[Wpn_SSword].fTrail_Min = 0.6f;
 	m_tWeaponParam[Wpn_SSword].fTrail_Max = 1.8f;
@@ -855,8 +925,8 @@ HRESULT CWeapon::SetUp_WeaponData()
 	m_tWeaponParam[Wpn_SSword_Black].iWeaponType = WEAPON_SSword;
 	m_tWeaponParam[Wpn_SSword_Black].iPrice = 700;
 	m_tWeaponParam[Wpn_SSword_Black].iReinforce = 0;
-	m_tWeaponParam[Wpn_SSword_Black].fDamage = 500.f;
-	m_tWeaponParam[Wpn_SSword_Black].fPlusDamage = 100.f;
+	m_tWeaponParam[Wpn_SSword_Black].fDamage = 380.f;
+	m_tWeaponParam[Wpn_SSword_Black].fPlusDamage = 0.f;
 	m_tWeaponParam[Wpn_SSword_Black].fRadius = 0.9f;
 	m_tWeaponParam[Wpn_SSword_Black].fTrail_Min = 0.6f;
 	m_tWeaponParam[Wpn_SSword_Black].fTrail_Max = 1.8f;
@@ -867,8 +937,8 @@ HRESULT CWeapon::SetUp_WeaponData()
 	m_tWeaponParam[Wpn_SSword_Military].iWeaponType = WEAPON_SSword;
 	m_tWeaponParam[Wpn_SSword_Military].iPrice = 800;
 	m_tWeaponParam[Wpn_SSword_Military].iReinforce = 0;
-	m_tWeaponParam[Wpn_SSword_Military].fDamage = 100.f;
-	m_tWeaponParam[Wpn_SSword_Military].fPlusDamage = 50.f;
+	m_tWeaponParam[Wpn_SSword_Military].fDamage = 410.f;
+	m_tWeaponParam[Wpn_SSword_Military].fPlusDamage = 0.f;
 	m_tWeaponParam[Wpn_SSword_Military].fRadius = 0.6f;
 	m_tWeaponParam[Wpn_SSword_Military].fTrail_Min = 0.6f;
 	m_tWeaponParam[Wpn_SSword_Military].fTrail_Max = 1.8f;
@@ -879,8 +949,8 @@ HRESULT CWeapon::SetUp_WeaponData()
 	m_tWeaponParam[Wpn_SSword_Slave].iWeaponType = WEAPON_SSword;
 	m_tWeaponParam[Wpn_SSword_Slave].iPrice = 950;
 	m_tWeaponParam[Wpn_SSword_Slave].iReinforce = 0;
-	m_tWeaponParam[Wpn_SSword_Slave].fDamage = 100.f;
-	m_tWeaponParam[Wpn_SSword_Slave].fPlusDamage = 50.f;
+	m_tWeaponParam[Wpn_SSword_Slave].fDamage = 450.f;
+	m_tWeaponParam[Wpn_SSword_Slave].fPlusDamage = 0.f;
 	m_tWeaponParam[Wpn_SSword_Slave].fRadius = 0.7f;
 	m_tWeaponParam[Wpn_SSword_Slave].fTrail_Min = 0.6f;
 	m_tWeaponParam[Wpn_SSword_Slave].fTrail_Max = 1.8f;
@@ -895,8 +965,8 @@ HRESULT CWeapon::SetUp_WeaponData()
 	m_tWeaponParam[Wpn_LSword].iWeaponType = WEAPON_LSword;
 	m_tWeaponParam[Wpn_LSword].iPrice = 1500;
 	m_tWeaponParam[Wpn_LSword].iReinforce = 0;
-	m_tWeaponParam[Wpn_LSword].fDamage = 155.f;
-	m_tWeaponParam[Wpn_LSword].fPlusDamage = 75.f;
+	m_tWeaponParam[Wpn_LSword].fDamage = 650.f;
+	m_tWeaponParam[Wpn_LSword].fPlusDamage = 0.f;
 	m_tWeaponParam[Wpn_LSword].fRadius = 0.9f;
 	m_tWeaponParam[Wpn_LSword].fTrail_Min = 0.8f;
 	m_tWeaponParam[Wpn_LSword].fTrail_Max = 2.1f;
@@ -907,8 +977,8 @@ HRESULT CWeapon::SetUp_WeaponData()
 	m_tWeaponParam[Wpn_LSword_Black].iWeaponType = WEAPON_LSword;
 	m_tWeaponParam[Wpn_LSword_Black].iPrice = 1200;
 	m_tWeaponParam[Wpn_LSword_Black].iReinforce = 0;
-	m_tWeaponParam[Wpn_LSword_Black].fDamage = 155.f;
-	m_tWeaponParam[Wpn_LSword_Black].fPlusDamage = 75.f;
+	m_tWeaponParam[Wpn_LSword_Black].fDamage = 680.f;
+	m_tWeaponParam[Wpn_LSword_Black].fPlusDamage = 0.f;
 	m_tWeaponParam[Wpn_LSword_Black].fRadius = 0.8f;
 	m_tWeaponParam[Wpn_LSword_Black].fTrail_Min = 0.8f;
 	m_tWeaponParam[Wpn_LSword_Black].fTrail_Max = 2.1f;
@@ -919,8 +989,8 @@ HRESULT CWeapon::SetUp_WeaponData()
 	m_tWeaponParam[Wpn_LSword_Military].iWeaponType = WEAPON_LSword;
 	m_tWeaponParam[Wpn_LSword_Military].iPrice = 1200;
 	m_tWeaponParam[Wpn_LSword_Military].iReinforce = 0;
-	m_tWeaponParam[Wpn_LSword_Military].fDamage = 155.f;
-	m_tWeaponParam[Wpn_LSword_Military].fPlusDamage = 75.f;
+	m_tWeaponParam[Wpn_LSword_Military].fDamage = 710.f;
+	m_tWeaponParam[Wpn_LSword_Military].fPlusDamage = 0.f;
 	m_tWeaponParam[Wpn_LSword_Military].fRadius = 0.8f;
 	m_tWeaponParam[Wpn_LSword_Military].fTrail_Min = 0.8f;
 	m_tWeaponParam[Wpn_LSword_Military].fTrail_Max = 2.1f;
@@ -931,8 +1001,8 @@ HRESULT CWeapon::SetUp_WeaponData()
 	m_tWeaponParam[Wpn_LSword_Slave].iWeaponType = WEAPON_LSword;
 	m_tWeaponParam[Wpn_LSword_Slave].iPrice = 1300;
 	m_tWeaponParam[Wpn_LSword_Slave].iReinforce = 0;
-	m_tWeaponParam[Wpn_LSword_Slave].fDamage = 155.f;
-	m_tWeaponParam[Wpn_LSword_Slave].fPlusDamage = 75.f;
+	m_tWeaponParam[Wpn_LSword_Slave].fDamage = 750.f;
+	m_tWeaponParam[Wpn_LSword_Slave].fPlusDamage = 0.f;
 	m_tWeaponParam[Wpn_LSword_Slave].fRadius = 0.8f;
 	m_tWeaponParam[Wpn_LSword_Slave].fTrail_Min = 0.8f;
 	m_tWeaponParam[Wpn_LSword_Slave].fTrail_Max = 2.1f;
@@ -947,8 +1017,8 @@ HRESULT CWeapon::SetUp_WeaponData()
 	m_tWeaponParam[Wpn_Halberd].iWeaponType = WEAPON_Halberd;
 	m_tWeaponParam[Wpn_Halberd].iPrice = 1100;
 	m_tWeaponParam[Wpn_Halberd].iReinforce = 0;
-	m_tWeaponParam[Wpn_Halberd].fDamage = 160.f;
-	m_tWeaponParam[Wpn_Halberd].fPlusDamage = 80.f;
+	m_tWeaponParam[Wpn_Halberd].fDamage = 650.f;
+	m_tWeaponParam[Wpn_Halberd].fPlusDamage = 0.f;
 	m_tWeaponParam[Wpn_Halberd].fRadius = 0.7f;
 	m_tWeaponParam[Wpn_Halberd].fTrail_Min = 1.2f;
 	m_tWeaponParam[Wpn_Halberd].fTrail_Max = 2.3f;
@@ -959,8 +1029,8 @@ HRESULT CWeapon::SetUp_WeaponData()
 	m_tWeaponParam[Wpn_Halberd_Black].iWeaponType = WEAPON_Halberd;
 	m_tWeaponParam[Wpn_Halberd_Black].iPrice = 1150;
 	m_tWeaponParam[Wpn_Halberd_Black].iReinforce = 0;
-	m_tWeaponParam[Wpn_Halberd_Black].fDamage = 160.f;
-	m_tWeaponParam[Wpn_Halberd_Black].fPlusDamage = 80.f;
+	m_tWeaponParam[Wpn_Halberd_Black].fDamage = 680.f;
+	m_tWeaponParam[Wpn_Halberd_Black].fPlusDamage = 0.f;
 	m_tWeaponParam[Wpn_Halberd_Black].fRadius = 0.7f;
 	m_tWeaponParam[Wpn_Halberd_Black].fTrail_Min = 1.2f;
 	m_tWeaponParam[Wpn_Halberd_Black].fTrail_Max = 2.3f;
@@ -971,8 +1041,8 @@ HRESULT CWeapon::SetUp_WeaponData()
 	m_tWeaponParam[Wpn_Halberd_Military].iWeaponType = WEAPON_Halberd;
 	m_tWeaponParam[Wpn_Halberd_Military].iPrice = 1200;
 	m_tWeaponParam[Wpn_Halberd_Military].iReinforce = 0;
-	m_tWeaponParam[Wpn_Halberd_Military].fDamage = 160.f;
-	m_tWeaponParam[Wpn_Halberd_Military].fPlusDamage = 80.f;
+	m_tWeaponParam[Wpn_Halberd_Military].fDamage = 710.f;
+	m_tWeaponParam[Wpn_Halberd_Military].fPlusDamage = 0.f;
 	m_tWeaponParam[Wpn_Halberd_Military].fRadius = 0.7f;
 	m_tWeaponParam[Wpn_Halberd_Military].fTrail_Min = 1.2f;
 	m_tWeaponParam[Wpn_Halberd_Military].fTrail_Max = 2.3f;
@@ -983,8 +1053,8 @@ HRESULT CWeapon::SetUp_WeaponData()
 	m_tWeaponParam[Wpn_Halberd_Slave].iWeaponType = WEAPON_Halberd;
 	m_tWeaponParam[Wpn_Halberd_Slave].iPrice = 1100;
 	m_tWeaponParam[Wpn_Halberd_Slave].iReinforce = 0;
-	m_tWeaponParam[Wpn_Halberd_Slave].fDamage = 160.f;
-	m_tWeaponParam[Wpn_Halberd_Slave].fPlusDamage = 80.f;
+	m_tWeaponParam[Wpn_Halberd_Slave].fDamage = 750.f;
+	m_tWeaponParam[Wpn_Halberd_Slave].fPlusDamage = 0.f;
 	m_tWeaponParam[Wpn_Halberd_Slave].fRadius = 0.8f;
 	m_tWeaponParam[Wpn_Halberd_Slave].fTrail_Min = 1.2f;
 	m_tWeaponParam[Wpn_Halberd_Slave].fTrail_Max = 2.3f;
@@ -999,8 +1069,8 @@ HRESULT CWeapon::SetUp_WeaponData()
 	m_tWeaponParam[Wpn_Hammer].iWeaponType = WEAPON_Hammer;
 	m_tWeaponParam[Wpn_Hammer].iPrice = 1600;
 	m_tWeaponParam[Wpn_Hammer].iReinforce = 0;
-	m_tWeaponParam[Wpn_Hammer].fDamage = 155.f;
-	m_tWeaponParam[Wpn_Hammer].fPlusDamage = 75.f;
+	m_tWeaponParam[Wpn_Hammer].fDamage = 650.f;
+	m_tWeaponParam[Wpn_Hammer].fPlusDamage = 0.f;
 	m_tWeaponParam[Wpn_Hammer].fRadius = 0.7f;
 	m_tWeaponParam[Wpn_Hammer].fTrail_Min = 0.75f;
 	m_tWeaponParam[Wpn_Hammer].fTrail_Max = 1.5f;
@@ -1011,8 +1081,8 @@ HRESULT CWeapon::SetUp_WeaponData()
 	m_tWeaponParam[Wpn_Hammer_Black].iWeaponType = WEAPON_Hammer;
 	m_tWeaponParam[Wpn_Hammer_Black].iPrice = 1700;
 	m_tWeaponParam[Wpn_Hammer_Black].iReinforce = 0;
-	m_tWeaponParam[Wpn_Hammer_Black].fDamage = 155.f;
-	m_tWeaponParam[Wpn_Hammer_Black].fPlusDamage = 75.f;
+	m_tWeaponParam[Wpn_Hammer_Black].fDamage = 680.f;
+	m_tWeaponParam[Wpn_Hammer_Black].fPlusDamage = 0.f;
 	m_tWeaponParam[Wpn_Hammer_Black].fRadius = 0.75f;
 	m_tWeaponParam[Wpn_Hammer_Black].fTrail_Min = 0.75f;
 	m_tWeaponParam[Wpn_Hammer_Black].fTrail_Max = 1.5f;
@@ -1023,8 +1093,8 @@ HRESULT CWeapon::SetUp_WeaponData()
 	m_tWeaponParam[Wpn_Hammer_Military].iWeaponType = WEAPON_Hammer;
 	m_tWeaponParam[Wpn_Hammer_Military].iPrice = 1800;
 	m_tWeaponParam[Wpn_Hammer_Military].iReinforce = 0;
-	m_tWeaponParam[Wpn_Hammer_Military].fDamage = 155.f;
-	m_tWeaponParam[Wpn_Hammer_Military].fPlusDamage = 75.f;
+	m_tWeaponParam[Wpn_Hammer_Military].fDamage = 710.f;
+	m_tWeaponParam[Wpn_Hammer_Military].fPlusDamage = 0.f;
 	m_tWeaponParam[Wpn_Hammer_Military].fRadius = 1.1f;
 	m_tWeaponParam[Wpn_Hammer_Military].fTrail_Min = 0.75f;
 	m_tWeaponParam[Wpn_Hammer_Military].fTrail_Max = 1.5f;
@@ -1035,8 +1105,8 @@ HRESULT CWeapon::SetUp_WeaponData()
 	m_tWeaponParam[Wpn_Hammer_Slave].iWeaponType = WEAPON_Hammer;
 	m_tWeaponParam[Wpn_Hammer_Slave].iPrice = 1600;
 	m_tWeaponParam[Wpn_Hammer_Slave].iReinforce = 0;
-	m_tWeaponParam[Wpn_Hammer_Slave].fDamage = 155.f;
-	m_tWeaponParam[Wpn_Hammer_Slave].fPlusDamage = 75.f;
+	m_tWeaponParam[Wpn_Hammer_Slave].fDamage = 750.f;
+	m_tWeaponParam[Wpn_Hammer_Slave].fPlusDamage = 0.f;
 	m_tWeaponParam[Wpn_Hammer_Slave].fRadius = 0.7f;
 	m_tWeaponParam[Wpn_Hammer_Slave].fTrail_Min = 0.75f;
 	m_tWeaponParam[Wpn_Hammer_Slave].fTrail_Max = 1.5f;
@@ -1051,8 +1121,8 @@ HRESULT CWeapon::SetUp_WeaponData()
 	m_tWeaponParam[Wpn_Gun].iWeaponType = WEAPON_Gun;
 	m_tWeaponParam[Wpn_Gun].iPrice = 1700;
 	m_tWeaponParam[Wpn_Gun].iReinforce = 0;
-	m_tWeaponParam[Wpn_Gun].fDamage = 70.f;
-	m_tWeaponParam[Wpn_Gun].fPlusDamage = 30.f;
+	m_tWeaponParam[Wpn_Gun].fDamage = 450.f;
+	m_tWeaponParam[Wpn_Gun].fPlusDamage = 0.f;
 	m_tWeaponParam[Wpn_Gun].fRadius = 0.5f;
 	m_tWeaponParam[Wpn_Gun].fTrail_Min = 0.75f;
 	m_tWeaponParam[Wpn_Gun].fTrail_Max = 1.5f;
@@ -1063,8 +1133,8 @@ HRESULT CWeapon::SetUp_WeaponData()
 	m_tWeaponParam[Wpn_Gun_Black].iWeaponType = WEAPON_Gun;
 	m_tWeaponParam[Wpn_Gun_Black].iPrice = 1850;
 	m_tWeaponParam[Wpn_Gun_Black].iReinforce = 0;
-	m_tWeaponParam[Wpn_Gun_Black].fDamage = 70.f;
-	m_tWeaponParam[Wpn_Gun_Black].fPlusDamage = 30.f;
+	m_tWeaponParam[Wpn_Gun_Black].fDamage = 480.f;
+	m_tWeaponParam[Wpn_Gun_Black].fPlusDamage = 0.f;
 	m_tWeaponParam[Wpn_Gun_Black].fRadius = 0.5f;
 	m_tWeaponParam[Wpn_Gun_Black].fTrail_Min = 0.75f;
 	m_tWeaponParam[Wpn_Gun_Black].fTrail_Max = 1.5f;
@@ -1075,8 +1145,8 @@ HRESULT CWeapon::SetUp_WeaponData()
 	m_tWeaponParam[Wpn_Gun_Military].iWeaponType = WEAPON_Gun;
 	m_tWeaponParam[Wpn_Gun_Military].iPrice = 1900;
 	m_tWeaponParam[Wpn_Gun_Military].iReinforce = 0;
-	m_tWeaponParam[Wpn_Gun_Military].fDamage = 70.f;
-	m_tWeaponParam[Wpn_Gun_Military].fPlusDamage = 30.f;
+	m_tWeaponParam[Wpn_Gun_Military].fDamage = 510.f;
+	m_tWeaponParam[Wpn_Gun_Military].fPlusDamage = 0.f;
 	m_tWeaponParam[Wpn_Gun_Military].fRadius = 0.5f;
 	m_tWeaponParam[Wpn_Gun_Military].fTrail_Min = 0.75f;
 	m_tWeaponParam[Wpn_Gun_Military].fTrail_Max = 1.5f;
@@ -1087,8 +1157,8 @@ HRESULT CWeapon::SetUp_WeaponData()
 	m_tWeaponParam[Wpn_Gun_Slave].iWeaponType = WEAPON_Gun;
 	m_tWeaponParam[Wpn_Gun_Slave].iPrice = 1850;
 	m_tWeaponParam[Wpn_Gun_Slave].iReinforce = 0;
-	m_tWeaponParam[Wpn_Gun_Slave].fDamage = 70.f;
-	m_tWeaponParam[Wpn_Gun_Slave].fPlusDamage = 30.f;
+	m_tWeaponParam[Wpn_Gun_Slave].fDamage = 550.f;
+	m_tWeaponParam[Wpn_Gun_Slave].fPlusDamage = 0.f;
 	m_tWeaponParam[Wpn_Gun_Slave].fRadius = 0.5f;
 	m_tWeaponParam[Wpn_Gun_Slave].fTrail_Min = 0.75f;
 	m_tWeaponParam[Wpn_Gun_Slave].fTrail_Max = 1.5f;
@@ -1104,7 +1174,7 @@ HRESULT CWeapon::SetUp_WeaponData()
 	m_tWeaponParam[WPN_Shield_Normal].iPrice = 1000;
 	m_tWeaponParam[WPN_Shield_Normal].iReinforce = 0;
 	m_tWeaponParam[WPN_Shield_Normal].fDamage = 25.f;
-	m_tWeaponParam[WPN_Shield_Normal].fPlusDamage = 10.f;
+	m_tWeaponParam[WPN_Shield_Normal].fPlusDamage = 0.f;
 	m_tWeaponParam[WPN_Shield_Normal].fRadius = 0.7f;
 	m_tWeaponParam[WPN_Shield_Normal].fTrail_Min = 0.f;
 	m_tWeaponParam[WPN_Shield_Normal].fTrail_Max = 1.f;
@@ -1118,7 +1188,7 @@ HRESULT CWeapon::SetUp_WeaponData()
 	m_tWeaponParam[WPN_QueenLance].iPrice = 1000;
 	m_tWeaponParam[WPN_QueenLance].iReinforce = 0;
 	m_tWeaponParam[WPN_QueenLance].fDamage = 25.f;
-	m_tWeaponParam[WPN_QueenLance].fPlusDamage = 10.f;
+	m_tWeaponParam[WPN_QueenLance].fPlusDamage = 0.f;
 	m_tWeaponParam[WPN_QueenLance].fRadius = 1.4f;
 	m_tWeaponParam[WPN_QueenLance].fTrail_Min = 0.3f;
 	m_tWeaponParam[WPN_QueenLance].fTrail_Max = 3.4f;
@@ -1130,7 +1200,7 @@ HRESULT CWeapon::SetUp_WeaponData()
 	m_tWeaponParam[WPN_QueenShield].iPrice = 1000;
 	m_tWeaponParam[WPN_QueenShield].iReinforce = 0;
 	m_tWeaponParam[WPN_QueenShield].fDamage = 25.f;
-	m_tWeaponParam[WPN_QueenShield].fPlusDamage = 10.f;
+	m_tWeaponParam[WPN_QueenShield].fPlusDamage = 0.f;
 	m_tWeaponParam[WPN_QueenShield].fRadius = 0.8f;
 	m_tWeaponParam[WPN_QueenShield].fTrail_Min = 0.f;
 	m_tWeaponParam[WPN_QueenShield].fTrail_Max = 1.f;
@@ -1144,7 +1214,7 @@ HRESULT CWeapon::SetUp_WeaponData()
 	m_tWeaponParam[WPN_FrostBlood_IceGirl].iPrice = 1000;
 	m_tWeaponParam[WPN_FrostBlood_IceGirl].iReinforce = 0;
 	m_tWeaponParam[WPN_FrostBlood_IceGirl].fDamage = 25.f;
-	m_tWeaponParam[WPN_FrostBlood_IceGirl].fPlusDamage = 10.f;
+	m_tWeaponParam[WPN_FrostBlood_IceGirl].fPlusDamage = 0.f;
 	m_tWeaponParam[WPN_FrostBlood_IceGirl].fRadius = 0.7f;
 	m_tWeaponParam[WPN_FrostBlood_IceGirl].fTrail_Min = 0.3f;
 	m_tWeaponParam[WPN_FrostBlood_IceGirl].fTrail_Max = 1.6f;
@@ -1158,7 +1228,7 @@ HRESULT CWeapon::SetUp_WeaponData()
 	m_tWeaponParam[WPN_DeerKingShield].iPrice = 1000;
 	m_tWeaponParam[WPN_DeerKingShield].iReinforce = 0;
 	m_tWeaponParam[WPN_DeerKingShield].fDamage = 25.f;
-	m_tWeaponParam[WPN_DeerKingShield].fPlusDamage = 10.f;
+	m_tWeaponParam[WPN_DeerKingShield].fPlusDamage = 0.f;
 	m_tWeaponParam[WPN_DeerKingShield].fRadius = 1.4f;
 	m_tWeaponParam[WPN_DeerKingShield].fTrail_Min = 0.f;
 	m_tWeaponParam[WPN_DeerKingShield].fTrail_Max = 1.f;
