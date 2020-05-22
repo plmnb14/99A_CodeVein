@@ -148,7 +148,7 @@ HRESULT CPlayer::Ready_GameObject(void * pArg)
 	m_fStaminaCost_Dodge = 20.f;
 	m_fStaminaCost_WeakAttack = 7.f;
 	m_fStaminaCost_HeavyAttack = 12.f;
-	m_fStamina_RecoverySpeed = 3.5f;
+	m_fStamina_RecoverySpeed = 15.f;
 
 	m_pHair = (CCostume_Hair*)g_pManagement->Clone_GameObject_Return(L"GameObject_Costume_Hair", 
 		&CCostume_Hair::_INFO(&m_pTransform->Get_WorldMat(), m_matBones[Bone_Head], _v4(1.f, 0.f, 0.f, 1.f)));
@@ -2819,6 +2819,7 @@ void CPlayer::Play_Run()
 	if (false == m_bOnAiming)
 	{
 		m_fFootWalkTimer_Max = 0.5f;
+		m_fFootWalkTimer_Cur = 0.f;
 
 		if (m_bCanPlayWalkSound)
 		{
@@ -2867,6 +2868,7 @@ void CPlayer::Play_Run()
 	else
 	{
 		m_fFootWalkTimer_Max = 0.4f;
+		m_fFootWalkTimer_Cur = 0.f;
 
 		if (m_bCanPlayWalkSound)
 		{
@@ -3014,6 +3016,7 @@ void CPlayer::Play_Dash()
 	if (false == m_bOnAiming)
 	{
 		m_fFootWalkTimer_Max = 0.35f;
+		m_fFootWalkTimer_Cur = 0.f;
 
 		if (m_bCanPlayWalkSound)
 		{
@@ -3062,6 +3065,7 @@ void CPlayer::Play_Dash()
 	else
 	{
 		m_fFootWalkTimer_Max = 0.4f;
+		m_fFootWalkTimer_Cur = 0.f;
 
 		if (m_bCanPlayWalkSound)
 		{
