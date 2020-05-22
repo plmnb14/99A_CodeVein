@@ -47,6 +47,8 @@ HRESULT CSkillPointUI::Ready_GameObject(void * pArg)
 
 _int CSkillPointUI::Update_GameObject(_double TimeDelta)
 {
+	Late_Init();
+
 	if (g_eSceneID_Cur == SCENE_STAGE_BASE)
 	{
 		Set_Active(false);

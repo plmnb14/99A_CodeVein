@@ -258,11 +258,10 @@ _int CPlayer::Late_Update_GameObject(_double TimeDelta)
 
 	Reset_BloodSuck_Options();	
 
-	m_pHair->Late_Update_GameObject(TimeDelta);
 	m_pOuter->Late_Update_GameObject(TimeDelta);
-
 	if (!m_tObjParam.bInvisible)
 	{
+		m_pHair->Late_Update_GameObject(TimeDelta);
 		m_pHead[m_eHeadType]->Late_Update_GameObject(TimeDelta);
 		m_pMask[m_eMaskType]->Late_Update_GameObject(TimeDelta);
 	}

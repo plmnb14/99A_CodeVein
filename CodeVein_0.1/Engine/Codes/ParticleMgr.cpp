@@ -1398,9 +1398,10 @@ void CParticleMgr::Create_FootSmoke_Effect(_v3 vPos, _float fOffset)
 	Create_Effect(L"Player_FootSmoke", vPos);
 }
 
-void CParticleMgr::Create_BossDeadParticle_Effect(_v3 vPos, _float fDelay, _float fLength)
+void CParticleMgr::Create_BossDeadParticle_Effect(_v3 vPos, _float fDelay, _float fLength, _bool bText)
 {
-	Create_BossDead_Text(fDelay * 0.5f);
+	if(bText)
+		Create_BossDead_Text(fDelay * 0.5f);
 
 	queue<CEffect*>* pFindedQueue = Find_Queue(L"Boss_Dead_Particle");
 	if (pFindedQueue == nullptr)
