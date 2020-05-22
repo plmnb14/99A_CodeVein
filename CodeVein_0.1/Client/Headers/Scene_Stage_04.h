@@ -38,6 +38,8 @@ private:
 	_float m_fMapFogDelay = 10.f;
 	_float m_fMapWindDustDelay = 1.f;
 
+	_bool	m_fCheck_ColleagueSummons = false;
+
 public:
 	static CScene_Stage_04* Create(LPDIRECT3DDEVICE9 pGraphic_Device, _bool _bLoadStatic);
 	virtual void Free();

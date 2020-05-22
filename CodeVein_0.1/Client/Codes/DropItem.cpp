@@ -161,10 +161,9 @@ _int CDropItem::Update_GameObject(_double TimeDelta)
 				{
 					pUI_Mgr->Get_Weapon_Inven()->Add_Weapon(pWeapon->Get_WeaponParam(Wpn_Gun));
 					m_iRenderIndex = 0;
-					//pItem_Mgr->Set_PickUp_Number(m_iRenderIndex);
-					pPickUp->Set_ItemNumber_Index(m_iRenderIndex);
 					m_bCanGetItem = true;
 					++m_iCount_GetItem;
+					pPickUp->Set_ItemNumber_Index(m_iRenderIndex);
 					m_pPickUpMgr->Set_Count_GetItem(m_iCount_GetItem);
 					m_pPickUpMgr->Set_vecPickUp_Item(pPickUp);
 					break;
@@ -173,8 +172,7 @@ _int CDropItem::Update_GameObject(_double TimeDelta)
 				{
 					CUI_Manager::Get_Instance()->Get_Weapon_Inven()->Add_Weapon(pWeapon->Get_WeaponParam(Wpn_Gun_Black));
 					m_iRenderIndex = 1;
-					//pItem_Mgr->Set_PickUp_Number(m_iRenderIndex);
-					pPickUp->Set_ItemNumber_Index(m_iRenderIndex);
+					pItem_Mgr->Set_PickUp_Number(m_iRenderIndex);
 					m_bCanGetItem = true;
 					++m_iCount_GetItem;
 					m_pPickUpMgr->Set_Count_GetItem(m_iCount_GetItem);
@@ -185,10 +183,9 @@ _int CDropItem::Update_GameObject(_double TimeDelta)
 				{
 					CUI_Manager::Get_Instance()->Get_Weapon_Inven()->Add_Weapon(pWeapon->Get_WeaponParam(Wpn_Gun_Military));
 					m_iRenderIndex = 2;
-					pPickUp->Set_ItemNumber_Index(m_iRenderIndex);
-					//pItem_Mgr->Set_PickUp_Number(m_iRenderIndex);
 					m_bCanGetItem = true;
 					++m_iCount_GetItem;
+					pPickUp->Set_ItemNumber_Index(m_iRenderIndex);
 					m_pPickUpMgr->Set_Count_GetItem(m_iCount_GetItem);
 					m_pPickUpMgr->Set_vecPickUp_Item(pPickUp);
 					break;
@@ -197,10 +194,9 @@ _int CDropItem::Update_GameObject(_double TimeDelta)
 				{
 					CUI_Manager::Get_Instance()->Get_Weapon_Inven()->Add_Weapon(pWeapon->Get_WeaponParam(Wpn_Gun_Slave));
 					m_iRenderIndex = 3;
-					//pItem_Mgr->Set_PickUp_Number(m_iRenderIndex);
-					pPickUp->Set_ItemNumber_Index(m_iRenderIndex);
 					m_bCanGetItem = true;
 					++m_iCount_GetItem;
+					pPickUp->Set_ItemNumber_Index(m_iRenderIndex);
 					m_pPickUpMgr->Set_Count_GetItem(m_iCount_GetItem);
 					m_pPickUpMgr->Set_vecPickUp_Item(pPickUp);
 					break;
@@ -209,10 +205,9 @@ _int CDropItem::Update_GameObject(_double TimeDelta)
 				{
 					CUI_Manager::Get_Instance()->Get_Weapon_Inven()->Add_Weapon(pWeapon->Get_WeaponParam(Wpn_Halberd));
 					m_iRenderIndex = 4;
-					//pItem_Mgr->Set_PickUp_Number(m_iRenderIndex);
-					pPickUp->Set_ItemNumber_Index(m_iRenderIndex);
 					m_bCanGetItem = true;
 					++m_iCount_GetItem;
+					pPickUp->Set_ItemNumber_Index(m_iRenderIndex);
 					m_pPickUpMgr->Set_Count_GetItem(m_iCount_GetItem);
 					m_pPickUpMgr->Set_vecPickUp_Item(pPickUp);
 					break;
@@ -221,10 +216,9 @@ _int CDropItem::Update_GameObject(_double TimeDelta)
 				{
 					CUI_Manager::Get_Instance()->Get_Weapon_Inven()->Add_Weapon(pWeapon->Get_WeaponParam(Wpn_Halberd_Black));
 					m_iRenderIndex = 5;
-					//pItem_Mgr->Set_PickUp_Number(m_iRenderIndex);
-					pPickUp->Set_ItemNumber_Index(m_iRenderIndex);
 					m_bCanGetItem = true;
 					++m_iCount_GetItem;
+					pPickUp->Set_ItemNumber_Index(m_iRenderIndex);
 					m_pPickUpMgr->Set_Count_GetItem(m_iCount_GetItem);
 					m_pPickUpMgr->Set_vecPickUp_Item(pPickUp);
 					break;
@@ -233,10 +227,9 @@ _int CDropItem::Update_GameObject(_double TimeDelta)
 				{
 					CUI_Manager::Get_Instance()->Get_Weapon_Inven()->Add_Weapon(pWeapon->Get_WeaponParam(Wpn_Halberd_Slave));
 					m_iRenderIndex = 6;
-					//pItem_Mgr->Set_PickUp_Number(m_iRenderIndex);
-					pPickUp->Set_ItemNumber_Index(m_iRenderIndex);
 					m_bCanGetItem = true;
 					++m_iCount_GetItem;
+					pPickUp->Set_ItemNumber_Index(m_iRenderIndex);
 					m_pPickUpMgr->Set_Count_GetItem(m_iCount_GetItem);
 					m_pPickUpMgr->Set_vecPickUp_Item(pPickUp);
 					break;
@@ -245,10 +238,9 @@ _int CDropItem::Update_GameObject(_double TimeDelta)
 				{
 					CUI_Manager::Get_Instance()->Get_Weapon_Inven()->Add_Weapon(pWeapon->Get_WeaponParam(Wpn_Halberd_Military));
 					m_iRenderIndex = 7;
-					//pItem_Mgr->Set_PickUp_Number(m_iRenderIndex);
-					pPickUp->Set_ItemNumber_Index(m_iRenderIndex);
 					m_bCanGetItem = true;
 					++m_iCount_GetItem;
+					pPickUp->Set_ItemNumber_Index(m_iRenderIndex);
 					m_pPickUpMgr->Set_Count_GetItem(m_iCount_GetItem);
 					m_pPickUpMgr->Set_vecPickUp_Item(pPickUp);
 					break;
@@ -257,9 +249,9 @@ _int CDropItem::Update_GameObject(_double TimeDelta)
 				{
 					CUI_Manager::Get_Instance()->Get_Weapon_Inven()->Add_Weapon(pWeapon->Get_WeaponParam(Wpn_Hammer));
 					m_iRenderIndex = 8;
-					pItem_Mgr->Set_PickUp_Number(m_iRenderIndex);
 					m_bCanGetItem = true;
 					++m_iCount_GetItem;
+					pPickUp->Set_ItemNumber_Index(m_iRenderIndex);
 					m_pPickUpMgr->Set_Count_GetItem(m_iCount_GetItem);
 					m_pPickUpMgr->Set_vecPickUp_Item(pPickUp);
 					break;
@@ -268,9 +260,9 @@ _int CDropItem::Update_GameObject(_double TimeDelta)
 				{
 					CUI_Manager::Get_Instance()->Get_Weapon_Inven()->Add_Weapon(pWeapon->Get_WeaponParam(Wpn_Hammer_Black));
 					m_iRenderIndex = 9;
-					pItem_Mgr->Set_PickUp_Number(m_iRenderIndex);
 					m_bCanGetItem = true;
 					++m_iCount_GetItem;
+					pPickUp->Set_ItemNumber_Index(m_iRenderIndex);
 					m_pPickUpMgr->Set_Count_GetItem(m_iCount_GetItem);
 					m_pPickUpMgr->Set_vecPickUp_Item(pPickUp);
 					break;
@@ -279,9 +271,9 @@ _int CDropItem::Update_GameObject(_double TimeDelta)
 				{
 					CUI_Manager::Get_Instance()->Get_Weapon_Inven()->Add_Weapon(pWeapon->Get_WeaponParam(Wpn_Hammer_Slave));
 					m_iRenderIndex = 10;
-					pItem_Mgr->Set_PickUp_Number(m_iRenderIndex);
 					m_bCanGetItem = true;
 					++m_iCount_GetItem;
+					pPickUp->Set_ItemNumber_Index(m_iRenderIndex);
 					m_pPickUpMgr->Set_Count_GetItem(m_iCount_GetItem);
 					m_pPickUpMgr->Set_vecPickUp_Item(pPickUp);
 					break;
@@ -290,9 +282,9 @@ _int CDropItem::Update_GameObject(_double TimeDelta)
 				{
 					CUI_Manager::Get_Instance()->Get_Weapon_Inven()->Add_Weapon(pWeapon->Get_WeaponParam(Wpn_Hammer_Military));
 					m_iRenderIndex = 11;
-					pItem_Mgr->Set_PickUp_Number(m_iRenderIndex);
 					m_bCanGetItem = true;
 					++m_iCount_GetItem;
+					pPickUp->Set_ItemNumber_Index(m_iRenderIndex);
 					m_pPickUpMgr->Set_Count_GetItem(m_iCount_GetItem);
 					m_pPickUpMgr->Set_vecPickUp_Item(pPickUp);
 					break;
@@ -301,9 +293,9 @@ _int CDropItem::Update_GameObject(_double TimeDelta)
 				{
 					CUI_Manager::Get_Instance()->Get_Weapon_Inven()->Add_Weapon(pWeapon->Get_WeaponParam(Wpn_LSword));
 					m_iRenderIndex = 12;
-					pItem_Mgr->Set_PickUp_Number(m_iRenderIndex);
 					m_bCanGetItem = true;
 					++m_iCount_GetItem;
+					pPickUp->Set_ItemNumber_Index(m_iRenderIndex);
 					m_pPickUpMgr->Set_Count_GetItem(m_iCount_GetItem);
 					m_pPickUpMgr->Set_vecPickUp_Item(pPickUp);
 					break;
@@ -312,9 +304,9 @@ _int CDropItem::Update_GameObject(_double TimeDelta)
 				{
 					CUI_Manager::Get_Instance()->Get_Weapon_Inven()->Add_Weapon(pWeapon->Get_WeaponParam(Wpn_LSword_Black));
 					m_iRenderIndex = 13;
-					pItem_Mgr->Set_PickUp_Number(m_iRenderIndex);
 					m_bCanGetItem = true;
 					++m_iCount_GetItem;
+					pPickUp->Set_ItemNumber_Index(m_iRenderIndex);
 					m_pPickUpMgr->Set_Count_GetItem(m_iCount_GetItem);
 					m_pPickUpMgr->Set_vecPickUp_Item(pPickUp);
 					break;
@@ -323,9 +315,9 @@ _int CDropItem::Update_GameObject(_double TimeDelta)
 				{
 					CUI_Manager::Get_Instance()->Get_Weapon_Inven()->Add_Weapon(pWeapon->Get_WeaponParam(Wpn_LSword_Military));
 					m_iRenderIndex = 14;
-					pItem_Mgr->Set_PickUp_Number(m_iRenderIndex);
 					m_bCanGetItem = true;
 					++m_iCount_GetItem;
+					pPickUp->Set_ItemNumber_Index(m_iRenderIndex);
 					m_pPickUpMgr->Set_Count_GetItem(m_iCount_GetItem);
 					m_pPickUpMgr->Set_vecPickUp_Item(pPickUp);
 					break;
@@ -334,9 +326,9 @@ _int CDropItem::Update_GameObject(_double TimeDelta)
 				{
 					CUI_Manager::Get_Instance()->Get_Weapon_Inven()->Add_Weapon(pWeapon->Get_WeaponParam(Wpn_LSword_Slave));
 					m_iRenderIndex = 15;
-					pItem_Mgr->Set_PickUp_Number(m_iRenderIndex);
 					m_bCanGetItem = true;
 					++m_iCount_GetItem;
+					pPickUp->Set_ItemNumber_Index(m_iRenderIndex);
 					m_pPickUpMgr->Set_Count_GetItem(m_iCount_GetItem);
 					m_pPickUpMgr->Set_vecPickUp_Item(pPickUp);
 					break;
@@ -345,9 +337,9 @@ _int CDropItem::Update_GameObject(_double TimeDelta)
 				{
 					CUI_Manager::Get_Instance()->Get_Weapon_Inven()->Add_Weapon(pWeapon->Get_WeaponParam(Wpn_SSword));
 					m_iRenderIndex = 16;
-					pItem_Mgr->Set_PickUp_Number(m_iRenderIndex);
 					m_bCanGetItem = true;
 					++m_iCount_GetItem;
+					pPickUp->Set_ItemNumber_Index(m_iRenderIndex);
 					m_pPickUpMgr->Set_Count_GetItem(m_iCount_GetItem);
 					m_pPickUpMgr->Set_vecPickUp_Item(pPickUp);
 					break;
@@ -356,9 +348,9 @@ _int CDropItem::Update_GameObject(_double TimeDelta)
 				{
 					CUI_Manager::Get_Instance()->Get_Weapon_Inven()->Add_Weapon(pWeapon->Get_WeaponParam(Wpn_SSword_Black));
 					m_iRenderIndex = 17;
-					pItem_Mgr->Set_PickUp_Number(m_iRenderIndex);
 					m_bCanGetItem = true;
 					++m_iCount_GetItem;
+					pPickUp->Set_ItemNumber_Index(m_iRenderIndex);
 					m_pPickUpMgr->Set_Count_GetItem(m_iCount_GetItem);
 					m_pPickUpMgr->Set_vecPickUp_Item(pPickUp);
 					break;
@@ -367,9 +359,9 @@ _int CDropItem::Update_GameObject(_double TimeDelta)
 				{
 					CUI_Manager::Get_Instance()->Get_Weapon_Inven()->Add_Weapon(pWeapon->Get_WeaponParam(Wpn_SSword_Military));
 					m_iRenderIndex = 18;
-					pItem_Mgr->Set_PickUp_Number(m_iRenderIndex);
 					m_bCanGetItem = true;
 					++m_iCount_GetItem;
+					pPickUp->Set_ItemNumber_Index(m_iRenderIndex);
 					m_pPickUpMgr->Set_Count_GetItem(m_iCount_GetItem);
 					m_pPickUpMgr->Set_vecPickUp_Item(pPickUp);
 					break;
@@ -378,9 +370,9 @@ _int CDropItem::Update_GameObject(_double TimeDelta)
 				{
 					CUI_Manager::Get_Instance()->Get_Weapon_Inven()->Add_Weapon(pWeapon->Get_WeaponParam(Wpn_SSword_Slave));
 					m_iRenderIndex = 19;
-					pItem_Mgr->Set_PickUp_Number(m_iRenderIndex);
 					m_bCanGetItem = true;
 					++m_iCount_GetItem;
+					pPickUp->Set_ItemNumber_Index(m_iRenderIndex);
 					m_pPickUpMgr->Set_Count_GetItem(m_iCount_GetItem);
 					m_pPickUpMgr->Set_vecPickUp_Item(pPickUp);
 					break;
@@ -650,7 +642,12 @@ _int CDropItem::Update_GameObject(_double TimeDelta)
 			}
 		}
 		else
+		{
 			m_bCanGetItem = false;
+			m_iCount_GetItem = 0;
+			m_pPickUpMgr->Set_Count_GetItem(m_iCount_GetItem);
+		}
+			
 
 			if (true == m_bCanGetItem)
 			{

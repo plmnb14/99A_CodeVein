@@ -82,6 +82,8 @@ HRESULT CPickUp_ItemUI::Render_GameObject()
 	if (false == m_bIsActive)
 		return NOERROR;
 
+	cout << m_uiRenderNumber << endl;
+
 	CUI_Manager* pUIManager = CUI_Manager::Get_Instance();
 	CItem_Manager* pItemManager = CItem_Manager::Get_Instance();
 
@@ -163,6 +165,7 @@ HRESULT CPickUp_ItemUI::SetUp_ConstantTable(_uint TextureIndex)
 void CPickUp_ItemUI::SetUp_State(_double TimeDelta)
 {
 	CUI_Manager* pUIManager = CUI_Manager::Get_Instance();
+	CDropItem* pDropItem = static_cast<CDropItem*>(g_pManagement->Get_GameObjectBack(L"Layer_Item", SCENE_STAGE));
 
 	if (false == m_bOne_PickupUIEnd)
 	{
@@ -183,6 +186,10 @@ void CPickUp_ItemUI::SetUp_State(_double TimeDelta)
 	{
 		m_bOne_PickupUIEnd = false;
 		m_fPickup_Itembar = 0.f;
+		m_fPosX = 1100.f;
+		m_fPosY = 200.f;
+		//if(nullptr != pDropItem && true == pDropItem->Get_Dead())
+		//	pUIManager->Get_PickUP_ItemUIMgr()->Get_vecPickUp_Item().pop_back(); 
 		m_bIsActive = false;
 	}
 }
