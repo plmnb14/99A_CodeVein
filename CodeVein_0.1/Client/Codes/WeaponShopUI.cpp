@@ -398,6 +398,9 @@ void CWeaponShopUI::Check_Key()
 	//if (!m_bIsActive && !m_bPopupOn)
 	//	return;
 
+	if (!(m_bPopupOn || !m_bFirestMenu))
+		return;
+
 	if (g_pInput_Device->Get_DIMouseState(CInput_Device::DIM_RB))
 	{
 		if (m_bPopupOn || !m_bFirestMenu)

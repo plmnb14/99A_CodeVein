@@ -510,6 +510,7 @@ HRESULT CRenderObject::Ready_GameObject(void * pAvg)
 	Check_Stage_01();
 	Check_Stage_02();
 	Check_Stage_03();
+	Check_Stage_04();
 
 	return S_OK;
 }
