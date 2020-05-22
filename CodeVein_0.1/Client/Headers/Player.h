@@ -135,19 +135,26 @@ public:
 	virtual HRESULT Render_GameObject_SetPass(CShader* pShader, _int iPass, _bool _bIsForMotionBlur = false);
 
 public:
-	virtual void Set_OnNPCUI(_bool _bOnNPCUI) { m_bOnUI_NPCTalk = _bOnNPCUI;}
-	virtual void Set_YakumoUI(_bool _bYakumoUI) { m_bOnYakumo_UI = _bYakumoUI; };
-	virtual void Set_YokumoUI(_bool _bYokumoUI) { m_bOnYokumo_UI = _bYokumoUI; };
-	virtual void Set_Jack(_bool _bJacKUI) { m_bOnJack_UI = _bJacKUI; };
+	void Set_OnNPCUI(_bool _bOnNPCUI) { m_bOnUI_NPCTalk = _bOnNPCUI; }
+	void Set_YakumoUI(_bool _bYakumoUI) { m_bOnYakumo_UI = _bYakumoUI; };
+	void Set_YokumoUI(_bool _bYokumoUI) { m_bOnYokumo_UI = _bYokumoUI; };
+	void Set_Jack(_bool _bJacKUI) { m_bOnJack_UI = _bJacKUI; };
 
-	virtual _bool Get_YakumoUI() { return m_bOnYakumo_UI; }
-	virtual _bool Get_YokumoUI() { return m_bOnYokumo_UI; }
-
-public:
-	virtual void Reset_OldAnimations();
+	_bool Get_YakumoUI() { return m_bOnYakumo_UI; }
+	_bool Get_YokumoUI() { return m_bOnYokumo_UI; }
 
 public:
-	virtual void Teleport_ResetOptions(_int _eSceneID, _int _eTeleportID);
+	CRigidBody* Get_Player_RigidBody() { return m_pRigid; }
+
+public:
+	void Reset_OldAnimations();
+
+public:
+	void Teleport_ResetOptions(_int _eSceneID, _int _eTeleportID);
+
+private:
+	void FootWalkTimerUpdate(_double _deltaTime);
+
 private:
 	ACTOR_INFO				m_tInfo = {};
 	ACT_STATE				m_eActState = ACT_Summon;
@@ -157,6 +164,10 @@ private:
 	ACTIVE_WEAPON_SLOT		m_eActiveSlot = WPN_SLOT_A;
 
 	_float					m_FallingTimer = 0.f;
+
+	_bool					m_bCanPlayWalkSound = true;
+	_float					m_fFootWalkTimer_Cur = 0.5f;
+	_float					m_fFootWalkTimer_Max = 0.5f;
 
 private:
 	_bool					m_bOldMoveDierection[MOVE_End] = {};
@@ -315,6 +326,11 @@ private: // For Dissolve
 	_float					m_fDissolveY = 0.f;
 
 private:
+	_bool					m_bCheat_HP = false;
+	_bool					m_bCheat_SP = false;
+	_bool					m_bCheat_ST = false;
+
+private:
 	_float					m_fStaminaCost_Dodge = 0.f;
 	_float					m_fStaminaCost_WeakAttack = 0.f;
 	_float					m_fStaminaCost_HeavyAttack = 0.f;
@@ -359,6 +375,7 @@ private:
 	_bool Check_CunterAngle(CGameObject* pObj);
 	_bool Check_CunterTarget();
 	void Check_Stamina(_double dTimeDelta);
+	void Check_Cheat();
 
 private:
 	void Change_PlayerBody(PLAYER_BODY _eBodyType);

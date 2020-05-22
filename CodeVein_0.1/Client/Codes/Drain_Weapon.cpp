@@ -464,6 +464,75 @@ void CDrain_Weapon::OnCollisionEvent(list<CGameObject*> plistGameObject)
 							g_pTimer_Manager->Set_MutiplyResetTime(L"Timer_Fps_60", 0.1f);
 							SHAKE_CAM_lv2;
 
+							g_pSoundManager->Stop_Sound(CSoundManager::Player_SFX_04);
+							g_pSoundManager->Play_Sound(L"IMPT_Hit_Heavy_01.wav", CSoundManager::Player_SFX_04, CSoundManager::Effect_Sound);
+
+							g_pSoundManager->Stop_Sound(CSoundManager::Player_SFX_04);
+							g_pSoundManager->Play_Sound(L"IMPT_Sword_01.wav", CSoundManager::Player_SFX_04, CSoundManager::Effect_Sound);
+
+							_int iRandNum = CCalculater::Random_Num(0, 3);
+
+							switch (iRandNum)
+							{
+							case 0:
+							{
+								g_pSoundManager->Stop_Sound(CSoundManager::Hit_SFX_02);
+								g_pSoundManager->Play_Sound(L"GORE_Gun_Gore_01.wav", CSoundManager::Hit_SFX_02, CSoundManager::Effect_Sound);
+
+								break;
+							}
+							case 1:
+							{
+								g_pSoundManager->Stop_Sound(CSoundManager::Hit_SFX_02);
+								g_pSoundManager->Play_Sound(L"GORE_Gun_Gore_02.wav", CSoundManager::Hit_SFX_02, CSoundManager::Effect_Sound);
+
+								break;
+							}
+							case 2:
+							{
+								g_pSoundManager->Stop_Sound(CSoundManager::Hit_SFX_02);
+								g_pSoundManager->Play_Sound(L"GORE_Gun_Gore_03.wav", CSoundManager::Hit_SFX_02, CSoundManager::Effect_Sound);
+
+								break;
+							}
+							}
+
+							iRandNum = CCalculater::Random_Num(0, 3);
+
+							switch (iRandNum)
+							{
+							case 0:
+							{
+								g_pSoundManager->Stop_Sound(CSoundManager::Hit_SFX_03);
+								g_pSoundManager->Play_Sound(L"SE_METAL_CLASH_018.wav", CSoundManager::Hit_SFX_03, CSoundManager::Effect_Sound);
+
+								break;
+							}
+							case 1:
+							{
+								g_pSoundManager->Stop_Sound(CSoundManager::Hit_SFX_03);
+								g_pSoundManager->Play_Sound(L"SE_METAL_CLASH_022.wav", CSoundManager::Hit_SFX_03, CSoundManager::Effect_Sound);
+
+								break;
+							}
+							case 2:
+							{
+								g_pSoundManager->Stop_Sound(CSoundManager::Hit_SFX_03);
+								g_pSoundManager->Play_Sound(L"SE_METAL_CLASH_024.wav", CSoundManager::Hit_SFX_03, CSoundManager::Effect_Sound);
+
+								break;
+							}
+
+							case 3:
+							{
+								g_pSoundManager->Stop_Sound(CSoundManager::Hit_SFX_03);
+								g_pSoundManager->Play_Sound(L"SE_METAL_CLASH_028.wav", CSoundManager::Hit_SFX_03, CSoundManager::Effect_Sound);
+
+
+								break;
+							}
+							}
+
 							if (m_bRecordCollision)
 							{
 								m_listCollisionRecord.push_back(iter);

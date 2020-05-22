@@ -15,7 +15,7 @@ CMainApp::CMainApp()
 
 HRESULT CMainApp::Ready_MainApp()
 {
-	if (FAILED(Ready_Default_Setting(CGraphic_Device::WINMODE_WIN, g_nWinCX, g_nWinCY)))
+	if (FAILED(Ready_Default_Setting(CGraphic_Device::WINMODE_FULL, g_nWinCX, g_nWinCY)))
 		return E_FAIL;
 
 	if (FAILED(Ready_Component_Prototype()))
@@ -201,23 +201,23 @@ void CMainApp::Global_KeyInput()
 			CCameraMgr::Get_Instance()->Set_CamView(BACK_VIEW);
 	}
 
-	// All Gizmo's Toggle On / Off
-	if (g_pInput_Device->Key_Down(DIK_NUMPAD6))
-	{
-		g_pManagement->Gizmo_Toggle();
-	}
-
-	// Cell Gizmo's Toggle On / Off
-	if (g_pInput_Device->Key_Down(DIK_NUMPAD7))
-	{
-		g_pManagement->Gizmo_CellEnable();
-	}
-
-	// Collider Gizmo Toggle On / Off
-	if (g_pInput_Device->Key_Down(DIK_NUMPAD8))
-	{
-		g_pManagement->Gizmo_ColliderEnable();
-	}
+	//// All Gizmo's Toggle On / Off
+	//if (g_pInput_Device->Key_Down(DIK_NUMPAD6))
+	//{
+	//	g_pManagement->Gizmo_Toggle();
+	//}
+	//
+	//// Cell Gizmo's Toggle On / Off
+	//if (g_pInput_Device->Key_Down(DIK_NUMPAD7))
+	//{
+	//	g_pManagement->Gizmo_CellEnable();
+	//}
+	//
+	//// Collider Gizmo Toggle On / Off
+	//if (g_pInput_Device->Key_Down(DIK_NUMPAD8))
+	//{
+	//	g_pManagement->Gizmo_ColliderEnable();
+	//}
 
 	// Frame Toggle On / Off
 	if (g_pInput_Device->Key_Down(DIK_SLASH))

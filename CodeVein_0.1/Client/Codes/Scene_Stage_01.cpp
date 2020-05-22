@@ -41,6 +41,9 @@ HRESULT CScene_Stage_01::Ready_Scene()
 
 	g_pManagement->LoadCreateObject_FromPath(m_pGraphic_Device, L"Object_Stage_01.dat");
 
+	g_pSoundManager->Stop_Sound(CSoundManager::Background_Loop);
+	g_pSoundManager->Stop_Sound(CSoundManager::Ambient_Loop);
+
 	g_pSoundManager->Set_Volume(CSoundManager::BGM_Volume, 1.f);
 	g_pSoundManager->Stop_Sound(CSoundManager::Ambient_Loop);
 	g_pSoundManager->Play_BGM(L"SE_AMB_St01_Base_Out.ogg", true);
@@ -57,18 +60,20 @@ _int CScene_Stage_01::Update_Scene(_double TimeDelta)
 	Create_Fog(TimeDelta);
 	Create_Dust(TimeDelta);
 
-	//if (g_pInput_Device->Key_Down(DIK_I))
-	//{
-	//	CGameObject* pInstance = nullptr;
-	//
-	//	pInstance = g_pManagement->Clone_GameObject_Return(L"GameObject_Colleague",
-	//		&CPlayer_Colleague::JACK_INFO(_v3(0.f, 0.f, 0.f), 0.f, 1));
-	//
-	//	if (nullptr != pInstance)
-	//		g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Colleague", nullptr);
-	//	else
-	//		cout << "소환할 수 없는 위치입니다" << endl;
-	//}
+	if (false == m_fCheck_ColleagueSummons && g_pInput_Device->Key_Down(DIK_O))
+	{
+		m_fCheck_ColleagueSummons = true;
+
+		CGameObject* pInstance = nullptr;
+
+		pInstance = g_pManagement->Clone_GameObject_Return(L"GameObject_Colleague",
+			&CPlayer_Colleague::JACK_INFO(_v3(0.f, 0.f, 0.f), 0.f, g_eSceneID_Cur));
+
+		if (nullptr != pInstance)
+			g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Colleague", nullptr);
+		//else
+		//	cout << "소환할 수 없는 위치입니다" << endl;
+	}
 
 	return _int();
 }
@@ -188,12 +193,12 @@ HRESULT CScene_Stage_01::Ready_Layer_Environment(const _tchar* pLayerTag)
 
 HRESULT CScene_Stage_01::Ready_Layer_Colleague(const _tchar * pLayerTah)
 {
-	// 김재구 추가
-	CGameObject* pInstance = nullptr;
+	//// 김재구 추가
+	//CGameObject* pInstance = nullptr;
 
-	pInstance = g_pManagement->Clone_GameObject_Return(L"GameObject_Colleague",
-		&CPlayer_Colleague::JACK_INFO(_v3(150.484f, -18.08f, 70.417f), 0.f, 1));
-	g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Colleague", nullptr);
+	//pInstance = g_pManagement->Clone_GameObject_Return(L"GameObject_Colleague",
+	//	&CPlayer_Colleague::JACK_INFO(_v3(150.484f, -18.08f, 70.417f), 0.f, 1));
+	//g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Colleague", nullptr);
 
 	return S_OK;
 }

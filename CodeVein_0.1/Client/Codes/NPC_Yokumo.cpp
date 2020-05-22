@@ -333,8 +333,6 @@ void CNPC_Yokumo::Check_Dist()
 
 	// 이미 활성화 되 있으면 리턴
 	if (!m_pShopUI->Get_Active() &&
-		!m_pUIManager->Get_GeneralStoreSellUI()->Get_Active() &&
-		!m_pUIManager->Get_GeneralStoreUI()->Get_Active() &&
 		!m_pInteractionButton->Get_ReactConversation())
 	{
 		// 거리젠다.
@@ -364,8 +362,6 @@ void CNPC_Yokumo::Check_Dist()
 			//	m_pPlayer->Set_OnNPCUI(false);
 
 			m_pPlayer->Set_YokumoUI(false);
-
-			m_bActive = false;
 
 			return;
 		}
@@ -457,15 +453,6 @@ void CNPC_Yokumo::Check_Anim()
 
 void CNPC_Yokumo::Check_Bye()
 {
-	const _float MIN_DIST = 1.f;
-	const _float MAX_DIST = 2.f;
-
-	_float fLen = D3DXVec3Length(&_v3(TARGET_TO_TRANS(m_pPlayer)->Get_Pos() - m_pTransformCom->Get_Pos()));
-	
-	// 거리 이내가 아닐 경우, 
-	if (fLen > MAX_DIST || fLen < MIN_DIST)
-		return;
-
 	if (!m_pShopUI->Get_Active() &&
 		!m_pUIManager->Get_Yokumo_NPCUI()->Get_Active() &&
 		!m_pUIManager->Get_GeneralStoreSellUI()->Get_Active() &&

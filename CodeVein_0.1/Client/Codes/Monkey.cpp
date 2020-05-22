@@ -113,56 +113,56 @@ _int CMonkey::Late_Update_GameObject(_double TimeDelta)
 
 HRESULT CMonkey::Render_GameObject()
 {
-	IF_NULL_VALUE_RETURN(m_pShaderCom, E_FAIL);
-	IF_NULL_VALUE_RETURN(m_pMeshCom, E_FAIL);
+	//IF_NULL_VALUE_RETURN(m_pShaderCom, E_FAIL);
+	//IF_NULL_VALUE_RETURN(m_pMeshCom, E_FAIL);
 
-	m_pMeshCom->Play_Animation(DELTA_60 * m_dAniPlayMul);
+	//m_pMeshCom->Play_Animation(DELTA_60 * m_dAniPlayMul);
 
-	if (m_bInFrustum)
-	{
-		if (FAILED(SetUp_ConstantTable(m_pShaderCom)))
-			return E_FAIL;
+	//if (m_bInFrustum)
+	//{
+	//	if (FAILED(SetUp_ConstantTable(m_pShaderCom)))
+	//		return E_FAIL;
 
-		m_pShaderCom->Begin_Shader();
+	//	m_pShaderCom->Begin_Shader();
 
-		_uint iNumMeshContainer = _uint(m_pMeshCom->Get_NumMeshContainer());
+	//	_uint iNumMeshContainer = _uint(m_pMeshCom->Get_NumMeshContainer());
 
-		for (_uint i = 0; i < _uint(iNumMeshContainer); ++i)
-		{
-			_uint iNumSubSet = (_uint)m_pMeshCom->Get_NumMaterials(i);
+	//	for (_uint i = 0; i < _uint(iNumMeshContainer); ++i)
+	//	{
+	//		_uint iNumSubSet = (_uint)m_pMeshCom->Get_NumMaterials(i);
 
-			m_pMeshCom->Update_SkinnedMesh(i);
+	//		m_pMeshCom->Update_SkinnedMesh(i);
 
-			for (_uint j = 0; j < iNumSubSet; ++j)
-			{
-				m_iPass = m_pMeshCom->Get_MaterialPass(i, j);
+	//		for (_uint j = 0; j < iNumSubSet; ++j)
+	//		{
+	//			m_iPass = m_pMeshCom->Get_MaterialPass(i, j);
 
-				if (m_bDissolve)
-					m_iPass = 3;
+	//			if (m_bDissolve)
+	//				m_iPass = 3;
 
-				m_pShaderCom->Begin_Pass(m_iPass);
+	//			m_pShaderCom->Begin_Pass(m_iPass);
 
-				m_pShaderCom->Set_DynamicTexture_Auto(m_pMeshCom, i, j);
+	//			m_pShaderCom->Set_DynamicTexture_Auto(m_pMeshCom, i, j);
 
-				m_pShaderCom->Commit_Changes();
+	//			m_pShaderCom->Commit_Changes();
 
-				m_pMeshCom->Render_Mesh(i, j);
+	//			m_pMeshCom->Render_Mesh(i, j);
 
-				m_pShaderCom->End_Pass();
-			}
-		}
+	//			m_pShaderCom->End_Pass();
+	//		}
+	//	}
 
-		m_pShaderCom->End_Shader();
-	}
+	//	m_pShaderCom->End_Shader();
+	//}
 
-	IF_NOT_NULL(m_pWeapon)
-		m_pWeapon->Update_GameObject(m_dTimeDelta);
+	//IF_NOT_NULL(m_pWeapon)
+	//	m_pWeapon->Update_GameObject(m_dTimeDelta);
 
-	if (MONSTER_STATE_TYPE::DEAD != m_eFirstCategory)
-	{
-		Update_Collider();
-		Render_Collider();
-	}
+	//if (MONSTER_STATE_TYPE::DEAD != m_eFirstCategory)
+	//{
+	//	Update_Collider();
+	//	Render_Collider();
+	//}
 
 	return S_OK;
 }
@@ -252,12 +252,12 @@ HRESULT CMonkey::Render_GameObject_SetPass(CShader * pShader, _int iPass, _bool 
 
 		m_matLastWVP = WorldMatrix * ViewMatrix * ProjMatrix;
 
-		_bool bMotionBlur = true;
-		if (FAILED(pShader->Set_Bool("g_bMotionBlur", bMotionBlur)))
-			return E_FAIL;
-		_bool bDecalTarget = false;
-		if (FAILED(pShader->Set_Bool("g_bDecalTarget", bDecalTarget)))
-			return E_FAIL;
+		//_bool bMotionBlur = true;
+		//if (FAILED(pShader->Set_Bool("g_bMotionBlur", bMotionBlur)))
+		//	return E_FAIL;
+		//_bool bDecalTarget = false;
+		//if (FAILED(pShader->Set_Bool("g_bDecalTarget", bDecalTarget)))
+		//	return E_FAIL;
 		_float fBloomPower = 0.5f;
 		if (FAILED(pShader->Set_Value("g_fBloomPower", &fBloomPower, sizeof(_float))))
 			return E_FAIL;
@@ -2747,6 +2747,7 @@ HRESULT CMonkey::Ready_Weapon()
 {
 	m_pWeapon = static_cast<CWeapon*>(g_pManagement->Clone_GameObject_Return(L"GameObject_Weapon", NULL));
 	m_pWeapon->Change_WeaponData(Wpn_SSword_Slave);
+	m_pWeapon->Set_WeaponDamage(WEAPON_DATA::Wpn_SSword_Slave, 220.f * pow(1.5f, g_eStageIdx_Cur - 1));
 
 	D3DXFRAME_DERIVED*	pFamre = (D3DXFRAME_DERIVED*)m_pMeshCom->Get_BonInfo("RightHandAttach");
 	m_pWeapon->Set_AttachBoneMartix(&pFamre->CombinedTransformationMatrix);
