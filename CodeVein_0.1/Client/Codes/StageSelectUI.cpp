@@ -147,6 +147,7 @@ void CStageSelectUI::Move_Right()
 {
 	if (!m_bIsActive)
 		return;
+	CUI_Manager::Get_Instance()->Stop_Play_UISound(L"Slot_Touch.ogg", CSoundManager::CHANNELID::UI_Click, CSoundManager::Effect_Sound);
 	//if (g_pInput_Device->Key_Up(DIK_RIGHT) && m_bIsActive)
 	{
 		if (CStageUI::Teleport_End - 1 != m_iSelectIndex)
@@ -163,6 +164,7 @@ void CStageSelectUI::Move_Left()
 {
 	if (!m_bIsActive)
 		return;
+	CUI_Manager::Get_Instance()->Stop_Play_UISound(L"Slot_Touch.ogg", CSoundManager::CHANNELID::UI_Click, CSoundManager::Effect_Sound);
 	//if (g_pInput_Device->Key_Up(DIK_LEFT))
 	{
 		if (0 != m_iSelectIndex)

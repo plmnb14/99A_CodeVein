@@ -1315,9 +1315,6 @@ Engine::EFFECT_INFO* CLoading::Read_EffectData(const _tchar* szPath)
 
 _uint CLoading::Loading_Title()
 {
-	//cout << "===============================================================================" << endl;
-	//cout << "Title_Loading . . ." << endl;
-	//cout << "===============================================================================" << endl;
 	//============================================================================================================
 	// 필수 메쉬 불러오는중
 	//============================================================================================================
@@ -1458,33 +1455,35 @@ _uint CLoading::Loading_Title()
 	g_pSoundManager->Load_Directory_SouneFile_W(L"NPC/Yakumo");
 	g_pSoundManager->Load_Directory_SouneFile_W(L"Boss_Genji");
 	g_pSoundManager->Load_Directory_SouneFile_W(L"Jack");
+	g_pSoundManager->Load_Directory_SouneFile_W(L"WavConvertPlayer");
+
 
 	m_bFinish = true;
 
-	system("cls");
-	cout << "===============================================================================" << endl;
-	cout << " 1. 위 숫자 키를 누르면 옵션이 활성화 됩니다." << endl;
-	cout << " 2. (Load_StaticMesh) 가 (false) 이면 스테이지 들어가도 생성 안됩니다." << endl;
-	cout << " 3. Space 를 누르면 다음 스테이지로 넘어갑니다." << endl;
-	cout << " 4. 트레이닝 맵은 별도로 Load_StaticMesh 안해도 넘어갑니다." << endl;
-	cout << " 5. 기본 설정된 맵은 Stage_Traing 입니다." << endl;
-	cout << "-------------------------------------------------------------------------------" << endl;
-	cout << " #  [ 릴리즈 모드 ] 는 메쉬로드와 스테이지 진행이 실제 게임처럼 됩니다." << endl;
-	cout << " #  [ 릴리즈 모드 ] 는 강제로 [ Stage_Base ] 부터 시작하게 됩니다." << endl;
-	cout << "-------------------------------------------------------------------------------" << endl;
-	cout << "[1] Stage_Training = true " << endl;
-	cout << "[2] Stage_Base = false " << endl;
-	cout << "[3] Stage_01 = false " << endl;
-	cout << "[4] Stage_02 = false " << endl;
-	cout << "[5] Stage_03 = false " << endl;
-	cout << "[6] Stage_04 = false " << endl;
-	cout << "-------------------------------------------------------------------------------" << endl;
-	cout << "[8] Load_StaticMesh = ";
-	cout << (m_bLoadStaticMesh ? "true" : "false") << endl;
-	cout << "-------------------------------------------------------------------------------" << endl;
-	cout << "[9] # 릴리즈 모드 # ";
-	cout << (g_bReleaseMode ? "true" : "false") << endl;
-	cout << "-------------------------------------------------------------------------------" << endl;
+	//system("cls");
+	//cout << "===============================================================================" << endl;
+	//cout << " 1. 위 숫자 키를 누르면 옵션이 활성화 됩니다." << endl;
+	//cout << " 2. (Load_StaticMesh) 가 (false) 이면 스테이지 들어가도 생성 안됩니다." << endl;
+	//cout << " 3. Space 를 누르면 다음 스테이지로 넘어갑니다." << endl;
+	//cout << " 4. 트레이닝 맵은 별도로 Load_StaticMesh 안해도 넘어갑니다." << endl;
+	//cout << " 5. 기본 설정된 맵은 Stage_Traing 입니다." << endl;
+	//cout << "-------------------------------------------------------------------------------" << endl;
+	//cout << " #  [ 릴리즈 모드 ] 는 메쉬로드와 스테이지 진행이 실제 게임처럼 됩니다." << endl;
+	//cout << " #  [ 릴리즈 모드 ] 는 강제로 [ Stage_Base ] 부터 시작하게 됩니다." << endl;
+	//cout << "-------------------------------------------------------------------------------" << endl;
+	//cout << "[1] Stage_Training = true " << endl;
+	//cout << "[2] Stage_Base = false " << endl;
+	//cout << "[3] Stage_01 = false " << endl;
+	//cout << "[4] Stage_02 = false " << endl;
+	//cout << "[5] Stage_03 = false " << endl;
+	//cout << "[6] Stage_04 = false " << endl;
+	//cout << "-------------------------------------------------------------------------------" << endl;
+	//cout << "[8] Load_StaticMesh = ";
+	//cout << (m_bLoadStaticMesh ? "true" : "false") << endl;
+	//cout << "-------------------------------------------------------------------------------" << endl;
+	//cout << "[9] # 릴리즈 모드 # ";
+	//cout << (g_bReleaseMode ? "true" : "false") << endl;
+	//cout << "-------------------------------------------------------------------------------" << endl;
 	
 	//====================================================================================================
 	// 사운드 재생 방법

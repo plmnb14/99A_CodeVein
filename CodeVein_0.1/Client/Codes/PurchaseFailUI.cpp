@@ -64,6 +64,8 @@ _int CPurchaseFailUI::Update_GameObject(_double TimeDelta)
 
 _int CPurchaseFailUI::Late_Update_GameObject(_double TimeDelta)
 {
+	if (!m_bIsActive && m_fAlpha <= 0.f)
+		return NOERROR;
 	D3DXMatrixIdentity(&m_matWorld);
 	D3DXMatrixIdentity(&m_matView);
 

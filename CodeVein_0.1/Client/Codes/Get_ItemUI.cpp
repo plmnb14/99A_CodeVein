@@ -164,9 +164,9 @@ void CGet_ItemUI::SetUp_State(_double TimeDelta)
 
 	m_fPercentage = m_fNowItemBar_Size / m_fSizeX;
 
-	if (g_pInput_Device->Key_Pressing(DIK_I))
+	if (g_pInput_Device->Key_Pressing(DIK_Z))
 		m_iUINumber = 1;
-	if (g_pInput_Device->Key_Up(DIK_I))
+	if (g_pInput_Device->Key_Up(DIK_Z))
 	{
 		m_iUINumber = 0;
 		++m_iPickUp_ItemNumber;

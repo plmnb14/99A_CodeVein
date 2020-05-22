@@ -135,6 +135,8 @@ void CExpendSellCollectionUI::SetUp_SubUI_Active(_bool bIsActive)
 	{
 		iter->Set_Active(bIsActive);
 	}
+
+	m_pInfoUI->Set_Active(bIsActive);
 }
 
 void CExpendSellCollectionUI::SetUp_SlotPos()
@@ -160,6 +162,8 @@ void CExpendSellCollectionUI::Click_SubUI()
 		{
 			if (g_pInput_Device->Get_DIMouseState(CInput_Device::DIM_LB))
 			{
+				m_pInfoUI->Set_Type(CExpendables::EXPEND_TYPE(iter->Get_Type()));
+
 				CUI_Manager::Get_Instance()->Stop_Play_UISound(L"Slot_Regist.ogg", CSoundManager::CHANNELID::UI_Click, CSoundManager::Effect_Sound);
 
 				m_pExpendSellUI->Set_SellSlot(iter);
@@ -182,38 +186,11 @@ void CExpendSellCollectionUI::SetUp_Default()
 {
 	m_pExpendSellUI = static_cast<CExpendSellUI*>(g_pManagement->Clone_GameObject_Return(L"GameObject_ExpendSellUI", nullptr));
 	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pExpendSellUI, SCENE_MORTAL, L"Layer_PlayerUI", nullptr);
+
+	m_pInfoUI = static_cast<CExpend_InfoUI*>(g_pManagement->Clone_GameObject_Return(L"GameObject_Expend_InfoUI", nullptr));
+	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pInfoUI, SCENE_MORTAL, L"Layer_PlayerUI", nullptr);
+	m_pInfoUI->Set_Type(CExpendables::Expend_MaximumUp);
 }
-//
-//void CExpendSellCollectionUI::Sell_ExpendItem(CExpendables_Slot * pSlot)
-//{
-//	if (nullptr == pSlot)
-//		return;
-//
-//	
-//
-//	if (pSlot->Get_Size() == 0)
-//	{		
-//		
-//
-//		_uint iIdx = 0;
-//		for (auto& iter : m_vecSlot)
-//		{
-//			if (iter == pSlot)
-//			{
-//				pSlot->Set_Dead();
-//				m_vecSlot.erase(m_vecSlot.begin() + iIdx);
-//				m_vecSlot.shrink_to_fit();
-//			}
-//			
-//			iIdx++;
-//		}
-//	}
-//	else
-//		pSlot->Delete_Item();
-//		
-//
-//	SetUp_SlotPos();
-//}
 
 CExpendSellCollectionUI * CExpendSellCollectionUI::Create(_Device pGraphic_Device)
 {

@@ -38,6 +38,7 @@ HRESULT CInfo_Slot::Ready_GameObject(void * pArg)
 	m_pItemCntFont->Set_UI_Size(10.4f, 20.f);
 	m_pItemCntFont->Set_ViewZ(m_fViewZ - 0.1f);
 	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pItemCntFont, SCENE_MORTAL, L"Layer_PlayerUI", nullptr);
+
 	return NOERROR;
 }
 
@@ -77,6 +78,7 @@ _int CInfo_Slot::Update_GameObject(_double TimeDelta)
 		m_pItemCntFont->Set_Active(false);
 	else
 		m_pItemCntFont->Set_Active(m_bIsActive);
+
 	m_pItemCntFont->Update_NumberValue((_float)m_iNumber);
 	m_pItemCntFont->Set_ViewZ(m_fViewZ - 0.1f);
 

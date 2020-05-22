@@ -6,6 +6,7 @@
 BEGIN(Client)
 class CExpendables_Slot;
 class CExpendSellUI;
+class CExpend_InfoUI;
 class CExpendSellCollectionUI final : public CUI
 {
 private:
@@ -28,9 +29,6 @@ private:
 	void	Click_SubUI();
 	void	SetUp_Default();
 
-public:
-	//void Sell_ExpendItem(CExpendables_Slot* pSlot);
-
 private:
 	CTransform*				m_pTransformCom = nullptr;
 	CRenderer*				m_pRendererCom = nullptr;
@@ -42,6 +40,7 @@ private:
 	_bool						m_bIsSubActive = false;
 	vector<CExpendables_Slot*>	m_vecSlot;
 	CExpendSellUI*				m_pExpendSellUI = nullptr;
+	CExpend_InfoUI*				m_pInfoUI = nullptr;
 
 public:
 	static CExpendSellCollectionUI*		Create(_Device pGraphic_Device);
