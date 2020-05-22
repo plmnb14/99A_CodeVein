@@ -1054,7 +1054,7 @@ CBT_Composite_Node * CDeerKing::LeftMoveAround()
 
 	CBT_Sequence* MainSeq = Node_Sequence("왼쪽 이동 서성임");
 	CBT_Play_Ani* Show_Ani6 = Node_Ani("왼쪽 이동", 6, 0.f);
-	CBT_MoveAround*	MoveAround0 = Node_MoveAround("왼쪽으로 서성 이동", L"Player_Pos", L"Monster_Speed", L"Monster_Dir", 2.f, 3, 1);
+	CBT_MoveAround*	MoveAround0 = Node_MoveAround("왼쪽으로 서성 이동", L"Player_Pos", L"Monster_Speed", L"Monster_Dir", 2.f, 1.5, 0.7);
 
 	CBT_ChaseDir* ChaseDir0 = Node_ChaseDir("플레이어 추적", L"Player_Pos", 5, 0);
 
@@ -1073,7 +1073,7 @@ CBT_Composite_Node * CDeerKing::RightMoveAround()
 
 	CBT_Sequence* MainSeq = Node_Sequence("오른쪽 이동 서성임");
 	CBT_Play_Ani* Show_Ani5 = Node_Ani("오른쪽 이동", 5, 0.f);
-	CBT_MoveAround*	MoveAround0 = Node_MoveAround("왼쪽으로 서성 이동", L"Player_Pos", L"Monster_Speed", L"Monster_Dir", -2.f, 3, 1);
+	CBT_MoveAround*	MoveAround0 = Node_MoveAround("왼쪽으로 서성 이동", L"Player_Pos", L"Monster_Speed", L"Monster_Dir", -2.f, 1.5, 0.7);
 
 	CBT_ChaseDir* ChaseDir0 = Node_ChaseDir("플레이어 추적", L"Player_Pos", 5, 0);
 
