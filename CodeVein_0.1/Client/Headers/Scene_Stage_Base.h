@@ -32,7 +32,7 @@ private:
 private:
 	CLoading*			m_pLoading = nullptr;
 	_float				m_fMapFogDelay = 10.f;
-
+	_bool				m_bLoadingCheck = false;
 private:
 	HRESULT Ready_LightDesc();
 

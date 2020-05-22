@@ -75,10 +75,10 @@ _int CMaterial_InfoUI::Update_GameObject(_double TimeDelta)
 
 
 	m_pCostFont->Update_NumberValue(_float(m_iCost));
-	m_pCostFont->Set_UI_Pos(630.f, 580.f);
+	m_pCostFont->Set_UI_Pos(630.f, 600.f);
 
 	m_pMyHazeFont->Update_NumberValue(_float(CUI_Manager::Get_Instance()->Get_HazeUI()->Get_Haze_Cnt()));
-	m_pMyHazeFont->Set_UI_Pos(630.f, 600.f);
+	m_pMyHazeFont->Set_UI_Pos(630.f, 620.f);
 
 	return NO_EVENT;
 }
