@@ -176,6 +176,8 @@ _int CPlayer::Update_GameObject(_double TimeDelta)
 	if (false == m_bEnable)
 		return NO_EVENT;
 
+	Check_Cheat();
+
 	m_pScreenCornerFade->Update_GameObject(TimeDelta);
 
 
@@ -3050,12 +3052,12 @@ void CPlayer::Play_Dodge()
 {
 	if (false == m_bOnDodge)
 	{
-		m_bDodgeBack = false;
-
 		g_pManagement->Create_AutoFindEffect(L"Player_SpaceBar_StepParticle", 1.f, m_pTransform, _v3(0.f, 1.f, 0.f));
 		g_pManagement->Create_Effect(L"Player_FootSmoke_Jump", m_pTransform->Get_Pos());
 		g_pManagement->Create_Effect(L"Player_FootSmoke_DodgeBack", V3_NULL, m_pTransform);
 
+		m_bDodgeBack = false;
+		
 		if (true == m_bOnAiming)
 		{
 			switch (m_eMainWpnState)
@@ -7962,6 +7964,11 @@ void CPlayer::Play_Gun_WeakAtk()
 
 					m_pWeapon[m_eActiveSlot]->Set_Target_CanAttack(true);
 					m_pWeapon[m_eActiveSlot]->Set_Enable_Record(true);
+					
+					g_pSoundManager->Stop_Sound(CSoundManager::Player_SFX_01);
+					g_pSoundManager->Play_Sound(L"Slash_Sword_01.wav", CSoundManager::Player_SFX_01, CSoundManager::Effect_Sound);
+					g_pSoundManager->Stop_Sound(CSoundManager::Player_SFX_02);
+					g_pSoundManager->Play_Sound(L"Swing_Fase_01.wav", CSoundManager::Player_SFX_02, CSoundManager::Effect_Sound);
 				}
 			}
 
@@ -8022,6 +8029,11 @@ void CPlayer::Play_Gun_WeakAtk()
 
 					m_pWeapon[m_eActiveSlot]->Set_Target_CanAttack(true);
 					m_pWeapon[m_eActiveSlot]->Set_Enable_Record(true);
+
+					g_pSoundManager->Stop_Sound(CSoundManager::Player_SFX_03);
+					g_pSoundManager->Play_Sound(L"Slash_Sword_02.wav", CSoundManager::Player_SFX_03, CSoundManager::Effect_Sound);
+					g_pSoundManager->Stop_Sound(CSoundManager::Player_SFX_04);
+					g_pSoundManager->Play_Sound(L"Swing_Fast_02.wav", CSoundManager::Player_SFX_04, CSoundManager::Effect_Sound);
 				}
 			}
 
@@ -8098,6 +8110,11 @@ void CPlayer::Play_Gun_WeakAtk()
 
 					m_pWeapon[m_eActiveSlot]->Set_Target_CanAttack(true);
 					m_pWeapon[m_eActiveSlot]->Set_Enable_Record(true);
+
+					g_pSoundManager->Stop_Sound(CSoundManager::Player_SFX_01);
+					g_pSoundManager->Play_Sound(L"Swing_Wind_01.wav", CSoundManager::Player_SFX_01, CSoundManager::Effect_Sound);
+					g_pSoundManager->Stop_Sound(CSoundManager::Player_SFX_02);
+					g_pSoundManager->Play_Sound(L"Slash_Sword_01.wav", CSoundManager::Player_SFX_02, CSoundManager::Effect_Sound);
 				}
 			}
 
@@ -8173,6 +8190,13 @@ void CPlayer::Play_Gun_WeakAtk()
 
 					m_pWeapon[m_eActiveSlot]->Set_Target_CanAttack(true);
 					m_pWeapon[m_eActiveSlot]->Set_Enable_Record(true);
+
+					g_pSoundManager->Stop_Sound(CSoundManager::Player_SFX_04);
+					g_pSoundManager->Play_Sound(L"Slash_Sword_04.wav", CSoundManager::Player_SFX_04, CSoundManager::Effect_Sound);
+					g_pSoundManager->Stop_Sound(CSoundManager::Player_SFX_01);
+					g_pSoundManager->Play_Sound(L"Swing_Wind_01.wav", CSoundManager::Player_SFX_01, CSoundManager::Effect_Sound);
+					g_pSoundManager->Stop_Sound(CSoundManager::Player_SFX_02);
+					g_pSoundManager->Play_Sound(L"Whoosh_Heavy_01.wav", CSoundManager::Player_SFX_02, CSoundManager::Effect_Sound);
 				}
 			}
 
@@ -8618,6 +8642,9 @@ void CPlayer::Play_Halverd_WeakAtk()
 
 					m_pWeapon[m_eActiveSlot]->Set_Target_CanAttack(true);
 					m_pWeapon[m_eActiveSlot]->Set_Enable_Record(true);
+
+					g_pSoundManager->Stop_Sound(CSoundManager::Player_SFX_04);
+					g_pSoundManager->Play_Sound(L"Monster_Blade_Swing1.ogg", CSoundManager::Player_SFX_04, CSoundManager::Effect_Sound);
 				}
 			}
 
@@ -8690,6 +8717,9 @@ void CPlayer::Play_Halverd_WeakAtk()
 
 					m_pWeapon[m_eActiveSlot]->Set_Target_CanAttack(true);
 					m_pWeapon[m_eActiveSlot]->Set_Enable_Record(true);
+
+					g_pSoundManager->Stop_Sound(CSoundManager::Player_SFX_02);
+					g_pSoundManager->Play_Sound(L"Monster_Blade_Swing1.ogg", CSoundManager::Player_SFX_02, CSoundManager::Effect_Sound);
 				}
 			}
 
@@ -8791,6 +8821,9 @@ void CPlayer::Play_Halverd_WeakAtk()
 					m_pWeapon[m_eActiveSlot]->Set_Enable_Trail(true);
 					m_pWeapon[m_eActiveSlot]->Set_Target_CanAttack(true);
 					m_pWeapon[m_eActiveSlot]->Set_Enable_Record(true);
+
+					g_pSoundManager->Stop_Sound(CSoundManager::Player_SFX_03);
+					g_pSoundManager->Play_Sound(L"Monster_Blade_Swing0.ogg", CSoundManager::Player_SFX_03, CSoundManager::Effect_Sound);
 				}
 			}
 
@@ -8867,6 +8900,9 @@ void CPlayer::Play_Halverd_WeakAtk()
 					m_pWeapon[m_eActiveSlot]->Set_Target_CanAttack(true);
 					m_pWeapon[m_eActiveSlot]->Set_Enable_Record(true);
 					m_pWeapon[m_eActiveSlot]->Set_Enable_Trail(true);
+
+					g_pSoundManager->Stop_Sound(CSoundManager::Player_SFX_03);
+					g_pSoundManager->Play_Sound(L"Monster_Blade_Swing1.ogg", CSoundManager::Player_SFX_03, CSoundManager::Effect_Sound);
 				}
 			}
 
@@ -8928,6 +8964,9 @@ void CPlayer::Play_Halverd_WeakAtk()
 					m_pWeapon[m_eActiveSlot]->Set_Target_CanAttack(true);
 					m_pWeapon[m_eActiveSlot]->Set_Enable_Record(true);
 					m_pWeapon[m_eActiveSlot]->Set_Enable_Trail(true);
+
+					g_pSoundManager->Stop_Sound(CSoundManager::Player_SFX_01);
+					g_pSoundManager->Play_Sound(L"Swing_Fast_02.wav", CSoundManager::Player_SFX_01, CSoundManager::Effect_Sound);
 				}
 			}
 
@@ -9004,6 +9043,9 @@ void CPlayer::Play_Halverd_WeakAtk()
 					m_pWeapon[m_eActiveSlot]->Set_Target_CanAttack(true);
 					m_pWeapon[m_eActiveSlot]->Set_Enable_Record(true);
 					m_pWeapon[m_eActiveSlot]->Set_Enable_Trail(true);
+
+					g_pSoundManager->Stop_Sound(CSoundManager::Player_SFX_02);
+					g_pSoundManager->Play_Sound(L"Swing_Fast_01.wav", CSoundManager::Player_SFX_02, CSoundManager::Effect_Sound);
 				}
 			}
 
@@ -9103,6 +9145,11 @@ void CPlayer::Play_Halverd_HeavyAtk()
 
 					m_pWeapon[m_eActiveSlot]->Set_Target_CanAttack(true);
 					m_pWeapon[m_eActiveSlot]->Set_Enable_Record(true);
+					
+					g_pSoundManager->Stop_Sound(CSoundManager::Player_SFX_01);
+					g_pSoundManager->Play_Sound(L"Monster_Blunt_Swing1.ogg", CSoundManager::Player_SFX_01, CSoundManager::Effect_Sound);
+					g_pSoundManager->Stop_Sound(CSoundManager::Player_SFX_02);
+					g_pSoundManager->Play_Sound(L"Swing_Wind_01.wav", CSoundManager::Player_SFX_02, CSoundManager::Effect_Sound);
 				}
 			}
 
@@ -9213,6 +9260,11 @@ void CPlayer::Play_Halverd_HeavyAtk()
 
 					m_pWeapon[m_eActiveSlot]->Set_Target_CanAttack(true);
 					m_pWeapon[m_eActiveSlot]->Set_Enable_Record(true);
+
+					g_pSoundManager->Stop_Sound(CSoundManager::Player_SFX_01);
+					g_pSoundManager->Play_Sound(L"Monster_Blunt_Swing0.ogg", CSoundManager::Player_SFX_01, CSoundManager::Effect_Sound);
+					g_pSoundManager->Stop_Sound(CSoundManager::Player_SFX_02);
+					g_pSoundManager->Play_Sound(L"Swing_Wind_01.wav", CSoundManager::Player_SFX_02, CSoundManager::Effect_Sound);
 				}
 			}
 
@@ -11792,6 +11844,71 @@ void CPlayer::Check_Stamina(_double dTimeDelta)
 	if (m_tObjParam.fStamina_Cur > m_tObjParam.fStamina_Max)
 		m_tObjParam.fStamina_Cur = m_tObjParam.fStamina_Max;
 
+}
+
+void CPlayer::Check_Cheat()
+{
+	if (m_bCheat_HP)
+		m_tObjParam.fHp_Cur = m_tObjParam.fHp_Max;
+	if (m_bCheat_SP)
+		m_tObjParam.sMana_Cur = m_tObjParam.sMana_Max;
+	if (m_bCheat_ST)
+		m_tObjParam.fStamina_Cur = m_tObjParam.fStamina_Max;
+
+	if (g_pInput_Device->Key_Down(DIK_NUMPAD4))
+	{
+		m_bCheat_HP = !m_bCheat_HP;
+		if (m_bCheat_HP)
+		{
+			g_pSoundManager->Stop_Sound(CSoundManager::UI_SFX_01);
+			g_pSoundManager->Play_Sound(L"SE_FIRE_ELEMENTS_000.ogg", CSoundManager::UI_SFX_01, CSoundManager::Effect_Sound);
+		}
+		else
+		{
+			g_pSoundManager->Stop_Sound(CSoundManager::UI_SFX_01);
+			g_pSoundManager->Play_Sound(L"SE_AURORA_KETSUGI_MOVE_ICE_000.ogg", CSoundManager::UI_SFX_01, CSoundManager::Effect_Sound);
+		}
+	}
+	if (g_pInput_Device->Key_Down(DIK_NUMPAD5))
+	{
+		m_bCheat_SP = !m_bCheat_SP;
+
+		if (m_bCheat_SP)
+		{
+			g_pSoundManager->Stop_Sound(CSoundManager::UI_SFX_01);
+			g_pSoundManager->Play_Sound(L"SE_FIRE_ELEMENTS_000.ogg", CSoundManager::UI_SFX_01, CSoundManager::Effect_Sound);
+		}
+		else
+		{
+			g_pSoundManager->Stop_Sound(CSoundManager::UI_SFX_01);
+			g_pSoundManager->Play_Sound(L"SE_AURORA_KETSUGI_MOVE_ICE_000.ogg", CSoundManager::UI_SFX_01, CSoundManager::Effect_Sound);
+		}
+	}
+	if (g_pInput_Device->Key_Down(DIK_NUMPAD6)) 
+	{
+		m_bCheat_ST = !m_bCheat_ST;
+
+		if (m_bCheat_ST)
+		{
+			g_pSoundManager->Stop_Sound(CSoundManager::UI_SFX_01);
+			g_pSoundManager->Play_Sound(L"SE_FIRE_ELEMENTS_000.ogg", CSoundManager::UI_SFX_01, CSoundManager::Effect_Sound);
+		}
+		else
+		{
+			g_pSoundManager->Stop_Sound(CSoundManager::UI_SFX_01);
+			g_pSoundManager->Play_Sound(L"SE_AURORA_KETSUGI_MOVE_ICE_000.ogg", CSoundManager::UI_SFX_01, CSoundManager::Effect_Sound);
+		}
+	}
+	if (g_pInput_Device->Key_Down(DIK_NUMPAD7))
+	{
+		m_pUIManager->Get_HazeUI()->Accumulate_Haze(10000);
+		m_pUIManager->Get_Material_Inven()->Add_MultiMaterial(CMaterial::Queen_Steel, 30);
+		m_pUIManager->Get_Material_Inven()->Add_MultiMaterial(CMaterial::Queen_Titanium, 30);
+		m_pUIManager->Get_Material_Inven()->Add_MultiMaterial(CMaterial::Queen_Tungsten, 30);
+
+		g_pSoundManager->Stop_Sound(CSoundManager::UI_SFX_01);
+		g_pSoundManager->Play_Sound(L"UI_Money_0.wav", CSoundManager::UI_SFX_01, CSoundManager::Effect_Sound);
+	}
 }
 
 void CPlayer::Change_PlayerBody(PLAYER_BODY _eBodyType)
