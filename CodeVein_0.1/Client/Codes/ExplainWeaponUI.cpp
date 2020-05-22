@@ -80,7 +80,13 @@ _int CExplainWeaponUI::Update_GameObject(_double TimeDelta)
 		m_tWeaponParam.fTrail_Max = 0.f;
 		m_tWeaponParam.fCol_Height = 0.f;
 
+		SetUp_SubUI_Active(false);
 		return NO_EVENT;
+	}
+		
+	if (m_tWeaponParam.iWeaponName == WPN_DATA_End)
+	{
+		m_bIsActive = false;
 	}
 		
 
@@ -91,12 +97,7 @@ _int CExplainWeaponUI::Update_GameObject(_double TimeDelta)
 	if (!m_pTarget)		
 		return NO_EVENT;
 	
-	if (m_tWeaponParam.iWeaponName == WPN_DATA_End)
-	{
-		m_pAttackFont->Set_Active(false);
-		m_pReinForceFont->Set_Active(false);
-		m_pAddDamageFont->Set_Active(false);
-	}
+	
 	
 	D3DXMatrixOrthoLH(&m_matProj, WINCX, WINCY, 0.f, 1.0f);
 	

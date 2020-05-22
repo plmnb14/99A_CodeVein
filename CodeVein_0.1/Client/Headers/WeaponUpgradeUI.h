@@ -126,6 +126,8 @@ private:
 	_bool								m_bLateInit = false;
 	_int								m_iTexIdx = 0;
 	_int								m_iOption = -1;
+	_bool								m_bIsSubActive = false;
+
 public:
 	static CWeaponUpgradeUI*	Create(_Device pGraphic_Device);
 	virtual CGameObject*		Clone_GameObject(void* pArg);

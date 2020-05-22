@@ -79,24 +79,24 @@ HRESULT CQueensKnight::Ready_GameObject(void * pArg)
 	pBlackBoard->Set_Value(L"CamShake2", false);
 	pBlackBoard->Set_Value(L"CamShake4", false);
 
-	CBT_Selector* Start_Sel = Node_Selector("행동 시작");
-	//CBT_Sequence* Start_Sel = Node_Sequence("행동 시작");	//테스트
+	//CBT_Selector* Start_Sel = Node_Selector("행동 시작");
+	CBT_Sequence* Start_Sel = Node_Sequence("행동 시작");	//테스트
 
 	pBehaviorTree->Set_Child(Start_Sel);
 
 
 	//////////// 아래에 주석해놓은 4줄이 본게임에서 쓸 것임, 차례대로 공격함.
 
-	CBT_CompareValue* Check_ShowValue = Node_BOOL_A_Equal_Value("시연회 변수 체크", L"Show", false);
-	Check_ShowValue->Set_Child(Start_Game());
-	Start_Sel->Add_Child(Check_ShowValue);
-	Start_Sel->Add_Child(Start_Show());
+	//CBT_CompareValue* Check_ShowValue = Node_BOOL_A_Equal_Value("시연회 변수 체크", L"Show", false);
+	//Check_ShowValue->Set_Child(Start_Game());
+	//Start_Sel->Add_Child(Check_ShowValue);
+	//Start_Sel->Add_Child(Start_Show());
 
 	////////////
 
 	// 패턴 확인용,  각 패턴 함수를 아래에 넣으면 재생됨
 
-	//Start_Sel->Add_Child(LeakField());
+	Start_Sel->Add_Child(LeakField());
 
 	//CBT_RotationDir* Rotation0 = Node_RotationDir("돌기", L"Player_Pos", 0.2);
 	//Start_Sel->Add_Child(Rotation0);
@@ -243,53 +243,53 @@ _int CQueensKnight::Late_Update_GameObject(_double TimeDelta)
 
 HRESULT CQueensKnight::Render_GameObject()
 {
-	if (nullptr == m_pShaderCom ||
-		nullptr == m_pMeshCom)
-		return E_FAIL;
+	//if (nullptr == m_pShaderCom ||
+	//	nullptr == m_pMeshCom)
+	//	return E_FAIL;
 
-	m_pMeshCom->Play_Animation(_float(m_dTimeDelta)); // * alpha
+	//m_pMeshCom->Play_Animation(_float(m_dTimeDelta)); // * alpha
 
-	if (m_bInFrustum)
-	{
-		if (FAILED(SetUp_ConstantTable(m_pShaderCom)))
-			return E_FAIL;
+	//if (m_bInFrustum)
+	//{
+	//	if (FAILED(SetUp_ConstantTable(m_pShaderCom)))
+	//		return E_FAIL;
 
-		m_pShaderCom->Begin_Shader();
+	//	m_pShaderCom->Begin_Shader();
 
-		_uint iNumMeshContainer = _uint(m_pMeshCom->Get_NumMeshContainer());
+	//	_uint iNumMeshContainer = _uint(m_pMeshCom->Get_NumMeshContainer());
 
-		for (_uint i = 0; i < _uint(iNumMeshContainer); ++i)
-		{
-			_uint iNumSubSet = (_uint)m_pMeshCom->Get_NumMaterials(i);
+	//	for (_uint i = 0; i < _uint(iNumMeshContainer); ++i)
+	//	{
+	//		_uint iNumSubSet = (_uint)m_pMeshCom->Get_NumMaterials(i);
 
-			m_pMeshCom->Update_SkinnedMesh(i);
+	//		m_pMeshCom->Update_SkinnedMesh(i);
 
-			for (_uint j = 0; j < iNumSubSet; ++j)
-			{
-				m_iPass = m_pMeshCom->Get_MaterialPass(i, j);
+	//		for (_uint j = 0; j < iNumSubSet; ++j)
+	//		{
+	//			m_iPass = m_pMeshCom->Get_MaterialPass(i, j);
 
-				if (m_bDissolve)
-					m_iPass = 3;
+	//			if (m_bDissolve)
+	//				m_iPass = 3;
 
-				m_pShaderCom->Begin_Pass(m_iPass);
+	//			m_pShaderCom->Begin_Pass(m_iPass);
 
-				m_pShaderCom->Set_DynamicTexture_Auto(m_pMeshCom, i, j);
+	//			m_pShaderCom->Set_DynamicTexture_Auto(m_pMeshCom, i, j);
 
-				m_pShaderCom->Commit_Changes();
+	//			m_pShaderCom->Commit_Changes();
 
-				m_pMeshCom->Render_Mesh(i, j);
+	//			m_pMeshCom->Render_Mesh(i, j);
 
-				m_pShaderCom->End_Pass();
-			}
-		}
+	//			m_pShaderCom->End_Pass();
+	//		}
+	//	}
 
-		m_pShaderCom->End_Shader();
-	}
+	//	m_pShaderCom->End_Shader();
+	//}
 
-	m_pSword->Update_GameObject(m_dTimeDelta);
-	m_pShield->Update_GameObject(m_dTimeDelta);
-	Update_Collider();
-	Draw_Collider();
+	//m_pSword->Update_GameObject(m_dTimeDelta);
+	//m_pShield->Update_GameObject(m_dTimeDelta);
+	//Update_Collider();
+	//Draw_Collider();
 
 	return NOERROR;
 }
@@ -378,12 +378,12 @@ HRESULT CQueensKnight::Render_GameObject_SetPass(CShader * pShader, _int iPass, 
 
 		m_matLastWVP = WorldMatrix * ViewMatrix * ProjMatrix;
 
-		_bool bMotionBlur = true;
-		if (FAILED(pShader->Set_Bool("g_bMotionBlur", bMotionBlur)))
-			return E_FAIL;
-		_bool bDecalTarget = false;
-		if (FAILED(pShader->Set_Bool("g_bDecalTarget", bDecalTarget)))
-			return E_FAIL;
+		//_bool bMotionBlur = true;
+		//if (FAILED(pShader->Set_Bool("g_bMotionBlur", bMotionBlur)))
+		//	return E_FAIL;
+		//_bool bDecalTarget = false;
+		//if (FAILED(pShader->Set_Bool("g_bDecalTarget", bDecalTarget)))
+		//	return E_FAIL;
 		_float fBloomPower = 0.5f;
 		if (FAILED(pShader->Set_Value("g_fBloomPower", &fBloomPower, sizeof(_float))))
 			return E_FAIL;
@@ -697,6 +697,7 @@ CBT_Composite_Node * CQueensKnight::ThreeCombo_Cut()
 	CBT_ChaseDir* ChaseDir0 = Node_ChaseDir("플레이어 바라보기", L"Player_Pos", 0.01, 0);
 	CBT_Wait* Wait2 = Node_Wait("대기2", 0.15, 0);
 	CBT_MoveDirectly* Move2 = Node_MoveDirectly_Rush("이동2", L"Monster_Speed", L"Monster_Dir", 6.f, 0.366, 0);
+	CBT_SetValue* CamShake = Node_BOOL_SetValue("카메라 흔들기", L"CamShake2", true);
 	CBT_SetValue* Sound2Stop = Node_BOOL_SetValue("소리1 재생", L"SFX_02_Stop", true);
 	CBT_SetValue* Sound2Play = Node_BOOL_SetValue("소리1 재생", L"SFX_02_Play", true);
 	CBT_SetValue* Sound2Tag = Node_INT_SetValue("소리1 이름 설정", L"SFX_02_Tag", 0);
@@ -707,7 +708,7 @@ CBT_Composite_Node * CQueensKnight::ThreeCombo_Cut()
 	CBT_ChaseDir* ChaseDir1 = Node_ChaseDir("플레이어 바라보기1", L"Player_Pos", 0.01, 0);
 	//48번애니 * 0.4 = 1.473
 	CBT_MoveDirectly* Move3 = Node_MoveDirectly_Rush("이동3", L"Monster_Speed", L"Monster_Dir", 6.f, 0.45, 0);
-	CBT_SetValue* CamShake = Node_BOOL_SetValue("카메라 흔들기", L"CamShake2", true);
+	CBT_SetValue* CamShake1 = Node_BOOL_SetValue("카메라 흔들기", L"CamShake2", true);
 	CBT_SetValue* Sound1Stop1 = Node_BOOL_SetValue("소리1 재생", L"SFX_01_Stop", true);
 	CBT_SetValue* Sound1Play1 = Node_BOOL_SetValue("소리1 재생", L"SFX_01_Play", true);
 	CBT_SetValue* Sound1Tag1 = Node_INT_SetValue("소리1 이름 설정", L"SFX_01_Tag", 1);
@@ -778,6 +779,7 @@ CBT_Composite_Node * CQueensKnight::ThreeCombo_Cut()
 	SubSeq->Add_Child(ChaseDir0);
 	SubSeq->Add_Child(Wait2);
 	SubSeq->Add_Child(Move2);
+	SubSeq->Add_Child(CamShake);
 	SubSeq->Add_Child(Sound2Stop);
 	SubSeq->Add_Child(Sound2Play);
 	SubSeq->Add_Child(Sound2Tag);
@@ -787,7 +789,7 @@ CBT_Composite_Node * CQueensKnight::ThreeCombo_Cut()
 	SubSeq->Add_Child(Rotation2);
 	SubSeq->Add_Child(ChaseDir1);
 	SubSeq->Add_Child(Move3);
-	SubSeq->Add_Child(CamShake);
+	SubSeq->Add_Child(CamShake1);
 	SubSeq->Add_Child(Sound1Stop1);
 	SubSeq->Add_Child(Sound1Play1);
 	SubSeq->Add_Child(Sound1Tag1);
@@ -2958,6 +2960,7 @@ HRESULT CQueensKnight::Ready_Weapon()
 	// 오른손 무기
 	m_pSword = static_cast<CWeapon*>(g_pManagement->Clone_GameObject_Return(L"GameObject_Weapon", NULL));
 	m_pSword->Change_WeaponData(WPN_QueenLance);
+	m_pSword->Set_WeaponDamage(WEAPON_DATA::WPN_QueenLance, 500.f * pow(1.5f, g_eStageIdx_Cur - 1));
 
 	D3DXFRAME_DERIVED*	pFamre = (D3DXFRAME_DERIVED*)m_pMeshCom->Get_BonInfo("RightHandAttach");
 	m_pSword->Set_AttachBoneMartix(&pFamre->CombinedTransformationMatrix);
@@ -2971,6 +2974,7 @@ HRESULT CQueensKnight::Ready_Weapon()
 	// 왼손 방패
 	m_pShield = static_cast<CWeapon*>(g_pManagement->Clone_GameObject_Return(L"GameObject_Weapon", NULL));
 	m_pShield->Change_WeaponData(WPN_QueenShield);
+	m_pShield->Set_WeaponDamage(WEAPON_DATA::WPN_QueenShield, 500.f * pow(1.5f, g_eStageIdx_Cur - 1));
 
 	pFamre = (D3DXFRAME_DERIVED*)m_pMeshCom->Get_BonInfo("LeftHandAttach");
 	m_pShield->Set_AttachBoneMartix(&pFamre->CombinedTransformationMatrix);
