@@ -359,8 +359,6 @@ void CNPC_Yakumo::Check_Dist()
 
 			m_pPlayer->Set_YakumoUI(false);
 
-			m_bActive = false;
-
 			return;
 		}
 
