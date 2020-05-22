@@ -73,13 +73,16 @@ _int CPlayer_Colleague::Update_GameObject(_double TimeDelta)
 	if (false == m_bEnable)
 		return NOERROR;
 
+	CPlayer* pPlayer = static_cast<CPlayer*>(g_pManagement->Get_GameObjectBack(L"Layer_Player", SCENE_MORTAL));
+	if (false == pPlayer->Get_Player_RigidBody())
+		return NOERROR;
+	else
 
 	//====================================================================================================
 	// 컬링
 	//====================================================================================================
 	m_bInFrustum = m_pOptimizationCom->Check_InFrustumforObject(&m_pTransformCom->Get_Pos(), 2.f);
 	//====================================================================================================
-
 
 	if (-1 == m_pNavMesh->Get_SubSetIndex())
 		return E_FAIL;
@@ -104,7 +107,7 @@ _int CPlayer_Colleague::Update_GameObject(_double TimeDelta)
 
 	//cout << m_iCenter_Count << endl;
 
-	if (0 >= m_tObjParam.fHp_Cur && 0 > m_iMyHeal_Count)
+	if (0.f >= m_tObjParam.fHp_Cur/* && 0 >= m_iMyHeal_Count*/)
 		m_eMovetype = CPlayer_Colleague::Coll_Dead;
 
 	if (false == m_bStage_LetsGo && m_eMovetype == CPlayer_Colleague::Coll_Move)
@@ -114,13 +117,6 @@ _int CPlayer_Colleague::Update_GameObject(_double TimeDelta)
 		g_pSoundManager->Play_Sound(L"Jack_Let_Go.ogg", CSoundManager::Jack_Voice, CSoundManager::Voice_Sound);
 	}
 
-	//CUI_Manager* pUI_Manager = CUI_Manager::Get_Instance();
-	//if (true == pUI_Manager->Get_Get_ItemUI()->Get_Show_ItemName())
-	//{
-	//	g_pSoundManager->Stop_Sound(CSoundManager::Jack_Voice);
-	//	g_pSoundManager->Play_Sound(L"Nice_Item.ogg", CSoundManager::Jack_Voice, CSoundManager::Voice_Sound);
-	//}
-
 
 	//if ((10.f >= m_tObjParam.fHp_Cur && 0 <= m_iMyHeal_Count) &&
 	//	m_eMovetype != CPlayer_Colleague::Coll_Dead)
@@ -128,7 +124,7 @@ _int CPlayer_Colleague::Update_GameObject(_double TimeDelta)
 	//	m_eMovetype = CPlayer_Colleague::Coll_Heal;
 	//	m_eColl_HealMoment = CPlayer_Colleague::My_Heal;
 	//}
-	if ((true == m_bNest_Skil_CoolTImer && m_pTarget->Get_Target_Hp() * 0.3f >= m_pTarget->Get_Target_Hp()) &&
+	if (/*true == m_bNest_Skil_CoolTImer && */(m_pTarget->Get_Target_Hp() * 0.4f >= m_pTarget->Get_Target_Hp()) &&
 		m_eMovetype != CPlayer_Colleague::Coll_Dead)
 	{
 		m_fCoolTimer_Skil_limit = 5.f;
@@ -686,10 +682,6 @@ void CPlayer_Colleague::Check_MyHit()
 			}
 		}
 	}
-	//else if (0 >= m_tObjParam.fHp_Cur && 0 >= m_iMyHeal_Count)
-	//	m_eMovetype = CPlayer_Colleague::Coll_Dead;
-	else if (0 >= m_tObjParam.fHp_Cur && 0 < m_iMyHeal_Count)
-		m_eMovetype = CPlayer_Colleague::Coll_Heal;
 }
 
 
@@ -1036,9 +1028,9 @@ void CPlayer_Colleague::Check_Do_List(_double TimeDelta)
 			m_fDodge_CoolTime = 0;
 		}
 	}
-	else if (fMyPlayerLength >= 30.f)
+	else if (fMyPlayerLength >= 30.f && false == m_bCheck_Dont_Go)
 	{
-		//m_pTransformCom->Set_Pos(_v3(m_pTargetTransformCom->Get_Pos().x - 3.f, m_pTargetTransformCom->Get_Pos().y, m_pTargetTransformCom->Get_Pos().z - 2.f));
+		m_bCheck_Dont_Go = true;
 		Check_Navi();
 		g_pSoundManager->Stop_Sound(CSoundManager::Jack_Voice);
 		g_pSoundManager->Play_Sound(L"Don_t_GoAway.ogg", CSoundManager::Jack_Voice, CSoundManager::Voice_Sound);
@@ -1260,8 +1252,11 @@ void CPlayer_Colleague::Set_AniEvent()
 		{
 		case Client::CPlayer_Colleague::My_Heal:
 		{
-			CollHeal_ForMe();
-			m_eColleague_Ani = CPlayer_Colleague::Ani_Heal;
+			if (m_eMovetype != CPlayer_Colleague::Coll_Dead)
+			{
+				CollHeal_ForMe();
+				m_eColleague_Ani = CPlayer_Colleague::Ani_Heal;
+			}
 			break;
 		}
 		case Client::CPlayer_Colleague::Player_Heal:
@@ -1332,9 +1327,9 @@ HRESULT CPlayer_Colleague::SetUp_Default()
 	m_List_pMonTarget[0] = &(g_pManagement->Get_GameObjectList(L"Layer_Monster", SCENE_STAGE));
 	m_List_pMonTarget[1] = &(g_pManagement->Get_GameObjectList(L"Layer_Boss", SCENE_STAGE));
 
-	m_tObjParam.fHp_Cur = 50000.f;
-	m_tObjParam.fHp_Max = 50000.f;
-	m_tObjParam.fDamage = 10.f;
+	m_tObjParam.fHp_Cur = 2500.f;
+	m_tObjParam.fHp_Max = 2500.f;
+	m_tObjParam.fDamage = 100.f;
 
 	m_tObjParam.bCanHit = true;		// 맞을 수 있는지
 	m_tObjParam.bIsHit = false;		// 맞는 도중인지
@@ -2763,13 +2758,13 @@ void CPlayer_Colleague::CollHeal_ForMe()
 {
 	_double		AniTime = m_pDynamicMesh->Get_TrackInfo().Position;
 
-	if (0 < m_iMyHeal_Count && m_iMyHeal_Count <= 4)
+	if (0 <= m_iMyHeal_Count && 5 > m_iMyHeal_Count)
 	{
 		if (m_pDynamicMesh->Is_Finish_Animation(0.9f) && m_eColleague_Ani == CPlayer_Colleague::Ani_Heal)
 		{
 			Funtion_Reset_State();
 			m_eMovetype = CPlayer_Colleague::Coll_Idle;
-
+			return;
 		}
 		else if (2.267f <= AniTime)
 		{

@@ -144,6 +144,9 @@ public:
 	virtual _bool Get_YokumoUI() { return m_bOnYokumo_UI; }
 
 public:
+	CRigidBody*	Get_Player_RigidBody() { return m_pRigid; }
+
+public:
 	virtual void Reset_OldAnimations();
 
 public:
