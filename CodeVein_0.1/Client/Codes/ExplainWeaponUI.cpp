@@ -68,27 +68,6 @@ _int CExplainWeaponUI::Update_GameObject(_double TimeDelta)
 		m_bIsSubActive = false;
 	}
 
-	
-	if (!m_bIsActive)
-	{
-		m_tWeaponParam.iWeaponName = WPN_DATA_End;
-		m_tWeaponParam.iWeaponType = WEAPON_End;
-		m_tWeaponParam.iReinforce = 0;
-		m_tWeaponParam.fDamage = 0.f;
-		m_tWeaponParam.fRadius = 0.f;
-		m_tWeaponParam.fTrail_Min = 0.f;
-		m_tWeaponParam.fTrail_Max = 0.f;
-		m_tWeaponParam.fCol_Height = 0.f;
-
-		SetUp_SubUI_Active(false);
-		return NO_EVENT;
-	}
-		
-	if (m_tWeaponParam.iWeaponName == WPN_DATA_End)
-	{
-		m_bIsActive = false;
-	}
-		
 
 	CUI::Update_GameObject(TimeDelta);
 	m_pRendererCom->Add_RenderList(RENDER_UI, this);
@@ -97,13 +76,21 @@ _int CExplainWeaponUI::Update_GameObject(_double TimeDelta)
 	if (!m_pTarget)		
 		return NO_EVENT;
 	
-	
-	
 	D3DXMatrixOrthoLH(&m_matProj, WINCX, WINCY, 0.f, 1.0f);
 	
-	m_pAttackFont->Set_Active(m_bIsActive);
-	m_pAddDamageFont->Set_Active(m_bIsActive);
-	m_pReinForceFont->Set_Active(m_bIsActive);
+	if (m_tWeaponParam.iWeaponName == WPN_DATA_End)
+	{
+		m_pAttackFont->Set_Active(false);
+		m_pAddDamageFont->Set_Active(false);
+		m_pReinForceFont->Set_Active(false);
+	}
+	else
+	{
+		m_pAttackFont->Set_Active(m_bIsActive);
+		m_pAddDamageFont->Set_Active(m_bIsActive);
+		m_pReinForceFont->Set_Active(m_bIsActive);
+	}
+	
 	
 	m_pAttackFont->Update_NumberValue(_float(m_tWeaponParam.fDamage));
 	m_pAttackFont->Set_UI_Pos(630.f, 392.f);
@@ -250,13 +237,6 @@ HRESULT CExplainWeaponUI::SetUp_ConstantTable(_uint iIndex)
 
 void CExplainWeaponUI::SetUp_SubUI_Active(_bool bIsActive)
 {
-	if (m_tWeaponParam.iWeaponName = WPN_DATA_End)
-	{
-		m_pAttackFont->Set_Active(false);
-		m_pAddDamageFont->Set_Active(false);
-		m_pReinForceFont->Set_Active(false);
-	}
-	
 	m_pAttackFont->Set_Active(bIsActive);
 	m_pAddDamageFont->Set_Active(bIsActive);
 	m_pReinForceFont->Set_Active(bIsActive);

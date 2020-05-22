@@ -13,6 +13,7 @@ public:
 		Talker_Player,
 		Talker_Jack,
 		Talker_Yakumo,
+		Talker_Yokumo,
 		Talker_End
 	};
 	// 말하는 대사 (Texture - 인덱스 설정시 사용)
