@@ -171,8 +171,7 @@ PS_OUT PS_SSAO(PS_IN In)
 
 	float	fSkin = tex2D(SkinSampler, In.vTexUV).x;
 	
-	if (fSkin > 0.99f)
-		Out.vSSAO = 1.f;
+	Out.vSSAO = fSkin < 0.99f ? Out.vSSAO.x : 1.f;
 
 	return Out;
 }

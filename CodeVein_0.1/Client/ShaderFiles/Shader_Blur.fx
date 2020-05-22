@@ -2,8 +2,8 @@
 
 matrix		g_matWorld, g_matView, g_matProj, g_matLastWVP;
 bool		g_bMotionBlur, g_bDecalTarget;
-float		g_fRimPower, g_fBloomPower = 0.75f;
-
+float		g_MinValue = 0.25f;
+float		g_fBloomPower = 0.f;
 
 texture		g_HeightTexture;
 
@@ -87,31 +87,19 @@ PS_OUT PS_MOTIONBLUR(PS_MOTIONBLUR_IN In)
 {
 	PS_OUT			Out = (PS_OUT)0;
 
-	float2 a = (In.vProjPos.xy / In.vProjPos.w) * 0.5 + 0.5;
-	float2 b = (In.vLastPos.xy / In.vLastPos.w) * 0.5 + 0.5;
-	//float2 velocity = pow(abs(a - b), 1 / 3.0)*sign(a - b) * 0.5 + 0.5;
-	float2 velocity = (a - b) * 0.5 + 0.5;
-
-	velocity = pow(velocity, 3.0);
+	float2 a = (In.vProjPos.xy / In.vProjPos.w) * 0.5f + 0.5f;
+	float2 b = (In.vLastPos.xy / In.vLastPos.w) * 0.5f + 0.5f;
+	float2 velocity = pow(((a - b) * 0.5f + 0.5f), 3.0f);
 
 	float fMinValue = 0.25f;
-	if (velocity.x < fMinValue &&
-		velocity.y < fMinValue)
-		Out.vVelocity.w = 0.f;
-
+	Out.vVelocity.w = velocity.x >= fMinValue && velocity.y >= fMinValue ? Out.vVelocity.w : 0.f;
 	Out.vVelocity = vector(velocity.xy, In.vProjPos.z / In.vProjPos.w, 1.f);
-	
-	if (!g_bMotionBlur)
-		Out.vVelocity = vector(0.f, 0.f, 0.f, 0.f);
 	
 	float HeightValue = tex2D(HeightSampler, In.vTexUV).x;
 
 	Out.vNormal = vector(0.f, 0.f, 0.f, 0.f);
-	Out.vBloomPower = vector(g_fBloomPower,0,0,0);
+	Out.vBloomPower = vector(g_fBloomPower,0.f, 0.f, 0.f);
 
-	if (g_bDecalTarget)
-		Out.vDecalDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / 500.f, 1.f, 1.f);
-	
 	return Out;
 }
 
@@ -119,30 +107,18 @@ PS_OUT PS_MOTIONBLUR_Height(PS_MOTIONBLUR_IN In)
 {
 	PS_OUT			Out = (PS_OUT)0;
 
-	float2 a = (In.vProjPos.xy / In.vProjPos.w) * 0.5 + 0.5;
-	float2 b = (In.vLastPos.xy / In.vLastPos.w) * 0.5 + 0.5;
-	//float2 velocity = pow(abs(a - b), 1 / 3.0)*sign(a - b) * 0.5 + 0.5;
-	float2 velocity = (a - b) * 0.5 + 0.5;
-
-	velocity = pow(velocity, 3.0);
+	float2 a = (In.vProjPos.xy / In.vProjPos.w) * 0.5f + 0.5f;
+	float2 b = (In.vLastPos.xy / In.vLastPos.w) * 0.5f + 0.5f;
+	float2 velocity = pow(((a - b) * 0.5f + 0.5f), 3.0f);
 
 	float fMinValue = 0.25f;
-	if (velocity.x < fMinValue &&
-		velocity.y < fMinValue)
-		Out.vVelocity.w = 0.f;
-
+	Out.vVelocity.w = velocity.x >= fMinValue && velocity.y >= fMinValue ? Out.vVelocity.w : 0.f;
 	Out.vVelocity = vector(velocity.xy, In.vProjPos.z / In.vProjPos.w, 1.f);
-
-	if (!g_bMotionBlur)
-		Out.vVelocity.w = 0;
 
 	float HeightValue = tex2D(HeightSampler, In.vTexUV).x;
 
 	Out.vNormal = vector(1.f, 0.f, 1.f, 1.f);
-	Out.vBloomPower = vector(g_fBloomPower, 0, 0, 0);
-
-	if (g_bDecalTarget)
-		Out.vDecalDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / 500.f, 1.f, 1.f);
+	Out.vBloomPower = vector(g_fBloomPower, 0.f, 0.f, 0.f);
 
 	return Out;
 }
@@ -151,28 +127,15 @@ PS_OUT PS_MOTIONBLUR_HeightSkin(PS_MOTIONBLUR_IN In)
 {
 	PS_OUT			Out = (PS_OUT)0;
 
-	float2 a = (In.vProjPos.xy / In.vProjPos.w) * 0.5 + 0.5;
-	float2 b = (In.vLastPos.xy / In.vLastPos.w) * 0.5 + 0.5;
-	//float2 velocity = pow(abs(a - b), 1 / 3.0)*sign(a - b) * 0.5 + 0.5;
-	float2 velocity = (a - b) * 0.5 + 0.5;
+	float2 a = (In.vProjPos.xy / In.vProjPos.w) * 0.5f + 0.5f;
+	float2 b = (In.vLastPos.xy / In.vLastPos.w) * 0.5f + 0.5f;
+	float2 velocity = pow(((a - b) * 0.5f + 0.5f), 3.0f);
 
-	velocity = pow(velocity, 3.0);
-
-	float fMinValue = 0.25f;
-	if (velocity.x < fMinValue &&
-		velocity.y < fMinValue)
-		Out.vVelocity.w = 0.f;
-
+	Out.vVelocity.w = velocity.x >= g_MinValue && velocity.y >= g_MinValue ? Out.vVelocity.w : 0.f;
 	Out.vVelocity = vector(velocity.xy, In.vProjPos.z / In.vProjPos.w, 1.f);
 
-	if (!g_bMotionBlur)
-		Out.vVelocity.w = 0;
-
 	Out.vNormal = vector(1.f, 0.f, 0.f, 1.f);
-	Out.vBloomPower = vector(g_fBloomPower, 0, 0, 0);
-
-	if (g_bDecalTarget)
-		Out.vDecalDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / 500.f, 1.f, 1.f);
+	Out.vBloomPower = vector(g_fBloomPower, 0.f, 0.f, 0.f);
 
 	return Out;
 }
@@ -181,28 +144,34 @@ PS_OUT PS_MOTIONBLUR_Alpha(PS_MOTIONBLUR_IN In)
 {
 	PS_OUT			Out = (PS_OUT)0;
 
-	float2 a = (In.vProjPos.xy / In.vProjPos.w) * 0.5 + 0.5;
-	float2 b = (In.vLastPos.xy / In.vLastPos.w) * 0.5 + 0.5;
-	//float2 velocity = pow(abs(a - b), 1 / 3.0)*sign(a - b) * 0.5 + 0.5;
-	float2 velocity = (a - b) * 0.5 + 0.5;
+	float2 a = (In.vProjPos.xy / In.vProjPos.w) * 0.5f + 0.5f;
+	float2 b = (In.vLastPos.xy / In.vLastPos.w) * 0.5f + 0.5f;
+	float2 velocity = pow(((a - b) * 0.5f + 0.5f), 3.0f);
 
-	velocity = pow(velocity, 3.0);
+	Out.vVelocity.w = velocity.x >= g_MinValue && velocity.y >= g_MinValue ? Out.vVelocity.w : 0.f;
+	Out.vVelocity = vector(velocity.xy, In.vProjPos.z / In.vProjPos.w, 1.f);
+	Out.vNormal = vector(1.f, 0.f, 1.f, 1.f);
+	Out.vBloomPower = vector(g_fBloomPower, 0.f, 0.f, 0.f);
 
-	float fMinValue = 0.25f;
-	if (velocity.x < fMinValue &&
-		velocity.y < fMinValue)
-		Out.vVelocity.w = 0.f;
+	return Out;
+}
 
+PS_OUT PS_MOTIONBLUR_RenderOnlyObject(PS_MOTIONBLUR_IN In)
+{
+	PS_OUT			Out = (PS_OUT)0;
+
+	float2 a = (In.vProjPos.xy / In.vProjPos.w) * 0.5f + 0.5f;
+	float2 b = (In.vLastPos.xy / In.vLastPos.w) * 0.5f + 0.5f; 
+	float2 velocity = pow(((a - b) * 0.5f + 0.5f) , 3.0f);
+
+	Out.vVelocity.w = velocity.x >= g_MinValue && velocity.y >= g_MinValue ? Out.vVelocity.w : 0.f;
 	Out.vVelocity = vector(velocity.xy, In.vProjPos.z / In.vProjPos.w, 1.f);
 
-	if (!g_bMotionBlur)
-		Out.vVelocity.w = 0;
+	float HeightValue = tex2D(HeightSampler, In.vTexUV).x;
 
-	Out.vNormal = vector(1.f, 0.f, 1.f, 1.f);
-	Out.vBloomPower = vector(g_fBloomPower, 0, 0, 0);
-
-	if (g_bDecalTarget)
-		Out.vDecalDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / 500.f, 1.f, 1.f);
+	Out.vNormal = vector(0.f, 0.f, 0.f, 0.f);
+	Out.vBloomPower = vector(g_fBloomPower, 0.f, 0.f, 0.f);
+	Out.vDecalDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / 500.f, 1.f, 1.f);
 
 	return Out;
 }
@@ -273,6 +242,21 @@ technique Default_Technique
 
 		VertexShader = compile  vs_3_0 VS_MOTIONBLUR();
 		PixelShader = compile ps_3_0 PS_MOTIONBLUR_Alpha();
+	}
+
+	//====================================================================================================
+	// 4 - MotionBlur for RenderOnlyObject
+	//====================================================================================================
+	pass MotionBlur_RenderOnlyObject
+	{
+		cullmode = ccw;
+
+		AlphaTestEnable = true;
+		AlphaRef = 0;
+		AlphaFunc = Greater;
+
+		VertexShader = compile  vs_3_0 VS_MOTIONBLUR();
+		PixelShader = compile ps_3_0 PS_MOTIONBLUR_RenderOnlyObject();
 	}
 }
 
