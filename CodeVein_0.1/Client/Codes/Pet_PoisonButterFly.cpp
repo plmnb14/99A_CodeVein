@@ -1092,6 +1092,8 @@ void CPet_PoisonButterFly::Play_Deformation()
 
 		g_pManagement->Create_Effect(L"Pet_SpawnParticle", m_pTransform->Get_Pos());
 		g_pManagement->Create_Effect(L"Pet_SpawnSmoke", m_pTransform->Get_Pos());
+
+		return;
 	}
 	else
 	{
