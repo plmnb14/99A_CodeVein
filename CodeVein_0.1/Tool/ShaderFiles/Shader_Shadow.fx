@@ -144,21 +144,10 @@ PS_OUT PS_SHADOW(PS_IN_ShadowRender In)
 
 		bias = clamp(bias, 0, 0.01);
 
-		if (fDepthValue * In.vDepth.w < In.vDepth.z - bias)
-		{
-			fShadowTerms[i] = 0.2f;
-		}
+		//float a = (fDepthValue * In.vDepth.w < In.vDepth.z - bias) ? 0.2f : 1.f;
+		//fShadowTerms[i] = float(a);
 		
-		else
-			fShadowTerms[i] = 1.f;
-		
-		fShadowTerm += float(fShadowTerms[i]);
-	
-		//float A = tex2Dproj(ShadowMapSampler, vTexCoord[i]).x;
-		//float B = (In.vDepth.z - 0.00001f);
-		//
-		//fShadowTerms[i] = (A < B ? 0.2f : 1.f);
-		//fShadowTerm += float(fShadowTerms[i]);
+		fShadowTerm += (fDepthValue * In.vDepth.w < In.vDepth.z - bias) ? 0.2f : 1.f;;
 	}
 	
 	fShadowTerm /= 9.f;
