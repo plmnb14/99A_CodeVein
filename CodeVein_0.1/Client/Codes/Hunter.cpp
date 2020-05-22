@@ -10869,7 +10869,8 @@ void CHunter::Play_Dead()
 					}
 				}
 			}
-			else if (4.233f <= AniTime)
+
+			if (4.233f <= AniTime)
 			{
 				if (false == m_bEventTrigger[0])
 				{
