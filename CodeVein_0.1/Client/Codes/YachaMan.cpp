@@ -112,7 +112,7 @@ _int CYachaMan::Late_Update_GameObject(_double TimeDelta)
 
 HRESULT CYachaMan::Render_GameObject()
 {
-	IF_NULL_VALUE_RETURN(m_pShaderCom, E_FAIL);
+	/*IF_NULL_VALUE_RETURN(m_pShaderCom, E_FAIL);
 	IF_NULL_VALUE_RETURN(m_pMeshCom, E_FAIL);
 
 	m_pMeshCom->Play_Animation(DELTA_60 * m_dAniPlayMul);
@@ -162,7 +162,7 @@ HRESULT CYachaMan::Render_GameObject()
 		Update_Collider();
 		Render_Collider();
 	}
-
+*/
 	return S_OK;
 }
 
@@ -247,12 +247,12 @@ HRESULT CYachaMan::Render_GameObject_SetPass(CShader * pShader, _int iPass, _boo
 
 		m_matLastWVP = WorldMatrix * ViewMatrix * ProjMatrix;
 
-		_bool bMotionBlur = true;
-		if (FAILED(pShader->Set_Bool("g_bMotionBlur", bMotionBlur)))
-			return E_FAIL;
-		_bool bDecalTarget = false;
-		if (FAILED(pShader->Set_Bool("g_bDecalTarget", bDecalTarget)))
-			return E_FAIL;
+		//_bool bMotionBlur = true;
+		//if (FAILED(pShader->Set_Bool("g_bMotionBlur", bMotionBlur)))
+		//	return E_FAIL;
+		//_bool bDecalTarget = false;
+		//if (FAILED(pShader->Set_Bool("g_bDecalTarget", bDecalTarget)))
+		//	return E_FAIL;
 		_float fBloomPower = 0.5f;
 		if (FAILED(pShader->Set_Value("g_fBloomPower", &fBloomPower, sizeof(_float))))
 			return E_FAIL;
@@ -5235,6 +5235,7 @@ HRESULT CYachaMan::Ready_Weapon()
 {
 	m_pWeapon = static_cast<CWeapon*>(g_pManagement->Clone_GameObject_Return(L"GameObject_Weapon", NULL));
 	m_pWeapon->Change_WeaponData(Wpn_Hammer_Military);
+	m_pWeapon->Set_WeaponDamage(WEAPON_DATA::Wpn_Hammer_Military, 350.f * pow(1.5f, g_eStageIdx_Cur - 1));
 
 	D3DXFRAME_DERIVED*	pFamre = (D3DXFRAME_DERIVED*)m_pMeshCom->Get_BonInfo("RightHandAttach");
 	m_pWeapon->Set_AttachBoneMartix(&pFamre->CombinedTransformationMatrix);
