@@ -4935,7 +4935,8 @@ void CYachaMan::Play_Dead()
 				m_bEnable = false;
 				m_dAniPlayMul = 0;
 			}
-			else if (3.233f <= AniTime)
+
+			if (3.233f <= AniTime)
 			{
 				if (false == m_bEventTrigger[0])
 				{

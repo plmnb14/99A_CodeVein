@@ -42,17 +42,7 @@ _int CExplainArmorUI::Update_GameObject(_double TimeDelta)
 		m_bIsSubActive = false;
 	}
 
-	if (m_tArmorParam.iArmorName == ArmorAll_END)
-		m_bIsActive = false;
-	if (!m_bIsActive)
-	{
-		m_tArmorParam.iArmorName = ArmorAll_END;
-		m_tArmorParam.fDef = 0.f;
-		m_tArmorParam.iPrice = 0;
-		SetUp_SubUI_Active(false);
-		return NO_EVENT;
-	}
-	else
+	if(m_bIsActive)
 	{
 		m_pReinForceFont->Update_NumberValue(_float(m_tArmorParam.iReinforce));
 		m_pDefFont->Update_NumberValue(_float(m_tArmorParam.fDef));
@@ -60,12 +50,15 @@ _int CExplainArmorUI::Update_GameObject(_double TimeDelta)
 		m_pHPFont->Update_NumberValue(_float(m_tArmorParam.fHP));
 		m_pPlusHPFont->Update_NumberValue(_float(m_tArmorParam.fPlusHP));
 
-		m_pReinForceFont->Set_UI_Pos(600.f, 255.f);	
-		m_pPlusDefFont->Set_UI_Pos(600.f, 277.f);
-		m_pPlusHPFont->Set_UI_Pos(600.f, 299.f);	
-		m_pDefFont->Set_UI_Pos(600.f, 425.f);
-		m_pHPFont->Set_UI_Pos(600.f, 520.f);
+		m_pReinForceFont->Set_UI_Pos(630.f, 255.f);	
+		m_pPlusDefFont->Set_UI_Pos(630.f, 299.f);	
+		m_pDefFont->Set_UI_Pos(630.f, 425.f);
+		m_pHPFont->Set_UI_Pos(630.f, 520.f);
 		SetUp_SubUI_Active(true);
+	}
+	else if (!m_bIsActive || m_tArmorParam.iArmorName == ArmorAll_END)
+	{
+		SetUp_SubUI_Active(false);
 	}
 
 	CUI::Update_GameObject(TimeDelta);
@@ -226,13 +219,12 @@ void CExplainArmorUI::SetUp_Default()
 	m_pPlusHPFont->Set_UI_Size(15.f, 30.f);
 	m_pPlusHPFont->Set_ViewZ(m_fViewZ - 0.1f);
 	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pPlusHPFont, SCENE_MORTAL, L"Layer_PlayerUI", nullptr);
+
+	m_tArmorParam.iArmorName = ARMOR_All_DATA::ArmorAll_END;
 }
 
 void CExplainArmorUI::SetUp_SubUI_Active(_bool bIsActive)
 {
-	if (m_tArmorParam.iArmorType = ARMOR_End)
-		return;
-
 	m_pReinForceFont->Set_Active(bIsActive);
 	m_pDefFont->Set_Active(bIsActive);
 	m_pPlusDefFont->Set_Active(bIsActive);

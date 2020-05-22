@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "..\Headers\Material_InfoUI.h"
+#include "UI_Manager.h"
 
 CMaterial_InfoUI::CMaterial_InfoUI(_Device pDevice)
 	: CUI(pDevice)
@@ -29,6 +30,18 @@ HRESULT CMaterial_InfoUI::Ready_GameObject(void * pArg)
 	m_fSizeX = 1280.f;
 	m_fSizeY = 700.f;
 
+	m_pCostFont = static_cast<CPlayerFontUI*>(g_pManagement->Clone_GameObject_Return(L"GameObject_PlayerFontUI", nullptr));
+	if (FAILED(g_pManagement->Add_GameOject_ToLayer_NoClone(m_pCostFont, SCENE_MORTAL, L"Layer_PlayerUI", nullptr)))
+		return E_FAIL;
+	m_pCostFont->Set_UI_Size(15.f, 30.f);
+	m_pCostFont->Set_ViewZ(m_fViewZ - 0.1f);
+
+	m_pMyHazeFont = static_cast<CPlayerFontUI*>(g_pManagement->Clone_GameObject_Return(L"GameObject_PlayerFontUI", nullptr));
+	if (FAILED(g_pManagement->Add_GameOject_ToLayer_NoClone(m_pMyHazeFont, SCENE_MORTAL, L"Layer_PlayerUI", nullptr)))
+		return E_FAIL;
+	m_pMyHazeFont->Set_UI_Size(15.f, 30.f);
+	m_pMyHazeFont->Set_ViewZ(m_fViewZ - 0.1f);
+
 	return NOERROR;
 }
 
@@ -40,6 +53,7 @@ _int CMaterial_InfoUI::Update_GameObject(_double TimeDelta)
 
 	D3DXMatrixOrthoLH(&m_matProj, WINCX, WINCY, 0.f, 1.f);
 
+	SetUp_Cost();
 	switch (m_eType)
 	{
 	case CMaterial::Queen_Steel:
@@ -53,8 +67,18 @@ _int CMaterial_InfoUI::Update_GameObject(_double TimeDelta)
 		break;
 	}
 
-	if (!m_bIsActive)
-		m_eType = CMaterial::MATERIAL_END;
+	//if (!m_bIsActive)
+	//	m_eType = CMaterial::MATERIAL_END;
+
+	m_pCostFont->Set_Active(m_bIsActive);
+	m_pMyHazeFont->Set_Active(m_bIsActive);
+
+
+	m_pCostFont->Update_NumberValue(_float(m_iCost));
+	m_pCostFont->Set_UI_Pos(630.f, 580.f);
+
+	m_pMyHazeFont->Update_NumberValue(_float(CUI_Manager::Get_Instance()->Get_HazeUI()->Get_Haze_Cnt()));
+	m_pMyHazeFont->Set_UI_Pos(630.f, 600.f);
 
 	return NO_EVENT;
 }
@@ -138,6 +162,29 @@ HRESULT CMaterial_InfoUI::SetUp_ConstantTable()
 		return E_FAIL;
 
 	return NOERROR;
+}
+
+void CMaterial_InfoUI::SetUp_Cost()
+{
+	// 개당 가격 설정
+	switch (m_eType)
+	{
+	case CMaterial::Queen_Steel:
+	{
+		m_iCost = 100;
+	}
+	break;
+	case CMaterial::Queen_Titanium:
+	{
+		m_iCost = 200;
+	}
+	break;
+	case CMaterial::Queen_Tungsten:
+	{
+		m_iCost = 300;
+	}
+	break;
+	}
 }
 
 CMaterial_InfoUI * CMaterial_InfoUI::Create(_Device pGraphic_Device)

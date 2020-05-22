@@ -1,6 +1,6 @@
 #include "stdafx.h"
 #include "..\Headers\Expend_InfoUI.h"
-
+#include "UI_Manager.h"
 
 CExpend_InfoUI::CExpend_InfoUI(_Device pDevice)
 	: CUI(pDevice)
@@ -29,6 +29,18 @@ HRESULT CExpend_InfoUI::Ready_GameObject(void * pArg)
 	m_fSizeX = 1280.f;
 	m_fSizeY = 700.f;
 
+	m_pCostFont = static_cast<CPlayerFontUI*>(g_pManagement->Clone_GameObject_Return(L"GameObject_PlayerFontUI", nullptr));
+	if (FAILED(g_pManagement->Add_GameOject_ToLayer_NoClone(m_pCostFont, SCENE_MORTAL, L"Layer_PlayerUI", nullptr)))
+		return E_FAIL;
+	m_pCostFont->Set_UI_Size(15.f, 30.f);
+	m_pCostFont->Set_ViewZ(m_fViewZ - 0.1f);
+
+	m_pMyHazeFont = static_cast<CPlayerFontUI*>(g_pManagement->Clone_GameObject_Return(L"GameObject_PlayerFontUI", nullptr));
+	if (FAILED(g_pManagement->Add_GameOject_ToLayer_NoClone(m_pMyHazeFont, SCENE_MORTAL, L"Layer_PlayerUI", nullptr)))
+		return E_FAIL;
+	m_pMyHazeFont->Set_UI_Size(15.f, 30.f);
+	m_pMyHazeFont->Set_ViewZ(m_fViewZ - 0.1f);
+
 	return NOERROR;
 }
 
@@ -39,6 +51,8 @@ _int CExpend_InfoUI::Update_GameObject(_double TimeDelta)
 	m_pRendererCom->Add_RenderList(RENDER_UI, this);
 
 	D3DXMatrixOrthoLH(&m_matProj, WINCX, WINCY, 0.f, 1.f);
+
+	SetUp_Cost();
 
 	switch (m_eType)
 	{
@@ -62,8 +76,20 @@ _int CExpend_InfoUI::Update_GameObject(_double TimeDelta)
 		break;
 	}
 
-	if (!m_bIsActive)
-		m_eType = CExpendables::EXPEND_END;
+	
+	m_pCostFont->Set_Active(m_bIsActive);
+	m_pMyHazeFont->Set_Active(m_bIsActive);
+	
+	
+	m_pCostFont->Update_NumberValue(_float(m_iCost));
+	m_pCostFont->Set_UI_Pos(630.f, 580.f);
+
+	m_pMyHazeFont->Update_NumberValue(_float(CUI_Manager::Get_Instance()->Get_HazeUI()->Get_Haze_Cnt()));
+	m_pMyHazeFont->Set_UI_Pos(630.f, 600.f);
+
+
+	//if (!m_bIsActive)
+	//	m_eType = CExpendables::EXPEND_END;
 
 	return NO_EVENT;
 }
@@ -147,6 +173,43 @@ HRESULT CExpend_InfoUI::SetUp_ConstantTable()
 		return E_FAIL;
 
 	return NOERROR;
+}
+
+void CExpend_InfoUI::SetUp_Cost()
+{
+	switch (m_eType)
+	{
+	case CExpendables::Expend_MaximumUp:
+	{
+		m_iCost = 50;
+	}
+	break;
+	case CExpendables::Expend_Hp:
+	{
+		m_iCost = 30;
+	}
+	break;
+	case CExpendables::Expend_Return:
+	{
+		m_iCost = 100;
+	}
+	break;
+	case CExpendables::Expend_Blood:
+	{
+		m_iCost = 40;
+	}
+	break;
+	case CExpendables::Expend_Cheet:
+	{
+		m_iCost = 80;
+	}
+	break;
+	case CExpendables::Expend_SuperArmor:
+	{
+		m_iCost = 200;
+	}
+	break;
+	}
 }
 
 CExpend_InfoUI * CExpend_InfoUI::Create(_Device pGraphic_Device)

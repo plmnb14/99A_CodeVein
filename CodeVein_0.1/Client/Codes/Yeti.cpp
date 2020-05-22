@@ -3871,7 +3871,8 @@ void CYeti::Play_Dead()
 				}
 			}
 		}
-		else if (5.433f <= AniTime)
+
+		if (5.433f <= AniTime)
 		{
 			if (false == m_bEventTrigger[0])
 			{
