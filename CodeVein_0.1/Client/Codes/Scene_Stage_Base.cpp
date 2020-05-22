@@ -82,6 +82,12 @@ _int CScene_Stage_Base::Update_Scene(_double TimeDelta)
 {
 	Create_Fog(TimeDelta);
 
+	if (!m_bLoadingCheck && m_pLoading->Get_Finish())
+	{
+		m_bLoadingCheck = true;
+		g_pSoundManager->Stop_Sound(CSoundManager::Effect_SFX_01);
+		g_pSoundManager->Play_Sound(L"Loading_End.wav", CSoundManager::Effect_SFX_01, CSoundManager::Effect_Sound);
+	}
 	//====================================================================================================
 	// 만약에 하나의 사운드를 계속해서 재생하고 싶다면
 	// Update 문이나, 순회가능한 곳에 Play 해둔다면 Loop 재생이 가능함.
