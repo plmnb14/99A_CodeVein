@@ -1333,7 +1333,6 @@ _uint CLoading::Loading_Title()
 
 	++m_dwLoadingCnt;
 	g_pManagement->LoadMesh_FromPath(m_pGraphicDev, L"../../Data/Load_MeshData/Mesh_NPC_Path.dat");
-	g_pManagement->LoadMesh_FromPath(m_pGraphicDev, L"../../Data/Load_MeshData/Mesh_Dynamic_Path.dat");
 
 	//============================================================================================================
 	// 무기 불러오는 중
@@ -1368,8 +1367,6 @@ _uint CLoading::Loading_Title()
 	// 플레이어 스킬, 보스 이펙트 포함
 	//============================================================================================================
 	++m_dwLoadingCnt;
-	if (FAILED(CParticleMgr::Get_Instance()->Ready_ParticleManager()))
-		return E_FAIL;
 	//============================================================================================================
 	// UI 원형 생성
 	//============================================================================================================
@@ -1748,6 +1745,10 @@ _uint CLoading::Loading_MainStages()
 	{
 		//cout << "DynamicMesh 불러오는 중 . . ." << endl;
 		g_pManagement->LoadMesh_FromPath(m_pGraphicDev, L"../../Data/Load_MeshData/Mesh_Dynamic_Path.dat");
+
+		//
+		if (FAILED(CParticleMgr::Get_Instance()->Ready_ParticleManager()))
+			return E_FAIL;
 
 		//cout << "Load Stage_01 StaticMesh . . ." << endl;
 		g_pManagement->LoadMesh_FilesFromPath_AddProtoRenderObj(m_pGraphicDev, L"../../Data/Load_MeshData/Mesh_Static_Stage01_Path.dat");

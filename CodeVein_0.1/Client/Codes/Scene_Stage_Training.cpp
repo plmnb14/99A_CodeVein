@@ -295,7 +295,8 @@ HRESULT CScene_Stage_Training::Ready_Layer_Enemies()
 	//	&CActiveObject::ACTOBJ_INFO(L"Mesh_Itembox_Lid", _v3(0.f, 0.f, 0.f),  _v3(0.f, 0.f, 0.f), _v3(1.f, 1.f, 1.f),
 	//		0, 3/*¹Ú½º Lid*/));
 	//g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Boss", nullptr);
-
+	
+	return S_OK;
 }
 
 HRESULT CScene_Stage_Training::Ready_Layer_Environment()

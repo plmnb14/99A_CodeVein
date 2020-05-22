@@ -5,6 +5,7 @@
 #include "Material.h"
 
 BEGIN(Client)
+class CPlayerFontUI;
 class CMaterial_InfoUI final : public CUI
 {
 private:
@@ -25,6 +26,7 @@ public:
 private:
 	HRESULT Add_Component();
 	HRESULT SetUp_ConstantTable();
+	void	SetUp_Cost();
 
 private:
 	CTransform*				m_pTransformCom = nullptr;
@@ -34,7 +36,11 @@ private:
 	CBuffer_RcTex*			m_pBufferCom = nullptr;
 
 private:
-	CMaterial::MATERIAL_TYPE m_eType = CMaterial::MATERIAL_END;
+	CMaterial::MATERIAL_TYPE	m_eType = CMaterial::MATERIAL_END;
+	_uint						m_iCost = 0;
+	_uint						m_iMyHaze = 0;
+	CPlayerFontUI*				m_pCostFont = nullptr;
+	CPlayerFontUI*				m_pMyHazeFont = nullptr;
 
 public:
 	static CMaterial_InfoUI*	Create(_Device pGraphic_Device);
