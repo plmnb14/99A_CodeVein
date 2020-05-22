@@ -308,10 +308,7 @@ void CPet_DeerKing::Check_Dist()
 		PET_STATE_TYPE::DEAD == m_eFirstCategory)
 		return;
 
-	//Function_Change_Mode();
-
 	if (true == m_bIsSummon ||
-		true == m_bIsMoveAround ||
 		true == m_tObjParam.bIsAttack ||
 		true == m_tObjParam.bIsDodge ||
 		true == m_tObjParam.bIsHit)
@@ -328,16 +325,14 @@ void CPet_DeerKing::Check_Dist()
 		{
 			if (nullptr != m_pTarget)
 			{
-				if (false == m_pTarget->Get_Enable() ||
+				if (0.f >= m_pTarget->Get_Target_Hp() ||
+					false == m_pTarget->Get_Enable() ||
 					true == m_pTarget->Get_Dead())
 				{
-					Safe_Release(m_pTarget);
 					m_pTarget = nullptr;
 
 					Function_ResetAfterAtk();
 					m_tObjParam.bCanAttack = true;
-					m_fCoolDownCur = 0.f;
-					m_fCoolDownMax = 0.f;
 
 					Function_Find_Target();
 
@@ -369,16 +364,14 @@ void CPet_DeerKing::Check_Dist()
 
 				if (nullptr != m_pTarget)
 				{
-					if (false == m_pTarget->Get_Enable() ||
+					if (0.f >= m_pTarget->Get_Target_Hp() ||
+						false == m_pTarget->Get_Enable() ||
 						true == m_pTarget->Get_Dead())
 					{
-						Safe_Release(m_pTarget);
 						m_pTarget = nullptr;
 
 						Function_ResetAfterAtk();
 						m_tObjParam.bCanAttack = true;
-						m_fCoolDownCur = 0.f;
-						m_fCoolDownMax = 0.f;
 
 						Function_Find_Target();
 
@@ -427,17 +420,14 @@ void CPet_DeerKing::Check_Dist()
 		{
 			if (nullptr != m_pTarget)
 			{
-				if (false == m_pTarget->Get_Enable() ||
+				if (0.f >= m_pTarget->Get_Target_Hp() ||
+					false == m_pTarget->Get_Enable() ||
 					true == m_pTarget->Get_Dead())
 				{
-					Safe_Release(m_pTarget);
 					m_pTarget = nullptr;
-					m_eTarget = PET_TARGET_TYPE::PET_TARGET_NONE;
 
 					Function_ResetAfterAtk();
 					m_tObjParam.bCanAttack = true;
-					m_fCoolDownCur = 0.f;
-					m_fCoolDownMax = 0.f;
 
 					Function_CalcMoveSpeed(m_fAtkRange);
 
@@ -480,9 +470,7 @@ void CPet_DeerKing::Check_Dist()
 	{
 		if (nullptr != m_pTarget)
 		{
-			Safe_Release(m_pTarget);
 			m_pTarget = nullptr;
-
 			m_eTarget = PET_TARGET_TYPE::PET_TARGET_NONE;
 		}
 
@@ -542,10 +530,11 @@ void CPet_DeerKing::Check_Action()
 
 				if (nullptr != m_pTarget)
 				{
-					if (false == m_pTarget->Get_Enable() ||
+					if (0.f >= m_pTarget->Get_Target_Hp() ||
+						false == m_pTarget->Get_Enable() ||
 						true == m_pTarget->Get_Dead())
 					{
-						Safe_Release(m_pTarget);
+						m_eTarget = PET_TARGET_TYPE::PET_TARGET_NONE;
 						m_pTarget = nullptr;
 					}
 				}
@@ -554,6 +543,7 @@ void CPet_DeerKing::Check_Action()
 			}
 			else
 			{
+				m_bCanChase = true;
 				m_eFirstCategory = PET_STATE_TYPE::MOVE;
 				m_eSecondCategory_MOVE = PET_MOVE_TYPE::MOVE_RUN;
 			}
@@ -1228,14 +1218,23 @@ void CPet_DeerKing::Play_Deformation()
 {
 	if (false == m_bCanSummon)
 	{
+		Function_ResetAfterAtk();
+
+		m_tObjParam.bCanAttack = true;
+
+		m_bCanCoolDown = false;
+		m_bIsCoolDown = false;
+
 		m_bCanSummon = true;
 		m_bIsSummon = true;
+
 		m_pMesh->Reset_OldIndx();
+		m_eFirstCategory = PET_STATE_TYPE::IDLE;
+		m_eSecondCategory_IDLE = PET_IDLE_TYPE::IDLE_STAND;
 		m_eState = PET_DEERKING_ANI::Shield_Appearance_End;
 
 		g_pManagement->Create_Effect(L"Pet_SpawnParticle", m_pTransform->Get_Pos());
 		g_pManagement->Create_Effect(L"Pet_SpawnSmoke", m_pTransform->Get_Pos());
-		return;
 	}
 	else
 	{
@@ -1253,21 +1252,17 @@ void CPet_DeerKing::Play_Deformation()
 
 void CPet_DeerKing::Play_Idle()
 {
-	m_eState = PET_DEERKING_ANI::Idle;
-
-	switch (m_eTarget)
+	switch (m_eSecondCategory_IDLE)
 	{
-	case PET_TARGET_TYPE::PET_TARGET_BOSS:
-	case PET_TARGET_TYPE::PET_TARGET_MONSTER:
-		Function_RotateBody(m_pTarget);
+	case PET_IDLE_TYPE::IDLE_IDLE:
+		m_eState = PET_DEERKING_ANI::Idle;
+		if (PET_TARGET_TYPE::PET_TARGET_NONE == m_eTarget)
+			Function_RotateBody(m_pPlayer);
+		else
+			Function_RotateBody(m_pTarget);
 		break;
-
-	case PET_TARGET_TYPE::PET_TARGET_ITEM:
-		Function_RotateBody(m_pTarget);
-		break;
-
-	case PET_TARGET_TYPE::PET_TARGET_NONE:
-		Function_RotateBody(m_pPlayer);
+	case PET_IDLE_TYPE::IDLE_STAND:
+		Play_Deformation();
 		break;
 	}
 
@@ -1436,8 +1431,6 @@ HRESULT CPet_DeerKing::Ready_Status(void * pArg)
 
 	m_eType = PET_TYPE::PET_DEERKING;
 	m_eFirstCategory = PET_STATE_TYPE::IDLE;
-	m_eNowPetMode = PET_MODE_TYPE::PET_MODE_ATK;
-	m_eOldPetMdoe = PET_MODE_TYPE::PET_MODE_END;
 	m_eTarget = PET_TARGET_TYPE::PET_TARGET_NONE;
 	m_eFBLR = FBLR::FRONT;
 
@@ -1460,8 +1453,6 @@ HRESULT CPet_DeerKing::Ready_Status(void * pArg)
 	m_bIsCoolDown = false; //쿨타임 진행중 여부
 	m_bCanChooseAtkType = true; //공격타입 고정용
 	m_bIsCombo = false; //콤보 진행중
-	m_bCanMoveAround = true; //경계 여부
-	m_bIsMoveAround = false; //경게 진행중
 	m_bCanIdle = true; //일상 가능
 	m_bIsIdle = false; //일상 진행중 아님
 

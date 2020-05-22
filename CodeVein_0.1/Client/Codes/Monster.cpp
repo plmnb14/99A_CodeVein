@@ -435,7 +435,7 @@ void CMonster::Check_CollisionHit(list<CGameObject*> plistGameObject)
 					if (false == iter->Get_Target_IsDodge())
 					{
 						iter->Set_Target_CanHit(false);
-						iter->Add_Target_Hp(m_tObjParam.fDamage);
+						iter->Hit_Target(m_tObjParam.fDamage);
 
 						if (iter->Get_Target_IsHit())
 							iter->Set_HitAgain(true);
@@ -768,6 +768,21 @@ void CMonster::Function_ResetAfterAtk()
 		m_bEventTrigger[i] = false;
 
 	return;
+}
+
+void CMonster::Give_Mana_To_Player(_byte _Mana)
+{
+	CGameObject* pPlayer = g_pManagement->Get_GameObjectBack(L"Layer_Player", SCENE_MORTAL);
+
+	if (nullptr == pPlayer)
+		return;
+
+	// 마나 더해줌.
+	pPlayer->Add_Target_Mana(_Mana);
+	
+	// 현재 마나가 최대보다 더 많다면 최대치로 맞춰줌.
+	if (pPlayer->Get_Target_Mana_Max() < pPlayer->Get_Target_Mana_Cur())
+		pPlayer->Set_Target_Mana_Cur(pPlayer->Get_Target_Mana_Max());
 }
 
 void CMonster::Free()

@@ -35,7 +35,7 @@ public:
 	virtual void			Set_ParentMatrix(_mat* _matParent) { m_pmatParent = _matParent; }
 
 	void					SetUp_Animation(_uint iIndex, _bool _bOffLerp);
-
+	void					Set_Invisible(_bool _bInvisible) { m_bInvisible = _bInvisible; }
 public:
 	virtual _int	Update_GameObject(_double TimeDelta);
 	_int	Update_GameObject(_double TimeDelta, _bool bClearCol);
@@ -92,7 +92,7 @@ private:
 	_uint					m_eAnimLower = 0;
 	_uint					m_eAnimRight = 0;
 	_uint					m_eAnimLeft = 0;
-
+	_bool					m_bInvisible = false;
 public:
 	static CCostume_Outer* Create(_Device pGraphicDev);
 	virtual CGameObject* Clone_GameObject(void* pArg);

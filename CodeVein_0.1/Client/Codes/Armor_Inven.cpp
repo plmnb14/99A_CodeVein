@@ -57,14 +57,16 @@ _int CArmor_Inven::Update_GameObject(_double TimeDelta)
 	{
 		SetUp_SubUI_Active(false);
 		m_bIsSubActive = false;
+
+		CUI_Manager::Get_Instance()->Get_MouseUI()->Set_Active(false);
 	}
 
 	if (!m_bIsActive)
 		return NO_EVENT;
-
+	else
+		CUI_Manager::Get_Instance()->Get_MouseUI()->Set_Active(true);
+	
 	CUI::Update_GameObject(TimeDelta);
-	
-	
 
 	m_pRendererCom->Add_RenderList(RENDER_UI, this);
 

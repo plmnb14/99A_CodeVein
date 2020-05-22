@@ -69,6 +69,9 @@ private:
 	CWeapon_Inven_InShop*			m_pArmorSellInven;
 	CWeapon_Inven_InShop*			m_pWeaponUpgradeInven;
 	CWeapon_Inven_InShop*			m_pArmorUpgradeInven;
+
+	_bool					m_bIsSubActive = false;
+
 public:
 	static CWeaponShopUI*	Create(_Device pGraphic_Device);
 	virtual CGameObject*	Clone_GameObject(void* pArg);

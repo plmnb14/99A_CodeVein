@@ -103,13 +103,6 @@ public:
 		PET_TYPE_END
 	};
 
-	enum PET_MODE_TYPE
-	{
-		PET_MODE_ATK, //공격대상->아이템
-		PET_MODE_UTILL, //아이템->공격대상
-		PET_MODE_END
-	};
-
 	enum PET_TARGET_TYPE
 	{
 		PET_TARGET_BOSS,
@@ -191,9 +184,6 @@ public:
 	virtual PET_TYPE Get_PetType() { return m_eType; }
 	virtual void Set_PetType(PET_TYPE _eType) { m_eType = _eType; }
 
-	PET_MODE_TYPE Get_Pet_Mode() { return m_eNowPetMode; }
-	void Set_Pet_Mode(PET_MODE_TYPE _eMode) { m_eNowPetMode = _eMode; }
-
 	virtual void Function_FBLR(CGameObject* _pGameObject);
 	virtual void Function_RotateBody(CGameObject* _pGameObject);
 	virtual void Function_MoveAround(CGameObject* _pGameObject, _float _fSpeed, _v3 _vDir = { V3_NULL });
@@ -203,7 +193,6 @@ public:
 	virtual void Function_CalcMoveSpeed(_float _fMidDist);
 	virtual void Function_Find_Target();
 	virtual void Function_ResetAfterAtk();
-	virtual void Function_Change_Mode();
 	virtual void Function_Check_Navi();
 	virtual void Function_Teleport_Near_Player();
 
@@ -232,8 +221,6 @@ protected:
 	PET_DEAD_TYPE		m_eSecondCategory_DEAD = PET_DEAD_TYPE::DEAD_END;
 
 	PET_TARGET_TYPE		m_eTarget = PET_TARGET_TYPE::PET_TARGET_TYPE_END;
-	PET_MODE_TYPE		m_eNowPetMode = PET_MODE_TYPE::PET_MODE_END;
-	PET_MODE_TYPE		m_eOldPetMdoe = PET_MODE_TYPE::PET_MODE_END;
 	FBLR				m_eFBLR= FBLR::FRONT;
 
 	PET_TYPE			m_eType = PET_TYPE::PET_TYPE_END;
@@ -279,9 +266,6 @@ protected:
 
 	_bool				m_bCanIdle =true; //기본 동작 진행여부
 	_bool				m_bIsIdle =false; //기본 동작 진행중 여부
-
-	_bool				m_bCanMoveAround = true; //경계 가능 여부
-	_bool				m_bIsMoveAround = false; //경계 진행중 여부
 
 	_bool				m_bCanChooseAtkType = true; //일반,콤보 공격 여부
 	_bool				m_bIsCombo = false; //콤보 진행 여부

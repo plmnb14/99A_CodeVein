@@ -266,7 +266,7 @@ void CMaterialSellUI::Sell_Item()
 											 // 인벤에서 삭제
 	CMaterial_Inven* pMtrl_Inven = CUI_Manager::Get_Instance()->Get_Material_Inven();
 
-	LOOP(m_iSellCnt)
+	LOOP(_int(m_iSellCnt))
 		pMtrl_Inven->Sell_Item(m_pSellSlot);
 
 	CHazeUI* pHazeUI = CUI_Manager::Get_Instance()->Get_HazeUI();

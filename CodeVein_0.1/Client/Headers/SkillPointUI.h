@@ -26,6 +26,7 @@ public:
 private:
 	HRESULT Add_Component();
 	HRESULT SetUp_ConstantTable();
+	void Late_Init();
 
 private:
 	CTransform*				m_pTransformCom = nullptr;
@@ -39,7 +40,7 @@ private:
 	_uint					m_iMaxSkillPoint = 20;
 	CPlayerFontUI*			m_pCurPointFont = nullptr;
 	CPlayerFontUI*			m_pMaxPointFont = nullptr;
-
+	_bool					m_bLateInit = false;
 public:
 	static CSkillPointUI*	Create(_Device pGraphic_Device);
 	virtual CGameObject*	Clone_GameObject(void* pArg);
