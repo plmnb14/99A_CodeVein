@@ -42,13 +42,10 @@ void CStageAgent::Change_Stage(_Device _pGraphicDev)
 			g_eSceneID_Cur == SCENE_STAGE_03 ? 3 :
 			g_eSceneID_Cur == SCENE_STAGE_04 ? 4 : 999;
 
-		if (999 != eStageIdx)
-		{
 			CScriptManager::Get_Instance()->Set_StageIdx(eStageIdx);
 			CScriptManager::Get_Instance()->Reset_ScriptEvent(eStageIdx, true);
+			CScriptManager::Get_Instance()->Reset_Script_DynmicObject();
 			CScriptManager::Get_Instance()->Ready_Script_DynamicObject(eStageIdx);
-		}
-	//}
 
 	// ¾À ¼¼ÆÃ
 	g_pManagement->SetUp_CurrentScene(pScene);

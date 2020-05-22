@@ -222,7 +222,21 @@ void CYetiTrap::Check_Dist()
 		_float fDist = V3_LENGTH(&(TARGET_TO_TRANS(m_pPlayer)->Get_Pos() - m_pTransform->Get_Pos()));
 
 		if (fDist < 1.f)
+		{
 			m_bCanSummonYeti = true;
+			if (!m_bEffect)
+			{
+				m_bEffect = true;
+
+				_v3 vPos = m_pTransform->Get_Pos();
+				CParticleMgr::Get_Instance()->Create_Effect(L"DeerKing_Snow_Up_Particle_0", vPos);
+				CParticleMgr::Get_Instance()->Create_Effect(L"DeerKing_Snow_Up_Particle_0", vPos);
+				CParticleMgr::Get_Instance()->Create_Effect(L"DeerKing_IceSmoke_0", vPos);
+				CParticleMgr::Get_Instance()->Create_Effect(L"DeerKing_IceSmoke_1", vPos);
+				CParticleMgr::Get_Instance()->Create_Effect(L"DeerKing_IceSmoke_Mid_0", vPos);
+				CParticleMgr::Get_Instance()->Create_Effect(L"DeerKing_IceSmoke_Mid_1", vPos);
+			}
+		}
 	}
 
 	return;
