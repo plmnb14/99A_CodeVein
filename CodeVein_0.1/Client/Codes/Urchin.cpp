@@ -1070,8 +1070,9 @@ void CUrchin::Play_Dead()
 		{
 			m_bEnable = false;
 			m_dAniPlayMul = 0;
-		}\
-		else if (1.967f <= AniTime)
+		}
+
+		if (1.967f <= AniTime)
 		{
 			if (false == m_bEventTrigger[0])
 			{
