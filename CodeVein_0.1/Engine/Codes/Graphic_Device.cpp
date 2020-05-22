@@ -116,16 +116,12 @@ void Engine::CGraphic_Device::Free(void)
 {
 	_ulong dwRefCnt = 0;
 
-	if (dwRefCnt = Engine::Safe_Release(m_pFont))
-		MSG_BOX("m_pGraphicDev Release Failed");
+	dwRefCnt = Engine::Safe_Release(m_pFont);
 
-	if (dwRefCnt = Engine::Safe_Release(m_pSprite))
-		MSG_BOX("m_pGraphicDev Release Failed");
+	dwRefCnt = Engine::Safe_Release(m_pSprite);
 
-	if(dwRefCnt = Engine::Safe_Release(m_pGraphicDev))
-		MSG_BOX("m_pGraphicDev Release Failed");
+	dwRefCnt = Engine::Safe_Release(m_pGraphicDev);
 
-	if(dwRefCnt = Engine::Safe_Release(m_pSDK))
-		MSG_BOX("m_pSDK Release Failed");
+	dwRefCnt = Engine::Safe_Release(m_pSDK);
 }
 

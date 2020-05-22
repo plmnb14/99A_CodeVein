@@ -43,6 +43,9 @@ HRESULT CScene_Stage_Base::Ready_Scene()
 	pRenderer->Set_UseLinearFog(true);
 	Safe_Release(pRenderer);
 
+	g_pSoundManager->Stop_Sound(CSoundManager::Background_Loop);
+	g_pSoundManager->Stop_Sound(CSoundManager::Ambient_Loop);
+
 	g_pSoundManager->Set_Volume(CSoundManager::BGM_Volume, 1.f);
 	g_pSoundManager->Stop_Sound(CSoundManager::Ambient_Loop);
 	g_pSoundManager->Play_BGM(L"AMB_BASE_000.ogg", true);

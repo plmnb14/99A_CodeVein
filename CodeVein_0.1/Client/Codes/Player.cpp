@@ -148,7 +148,7 @@ HRESULT CPlayer::Ready_GameObject(void * pArg)
 	m_fStaminaCost_Dodge = 20.f;
 	m_fStaminaCost_WeakAttack = 7.f;
 	m_fStaminaCost_HeavyAttack = 12.f;
-	m_fStamina_RecoverySpeed = 3.5f;
+	m_fStamina_RecoverySpeed = 15.f;
 
 	m_pHair = (CCostume_Hair*)g_pManagement->Clone_GameObject_Return(L"GameObject_Costume_Hair", 
 		&CCostume_Hair::_INFO(&m_pTransform->Get_WorldMat(), m_matBones[Bone_Head], _v4(1.f, 0.f, 0.f, 1.f)));
@@ -220,6 +220,8 @@ _int CPlayer::Update_GameObject(_double TimeDelta)
 	m_pScriptManager->Update_ScriptMgr(TimeDelta, m_pNavMesh->Get_SubSetIndex(), m_pNavMesh->Get_CellIndex());
 
 	m_pScreenCornerEffect->Update_GameObject(TimeDelta);
+
+	FootWalkTimerUpdate(TimeDelta);
 
 	return NO_EVENT;
 }
@@ -478,6 +480,11 @@ void CPlayer::Reset_OldAnimations()
 
 void CPlayer::Teleport_ResetOptions(_int _eSceneID, _int _eTeleportID)
 {
+	m_bIsDead = false;
+	m_tObjParam.fHp_Cur = m_tObjParam.fHoldGage_Max;
+	m_tObjParam.sMana_Cur = m_tObjParam.sMana_Max;
+	m_tObjParam.fStamina_Cur = m_tObjParam.fStamina_Max;
+
 	_v3 vShadowLightPos = V3_NULL;
 	_v3 vPos = V3_NULL;
 	_float fAngle = 0.f;
@@ -585,6 +592,29 @@ void CPlayer::Teleport_ResetOptions(_int _eSceneID, _int _eTeleportID)
 
 	CCameraMgr::Get_Instance()->Set_LockAngleX(fAngle);
 	CCameraMgr::Get_Instance()->Set_CamView(BACK_VIEW);
+}
+
+void CPlayer::FootWalkTimerUpdate(_double _deltaTime)
+{
+	if (m_eActState == ACT_Walk || m_eActState == ACT_Run || m_eActState == ACT_Dash)
+	{
+		if (false == m_bCanPlayWalkSound)
+		{
+			m_fFootWalkTimer_Cur += _deltaTime;
+
+			if (m_fFootWalkTimer_Cur >= m_fFootWalkTimer_Max)
+			{
+				m_fFootWalkTimer_Cur = m_fFootWalkTimer_Max;
+				m_bCanPlayWalkSound = true;
+			}
+		}
+	}
+	else
+	{
+		m_bCanPlayWalkSound = true;
+		m_fFootWalkTimer_Cur = 0.f;
+		m_fFootWalkTimer_Max = 0.5f;
+	}
 }
 
 void CPlayer::Parameter_State()
@@ -2793,13 +2823,102 @@ void CPlayer::Play_Run()
 			m_eMainWpnState == WEAPON_Halberd ? Halberd_BlendRun : m_eAnim_Lower);
 	}
 
-	g_pManagement->Create_Effect_Offset(L"Player_FootSmoke", 0.5f, m_pTransform->Get_Pos());
-
-	if (SCENE_STAGE_02 == g_eSceneID_Cur)
+	if (false == m_bOnAiming)
 	{
-		g_pManagement->Create_Effect_Offset(L"Player_FootSmoke_Snow", 0.5f, m_pTransform->Get_Pos());
-		g_pManagement->Create_Effect_Offset(L"Player_FootSmoke_SnowChunk", 0.5f, m_pTransform->Get_Pos());
-		g_pManagement->Create_Effect_Offset(L"Player_FootSmoke_SnowUp", 0.5f, m_pTransform->Get_Pos());
+		m_fFootWalkTimer_Max = 0.5f;
+
+		if (m_bCanPlayWalkSound)
+		{
+			m_fFootWalkTimer_Cur = 0.f;
+			m_bCanPlayWalkSound = false;
+
+			_int iSwitchNum = CALC::Random_Num(0, 2);
+
+			switch (iSwitchNum)
+			{
+			case 0:
+			{
+				g_pSoundManager->Stop_Sound(CSoundManager::Player_FootStep);
+				g_pSoundManager->Play_Sound(L"FootHeel_01.wav", CSoundManager::Player_FootStep, CSoundManager::Effect_Sound);
+
+				break;
+			}
+			case 1:
+			{
+				g_pSoundManager->Stop_Sound(CSoundManager::Player_FootStep);
+				g_pSoundManager->Play_Sound(L"FootHeel_02.wav", CSoundManager::Player_FootStep, CSoundManager::Effect_Sound);
+
+
+				break;
+			}
+			case 2:
+			{
+				g_pSoundManager->Stop_Sound(CSoundManager::Player_FootStep);
+				g_pSoundManager->Play_Sound(L"FootHeel_03.wav", CSoundManager::Player_FootStep, CSoundManager::Effect_Sound);
+
+
+				break;
+			}
+			}
+		}
+
+		g_pManagement->Create_Effect_Offset(L"Player_FootSmoke", 0.5f, m_pTransform->Get_Pos());
+
+		if (SCENE_STAGE_02 == g_eSceneID_Cur)
+		{
+			g_pManagement->Create_Effect_Offset(L"Player_FootSmoke_Snow", 0.5f, m_pTransform->Get_Pos());
+			g_pManagement->Create_Effect_Offset(L"Player_FootSmoke_SnowChunk", 0.5f, m_pTransform->Get_Pos());
+			g_pManagement->Create_Effect_Offset(L"Player_FootSmoke_SnowUp", 0.5f, m_pTransform->Get_Pos());
+		}
+	}
+
+	else
+	{
+		m_fFootWalkTimer_Max = 0.4f;
+
+		if (m_bCanPlayWalkSound)
+		{
+			m_fFootWalkTimer_Cur = 0.f;
+			m_bCanPlayWalkSound = false;
+
+			_int iSwitchNum = CALC::Random_Num(0, 2);
+
+			switch (iSwitchNum)
+			{
+			case 0:
+			{
+				g_pSoundManager->Stop_Sound(CSoundManager::Player_FootStep);
+				g_pSoundManager->Play_Sound(L"FootHeel_01.wav", CSoundManager::Player_FootStep, CSoundManager::Effect_Sound);
+
+				break;
+			}
+			case 1:
+			{
+				g_pSoundManager->Stop_Sound(CSoundManager::Player_FootStep);
+				g_pSoundManager->Play_Sound(L"FootHeel_02.wav", CSoundManager::Player_FootStep, CSoundManager::Effect_Sound);
+
+
+				break;
+			}
+			case 2:
+			{
+				g_pSoundManager->Stop_Sound(CSoundManager::Player_FootStep);
+				g_pSoundManager->Play_Sound(L"FootHeel_03.wav", CSoundManager::Player_FootStep, CSoundManager::Effect_Sound);
+
+
+				break;
+			}
+			}
+		}
+
+		g_pManagement->Create_Effect_Offset(L"Player_FootSmoke", 0.5f, m_pTransform->Get_Pos());
+
+		if (SCENE_STAGE_02 == g_eSceneID_Cur)
+		{
+			g_pManagement->Create_Effect_Offset(L"Player_FootSmoke_Snow", 0.5f, m_pTransform->Get_Pos());
+			g_pManagement->Create_Effect_Offset(L"Player_FootSmoke_SnowChunk", 0.5f, m_pTransform->Get_Pos());
+			g_pManagement->Create_Effect_Offset(L"Player_FootSmoke_SnowUp", 0.5f, m_pTransform->Get_Pos());
+		}
 	}
 }
 
@@ -2901,7 +3020,103 @@ void CPlayer::Play_Dash()
 			m_eMainWpnState == WEAPON_Halberd ? Halberd_BlendDash : m_eAnim_Lower);
 	}
 
-	g_pManagement->Create_Effect_Offset(L"Player_FootSmoke", 0.35f, m_pTransform->Get_Pos());
+	if (false == m_bOnAiming)
+	{
+		m_fFootWalkTimer_Max = 0.35f;
+
+		if (m_bCanPlayWalkSound)
+		{
+			m_fFootWalkTimer_Cur = 0.f;
+			m_bCanPlayWalkSound = false;
+
+			_int iSwitchNum = CALC::Random_Num(0, 2);
+
+			switch (iSwitchNum)
+			{
+			case 0:
+			{
+				g_pSoundManager->Stop_Sound(CSoundManager::Player_FootStep);
+				g_pSoundManager->Play_Sound(L"FootHeel_01.wav", CSoundManager::Player_FootStep, CSoundManager::Effect_Sound);
+
+				break;
+			}
+			case 1:
+			{
+				g_pSoundManager->Stop_Sound(CSoundManager::Player_FootStep);
+				g_pSoundManager->Play_Sound(L"FootHeel_02.wav", CSoundManager::Player_FootStep, CSoundManager::Effect_Sound);
+
+
+				break;
+			}
+			case 2:
+			{
+				g_pSoundManager->Stop_Sound(CSoundManager::Player_FootStep);
+				g_pSoundManager->Play_Sound(L"FootHeel_03.wav", CSoundManager::Player_FootStep, CSoundManager::Effect_Sound);
+
+
+				break;
+			}
+			}
+		}
+
+		g_pManagement->Create_Effect_Offset(L"Player_FootSmoke", 0.35f, m_pTransform->Get_Pos());
+
+		if (SCENE_STAGE_02 == g_eSceneID_Cur)
+		{
+			g_pManagement->Create_Effect_Offset(L"Player_FootSmoke_Snow", 0.35f, m_pTransform->Get_Pos());
+			g_pManagement->Create_Effect_Offset(L"Player_FootSmoke_SnowChunk", 0.35f, m_pTransform->Get_Pos());
+			g_pManagement->Create_Effect_Offset(L"Player_FootSmoke_SnowUp", 0.35f, m_pTransform->Get_Pos());
+		}
+	}
+
+	else
+	{
+		m_fFootWalkTimer_Max = 0.4f;
+
+		if (m_bCanPlayWalkSound)
+		{
+			m_fFootWalkTimer_Cur = 0.f;
+			m_bCanPlayWalkSound = false;
+
+			_int iSwitchNum = CALC::Random_Num(0, 2);
+
+			switch (iSwitchNum)
+			{
+			case 0:
+			{
+				g_pSoundManager->Stop_Sound(CSoundManager::Player_FootStep);
+				g_pSoundManager->Play_Sound(L"FootHeel_01.wav", CSoundManager::Player_FootStep, CSoundManager::Effect_Sound);
+
+				break;
+			}
+			case 1:
+			{
+				g_pSoundManager->Stop_Sound(CSoundManager::Player_FootStep);
+				g_pSoundManager->Play_Sound(L"FootHeel_02.wav", CSoundManager::Player_FootStep, CSoundManager::Effect_Sound);
+
+
+				break;
+			}
+			case 2:
+			{
+				g_pSoundManager->Stop_Sound(CSoundManager::Player_FootStep);
+				g_pSoundManager->Play_Sound(L"FootHeel_03.wav", CSoundManager::Player_FootStep, CSoundManager::Effect_Sound);
+
+
+				break;
+			}
+			}
+		}
+
+		g_pManagement->Create_Effect_Offset(L"Player_FootSmoke", 0.5f, m_pTransform->Get_Pos());
+
+		if (SCENE_STAGE_02 == g_eSceneID_Cur)
+		{
+			g_pManagement->Create_Effect_Offset(L"Player_FootSmoke_Snow", 0.5f, m_pTransform->Get_Pos());
+			g_pManagement->Create_Effect_Offset(L"Player_FootSmoke_SnowChunk", 0.5f, m_pTransform->Get_Pos());
+			g_pManagement->Create_Effect_Offset(L"Player_FootSmoke_SnowUp", 0.5f, m_pTransform->Get_Pos());
+		}
+	}
 }
 
 void CPlayer::Play_MoveDelay()
@@ -2996,14 +3211,15 @@ void CPlayer::Play_MoveDelay()
 		// 한손 일때
 		if (m_bOneHand)
 		{
-			m_eAnim_LeftArm = m_eAnim_RightArm =
+			m_eAnim_LeftArm =
+				m_eAnim_RightArm =
 				(m_eMainWpnState == WEAPON_Gun ? Gun_BlendWalk :
 					m_eMainWpnState == WEAPON_Halberd ? Halberd_BlendWalk: m_eAnim_Lower);
 		}
 		// 양손 일때
 		else
 		{
-			m_eAnim_RightArm =
+			m_eAnim_RightArm = 
 				(m_eMainWpnState == WEAPON_Hammer ? Hammer_BlendWalk :
 					m_eMainWpnState == WEAPON_LSword ? Lsword_BlendWalk : Lsword_BlendWalk);
 		}
@@ -3984,6 +4200,44 @@ void CPlayer::Play_Hit()
 {
 	if (false == m_tObjParam.bIsHit)
 	{
+		_int iSwitchNum = CALC::Random_Num(0, 3);
+
+		switch (iSwitchNum)
+		{
+		case 0:
+		{
+			g_pSoundManager->Stop_Sound(CSoundManager::Player_Hit);
+			g_pSoundManager->Play_Sound(L"Player_Hit_01.wav", CSoundManager::Player_Hit, CSoundManager::Effect_Sound);
+
+			break;
+		}
+		case 1:
+		{
+			g_pSoundManager->Stop_Sound(CSoundManager::Player_Hit);
+			g_pSoundManager->Play_Sound(L"Player_Hit_02.wav", CSoundManager::Player_Hit, CSoundManager::Effect_Sound);
+
+
+			break;
+		}
+		case 2:
+		{
+			g_pSoundManager->Stop_Sound(CSoundManager::Player_Hit);
+			g_pSoundManager->Play_Sound(L"Player_Hit_03.wav", CSoundManager::Player_Hit, CSoundManager::Effect_Sound);
+
+
+			break;
+		}
+
+		case 3:
+		{
+			g_pSoundManager->Stop_Sound(CSoundManager::Player_Hit);
+			g_pSoundManager->Play_Sound(L"Player_Hit_04.wav", CSoundManager::Player_Hit, CSoundManager::Effect_Sound);
+
+
+			break;
+		}
+		}
+
 		m_pScreenCornerEffect->Set_Enable(true);
 		m_pScreenCornerEffect->Set_LifeTime(0.5f);
 		m_pScreenCornerEffect->Set_OnLifeTime(true);
@@ -4851,15 +5105,15 @@ void CPlayer::Play_WeaponChange()
 
 			m_bChangeWeapon = false;
 
-			m_bOneHand = (
-				m_eMainWpnState == WEAPON_SSword ? false :
-				m_eMainWpnState == WEAPON_LSword ? true :
-				m_eMainWpnState == WEAPON_Halberd ? false :
-				m_eMainWpnState == WEAPON_Gun ? false :
-				m_eMainWpnState == WEAPON_Hammer ? true : true
-				);
-
 			m_eMainWpnState = m_pWeapon[m_eActiveSlot]->Get_WeaponType();
+
+			m_bOneHand = (
+				m_eMainWpnState == WEAPON_SSword ? true :
+				m_eMainWpnState == WEAPON_LSword ? false :
+				m_eMainWpnState == WEAPON_Halberd ? true :
+				m_eMainWpnState == WEAPON_Gun ? true :
+				m_eMainWpnState == WEAPON_Hammer ? false : true
+				);
 			
 			m_bOnInvenChange = false;
 
@@ -5047,6 +5301,9 @@ void CPlayer::Play_Summon()
 {
 	if (false == m_bOnSummon)
 	{
+		g_pSoundManager->Stop_Sound(CSoundManager::Player_SFX_03);
+		g_pSoundManager->Play_Sound(L"Go_To_Next_01.wav", CSoundManager::Player_SFX_03, CSoundManager::Effect_Sound);
+
 		m_bOnSummon = true;
 
 		m_eAnim_Upper = Cmn_CheckPoint_End;
@@ -7234,9 +7491,12 @@ void CPlayer::Play_Ssword_WeakAtk()
 					m_bEventTrigger[0] = true;
 
 					g_pSoundManager->Stop_Sound(CSoundManager::Player_SFX_01);
-					g_pSoundManager->Play_Sound(L"SSword_Swing_02.wav", CSoundManager::Player_SFX_01, CSoundManager::Effect_Sound);
+					g_pSoundManager->Play_Sound(L"AttackReady.wav", CSoundManager::Player_SFX_01, CSoundManager::Effect_Sound);
 
 					g_pSoundManager->Stop_Sound(CSoundManager::Player_SFX_02);
+					g_pSoundManager->Play_Sound(L"Swing_Wind_01.wav", CSoundManager::Player_SFX_01, CSoundManager::Effect_Sound);
+
+					g_pSoundManager->Stop_Sound(CSoundManager::Player_SFX_03);
 					g_pSoundManager->Play_Sound(L"Swing_Fast_02.wav", CSoundManager::Player_SFX_02, CSoundManager::Effect_Sound);
 
 
@@ -7259,9 +7519,6 @@ void CPlayer::Play_Ssword_WeakAtk()
 					if (m_bEventTrigger[1] == false)
 					{
 						m_bEventTrigger[1] = true;
-
-						g_pSoundManager->Stop_Sound(CSoundManager::Player_SFX_01);
-						g_pSoundManager->Play_Sound(L"AttackReady.wav", CSoundManager::Player_SFX_01, CSoundManager::Effect_Sound);
 
 						m_pWeapon[m_eActiveSlot]->Set_Target_CanAttack(false);
 					}
@@ -7425,6 +7682,14 @@ void CPlayer::Play_Ssword_WeakAtk()
 				{
 					m_bEventTrigger[0] = true;
 
+
+
+					g_pSoundManager->Stop_Sound(CSoundManager::Player_SFX_01);
+					g_pSoundManager->Play_Sound(L"SSword_Swing_03.wav", CSoundManager::Player_SFX_01, CSoundManager::Effect_Sound);
+
+					g_pSoundManager->Stop_Sound(CSoundManager::Player_SFX_02);
+					g_pSoundManager->Play_Sound(L"Swing_Fast_02.wav", CSoundManager::Player_SFX_02, CSoundManager::Effect_Sound);
+
 					m_pWeapon[m_eActiveSlot]->Set_Target_CanAttack(true);
 					m_pWeapon[m_eActiveSlot]->Set_Enable_Trail(true);
 					m_pWeapon[m_eActiveSlot]->Set_Enable_Record(true);
@@ -7498,6 +7763,20 @@ void CPlayer::Play_Ssword_WeakAtk()
 					}
 				}
 
+				else if (m_pDynamicMesh->Get_TrackInfo().Position > 0.6f)
+				{
+					if (m_bEventTrigger[10] == false)
+					{
+						m_bEventTrigger[10] = true;
+
+						g_pSoundManager->Stop_Sound(CSoundManager::Player_SFX_01);
+						g_pSoundManager->Play_Sound(L"SSword_Swing_01.wav", CSoundManager::Player_SFX_01, CSoundManager::Effect_Sound);
+
+						g_pSoundManager->Stop_Sound(CSoundManager::Player_SFX_02);
+						g_pSoundManager->Play_Sound(L"Swing_Fast_02.wav", CSoundManager::Player_SFX_02, CSoundManager::Effect_Sound);
+					}
+				}
+
 				else if (m_pDynamicMesh->Get_TrackInfo().Position > 0.53f)
 				{
 					if (m_bEventTrigger[0] == false)
@@ -7562,6 +7841,24 @@ void CPlayer::Play_Ssword_WeakAtk()
 
 					m_pWeapon[m_eActiveSlot]->Set_Target_CanAttack(false);
 					m_pWeapon[m_eActiveSlot]->Set_Enable_Record(false);
+				}
+			}
+
+			else if (m_pDynamicMesh->Get_TrackInfo().Position > 0.4f)
+			{
+				if (m_bEventTrigger[10] == false)
+				{
+					m_bEventTrigger[10] = true;
+
+					g_pSoundManager->Stop_Sound(CSoundManager::Player_SFX_01);
+					g_pSoundManager->Play_Sound(L"SSword_Swing_03.wav", CSoundManager::Player_SFX_01, CSoundManager::Effect_Sound);
+
+					g_pSoundManager->Stop_Sound(CSoundManager::Player_SFX_02);
+					g_pSoundManager->Play_Sound(L"Swing_Fast_02.wav", CSoundManager::Player_SFX_02, CSoundManager::Effect_Sound);
+
+					m_pWeapon[m_eActiveSlot]->Set_Target_CanAttack(true);
+					m_pWeapon[m_eActiveSlot]->Set_Enable_Trail(true);
+					m_pWeapon[m_eActiveSlot]->Set_Enable_Record(true);
 				}
 			}
 
@@ -7694,6 +7991,12 @@ void CPlayer::Play_Ssword_HeavyAtk()
 				{
 					m_bEventTrigger[2] = true;
 
+					g_pSoundManager->Stop_Sound(CSoundManager::Player_SFX_01);
+					g_pSoundManager->Play_Sound(L"SLASH_Sword_012.wav", CSoundManager::Player_SFX_01, CSoundManager::Effect_Sound);
+
+					g_pSoundManager->Stop_Sound(CSoundManager::Player_SFX_02);
+					g_pSoundManager->Play_Sound(L"Swing_Fast_02.wav", CSoundManager::Player_SFX_02, CSoundManager::Effect_Sound);
+
 					m_pWeapon[m_eActiveSlot]->Set_Target_CanAttack(true);
 				}
 			}
@@ -7713,6 +8016,12 @@ void CPlayer::Play_Ssword_HeavyAtk()
 				if (m_bEventTrigger[0] == false)
 				{
 					m_bEventTrigger[0] = true;
+
+					g_pSoundManager->Stop_Sound(CSoundManager::Player_SFX_01);
+					g_pSoundManager->Play_Sound(L"SSword_Swing_01.wav", CSoundManager::Player_SFX_01, CSoundManager::Effect_Sound);
+
+					g_pSoundManager->Stop_Sound(CSoundManager::Player_SFX_02);
+					g_pSoundManager->Play_Sound(L"Swing_Fast_02.wav", CSoundManager::Player_SFX_02, CSoundManager::Effect_Sound);
 
 					m_pWeapon[m_eActiveSlot]->Set_Enable_Trail(true);
 					m_pWeapon[m_eActiveSlot]->Set_Target_CanAttack(true);
@@ -7778,6 +8087,13 @@ void CPlayer::Play_Ssword_HeavyAtk()
 				if (m_bEventTrigger[0] == false)
 				{
 					m_bEventTrigger[0] = true;
+
+					g_pSoundManager->Stop_Sound(CSoundManager::Player_SFX_01);
+					g_pSoundManager->Play_Sound(L"SLASH_Sword_012.wav", CSoundManager::Player_SFX_01, CSoundManager::Effect_Sound);
+
+					g_pSoundManager->Stop_Sound(CSoundManager::Player_SFX_02);
+					g_pSoundManager->Play_Sound(L"Swing_Fast_02.wav", CSoundManager::Player_SFX_02, CSoundManager::Effect_Sound);
+
 
 					m_pWeapon[m_eActiveSlot]->Set_Enable_Trail(true);
 					m_pWeapon[m_eActiveSlot]->Set_Target_CanAttack(true);
@@ -8591,6 +8907,8 @@ void CPlayer::Play_Halverd_WeakAtk()
 			{
 				m_eAnim_Lower = Halberd_WeakAtk_08;
 			}
+
+			m_sWeakAtkCnt = 0;
 		}
 
 		m_bOnAttack = true;
@@ -9401,6 +9719,15 @@ void CPlayer::Play_Hammer_WeakAtk()
 					m_pWeapon[m_eActiveSlot]->Set_Enable_Record(false);
 
 					g_pManagement->Create_Effect(L"Weapon_HeavyDust", m_pWeapon[m_eActiveSlot]->Get_HeadPos());
+
+					g_pSoundManager->Stop_Sound(CSoundManager::Player_SFX_01);
+					g_pSoundManager->Play_Sound(L"Hammer_Ground_01.wav", CSoundManager::Player_SFX_01, CSoundManager::Effect_Sound);
+
+					g_pSoundManager->Stop_Sound(CSoundManager::Player_SFX_02);
+					g_pSoundManager->Play_Sound(L"Metal_Smash.wav", CSoundManager::Player_SFX_02, CSoundManager::Effect_Sound);
+
+					g_pSoundManager->Stop_Sound(CSoundManager::Player_SFX_03);
+					g_pSoundManager->Play_Sound(L"HitGround_02.wav", CSoundManager::Player_SFX_03, CSoundManager::Effect_Sound);
 					SHAKE_CAM_lv2
 				}
 			}
@@ -9466,16 +9793,16 @@ void CPlayer::Play_Hammer_WeakAtk()
 					m_pWeapon[m_eActiveSlot]->Set_Enable_Record(false);
 
 					g_pManagement->Create_Effect(L"Weapon_HeavyDust", m_pWeapon[m_eActiveSlot]->Get_HeadPos());
-					SHAKE_CAM_lv2
+					SHAKE_CAM_lv2;
 
-					// 진동 - 강
-					//CCameraMgr::Get_Instance()->MainCamera_Oscillatation_SetUp(10.f, 30.f, 1.f, 0.95f, CCamera::CAM_OSC_TYPE::POS_OSC);
+					g_pSoundManager->Stop_Sound(CSoundManager::Player_SFX_01);
+					g_pSoundManager->Play_Sound(L"Hammer_Ground_01.wav", CSoundManager::Player_SFX_01, CSoundManager::Effect_Sound);
 
-					// 진동 - 중
-					//CCameraMgr::Get_Instance()->MainCamera_Oscillatation_SetUp(5.f, 20.f, 0.5f, 0.85f, CCamera::CAM_OSC_TYPE::POS_OSC);
+					g_pSoundManager->Stop_Sound(CSoundManager::Player_SFX_02);
+					g_pSoundManager->Play_Sound(L"Metal_Smash.wav", CSoundManager::Player_SFX_02, CSoundManager::Effect_Sound);
 
-					// 진동 - 약
-					//CCameraMgr::Get_Instance()->MainCamera_Oscillatation_SetUp(3.f, 10.f, 0.3f, 0.8f, CCamera::CAM_OSC_TYPE::POS_OSC);
+					g_pSoundManager->Stop_Sound(CSoundManager::Player_SFX_03);
+					g_pSoundManager->Play_Sound(L"HitGround_02.wav", CSoundManager::Player_SFX_03, CSoundManager::Effect_Sound);
 				}
 			}
 
@@ -9487,6 +9814,12 @@ void CPlayer::Play_Hammer_WeakAtk()
 
 					m_pWeapon[m_eActiveSlot]->Set_Target_CanAttack(true);
 					m_pWeapon[m_eActiveSlot]->Set_Enable_Record(true);
+
+					g_pSoundManager->Stop_Sound(CSoundManager::Player_SFX_01);
+					g_pSoundManager->Play_Sound(L"Heavy_Swing_01.wav", CSoundManager::Player_SFX_01, CSoundManager::Effect_Sound);
+
+					g_pSoundManager->Stop_Sound(CSoundManager::Player_SFX_02);
+					g_pSoundManager->Play_Sound(L"Swing_Wind_01.wav", CSoundManager::Player_SFX_02, CSoundManager::Effect_Sound);
 				}
 			}
 
@@ -9539,6 +9872,15 @@ void CPlayer::Play_Hammer_WeakAtk()
 					m_pWeapon[m_eActiveSlot]->Set_Target_CanAttack(false);
 					m_pWeapon[m_eActiveSlot]->Set_Enable_Record(false);
 
+					g_pSoundManager->Stop_Sound(CSoundManager::Player_SFX_01);
+					g_pSoundManager->Play_Sound(L"Hammer_Ground_01.wav", CSoundManager::Player_SFX_01, CSoundManager::Effect_Sound);
+
+					g_pSoundManager->Stop_Sound(CSoundManager::Player_SFX_02);
+					g_pSoundManager->Play_Sound(L"Metal_Smash.wav", CSoundManager::Player_SFX_02, CSoundManager::Effect_Sound);
+
+					g_pSoundManager->Stop_Sound(CSoundManager::Player_SFX_03);
+					g_pSoundManager->Play_Sound(L"HitGround_02.wav", CSoundManager::Player_SFX_03, CSoundManager::Effect_Sound);
+
 					g_pManagement->Create_Effect(L"Weapon_HeavyDust", m_pWeapon[m_eActiveSlot]->Get_HeadPos());
 					SHAKE_CAM_lv2
 				}
@@ -9549,6 +9891,12 @@ void CPlayer::Play_Hammer_WeakAtk()
 				if (m_bEventTrigger[5] == false)
 				{
 					m_bEventTrigger[5] = true;
+
+					g_pSoundManager->Stop_Sound(CSoundManager::Player_SFX_01);
+					g_pSoundManager->Play_Sound(L"Swing_Heavy_02.wav", CSoundManager::Player_SFX_01, CSoundManager::Effect_Sound);
+
+					g_pSoundManager->Stop_Sound(CSoundManager::Player_SFX_02);
+					g_pSoundManager->Play_Sound(L"Swing_Wind_01.wav", CSoundManager::Player_SFX_02, CSoundManager::Effect_Sound);
 
 					m_pWeapon[m_eActiveSlot]->Set_Target_CanAttack(true);
 					m_pWeapon[m_eActiveSlot]->Set_Enable_Record(true);
@@ -9609,6 +9957,12 @@ void CPlayer::Play_Hammer_WeakAtk()
 				if (m_bEventTrigger[5] == false)
 				{
 					m_bEventTrigger[5] = true;
+
+					g_pSoundManager->Stop_Sound(CSoundManager::Player_SFX_01);
+					g_pSoundManager->Play_Sound(L"Swing_Heavy_02.wav", CSoundManager::Player_SFX_01, CSoundManager::Effect_Sound);
+
+					g_pSoundManager->Stop_Sound(CSoundManager::Player_SFX_02);
+					g_pSoundManager->Play_Sound(L"Swing_Wind_01.wav", CSoundManager::Player_SFX_02, CSoundManager::Effect_Sound);
 
 					m_pWeapon[m_eActiveSlot]->Set_Target_CanAttack(true);
 					m_pWeapon[m_eActiveSlot]->Set_Enable_Record(true);
@@ -9708,6 +10062,18 @@ void CPlayer::Play_Hammer_HeavyAtk()
 					m_pWeapon[m_eActiveSlot]->Set_Target_CanAttack(false);
 					m_pWeapon[m_eActiveSlot]->Set_Enable_Record(false);
 					
+					g_pSoundManager->Stop_Sound(CSoundManager::Player_SFX_01);
+					g_pSoundManager->Play_Sound(L"Hammer_Ground_01.wav", CSoundManager::Player_SFX_01, CSoundManager::Effect_Sound);
+
+					g_pSoundManager->Stop_Sound(CSoundManager::Player_SFX_02);
+					g_pSoundManager->Play_Sound(L"Hammer_Ground_01.wav", CSoundManager::Player_SFX_02, CSoundManager::Effect_Sound);
+
+					g_pSoundManager->Stop_Sound(CSoundManager::Player_SFX_03);
+					g_pSoundManager->Play_Sound(L"HitGround_02.wav", CSoundManager::Player_SFX_03, CSoundManager::Effect_Sound);
+
+					g_pSoundManager->Stop_Sound(CSoundManager::Player_SFX_04);
+					g_pSoundManager->Play_Sound(L"Hammer_Smash.wav", CSoundManager::Player_SFX_02, CSoundManager::Effect_Sound);
+
 					g_pManagement->Create_Effect(L"Weapon_HeavyDust", m_pWeapon[m_eActiveSlot]->Get_HeadPos());
 					SHAKE_CAM_lv2
 				}
@@ -9718,6 +10084,12 @@ void CPlayer::Play_Hammer_HeavyAtk()
 				if (m_bEventTrigger[9] == false)
 				{
 					m_bEventTrigger[9] = true;
+
+					g_pSoundManager->Stop_Sound(CSoundManager::Player_SFX_01);
+					g_pSoundManager->Play_Sound(L"Swing_Heavy_02.wav", CSoundManager::Player_SFX_01, CSoundManager::Effect_Sound);
+
+					g_pSoundManager->Stop_Sound(CSoundManager::Player_SFX_02);
+					g_pSoundManager->Play_Sound(L"Swing_Wind_01.wav", CSoundManager::Player_SFX_02, CSoundManager::Effect_Sound);
 
 					m_pWeapon[m_eActiveSlot]->Set_Target_CanAttack(true);
 					m_pWeapon[m_eActiveSlot]->Set_Enable_Record(true);
@@ -9733,6 +10105,17 @@ void CPlayer::Play_Hammer_HeavyAtk()
 					m_pWeapon[m_eActiveSlot]->Set_Target_CanAttack(false);
 					m_pWeapon[m_eActiveSlot]->Set_Enable_Record(false);
 
+					g_pSoundManager->Stop_Sound(CSoundManager::Player_SFX_01);
+					g_pSoundManager->Play_Sound(L"Hammer_Ground_01.wav", CSoundManager::Player_SFX_01, CSoundManager::Effect_Sound);
+
+					g_pSoundManager->Stop_Sound(CSoundManager::Player_SFX_02);
+					g_pSoundManager->Play_Sound(L"Hammer_Ground_01.wav", CSoundManager::Player_SFX_02, CSoundManager::Effect_Sound);
+
+					g_pSoundManager->Stop_Sound(CSoundManager::Player_SFX_03);
+					g_pSoundManager->Play_Sound(L"HitGround_02.wav", CSoundManager::Player_SFX_03, CSoundManager::Effect_Sound);
+
+					g_pSoundManager->Stop_Sound(CSoundManager::Player_SFX_04);
+
 					g_pManagement->Create_Effect(L"Weapon_HeavyDust", m_pWeapon[m_eActiveSlot]->Get_HeadPos());
 					SHAKE_CAM_lv2
 				}
@@ -9743,6 +10126,12 @@ void CPlayer::Play_Hammer_HeavyAtk()
 				if (m_bEventTrigger[7] == false)
 				{
 					m_bEventTrigger[7] = true;
+
+					g_pSoundManager->Stop_Sound(CSoundManager::Player_SFX_01);
+					g_pSoundManager->Play_Sound(L"Swing_Heavy_02.wav", CSoundManager::Player_SFX_01, CSoundManager::Effect_Sound);
+
+					g_pSoundManager->Stop_Sound(CSoundManager::Player_SFX_02);
+					g_pSoundManager->Play_Sound(L"Swing_Wind_01.wav", CSoundManager::Player_SFX_02, CSoundManager::Effect_Sound);
 
 					m_pWeapon[m_eActiveSlot]->Set_Target_CanAttack(true);
 					m_pWeapon[m_eActiveSlot]->Set_Enable_Record(true);
@@ -9758,6 +10147,17 @@ void CPlayer::Play_Hammer_HeavyAtk()
 					m_pWeapon[m_eActiveSlot]->Set_Target_CanAttack(false);
 					m_pWeapon[m_eActiveSlot]->Set_Enable_Record(false);
 
+					g_pSoundManager->Stop_Sound(CSoundManager::Player_SFX_01);
+					g_pSoundManager->Play_Sound(L"Hammer_Ground_01.wav", CSoundManager::Player_SFX_01, CSoundManager::Effect_Sound);
+
+					g_pSoundManager->Stop_Sound(CSoundManager::Player_SFX_02);
+					g_pSoundManager->Play_Sound(L"Hammer_Ground_01.wav", CSoundManager::Player_SFX_02, CSoundManager::Effect_Sound);
+
+					g_pSoundManager->Stop_Sound(CSoundManager::Player_SFX_03);
+					g_pSoundManager->Play_Sound(L"HitGround_02.wav", CSoundManager::Player_SFX_03, CSoundManager::Effect_Sound);
+
+					g_pSoundManager->Stop_Sound(CSoundManager::Player_SFX_04);
+
 					g_pManagement->Create_Effect(L"Weapon_HeavyDust", m_pWeapon[m_eActiveSlot]->Get_HeadPos());
 					SHAKE_CAM_lv2
 				}
@@ -9768,6 +10168,12 @@ void CPlayer::Play_Hammer_HeavyAtk()
 				if (m_bEventTrigger[5] == false)
 				{
 					m_bEventTrigger[5] = true;
+
+					g_pSoundManager->Stop_Sound(CSoundManager::Player_SFX_01);
+					g_pSoundManager->Play_Sound(L"Swing_Heavy_02.wav", CSoundManager::Player_SFX_01, CSoundManager::Effect_Sound);
+
+					g_pSoundManager->Stop_Sound(CSoundManager::Player_SFX_02);
+					g_pSoundManager->Play_Sound(L"Swing_Wind_01.wav", CSoundManager::Player_SFX_02, CSoundManager::Effect_Sound);
 
 					m_pWeapon[m_eActiveSlot]->Set_Target_CanAttack(true);
 					m_pWeapon[m_eActiveSlot]->Set_Enable_Record(true);
@@ -10798,17 +11204,14 @@ void CPlayer::Ready_Weapon()
 
 	m_matHandBone = &pFamre->CombinedTransformationMatrix;
 
-	m_pWeapon[WPN_SLOT_A] = static_cast<CWeapon*>(g_pManagement->Clone_GameObject_Return(L"GameObject_Weapon", NULL));
-	m_pWeapon[WPN_SLOT_A]->Change_WeaponData(Wpn_SSword);
-	m_pWeapon[WPN_SLOT_A]->Set_Friendly(true);
-	m_pWeapon[WPN_SLOT_A]->Set_AttachBoneMartix(m_matHandBone);
-	m_pWeapon[WPN_SLOT_A]->Set_ParentMatrix(&m_pTransform->Get_WorldMat());
+	m_pWeapon[WPN_SLOT_A] = nullptr;
+	m_pWeapon[WPN_SLOT_B] = nullptr;
 
-	//m_pWeapon[WPN_SLOT_B] = static_cast<CWeapon*>(g_pManagement->Clone_GameObject_Return(L"GameObject_Weapon", NULL));
-	//m_pWeapon[WPN_SLOT_B]->Change_WeaponData(Wpn_Hammer);
-	//m_pWeapon[WPN_SLOT_B]->Set_AttachBoneMartix(&pFamre->CombinedTransformationMatrix);
-	//m_pWeapon[WPN_SLOT_B]->Set_ParentMatrix(&m_pTransform->Get_WorldMat());
-	//m_pWeapon[WPN_SLOT_B]->Set_Friendly(true);
+	//m_pWeapon[WPN_SLOT_A] = static_cast<CWeapon*>(g_pManagement->Clone_GameObject_Return(L"GameObject_Weapon", NULL));
+	//m_pWeapon[WPN_SLOT_A]->Change_WeaponData(Wpn_SSword);
+	//m_pWeapon[WPN_SLOT_A]->Set_Friendly(true);
+	//m_pWeapon[WPN_SLOT_A]->Set_AttachBoneMartix(m_matHandBone);
+	//m_pWeapon[WPN_SLOT_A]->Set_ParentMatrix(&m_pTransform->Get_WorldMat());
 
 	m_bWeaponActive[WPN_SLOT_A] = true;
 	m_bWeaponActive[WPN_SLOT_B] = false;

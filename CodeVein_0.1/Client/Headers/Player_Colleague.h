@@ -338,6 +338,7 @@ private:
 	_bool	m_bCheck_Be_Careful = false;
 
 	_bool	m_bCheck_Skil_Voice = false;
+	_bool	m_bCheck_Dont_Go = false;
 
 
 private: // For Effect

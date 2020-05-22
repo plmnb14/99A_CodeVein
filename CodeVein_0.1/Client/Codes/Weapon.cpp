@@ -402,33 +402,143 @@ void CWeapon::OnCollisionEvent(list<CGameObject*> plistGameObject, _bool _bIsPla
 
 							g_pManagement->Create_Hit_Effect(vecIter, vecCol, pIterTransform);
 						
-							if (0 == CCalculater::Random_Num(0, 1))
-							{
-								g_pSoundManager->Stop_Sound(CSoundManager::Effect_SFX_01);
-								g_pSoundManager->Play_Sound(L"SE_Blood_000.ogg", CSoundManager::Effect_SFX_01, CSoundManager::Effect_Sound);
-							}
-							else
-							{
-								g_pSoundManager->Stop_Sound(CSoundManager::Effect_SFX_01);
-								g_pSoundManager->Play_Sound(L"SE_Blood_001.ogg", CSoundManager::Effect_SFX_01, CSoundManager::Effect_Sound);
-							}
-							
-							_int iRand = CCalculater::Random_Num(0, 2);
+							_int iRandNum = CCalculater::Random_Num(0, 3);
 
-							if (0 == iRand)
+							if (m_eWeaponType != WEAPON_Hammer)
 							{
-								g_pSoundManager->Stop_Sound(CSoundManager::Effect_SFX_02);
-								g_pSoundManager->Play_Sound(L"HIT01.ogg", CSoundManager::Effect_SFX_02, CSoundManager::Effect_Sound);
+								switch (iRandNum)
+								{
+								case 0:
+								{
+									g_pSoundManager->Stop_Sound(CSoundManager::Hit_SFX_01);
+									g_pSoundManager->Play_Sound(L"IMPT_Hit_Short_01.wav", CSoundManager::Hit_SFX_01, CSoundManager::Effect_Sound);
+
+									break;
+								}
+								case 1:
+								{
+									g_pSoundManager->Stop_Sound(CSoundManager::Hit_SFX_01);
+									g_pSoundManager->Play_Sound(L"Slash_Sword_02_Short.wav", CSoundManager::Hit_SFX_01, CSoundManager::Effect_Sound);
+
+									break;
+								}
+								case 2:
+								{
+									g_pSoundManager->Stop_Sound(CSoundManager::Hit_SFX_01);
+									g_pSoundManager->Play_Sound(L"Slash_Sword_03.wav", CSoundManager::Hit_SFX_01, CSoundManager::Effect_Sound);
+
+									break;
+								}
+
+								case 3:
+								{
+									g_pSoundManager->Stop_Sound(CSoundManager::Hit_SFX_01);
+									g_pSoundManager->Play_Sound(L"Slash_Sword_04.wav", CSoundManager::Hit_SFX_01, CSoundManager::Effect_Sound);
+
+
+									break;
+								}
+								}
 							}
-							else if(1 == iRand)
-							{
-								g_pSoundManager->Stop_Sound(CSoundManager::Effect_SFX_02);
-								g_pSoundManager->Play_Sound(L"HIT03.ogg", CSoundManager::Effect_SFX_02, CSoundManager::Effect_Sound);
-							}
+
 							else
 							{
-								g_pSoundManager->Stop_Sound(CSoundManager::Effect_SFX_02);
-								g_pSoundManager->Play_Sound(L"HIT05.ogg", CSoundManager::Effect_SFX_02, CSoundManager::Effect_Sound);
+								switch (iRandNum)
+								{
+								case 0:
+								{
+									g_pSoundManager->Stop_Sound(CSoundManager::Hit_SFX_01);
+									g_pSoundManager->Play_Sound(L"IMPT_Hit_Short_01.wav", CSoundManager::Hit_SFX_01, CSoundManager::Effect_Sound);
+
+									break;
+								}
+								case 1:
+								{
+									g_pSoundManager->Stop_Sound(CSoundManager::Hit_SFX_01);
+									g_pSoundManager->Play_Sound(L"Slash_Sword_02_Short.wav", CSoundManager::Hit_SFX_01, CSoundManager::Effect_Sound);
+
+									break;
+								}
+								case 2:
+								{
+									g_pSoundManager->Stop_Sound(CSoundManager::Hit_SFX_01);
+									g_pSoundManager->Play_Sound(L"Slash_Sword_03.wav", CSoundManager::Hit_SFX_01, CSoundManager::Effect_Sound);
+
+									break;
+								}
+
+								case 3:
+								{
+									g_pSoundManager->Stop_Sound(CSoundManager::Hit_SFX_01);
+									g_pSoundManager->Play_Sound(L"Slash_Sword_04.wav", CSoundManager::Hit_SFX_01, CSoundManager::Effect_Sound);
+
+
+									break;
+								}
+								}
+							}
+
+							iRandNum = CCalculater::Random_Num(0, 3);
+
+							switch (iRandNum)
+							{
+							case 0:
+							{
+								g_pSoundManager->Stop_Sound(CSoundManager::Hit_SFX_02);
+								g_pSoundManager->Play_Sound(L"GORE_Gun_Gore_01.wav", CSoundManager::Hit_SFX_02, CSoundManager::Effect_Sound);
+
+								break;
+							}
+							case 1:
+							{
+								g_pSoundManager->Stop_Sound(CSoundManager::Hit_SFX_02);
+								g_pSoundManager->Play_Sound(L"GORE_Gun_Gore_02.wav", CSoundManager::Hit_SFX_02, CSoundManager::Effect_Sound);
+
+								break;
+							}
+							case 2:
+							{
+								g_pSoundManager->Stop_Sound(CSoundManager::Hit_SFX_02);
+								g_pSoundManager->Play_Sound(L"GORE_Gun_Gore_03.wav", CSoundManager::Hit_SFX_02, CSoundManager::Effect_Sound);
+
+								break;
+							}
+							}
+
+							iRandNum = CCalculater::Random_Num(0, 3);
+
+							switch (iRandNum)
+							{
+							case 0:
+							{
+								g_pSoundManager->Stop_Sound(CSoundManager::Hit_SFX_03);
+								g_pSoundManager->Play_Sound(L"SE_METAL_CLASH_018.wav", CSoundManager::Hit_SFX_03, CSoundManager::Effect_Sound);
+
+								break;
+							}
+							case 1:
+							{
+								g_pSoundManager->Stop_Sound(CSoundManager::Hit_SFX_03);
+								g_pSoundManager->Play_Sound(L"SE_METAL_CLASH_022.wav", CSoundManager::Hit_SFX_03, CSoundManager::Effect_Sound);
+
+								break;
+							}
+							case 2:
+							{
+								g_pSoundManager->Stop_Sound(CSoundManager::Hit_SFX_03);
+								g_pSoundManager->Play_Sound(L"SE_METAL_CLASH_024.wav", CSoundManager::Hit_SFX_03, CSoundManager::Effect_Sound);
+
+								break;
+							}
+
+							case 3:
+							{
+								g_pSoundManager->Stop_Sound(CSoundManager::Hit_SFX_03);
+								g_pSoundManager->Play_Sound(L"SE_METAL_CLASH_028.wav", CSoundManager::Hit_SFX_03, CSoundManager::Effect_Sound);
+
+
+								break;
+							}
 							}
 
 							Create_PointLight(vecIter->Get_CenterPos());
