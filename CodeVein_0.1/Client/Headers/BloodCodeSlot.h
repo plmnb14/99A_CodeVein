@@ -18,7 +18,6 @@ public:
 public:
 	void Set_CodeID(BloodCode_ID eID) { m_eID = eID; }
 	void Set_Select(_bool bIsSelect) { m_bIsSelect = bIsSelect; }
-	void Set_Release(_bool bIsRelease) { m_bIsRelease = bIsRelease; }
 
 public:
 	virtual HRESULT Ready_GameObject_Prototype();

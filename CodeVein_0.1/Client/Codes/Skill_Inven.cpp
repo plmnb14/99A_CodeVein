@@ -83,6 +83,7 @@ _int CSkill_Inven::Update_GameObject(_double TimeDelta)
 	//Search_Regist_Skill();
 
 	Search_Regist_Skill();
+	
 
 	/*if (!m_bIsActive)
 	{

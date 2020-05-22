@@ -144,7 +144,7 @@ void CBloodCodeSelectUI::Click_BloodCodeSlot()
 
 void CBloodCodeSelectUI::Release_BloodCode(BloodCode_ID eBloodCodeID)
 {
-	switch (eBloodCodeID)
+	/*switch (eBloodCodeID)
 	{
 	case BloodCode_Fighter:
 	{
@@ -171,7 +171,7 @@ void CBloodCodeSelectUI::Release_BloodCode(BloodCode_ID eBloodCodeID)
 		m_vecBloodCodeSlot[4]->Set_Release(true);
 	}
 		return;
-	}
+	}*/
 }
 
 void CBloodCodeSelectUI::SetUp_Default()
@@ -194,8 +194,6 @@ void CBloodCodeSelectUI::SetUp_Default()
 	m_vecBloodCodeSlot[2]->Set_CodeID(BloodCode_Artemis);
 	m_vecBloodCodeSlot[3]->Set_CodeID(BloodCode_DarkKnight);
 	m_vecBloodCodeSlot[4]->Set_CodeID(BloodCode_Queen);
-
-	m_vecBloodCodeSlot[0]->Set_Release(true);
 }
 
 CBloodCodeSelectUI * CBloodCodeSelectUI::Create(_Device pGraphic_Device)

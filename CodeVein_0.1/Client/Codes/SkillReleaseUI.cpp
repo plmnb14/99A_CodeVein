@@ -45,6 +45,13 @@ _int CSkillReleaseUI::Update_GameObject(_double TimeDelta)
 		CUI_Manager::Get_Instance()->Get_MouseUI()->Set_Active(false);
 		for (auto& iter : m_vecSkillSlot)
 			iter->Set_Active(false);
+
+		for (auto& iter : m_vecSkillSlot)
+		{
+			iter->Set_Release(false);
+		}
+		m_vecData.clear();
+
 		m_bIsSubActive = false;
 	}
 
