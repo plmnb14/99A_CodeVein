@@ -52,6 +52,7 @@ private:
 	_bool								m_bLateInit = false;
 	_int								m_iTexIdx = 0;
 	_ulong								m_dwCurentActiveUI = 0;
+	_bool								m_bIsSubActive = false;
 
 public:
 	static CCustomCategory*	Create(_Device pGraphic_Device);

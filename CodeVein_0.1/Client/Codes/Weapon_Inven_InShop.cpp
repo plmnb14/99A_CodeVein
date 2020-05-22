@@ -149,6 +149,16 @@ HRESULT CWeapon_Inven_InShop::Ready_GameObject(void * pArg)
 
 _int CWeapon_Inven_InShop::Update_GameObject(_double TimeDelta)
 {
+	if (m_bIsActive && !m_bIsSubActive)
+	{
+		m_bIsSubActive = true;
+	}
+	else if (!m_bIsActive && m_bIsSubActive)
+	{
+		CUI_Manager::Get_Instance()->Get_MouseUI()->Set_Active(false);
+		m_bIsSubActive = false;
+	}
+
 	CUI::Update_GameObject(TimeDelta);
 
 	m_pRendererCom->Add_RenderList(RENDER_UI, this);
@@ -223,6 +233,11 @@ _int CWeapon_Inven_InShop::Update_GameObject(_double TimeDelta)
 		}
 	}
 	
+	if (false == m_bIsActive)
+		return NO_EVENT;
+	else
+		CUI_Manager::Get_Instance()->Get_MouseUI()->Set_Active(true);
+
 	return NO_EVENT;
 }
 
