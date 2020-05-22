@@ -404,40 +404,80 @@ void CWeapon::OnCollisionEvent(list<CGameObject*> plistGameObject, _bool _bIsPla
 						
 							_int iRandNum = CCalculater::Random_Num(0, 3);
 
-							switch (iRandNum)
+							if (m_eWeaponType != WEAPON_Hammer)
 							{
-							case 0:
+								switch (iRandNum)
+								{
+								case 0:
+								{
+									g_pSoundManager->Stop_Sound(CSoundManager::Hit_SFX_01);
+									g_pSoundManager->Play_Sound(L"IMPT_Hit_Short_01.wav", CSoundManager::Hit_SFX_01, CSoundManager::Effect_Sound);
+
+									break;
+								}
+								case 1:
+								{
+									g_pSoundManager->Stop_Sound(CSoundManager::Hit_SFX_01);
+									g_pSoundManager->Play_Sound(L"Slash_Sword_02_Short.wav", CSoundManager::Hit_SFX_01, CSoundManager::Effect_Sound);
+
+									break;
+								}
+								case 2:
+								{
+									g_pSoundManager->Stop_Sound(CSoundManager::Hit_SFX_01);
+									g_pSoundManager->Play_Sound(L"Slash_Sword_03.wav", CSoundManager::Hit_SFX_01, CSoundManager::Effect_Sound);
+
+									break;
+								}
+
+								case 3:
+								{
+									g_pSoundManager->Stop_Sound(CSoundManager::Hit_SFX_01);
+									g_pSoundManager->Play_Sound(L"Slash_Sword_04.wav", CSoundManager::Hit_SFX_01, CSoundManager::Effect_Sound);
+
+
+									break;
+								}
+								}
+							}
+
+							else
 							{
-								g_pSoundManager->Stop_Sound(CSoundManager::Hit_SFX_01);
-								g_pSoundManager->Play_Sound(L"IMPT_Hit_Short_01.wav", CSoundManager::Hit_SFX_01, CSoundManager::Effect_Sound);
+								switch (iRandNum)
+								{
+								case 0:
+								{
+									g_pSoundManager->Stop_Sound(CSoundManager::Hit_SFX_01);
+									g_pSoundManager->Play_Sound(L"IMPT_Hit_Short_01.wav", CSoundManager::Hit_SFX_01, CSoundManager::Effect_Sound);
 
-								break;
+									break;
+								}
+								case 1:
+								{
+									g_pSoundManager->Stop_Sound(CSoundManager::Hit_SFX_01);
+									g_pSoundManager->Play_Sound(L"Slash_Sword_02_Short.wav", CSoundManager::Hit_SFX_01, CSoundManager::Effect_Sound);
+
+									break;
+								}
+								case 2:
+								{
+									g_pSoundManager->Stop_Sound(CSoundManager::Hit_SFX_01);
+									g_pSoundManager->Play_Sound(L"Slash_Sword_03.wav", CSoundManager::Hit_SFX_01, CSoundManager::Effect_Sound);
+
+									break;
+								}
+
+								case 3:
+								{
+									g_pSoundManager->Stop_Sound(CSoundManager::Hit_SFX_01);
+									g_pSoundManager->Play_Sound(L"Slash_Sword_04.wav", CSoundManager::Hit_SFX_01, CSoundManager::Effect_Sound);
+
+
+									break;
+								}
+								}
 							}
-							case 1:
-							{
-								g_pSoundManager->Stop_Sound(CSoundManager::Hit_SFX_01);
-								g_pSoundManager->Play_Sound(L"Slash_Sword_02_Short.wav", CSoundManager::Hit_SFX_01, CSoundManager::Effect_Sound);
 
-								break;
-							}
-							case 2:
-							{
-								g_pSoundManager->Stop_Sound(CSoundManager::Hit_SFX_01);
-								g_pSoundManager->Play_Sound(L"Slash_Sword_03.wav", CSoundManager::Hit_SFX_01, CSoundManager::Effect_Sound);
-
-								break;
-							}
-
-							case 3:
-							{
-								g_pSoundManager->Stop_Sound(CSoundManager::Hit_SFX_01);
-								g_pSoundManager->Play_Sound(L"Slash_Sword_04.wav", CSoundManager::Hit_SFX_01, CSoundManager::Effect_Sound);
-
-
-								break;
-							}
-							}
-							
 							iRandNum = CCalculater::Random_Num(0, 3);
 
 							switch (iRandNum)

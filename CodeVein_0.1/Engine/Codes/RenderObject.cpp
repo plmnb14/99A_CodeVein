@@ -43,7 +43,7 @@ _int CRenderObject::Update_GameObject(_double _TimeDelta)
 	if (nullptr == m_pOptimization)
 		return NO_EVENT;
 
-	_float fFrustumRadius = m_bAdvencedCull ? 30.f : 10.f;
+	_float fFrustumRadius = m_bAdvencedCull ? 100.f : 10.f;
 	m_bInFrustum = m_pOptimization->Check_InFrustumforObject(&m_pTransform->Get_Pos(), fFrustumRadius);
 
 	if (false == m_bUpdated)
@@ -570,39 +570,43 @@ void CRenderObject::Check_Stage_02()
 	{
 		m_bAdvencedCull = true;
 	}
-	if (!lstrcmp(L"SM_MERGED_SplineGaia199", m_szName))
+	if (!lstrcmp(L"Mesh_SM_MERGED_SplineGaia199", m_szName))
 		m_bAdvencedCull = true;
-	if (!lstrcmp(L"SM_MERGED_SplineGaia319", m_szName))
+	if (!lstrcmp(L"Mesh_SM_MERGED_SplineGaia319", m_szName))
 		m_bAdvencedCull = true;
-	if (!lstrcmp(L"SM_MERGED_SplineGaia436", m_szName))
+	if (!lstrcmp(L"Mesh_SM_MERGED_SplineGaia436", m_szName))
 		m_bAdvencedCull = true;
-	if (!lstrcmp(L"SM_MERGED_SplineGaia445", m_szName))
+	if (!lstrcmp(L"Mesh_SM_MERGED_SplineGaia445", m_szName))
 		m_bAdvencedCull = true;
-	if (!lstrcmp(L"SM_MERGED_SplineGaia449", m_szName))
+	if (!lstrcmp(L"Mesh_SM_MERGED_SplineGaia449", m_szName))
 		m_bAdvencedCull = true;
-	if (!lstrcmp(L"SM_MERGED_SplineGaia471", m_szName))
+	if (!lstrcmp(L"Mesh_SM_MERGED_SplineGaia471", m_szName))
 		m_bAdvencedCull = true;
-	if (!lstrcmp(L"SM_MERGED_SplineGaia473", m_szName))
+	if (!lstrcmp(L"Mesh_SM_MERGED_SplineGaia473", m_szName))
 		m_bAdvencedCull = true;
-	if (!lstrcmp(L"SM_MERGED_SplineGaia475", m_szName))
+	if (!lstrcmp(L"Mesh_SM_MERGED_SplineGaia475", m_szName))
 		m_bAdvencedCull = true;
-	if (!lstrcmp(L"SM_MERGED_SplineGaia582", m_szName))
+	if (!lstrcmp(L"Mesh_SM_MERGED_SplineGaia582", m_szName))
 		m_bAdvencedCull = true;
-	if (!lstrcmp(L"SM_MERGED_SplineGaia586", m_szName))
+	if (!lstrcmp(L"Mesh_SM_MERGED_SplineGaia586", m_szName))
 		m_bAdvencedCull = true;
-	if (!lstrcmp(L"SM_MERGED_SplineGaia611", m_szName))
+	if (!lstrcmp(L"Mesh_SM_MERGED_SplineGaia611", m_szName))
 		m_bAdvencedCull = true;
-	if (!lstrcmp(L"SM_MERGED_SplineGaia618", m_szName))
+	if (!lstrcmp(L"Mesh_SM_MERGED_SplineGaia618", m_szName))
 		m_bAdvencedCull = true;
-	if (!lstrcmp(L"SM_MERGED_SplineGaia667", m_szName))
+	if (!lstrcmp(L"Mesh_SM_MERGED_SplineGaia667", m_szName))
 		m_bAdvencedCull = true;
-	if (!lstrcmp(L"SM_MERGED_SplineGaia726", m_szName))
+	if (!lstrcmp(L"Mesh_SM_MERGED_SplineGaia726", m_szName))
 		m_bAdvencedCull = true;
-	if (!lstrcmp(L"SM_MERGED_SplineGaia784", m_szName))
+	if (!lstrcmp(L"Mesh_SM_MERGED_SplineGaia784", m_szName))
 		m_bAdvencedCull = true;
 	if (!lstrcmp(L"SM_MERGED_SplineGaia791", m_szName))
 		m_bAdvencedCull = true;
-	if (!lstrcmp(L"SM_MERGED_SplineGaia891", m_szName))
+	if (!lstrcmp(L"Mesh_SM_MERGED_SplineGaia891", m_szName))
+		m_bAdvencedCull = true;
+	if (!lstrcmp(L"Mesh_SM_GroundBase02_st09a1", m_szName))
+		m_bAdvencedCull = true;
+	if (!lstrcmp(L"Mesh_SM_GroundBase04_st09a1", m_szName))
 		m_bAdvencedCull = true;
 }
 
@@ -613,24 +617,24 @@ void CRenderObject::Check_Stage_03()
 	{
 		m_bAdvencedCull = true;
 	}
-	if (!lstrcmp(L"Room_Stage3_1", m_szName))
+	if (!lstrcmp(L"Mesh_Room_Stage3_1", m_szName))
 		m_bAdvencedCull = true;
-	if (!lstrcmp(L"Room_Stage3_2", m_szName))
+	if (!lstrcmp(L"Mesh_Room_Stage3_2", m_szName))
 		m_bAdvencedCull = true;
 }
 
 void CRenderObject::Check_Stage_04()
 {
-	if (!lstrcmp(L"DuomoFloorB", m_szName))
+	if (!lstrcmp(L"Mesh_DuomoFloorB", m_szName))
 		m_bAdvencedCull = true;
-	if (!lstrcmp(L"Cathedral_PillarL_Center_Round", m_szName))
+	if (!lstrcmp(L"Mesh_Cathedral_PillarL_Center_Round", m_szName))
 		m_bAdvencedCull = true;
-	if (!lstrcmp(L"Cathedral_TowerWall_Under_A", m_szName))
+	if (!lstrcmp(L"Mesh_Cathedral_TowerWall_Under_A", m_szName))
 		m_bAdvencedCull = true;
-	if (!lstrcmp(L"Cathedral_TowerWall_Under_B", m_szName))
+	if (!lstrcmp(L"Mesh_Cathedral_TowerWall_Under_B", m_szName))
 		m_bAdvencedCull = true;
-	if (!lstrcmp(L"Cathedral_TowerFloor_D", m_szName))
+	if (!lstrcmp(L"Mesh_Cathedral_TowerFloor_D", m_szName))
 		m_bAdvencedCull = true;
-	if (!lstrcmp(L"Cathedral_Floor_Center_Round", m_szName))
+	if (!lstrcmp(L"Mesh_Cathedral_Floor_Center_Round", m_szName))
 		m_bAdvencedCull = true;
 }
