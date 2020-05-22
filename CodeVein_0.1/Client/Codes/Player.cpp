@@ -360,7 +360,6 @@ HRESULT CPlayer::Render_GameObject_Instancing_SetPass(CShader * pShader)
 	bOnToonRimLight = false;
 	pShader->Set_Value("g_bToonRimLight", &bOnToonRimLight, sizeof(_bool));
 
-
 	return NOERROR;
 }
 
@@ -389,20 +388,16 @@ HRESULT CPlayer::Render_GameObject_SetPass(CShader* pShader, _int iPass, _bool _
 	//============================================================================================
 	if (_bIsForMotionBlur)
 	{
+		if (FAILED(pShader->Set_Value("g_matView", &ViewMatrix, sizeof(_mat))))
+			return E_FAIL;
+		if (FAILED(pShader->Set_Value("g_matProj", &ProjMatrix, sizeof(_mat))))
+			return E_FAIL;
 		if (FAILED(pShader->Set_Value("g_matLastWVP", &m_matLastWVP, sizeof(_mat))))
 			return E_FAIL;
 
 		m_matLastWVP = WorldMatrix * ViewMatrix * ProjMatrix;
 
-		_bool bMotionBlur = true;
-		if (FAILED(pShader->Set_Bool("g_bMotionBlur", bMotionBlur)))
-			return E_FAIL;
-
-		_bool bDecalTarget = false;
-		if (FAILED(pShader->Set_Bool("g_bDecalTarget", bDecalTarget)))
-			return E_FAIL;
-
-		_float fBloomPower = 10.f;
+		_float fBloomPower = 20.f;
 		if (FAILED(pShader->Set_Value("g_fBloomPower", &fBloomPower, sizeof(_float))))
 			return E_FAIL;
 	}
@@ -1558,7 +1553,7 @@ void CPlayer::KeyDown()
 			}
 		}
 
-		if (g_pInput_Device->Key_Down(DIK_C))
+		if (g_pInput_Device->Key_Down(DIK_T))
 		{
 			m_pCamManager->Set_CustomizeCamIdx(0);
 			m_pCamManager->Set_CustomizeCamMode(false);
@@ -1579,7 +1574,7 @@ void CPlayer::KeyDown()
 
 	else
 	{
-		if (g_pInput_Device->Key_Down(DIK_C))
+		if (g_pInput_Device->Key_Down(DIK_T))
 		{
 			if (false == m_pUIManager->Get_CustomCategory()->Get_Active())
 			{
@@ -4797,6 +4792,9 @@ void CPlayer::Play_Dead()
 			{
 				m_fAnimMutiply = 0.f;
 				m_eActState = ACT_Dead;
+
+				Teleport_ResetOptions(g_eSceneID_Cur, g_eSTeleportID_Cur);
+				m_bIsDead = false;
 			}
 		}
 	}
@@ -5318,6 +5316,8 @@ void CPlayer::Play_BloodSuckCount()
 			m_pDrainWeapon->Set_Enable_Record(false);
 
 			Reset_BattleState();
+
+			return;
 		}
 
 		if (dAniTime > 2.833)
@@ -5354,7 +5354,7 @@ void CPlayer::Play_BloodSuckCount()
 			}
 		}
 
-		if (dAniTime > 2.533)
+		else if (dAniTime > 2.533)
 		{
 			if (false == m_bEventTrigger[1])
 			{
@@ -7211,6 +7211,13 @@ void CPlayer::Play_Ssword_WeakAtk()
 				{
 					m_bEventTrigger[0] = true;
 
+					g_pSoundManager->Stop_Sound(CSoundManager::Player_SFX_01);
+					g_pSoundManager->Play_Sound(L"SSword_Swing_02.wav", CSoundManager::Player_SFX_01, CSoundManager::Effect_Sound);
+
+					g_pSoundManager->Stop_Sound(CSoundManager::Player_SFX_02);
+					g_pSoundManager->Play_Sound(L"Swing_Fast_02.wav", CSoundManager::Player_SFX_02, CSoundManager::Effect_Sound);
+
+
 					m_pWeapon[m_eActiveSlot]->Set_Target_CanAttack(true);
 					m_pWeapon[m_eActiveSlot]->Set_Enable_Trail(true);
 				}
@@ -7230,6 +7237,9 @@ void CPlayer::Play_Ssword_WeakAtk()
 					if (m_bEventTrigger[1] == false)
 					{
 						m_bEventTrigger[1] = true;
+
+						g_pSoundManager->Stop_Sound(CSoundManager::Player_SFX_01);
+						g_pSoundManager->Play_Sound(L"AttackReady.wav", CSoundManager::Player_SFX_01, CSoundManager::Effect_Sound);
 
 						m_pWeapon[m_eActiveSlot]->Set_Target_CanAttack(false);
 					}
@@ -7305,6 +7315,12 @@ void CPlayer::Play_Ssword_WeakAtk()
 			{
 				if (m_bEventTrigger[0] == false)
 				{
+					g_pSoundManager->Stop_Sound(CSoundManager::Player_SFX_01);
+					g_pSoundManager->Play_Sound(L"SSword_Swing_02.wav", CSoundManager::Player_SFX_01, CSoundManager::Effect_Sound);
+
+					g_pSoundManager->Stop_Sound(CSoundManager::Player_SFX_02);
+					g_pSoundManager->Play_Sound(L"Swing_Fast_02.wav", CSoundManager::Player_SFX_02, CSoundManager::Effect_Sound);
+
 					m_bEventTrigger[0] = true;
 
 					m_pWeapon[m_eActiveSlot]->Set_Target_CanAttack(true);
@@ -10699,18 +10715,6 @@ void CPlayer::Ready_Masks()
 
 	m_pMask[CCostume_Mask::Mask_11] = static_cast<CCostume_Mask*>(g_pManagement->Clone_GameObject_Return(L"GameObject_Costume_Mask",
 		&CCostume_Mask::_INFO(&m_pTransform->Get_WorldMat(), m_matBones[Bone_Head], _v4(1.f, 1.f, 1.f, 1.f), CCostume_Mask::Mask_11)));
-
-	m_pMask[CCostume_Mask::Mask_Drape] = static_cast<CCostume_Mask*>(g_pManagement->Clone_GameObject_Return(L"GameObject_Costume_Mask",
-		&CCostume_Mask::_INFO(&m_pTransform->Get_WorldMat(), m_matBones[Bone_Head], _v4(1.f, 1.f, 1.f, 1.f), CCostume_Mask::Mask_Drape)));
-
-	m_pMask[CCostume_Mask::Mask_Stinger] = static_cast<CCostume_Mask*>(g_pManagement->Clone_GameObject_Return(L"GameObject_Costume_Mask",
-		&CCostume_Mask::_INFO(&m_pTransform->Get_WorldMat(), m_matBones[Bone_Head], _v4(1.f, 1.f, 1.f, 1.f), CCostume_Mask::Mask_Stinger)));
-
-	m_pMask[CCostume_Mask::Mask_Gauntlet] = static_cast<CCostume_Mask*>(g_pManagement->Clone_GameObject_Return(L"GameObject_Costume_Mask",
-		&CCostume_Mask::_INFO(&m_pTransform->Get_WorldMat(), m_matBones[Bone_Head], _v4(1.f, 1.f, 1.f, 1.f), CCostume_Mask::Mask_Gauntlet)));
-
-	m_pMask[CCostume_Mask::Mask_Ivy] = static_cast<CCostume_Mask*>(g_pManagement->Clone_GameObject_Return(L"GameObject_Costume_Mask",
-		&CCostume_Mask::_INFO(&m_pTransform->Get_WorldMat(), m_matBones[Bone_Head], _v4(1.f, 1.f, 1.f, 1.f),  CCostume_Mask::Mask_Ivy)));
 }
 
 void CPlayer::Ready_Weapon()

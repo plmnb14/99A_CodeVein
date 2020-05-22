@@ -592,6 +592,7 @@ PS_OUT PS_TRAIL_MASK(PS_IN In)
 bool g_bTitle;
 float g_fUV_Value_X;
 float g_fUV_Value_Y;
+
 PS_OUT PS_UV(PS_IN In)
 {
 	PS_OUT			Out = (PS_OUT)0;

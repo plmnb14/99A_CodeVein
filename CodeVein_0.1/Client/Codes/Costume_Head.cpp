@@ -277,7 +277,7 @@ HRESULT CCostume_Head::Render_GameObject_SetPass(CShader * pShader, _int iPass, 
 		_bool bDecalTarget = false;
 		if (FAILED(pShader->Set_Bool("g_bDecalTarget", bDecalTarget)))
 			return E_FAIL;
-		_float fBloomPower = 3.f;
+		_float fBloomPower = 20.f;
 		if (FAILED(pShader->Set_Value("g_fBloomPower", &fBloomPower, sizeof(_float))))
 			return E_FAIL;
 	}
@@ -330,7 +330,7 @@ HRESULT CCostume_Head::Render_GameObject_SetPass(CShader * pShader, _int iPass, 
 	//============================================================================================
 
 
-	return NOERROR;
+	return S_OK;
 }
 
 void CCostume_Head::Change_HeadMesh(CHAR_HEAD _eHeadType)

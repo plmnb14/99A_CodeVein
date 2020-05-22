@@ -49,7 +49,7 @@ _int CRenderObject::Update_GameObject(_double _TimeDelta)
 	if (false == m_bUpdated)
 	{
 		// 스태틱은 한번만 배치되면 되서 계속 갱신할 필요없음
-		m_bUpdated = true;
+		//m_bUpdated = true;
 
 		CGameObject::LateInit_GameObject();
 		CGameObject::Update_GameObject(_TimeDelta);
@@ -186,10 +186,10 @@ HRESULT CRenderObject::Render_GameObject_SetPass(CShader* pShader, _int iPass, _
 	//============================================================================================
 	if (_bIsForMotionBlur)
 	{
-		//if (FAILED(pShader->Set_Value("g_matView", &matView, sizeof(_mat))))
-		//	return E_FAIL;
-		//if (FAILED(pShader->Set_Value("g_matProj", &matProj, sizeof(_mat))))
-		//	return E_FAIL;
+		if (FAILED(pShader->Set_Value("g_matView", &matView, sizeof(_mat))))
+			return E_FAIL;
+		if (FAILED(pShader->Set_Value("g_matProj", &matProj, sizeof(_mat))))
+			return E_FAIL;
 		if (FAILED(pShader->Set_Value("g_matLastWVP", &m_matLastWVP, sizeof(_mat))))
 			return E_FAIL;
 
