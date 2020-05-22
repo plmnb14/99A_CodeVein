@@ -102,41 +102,41 @@ HRESULT CManagement::Clear_Instance(_uint iSceneIndex)
 HRESULT CManagement::Release_Engine()
 {
 	// 최종적으로 엔진에서 사용하고 있는 다양한 매니져클래스들의 정리작업을 수행한다.
-	if (0 != CManagement::Get_Instance()->Destroy_Instance())
-		MSG_BOX("Failed To Release CManagement");
+	CManagement::Get_Instance()->Destroy_Instance();
+		///MSG_BOX("Failed To Release CManagement");
 
-	if (0 != CMyPhysx::Get_Instance()->Destroy_Instance())
-		MSG_BOX("Failed To Release CMyPhysx");
+	CMyPhysx::Get_Instance()->Destroy_Instance();
+		//MSG_BOX("Failed To Release CMyPhysx");
 
-	if (0 != CBT_Node_Manager::Get_Instance()->Destroy_Instance())
-		MSG_BOX("Failed To Release CBT_Node_Manager");
+	CBT_Node_Manager::Get_Instance()->Destroy_Instance();
+		//MSG_BOX("Failed To Release CBT_Node_Manager");
 
-	if (0 != CObject_Manager::Get_Instance()->Destroy_Instance())
-		MSG_BOX("Failed To Release CObject_Manager");
+	CObject_Manager::Get_Instance()->Destroy_Instance();
+		//MSG_BOX("Failed To Release CObject_Manager");
 
-	if (0 != CComponent_Manager::Get_Instance()->Destroy_Instance())
-		MSG_BOX("Failed To Release CComponent_Manager");
+	CComponent_Manager::Get_Instance()->Destroy_Instance();
+		//MSG_BOX("Failed To Release CComponent_Manager");
 
-	if (0 != CScene_Manager::Get_Instance()->Destroy_Instance())
-		MSG_BOX("Failed To Release CScene_Manager");
+	CScene_Manager::Get_Instance()->Destroy_Instance();
+		//MSG_BOX("Failed To Release CScene_Manager");
 
-	if (0 != CPipeLine::Get_Instance()->Destroy_Instance())
-		MSG_BOX("Failed To Release CPipeLine");
+	CPipeLine::Get_Instance()->Destroy_Instance();
+		//MSG_BOX("Failed To Release CPipeLine");
 
-	if (0 != CLight_Manager::Get_Instance()->Destroy_Instance())
-		MSG_BOX("Failed To Release CLight_Manager");
+	CLight_Manager::Get_Instance()->Destroy_Instance();
+		//MSG_BOX("Failed To Release CLight_Manager");
 
-	if (0 != CInput_Device::Get_Instance()->Destroy_Instance())
-		MSG_BOX("Failed To Release CInput_Device");
+	CInput_Device::Get_Instance()->Destroy_Instance();
+		//MSG_BOX("Failed To Release CInput_Device");
 
-	if (0 != CTarget_Manager::Get_Instance()->Destroy_Instance())
-		MSG_BOX("Failed To Release CTarget_Manager");
+	CTarget_Manager::Get_Instance()->Destroy_Instance();
+		//MSG_BOX("Failed To Release CTarget_Manager");
 
-	if (0 != CGizmo::Get_Instance()->Destroy_Instance())
-		MSG_BOX("Failed To Release CGizmo");
+	CGizmo::Get_Instance()->Destroy_Instance();
+		//MSG_BOX("Failed To Release CGizmo");
 
-	if (0 != CGraphic_Device::Get_Instance()->Destroy_Instance())
-		MSG_BOX("Failed To Release CGraphic_Device");
+	CGraphic_Device::Get_Instance()->Destroy_Instance();
+		//MSG_BOX("Failed To Release CGraphic_Device");
 
 
 
