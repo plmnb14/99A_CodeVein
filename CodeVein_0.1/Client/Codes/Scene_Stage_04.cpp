@@ -65,8 +65,6 @@ _int CScene_Stage_04::Update_Scene(_double TimeDelta)
 
 	if (false == m_fCheck_ColleagueSummons && g_pInput_Device->Key_Down(DIK_O))
 	{
-		m_fCheck_ColleagueSummons = true;
-
 		CGameObject* pInstance = nullptr;
 
 		pInstance = g_pManagement->Clone_GameObject_Return(L"GameObject_Colleague",
@@ -76,6 +74,8 @@ _int CScene_Stage_04::Update_Scene(_double TimeDelta)
 			g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Colleague", nullptr);
 		//else
 		//	cout << "소환할 수 없는 위치입니다" << endl;
+		
+		m_fCheck_ColleagueSummons = true;
 	}
 
 	return S_OK;

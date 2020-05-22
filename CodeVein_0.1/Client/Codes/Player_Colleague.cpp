@@ -74,9 +74,11 @@ _int CPlayer_Colleague::Update_GameObject(_double TimeDelta)
 		return NOERROR;
 
 	CPlayer* pPlayer = static_cast<CPlayer*>(g_pManagement->Get_GameObjectBack(L"Layer_Player", SCENE_MORTAL));
-	if (false == pPlayer->Get_Player_RigidBody())
+	if (nullptr != pPlayer && false == pPlayer->Get_Player_RigidBody())
 		return NOERROR;
-	else
+
+	if (nullptr != m_pTarget && true == m_pTarget->Get_Dead())
+		return NOERROR;
 
 	//====================================================================================================
 	// ÄÃ¸µ
@@ -1028,12 +1030,15 @@ void CPlayer_Colleague::Check_Do_List(_double TimeDelta)
 			m_fDodge_CoolTime = 0;
 		}
 	}
-	else if (fMyPlayerLength >= 30.f && false == m_bCheck_Dont_Go)
+	else if (fMyPlayerLength >= 30.f)
 	{
-		m_bCheck_Dont_Go = true;
 		Check_Navi();
-		g_pSoundManager->Stop_Sound(CSoundManager::Jack_Voice);
-		g_pSoundManager->Play_Sound(L"Don_t_GoAway.ogg", CSoundManager::Jack_Voice, CSoundManager::Voice_Sound);
+		if (false == m_bCheck_Dont_Go)
+		{
+			m_bCheck_Dont_Go = true;
+			g_pSoundManager->Stop_Sound(CSoundManager::Jack_Voice);
+			g_pSoundManager->Play_Sound(L"Don_t_GoAway.ogg", CSoundManager::Jack_Voice, CSoundManager::Voice_Sound);
+		}
 	}
 }
 
