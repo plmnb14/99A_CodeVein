@@ -81,18 +81,15 @@ _int CTotal_Inven::Update_GameObject(_double TimeDelta)
 		SetUp_SubUI_Active(true);
 		m_bIsSubActive = true;
 
-		g_pSoundManager->Stop_Sound(CSoundManager::UI_SFX_01);
-		g_pSoundManager->Play_Sound(L"UI_WindowToggle.ogg", CSoundManager::UI_SFX_01, CSoundManager::Effect_Sound);
-
 		
+		CUI_Manager::Get_Instance()->Stop_Play_UISound(L"Inven_Open.ogg", CSoundManager::UI_Open_Close, CSoundManager::Effect_Sound);
 	}
 	else if (!m_bIsActive && m_bIsSubActive)
 	{
 		SetUp_SubUI_Active(false);
 		m_bIsSubActive = false;
 
-		g_pSoundManager->Stop_Sound(CSoundManager::UI_SFX_01);
-		g_pSoundManager->Play_Sound(L"UI_WindowToggle.ogg", CSoundManager::UI_SFX_01, CSoundManager::Effect_Sound);
+		CUI_Manager::Get_Instance()->Stop_Play_UISound(L"Inven_Open.ogg", CSoundManager::UI_Open_Close, CSoundManager::Effect_Sound);
 
 		CUI_Manager::Get_Instance()->Get_MouseUI()->Set_Active(false);
 	}
@@ -108,9 +105,6 @@ _int CTotal_Inven::Update_GameObject(_double TimeDelta)
 	m_pRendererCom->Add_RenderList(RENDER_UI, this);
 
 	D3DXMatrixOrthoLH(&m_matProj, WINCX, WINCY, 0.f, 1.0f);
-
-	
-
 
 	Click_Icon();
 	

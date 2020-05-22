@@ -229,6 +229,9 @@ void CExplainArmorUI::SetUp_Default()
 
 void CExplainArmorUI::SetUp_SubUI_Active(_bool bIsActive)
 {
+	if (m_tArmorParam.iArmorType = ARMOR_End)
+		return;
+
 	m_pReinForceFont->Set_Active(bIsActive);
 	m_pDefFont->Set_Active(bIsActive);
 	m_pPlusDefFont->Set_Active(bIsActive);
