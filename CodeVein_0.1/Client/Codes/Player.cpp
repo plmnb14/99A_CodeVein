@@ -10515,6 +10515,9 @@ void CPlayer::Play_Lsword_WeakAtk()
 
 					m_pWeapon[m_eActiveSlot]->Set_Target_CanAttack(true);
 					m_pWeapon[m_eActiveSlot]->Set_Enable_Record(true);
+
+					g_pSoundManager->Stop_Sound(CSoundManager::Player_SFX_01);
+					g_pSoundManager->Play_Sound(L"SE_BLACK_KNIGHT_SWING_000.ogg", CSoundManager::Player_SFX_01, CSoundManager::Effect_Sound);
 				}
 			}
 
@@ -10592,6 +10595,9 @@ void CPlayer::Play_Lsword_WeakAtk()
 
 					g_pManagement->Create_Effect(L"Weapon_HeavyDust", m_pWeapon[m_eActiveSlot]->Get_HeadPos());
 					SHAKE_CAM_lv2
+
+					g_pSoundManager->Stop_Sound(CSoundManager::Player_SFX_03);
+					g_pSoundManager->Play_Sound(L"LSword_Impact.wav", CSoundManager::Player_SFX_03, CSoundManager::Effect_Sound);
 				}
 			}
 
@@ -10603,6 +10609,9 @@ void CPlayer::Play_Lsword_WeakAtk()
 
 					m_pWeapon[m_eActiveSlot]->Set_Target_CanAttack(true);
 					m_pWeapon[m_eActiveSlot]->Set_Enable_Record(true);
+
+					g_pSoundManager->Stop_Sound(CSoundManager::Player_SFX_02);
+					g_pSoundManager->Play_Sound(L"SE_BLACK_KNIGHT_SWING_001.ogg", CSoundManager::Player_SFX_02, CSoundManager::Effect_Sound);
 				}
 			}
 
@@ -10688,6 +10697,9 @@ void CPlayer::Play_Lsword_WeakAtk()
 
 					m_pWeapon[m_eActiveSlot]->Set_Target_CanAttack(true);
 					m_pWeapon[m_eActiveSlot]->Set_Enable_Record(true);
+
+					g_pSoundManager->Stop_Sound(CSoundManager::Player_SFX_04);
+					g_pSoundManager->Play_Sound(L"SE_BLACK_KNIGHT_SWING_002.ogg", CSoundManager::Player_SFX_04, CSoundManager::Effect_Sound);
 				}
 			}
 
@@ -10772,6 +10784,9 @@ void CPlayer::Play_Lsword_WeakAtk()
 
 					m_pWeapon[m_eActiveSlot]->Set_Target_CanAttack(true);
 					m_pWeapon[m_eActiveSlot]->Set_Enable_Record(true);
+
+					g_pSoundManager->Stop_Sound(CSoundManager::Player_SFX_01);
+					g_pSoundManager->Play_Sound(L"SE_BLACK_KNIGHT_SWING_005.ogg", CSoundManager::Player_SFX_01, CSoundManager::Effect_Sound);
 				}
 			}
 
@@ -10916,6 +10931,9 @@ void CPlayer::Play_Lsword_HeavyAtk()
 
 					m_pWeapon[m_eActiveSlot]->Set_Target_CanAttack(true);
 					m_pWeapon[m_eActiveSlot]->Set_Enable_Record(true);
+
+					g_pSoundManager->Stop_Sound(CSoundManager::Player_SFX_01);
+					g_pSoundManager->Play_Sound(L"SE_BLACK_KNIGHT_SWING_000.ogg", CSoundManager::Player_SFX_01, CSoundManager::Effect_Sound);
 				}
 			}
 
@@ -11001,6 +11019,9 @@ void CPlayer::Play_Lsword_HeavyAtk()
 
 					m_pWeapon[m_eActiveSlot]->Set_Target_CanAttack(true);
 					m_pWeapon[m_eActiveSlot]->Set_Enable_Record(true);
+
+					g_pSoundManager->Stop_Sound(CSoundManager::Player_SFX_02);
+					g_pSoundManager->Play_Sound(L"SE_BLACK_KNIGHT_SWING_001.ogg", CSoundManager::Player_SFX_02, CSoundManager::Effect_Sound);
 				}
 			}
 
@@ -11099,6 +11120,9 @@ void CPlayer::Play_Lsword_DashAtk()
 
 			m_pWeapon[m_eActiveSlot]->Set_Target_CanAttack(true);
 			m_pWeapon[m_eActiveSlot]->Set_Enable_Record(true);
+
+			g_pSoundManager->Stop_Sound(CSoundManager::Player_SFX_03);
+			g_pSoundManager->Play_Sound(L"SE_BLACK_KNIGHT_SWING_002.ogg", CSoundManager::Player_SFX_03, CSoundManager::Effect_Sound);
 		}
 	}
 
