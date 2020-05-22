@@ -453,6 +453,8 @@ void CScriptManager::St02_Sub3()
 			m_bEventTrigger[Script_Stage03][5] = true;
 
 			m_vecObjectPool[23]->Set_Enable(true);
+
+			m_bFogOff = true;
 		}
 
 	}

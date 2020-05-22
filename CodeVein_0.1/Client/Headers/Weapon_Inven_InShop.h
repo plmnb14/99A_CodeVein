@@ -106,6 +106,8 @@ private:
 	
 	CWeapon*				m_pTempWeapon = nullptr;
 	_bool					m_bCloseUpgradePopup = false;
+	_bool					m_bIsSubActive = false;
+
 public:
 	static CWeapon_Inven_InShop*	Create(_Device pGraphic_Device);
 	virtual CGameObject*	Clone_GameObject(void* pArg);
