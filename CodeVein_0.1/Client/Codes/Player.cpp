@@ -62,13 +62,9 @@ void CPlayer::Set_WeaponSlot(ACTIVE_WEAPON_SLOT eType, WEAPON_DATA eData)
 	m_pWeapon[eType]->Set_ParentMatrix(&m_pTransform->Get_WorldMat());
 
 	// 메인 슬롯이라면
-	if(WPN_SLOT_A == eType)
-		m_eMainWpnState = m_pWeapon[eType]->Get_WeaponType();
-
-	// 메인 슬롯이라면
-	else if (WPN_SLOT_B == eType)
+	if (WPN_SLOT_A == eType)
 	{
-		m_eSubWpnState = m_pWeapon[eType]->Get_WeaponType();
+		m_eMainWpnState = m_pWeapon[eType]->Get_WeaponType();
 
 		m_bOneHand = (
 			m_eMainWpnState == WEAPON_SSword ? true :
@@ -77,6 +73,12 @@ void CPlayer::Set_WeaponSlot(ACTIVE_WEAPON_SLOT eType, WEAPON_DATA eData)
 			m_eMainWpnState == WEAPON_Gun ? true :
 			m_eMainWpnState == WEAPON_Hammer ? false : true
 			);
+	}
+
+	// 메인 슬롯이라면
+	else if (WPN_SLOT_B == eType)
+	{
+		m_eSubWpnState = m_pWeapon[eType]->Get_WeaponType();
 	}
 }
 
@@ -301,7 +303,7 @@ HRESULT CPlayer::Render_GameObject_Instancing_SetPass(CShader * pShader)
 
 	m_pDynamicMesh->Play_Animation_Lower(dDeltaTime * m_fAnimMutiply);
 	m_pDynamicMesh->Play_Animation_Upper(dDeltaTime * m_fAnimMutiply);
-	m_pDynamicMesh->Play_Animation_RightArm(dDeltaTime * m_fAnimMutiply, false);
+	m_pDynamicMesh->Play_Animation_RightArm(dDeltaTime * m_fAnimMutiply, !m_bOneHand);
 	m_pDynamicMesh->Play_Animation_LeftArm(dDeltaTime * m_fAnimMutiply);
 
 	m_pHead[m_eHeadType]->Update_GameObject(dDeltaTime);
@@ -479,7 +481,7 @@ void CPlayer::Reset_OldAnimations()
 void CPlayer::Teleport_ResetOptions(_int _eSceneID, _int _eTeleportID)
 {
 	m_bIsDead = false;
-	m_tObjParam.fHp_Cur = m_tObjParam.fHoldGage_Max;
+	m_tObjParam.fHp_Cur = m_tObjParam.fHp_Max;
 	m_tObjParam.sMana_Cur = m_tObjParam.sMana_Max;
 	m_tObjParam.fStamina_Cur = m_tObjParam.fStamina_Max;
 
@@ -1422,6 +1424,9 @@ void CPlayer::Target_AimChasing()
 			// 기존에 OldLength 보다 작을 경우
 			if (fOldLength > fLength)
 				fOldLength = fLength;
+
+			else
+				continue;
 
 			pOldTarget = iter;
 		}
@@ -2823,7 +2828,7 @@ void CPlayer::Play_Run()
 
 	if (false == m_bOnAiming)
 	{
-		m_fFootWalkTimer_Max = 0.5f;
+		m_fFootWalkTimer_Max = 0.4f;
 
 		if (m_bCanPlayWalkSound)
 		{
@@ -5383,6 +5388,13 @@ void CPlayer::Play_BloodSuck()
 		{
 			if (m_pDynamicMesh->Is_Finish_Animation_Lower(0.95f))
 			{
+				g_pSoundManager->Stop_Sound(CSoundManager::Player_SFX_01);
+				g_pSoundManager->Play_Sound(L"Swing_Fast_01.wav", CSoundManager::Player_SFX_01, CSoundManager::Effect_Sound);
+
+				g_pSoundManager->Stop_Sound(CSoundManager::Player_SFX_02);
+				g_pSoundManager->Play_Sound(L"Whoosh_Heavy_01.wav", CSoundManager::Player_SFX_02, CSoundManager::Effect_Sound);
+
+
 				m_eAnim_Upper = LongCoat_Charge_End;
 				m_eAnim_Lower = m_eAnim_Upper;
 				m_eAnim_RightArm = m_eAnim_Upper;
@@ -5420,6 +5432,13 @@ void CPlayer::Play_BloodSuck()
 			{
 				if (m_pDynamicMesh->Get_TrackInfo().Position >= 3.f)
 				{
+					g_pSoundManager->Stop_Sound(CSoundManager::Player_SFX_01);
+					g_pSoundManager->Play_Sound(L"Swing_Fast_01.wav", CSoundManager::Player_SFX_01, CSoundManager::Effect_Sound);
+
+					g_pSoundManager->Stop_Sound(CSoundManager::Player_SFX_02);
+					g_pSoundManager->Play_Sound(L"Whoosh_Heavy_01.wav", CSoundManager::Player_SFX_02, CSoundManager::Effect_Sound);
+
+
 					m_eAnim_Upper = LongCoat_Charge_End;
 					m_eAnim_Lower = m_eAnim_Upper;
 					m_eAnim_RightArm = m_eAnim_Upper;
@@ -11877,8 +11896,8 @@ HRESULT CPlayer::SetUp_Default()
 	m_tObjParam.bCanCounter = true;
 	m_tObjParam.bCanHit = true;
 	m_tObjParam.bIsDodge = false;
-	m_tObjParam.fHp_Cur = 9999.f;
-	m_tObjParam.fHp_Max = 9999.f;
+	m_tObjParam.fHp_Cur = 1000.f;
+	m_tObjParam.fHp_Max = 1000.f;
 	
 	// Anim
 	m_fAnimMutiply = 1.f;

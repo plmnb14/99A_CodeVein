@@ -15,7 +15,7 @@ CMainApp::CMainApp()
 
 HRESULT CMainApp::Ready_MainApp()
 {
-	if (FAILED(Ready_Default_Setting(CGraphic_Device::WINMODE_FULL, g_nWinCX, g_nWinCY)))
+	if (FAILED(Ready_Default_Setting(CGraphic_Device::WINMODE_WIN, g_nWinCX, g_nWinCY)))
 		return E_FAIL;
 
 	if (FAILED(Ready_Component_Prototype()))
@@ -45,7 +45,7 @@ _int CMainApp::Update_MainApp(_double TimeDelta)
 	{
 		g_pSoundManager->Add_Volume(CSoundManager::Master_Volume, 0.05f);
 
-		cout << "현재 마스터 사운드 볼륨 : " << g_pSoundManager->Get_Volume() << endl;
+		//cout << "현재 마스터 사운드 볼륨 : " << g_pSoundManager->Get_Volume() << endl;
 	}
 
 	// 마스터 볼륨 다운
@@ -53,7 +53,7 @@ _int CMainApp::Update_MainApp(_double TimeDelta)
 	{
 		g_pSoundManager->Add_Volume(CSoundManager::Master_Volume, -0.05f);
 
-		cout << "현재 마스터 사운드 볼륨 : " << g_pSoundManager->Get_Volume() << endl;
+		//cout << "현재 마스터 사운드 볼륨 : " << g_pSoundManager->Get_Volume() << endl;
 	}
 
 	m_fFrameDeltaTimer = (_float)TimeDelta;
