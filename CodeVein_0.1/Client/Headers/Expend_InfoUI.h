@@ -5,6 +5,7 @@
 #include "Expendables.h"
 
 BEGIN(Client)
+class CPlayerFontUI;
 class CExpend_InfoUI final : public CUI
 {
 private:
@@ -25,6 +26,7 @@ public:
 private:
 	HRESULT Add_Component();
 	HRESULT SetUp_ConstantTable();
+	void	SetUp_Cost();
 
 private:
 	CTransform*				m_pTransformCom = nullptr;
@@ -35,6 +37,10 @@ private:
 
 private:
 	CExpendables::EXPEND_TYPE m_eType = CExpendables::EXPEND_END;
+	_uint						m_iCost = 0;
+	_uint						m_iMyHaze = 0;
+	CPlayerFontUI*				m_pCostFont = nullptr;
+	CPlayerFontUI*				m_pMyHazeFont = nullptr;
 
 public:
 	static CExpend_InfoUI*		Create(_Device pGraphic_Device);

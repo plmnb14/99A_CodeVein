@@ -105,8 +105,8 @@ public:
 
 private:
 	void Update_Collider();
-	void Render_Collider();
 
+	void Check_PosY();
 	void Check_Dist();
 	void Check_Action();
 	void Check_AniEvent();

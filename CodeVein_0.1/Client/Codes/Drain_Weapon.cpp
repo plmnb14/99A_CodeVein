@@ -301,6 +301,9 @@ void CDrain_Weapon::Set_Active(_bool _bActiveDrain)
 
 		else if (Drain_Charge_Start == m_eAnimnum)
 		{
+			g_pSoundManager->Stop_Sound(CSoundManager::Player_SFX_04);
+			g_pSoundManager->Play_Sound(L"DrainWeapon.wav", CSoundManager::Player_SFX_04, CSoundManager::Effect_Sound);
+
 			Start_Dissolve(1.f, true);
 		}
 		// 활성화 되면, 디졸브 효과
@@ -780,6 +783,9 @@ HRESULT CDrain_Weapon::Parameter_State()
 			{
 				if (false == m_bEventTrigger[0])
 				{
+					g_pSoundManager->Stop_Sound(CSoundManager::Player_SFX_04);
+					g_pSoundManager->Play_Sound(L"DrainWeapon.wav", CSoundManager::Player_SFX_04, CSoundManager::Effect_Sound);
+
 					m_bEventTrigger[0] = true;
 
 					Start_Dissolve(0.5f);

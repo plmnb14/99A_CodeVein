@@ -41,10 +41,9 @@ _int CPet_DeerKing::Update_GameObject(_double TimeDelta)
 	if (false == m_bEnable)
 		return NO_EVENT;
 
-	Play_Deformation();
-
 	CGameObject::Update_GameObject(TimeDelta);
 
+	Check_PosY();
 	Check_Dist();
 	Check_AniEvent();
 	Function_CoolDown();
@@ -133,10 +132,8 @@ HRESULT CPet_DeerKing::Render_GameObject()
 	m_pShader->End_Shader();
 
 	if (PET_STATE_TYPE::DEAD != m_eFirstCategory)
-	{
 		Update_Collider();
-		Render_Collider();
-	}
+
 
 	return S_OK;
 }
@@ -182,10 +179,8 @@ HRESULT CPet_DeerKing::Render_GameObject_Instancing_SetPass(CShader * pShader)
 	}
 
 	if (PET_STATE_TYPE::DEAD != m_eFirstCategory)
-	{
 		Update_Collider();
-		Render_Collider();
-	}
+
 
 	return S_OK;
 }
@@ -293,10 +288,9 @@ void CPet_DeerKing::Update_Collider()
 	return;
 }
 
-void CPet_DeerKing::Render_Collider()
+void CPet_DeerKing::Check_PosY()
 {
-	for (auto& iter : m_vecAttackCol)
-		g_pManagement->Gizmo_Draw_Sphere(iter->Get_CenterPos(), iter->Get_Radius().x);
+	m_pTransform->Set_Pos(m_pNavMesh->Axis_Y_OnNavMesh(m_pTransform->Get_Pos()));
 
 	return;
 }
@@ -1235,6 +1229,8 @@ void CPet_DeerKing::Play_Deformation()
 
 		g_pManagement->Create_Effect(L"Pet_SpawnParticle", m_pTransform->Get_Pos());
 		g_pManagement->Create_Effect(L"Pet_SpawnSmoke", m_pTransform->Get_Pos());
+
+		return;
 	}
 	else
 	{

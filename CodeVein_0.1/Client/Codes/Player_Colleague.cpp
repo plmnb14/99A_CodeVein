@@ -126,13 +126,13 @@ _int CPlayer_Colleague::Update_GameObject(_double TimeDelta)
 	//	m_eMovetype = CPlayer_Colleague::Coll_Heal;
 	//	m_eColl_HealMoment = CPlayer_Colleague::My_Heal;
 	//}
-	if (/*true == m_bNest_Skil_CoolTImer && */(m_pTarget->Get_Target_Hp() * 0.4f >= m_pTarget->Get_Target_Hp()) &&
-		m_eMovetype != CPlayer_Colleague::Coll_Dead)
-	{
-		m_fCoolTimer_Skil_limit = 5.f;
-		m_eMovetype = CPlayer_Colleague::Coll_Heal;
-		m_eColl_HealMoment = CPlayer_Colleague::Player_Heal;
-	}
+	//if (true == m_bNest_Skil_CoolTImer && (m_pTarget->Get_Target_Param().fHp_Max * 0.4f >= m_pTarget->Get_Target_Hp()) &&
+	//	m_eMovetype != CPlayer_Colleague::Coll_Dead)
+	//{
+	//	m_fCoolTimer_Skil_limit = 5.f;
+	//	m_eMovetype = CPlayer_Colleague::Coll_Heal;
+	//	m_eColl_HealMoment = CPlayer_Colleague::Player_Heal;
+	//}
 
 
 	if (false == m_bCheck_Be_Careful &&
@@ -748,7 +748,7 @@ void CPlayer_Colleague::Check_Do_List(_double TimeDelta)
 				//m_bStart_Fighting = false;
 				//m_bNear_byMonster = false;
 				m_pObject_Mon = nullptr;
-				break;
+				continue;
 			}
 			if (true == Bossiter->Get_Dead())
 			{
@@ -771,13 +771,13 @@ void CPlayer_Colleague::Check_Do_List(_double TimeDelta)
 						m_bStart_Fighting = false;
 						m_bNear_byMonster = false;
 						m_bMonDead = true;
-						continue;
+						break;
 					}
 
 				}
 
 				if (nullptr == Bossiter)
-					break;
+					continue;
 
 				fMinPos = fMonLength;
 
@@ -804,11 +804,11 @@ void CPlayer_Colleague::Check_Do_List(_double TimeDelta)
 						m_bStart_Fighting = false;
 						m_bNear_byMonster = false;
 						m_bMonDead = true;
-						continue;
+						break;
 					}
 
 				if (nullptr == Bossiter)
-					break;
+					continue;
 
 				fMinPos = fMonLength;
 
@@ -818,7 +818,7 @@ void CPlayer_Colleague::Check_Do_List(_double TimeDelta)
 					m_bMonDead = false;
 
 				if (nullptr == m_pObject_Mon)
-					break;
+					continue;
 			}
 
 			if (true == Bossiter->Get_Dead())
@@ -829,7 +829,7 @@ void CPlayer_Colleague::Check_Do_List(_double TimeDelta)
 					/*m_bStart_Fighting = false;
 					m_bNear_byMonster = false;*/
 					m_bMonDead = true;
-					continue;
+					break;
 				}
 		}
 	}
@@ -842,7 +842,7 @@ void CPlayer_Colleague::Check_Do_List(_double TimeDelta)
 
 	//=======================================================
 
-	if (nullptr == m_pObject_Mon || false == m_bStart_Fighting)
+	if (nullptr == m_pObject_Mon /*|| false == m_bStart_Fighting*/)
 	{
 		if (!(m_List_pMonTarget[0]->empty()))
 			fMinPos = 2000000.f;
@@ -1332,8 +1332,8 @@ HRESULT CPlayer_Colleague::SetUp_Default()
 	m_List_pMonTarget[0] = &(g_pManagement->Get_GameObjectList(L"Layer_Monster", SCENE_STAGE));
 	m_List_pMonTarget[1] = &(g_pManagement->Get_GameObjectList(L"Layer_Boss", SCENE_STAGE));
 
-	m_tObjParam.fHp_Cur = 2500.f;
-	m_tObjParam.fHp_Max = 2500.f;
+	m_tObjParam.fHp_Cur = 9500.f;
+	m_tObjParam.fHp_Max = 9500.f;
 	m_tObjParam.fDamage = 100.f;
 
 	m_tObjParam.bCanHit = true;		// 맞을 수 있는지

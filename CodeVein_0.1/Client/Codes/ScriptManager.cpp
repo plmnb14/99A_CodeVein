@@ -418,8 +418,9 @@ void CScriptManager::St02_Sub2()
 
 			m_vecObjectPool[16]->Set_Enable(true); //늑대
 			m_vecObjectPool[17]->Set_Enable(true); //늑대
-			m_vecObjectPool[18]->Set_Enable(true); //토템
-			m_vecObjectPool[19]->Set_Enable(true); //성게
+			m_vecObjectPool[18]->Set_Enable(true); //늑대
+			m_vecObjectPool[19]->Set_Enable(true); //토템
+			m_vecObjectPool[20]->Set_Enable(true); //성게
 		}
 	}
 		break;
@@ -438,9 +439,9 @@ void CScriptManager::St02_Sub3()
 		{
 			m_bEventTrigger[Script_Stage03][4] = true;
 
-			m_vecTrapPool[4]->Set_Enable(true); //20번 예티
-			m_vecTrapPool[5]->Set_Enable(true); //21번 예티
-			m_vecTrapPool[6]->Set_Enable(true); //22번 예티
+			m_vecTrapPool[4]->Set_Enable(true); //21번 예티
+			m_vecTrapPool[5]->Set_Enable(true); //22번 예티
+			m_vecTrapPool[6]->Set_Enable(true); //23번 예티
 		}
 
 	}
@@ -452,7 +453,7 @@ void CScriptManager::St02_Sub3()
 		{
 			m_bEventTrigger[Script_Stage03][5] = true;
 
-			m_vecObjectPool[23]->Set_Enable(true);
+			m_vecObjectPool[24]->Set_Enable(true); // 24번
 
 			m_bFogOff = true;
 		}
@@ -1700,6 +1701,7 @@ void CScriptManager::Ready_Stage03_DynamicObject()
 		Safe_AddRef(pInstance);
 		g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Monster", nullptr);
 		++iIndex;
+
 		//헌터(검)
 		pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_Hunter",
 			&CMonster::MONSTER_STATUS(CMonster::MONSTER_COLOR_TYPE::COLOR_NONE, WEAPON_STATE::WEAPON_SSword,
