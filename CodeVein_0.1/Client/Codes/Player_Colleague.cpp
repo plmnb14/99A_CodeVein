@@ -3106,7 +3106,7 @@ void CPlayer_Colleague::Check_Collision_Event(list<CGameObject*> plistGameObject
 
 					vecIter->Set_Enabled(false);
 
-					g_pManagement->Create_Hit_Effect(vecIter, vecCol, TARGET_TO_TRANS(iter));
+					g_pManagement->Create_Hit_Effect(vecIter, vecCol, TARGET_TO_TRANS(iter), 1.5f, false);
 
 					break;
 				}

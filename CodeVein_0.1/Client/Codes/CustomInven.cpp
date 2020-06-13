@@ -342,7 +342,7 @@ void CCustomInven::Slot_PositionRearrange(vector<CCustomSlot*>* pVecSlot)
 	{
 		(*pVecSlot)[i]->Set_Active(m_bIsActive);
 		(*pVecSlot)[i]->Set_ViewZ(m_fViewZ - 0.1f);
-		(*pVecSlot)[i]->Set_UI_Pos(m_fPosX - 103.f + 52.f * (i % 5), m_fPosY - 140.f + 52.f * (i / 5));
+		(*pVecSlot)[i]->Set_UI_Pos(m_fPosX - 103.f + 60.f * (i % 5), m_fPosY - 140.f + 60.f * (i / 5));
 	}
 }
 

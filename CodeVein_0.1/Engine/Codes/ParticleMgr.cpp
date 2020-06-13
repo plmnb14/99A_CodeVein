@@ -1309,7 +1309,7 @@ void CParticleMgr::Create_Effect_Decal(_tchar* szName, _v3 vPos)
 	pFindedQueue->pop();
 }
 
-void CParticleMgr::Create_Hit_Effect(CCollider* pAttackCol, CCollider* pHittedCol, CTransform* pHittedTrans, _float fPower)
+void CParticleMgr::Create_Hit_Effect(CCollider* pAttackCol, CCollider* pHittedCol, CTransform* pHittedTrans, _float fPower, _bool bLongSpark)
 {
 	_v3 vAttackPos = pAttackCol->Get_CenterPos();
 	_v3 vHittedPos = pHittedCol->Get_CenterPos();
@@ -1374,11 +1374,15 @@ void CParticleMgr::Create_Hit_Effect(CCollider* pAttackCol, CCollider* pHittedCo
 	tWallDecalInfo.bWall = false;
 	CObjectPool_Manager::Get_Instance()->Create_Object(L"GameObject_BloodChunk", &tWallDecalInfo);
 
-	EFF_INFO tSparkInfo;
-	tSparkInfo.vCreatePos = pHittedTrans->Get_Pos();
-	tSparkInfo.vDirection = vBloodDir;
-	for (_int i = 0; i < 70; i++)
-		CObjectPool_Manager::Get_Instance()->Create_Object(L"GameObject_LongSpark", &tSparkInfo);
+	if (bLongSpark)
+	{
+		EFF_INFO tSparkInfo;
+		tSparkInfo.vCreatePos = pHittedTrans->Get_Pos();
+		tSparkInfo.vDirection = vBloodDir;
+		for (_int i = 0; i < 70; i++)
+			CObjectPool_Manager::Get_Instance()->Create_Object(L"GameObject_LongSpark", &tSparkInfo);
+	}
+	
 }
 
 void CParticleMgr::Create_Spawn_Effect(_float fDelay, _v3 vPos, _v3 vFinishPos, CTransform* pFollowTrans)
