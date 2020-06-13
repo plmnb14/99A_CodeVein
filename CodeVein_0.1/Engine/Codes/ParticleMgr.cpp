@@ -254,6 +254,7 @@ HRESULT CParticleMgr::Ready_ParticleManager()
 	Input_Pool(L"Player_Skill_Gun_Bullet_DeadSmoke_Blue_1", 100);
 	Input_Pool(L"Player_Skill_Gun_BulletBody_Ver", 10);
 	Input_Pool(L"Player_Skill_Gun_BulletBody_Hor", 10);
+	Input_Pool(L"Player_Skill_Gun_BulletBody", 10);
 
 	Input_Pool(L"Player_Skill_Halberd_Blaster_Hor", 50);
 	Input_Pool(L"Player_Skill_Halberd_Blaster_Ver", 50);
@@ -671,119 +672,76 @@ HRESULT CParticleMgr::Update_ParticleManager(const _double TimeDelta)
 	//
 	//}
 	//
-	//if (CInput_Device::Get_Instance()->Key_Down(DIK_U))
-	//{
-	//	CGameObject* pPlayer = CManagement::Get_Instance()->Get_GameObjectBack(L"Layer_Player", SCENE_MORTAL);
-	//	if (!pPlayer)
-	//		return S_OK;
-	//
-	//	_mat matView = TARGET_TO_TRANS(pPlayer)->Get_WorldMat(); // CManagement::Get_Instance()->Get_Transform(D3DTS_VIEW);
-	//	D3DXMatrixInverse(&matView, nullptr, &matView);
-	//	_v3 vCamUp = _v3(matView._21, matView._22, matView._23);
-	//	_v3 vCamLook = _v3(matView._31, matView._32, matView._33);
-	//	_mat matRot;
-	//	D3DXMatrixIdentity(&matRot);
-	//	D3DXVec3Normalize(&vCamLook, &vCamLook);
-	//
-	//	// Calc Angle
-	//	_v3	vRight = *D3DXVec3Cross(&vRight, &_v3(0.f, 1.f, 0.f), &vCamLook);
-	//	V3_NORMAL_SELF(&vRight);
-	//	_float	fDot = acosf(D3DXVec3Dot(&_v3{ 0,0,1 }, &vCamLook));
-	//	if (vRight.z > 0)
-	//		fDot *= -1.f;
-	//
-	//	_v3 vEffectDistZ = TARGET_TO_TRANS(pPlayer)->Get_Axis(AXIS_Z) * 1.5f;
-	//
-	//	// =========================
-	//	//  Gun
-	//	// =========================
-	//	_v3 vEffectPos = TARGET_TO_TRANS(pPlayer)->Get_Pos() + _v3(0.f, 2.f, 0.f) + TARGET_TO_TRANS(pPlayer)->Get_Axis(AXIS_Z) * 1.f;
-	//
-	//	CTexEffect* pEff = static_cast<CTexEffect*>(CManagement::Get_Instance()->Clone_GameObject_Return(L"Player_Skill_Gun_FlashLight", nullptr));
-	//	pEff->Set_Desc(_v3(0, 1, 0), nullptr);
-	//	pEff->Set_Delay(true, 0.6f);
-	//	pEff->Set_LayerIdx(1);
-	//	pEff->Reset_Init();
-	//	CManagement::Get_Instance()->Add_GameOject_ToLayer_NoClone(pEff, SCENE_STAGE, L"Layer_Effect", nullptr);
-	//
-	//	pEff = static_cast<CTexEffect*>(CManagement::Get_Instance()->Clone_GameObject_Return(L"Player_Skill_Gun_PurpleLightning", nullptr));
-	//	pEff->Set_Desc(_v3(0, 1, 0), nullptr);
-	//	pEff->Set_Delay(true, 0.6f);
-	//	pEff->Set_LayerIdx(2);
-	//	pEff->Reset_Init();
-	//	CManagement::Get_Instance()->Add_GameOject_ToLayer_NoClone(pEff, SCENE_STAGE, L"Layer_Effect", nullptr);
-	//
-	//	pEff = static_cast<CTexEffect*>(CManagement::Get_Instance()->Clone_GameObject_Return(L"Player_Skill_Gun_ShotSmoke", nullptr));
-	//	pEff->Set_Desc(_v3(0, 1, 0), nullptr);
-	//	pEff->Set_Delay(true, 0.6f);
-	//	pEff->Set_LayerIdx(1);
-	//	pEff->Reset_Init();
-	//	CManagement::Get_Instance()->Add_GameOject_ToLayer_NoClone(pEff, SCENE_STAGE, L"Layer_Effect", nullptr);
-	//
-	//	Create_Effect_Delay(L"Player_Skill_Gun_Smoke_Blue_0", 0.f, _v3(0, 1, 0), nullptr);
-	//	Create_Effect_Delay(L"Player_Skill_Gun_Smoke_Blue_1", 0.f, _v3(0, 1, 0), nullptr);
-	//	Create_Effect_Delay(L"Player_Skill_Gun_Smoke_DarkBlue", 0.f, _v3(0, 1, 0), nullptr);
-	//	Create_Effect_Delay(L"Player_Skill_Gun_Smoke_DarkBlue", 0.2f, _v3(0, 1, 0), nullptr);
-	//	Create_Effect_Delay(L"Player_Skill_Gun_Smoke_DarkBlue", 0.3f, _v3(0, 1, 0), nullptr);
-	//
-	//	//=====================================================================================
-	//	//for (_int i = 0; i < 5; i++)
-	//	//{
-	//	//	Create_Effect_Delay(L"DrainWeapon_BlackSmoke_0", 0.f + i * 0.05f, _v3(0, 1, 0), nullptr);
-	//	//	Create_Effect_Delay(L"DrainWeapon_BlackSmoke_1", 0.f + i * 0.05f, _v3(0, 1, 0), nullptr);
-	//	//	Create_Effect_Delay(L"DrainWeapon_BlackSmoke_2", 0.f + i * 0.05f, _v3(0, 1, 0), nullptr);
-	//	//	Create_Effect_Delay(L"DrainWeapon_BlackSmoke_3", 0.f + i * 0.05f, _v3(0, 1, 0), nullptr);
-	//	//
-	//	//	Create_Effect_Delay(L"DrainWeapon_WhiteParticle_0", 0.f + i * 0.05f, _v3(0, 1, 0), nullptr);
-	//	//	Create_Effect_Delay(L"DrainWeapon_WhiteParticle_1", 0.f + i * 0.05f, _v3(0, 1, 0), nullptr);
-	//	//	Create_Effect_Delay(L"DrainWeapon_WhiteParticle_2", 0.f + i * 0.05f, _v3(0, 1, 0), nullptr);
-	//	//	Create_Effect_Delay(L"DrainWeapon_WhiteParticle_3", 0.f + i * 0.05f, _v3(0, 1, 0), nullptr);
-	//	//}
-	//	//
-	//	//
-	//	//Create_Effect_Delay(L"Player_Skill_Distortion_Circle", 0.5f, _v3(0, 1, 0), nullptr);
-	//	//
-	//	//for (_int i = 0; i < 20; i++)
-	//	//{
-	//	//	_float fAngle = _float(CCalculater::Random_Num_Double(0, 360));
-	//	//	D3DXMatrixRotationAxis(&matRot, &vCamLook, D3DXToRadian(fAngle));
-	//	//	_v3 vDir = *D3DXVec3TransformNormal(&_v3(), &_v3(0, 1, 0), &matRot);
-	//	//	//D3DXVec3Normalize(&vDir, &vDir);
-	//	//
-	//	//	CTexEffect* pEff = static_cast<CTexEffect*>(CManagement::Get_Instance()->Clone_GameObject_Return(L"DrainWeapon_RedLine_Explosion_Particle", nullptr));
-	//	//	pEff->Set_Desc(_v3(0, 1, 0), nullptr);
-	//	//	pEff->Set_Delay(1.f);
-	//	//	pEff->Set_Dir(vDir);
-	//	//	pEff->Set_Angle(_v3(0, D3DXToDegree(fDot), fAngle));
-	//	//	pEff->Set_LayerIdx(1);
-	//	//	pEff->Reset_Init();
-	//	//	CManagement::Get_Instance()->Add_GameOject_ToLayer_NoClone(pEff, SCENE_STAGE, L"Layer_Effect", nullptr);
-	//	//}
-	//	//
-	//	//Create_Effect_Delay(L"DrainWeapon_RedLine_Explosion_Particle", 1.f, _v3(0, 1, 0), nullptr);
-	//	//Create_Effect_Delay(L"DrainWeapon_Counter_ShockWave_0", 1.2f, _v3(0, 1, 0), nullptr);
-	//	//Create_Effect_Delay(L"DrainWeapon_Counter_ShockWave_1", 1.6f, _v3(0, 1, 0), nullptr);
-	//	//Create_Effect_Delay(L"DrainWeapon_Counter_ShockWave_2", 2.f, _v3(0, 1, 0), nullptr);
-	//
-	//	//==============================================
-	//
-	//	//CTexEffect* pEff = static_cast<CTexEffect*>(CManagement::Get_Instance()->Clone_GameObject_Return(L"Player_Skill_Gun_Bullet_DeadFlash", nullptr));
-	//	//pEff->Set_Desc(_v3(0, 1, 0), nullptr);
-	//	//pEff->Set_LayerIdx(1);
-	//	//pEff->Reset_Init();
-	//	//CManagement::Get_Instance()->Add_GameOject_ToLayer_NoClone(pEff, SCENE_STAGE, L"Layer_Effect", nullptr);
-	//	//
-	//	//pEff = static_cast<CTexEffect*>(CManagement::Get_Instance()->Clone_GameObject_Return(L"Player_Skill_Gun_Bullet_DeadShockWave", nullptr));
-	//	//pEff->Set_Desc(_v3(0, 1, 0), nullptr);
-	//	//pEff->Set_LayerIdx(1);
-	//	//pEff->Reset_Init();
-	//	//CManagement::Get_Instance()->Add_GameOject_ToLayer_NoClone(pEff, SCENE_STAGE, L"Layer_Effect", nullptr);
-	//	//
-	//	//Create_Effect_Delay(L"Player_Skill_Gun_Bullet_DeadSmoke_Move_Purple", 0.f, _v3(0, 1, 0), nullptr);
-	//	//Create_Effect_Delay(L"Player_Skill_Gun_Bullet_DeadSmoke_Blue_0", 0.25f, _v3(0, 1, 0), nullptr);
-	//	//Create_Effect_Delay(L"Player_Skill_Gun_Bullet_DeadSmoke_Blue_1", 0.25f, _v3(0, 1, 0), nullptr);
-	//	//Create_Effect_Delay(L"Player_Skill_Gun_Smoke_DarkBlue", 0.25f, _v3(0, 1, 0), nullptr);
-	//}
+	if (CInput_Device::Get_Instance()->Key_Down(DIK_U))
+	{
+		CGameObject* pPlayer = CManagement::Get_Instance()->Get_GameObjectBack(L"Layer_Player", SCENE_MORTAL);
+		if (!pPlayer)
+			return S_OK;
+	
+		_mat matView = TARGET_TO_TRANS(pPlayer)->Get_WorldMat(); // CManagement::Get_Instance()->Get_Transform(D3DTS_VIEW);
+		D3DXMatrixInverse(&matView, nullptr, &matView);
+		_v3 vCamUp = _v3(matView._21, matView._22, matView._23);
+		_v3 vCamLook = _v3(matView._31, matView._32, matView._33);
+		_mat matRot;
+		D3DXMatrixIdentity(&matRot);
+		D3DXVec3Normalize(&vCamLook, &vCamLook);
+	
+		// Calc Angle
+		_v3	vRight = *D3DXVec3Cross(&vRight, &_v3(0.f, 1.f, 0.f), &vCamLook);
+		V3_NORMAL_SELF(&vRight);
+		_float	fDot = acosf(D3DXVec3Dot(&_v3{ 0,0,1 }, &vCamLook));
+		if (vRight.z > 0)
+			fDot *= -1.f;
+	
+		_v3 vEffectDistZ = TARGET_TO_TRANS(pPlayer)->Get_Axis(AXIS_Z) * 1.5f;
+	
+		// =========================
+		//  Gun
+		// =========================
+		
+	
+		//=====================================================================================
+		//for (_int i = 0; i < 5; i++)
+		//{
+		//	Create_Effect_Delay(L"DrainWeapon_BlackSmoke_0", 0.f + i * 0.05f, _v3(0, 1, 0), nullptr);
+		//	Create_Effect_Delay(L"DrainWeapon_BlackSmoke_1", 0.f + i * 0.05f, _v3(0, 1, 0), nullptr);
+		//	Create_Effect_Delay(L"DrainWeapon_BlackSmoke_2", 0.f + i * 0.05f, _v3(0, 1, 0), nullptr);
+		//	Create_Effect_Delay(L"DrainWeapon_BlackSmoke_3", 0.f + i * 0.05f, _v3(0, 1, 0), nullptr);
+		//
+		//	Create_Effect_Delay(L"DrainWeapon_WhiteParticle_0", 0.f + i * 0.05f, _v3(0, 1, 0), nullptr);
+		//	Create_Effect_Delay(L"DrainWeapon_WhiteParticle_1", 0.f + i * 0.05f, _v3(0, 1, 0), nullptr);
+		//	Create_Effect_Delay(L"DrainWeapon_WhiteParticle_2", 0.f + i * 0.05f, _v3(0, 1, 0), nullptr);
+		//	Create_Effect_Delay(L"DrainWeapon_WhiteParticle_3", 0.f + i * 0.05f, _v3(0, 1, 0), nullptr);
+		//}
+		//
+		//
+		//Create_Effect_Delay(L"Player_Skill_Distortion_Circle", 0.5f, _v3(0, 1, 0), nullptr);
+		//
+		//for (_int i = 0; i < 20; i++)
+		//{
+		//	_float fAngle = _float(CCalculater::Random_Num_Double(0, 360));
+		//	D3DXMatrixRotationAxis(&matRot, &vCamLook, D3DXToRadian(fAngle));
+		//	_v3 vDir = *D3DXVec3TransformNormal(&_v3(), &_v3(0, 1, 0), &matRot);
+		//	//D3DXVec3Normalize(&vDir, &vDir);
+		//
+		//	CTexEffect* pEff = static_cast<CTexEffect*>(CManagement::Get_Instance()->Clone_GameObject_Return(L"DrainWeapon_RedLine_Explosion_Particle", nullptr));
+		//	pEff->Set_Desc(_v3(0, 1, 0), nullptr);
+		//	pEff->Set_Delay(1.f);
+		//	pEff->Set_Dir(vDir);
+		//	pEff->Set_Angle(_v3(0, D3DXToDegree(fDot), fAngle));
+		//	pEff->Set_LayerIdx(1);
+		//	pEff->Reset_Init();
+		//	CManagement::Get_Instance()->Add_GameOject_ToLayer_NoClone(pEff, SCENE_STAGE, L"Layer_Effect", nullptr);
+		//}
+		//
+		//Create_Effect_Delay(L"DrainWeapon_RedLine_Explosion_Particle", 1.f, _v3(0, 1, 0), nullptr);
+		//Create_Effect_Delay(L"DrainWeapon_Counter_ShockWave_0", 1.2f, _v3(0, 1, 0), nullptr);
+		//Create_Effect_Delay(L"DrainWeapon_Counter_ShockWave_1", 1.6f, _v3(0, 1, 0), nullptr);
+		//Create_Effect_Delay(L"DrainWeapon_Counter_ShockWave_2", 2.f, _v3(0, 1, 0), nullptr);
+	
+		//==============================================
+
+	}
 
 
 	auto& iter_begin = m_vecParticle.begin();
