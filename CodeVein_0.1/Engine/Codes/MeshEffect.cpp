@@ -94,8 +94,8 @@ _int CMeshEffect::Update_GameObject(_double TimeDelta)
 
 	if (FAILED(m_pRendererCom->Add_RenderList(eGroup, this)))
 		return E_FAIL;
-	if (FAILED(m_pRendererCom->Add_RenderList(RENDER_MOTIONBLURTARGET, this)))
-		return E_FAIL;
+	//if (FAILED(m_pRendererCom->Add_RenderList(RENDER_MOTIONBLURTARGET, this)))
+	//	return E_FAIL;
 
 	return S_OK;
 }
