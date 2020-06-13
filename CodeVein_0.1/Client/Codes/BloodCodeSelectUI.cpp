@@ -122,7 +122,7 @@ void CBloodCodeSelectUI::Click_BloodCodeSlot()
 			m_eID = iter->Get_CodeID();
 			CUI_Manager::Get_Instance()->Get_BloodCode_Owner()->Set_CodeID(m_eID);
 			
-			if (g_pInput_Device->Get_DIMouseState(CInput_Device::DIM_LB) && iter->Get_Release())
+			if (g_pInput_Device->Get_DIMouseState(CInput_Device::DIM_LB)/* && iter->Get_Release()*/)
 			{
 				// 블러드 코드 선택 시, 연혈 릴리즈 창 활성화 & 블러드 코드 선택 창 비활성화
 				CUI_Manager::Get_Instance()->Stop_Play_UISound(L"Slot_Regist.ogg", CSoundManager::CHANNELID::UI_Click, CSoundManager::Effect_Sound);
@@ -144,7 +144,7 @@ void CBloodCodeSelectUI::Click_BloodCodeSlot()
 
 void CBloodCodeSelectUI::Release_BloodCode(BloodCode_ID eBloodCodeID)
 {
-	switch (eBloodCodeID)
+	/*switch (eBloodCodeID)
 	{
 	case BloodCode_Fighter:
 	{
@@ -171,7 +171,7 @@ void CBloodCodeSelectUI::Release_BloodCode(BloodCode_ID eBloodCodeID)
 		m_vecBloodCodeSlot[4]->Set_Release(true);
 	}
 		return;
-	}
+	}*/
 }
 
 void CBloodCodeSelectUI::SetUp_Default()
@@ -194,8 +194,6 @@ void CBloodCodeSelectUI::SetUp_Default()
 	m_vecBloodCodeSlot[2]->Set_CodeID(BloodCode_Artemis);
 	m_vecBloodCodeSlot[3]->Set_CodeID(BloodCode_DarkKnight);
 	m_vecBloodCodeSlot[4]->Set_CodeID(BloodCode_Queen);
-
-	m_vecBloodCodeSlot[0]->Set_Release(true);
 }
 
 CBloodCodeSelectUI * CBloodCodeSelectUI::Create(_Device pGraphic_Device)

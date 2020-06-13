@@ -25,7 +25,7 @@ HRESULT CMainApp::Ready_MainApp()
 		return E_FAIL;
 
 	// 볼륨조절
-	g_pSoundManager->Set_Volume(CSoundManager::Master_Volume, 0.5f);
+	g_pSoundManager->Set_Volume(CSoundManager::Master_Volume, 0.0f);
 
 	g_pSoundManager->Set_Volume(CSoundManager::Effect_Volume, 0.8f);
 	g_pSoundManager->Set_Volume(CSoundManager::BGM_Volume, 0.8f); 
@@ -41,7 +41,7 @@ _int CMainApp::Update_MainApp(_double TimeDelta)
 		return -1;
 	
 	// 마스터 볼륨 업
-	if (g_pInput_Device->Key_Down(DIK_NUMPADPLUS))
+	if (g_pInput_Device->Key_Down(DIK_NUMPAD2))
 	{
 		g_pSoundManager->Add_Volume(CSoundManager::Master_Volume, 0.05f);
 
@@ -49,7 +49,7 @@ _int CMainApp::Update_MainApp(_double TimeDelta)
 	}
 
 	// 마스터 볼륨 다운
-	else if (g_pInput_Device->Key_Down(DIK_NUMPADMINUS))
+	else if (g_pInput_Device->Key_Down(DIK_NUMPAD3))
 	{
 		g_pSoundManager->Add_Volume(CSoundManager::Master_Volume, -0.05f);
 
