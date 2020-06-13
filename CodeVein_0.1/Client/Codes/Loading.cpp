@@ -20,6 +20,8 @@
 #include "Player.h"
 #include "Costume_Hair.h"
 #include "Costume_Outer.h"
+#include "PlayerGunBullet.h"
+#include "PlayerSkillBullet.h"
 
 #include "Weapon.h"
 #include "Drain_Weapon.h"
@@ -1100,6 +1102,8 @@ HRESULT CLoading::Ready_Effect(void)
 		return E_FAIL;
 	if (FAILED(Add_EffectPrototype(L"Player_Skill_Gun_BulletBody_Hor")))
 		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"Player_Skill_Gun_BulletBody")))
+		return E_FAIL;
 	if (FAILED(Add_EffectPrototype(L"Player_Skill_BottomBlood_0")))
 		return E_FAIL;
 	if (FAILED(Add_EffectPrototype(L"Player_Skill_BottomBlood_1")))
@@ -1716,6 +1720,15 @@ _uint CLoading::Loading_Stage()
 			return E_FAIL;
 		CObjectPool_Manager::Get_Instance()->Create_ObjectPool(L"GameObject_DropItem", L"GameObject_DropItem", 200);
 
+		// Player Gun Bullet
+		if (FAILED(g_pManagement->Add_Prototype(L"GameObject_PlayerGunBullet", CPlayerGunBullet::Create(m_pGraphicDev))))
+			return E_FAIL;
+		CObjectPool_Manager::Get_Instance()->Create_ObjectPool(L"GameObject_PlayerGunBullet", L"GameObject_PlayerGunBullet", 100);
+
+		// Player Skill Bullet
+		if (FAILED(g_pManagement->Add_Prototype(L"GameObject_PlayerSkillBullet", CPlayerSkillBullet::Create(m_pGraphicDev))))
+			return E_FAIL;
+		CObjectPool_Manager::Get_Instance()->Create_ObjectPool(L"GameObject_PlayerSkillBullet", L"GameObject_PlayerSkillBullet", 30);
 		//============================================================================================================
 		// NPC
 		//============================================================================================================
@@ -1749,7 +1762,7 @@ _uint CLoading::Loading_MainStages()
 	{
 		//cout << "Load Stage_01 StaticMesh . . ." << endl;
 		g_pManagement->LoadMesh_FilesFromPath_AddProtoRenderObj(m_pGraphicDev, L"../../Data/Load_MeshData/Mesh_Static_Stage01_Path.dat");
-
+		
 		g_bOnStage[3] = true;
 	}
 
@@ -1758,25 +1771,25 @@ _uint CLoading::Loading_MainStages()
 	{
 		//cout << "Load Stage_02 StaticMesh . . ." << endl;
 		g_pManagement->LoadMesh_FilesFromPath_AddProtoRenderObj(m_pGraphicDev, L"../../Data/Load_MeshData/Mesh_Static_Stage02_Path.dat");
-
+	
 		g_bOnStage[4] = true;
 	}
-
+	
 	// 3번 - 스테이지 01
 	if (false == g_bOnStage[5])
 	{
 		//cout << "Load Stage_03 StaticMesh . . ." << endl;
 		g_pManagement->LoadMesh_FilesFromPath_AddProtoRenderObj(m_pGraphicDev, L"../../Data/Load_MeshData/Mesh_Static_Stage03_Path.dat");
-
+	
 		g_bOnStage[5] = true;
 	}
-
+	
 	// 3번 - 스테이지 01
 	if (false == g_bOnStage[6])
 	{
 		//cout << "Load Stage_04 StaticMesh . . ." << endl;
 		g_pManagement->LoadMesh_FilesFromPath_AddProtoRenderObj(m_pGraphicDev, L"../../Data/Load_MeshData/Mesh_Static_Stage04_Path.dat");
-
+	
 		g_bOnStage[6] = true;
 	}
 

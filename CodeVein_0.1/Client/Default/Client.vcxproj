@@ -239,6 +239,8 @@
     <ClInclude Include="..\Headers\NPC_Yokumo.h" />
     <ClInclude Include="..\Headers\Pet_DeerKing.h" />
     <ClInclude Include="..\Headers\PickUp_ItemUIManager.h" />
+    <ClInclude Include="..\Headers\PlayerGunBullet.h" />
+    <ClInclude Include="..\Headers\PlayerSkillBullet.h" />
     <ClInclude Include="..\Headers\PurchaseFailUI.h" />
     <ClInclude Include="..\Headers\ScriptUI.h" />
     <ClInclude Include="..\Headers\Costume_Mask.h" />
@@ -465,6 +467,8 @@
     <ClCompile Include="..\Codes\NPC_Yokumo.cpp" />
     <ClCompile Include="..\Codes\Pet_DeerKing.cpp" />
     <ClCompile Include="..\Codes\PickUp_ItemUIManager.cpp" />
+    <ClCompile Include="..\Codes\PlayerGunBullet.cpp" />
+    <ClCompile Include="..\Codes\PlayerSkillBullet.cpp" />
     <ClCompile Include="..\Codes\PurchaseFailUI.cpp" />
     <ClCompile Include="..\Codes\ScriptUI.cpp" />
     <ClCompile Include="..\Codes\Costume_Mask.cpp" />

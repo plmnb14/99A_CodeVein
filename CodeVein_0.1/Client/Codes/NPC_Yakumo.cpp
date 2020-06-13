@@ -454,7 +454,6 @@ void CNPC_Yakumo::Check_Bye()
 		return;
 
 	if (!m_pWeaponShoUI->Get_Active() &&
-		!m_pUIManager->Get_Yokumo_NPCUI()->Get_Active() &&
 		!m_pWeaponShoUI->Get_OtherPopupOn() &&
 		m_pInteractionButton->Get_ReactConversation())
 	{

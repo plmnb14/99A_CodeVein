@@ -2474,7 +2474,7 @@ void CPlayer::Key_UI_n_Utiliy(_bool _bActiveUI)
 				}
 			}
 
-			if (m_bOnUI_StageSelect)
+			else if (m_bOnUI_StageSelect)
 			{
 				Active_UI_StageSelect(true);
 			}
@@ -7438,6 +7438,60 @@ void CPlayer::Play_TwoHandSkill_03()
 
 void CPlayer::Play_GunSkill()
 {
+	///////////////////////////////////////////
+	// Create Gun Skill Bullet
+	///////////////////////////////////////////
+	//if (m_pDynamicMesh->Get_TrackInfo().Position >= 1.1f)
+	//{
+	//	if (false == m_bEventTrigger[0])
+	//	{
+	//		m_bEventTrigger[0] = true;
+	//
+	//		_v3 vBulletPos = m_pTransform->Get_Pos()
+	//			+ m_pTransform->Get_Axis(AXIS_Z) * 1.8f
+	//			+ m_pTransform->Get_Axis(AXIS_Y) * 1.3f
+	//			+ m_pTransform->Get_Axis(AXIS_X) * -1.5f;
+	//		CObjectPool_Manager::Get_Instance()->Create_Object(L"GameObject_PlayerSkillBullet",
+	//			&BULLET_INFO(vBulletPos, m_pTransform->Get_Axis(AXIS_Z), 20.f, 2.f));
+	//
+	//		g_pSoundManager->Stop_Sound(CSoundManager::Player_SFX_01);
+	//		g_pSoundManager->Play_Sound(L"Gun_Attack.ogg", CSoundManager::Player_SFX_01, CSoundManager::Effect_Sound);
+	//	}
+	//}
+	//if (m_pDynamicMesh->Get_TrackInfo().Position >= 1.5f)
+	//{
+	//	if (false == m_bEventTrigger[1])
+	//	{
+	//		m_bEventTrigger[1] = true;
+	//
+	//		_v3 vBulletPos = m_pTransform->Get_Pos()
+	//			+ m_pTransform->Get_Axis(AXIS_Z) * 1.8f
+	//			+ m_pTransform->Get_Axis(AXIS_Y) * 2.0f
+	//			+ m_pTransform->Get_Axis(AXIS_X) * 0.1f;
+	//		CObjectPool_Manager::Get_Instance()->Create_Object(L"GameObject_PlayerSkillBullet",
+	//			&BULLET_INFO(vBulletPos, m_pTransform->Get_Axis(AXIS_Z), 20.f, 2.f));
+	//
+	//		g_pSoundManager->Stop_Sound(CSoundManager::Player_SFX_01);
+	//		g_pSoundManager->Play_Sound(L"Gun_Attack.ogg", CSoundManager::Player_SFX_01, CSoundManager::Effect_Sound);
+	//	}
+	//}
+	//if (m_pDynamicMesh->Get_TrackInfo().Position >= 1.9f)
+	//{
+	//	if (false == m_bEventTrigger[2])
+	//	{
+	//		m_bEventTrigger[2] = true;
+	//
+	//		_v3 vBulletPos = m_pTransform->Get_Pos()
+	//			+ m_pTransform->Get_Axis(AXIS_Z) * 1.8f
+	//			+ m_pTransform->Get_Axis(AXIS_Y) * 1.5f
+	//			+ m_pTransform->Get_Axis(AXIS_X) * 1.5f;
+	//		CObjectPool_Manager::Get_Instance()->Create_Object(L"GameObject_PlayerSkillBullet",
+	//			&BULLET_INFO(vBulletPos, m_pTransform->Get_Axis(AXIS_Z), 20.f, 2.f));
+	//
+	//		g_pSoundManager->Stop_Sound(CSoundManager::Player_SFX_01);
+	//		g_pSoundManager->Play_Sound(L"Gun_Attack.ogg", CSoundManager::Player_SFX_01, CSoundManager::Effect_Sound);
+	//	}
+	//}
 }
 
 void CPlayer::Play_Ssword_WeakAtk()
@@ -8802,8 +8856,58 @@ void CPlayer::Play_Gun_HeavyAtk()
 
 		case Gun_HeavyAtk_02:
 		{
-			Decre_Skill_Movement(m_fSkillMoveMultiply);
-			Skill_Movement(m_fSkillMoveSpeed_Cur, -m_pTransform->Get_Axis(AXIS_Z));
+			if (m_pDynamicMesh->Get_TrackInfo().Position >= 2.467f && m_pDynamicMesh->Get_TrackInfo().Position < 3.8f)
+			{
+				if (m_bEventTrigger[0] == false)
+				{
+					m_bEventTrigger[0] = true;
+			
+					m_fSkillMoveAccel_Cur = 0.f;
+					m_fSkillMoveSpeed_Cur = 0.1f;
+					m_fSkillMoveMultiply = 0.0f;
+				}
+			
+				Decre_Skill_Movement(m_fSkillMoveMultiply);
+				Skill_Movement(m_fSkillMoveSpeed_Cur, m_pTransform->Get_Axis(AXIS_Z));
+			}
+			else if (m_pDynamicMesh->Get_TrackInfo().Position >= 0.2f && m_pDynamicMesh->Get_TrackInfo().Position < 0.8f)
+			{
+				if (m_bEventTrigger[1] == false)
+				{
+					m_bEventTrigger[1] = true;
+			
+					m_fSkillMoveAccel_Cur = 0.f;
+					m_fSkillMoveSpeed_Cur = 0.15f;
+					m_fSkillMoveMultiply = 0.0f;
+				}
+			
+				Decre_Skill_Movement(m_fSkillMoveMultiply);
+				Skill_Movement(m_fSkillMoveSpeed_Cur, -m_pTransform->Get_Axis(AXIS_Z));
+			}
+
+			if (m_pDynamicMesh->Get_TrackInfo().Position >= 1.0f)
+			{
+				if (false == m_bEventTrigger[2])
+				{
+					m_bEventTrigger[2] = true;
+
+					_v3	vBirth, vLook;
+					_float	fLenght = 1.f;
+					
+					_mat matBone = (*m_matHandBone ) * m_pTransform->Get_WorldMat();
+					memcpy(&vBirth, &matBone._41, sizeof(_v3));
+					memcpy(&vLook, &matBone._21, sizeof(_v3));
+					vBirth += (vLook * fLenght);
+					
+					CObjectPool_Manager::Get_Instance()->Create_Object(L"GameObject_PlayerGunBullet",
+						&BULLET_INFO(vBirth, m_pTransform->Get_Axis(AXIS_Z), 10.f, 2.f));
+					g_pSoundManager->Stop_Sound(CSoundManager::Player_SFX_01);
+					g_pSoundManager->Play_Sound(L"Gun_Attack.ogg", CSoundManager::Player_SFX_01, CSoundManager::Effect_Sound);
+
+					g_pSoundManager->Stop_Sound(CSoundManager::Player_SFX_01);
+					g_pSoundManager->Play_Sound(L"Gun_Attack.ogg", CSoundManager::Player_SFX_01, CSoundManager::Effect_Sound);
+				}
+			}
 
 			if (m_pDynamicMesh->Is_Finish_Animation_Lower(0.92f))
 			{
