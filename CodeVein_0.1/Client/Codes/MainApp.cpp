@@ -25,7 +25,7 @@ HRESULT CMainApp::Ready_MainApp()
 		return E_FAIL;
 
 	// º¼·ýÁ¶Àý
-	g_pSoundManager->Set_Volume(CSoundManager::Master_Volume, 0.5f);
+	g_pSoundManager->Set_Volume(CSoundManager::Master_Volume, 0.0f);
 
 	g_pSoundManager->Set_Volume(CSoundManager::Effect_Volume, 0.8f);
 	g_pSoundManager->Set_Volume(CSoundManager::BGM_Volume, 0.8f); 

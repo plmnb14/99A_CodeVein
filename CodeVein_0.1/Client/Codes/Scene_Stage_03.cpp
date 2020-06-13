@@ -226,6 +226,32 @@ HRESULT CScene_Stage_03::Ready_LightDesc()
 	if (FAILED(g_pManagement->Add_Light(m_pGraphic_Device, LightDesc, CLight_Manager::Static_Light)))
 		return E_FAIL;
 
+	float fAmbient = 0.1f;
+	
+	// 시작 겨우살이
+	LightDesc.Type = D3DLIGHT_POINT;
+	LightDesc.Diffuse = D3DXCOLOR(0.31f, 0.73f, 0.87f, 1.f) * 2.f;
+	LightDesc.Ambient = D3DXCOLOR(fAmbient, fAmbient, fAmbient, 1.f);
+	LightDesc.Specular = LightDesc.Diffuse;
+	LightDesc.Position = _v3(50.f, -10.f, 3.7f);
+	LightDesc.Range = 5.f;
+	LightDesc.fAlpha = 1.f;
+	
+	if (FAILED(g_pManagement->Add_Light(m_pGraphic_Device, LightDesc, CLight_Manager::Static_Light)))
+		return E_FAIL;
+
+	// 천장 막힌 건물 가운데
+	LightDesc.Type = D3DLIGHT_POINT;
+	LightDesc.Diffuse = D3DXCOLOR(1.f, 0.75f, 0.5f, 1.f)* 2.f;
+	LightDesc.Ambient = D3DXCOLOR(0.2, 0.2, 0.2, 1.f);
+	LightDesc.Specular = LightDesc.Diffuse;
+	LightDesc.Position = _v3(-2.9f, 2.f, -90.f);
+	LightDesc.Range = 10.f;
+	LightDesc.fAlpha = 1.f;
+	
+	if (FAILED(g_pManagement->Add_Light(m_pGraphic_Device, LightDesc, CLight_Manager::Static_Light)))
+		return E_FAIL;
+
 	return NOERROR;
 }
 
