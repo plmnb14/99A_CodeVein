@@ -732,6 +732,8 @@ void CMonster::Function_Find_Target()
 
 void CMonster::Function_ResetAfterAtk()
 {
+	m_dAniPlayMul = 1;
+
 	m_fCoolDownMax = 0.f;
 	m_fCoolDownCur = 0.f;
 
@@ -773,9 +775,7 @@ void CMonster::Function_ResetAfterAtk()
 void CMonster::Give_Mana_To_Player(_byte _Mana)
 {
 	CGameObject* pPlayer = g_pManagement->Get_GameObjectBack(L"Layer_Player", SCENE_MORTAL);
-
-	if (nullptr == pPlayer)
-		return;
+	IF_NULL_RETURN(pPlayer);
 
 	// 마나 더해줌.
 	pPlayer->Add_Target_Mana(_Mana);
@@ -783,6 +783,8 @@ void CMonster::Give_Mana_To_Player(_byte _Mana)
 	// 현재 마나가 최대보다 더 많다면 최대치로 맞춰줌.
 	if (pPlayer->Get_Target_Mana_Max() < pPlayer->Get_Target_Mana_Cur())
 		pPlayer->Set_Target_Mana_Cur(pPlayer->Get_Target_Mana_Max());
+
+	return;
 }
 
 void CMonster::Free()

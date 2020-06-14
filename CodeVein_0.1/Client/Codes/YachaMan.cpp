@@ -2573,6 +2573,11 @@ void CYachaMan::Play_Combo_R_L()
 			m_tObjParam.bSuperArmor = false;
 			m_vecAttackCol[0]->Set_Enabled(false);
 			m_eState = YACHAMAN_ANI::Hammer_N02;
+
+			m_pBattleAgentCom->Set_RimColor(_v4(0.f, 0.f, 0.f, 0.f));
+			m_pBattleAgentCom->Set_RimAlpha(0.5f);
+			m_pBattleAgentCom->Set_RimValue(8.f);
+
 			return;
 		}
 		else if (4.233f <= AniTime)
@@ -2597,6 +2602,7 @@ void CYachaMan::Play_Combo_R_L()
 			if (false == m_bEventTrigger[2])
 			{
 				m_bEventTrigger[2] = true;
+				m_dAniPlayMul = 1;
 				m_pWeapon->Set_Target_CanAttack(true);
 				m_pWeapon->Set_Enable_Trail(true);
 				m_tObjParam.bSuperArmor = true;
@@ -2626,9 +2632,15 @@ void CYachaMan::Play_Combo_R_L()
 		}
 		else if (3.f <= AniTime)
 		{
-			if (false == m_bEventTrigger[8])
+			if (false == m_bEventTrigger[3])
 			{
-				m_bEventTrigger[8] = true;
+				m_bEventTrigger[3] = true;
+
+				m_dAniPlayMul = 0.5;
+
+				m_pBattleAgentCom->Set_RimColor(_v4(1.f, 0.f, 0.f, 0.f));
+				m_pBattleAgentCom->Set_RimAlpha(1.f);
+				m_pBattleAgentCom->Set_RimValue(5.f);
 
 				g_pSoundManager->Stop_Sound(CSoundManager::Yacha_Voice);
 
@@ -2663,9 +2675,9 @@ void CYachaMan::Play_Combo_R_L()
 
 		if (2.833f < AniTime && 4.233f > AniTime)
 		{
-			if (m_bEventTrigger[3] == false)
+			if (m_bEventTrigger[4] == false)
 			{
-				m_bEventTrigger[3] = true;
+				m_bEventTrigger[4] = true;
 				m_fSkillMoveSpeed_Cur = 8.f;
 				m_fSkillMoveAccel_Cur = 0.f;
 				m_fSkillMoveMultiply = 1.5f;
@@ -2726,30 +2738,35 @@ void CYachaMan::Play_Combo_R_L()
 			m_bCanCoolDown = true;
 			m_fCoolDownMax = 0.6f;
 
+			m_pBattleAgentCom->Set_RimColor(_v4(0.f, 0.f, 0.f, 0.f));
+			m_pBattleAgentCom->Set_RimAlpha(0.5f);
+			m_pBattleAgentCom->Set_RimValue(8.f);
+
 			return;
 		}
 		else if (3.000f <= AniTime)
 		{
-			if (false == m_bEventTrigger[4])
+			if (false == m_bEventTrigger[5])
 			{
-				m_bEventTrigger[4] = true;
+				m_bEventTrigger[5] = true;
 				m_pWeapon->Set_Enable_Trail(false);
 			}
 		}
 		else if (2.700f <= AniTime)
 		{
-			if (false == m_bEventTrigger[5])
+			if (false == m_bEventTrigger[6])
 			{
-				m_bEventTrigger[5] = true;
+				m_bEventTrigger[6] = true;
 				m_pWeapon->Set_Target_CanAttack(false);
 				m_tObjParam.bSuperArmor = false;
 			}
 		}
 		else if (2.400f <= AniTime)
 		{
-			if (false == m_bEventTrigger[6])
+			if (false == m_bEventTrigger[7])
 			{
-				m_bEventTrigger[6] = true;
+				m_bEventTrigger[7] = true;
+				m_dAniPlayMul = 1;
 				m_pWeapon->Set_Target_CanAttack(true);
 				m_pWeapon->Set_Enable_Trail(true);
 				m_tObjParam.bSuperArmor = true;
@@ -2779,9 +2796,15 @@ void CYachaMan::Play_Combo_R_L()
 		}
 		else if (2.f <= AniTime)
 		{
-			if (false == m_bEventTrigger[9])
+			if (false == m_bEventTrigger[8])
 			{
-				m_bEventTrigger[9] = true;
+				m_bEventTrigger[8] = true;
+
+				m_dAniPlayMul = 0.5;
+
+				m_pBattleAgentCom->Set_RimColor(_v4(1.f, 0.f, 0.f, 0.f));
+				m_pBattleAgentCom->Set_RimAlpha(1.f);
+				m_pBattleAgentCom->Set_RimValue(5.f);
 
 				g_pSoundManager->Stop_Sound(CSoundManager::Yacha_Voice);
 
@@ -2816,9 +2839,9 @@ void CYachaMan::Play_Combo_R_L()
 
 		if (0.900f < AniTime && 2.833f > AniTime)
 		{
-			if (m_bEventTrigger[7] == false)
+			if (m_bEventTrigger[9] == false)
 			{
-				m_bEventTrigger[7] = true;
+				m_bEventTrigger[9] = true;
 				m_fSkillMoveSpeed_Cur = 8.f;
 				m_fSkillMoveAccel_Cur = 0.f;
 				m_fSkillMoveMultiply = 1.5f;
@@ -2886,6 +2909,11 @@ void CYachaMan::Play_Combo_R_Hammering()
 			m_tObjParam.bSuperArmor = false;
 			m_vecAttackCol[0]->Set_Enabled(false);
 			m_eState = YACHAMAN_ANI::Hammer_N03;
+
+			m_pBattleAgentCom->Set_RimColor(_v4(0.f, 0.f, 0.f, 0.f));
+			m_pBattleAgentCom->Set_RimAlpha(0.5f);
+			m_pBattleAgentCom->Set_RimValue(8.f);
+
 			return;
 		}
 		else if (4.233f <= AniTime)
@@ -2910,6 +2938,7 @@ void CYachaMan::Play_Combo_R_Hammering()
 			if (false == m_bEventTrigger[2])
 			{
 				m_bEventTrigger[2] = true;
+				m_dAniPlayMul = 1;
 				m_pWeapon->Set_Target_CanAttack(true);
 				m_pWeapon->Set_Enable_Trail(true);
 				m_tObjParam.bSuperArmor = true;
@@ -2939,9 +2968,15 @@ void CYachaMan::Play_Combo_R_Hammering()
 		}
 		else if (3.f <= AniTime)
 		{
-			if (false == m_bEventTrigger[8])
+			if (false == m_bEventTrigger[3])
 			{
-				m_bEventTrigger[8] = true;
+				m_bEventTrigger[3] = true;
+
+				m_dAniPlayMul = 0.5;
+
+				m_pBattleAgentCom->Set_RimColor(_v4(1.f, 0.f, 0.f, 0.f));
+				m_pBattleAgentCom->Set_RimAlpha(1.f);
+				m_pBattleAgentCom->Set_RimValue(5.f);
 
 				g_pSoundManager->Stop_Sound(CSoundManager::Yacha_Voice);
 
@@ -2976,9 +3011,9 @@ void CYachaMan::Play_Combo_R_Hammering()
 
 		if (2.833f < AniTime && 4.233f > AniTime)
 		{
-			if (m_bEventTrigger[3] == false)
+			if (m_bEventTrigger[4] == false)
 			{
-				m_bEventTrigger[3] = true;
+				m_bEventTrigger[4] = true;
 				m_fSkillMoveSpeed_Cur = 8.f;
 				m_fSkillMoveAccel_Cur = 0.f;
 				m_fSkillMoveMultiply = 1.5f;
@@ -3039,21 +3074,25 @@ void CYachaMan::Play_Combo_R_Hammering()
 			m_bCanCoolDown = true;
 			m_fCoolDownMax = 1.2f;
 
+			m_pBattleAgentCom->Set_RimColor(_v4(0.f, 0.f, 0.f, 0.f));
+			m_pBattleAgentCom->Set_RimAlpha(0.5f);
+			m_pBattleAgentCom->Set_RimValue(8.f);
+
 			return;
 		}
 		else if (3.933f <= AniTime)
 		{
-			if (false == m_bEventTrigger[4])
+			if (false == m_bEventTrigger[5])
 			{
-				m_bEventTrigger[4] = true;
+				m_bEventTrigger[5] = true;
 				m_pWeapon->Set_Enable_Trail(false);
 			}
 		}
 		else if (3.633f <= AniTime)
 		{
-			if (false == m_bEventTrigger[5])
+			if (false == m_bEventTrigger[6])
 			{
-				m_bEventTrigger[5] = true;
+				m_bEventTrigger[6] = true;
 				m_pWeapon->Set_Target_CanAttack(false);
 
 				m_tObjParam.bSuperArmor = false;
@@ -3062,9 +3101,10 @@ void CYachaMan::Play_Combo_R_Hammering()
 		}
 		else if (3.267f <= AniTime)
 		{
-			if (false == m_bEventTrigger[6])
+			if (false == m_bEventTrigger[7])
 			{
-				m_bEventTrigger[6] = true;
+				m_bEventTrigger[7] = true;
+				m_dAniPlayMul = 1;
 				m_pWeapon->Set_Target_CanAttack(true);
 				m_pWeapon->Set_Enable_Trail(true);
 				m_tObjParam.bSuperArmor = true;
@@ -3094,9 +3134,15 @@ void CYachaMan::Play_Combo_R_Hammering()
 		}
 		else if (3.f <= AniTime)
 		{
-			if (false == m_bEventTrigger[9])
+			if (false == m_bEventTrigger[8])
 			{
-				m_bEventTrigger[9] = true;
+				m_bEventTrigger[8] = true;
+
+				m_dAniPlayMul = 0.5;
+
+				m_pBattleAgentCom->Set_RimColor(_v4(1.f, 0.f, 0.f, 0.f));
+				m_pBattleAgentCom->Set_RimAlpha(1.f);
+				m_pBattleAgentCom->Set_RimValue(5.f);
 
 				g_pSoundManager->Stop_Sound(CSoundManager::Yacha_Voice);
 
@@ -3131,9 +3177,9 @@ void CYachaMan::Play_Combo_R_Hammering()
 
 		if (2.167f < AniTime && 3.367f > AniTime)
 		{
-			if (m_bEventTrigger[7] == false)
+			if (m_bEventTrigger[9] == false)
 			{
-				m_bEventTrigger[7] = true;
+				m_bEventTrigger[9] = true;
 				m_fSkillMoveSpeed_Cur = 8.f;
 				m_fSkillMoveAccel_Cur = 0.f;
 				m_fSkillMoveMultiply = 1.5f;
@@ -3201,6 +3247,11 @@ void CYachaMan::Play_Combo_Shoulder_TurnTwice()
 			m_tObjParam.bSuperArmor = false;
 			m_vecAttackCol[0]->Set_Enabled(false);
 			m_eState = Hammer_S02;
+
+			m_pBattleAgentCom->Set_RimColor(_v4(0.f, 0.f, 0.f, 0.f));
+			m_pBattleAgentCom->Set_RimAlpha(0.5f);
+			m_pBattleAgentCom->Set_RimValue(8.f);
+
 			return;
 		}
 		else if (2.500f <= AniTime)
@@ -3219,13 +3270,20 @@ void CYachaMan::Play_Combo_Shoulder_TurnTwice()
 				m_bEventTrigger[1] = true;
 				m_vecAttackCol[0]->Set_Enabled(true);
 				m_tObjParam.bSuperArmor = true;
+				m_dAniPlayMul = 1;
 			}
 		}
-		else if (2.f <= AniTime)
+		else if (1.7f <= AniTime)
 		{
-			if (false == m_bEventTrigger[13])
+			if (false == m_bEventTrigger[2])
 			{
-				m_bEventTrigger[13] = true;
+				m_bEventTrigger[2] = true;
+
+				m_dAniPlayMul = 0.5;
+
+				m_pBattleAgentCom->Set_RimColor(_v4(1.f, 0.f, 0.f, 0.f));
+				m_pBattleAgentCom->Set_RimAlpha(1.f);
+				m_pBattleAgentCom->Set_RimValue(5.f);
 
 				g_pSoundManager->Stop_Sound(CSoundManager::Yacha_Voice);
 
@@ -3260,9 +3318,9 @@ void CYachaMan::Play_Combo_Shoulder_TurnTwice()
 
 		if (4.733f < AniTime && 5.800f >AniTime)
 		{
-			if (m_bEventTrigger[2] == false)
+			if (m_bEventTrigger[3] == false)
 			{
-				m_bEventTrigger[2] = true;
+				m_bEventTrigger[3] = true;
 				m_fSkillMoveSpeed_Cur = 0.2f;
 				m_fSkillMoveAccel_Cur = 0.f;
 				m_fSkillMoveMultiply = 0.1f;
@@ -3273,9 +3331,9 @@ void CYachaMan::Play_Combo_Shoulder_TurnTwice()
 		}
 		else if (1.500f < AniTime && 1.800f > AniTime)
 		{
-			if (m_bEventTrigger[3] == false)
+			if (m_bEventTrigger[4] == false)
 			{
-				m_bEventTrigger[3] = true;
+				m_bEventTrigger[4] = true;
 				m_fSkillMoveSpeed_Cur = 8.f;
 				m_fSkillMoveAccel_Cur = 0.f;
 				m_fSkillMoveMultiply = 1.5f;
@@ -3336,30 +3394,34 @@ void CYachaMan::Play_Combo_Shoulder_TurnTwice()
 			m_bCanCoolDown = true;
 			m_fCoolDownMax = 1.4f;
 
+			m_pBattleAgentCom->Set_RimColor(_v4(0.f, 0.f, 0.f, 0.f));
+			m_pBattleAgentCom->Set_RimAlpha(0.5f);
+			m_pBattleAgentCom->Set_RimValue(8.f);
+
 			return;
 		}
 		else if (4.000f <= AniTime)
 		{
-			if (false == m_bEventTrigger[4])
+			if (false == m_bEventTrigger[5])
 			{
-				m_bEventTrigger[4] = true;
+				m_bEventTrigger[5] = true;
 				m_pWeapon->Set_Enable_Trail(false);
 			}
 		}
 		else if (3.700f <= AniTime)
 		{
-			if (false == m_bEventTrigger[5])
+			if (false == m_bEventTrigger[6])
 			{
-				m_bEventTrigger[5] = true;
+				m_bEventTrigger[6] = true;
 				m_pWeapon->Set_Target_CanAttack(false);
 				m_tObjParam.bSuperArmor = false;
 			}
 		}
 		else if (3.300f <= AniTime)
 		{
-			if (false == m_bEventTrigger[6])
+			if (false == m_bEventTrigger[7])
 			{
-				m_bEventTrigger[6] = true;
+				m_bEventTrigger[7] = true;
 				m_pWeapon->Set_Target_CanAttack(true);
 				m_pWeapon->Set_Enable_Trail(true);
 				m_tObjParam.bSuperArmor = true;
@@ -3389,9 +3451,9 @@ void CYachaMan::Play_Combo_Shoulder_TurnTwice()
 		}
 		else if (3.f <= AniTime)
 		{
-			if (false == m_bEventTrigger[14])
+			if (false == m_bEventTrigger[8])
 			{
-				m_bEventTrigger[14] = true;
+				m_bEventTrigger[8] = true;
 
 				g_pSoundManager->Stop_Sound(CSoundManager::Yacha_Voice);
 
@@ -3425,26 +3487,27 @@ void CYachaMan::Play_Combo_Shoulder_TurnTwice()
 		}
 		else if (2.600f <= AniTime)
 		{
-			if (false == m_bEventTrigger[7])
+			if (false == m_bEventTrigger[9])
 			{
-				m_bEventTrigger[7] = true;
+				m_bEventTrigger[9] = true;
 				m_pWeapon->Set_Enable_Trail(false);
 			}
 		}
 		else if (2.300f <= AniTime)
 		{
-			if (false == m_bEventTrigger[8])
+			if (false == m_bEventTrigger[10])
 			{
-				m_bEventTrigger[8] = true;
+				m_bEventTrigger[10] = true;
 				m_pWeapon->Set_Target_CanAttack(false);
 				m_tObjParam.bSuperArmor = false;
 			}
 		}
 		else if (1.967f <= AniTime)
 		{
-			if (false == m_bEventTrigger[9])
+			if (false == m_bEventTrigger[11])
 			{
-				m_bEventTrigger[9] = true;
+				m_bEventTrigger[11] = true;
+				m_dAniPlayMul = 1;
 				m_pWeapon->Set_Target_CanAttack(true);
 				m_pWeapon->Set_Enable_Trail(true);
 				m_tObjParam.bSuperArmor = true;
@@ -3474,9 +3537,15 @@ void CYachaMan::Play_Combo_Shoulder_TurnTwice()
 		}
 		else if (1.5f <= AniTime)
 		{
-			if (false == m_bEventTrigger[15])
+			if (false == m_bEventTrigger[12])
 			{
-				m_bEventTrigger[15] = true;
+				m_bEventTrigger[12] = true;
+
+				m_dAniPlayMul = 0.5;
+
+				m_pBattleAgentCom->Set_RimColor(_v4(1.f, 0.f, 0.f, 0.f));
+				m_pBattleAgentCom->Set_RimAlpha(1.f);
+				m_pBattleAgentCom->Set_RimValue(5.f);
 
 				g_pSoundManager->Stop_Sound(CSoundManager::Yacha_Voice);
 
@@ -3511,9 +3580,9 @@ void CYachaMan::Play_Combo_Shoulder_TurnTwice()
 
 		if (3.233f < AniTime && 3.733f > AniTime)
 		{
-			if (m_bEventTrigger[10] == false)
+			if (m_bEventTrigger[13] == false)
 			{
-				m_bEventTrigger[10] = true;
+				m_bEventTrigger[13] = true;
 				m_fSkillMoveSpeed_Cur = 8.f;
 				m_fSkillMoveAccel_Cur = 0.f;
 				m_fSkillMoveMultiply = 1.5f;
@@ -3567,9 +3636,9 @@ void CYachaMan::Play_Combo_Shoulder_TurnTwice()
 		}
 		else if (2.200f < AniTime && 3.133f >AniTime)
 		{
-			if (m_bEventTrigger[11] == false)
+			if (m_bEventTrigger[14] == false)
 			{
-				m_bEventTrigger[11] = true;
+				m_bEventTrigger[14] = true;
 				m_fSkillMoveSpeed_Cur = 8.f;
 				m_fSkillMoveAccel_Cur = 0.f;
 				m_fSkillMoveMultiply = 1.5f;
@@ -3623,9 +3692,9 @@ void CYachaMan::Play_Combo_Shoulder_TurnTwice()
 		}
 		else if (1.767f < AniTime && 2.100f > AniTime)
 		{
-			if (m_bEventTrigger[12] == false)
+			if (m_bEventTrigger[15] == false)
 			{
-				m_bEventTrigger[12] = true;
+				m_bEventTrigger[15] = true;
 				m_fSkillMoveSpeed_Cur = 8.f;
 				m_fSkillMoveAccel_Cur = 0.f;
 				m_fSkillMoveMultiply = 1.5f;
@@ -3693,6 +3762,11 @@ void CYachaMan::Play_Combo_Shoulder_HalfClock()
 			m_vecAttackCol[0]->Set_Enabled(false);
 			m_tObjParam.bSuperArmor = false;
 			m_eState = Hammer_S03;
+
+			m_pBattleAgentCom->Set_RimColor(_v4(0.f, 0.f, 0.f, 0.f));
+			m_pBattleAgentCom->Set_RimAlpha(0.5f);
+			m_pBattleAgentCom->Set_RimValue(8.f);
+
 			return;
 		}
 		else if (2.500f <= AniTime)
@@ -3711,13 +3785,20 @@ void CYachaMan::Play_Combo_Shoulder_HalfClock()
 				m_bEventTrigger[1] = true;
 				m_vecAttackCol[0]->Set_Enabled(true);
 				m_tObjParam.bSuperArmor = true;
+				m_dAniPlayMul = 1;
 			}
 		}
-		else if (1.8f <= AniTime)
+		else if (1.765f <= AniTime)
 		{
-			if (false == m_bEventTrigger[9])
+			if (false == m_bEventTrigger[2])
 			{
-				m_bEventTrigger[9] = true;
+				m_bEventTrigger[2] = true;
+
+				m_dAniPlayMul = 0.5;
+
+				m_pBattleAgentCom->Set_RimColor(_v4(1.f, 0.f, 0.f, 0.f));
+				m_pBattleAgentCom->Set_RimAlpha(1.f);
+				m_pBattleAgentCom->Set_RimValue(5.f);
 
 				g_pSoundManager->Stop_Sound(CSoundManager::Yacha_Voice);
 
@@ -3752,9 +3833,9 @@ void CYachaMan::Play_Combo_Shoulder_HalfClock()
 
 		if (4.733f < AniTime && 5.800f >AniTime)
 		{
-			if (m_bEventTrigger[2] == false)
+			if (m_bEventTrigger[3] == false)
 			{
-				m_bEventTrigger[2] = true;
+				m_bEventTrigger[3] = true;
 				m_fSkillMoveSpeed_Cur = 0.2f;
 				m_fSkillMoveAccel_Cur = 0.f;
 				m_fSkillMoveMultiply = 0.1f;
@@ -3765,9 +3846,9 @@ void CYachaMan::Play_Combo_Shoulder_HalfClock()
 		}
 		else if (1.500f < AniTime && 1.800f > AniTime)
 		{
-			if (m_bEventTrigger[3] == false)
+			if (m_bEventTrigger[4] == false)
 			{
-				m_bEventTrigger[3] = true;
+				m_bEventTrigger[4] = true;
 				m_fSkillMoveSpeed_Cur = 8.f;
 				m_fSkillMoveAccel_Cur = 0.f;
 				m_fSkillMoveMultiply = 1.5f;
@@ -3828,30 +3909,35 @@ void CYachaMan::Play_Combo_Shoulder_HalfClock()
 			m_bCanCoolDown = true;
 			m_fCoolDownMax = 0.7f;
 
+			m_pBattleAgentCom->Set_RimColor(_v4(0.f, 0.f, 0.f, 0.f));
+			m_pBattleAgentCom->Set_RimAlpha(0.5f);
+			m_pBattleAgentCom->Set_RimValue(8.f);
+
 			return;
 		}
 		else if (2.433f <= AniTime)
 		{
-			if (false == m_bEventTrigger[4])
+			if (false == m_bEventTrigger[5])
 			{
-				m_bEventTrigger[4] = true;
+				m_bEventTrigger[5] = true;
 				m_pWeapon->Set_Enable_Trail(false);
 			}
 		}
 		else if (2.133f <= AniTime)
 		{
-			if (false == m_bEventTrigger[5])
+			if (false == m_bEventTrigger[6])
 			{
-				m_bEventTrigger[5] = true;
+				m_bEventTrigger[6] = true;
 				m_pWeapon->Set_Target_CanAttack(false);
 				m_tObjParam.bSuperArmor = false;
 			}
 		}
 		else if (1.800f <= AniTime)
 		{
-			if (false == m_bEventTrigger[6])
+			if (false == m_bEventTrigger[7])
 			{
-				m_bEventTrigger[6] = true;
+				m_bEventTrigger[7] = true;
+				m_dAniPlayMul = 1;
 				m_pWeapon->Set_Target_CanAttack(true);
 				m_pWeapon->Set_Enable_Trail(true);
 				m_tObjParam.bSuperArmor = true;
@@ -3881,9 +3967,15 @@ void CYachaMan::Play_Combo_Shoulder_HalfClock()
 		}
 		else if (1.5f <= AniTime)
 		{
-			if (false == m_bEventTrigger[10])
+			if (false == m_bEventTrigger[8])
 			{
-				m_bEventTrigger[10] = true;
+				m_bEventTrigger[8] = true;
+
+				m_dAniPlayMul = 0.5;
+
+				m_pBattleAgentCom->Set_RimColor(_v4(1.f, 0.f, 0.f, 0.f));
+				m_pBattleAgentCom->Set_RimAlpha(1.f);
+				m_pBattleAgentCom->Set_RimValue(5.f);
 
 				g_pSoundManager->Stop_Sound(CSoundManager::Yacha_Voice);
 
@@ -3918,9 +4010,9 @@ void CYachaMan::Play_Combo_Shoulder_HalfClock()
 
 		if (1.933f < AniTime && 3.000f> AniTime)
 		{
-			if (m_bEventTrigger[7] == false)
+			if (m_bEventTrigger[9] == false)
 			{
-				m_bEventTrigger[7] = true;
+				m_bEventTrigger[9] = true;
 				m_fSkillMoveSpeed_Cur = 8.f;
 				m_fSkillMoveAccel_Cur = 0.f;
 				m_fSkillMoveMultiply = 1.5f;
@@ -3974,9 +4066,9 @@ void CYachaMan::Play_Combo_Shoulder_HalfClock()
 		}
 		else if (1.000f < AniTime && 1.833f >AniTime)
 		{
-			if (m_bEventTrigger[8] == false)
+			if (m_bEventTrigger[10] == false)
 			{
-				m_bEventTrigger[8] = true;
+				m_bEventTrigger[10] = true;
 				m_fSkillMoveSpeed_Cur = 8.f;
 				m_fSkillMoveAccel_Cur = 0.f;
 				m_fSkillMoveMultiply = 1.5f;
@@ -4043,6 +4135,11 @@ void CYachaMan::Play_Combo_RunHammering()
 		{
 			m_tObjParam.bSuperArmor = false;
 			m_eState = Hammer_Sp03_Loop;
+
+			m_pBattleAgentCom->Set_RimColor(_v4(1.f, 0.f, 0.f, 0.f));
+			m_pBattleAgentCom->Set_RimAlpha(1.f);
+			m_pBattleAgentCom->Set_RimValue(5.f);
+
 			return;
 		}
 
@@ -4255,6 +4352,10 @@ void CYachaMan::Play_Combo_RunHammering()
 			Function_ResetAfterAtk();
 			m_bCanCoolDown = true;
 			m_fCoolDownMax = 1.4f;
+
+			m_pBattleAgentCom->Set_RimColor(_v4(0.f, 0.f, 0.f, 0.f));
+			m_pBattleAgentCom->Set_RimAlpha(0.5f);
+			m_pBattleAgentCom->Set_RimValue(8.f);
 
 			return;
 		}
@@ -4945,7 +5046,10 @@ void CYachaMan::Play_Dead()
 					m_pWeapon->Start_Dissolve(0.5f, false, true);
 
 					Give_Mana_To_Player(5);
-					Check_DropItem(MONSTER_NAMETYPE::M_YachaMan);
+
+					if (false == m_pRigidCom->Get_IsFall())
+						Check_DropItem(MONSTER_NAMETYPE::M_YachaMan);
+
 					CObjectPool_Manager::Get_Instance()->Create_Object(L"GameObject_Haze", (void*)&CHaze::HAZE_INFO(_float(CCalculater::Random_Num(100, 300)), m_pTransformCom->Get_Pos(), 0.f));
 				}
 			}

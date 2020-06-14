@@ -2358,9 +2358,14 @@ void CYeti::Play_Combo_RLRL_Shoulder()
 		if (m_pMeshCom->Is_Finish_Animation(0.5f))
 		{
 			m_tObjParam.bSuperArmor = true;
+			m_eState = YETI_ANI::Atk_Shoulder;
+
 			m_vecAttackCol[1]->Set_Enabled(false);
 			m_vecAttackCol[2]->Set_Enabled(false);
-			m_eState = YETI_ANI::Atk_Shoulder;
+
+			m_pBattleAgentCom->Set_RimColor(_v4(0.f, 0.f, 0.f, 0.f));
+			m_pBattleAgentCom->Set_RimAlpha(0.5f);
+			m_pBattleAgentCom->Set_RimValue(8.f);
 
 			return;
 		}
@@ -2384,9 +2389,9 @@ void CYeti::Play_Combo_RLRL_Shoulder()
 		}
 		else if (4.2f <= AniTime)
 		{
-			if (false == m_bEventTrigger[16])
+			if (false == m_bEventTrigger[2])
 			{
-				m_bEventTrigger[16] = true;
+				m_bEventTrigger[2] = true;
 
 				g_pSoundManager->Stop_Sound(CSoundManager::Yeti_Voice);
 
@@ -2420,27 +2425,27 @@ void CYeti::Play_Combo_RLRL_Shoulder()
 		}
 		else if (3.700f <= AniTime)
 		{
-			if (false == m_bEventTrigger[2])
+			if (false == m_bEventTrigger[3])
 			{
-				m_bEventTrigger[2] = true;
+				m_bEventTrigger[3] = true;
 				m_vecAttackCol[2]->Set_Enabled(false);
 				m_tObjParam.bSuperArmor = false;
 			}
 		}
 		else if (3.633f <= AniTime)
 		{
-			if (false == m_bEventTrigger[3])
+			if (false == m_bEventTrigger[4])
 			{
-				m_bEventTrigger[3] = true;
+				m_bEventTrigger[4] = true;
 				m_vecAttackCol[2]->Set_Enabled(true);
 				m_tObjParam.bSuperArmor = true;
 			}
 		}
 		else if (3.3f <= AniTime)
 		{
-			if (false == m_bEventTrigger[17])
+			if (false == m_bEventTrigger[5])
 			{
-				m_bEventTrigger[17] = true;
+				m_bEventTrigger[5] = true;
 
 				g_pSoundManager->Stop_Sound(CSoundManager::Yeti_Voice);
 
@@ -2474,27 +2479,27 @@ void CYeti::Play_Combo_RLRL_Shoulder()
 		}
 		else if (2.800f <= AniTime)
 		{
-			if (false == m_bEventTrigger[4])
+			if (false == m_bEventTrigger[6])
 			{
-				m_bEventTrigger[4] = true;
+				m_bEventTrigger[6] = true;
 				m_vecAttackCol[1]->Set_Enabled(false);
 				m_tObjParam.bSuperArmor = false;
 			}
 		}
 		else if (2.733f <= AniTime)
 		{
-			if (false == m_bEventTrigger[5])
+			if (false == m_bEventTrigger[7])
 			{
-				m_bEventTrigger[5] = true;
+				m_bEventTrigger[7] = true;
 				m_vecAttackCol[1]->Set_Enabled(true);
 				m_tObjParam.bSuperArmor = true;
 			}
 		}
 		else if (2.3f <= AniTime)
 		{
-			if (false == m_bEventTrigger[18])
+			if (false == m_bEventTrigger[8])
 			{
-				m_bEventTrigger[18] = true;
+				m_bEventTrigger[8] = true;
 
 				g_pSoundManager->Stop_Sound(CSoundManager::Yeti_Voice);
 
@@ -2528,27 +2533,29 @@ void CYeti::Play_Combo_RLRL_Shoulder()
 		}
 		else if (1.967f <= AniTime)
 		{
-			if (false == m_bEventTrigger[6])
+			if (false == m_bEventTrigger[9])
 			{
-				m_bEventTrigger[6] = true;
+				m_bEventTrigger[9] = true;
 				m_vecAttackCol[2]->Set_Enabled(false);
 				m_tObjParam.bSuperArmor = false;
 			}
 		}
 		else if (1.867f <= AniTime)
 		{
-			if (false == m_bEventTrigger[7])
+			if (false == m_bEventTrigger[10])
 			{
-				m_bEventTrigger[7] = true;
+				m_bEventTrigger[10] = true;
 				m_vecAttackCol[2]->Set_Enabled(true);
 				m_tObjParam.bSuperArmor = true;
 			}
 		}
 		else if (1.3f <= AniTime)
 		{
-			if (false == m_bEventTrigger[19])
+			if (false == m_bEventTrigger[11])
 			{
-				m_bEventTrigger[19] = true;
+				m_bEventTrigger[11] = true;
+				
+				m_dAniPlayMul = 1;
 
 				g_pSoundManager->Stop_Sound(CSoundManager::Yeti_Voice);
 
@@ -2580,12 +2587,25 @@ void CYeti::Play_Combo_RLRL_Shoulder()
 				}
 			}
 		}
+		else if (1.f <= AniTime)
+		{
+			if (false == m_bEventTrigger[12])
+			{
+				m_bEventTrigger[12] = true;
+
+				m_dAniPlayMul = 0.5;
+
+				m_pBattleAgentCom->Set_RimColor(_v4(1.f, 0.f, 0.f, 0.f));
+				m_pBattleAgentCom->Set_RimAlpha(1.f);
+				m_pBattleAgentCom->Set_RimValue(5.f);
+			}
+		}
 
 		if (4.333f < AniTime && 4.567f > AniTime)
 		{
-			if (false == m_bEventTrigger[8])
+			if (false == m_bEventTrigger[13])
 			{
-				m_bEventTrigger[8] = true;
+				m_bEventTrigger[13] = true;
 				m_fSkillMoveSpeed_Cur = 6.f;
 				m_fSkillMoveAccel_Cur = 0.f;
 				m_fSkillMoveMultiply = 1.f;
@@ -2596,9 +2616,9 @@ void CYeti::Play_Combo_RLRL_Shoulder()
 		}
 		else if (3.467f < AniTime && 3.900f > AniTime)
 		{
-			if (false == m_bEventTrigger[9])
+			if (false == m_bEventTrigger[14])
 			{
-				m_bEventTrigger[9] = true;
+				m_bEventTrigger[14] = true;
 				m_fSkillMoveSpeed_Cur = 6.f;
 				m_fSkillMoveAccel_Cur = 0.f;
 				m_fSkillMoveMultiply = 1.f;
@@ -2609,9 +2629,9 @@ void CYeti::Play_Combo_RLRL_Shoulder()
 		}
 		else if (2.633f < AniTime && 2.900f > AniTime)
 		{
-			if (false == m_bEventTrigger[10])
+			if (false == m_bEventTrigger[15])
 			{
-				m_bEventTrigger[10] = true;
+				m_bEventTrigger[15] = true;
 				m_fSkillMoveSpeed_Cur = 6.f;
 				m_fSkillMoveAccel_Cur = 0.f;
 				m_fSkillMoveMultiply = 1.f;
@@ -2622,9 +2642,9 @@ void CYeti::Play_Combo_RLRL_Shoulder()
 		}
 		else if (1.533f < AniTime && 2.133f > AniTime)
 		{
-			if (false == m_bEventTrigger[11])
+			if (false == m_bEventTrigger[16])
 			{
-				m_bEventTrigger[11] = true;
+				m_bEventTrigger[16] = true;
 				m_fSkillMoveSpeed_Cur = 6.f;
 				m_fSkillMoveAccel_Cur = 0.f;
 				m_fSkillMoveMultiply = 1.f;
@@ -2635,9 +2655,9 @@ void CYeti::Play_Combo_RLRL_Shoulder()
 		}
 		else if (0.767f < AniTime && 1.333f > AniTime)
 		{
-			if (false == m_bEventTrigger[12])
+			if (false == m_bEventTrigger[17])
 			{
-				m_bEventTrigger[12] = true;
+				m_bEventTrigger[17] = true;
 				m_fSkillMoveSpeed_Cur = 6.f;
 				m_fSkillMoveAccel_Cur = 0.f;
 				m_fSkillMoveMultiply = 1.f;
@@ -2655,24 +2675,29 @@ void CYeti::Play_Combo_RLRL_Shoulder()
 			m_bCanCoolDown = true;
 			m_fCoolDownMax = 0.8f;
 
+			m_pBattleAgentCom->Set_RimColor(_v4(0.f, 0.f, 0.f, 0.f));
+			m_pBattleAgentCom->Set_RimAlpha(0.5f);
+			m_pBattleAgentCom->Set_RimValue(8.f);
+
 			return;
 		}
 		else if (1.067f <= AniTime)
 		{
-			if (false == m_bEventTrigger[13])
+			if (false == m_bEventTrigger[18])
 			{
-				m_bEventTrigger[13] = true;
+				m_bEventTrigger[18] = true;
 				m_vecAttackCol[2]->Set_Enabled(false);
 				m_tObjParam.bSuperArmor = false;
 			}
 		}
 		else if (0.800f <= AniTime)
 		{
-			if (false == m_bEventTrigger[14])
+			if (false == m_bEventTrigger[19])
 			{
-				m_bEventTrigger[14] = true;
+				m_bEventTrigger[19] = true;
 				m_vecAttackCol[2]->Set_Enabled(true);
 				m_tObjParam.bSuperArmor = true;
+				m_dAniPlayMul = 1;
 			}
 		}
 		else if (0.5f <= AniTime)
@@ -2681,9 +2706,16 @@ void CYeti::Play_Combo_RLRL_Shoulder()
 			{
 				m_bEventTrigger[20] = true;
 
+				m_dAniPlayMul = 0.5;
+
+				m_pBattleAgentCom->Set_RimColor(_v4(1.f, 0.f, 0.f, 0.f));
+				m_pBattleAgentCom->Set_RimAlpha(1.f);
+				m_pBattleAgentCom->Set_RimValue(5.f);
+
 				g_pSoundManager->Stop_Sound(CSoundManager::Yeti_Voice);
 
 				m_iRandom = CALC::Random_Num(0, 6);
+
 
 				switch (m_iRandom)
 				{
@@ -2714,9 +2746,9 @@ void CYeti::Play_Combo_RLRL_Shoulder()
 
 		if (0.400f < AniTime && 0.967f > AniTime)
 		{
-			if (false == m_bEventTrigger[15])
+			if (false == m_bEventTrigger[21])
 			{
-				m_bEventTrigger[15] = true;
+				m_bEventTrigger[21] = true;
 				m_fSkillMoveSpeed_Cur = 6.f;
 				m_fSkillMoveAccel_Cur = 0.f;
 				m_fSkillMoveMultiply = 1.f;
@@ -2760,9 +2792,14 @@ void CYeti::Play_Combo_RLRL_Smash()
 		if (m_pMeshCom->Is_Finish_Animation(0.5f))
 		{
 			m_tObjParam.bSuperArmor = true;
+			m_eState = YETI_ANI::Atk_Smash;
+
 			m_vecAttackCol[1]->Set_Enabled(false);
 			m_vecAttackCol[2]->Set_Enabled(false);
-			m_eState = YETI_ANI::Atk_Smash;
+
+			m_pBattleAgentCom->Set_RimColor(_v4(0.f, 0.f, 0.f, 0.f));
+			m_pBattleAgentCom->Set_RimAlpha(0.5f);
+			m_pBattleAgentCom->Set_RimValue(8.f);
 
 			return;
 		}
@@ -2786,9 +2823,9 @@ void CYeti::Play_Combo_RLRL_Smash()
 		}
 		else if (4.3f <= AniTime)
 		{
-			if (false == m_bEventTrigger[16])
+			if (false == m_bEventTrigger[2])
 			{
-				m_bEventTrigger[16] = true;
+				m_bEventTrigger[2] = true;
 
 				g_pSoundManager->Stop_Sound(CSoundManager::Yeti_Voice);
 
@@ -2822,27 +2859,27 @@ void CYeti::Play_Combo_RLRL_Smash()
 		}
 		else if (3.700f <= AniTime)
 		{
-			if (false == m_bEventTrigger[2])
+			if (false == m_bEventTrigger[3])
 			{
-				m_bEventTrigger[2] = true;
+				m_bEventTrigger[3] = true;
 				m_vecAttackCol[2]->Set_Enabled(false);
 				m_tObjParam.bSuperArmor = false;
 			}
 		}
 		else if (3.633f <= AniTime)
 		{
-			if (false == m_bEventTrigger[3])
+			if (false == m_bEventTrigger[4])
 			{
-				m_bEventTrigger[3] = true;
+				m_bEventTrigger[4] = true;
 				m_vecAttackCol[2]->Set_Enabled(true);
 				m_tObjParam.bSuperArmor = true;
 			}
 		}
 		else if (3.4f <= AniTime)
 		{
-			if (false == m_bEventTrigger[17])
+			if (false == m_bEventTrigger[5])
 			{
-				m_bEventTrigger[17] = true;
+				m_bEventTrigger[5] = true;
 
 				g_pSoundManager->Stop_Sound(CSoundManager::Yeti_Voice);
 
@@ -2876,27 +2913,27 @@ void CYeti::Play_Combo_RLRL_Smash()
 		}
 		else if (2.800f <= AniTime)
 		{
-			if (false == m_bEventTrigger[4])
+			if (false == m_bEventTrigger[6])
 			{
-				m_bEventTrigger[4] = true;
+				m_bEventTrigger[6] = true;
 				m_vecAttackCol[1]->Set_Enabled(false);
 				m_tObjParam.bSuperArmor = false;
 			}
 		}
 		else if (2.733f <= AniTime)
 		{
-			if (false == m_bEventTrigger[5])
+			if (false == m_bEventTrigger[7])
 			{
-				m_bEventTrigger[5] = true;
+				m_bEventTrigger[7] = true;
 				m_vecAttackCol[1]->Set_Enabled(true);
 				m_tObjParam.bSuperArmor = true;
 			}
 		}
 		else if (2.4f <= AniTime)
 		{
-			if (false == m_bEventTrigger[18])
+			if (false == m_bEventTrigger[8])
 			{
-				m_bEventTrigger[18] = true;
+				m_bEventTrigger[8] = true;
 
 				g_pSoundManager->Stop_Sound(CSoundManager::Yeti_Voice);
 
@@ -2930,27 +2967,29 @@ void CYeti::Play_Combo_RLRL_Smash()
 		}
 		else if (1.967f <= AniTime)
 		{
-			if (false == m_bEventTrigger[6])
+			if (false == m_bEventTrigger[9])
 			{
-				m_bEventTrigger[6] = true;
+				m_bEventTrigger[9] = true;
 				m_vecAttackCol[2]->Set_Enabled(false);
 				m_tObjParam.bSuperArmor = false;
 			}
 		}
 		else if (1.867f <= AniTime)
 		{
-			if (false == m_bEventTrigger[7])
+			if (false == m_bEventTrigger[10])
 			{
-				m_bEventTrigger[7] = true;
+				m_bEventTrigger[10] = true;
 				m_vecAttackCol[2]->Set_Enabled(true);
 				m_tObjParam.bSuperArmor = true;
 			}
 		}
 		else if (1.4f <= AniTime)
 		{
-			if (false == m_bEventTrigger[19])
+			if (false == m_bEventTrigger[11])
 			{
-				m_bEventTrigger[19] = true;
+				m_bEventTrigger[11] = true;
+
+				m_dAniPlayMul = 1;
 
 				g_pSoundManager->Stop_Sound(CSoundManager::Yeti_Voice);
 
@@ -2982,12 +3021,25 @@ void CYeti::Play_Combo_RLRL_Smash()
 				}
 			}
 		}
+		else if (1.f <= AniTime)
+		{
+			if (false == m_bEventTrigger[12])
+			{
+				m_bEventTrigger[12] = true;
+
+				m_dAniPlayMul = 0.5;
+
+				m_pBattleAgentCom->Set_RimColor(_v4(1.f, 0.f, 0.f, 0.f));
+				m_pBattleAgentCom->Set_RimAlpha(1.f);
+				m_pBattleAgentCom->Set_RimValue(5.f);
+			}
+		}
 
 		if (4.333f < AniTime && 4.567f > AniTime)
 		{
-			if (false == m_bEventTrigger[8])
+			if (false == m_bEventTrigger[13])
 			{
-				m_bEventTrigger[8] = true;
+				m_bEventTrigger[13] = true;
 				m_fSkillMoveSpeed_Cur = 6.f;
 				m_fSkillMoveAccel_Cur = 0.f;
 				m_fSkillMoveMultiply = 1.f;
@@ -2998,9 +3050,9 @@ void CYeti::Play_Combo_RLRL_Smash()
 		}
 		else if (3.467f < AniTime && 3.900f > AniTime)
 		{
-			if (false == m_bEventTrigger[9])
+			if (false == m_bEventTrigger[14])
 			{
-				m_bEventTrigger[9] = true;
+				m_bEventTrigger[14] = true;
 				m_fSkillMoveSpeed_Cur = 6.f;
 				m_fSkillMoveAccel_Cur = 0.f;
 				m_fSkillMoveMultiply = 1.f;
@@ -3011,9 +3063,9 @@ void CYeti::Play_Combo_RLRL_Smash()
 		}
 		else if (2.633f < AniTime && 2.900f > AniTime)
 		{
-			if (false == m_bEventTrigger[10])
+			if (false == m_bEventTrigger[15])
 			{
-				m_bEventTrigger[10] = true;
+				m_bEventTrigger[15] = true;
 				m_fSkillMoveSpeed_Cur = 6.f;
 				m_fSkillMoveAccel_Cur = 0.f;
 				m_fSkillMoveMultiply = 1.f;
@@ -3024,9 +3076,9 @@ void CYeti::Play_Combo_RLRL_Smash()
 		}
 		else if (1.533f < AniTime && 2.133f > AniTime)
 		{
-			if (false == m_bEventTrigger[11])
+			if (false == m_bEventTrigger[16])
 			{
-				m_bEventTrigger[11] = true;
+				m_bEventTrigger[16] = true;
 				m_fSkillMoveSpeed_Cur = 6.f;
 				m_fSkillMoveAccel_Cur = 0.f;
 				m_fSkillMoveMultiply = 1.f;
@@ -3037,9 +3089,9 @@ void CYeti::Play_Combo_RLRL_Smash()
 		}
 		else if (0.767f < AniTime && 1.333f > AniTime)
 		{
-			if (false == m_bEventTrigger[12])
+			if (false == m_bEventTrigger[17])
 			{
-				m_bEventTrigger[12] = true;
+				m_bEventTrigger[17] = true;
 				m_fSkillMoveSpeed_Cur = 6.f;
 				m_fSkillMoveAccel_Cur = 0.f;
 				m_fSkillMoveMultiply = 1.f;
@@ -3057,22 +3109,26 @@ void CYeti::Play_Combo_RLRL_Smash()
 			m_bCanCoolDown = true;
 			m_fCoolDownMax = 0.8f;
 
+			m_pBattleAgentCom->Set_RimColor(_v4(0.f, 0.f, 0.f, 0.f));
+			m_pBattleAgentCom->Set_RimAlpha(0.5f);
+			m_pBattleAgentCom->Set_RimValue(8.f);
+
 			return;
 		}
 		else if (2.800f <= AniTime)
 		{
-			if (false == m_bEventTrigger[13])
+			if (false == m_bEventTrigger[18])
 			{
-				m_bEventTrigger[13] = true;
+				m_bEventTrigger[18] = true;
 				m_vecAttackCol[2]->Set_Enabled(false);
 				m_tObjParam.bSuperArmor = false;
 			}
 		}
 		else if (2.633f <= AniTime)
 		{
-			if (false == m_bEventTrigger[14])
+			if (false == m_bEventTrigger[19])
 			{
-				m_bEventTrigger[14] = true;
+				m_bEventTrigger[19] = true;
 				m_vecAttackCol[2]->Set_Enabled(true);
 				m_tObjParam.bSuperArmor = true;
 			}
@@ -3113,12 +3169,34 @@ void CYeti::Play_Combo_RLRL_Smash()
 				}
 			}
 		}
+		else if (1.3f <= AniTime)
+		{
+			if (false == m_bEventTrigger[21])
+			{
+				m_bEventTrigger[21] = true;
+
+				m_dAniPlayMul = 1;
+			}
+		}
+		else if (1.f <= AniTime)
+		{
+			if (false == m_bEventTrigger[22])
+			{
+				m_bEventTrigger[22] = true;
+
+				m_dAniPlayMul = 0.5;
+
+				m_pBattleAgentCom->Set_RimColor(_v4(1.f, 0.f, 0.f, 0.f));
+				m_pBattleAgentCom->Set_RimAlpha(1.f);
+				m_pBattleAgentCom->Set_RimValue(5.f);
+			}
+		}
 
 		if (1.033f < AniTime && 2.633f > AniTime)
 		{
-			if (false == m_bEventTrigger[15])
+			if (false == m_bEventTrigger[22])
 			{
-				m_bEventTrigger[15] = true;
+				m_bEventTrigger[22] = true;
 				m_fSkillMoveSpeed_Cur = 6.f;
 				m_fSkillMoveAccel_Cur = 0.f;
 				m_fSkillMoveMultiply = 1.f;
@@ -3166,6 +3244,10 @@ void CYeti::Play_Combo_RLRL_Swing()
 			m_vecAttackCol[2]->Set_Enabled(false);
 			m_eState = YETI_ANI::Atk_Swing;
 
+			m_pBattleAgentCom->Set_RimColor(_v4(0.f, 0.f, 0.f, 0.f));
+			m_pBattleAgentCom->Set_RimAlpha(0.5f);
+			m_pBattleAgentCom->Set_RimValue(8.f);
+
 			return;
 		}
 		else if (4.600f <= AniTime)
@@ -3188,9 +3270,9 @@ void CYeti::Play_Combo_RLRL_Swing()
 		}
 		else if (4.3f <= AniTime)
 		{
-			if (false == m_bEventTrigger[16])
+			if (false == m_bEventTrigger[2])
 			{
-				m_bEventTrigger[16] = true;
+				m_bEventTrigger[2] = true;
 
 				g_pSoundManager->Stop_Sound(CSoundManager::Yeti_Voice);
 
@@ -3224,27 +3306,27 @@ void CYeti::Play_Combo_RLRL_Swing()
 		}
 		else if (3.700f <= AniTime)
 		{
-			if (false == m_bEventTrigger[2])
+			if (false == m_bEventTrigger[3])
 			{
-				m_bEventTrigger[2] = true;
+				m_bEventTrigger[3] = true;
 				m_vecAttackCol[2]->Set_Enabled(false);
 				m_tObjParam.bSuperArmor = false;
 			}
 		}
 		else if (3.633f <= AniTime)
 		{
-			if (false == m_bEventTrigger[3])
+			if (false == m_bEventTrigger[4])
 			{
-				m_bEventTrigger[3] = true;
+				m_bEventTrigger[4] = true;
 				m_vecAttackCol[2]->Set_Enabled(true);
 				m_tObjParam.bSuperArmor = true;
 			}
 		}
 		else if (3.4f <= AniTime)
 		{
-			if (false == m_bEventTrigger[17])
+			if (false == m_bEventTrigger[5])
 			{
-				m_bEventTrigger[17] = true;
+				m_bEventTrigger[5] = true;
 
 				g_pSoundManager->Stop_Sound(CSoundManager::Yeti_Voice);
 
@@ -3278,27 +3360,27 @@ void CYeti::Play_Combo_RLRL_Swing()
 		}
 		else if (2.800f <= AniTime)
 		{
-			if (false == m_bEventTrigger[4])
+			if (false == m_bEventTrigger[6])
 			{
-				m_bEventTrigger[4] = true;
+				m_bEventTrigger[6] = true;
 				m_vecAttackCol[1]->Set_Enabled(false);
 				m_tObjParam.bSuperArmor = false;
 			}
 		}
 		else if (2.733f <= AniTime)
 		{
-			if (false == m_bEventTrigger[5])
+			if (false == m_bEventTrigger[7])
 			{
-				m_bEventTrigger[5] = true;
+				m_bEventTrigger[7] = true;
 				m_vecAttackCol[1]->Set_Enabled(true);
 				m_tObjParam.bSuperArmor = true;
 			}
 		}
 		else if (2.4f <= AniTime)
 		{
-			if (false == m_bEventTrigger[18])
+			if (false == m_bEventTrigger[8])
 			{
-				m_bEventTrigger[18] = true;
+				m_bEventTrigger[8] = true;
 
 				g_pSoundManager->Stop_Sound(CSoundManager::Yeti_Voice);
 
@@ -3332,27 +3414,29 @@ void CYeti::Play_Combo_RLRL_Swing()
 		}
 		else if (1.967f <= AniTime)
 		{
-			if (false == m_bEventTrigger[6])
+			if (false == m_bEventTrigger[9])
 			{
-				m_bEventTrigger[6] = true;
+				m_bEventTrigger[9] = true;
 				m_vecAttackCol[2]->Set_Enabled(false);
 				m_tObjParam.bSuperArmor = false;
 			}
 		}
 		else if (1.867f <= AniTime)
 		{
-			if (false == m_bEventTrigger[7])
+			if (false == m_bEventTrigger[10])
 			{
-				m_bEventTrigger[7] = true;
+				m_bEventTrigger[10] = true;
 				m_vecAttackCol[2]->Set_Enabled(true);
 				m_tObjParam.bSuperArmor = true;
 			}
 		}
 		else if (1.4f <= AniTime)
 		{
-			if (false == m_bEventTrigger[19])
+			if (false == m_bEventTrigger[11])
 			{
-				m_bEventTrigger[19] = true;
+				m_bEventTrigger[11] = true;
+
+				m_dAniPlayMul = 1;
 
 				g_pSoundManager->Stop_Sound(CSoundManager::Yeti_Voice);
 
@@ -3384,12 +3468,25 @@ void CYeti::Play_Combo_RLRL_Swing()
 				}
 			}
 		}
+		else if (1.f <= AniTime)
+		{
+			if (false == m_bEventTrigger[12])
+			{
+				m_bEventTrigger[12] = true;
+
+				m_dAniPlayMul = 0.5;
+
+				m_pBattleAgentCom->Set_RimColor(_v4(1.f, 0.f, 0.f, 0.f));
+				m_pBattleAgentCom->Set_RimAlpha(1.f);
+				m_pBattleAgentCom->Set_RimValue(5.f);
+			}
+		}
 
 		if (4.333f < AniTime && 4.567f > AniTime)
 		{
-			if (false == m_bEventTrigger[8])
+			if (false == m_bEventTrigger[13])
 			{
-				m_bEventTrigger[8] = true;
+				m_bEventTrigger[13] = true;
 				m_fSkillMoveSpeed_Cur = 6.f;
 				m_fSkillMoveAccel_Cur = 0.f;
 				m_fSkillMoveMultiply = 1.f;
@@ -3400,9 +3497,9 @@ void CYeti::Play_Combo_RLRL_Swing()
 		}
 		else if (3.467f < AniTime && 3.900f > AniTime)
 		{
-			if (false == m_bEventTrigger[9])
+			if (false == m_bEventTrigger[14])
 			{
-				m_bEventTrigger[9] = true;
+				m_bEventTrigger[14] = true;
 				m_fSkillMoveSpeed_Cur = 6.f;
 				m_fSkillMoveAccel_Cur = 0.f;
 				m_fSkillMoveMultiply = 1.f;
@@ -3413,9 +3510,9 @@ void CYeti::Play_Combo_RLRL_Swing()
 		}
 		else if (2.633f < AniTime && 2.900f > AniTime)
 		{
-			if (false == m_bEventTrigger[10])
+			if (false == m_bEventTrigger[15])
 			{
-				m_bEventTrigger[10] = true;
+				m_bEventTrigger[15] = true;
 				m_fSkillMoveSpeed_Cur = 6.f;
 				m_fSkillMoveAccel_Cur = 0.f;
 				m_fSkillMoveMultiply = 1.f;
@@ -3426,9 +3523,9 @@ void CYeti::Play_Combo_RLRL_Swing()
 		}
 		else if (1.533f < AniTime && 2.133f > AniTime)
 		{
-			if (false == m_bEventTrigger[11])
+			if (false == m_bEventTrigger[16])
 			{
-				m_bEventTrigger[11] = true;
+				m_bEventTrigger[16] = true;
 				m_fSkillMoveSpeed_Cur = 6.f;
 				m_fSkillMoveAccel_Cur = 0.f;
 				m_fSkillMoveMultiply = 1.f;
@@ -3439,9 +3536,9 @@ void CYeti::Play_Combo_RLRL_Swing()
 		}
 		else if (0.767f < AniTime && 1.333f > AniTime)
 		{
-			if (false == m_bEventTrigger[12])
+			if (false == m_bEventTrigger[17])
 			{
-				m_bEventTrigger[12] = true;
+				m_bEventTrigger[17] = true;
 				m_fSkillMoveSpeed_Cur = 6.f;
 				m_fSkillMoveAccel_Cur = 0.f;
 				m_fSkillMoveMultiply = 1.f;
@@ -3459,22 +3556,26 @@ void CYeti::Play_Combo_RLRL_Swing()
 			m_bCanCoolDown = true;
 			m_fCoolDownMax = 0.8f;
 
+			m_pBattleAgentCom->Set_RimColor(_v4(0.f, 0.f, 0.f, 0.f));
+			m_pBattleAgentCom->Set_RimAlpha(0.5f);
+			m_pBattleAgentCom->Set_RimValue(8.f);
+
 			return;
 		}
 		else if (2.033f <= AniTime)
 		{
-			if (false == m_bEventTrigger[13])
+			if (false == m_bEventTrigger[18])
 			{
-				m_bEventTrigger[13] = true;
+				m_bEventTrigger[18] = true;
 				m_vecAttackCol[2]->Set_Enabled(false);
 				m_tObjParam.bSuperArmor = false;
 			}
 		}
 		else if (1.833f <= AniTime)
 		{
-			if (false == m_bEventTrigger[14])
+			if (false == m_bEventTrigger[19])
 			{
-				m_bEventTrigger[14] = true;
+				m_bEventTrigger[19] = true;
 				m_vecAttackCol[2]->Set_Enabled(true);
 				m_tObjParam.bSuperArmor = true;
 			}
@@ -3484,6 +3585,8 @@ void CYeti::Play_Combo_RLRL_Swing()
 			if (false == m_bEventTrigger[20])
 			{
 				m_bEventTrigger[20] = true;
+
+				m_dAniPlayMul = 1;
 
 				g_pSoundManager->Stop_Sound(CSoundManager::Yeti_Voice);
 
@@ -3515,12 +3618,25 @@ void CYeti::Play_Combo_RLRL_Swing()
 				}
 			}
 		}
+		else if (1.f <= AniTime)
+		{
+			if (false == m_bEventTrigger[21])
+			{
+				m_bEventTrigger[21] = true;
+
+				m_dAniPlayMul = 0.5;
+
+				m_pBattleAgentCom->Set_RimColor(_v4(1.f, 0.f, 0.f, 0.f));
+				m_pBattleAgentCom->Set_RimAlpha(1.f);
+				m_pBattleAgentCom->Set_RimValue(5.f);
+			}
+		}
 
 		if (1.267f < AniTime && 1.667f > AniTime)
 		{
-			if (false == m_bEventTrigger[15])
+			if (false == m_bEventTrigger[22])
 			{
-				m_bEventTrigger[15] = true;
+				m_bEventTrigger[22] = true;
 				m_fSkillMoveSpeed_Cur = 6.f;
 				m_fSkillMoveAccel_Cur = 0.f;
 				m_fSkillMoveMultiply = 1.f;
@@ -3882,7 +3998,10 @@ void CYeti::Play_Dead()
 				m_fDeadEffect_Delay = 0.f;
 
 				Give_Mana_To_Player(5);
-				Check_DropItem(MONSTER_NAMETYPE::M_Yeti);
+
+				if (false == m_pRigidCom->Get_IsFall())
+					Check_DropItem(MONSTER_NAMETYPE::M_Yeti);
+
 				CObjectPool_Manager::Get_Instance()->Create_Object(L"GameObject_Haze", (void*)&CHaze::HAZE_INFO(_float(CCalculater::Random_Num(100, 300)), m_pTransformCom->Get_Pos(), 0.f));
 			}
 		}
