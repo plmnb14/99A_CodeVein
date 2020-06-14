@@ -82,6 +82,8 @@ HRESULT CGunGenji::Ready_GameObject(void * pArg)
 	pBlackBoard->Set_Value(L"Voice_Tag", 0);
 	pBlackBoard->Set_Value(L"Voice_Play", false);
 	pBlackBoard->Set_Value(L"Voice_Stop", false);
+	pBlackBoard->Set_Value(L"Step_Play", false);
+	pBlackBoard->Set_Value(L"Step_Tag", 20);
 
 	CBT_Selector* Start_Sel = Node_Selector("행동 시작");
 	//CBT_Sequence* Start_Sel = Node_Sequence("행동 시작"); // 테스트
@@ -496,6 +498,8 @@ CBT_Composite_Node * CGunGenji::Shot()
 	CBT_SetValue* Sound1Stop = Node_BOOL_SetValue("소리1 재생", L"SFX_01_Stop", true);
 	CBT_SetValue* Sound1Play = Node_BOOL_SetValue("소리1 재생", L"SFX_01_Play", true);
 	CBT_SetValue* Sound1Tag = Node_INT_SetValue("소리1 이름 설정", L"SFX_01_Tag", 0);
+	CBT_SetValue* VoiceStop = Node_BOOL_SetValue("목소리 재생", L"Voice_Stop", true);
+	CBT_SetValue* VoicePlay = Node_BOOL_SetValue("목소리 재생", L"Voice_Play", true);
 
 	CBT_CreateBullet* Bullet0 = Node_CreateBullet("겐지 총알", L"Monster_GunGenjiBullet", L"CreateBulletPos", L"NormalShotDir", 20, 1.5, 1.633, 1, 1, 0, CBT_Service_Node::Finite);
 	Root_Parallel->Add_Service(Bullet0);
@@ -514,9 +518,13 @@ CBT_Composite_Node * CGunGenji::Shot()
 	Root_Parallel->Set_Sub_Child(SubSeq);
 	SubSeq->Add_Child(ChaseDir0);
 	SubSeq->Add_Child(Rotation0);
+	SubSeq->Add_Child(VoiceStop);
+	SubSeq->Add_Child(VoicePlay);
+	SubSeq->Add_Child(Random_Voice());
 	SubSeq->Add_Child(Sound1Stop);
 	SubSeq->Add_Child(Sound1Play);
 	SubSeq->Add_Child(Sound1Tag);
+
 
 	return Root_Parallel;
 }
@@ -824,11 +832,17 @@ CBT_Composite_Node * CGunGenji::Chase()
 {
 	CBT_Simple_Parallel* Root_Parallel = Node_Parallel_Immediate("병렬");
 
+	CBT_Sequence* MainSeq = Node_Sequence("추적");
+	CBT_SetValue* StepPlay = Node_BOOL_SetValue("발소리 재생", L"Step_Play", true);
 	CBT_MoveDirectly* pChase = Node_MoveDirectly_Chase("추적", L"Player_Pos", L"Monster_Speed", L"Monster_Dir", 3.f, 5.f);
+	CBT_SetValue* StepStop = Node_BOOL_SetValue("발소리 재생", L"Step_Play", false);
 
 	CBT_Play_Ani* Show_Ani16 = Node_Ani("추적", 16, 1.f);
 
-	Root_Parallel->Set_Main_Child(pChase);
+	Root_Parallel->Set_Main_Child(MainSeq);
+	MainSeq->Add_Child(StepPlay);
+	MainSeq->Add_Child(pChase);
+	MainSeq->Add_Child(StepStop);
 
 	Root_Parallel->Set_Sub_Child(Show_Ani16);
 
@@ -854,6 +868,23 @@ CBT_Composite_Node * CGunGenji::FarAttack()
 
 	Root_Sel->Add_Child(Shot());
 	Root_Sel->Add_Child(Sudden_Shot());
+
+	return Root_Sel;
+}
+
+CBT_Composite_Node * CGunGenji::Random_Voice()
+{
+	CBT_Selector* Root_Sel = Node_Selector_Random("랜덤 원거리 공격");
+	
+	CBT_SetValue* VoiceTag0 = Node_INT_SetValue("목소리 이름 설정", L"Voice_Tag", 10);
+	CBT_SetValue* VoiceTag1 = Node_INT_SetValue("목소리 이름 설정", L"Voice_Tag", 11);
+	CBT_SetValue* VoiceTag2 = Node_INT_SetValue("목소리 이름 설정", L"Voice_Tag", 12);
+	CBT_SetValue* VoiceTag3 = Node_INT_SetValue("목소리 이름 설정", L"Voice_Tag", 13);
+
+	Root_Sel->Add_Child(VoiceTag0);
+	Root_Sel->Add_Child(VoiceTag1);
+	Root_Sel->Add_Child(VoiceTag2);
+	Root_Sel->Add_Child(VoiceTag3);
 
 	return Root_Sel;
 }
@@ -999,7 +1030,10 @@ HRESULT CGunGenji::Update_Value_Of_BB()
 		g_pSoundManager->Play_Sound(const_cast<TCHAR*>(m_mapSound[m_pAIControllerCom->Get_IntValue(L"Voice_Tag")]), CSoundManager::CHANNELID::GunGenji_Voice, CSoundManager::SOUND::Effect_Sound);
 	}
 
-
+	if (true == m_pAIControllerCom->Get_BoolValue(L"Step_Play"))	// 재생
+	{
+		g_pSoundManager->Play_Sound(const_cast<TCHAR*>(m_mapSound[m_pAIControllerCom->Get_IntValue(L"Step_Tag")]), CSoundManager::CHANNELID::SwordGenji_Voice, CSoundManager::SOUND::Effect_Sound);
+	}
 
 
 
@@ -1596,6 +1630,13 @@ HRESULT CGunGenji::Ready_Sound()
 	m_mapSound.emplace(1, L"SE_GATE_WOMAN_ATTACK_SWING_002.ogg");
 	m_mapSound.emplace(2, L"SE_NEW_DODGE_MV_000.ogg");
 	
+	m_mapSound.emplace(10, L"SE_NEW_BARK_ATTACK_SMALL_MV_000.ogg");
+	m_mapSound.emplace(11, L"SE_NEW_BARK_ATTACK_SMALL_MV_002.ogg");
+	m_mapSound.emplace(12, L"SE_NEW_BARK_ATTACK_SMALL_MV_004.ogg");
+	m_mapSound.emplace(13, L"SE_NEW_BARK_ATTACK_SMALL_MV_006.ogg");
+
+	m_mapSound.emplace(20, L"SE_FOOT_STEP_CARPET_001.ogg");
+
 	return S_OK;
 }
 
