@@ -104,7 +104,7 @@ HRESULT CScene_Stage_Training::Ready_Layer_Enemies()
 	if (FAILED(g_pManagement->Add_Layer(SCENE_STAGE, L"Layer_Boss")))
 		return E_FAIL;
 
-	if (FAILED(g_pManagement->Add_Layer(SCENE_MORTAL, L"Layer_Pet")))
+	if (FAILED(g_pManagement->Add_Layer(SCENE_STAGE, L"Layer_Pet")))
 		return E_FAIL;
 
 	if (FAILED(g_pManagement->Add_Layer(SCENE_STAGE, L"Layer_Item")))
@@ -137,9 +137,9 @@ HRESULT CScene_Stage_Training::Ready_Layer_Enemies()
 	//g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_MORTAL, L"Layer_Item", nullptr);
 
 	// ±èÀç±¸ 
-	//pInstance = g_pManagement->Clone_GameObject_Return(L"GameObject_Colleague",
-	//	&CPlayer_Colleague::JACK_INFO(_v3(0.f, 0.f, 0.f), 0.f, 0));
-	//g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Colleague", nullptr);
+	pInstance = g_pManagement->Clone_GameObject_Return(L"GameObject_Colleague",
+		&CPlayer_Colleague::JACK_INFO(_v3(0.f, 0.f, 0.f), 0.f, 0));
+	g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Colleague", nullptr);
 
 
 	// ¾ßÄí¸ð
@@ -270,11 +270,11 @@ HRESULT CScene_Stage_Training::Ready_Layer_Enemies()
 	//g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Boss", nullptr);
 
 
-	//// ¿©¿ÕÀÇ ±â»ç
-	//pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_QueensKnight",
-	//	&CQueensKnight::INFO(10.f, 5.f, 2.f,
-	//		true, _v3(-8.f, 0.f, 3.f), V3_NULL, 0));
-	//g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Boss", nullptr);
+	// ¿©¿ÕÀÇ ±â»ç
+	pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_QueensKnight",
+		&CQueensKnight::INFO(10.f, 5.f, 2.f,
+			true, _v3(-8.f, 0.f, 3.f), V3_NULL, 0));
+	g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Boss", nullptr);
 
 	//// ¾óÀ½¿©ÀÚ
 	//pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_IceGirl",

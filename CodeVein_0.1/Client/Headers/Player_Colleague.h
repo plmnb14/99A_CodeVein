@@ -37,23 +37,53 @@ public:
 	}TELEPORT_RESET;
 
 public:
-	enum Colleague_Type { Coll_Idle, Coll_Move, Coll_Guard, Coll_Attack, Coll_Hit, Coll_Dodge, Coll_Heal, Coll_Dead, Coll_Start };
-	enum Coll_Movement { Move_Walk, Move_BackWalk, Move_Run, Move_BackRun };
-	enum Coll_IdleMoment { Idle_Waiting, Idle_Guard };
-	enum Coll_AttackMoment { Att_Skil, Att_Normal };
-	enum Coll_Sub_AttMoment { 
+	enum Colleague_Type 
+	{ 
+		Coll_Idle, Coll_Move, Coll_Guard, Coll_Attack, Coll_Hit, Coll_Dodge, Coll_Heal, Coll_Dead, Coll_Start, Coll_End 
+	};
+	enum Coll_Movement 
+	{ 
+		Move_Walk, Move_BackWalk, Move_Run, Move_BackRun, Move_End 
+	};
+	enum Coll_IdleMoment 
+	{ 
+		Idle_Waiting, Idle_Guard, Idle_End 
+	};
+	enum Coll_AttackMoment 
+	{ 
+		Att_Skil, Att_Normal, Att_End 
+	};
+	enum Coll_Sub_AttMoment 
+	{
 		Att_Base1, Att_Base2, Att_Base3, Att_Base4, Att_ThreeCombo, Att_CenterDown, Att_SlowGun,
-		Att_MonWalk, Att_MonRun, Att_MonBackWalk
+		Att_MonWalk, Att_MonRun, Att_MonBackWalk, Att_Sub_End
+	};
+	enum Coll_GuardMoment 
+	{ 
+		Guard_Idle, Gurad_Walk, Gurad_Hit, Gurad_End 
+	};
+	enum Coll_DodgeMoment 
+	{ 
+		Dodge_FrontRoll, Dodge_BackRoll, Dodge_LeftRoll, Dodge_RightRoll, Dodge_BLeftRoll, Dodge_BRightRoll, Dodge_End 
+	};
+	enum Coll_HealMoment
+	{ 
+		My_Heal, Player_Heal, Heal_End 
+	};
+	enum Coll_FBLR 
+	{ 
+		Coll_Front, Coll_Back, Coll_FrontRight, Coll_BackRight, Coll_BackLeft, Coll_FrontLeft, Coll_FBLR_End 
+	};
+	enum Coll_Target 
+	{ 
+		Coll_Target_Boss, Coll_Target_Monster, Coll_Target_Non, Coll_Target_End 
 	};
 
-	enum Coll_GuardMoment { Guard_Idle, Gurad_Walk, Gurad_Hit };
-	enum Coll_DodgeMoment { Dodge_FrontRoll, Dodge_BackRoll, Dodge_LeftRoll, Dodge_RightRoll, Dodge_BLeftRoll, Dodge_BRightRoll };
-	enum Coll_HealMoment { My_Heal, Player_Heal };
-
-	enum Coll_FBLR { Coll_Front, Coll_Back, Coll_FrontRight, Coll_BackRight, Coll_BackLeft, Coll_FrontLeft };
-
 private:
-	enum Bonematrix_Type { Bone_Range, Bone_Body, Bone_Head, Bone_LHand, Bone_RHand, Bone_End };
+	enum Bonematrix_Type 
+	{ 
+		Bone_Range, Bone_Body, Bone_Head, Bone_LHand, Bone_RHand, Bone_End 
+	};
 
 private:
 	enum Colleague_Ani
@@ -90,6 +120,7 @@ private:
 		Ani_BLeft_Roll,
 		Ani_BRight_Roll
 	};
+
 
 protected:
 	explicit CPlayer_Colleague(LPDIRECT3DDEVICE9 pGraphic_Device);
@@ -128,7 +159,6 @@ private:
 	HRESULT	Ready_Weapon();
 
 
-
 private:
 	void	Update_Collider();
 	void	Render_Collider();
@@ -137,6 +167,7 @@ private:
 	void	Check_DeadEffect(_double TimeDelta);
 
 	void	Check_Do_List(_double TimeDelta);
+	void	Check_Action_List(_double TimeDelta);
 	void	Check_MyHit();
 
 	void	Set_AniEvent();
@@ -144,6 +175,10 @@ private:
 private:
 	void	Colleague_Movement(_float fSpeed, _v3 vDir);
 	void	Colleague_SkilMovement(_float Multiply);
+
+private:
+	void	Select_Moving();
+	void	Select_Heal();
 
 private:
 	void	Play_Start_Game();
@@ -191,9 +226,9 @@ private:
 	void	CollHeal_ForPlayer();
 
 private:
-	void	Funtion_RotateBody();
-	void	Funtion_Reset_State();
-	
+	void	Function_RotateBody();
+	void	Function_Reset_State();
+
 	void	Enter_Collision();
 	void	Check_Collision_PushOut();
 	void	Check_Collision_Event(list<CGameObject*> plistGameObject);
@@ -204,8 +239,11 @@ private:
 
 	void	Function_FBRL();
 
+	void	Function_Find_Target();
+
 public:
 	HRESULT Teleport_ResetOptions(void * pArg/*_int eSceneID, _int eTeleportID*/);
+
 
 private:
 	CTransform*				m_pTransformCom = nullptr;
@@ -241,6 +279,8 @@ private:
 
 	Coll_FBLR				m_eFBLR;
 
+	Coll_Target				m_eTarget;
+
 	//Move_Direction			m_eMoveDirection;
 
 private:
@@ -258,6 +298,16 @@ private:
 	_uint	m_iDodgeCountMax = 5;
 
 	_int	m_iMyHeal_Count = 4;
+
+	// 회복 불가능 체크
+	_bool	m_bNot_Recoverable = false;
+	_bool	m_bCheck_PlayerDist = false;
+
+	// 플레이어의 일정 거리
+	_float	m_fPlayer_DistDifference = 30.f;
+	// 몬스터 인지 거리
+	_float	m_fEnemiesPerceive_Length = 30.f;
+
 
 
 	_float	m_fSpeed = 0.f;
