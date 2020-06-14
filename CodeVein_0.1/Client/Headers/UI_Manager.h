@@ -123,6 +123,8 @@
 
 #include "NPC_InteractionUI.h"
 
+#include "LoadingScreen.h"
+
 BEGIN(Client)
 
 class CUI_Manager final : public CBase
@@ -171,6 +173,7 @@ public:
 	CCustomCategory* Get_CustomCategory() { return m_pCustomCategory;}
 	CGeneralStoreSellUI* Get_GeneralStoreSellUI() { return m_pGeneralStoreSellUI; }
 	CGeneralStoreNPCUI* Get_Yokumo_NPCUI() { return m_pGeneralStoreNPCUI; } // 요쿠모(소비, 재료 상점 NPC)!!
+	CLoadingScreen* Get_LoadingScreen();
 
 	// 펫 인벤토리
 	CPet_Inven* Get_Pet_Inven() { return m_pPet_Inven; }

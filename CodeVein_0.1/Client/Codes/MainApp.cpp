@@ -15,7 +15,7 @@ CMainApp::CMainApp()
 
 HRESULT CMainApp::Ready_MainApp()
 {
-	if (FAILED(Ready_Default_Setting(CGraphic_Device::WINMODE_FULL, g_nWinCX, g_nWinCY)))
+	if (FAILED(Ready_Default_Setting(CGraphic_Device::WINMODE_WIN, g_nWinCX, g_nWinCY)))
 		return E_FAIL;
 
 	if (FAILED(Ready_Component_Prototype()))
@@ -25,7 +25,7 @@ HRESULT CMainApp::Ready_MainApp()
 		return E_FAIL;
 
 	// º¼·ýÁ¶Àý
-	g_pSoundManager->Set_Volume(CSoundManager::Master_Volume, 0.5f);
+	g_pSoundManager->Set_Volume(CSoundManager::Master_Volume, 0.0f);
 
 	g_pSoundManager->Set_Volume(CSoundManager::Effect_Volume, 0.8f);
 	g_pSoundManager->Set_Volume(CSoundManager::BGM_Volume, 0.8f); 

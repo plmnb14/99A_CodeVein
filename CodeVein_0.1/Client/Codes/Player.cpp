@@ -404,10 +404,6 @@ HRESULT CPlayer::Render_GameObject_SetPass(CShader* pShader, _int iPass, _bool _
 	//============================================================================================
 	if (_bIsForMotionBlur)
 	{
-		if (FAILED(pShader->Set_Value("g_matView", &ViewMatrix, sizeof(_mat))))
-			return E_FAIL;
-		if (FAILED(pShader->Set_Value("g_matProj", &ProjMatrix, sizeof(_mat))))
-			return E_FAIL;
 		if (FAILED(pShader->Set_Value("g_matLastWVP", &m_matLastWVP, sizeof(_mat))))
 			return E_FAIL;
 
@@ -2478,7 +2474,7 @@ void CPlayer::Key_UI_n_Utiliy(_bool _bActiveUI)
 				}
 			}
 
-			if (m_bOnUI_StageSelect)
+			else if (m_bOnUI_StageSelect)
 			{
 				Active_UI_StageSelect(true);
 			}
@@ -6029,6 +6025,8 @@ void CPlayer::Play_Skills()
 					g_pSoundManager->Play_Sound(L"SE_WEAPON_HIT_009.ogg", CSoundManager::Player_SFX_03, CSoundManager::Effect_Sound);
 					g_pSoundManager->Stop_Sound(CSoundManager::Player_SFX_01);
 					g_pSoundManager->Play_Sound(L"SE_WEAPON_IMPACT_001.ogg", CSoundManager::Player_SFX_01, CSoundManager::Effect_Sound);
+					g_pSoundManager->Stop_Sound(CSoundManager::Player_SFX_04);
+					g_pSoundManager->Play_Sound(L"Laser_Eff.ogg", CSoundManager::Player_SFX_04, CSoundManager::Effect_Sound);
 				}
 			}
 
@@ -6107,6 +6105,9 @@ void CPlayer::Play_Skills()
 					g_pManagement->Create_Effect_Delay(L"Player_Skill_Ring_Ver", 0.f, vEffPos, m_pTransform);
 					g_pManagement->Create_Effect_Delay(L"Player_Skill_RedCircle_Flash", 0.f, vEffPos, m_pTransform);
 					g_pManagement->Create_Effect_Delay(L"Player_Skill_RedParticle_Explosion", 0.f, vEffPos, m_pTransform);
+
+					g_pSoundManager->Stop_Sound(CSoundManager::Player_SFX_01);
+					g_pSoundManager->Play_Sound(L"PlayerSkill02_Eff.ogg", CSoundManager::Player_SFX_01, CSoundManager::Effect_Sound);
 				}
 			}
 
@@ -6630,6 +6631,9 @@ void CPlayer::Play_Skills()
 
 					g_pSoundManager->Stop_Sound(CSoundManager::Player_SFX_01);
 					g_pSoundManager->Play_Sound(L"SE_WEAPON_IMPACT_001.ogg", CSoundManager::Player_SFX_01, CSoundManager::Effect_Sound);
+					g_pSoundManager->Stop_Sound(CSoundManager::Player_SFX_02);
+					g_pSoundManager->Play_Sound(L"PlayerSkill04_Eff.ogg", CSoundManager::Player_SFX_02, CSoundManager::Effect_Sound);
+					
 					SHAKE_CAM_lv2;
 				}
 			}
@@ -7025,6 +7029,8 @@ void CPlayer::Play_Skills()
 					g_pSoundManager->Play_Sound(L"SE_WEAPON_HIT_009.ogg", CSoundManager::Player_SFX_03, CSoundManager::Effect_Sound);
 					g_pSoundManager->Stop_Sound(CSoundManager::Player_SFX_01);
 					g_pSoundManager->Play_Sound(L"SE_WEAPON_IMPACT_000.ogg", CSoundManager::Player_SFX_01, CSoundManager::Effect_Sound);
+					g_pSoundManager->Stop_Sound(CSoundManager::Player_SFX_04);
+					g_pSoundManager->Play_Sound(L"Laser_Eff.ogg", CSoundManager::Player_SFX_04, CSoundManager::Effect_Sound);
 				}
 			}
 
@@ -7442,6 +7448,60 @@ void CPlayer::Play_TwoHandSkill_03()
 
 void CPlayer::Play_GunSkill()
 {
+	///////////////////////////////////////////
+	// Create Gun Skill Bullet
+	///////////////////////////////////////////
+	//if (m_pDynamicMesh->Get_TrackInfo().Position >= 1.1f)
+	//{
+	//	if (false == m_bEventTrigger[0])
+	//	{
+	//		m_bEventTrigger[0] = true;
+	//
+	//		_v3 vBulletPos = m_pTransform->Get_Pos()
+	//			+ m_pTransform->Get_Axis(AXIS_Z) * 1.8f
+	//			+ m_pTransform->Get_Axis(AXIS_Y) * 1.3f
+	//			+ m_pTransform->Get_Axis(AXIS_X) * -1.5f;
+	//		CObjectPool_Manager::Get_Instance()->Create_Object(L"GameObject_PlayerSkillBullet",
+	//			&BULLET_INFO(vBulletPos, m_pTransform->Get_Axis(AXIS_Z), 20.f, 2.f));
+	//
+	//		g_pSoundManager->Stop_Sound(CSoundManager::Player_SFX_01);
+	//		g_pSoundManager->Play_Sound(L"PlayerGunSkill_ReadyEff.ogg", CSoundManager::Player_SFX_01, CSoundManager::Effect_Sound);
+	//	}
+	//}
+	//if (m_pDynamicMesh->Get_TrackInfo().Position >= 1.5f)
+	//{
+	//	if (false == m_bEventTrigger[1])
+	//	{
+	//		m_bEventTrigger[1] = true;
+	//
+	//		_v3 vBulletPos = m_pTransform->Get_Pos()
+	//			+ m_pTransform->Get_Axis(AXIS_Z) * 1.8f
+	//			+ m_pTransform->Get_Axis(AXIS_Y) * 2.0f
+	//			+ m_pTransform->Get_Axis(AXIS_X) * 0.1f;
+	//		CObjectPool_Manager::Get_Instance()->Create_Object(L"GameObject_PlayerSkillBullet",
+	//			&BULLET_INFO(vBulletPos, m_pTransform->Get_Axis(AXIS_Z), 20.f, 2.f));
+	//
+	//		g_pSoundManager->Stop_Sound(CSoundManager::Player_SFX_02);
+	//		g_pSoundManager->Play_Sound(L"PlayerGunSkill_ReadyEff.ogg", CSoundManager::Player_SFX_02, CSoundManager::Effect_Sound);
+	//	}
+	//}
+	//if (m_pDynamicMesh->Get_TrackInfo().Position >= 1.9f)
+	//{
+	//	if (false == m_bEventTrigger[2])
+	//	{
+	//		m_bEventTrigger[2] = true;
+	//
+	//		_v3 vBulletPos = m_pTransform->Get_Pos()
+	//			+ m_pTransform->Get_Axis(AXIS_Z) * 1.8f
+	//			+ m_pTransform->Get_Axis(AXIS_Y) * 1.5f
+	//			+ m_pTransform->Get_Axis(AXIS_X) * 1.5f;
+	//		CObjectPool_Manager::Get_Instance()->Create_Object(L"GameObject_PlayerSkillBullet",
+	//			&BULLET_INFO(vBulletPos, m_pTransform->Get_Axis(AXIS_Z), 20.f, 2.f));
+	//
+	//		g_pSoundManager->Stop_Sound(CSoundManager::Player_SFX_03);
+	//		g_pSoundManager->Play_Sound(L"PlayerGunSkill_ReadyEff.ogg", CSoundManager::Player_SFX_03, CSoundManager::Effect_Sound);
+	//	}
+	//}
 }
 
 void CPlayer::Play_Ssword_WeakAtk()
@@ -8300,8 +8360,11 @@ void CPlayer::Play_Gun_WeakAtk()
 					m_pWeapon[m_eActiveSlot]->Set_Target_CanAttack(true);
 					m_pWeapon[m_eActiveSlot]->Set_Enable_Record(true);
 					
+					_tchar szBuff[256] = L"";
+					wsprintf(szBuff, L"PlayerGunKnife_Slash0%d.ogg", CCalculater::Random_Num(1, 2));
+
 					g_pSoundManager->Stop_Sound(CSoundManager::Player_SFX_01);
-					g_pSoundManager->Play_Sound(L"Slash_Sword_01.wav", CSoundManager::Player_SFX_01, CSoundManager::Effect_Sound);
+					g_pSoundManager->Play_Sound(szBuff, CSoundManager::Player_SFX_01, CSoundManager::Effect_Sound);
 					g_pSoundManager->Stop_Sound(CSoundManager::Player_SFX_02);
 					g_pSoundManager->Play_Sound(L"Swing_Fase_01.wav", CSoundManager::Player_SFX_02, CSoundManager::Effect_Sound);
 				}
@@ -8365,8 +8428,11 @@ void CPlayer::Play_Gun_WeakAtk()
 					m_pWeapon[m_eActiveSlot]->Set_Target_CanAttack(true);
 					m_pWeapon[m_eActiveSlot]->Set_Enable_Record(true);
 
+					_tchar szBuff[256] = L"";
+					wsprintf(szBuff, L"PlayerGunKnife_Slash0%d.ogg", CCalculater::Random_Num(1, 2));
+
 					g_pSoundManager->Stop_Sound(CSoundManager::Player_SFX_03);
-					g_pSoundManager->Play_Sound(L"Slash_Sword_02.wav", CSoundManager::Player_SFX_03, CSoundManager::Effect_Sound);
+					g_pSoundManager->Play_Sound(szBuff, CSoundManager::Player_SFX_03, CSoundManager::Effect_Sound);
 					g_pSoundManager->Stop_Sound(CSoundManager::Player_SFX_04);
 					g_pSoundManager->Play_Sound(L"Swing_Fast_02.wav", CSoundManager::Player_SFX_04, CSoundManager::Effect_Sound);
 				}
@@ -8446,10 +8512,13 @@ void CPlayer::Play_Gun_WeakAtk()
 					m_pWeapon[m_eActiveSlot]->Set_Target_CanAttack(true);
 					m_pWeapon[m_eActiveSlot]->Set_Enable_Record(true);
 
+					_tchar szBuff[256] = L"";
+					wsprintf(szBuff, L"PlayerGunKnife_Slash0%d.ogg", CCalculater::Random_Num(1, 2));
+
 					g_pSoundManager->Stop_Sound(CSoundManager::Player_SFX_01);
 					g_pSoundManager->Play_Sound(L"Swing_Wind_01.wav", CSoundManager::Player_SFX_01, CSoundManager::Effect_Sound);
 					g_pSoundManager->Stop_Sound(CSoundManager::Player_SFX_02);
-					g_pSoundManager->Play_Sound(L"Slash_Sword_01.wav", CSoundManager::Player_SFX_02, CSoundManager::Effect_Sound);
+					g_pSoundManager->Play_Sound(szBuff, CSoundManager::Player_SFX_02, CSoundManager::Effect_Sound);
 				}
 			}
 
@@ -8526,8 +8595,11 @@ void CPlayer::Play_Gun_WeakAtk()
 					m_pWeapon[m_eActiveSlot]->Set_Target_CanAttack(true);
 					m_pWeapon[m_eActiveSlot]->Set_Enable_Record(true);
 
+					_tchar szBuff[256] = L"";
+					wsprintf(szBuff, L"PlayerGunKnife_Slash0%d.ogg", CCalculater::Random_Num(1, 2));
+
 					g_pSoundManager->Stop_Sound(CSoundManager::Player_SFX_04);
-					g_pSoundManager->Play_Sound(L"Slash_Sword_04.wav", CSoundManager::Player_SFX_04, CSoundManager::Effect_Sound);
+					g_pSoundManager->Play_Sound(szBuff, CSoundManager::Player_SFX_04, CSoundManager::Effect_Sound);
 					g_pSoundManager->Stop_Sound(CSoundManager::Player_SFX_01);
 					g_pSoundManager->Play_Sound(L"Swing_Wind_01.wav", CSoundManager::Player_SFX_01, CSoundManager::Effect_Sound);
 					g_pSoundManager->Stop_Sound(CSoundManager::Player_SFX_02);
@@ -8806,8 +8878,67 @@ void CPlayer::Play_Gun_HeavyAtk()
 
 		case Gun_HeavyAtk_02:
 		{
-			Decre_Skill_Movement(m_fSkillMoveMultiply);
-			Skill_Movement(m_fSkillMoveSpeed_Cur, -m_pTransform->Get_Axis(AXIS_Z));
+			if (m_pDynamicMesh->Get_TrackInfo().Position >= 2.467f && m_pDynamicMesh->Get_TrackInfo().Position < 3.8f)
+			{
+				if (m_bEventTrigger[0] == false)
+				{
+					m_bEventTrigger[0] = true;
+			
+					m_fSkillMoveAccel_Cur = 0.f;
+					m_fSkillMoveSpeed_Cur = 0.1f;
+					m_fSkillMoveMultiply = 0.0f;
+				}
+			
+				Decre_Skill_Movement(m_fSkillMoveMultiply);
+				Skill_Movement(m_fSkillMoveSpeed_Cur, m_pTransform->Get_Axis(AXIS_Z));
+			}
+			else if (m_pDynamicMesh->Get_TrackInfo().Position >= 0.2f && m_pDynamicMesh->Get_TrackInfo().Position < 0.8f)
+			{
+				if (m_bEventTrigger[1] == false)
+				{
+					m_bEventTrigger[1] = true;
+			
+					m_fSkillMoveAccel_Cur = 0.f;
+					m_fSkillMoveSpeed_Cur = 0.15f;
+					m_fSkillMoveMultiply = 0.0f;
+				}
+			
+				Decre_Skill_Movement(m_fSkillMoveMultiply);
+				Skill_Movement(m_fSkillMoveSpeed_Cur, -m_pTransform->Get_Axis(AXIS_Z));
+			}
+
+			if (m_pDynamicMesh->Get_TrackInfo().Position >= 1.0f)
+			{
+				if (false == m_bEventTrigger[2])
+				{
+					m_bEventTrigger[2] = true;
+
+					_v3	vBirth, vLook;
+					_float	fLenght = 1.f;
+					
+					_mat matBone = (*m_matHandBone ) * m_pTransform->Get_WorldMat();
+					memcpy(&vBirth, &matBone._41, sizeof(_v3));
+					memcpy(&vLook, &matBone._21, sizeof(_v3));
+					vBirth += (vLook * fLenght);
+					
+					CObjectPool_Manager::Get_Instance()->Create_Object(L"GameObject_PlayerGunBullet",
+						&BULLET_INFO(vBirth, m_pTransform->Get_Axis(AXIS_Z), 10.f, 2.f));
+
+					
+					g_pSoundManager->Stop_Sound(CSoundManager::Player_SFX_02);
+					g_pSoundManager->Play_Sound(L"PlayerGun_Shot.ogg", CSoundManager::Player_SFX_02, CSoundManager::Effect_Sound);
+				}
+			}
+			else if (m_pDynamicMesh->Get_TrackInfo().Position >= 0.3f)
+			{
+				if (false == m_bEventTrigger[3])
+				{
+					m_bEventTrigger[3] = true;
+
+					g_pSoundManager->Stop_Sound(CSoundManager::Player_SFX_01);
+					g_pSoundManager->Play_Sound(L"PlayerGun_Ready.ogg", CSoundManager::Player_SFX_01, CSoundManager::Effect_Sound);
+				}
+			}
 
 			if (m_pDynamicMesh->Is_Finish_Animation_Lower(0.92f))
 			{

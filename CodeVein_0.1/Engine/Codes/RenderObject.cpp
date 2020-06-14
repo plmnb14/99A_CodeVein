@@ -70,11 +70,11 @@ _int CRenderObject::Late_Update_GameObject(_double TimeDelta)
 
 	m_pRenderer->Add_RenderList(RENDER_SHADOWTARGET, this);
 
-	if (m_bInFrustum)
-	{
+	//if (m_bInFrustum)
+	//{
 		m_pRenderer->Add_RenderList(RENDER_NONALPHA, this);
 		m_pRenderer->Add_RenderList(RENDER_MOTIONBLURTARGET, this);
-	}
+	//}
 
 	return _int();
 }
@@ -186,21 +186,11 @@ HRESULT CRenderObject::Render_GameObject_SetPass(CShader* pShader, _int iPass, _
 	//============================================================================================
 	if (_bIsForMotionBlur)
 	{
-		if (FAILED(pShader->Set_Value("g_matView", &matView, sizeof(_mat))))
-			return E_FAIL;
-		if (FAILED(pShader->Set_Value("g_matProj", &matProj, sizeof(_mat))))
-			return E_FAIL;
 		if (FAILED(pShader->Set_Value("g_matLastWVP", &m_matLastWVP, sizeof(_mat))))
 			return E_FAIL;
 
 		m_matLastWVP = WorldMatrix * matView * matProj;
 
-		_bool bMotionBlur = true;
-		if (FAILED(pShader->Set_Bool("g_bMotionBlur", bMotionBlur)))
-			return E_FAIL;
-		_bool bDecalTarget = true;
-		if (FAILED(pShader->Set_Bool("g_bDecalTarget", bDecalTarget)))
-			return E_FAIL;
 		_float fBloomPower = 10.f;
 		if (FAILED(pShader->Set_Value("g_fBloomPower", &fBloomPower, sizeof(_float))))
 			return E_FAIL;
@@ -225,9 +215,14 @@ HRESULT CRenderObject::Render_GameObject_SetPass(CShader* pShader, _int iPass, _
 
 	_ulong dwSubCnt = m_pMesh_Static->Get_NumMaterials();
 
+	_short iShaderPass = iPass;
+
+	if (_bIsForMotionBlur)
+		iShaderPass = 5;
+
 	for (_ulong i = 0; i < dwSubCnt; ++i)
 	{
-		pShader->Begin_Pass(iPass);
+		pShader->Begin_Pass(iShaderPass);
 
 		pShader->Commit_Changes();
 

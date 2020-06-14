@@ -391,7 +391,6 @@ _int CUI_Manager::Update_UI()
 	하나라도 켜져 있으면 Active = true;
 	모두 꺼져 있으면 Active = false;
 	*/
-
 	
 	return 0;
 }
@@ -404,6 +403,21 @@ void CUI_Manager::Set_BossUI_Active(_bool bIsActive)
 	{
 		static_cast<CBossHP*>(iter)->Set_Active(bIsActive);
 	}
+}
+
+CLoadingScreen * CUI_Manager::Get_LoadingScreen()
+{
+	CLoadingScreen* pScreen = nullptr;
+	pScreen = static_cast<CLoadingScreen*>(g_pManagement->Get_GameObjectBack(L"Layer_LoadingScreen", SCENE_STATIC));
+	if (nullptr == pScreen)
+	{
+		MSG_BOX("LoadingScreen Call Failed");
+		return nullptr;
+	}
+
+	pScreen->Set_UI_Index(1);
+
+	return pScreen;
 }
 
 void CUI_Manager::Stop_Play_UISound(TCHAR * pSoundKey, CSoundManager::CHANNELID eID, CSoundManager::SOUND _eSoundGroup)
