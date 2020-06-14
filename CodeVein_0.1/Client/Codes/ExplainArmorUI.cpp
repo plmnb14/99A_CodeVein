@@ -51,9 +51,10 @@ _int CExplainArmorUI::Update_GameObject(_double TimeDelta)
 		m_pPlusHPFont->Update_NumberValue(_float(m_tArmorParam.fPlusHP));
 
 		m_pReinForceFont->Set_UI_Pos(630.f, 255.f);	
-		m_pPlusDefFont->Set_UI_Pos(630.f, 299.f);	
+		m_pPlusDefFont->Set_UI_Pos(630.f, 279.f);	
 		m_pDefFont->Set_UI_Pos(630.f, 425.f);
 		m_pHPFont->Set_UI_Pos(630.f, 520.f);
+		m_pPlusHPFont->Set_UI_Pos(630.f, 300.f);
 		SetUp_SubUI_Active(true);
 	}
 	else if (!m_bIsActive || m_tArmorParam.iArmorName == ArmorAll_END)

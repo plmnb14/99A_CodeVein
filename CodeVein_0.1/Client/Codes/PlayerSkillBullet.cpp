@@ -118,6 +118,18 @@ _int CPlayerSkillBullet::Update_GameObject(_double TimeDelta)
 		m_pBulletBody_1->Set_ParentObject(this);
 		m_pBulletBody_1->Reset_Init();
 		g_pManagement->Add_GameOject_ToLayer_NoClone(m_pBulletBody_1, SCENE_STAGE, L"Layer_Effect", nullptr);
+
+		CSoundManager::CHANNELID eChannel = CSoundManager::CHANNELID::Effect_SFX_01;
+		_int iRand = CCalculater::Random_Num(0, 2);
+		if (0 == iRand)
+			eChannel = CSoundManager::CHANNELID::Effect_SFX_01;
+		else if (1 == iRand)
+			eChannel = CSoundManager::CHANNELID::Effect_SFX_02;
+		else if (2 == iRand)
+			eChannel = CSoundManager::CHANNELID::Effect_SFX_03;
+
+		g_pSoundManager->Stop_Sound(eChannel);
+		g_pSoundManager->Play_Sound(L"PlayerGunSkill_ShotEff.ogg", eChannel, CSoundManager::Effect_Sound);
 	}
 
 	Enter_Collision();
