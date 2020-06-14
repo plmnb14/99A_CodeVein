@@ -791,12 +791,8 @@ void CPlayer_Colleague::Check_Action_List(_double TimeDelta)
 
 	if ((true == m_bStart_Fighting && true == m_bNear_byMonster) && m_fDodge_CoolTime >= 10.f)
 	{
-		_float fAngle = 0.f;
-		if (nullptr != m_pObject_Mon)
-			fAngle = D3DXToDegree(m_pTransformCom->Chase_Target_Angle(&TARGET_TO_TRANS(m_pObject_Mon)->Get_Pos()));
+		_float fAngle = D3DXToDegree(m_pTransformCom->Chase_Target_Angle(&TARGET_TO_TRANS(m_pObject_Mon)->Get_Pos()));
 
-		// 전투 상태일 때, 10초마다 구르게
-		//cout << "데굴데굴" << endl;
 		m_eMovetype = CPlayer_Colleague::Coll_Dodge;
 
 		if (0.f <= fAngle && 30.f > fAngle)
@@ -1090,13 +1086,16 @@ void CPlayer_Colleague::Set_AniEvent()
 			{
 				m_eColleague_Ani = CPlayer_Colleague::Ani_Heal;
 				CollHeal_ForMe();
-				break;
 			}
+			break;
 		}
 		case Client::CPlayer_Colleague::Player_Heal:
 		{
-			m_eColleague_Ani = CPlayer_Colleague::Ani_PlayerHeal_or_Gun;
-			CollHeal_ForPlayer();
+			if (false == m_pTarget->Get_Dead())
+			{
+				m_eColleague_Ani = CPlayer_Colleague::Ani_PlayerHeal_or_Gun;
+				CollHeal_ForPlayer();
+			}
 			break;
 		}
 		}
@@ -1164,7 +1163,9 @@ void CPlayer_Colleague::Select_Moving()
 void CPlayer_Colleague::Select_Heal(_double TimeDelta)
 {
 	if (m_eMovetype == CPlayer_Colleague::Coll_Dead ||
-		m_eMovetype == CPlayer_Colleague::Coll_Dodge)
+		m_eMovetype == CPlayer_Colleague::Coll_Dodge ||
+		m_pTarget->Get_Dead() || 
+		m_pTarget->Get_Target_Param().fHp_Cur <= 0.f)
 		return;
 
 	_float	fHPPercent = (m_tObjParam.fHp_Max * 20.f) / 100.f;
