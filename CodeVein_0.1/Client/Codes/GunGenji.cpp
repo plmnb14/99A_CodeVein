@@ -518,9 +518,6 @@ CBT_Composite_Node * CGunGenji::Shot()
 	Root_Parallel->Set_Sub_Child(SubSeq);
 	SubSeq->Add_Child(ChaseDir0);
 	SubSeq->Add_Child(Rotation0);
-	SubSeq->Add_Child(VoiceStop);
-	SubSeq->Add_Child(VoicePlay);
-	SubSeq->Add_Child(Random_Voice());
 	SubSeq->Add_Child(Sound1Stop);
 	SubSeq->Add_Child(Sound1Play);
 	SubSeq->Add_Child(Sound1Tag);
