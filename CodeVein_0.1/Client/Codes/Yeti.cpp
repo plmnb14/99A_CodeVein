@@ -4237,6 +4237,15 @@ HRESULT CYeti::Ready_Collider()
 	pCollider->Set_Enabled(true);
 
 	m_vecPhysicCol.push_back(pCollider);
+
+	IF_NULL_VALUE_RETURN(pCollider = static_cast<CCollider*>(g_pManagement->Clone_Component(SCENE_STATIC, L"Collider")), E_FAIL);
+	fRadius = 2.f;
+	pCollider->Set_Radius(_v3{ fRadius, fRadius, fRadius });
+	pCollider->Set_Dynamic(true);
+	pCollider->Set_Type(COL_SPHERE);
+	pCollider->Set_CenterPos(_v3(m_matBone[Bone_Body]->_41, m_matBone[Bone_Body]->_42, m_matBone[Bone_Body]->_43));
+	pCollider->Set_Enabled(true);
+
 	m_vecAttackCol.push_back(pCollider); //¹¶°³±â¿ë
 
 	IF_NULL_VALUE_RETURN(pCollider = static_cast<CCollider*>(g_pManagement->Clone_Component(SCENE_STATIC, L"Collider")), E_FAIL);

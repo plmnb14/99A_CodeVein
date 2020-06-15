@@ -122,6 +122,9 @@ private:	// 패턴들
 	CBT_Composite_Node* NearAttack_Dist5_Final();
 	CBT_Composite_Node* FarAttack_Fianl();
 
+	// 보이스 랜덤 선택
+	CBT_Composite_Node*		Random_Voice();
+
 	//////// 시연회용
 	CBT_Composite_Node* Start_Show();
 	CBT_Composite_Node* Show_ChaseAndNearAttack();
