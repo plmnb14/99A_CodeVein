@@ -291,8 +291,6 @@ private:
 	_mat*					m_matBone[Bone_End];
 	ATK_COMBO_TYPE			m_eAtkCombo;
 	HUNTER_ANI				m_eState;
-	_int					m_iPatternCount = 0;
-	_int					m_iPatternCountMax = 0;
 
 };
 

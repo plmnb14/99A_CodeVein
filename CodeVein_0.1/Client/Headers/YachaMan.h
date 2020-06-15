@@ -118,15 +118,12 @@ private:
 	void Check_AniEvent();
 	void Check_DeadEffect(_double TimeDelta);
 
+	void Play_SequenceAtk();
 	void Play_RandomAtkNormal();
 	void Play_RandomAtkCombo();
 
 	void Play_R();
-	void Play_L();
-	void Play_Hammering();
 	void Play_Shoulder();
-	void Play_TurnTwice();
-	void Play_HalfClock();
 	void Play_TargetHammering();
 	void Play_WheelWind();
 	void Play_Combo_R_L();

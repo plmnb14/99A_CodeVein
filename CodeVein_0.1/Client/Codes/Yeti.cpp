@@ -481,24 +481,36 @@ void CYeti::Check_AniEvent()
 	case MONSTER_STATE_TYPE::ATTACK:
 		if (true == m_bCanChooseAtkType)
 		{
+			if (m_iPatternCount >= m_iPatternCountMax)
+			{
+				m_bCanSequencePattern = false;
+				m_iPatternCount = 0;
+			}
+
 			m_tObjParam.bCanAttack = false;
 			m_tObjParam.bIsAttack = true;
 
 			m_bCanChooseAtkType = false;
 
-			m_iRandom = CALC::Random_Num(MONSTER_ATK_TYPE::ATK_NORMAL, MONSTER_ATK_TYPE::ATK_COMBO);
-
-			switch (m_iRandom)
+			if (true == m_bCanSequencePattern)
 			{
-			case MONSTER_ATK_TYPE::ATK_NORMAL:
-				m_eSecondCategory_ATK = MONSTER_ATK_TYPE::ATK_NORMAL;
-				Play_RandomAtkNormal();
-				break;
-			case MONSTER_ATK_TYPE::ATK_COMBO:
-				m_eSecondCategory_ATK = MONSTER_ATK_TYPE::ATK_COMBO;
-				m_bIsCombo = true;
-				Play_RandomAtkCombo();
-				break;
+				m_eSecondCategory_ATK = MONSTER_ATK_TYPE::ATK_SEQUNCE;
+				Play_SequenceAtk();
+			}
+			else
+			{
+				switch (CALC::Random_Num(MONSTER_ATK_TYPE::ATK_NORMAL, MONSTER_ATK_TYPE::ATK_COMBO))
+				{
+				case MONSTER_ATK_TYPE::ATK_NORMAL:
+					m_eSecondCategory_ATK = MONSTER_ATK_TYPE::ATK_NORMAL;
+					Play_RandomAtkNormal();
+					break;
+				case MONSTER_ATK_TYPE::ATK_COMBO:
+					m_eSecondCategory_ATK = MONSTER_ATK_TYPE::ATK_COMBO;
+					m_bIsCombo = true;
+					Play_RandomAtkCombo();
+					break;
+				}
 			}
 
 			return;
@@ -560,6 +572,64 @@ void CYeti::Check_AniEvent()
 					break;
 				}
 			}
+			else if (MONSTER_ATK_TYPE::ATK_SEQUNCE == m_eSecondCategory_ATK)
+			{
+				if (true == m_bIsCombo)
+				{
+					switch (m_eAtkCombo)
+					{
+					case ATK_COMBO_TYPE::COMBO_RLRL_SHOULDER:
+						Play_Combo_RLRL_Shoulder();
+						break;
+					case ATK_COMBO_TYPE::COMBO_RLRL_SMASH:
+						Play_Combo_RLRL_Smash();
+						break;
+					case ATK_COMBO_TYPE::COMBO_RLRL_SWING:
+						Play_Combo_RLRL_Swing();
+						break;
+					}
+				}
+				else
+				{
+					switch (m_eState)
+					{
+					case YETI_ANI::Atk_Rush:
+						Play_Rush();
+						break;
+					case YETI_ANI::Atk_RollingSlash:
+						Play_RollingSlash();
+						break;
+					case YETI_ANI::Atk_IceThrowing:
+						Play_IceThrowing();
+						break;
+					case YETI_ANI::Atk_Sp06:
+						Play_RLRL();
+						break;
+					case YETI_ANI::Atk_Sp05:
+						Play_WoodChop();
+						break;
+					case YETI_ANI::Atk_Sp04:
+						Play_FastLR();
+						break;
+					case YETI_ANI::Atk_Sp03:
+						Play_LRSweap();
+						break;
+					case YETI_ANI::Atk_Sp02:
+						Play_RUpperChop();
+						break;
+					case YETI_ANI::Atk_Sp01:
+						Play_SlowLR();
+						break;
+					case YETI_ANI::Atk_Field:
+						//자가 버프 혹은 근처에 일렁거리며 데미지 주기
+						Play_Howling();
+						break;
+					case YETI_ANI::Atk_BodyPress:
+						Play_BodyPress();
+						break;
+					}
+				}
+			}
 		}
 		break;
 
@@ -605,10 +675,76 @@ void CYeti::Check_DeadEffect(_double TimeDelta)
 	CParticleMgr::Get_Instance()->Create_Effect(L"Monster_DeadSmoke_0", vPos);
 }
 
+void CYeti::Play_SequenceAtk()
+{
+	switch (m_iPatternCount)
+	{
+	case 0:
+		m_eState = YETI_ANI::Atk_Rush;
+		break;
+
+	case 1:
+		m_eState = YETI_ANI::Atk_RollingSlash;
+		break;
+
+	case 2:
+		m_eState = YETI_ANI::Atk_IceThrowing;
+		break;
+
+	case 3:
+		m_eState = YETI_ANI::Atk_Sp06;
+		break;
+
+	case 4:
+		m_eState = YETI_ANI::Atk_Sp05;
+		break;
+
+	case 5:
+		m_eState = YETI_ANI::Atk_Sp04;
+		break;
+
+	case 6:
+		m_eState = YETI_ANI::Atk_Sp03;
+		break;
+
+	case 7:
+		m_eState = YETI_ANI::Atk_Sp02;
+		break;
+
+	case 8:
+		m_eState = YETI_ANI::Atk_Sp01;
+		break;
+
+	case 9:
+		m_eState = YETI_ANI::Atk_BodyPress;
+		break;
+
+	case 10:
+		m_bIsCombo = true;
+		m_eAtkCombo = ATK_COMBO_TYPE::COMBO_RLRL_SHOULDER;
+		m_eState = YETI_ANI::Atk_Sp06;
+		break;
+
+	case 11:
+		m_bIsCombo = true;
+		m_eAtkCombo = ATK_COMBO_TYPE::COMBO_RLRL_SMASH;
+		m_eState = YETI_ANI::Atk_Sp06;
+		break;
+
+	case 12:
+		m_bIsCombo = true;
+		m_eAtkCombo = ATK_COMBO_TYPE::COMBO_RLRL_SWING;
+		m_eState = YETI_ANI::Atk_Sp06;
+		break;
+	}
+
+	++m_iPatternCount;
+
+	return;
+}
+
 void CYeti::Play_RandomAtkNormal()
 {
-	_float fLenth = V3_LENGTH(&(TARGET_TO_TRANS(m_pAggroTarget)->Get_Pos() - m_pTransformCom->Get_Pos()));
-
 	switch (CALC::Random_Num(ATK_NORMAL_TYPE::NORMAL_RUSH, ATK_NORMAL_TYPE::NORMAL_BODYPRESS))
 	{
 	case ATK_NORMAL_TYPE::NORMAL_RUSH:
@@ -4182,16 +4318,22 @@ HRESULT CYeti::Ready_Status(void * pArg)
 	m_tObjParam.bIsAttack = false;
 	m_tObjParam.bCanDodge = true;
 	m_tObjParam.bIsDodge = false;
+
+	m_bCanSequencePattern = true;
 	m_bCanPlayDead = false;
 	m_bInRecognitionRange = false;
 	m_bInAtkRange = false;
 	m_bCanChase = false;
+
 	m_bCanCoolDown = false;
 	m_bIsCoolDown = false;
+
 	m_bCanChooseAtkType = true;
 	m_bIsCombo = false;
+
 	m_bCanIdle = true;
 	m_bIsIdle = false;
+
 	m_bCanMoveAround = true;
 	m_bIsMoveAround = false;
 
@@ -4206,6 +4348,9 @@ HRESULT CYeti::Ready_Status(void * pArg)
 
 	m_fCoolDownMax = 0.f;
 	m_fCoolDownCur = 0.f;
+
+	m_iPatternCount = 0;
+	m_iPatternCountMax = 13;
 
 	return S_OK;
 }

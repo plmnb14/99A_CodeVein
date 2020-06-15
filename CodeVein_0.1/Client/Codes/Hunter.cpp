@@ -583,70 +583,48 @@ void CHunter::Check_AniEvent()
 	case MONSTER_STATE_TYPE::ATTACK:
 		if (true == m_bCanChooseAtkType)
 		{
+			if (m_iPatternCount >= m_iPatternCountMax)
+			{
+				m_bCanSequencePattern = false;
+				m_iPatternCount = 0;
+			}
+
 			m_tObjParam.bCanAttack = false;
 			m_tObjParam.bIsAttack = true;
 
 			m_bCanChooseAtkType = false;
 
-			//m_iRandom = CALC::Random_Num(MONSTER_ATK_TYPE::ATK_NORMAL, MONSTER_ATK_TYPE::ATK_COMBO);
-			//if (WEAPON_STATE::WEAPON_Hammer == m_eWeaponState)
-			//	m_iRandom = 0;
-			//switch (m_iRandom)
-			//{
-			//case MONSTER_ATK_TYPE::ATK_NORMAL:
-			//	m_eSecondCategory_ATK = MONSTER_ATK_TYPE::ATK_NORMAL;
-			//	Play_RandomAtkNormal();
-			//	break;
-			//case MONSTER_ATK_TYPE::ATK_COMBO:
-			//	m_eSecondCategory_ATK = MONSTER_ATK_TYPE::ATK_COMBO;
-			//	Play_RandomAtkCombo();
-			//	m_bIsCombo = true;
-			//	break;
-			//}
+			if (true == m_bCanSequencePattern)
+			{
+				m_eSecondCategory_ATK = MONSTER_ATK_TYPE::ATK_SEQUNCE;
+				Play_SequenceAtk();
+			}
+			else
+			{
+				m_iRandom = CALC::Random_Num(MONSTER_ATK_TYPE::ATK_NORMAL, MONSTER_ATK_TYPE::ATK_COMBO);
 
-			m_eSecondCategory_ATK = MONSTER_ATK_TYPE::ATK_SEQUNCE;
-			Play_SequenceAtk();
+				if (WEAPON_STATE::WEAPON_Hammer == m_eWeaponState)
+					m_iRandom = 0;
+
+				switch (m_iRandom)
+				{
+				case MONSTER_ATK_TYPE::ATK_NORMAL:
+					m_eSecondCategory_ATK = MONSTER_ATK_TYPE::ATK_NORMAL;
+					Play_RandomAtkNormal();
+					break;
+				case MONSTER_ATK_TYPE::ATK_COMBO:
+					m_eSecondCategory_ATK = MONSTER_ATK_TYPE::ATK_COMBO;
+					Play_RandomAtkCombo();
+					m_bIsCombo = true;
+					break;
+				}
+			}
+
 			return;
 		}
 		else
 		{
-			if (true == m_bIsCombo)
-			{
-				switch (m_eAtkCombo)
-				{
-				case ATK_COMBO_TYPE::COMBO_GUN_SHOT:
-					Play_Gun_Combo_Shot();
-					break;
-				case ATK_COMBO_TYPE::COMBO_GUN_CQC:
-					Play_Gun_Combo_CQC();
-					break;
-				case ATK_COMBO_TYPE::COMBO_HALBERD_THIRDATK:
-					Play_Halberd_Combo_ThirdAtk();
-					break;
-				case ATK_COMBO_TYPE::COMBO_HALBERD_PIERCETWICE:
-					Play_Halberd_Combo_PierceTwice();
-					break;
-				case ATK_COMBO_TYPE::COMBO_HALBERD_PIERCEWIND:
-					Play_Halberd_Combo_PierceWind();
-					break;
-				case ATK_COMBO_TYPE::COMBO_LSWORD_NORMAL:
-					Play_LSword_Combo_Normal();
-					break;
-				case ATK_COMBO_TYPE::COMBO_LSWORD_STRONG:
-					Play_LSword_Combo_Strong();
-					break;
-				case ATK_COMBO_TYPE::COMBO_SWORD_STEPPIERCE:
-					Play_SSword_Combo_StepPierce();
-					break;
-				case ATK_COMBO_TYPE::COMBO_SWORD_STRONG:
-					Play_SSword_Combo_Strong();
-					break;
-				case ATK_COMBO_TYPE::COMBO_SWORD_Diagonal_L:
-					Play_SSword_Combo_Diagonal_L();
-					break;
-				}
-			}
-			else
+			if (MONSTER_ATK_TYPE::ATK_NORMAL == m_eSecondCategory_ATK)
 			{
 				switch (m_eState)
 				{
@@ -739,135 +717,174 @@ void CHunter::Check_AniEvent()
 					break;
 				}
 			}
-			//if (MONSTER_ATK_TYPE::ATK_NORMAL == m_eSecondCategory_ATK)
-			//{
-			//	switch (m_eState)
-			//	{
-			//	case HUNTER_ANI::SSword_Atk_Sp02:
-			//		Play_SSword_CriticalDraw();
-			//		break;
-			//	case HUNTER_ANI::SSword_Atk_Sp01:
-			//		Play_SSword_HelmetBreak();
-			//		break;
-			//	case HUNTER_ANI::SSword_Atk_S01:
-			//		Play_SSword_Elbow();
-			//		break;
-			//	case HUNTER_ANI::SSword_Atk_N05:
-			//		Play_SSword_WoodChop();
-			//		break;
-			//	case HUNTER_ANI::SSword_Atk_N04:
-			//		Play_SSword_Upper_L();
-			//		break;
-			//	case HUNTER_ANI::SSword_Atk_N01:
-			//		Play_SSword_Upper();
-			//		break;
-			//	case HUNTER_ANI::SSword_Atk_RaiseUp:
-			//		Play_SSword_RaiseUp();
-			//		break;
-			//	case HUNTER_ANI::SSword_Atk_Jump:
-			//		Play_SSword_Jump();
-			//		break;
-			//	case HUNTER_ANI::LSword_Atk_Smash:
-			//		Play_LSword_Smash();
-			//		break;
-			//	case HUNTER_ANI::LSword_Atk_S01:
-			//		Play_LSword_RDiagonal();
-			//		break;
-			//	case HUNTER_ANI::LSword_Atk_N01:
-			//		Play_LSword_Right();
-			//		break;
-			//	case HUNTER_ANI::LSword_Atk_Kick:
-			//		Play_LSword_KneeKick();
-			//		break;
-			//	case HUNTER_ANI::Hammer_Atk_TwoUpper:
-			//		Play_Hammer_TwoUpper();
-			//		break;
-			//	case HUNTER_ANI::Hammer_Atk_Smash:
-			//		Play_Hammer_Smash();
-			//		break;
-			//	case HUNTER_ANI::Hammer_Atk_Slash:
-			//		Play_Hammer_Slash();
-			//		break;
-			//	case HUNTER_ANI::Hammer_Atk_N:
-			//		Play_Hammer_Upper();
-			//		break;
-			//	case HUNTER_ANI::Halberd_Atk_TwoUpper:
-			//		Play_Halberd_TwoUpper();
-			//		break;
-			//	case HUNTER_ANI::Halberd_Atk_TwoSlash:
-			//		Play_Halberd_SlashForth();
-			//		break;
-			//	case HUNTER_ANI::Halberd_Atk_Sweep:
-			//		Play_Halberd_Sweap();
-			//		break;
-			//	case HUNTER_ANI::Halberd_Atk_Sp03:
-			//		Play_Halberd_Swing_Jump();
-			//		break;
-			//	case HUNTER_ANI::Halberd_Atk_Sp02:
-			//		Play_Halberd_ClockTwice();
-			//		break;
-			//	case HUNTER_ANI::Halberd_Atk_S01:
-			//		Play_Halberd_DeepPierce();
-			//		break;
-			//	case HUNTER_ANI::Halberd_Atk_N01:
-			//		Play_Halberd_Pierce();
-			//		break;
-			//	case HUNTER_ANI::Halberd_Atk_RaiseUp:
-			//		Play_Halberd_RiseUp();
-			//		break;
-			//	case HUNTER_ANI::Halberd_Atk_Force:
-			//		Play_Halberd_StepPierce();
-			//		break;
-			//	case HUNTER_ANI::Bayonet_Atk_Snipe:
-			//		Play_Gun_Snipe();
-			//		break;
-			//	case HUNTER_ANI::Bayonet_Atk_Shoot01:
-			//		Play_Gun_Shoot();
-			//		break;
-			//	case HUNTER_ANI::Bayonet_Atk_N01:
-			//		Play_Gun_R();
-			//		break;
-			//	case HUNTER_ANI::Bayonet_Atk_Kick:
-			//		Play_Gun_Kick();
-			//		break;
-			//	}
-			//}
-			//else if (MONSTER_ATK_TYPE::ATK_COMBO == m_eSecondCategory_ATK)
-			//{
-			//	switch (m_eAtkCombo)
-			//	{
-			//	case ATK_COMBO_TYPE::COMBO_GUN_SHOT:
-			//		Play_Gun_Combo_Shot();
-			//		break;
-			//	case ATK_COMBO_TYPE::COMBO_GUN_CQC:
-			//		Play_Gun_Combo_CQC();
-			//		break;
-			//	case ATK_COMBO_TYPE::COMBO_HALBERD_THIRDATK:
-			//		Play_Halberd_Combo_ThirdAtk();
-			//		break;
-			//	case ATK_COMBO_TYPE::COMBO_HALBERD_PIERCETWICE:
-			//		Play_Halberd_Combo_PierceTwice();
-			//		break;
-			//	case ATK_COMBO_TYPE::COMBO_HALBERD_PIERCEWIND:
-			//		Play_Halberd_Combo_PierceWind();
-			//		break;
-			//	case ATK_COMBO_TYPE::COMBO_LSWORD_NORMAL:
-			//		Play_LSword_Combo_Normal();
-			//		break;
-			//	case ATK_COMBO_TYPE::COMBO_LSWORD_STRONG:
-			//		Play_LSword_Combo_Strong();
-			//		break;
-			//	case ATK_COMBO_TYPE::COMBO_SWORD_STEPPIERCE:
-			//		Play_SSword_Combo_StepPierce();
-			//		break;
-			//	case ATK_COMBO_TYPE::COMBO_SWORD_STRONG:
-			//		Play_SSword_Combo_Strong();
-			//		break;
-			//	case ATK_COMBO_TYPE::COMBO_SWORD_Diagonal_L:
-			//		Play_SSword_Combo_Diagonal_L();
-			//		break;
-			//	}
-			//}
+			else if (MONSTER_ATK_TYPE::ATK_COMBO == m_eSecondCategory_ATK)
+			{
+				switch (m_eAtkCombo)
+				{
+				case ATK_COMBO_TYPE::COMBO_GUN_SHOT:
+					Play_Gun_Combo_Shot();
+					break;
+				case ATK_COMBO_TYPE::COMBO_GUN_CQC:
+					Play_Gun_Combo_CQC();
+					break;
+				case ATK_COMBO_TYPE::COMBO_HALBERD_THIRDATK:
+					Play_Halberd_Combo_ThirdAtk();
+					break;
+				case ATK_COMBO_TYPE::COMBO_HALBERD_PIERCETWICE:
+					Play_Halberd_Combo_PierceTwice();
+					break;
+				case ATK_COMBO_TYPE::COMBO_HALBERD_PIERCEWIND:
+					Play_Halberd_Combo_PierceWind();
+					break;
+				case ATK_COMBO_TYPE::COMBO_LSWORD_NORMAL:
+					Play_LSword_Combo_Normal();
+					break;
+				case ATK_COMBO_TYPE::COMBO_LSWORD_STRONG:
+					Play_LSword_Combo_Strong();
+					break;
+				case ATK_COMBO_TYPE::COMBO_SWORD_STEPPIERCE:
+					Play_SSword_Combo_StepPierce();
+					break;
+				case ATK_COMBO_TYPE::COMBO_SWORD_STRONG:
+					Play_SSword_Combo_Strong();
+					break;
+				case ATK_COMBO_TYPE::COMBO_SWORD_Diagonal_L:
+					Play_SSword_Combo_Diagonal_L();
+					break;
+				}
+			}
+			else if (MONSTER_ATK_TYPE::ATK_SEQUNCE == m_eSecondCategory_ATK)
+			{
+				if (true == m_bIsCombo)
+				{
+					switch (m_eAtkCombo)
+					{
+					case ATK_COMBO_TYPE::COMBO_GUN_SHOT:
+						Play_Gun_Combo_Shot();
+						break;
+					case ATK_COMBO_TYPE::COMBO_GUN_CQC:
+						Play_Gun_Combo_CQC();
+						break;
+					case ATK_COMBO_TYPE::COMBO_HALBERD_THIRDATK:
+						Play_Halberd_Combo_ThirdAtk();
+						break;
+					case ATK_COMBO_TYPE::COMBO_HALBERD_PIERCETWICE:
+						Play_Halberd_Combo_PierceTwice();
+						break;
+					case ATK_COMBO_TYPE::COMBO_HALBERD_PIERCEWIND:
+						Play_Halberd_Combo_PierceWind();
+						break;
+					case ATK_COMBO_TYPE::COMBO_LSWORD_NORMAL:
+						Play_LSword_Combo_Normal();
+						break;
+					case ATK_COMBO_TYPE::COMBO_LSWORD_STRONG:
+						Play_LSword_Combo_Strong();
+						break;
+					case ATK_COMBO_TYPE::COMBO_SWORD_STEPPIERCE:
+						Play_SSword_Combo_StepPierce();
+						break;
+					case ATK_COMBO_TYPE::COMBO_SWORD_STRONG:
+						Play_SSword_Combo_Strong();
+						break;
+					case ATK_COMBO_TYPE::COMBO_SWORD_Diagonal_L:
+						Play_SSword_Combo_Diagonal_L();
+						break;
+					}
+				}
+				else
+				{
+					switch (m_eState)
+					{
+					case HUNTER_ANI::SSword_Atk_Sp02:
+						Play_SSword_CriticalDraw();
+						break;
+					case HUNTER_ANI::SSword_Atk_Sp01:
+						Play_SSword_HelmetBreak();
+						break;
+					case HUNTER_ANI::SSword_Atk_S01:
+						Play_SSword_Elbow();
+						break;
+					case HUNTER_ANI::SSword_Atk_N05:
+						Play_SSword_WoodChop();
+						break;
+					case HUNTER_ANI::SSword_Atk_N04:
+						Play_SSword_Upper_L();
+						break;
+					case HUNTER_ANI::SSword_Atk_N01:
+						Play_SSword_Upper();
+						break;
+					case HUNTER_ANI::SSword_Atk_RaiseUp:
+						Play_SSword_RaiseUp();
+						break;
+					case HUNTER_ANI::SSword_Atk_Jump:
+						Play_SSword_Jump();
+						break;
+					case HUNTER_ANI::LSword_Atk_Smash:
+						Play_LSword_Smash();
+						break;
+					case HUNTER_ANI::LSword_Atk_S01:
+						Play_LSword_RDiagonal();
+						break;
+					case HUNTER_ANI::LSword_Atk_N01:
+						Play_LSword_Right();
+						break;
+					case HUNTER_ANI::LSword_Atk_Kick:
+						Play_LSword_KneeKick();
+						break;
+					case HUNTER_ANI::Hammer_Atk_TwoUpper:
+						Play_Hammer_TwoUpper();
+						break;
+					case HUNTER_ANI::Hammer_Atk_Smash:
+						Play_Hammer_Smash();
+						break;
+					case HUNTER_ANI::Hammer_Atk_Slash:
+						Play_Hammer_Slash();
+						break;
+					case HUNTER_ANI::Hammer_Atk_N:
+						Play_Hammer_Upper();
+						break;
+					case HUNTER_ANI::Halberd_Atk_TwoUpper:
+						Play_Halberd_TwoUpper();
+						break;
+					case HUNTER_ANI::Halberd_Atk_TwoSlash:
+						Play_Halberd_SlashForth();
+						break;
+					case HUNTER_ANI::Halberd_Atk_Sweep:
+						Play_Halberd_Sweap();
+						break;
+					case HUNTER_ANI::Halberd_Atk_Sp03:
+						Play_Halberd_Swing_Jump();
+						break;
+					case HUNTER_ANI::Halberd_Atk_Sp02:
+						Play_Halberd_ClockTwice();
+						break;
+					case HUNTER_ANI::Halberd_Atk_S01:
+						Play_Halberd_DeepPierce();
+						break;
+					case HUNTER_ANI::Halberd_Atk_N01:
+						Play_Halberd_Pierce();
+						break;
+					case HUNTER_ANI::Halberd_Atk_RaiseUp:
+						Play_Halberd_RiseUp();
+						break;
+					case HUNTER_ANI::Halberd_Atk_Force:
+						Play_Halberd_StepPierce();
+						break;
+					case HUNTER_ANI::Bayonet_Atk_Snipe:
+						Play_Gun_Snipe();
+						break;
+					case HUNTER_ANI::Bayonet_Atk_Shoot01:
+						Play_Gun_Shoot();
+						break;
+					case HUNTER_ANI::Bayonet_Atk_N01:
+						Play_Gun_R();
+						break;
+					case HUNTER_ANI::Bayonet_Atk_Kick:
+						Play_Gun_Kick();
+						break;
+					}
+				}
+			}
 		}
 		break;
 
@@ -917,9 +934,6 @@ void CHunter::Check_DeadEffect(_double TimeDelta)
 
 void CHunter::Play_SequenceAtk()
 {
-	if (m_iPatternCount >= m_iPatternCountMax)
-		m_iPatternCount = 0;
-
 	//처음 목표가 없을 경우
 	if (nullptr == m_pAggroTarget)
 	{
@@ -11743,6 +11757,7 @@ HRESULT CHunter::Ready_Status(void* pArg)
 	m_tObjParam.bCanDodge = true; //회피 가능
 	m_tObjParam.bIsDodge = false;  //회피 진행중 아님
 
+	m_bCanSequencePattern = true; //순차진행 여부
 	m_bCanPlayDead = false; //죽음 애니 진행시 true;
 	m_bInRecognitionRange = false; //인지 범위 여부
 	m_bInAtkRange = false; //공격 범위 여부

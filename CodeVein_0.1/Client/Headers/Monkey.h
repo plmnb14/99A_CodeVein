@@ -98,6 +98,7 @@ protected:
 	void Check_AniEvent();
 	void Check_DeadEffect(_double TimeDelta);
 
+	void Play_SequenceAtk();
 	void Play_RandomAtkNormal();
 	void Play_RandomAtkCombo();
 
