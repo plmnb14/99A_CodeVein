@@ -282,6 +282,9 @@ HRESULT CRenderer::Ready_Component_Prototype()
 	m_iInstanceCnt = 200;
 	m_pInstanceData = new INSTANCEDATA[m_iInstanceCnt];
 
+	m_fLinearFogX = 500.f / (500.f - 0.1f);
+	m_fLinearFogY = -1.f / (500.f - 0.1f);
+
 	m_pGraphic_Dev->SetRenderState(D3DRS_CULLMODE, D3DCULL_CCW);
 
 
@@ -490,8 +493,8 @@ HRESULT CRenderer::Draw_RenderList()
 		return E_FAIL;
 	if (FAILED(Render_DOF()))
 		return E_FAIL;
-	if (FAILED(Render_ColorGrading()))
-		return E_FAIL;
+	//if (FAILED(Render_ColorGrading()))
+	//	return E_FAIL;
 
 	if (FAILED(Render_UI_Back()))
 		return E_FAIL;
@@ -1339,6 +1342,10 @@ HRESULT CRenderer::Render_Blend()
 
 	if (FAILED(m_pShader_Blend->Set_Value("g_FogDestiny", &fDestiny, sizeof(_float))))
 		return E_FAIL;
+	if (FAILED(m_pShader_Blend->Set_Value("g_LinearFogX", &m_fLinearFogX, sizeof(_float))))
+		return E_FAIL;
+	if (FAILED(m_pShader_Blend->Set_Value("g_LinearFogY", &m_fLinearFogY, sizeof(_float))))
+		return E_FAIL;
 
 	if (FAILED(m_pTarget_Manager->Begin_MRT(L"MRT_Blend")))
 		return E_FAIL;
@@ -1782,7 +1789,7 @@ HRESULT CRenderer::Render_DOF()
 	if (FAILED(m_pShader_Blend->Set_Value("g_Range_DOF", &m_fRange, sizeof(_float))))
 		return E_FAIL;
 
-	m_pTarget_Manager->Begin_Render_Target(L"Target_DOFAfter");
+	//m_pTarget_Manager->Begin_Render_Target(L"Target_DOFAfter");
 
 	// 장치에 백버퍼가 셋팅되어있다.	
 	m_pShader_Blend->Begin_Shader();
@@ -1793,7 +1800,7 @@ HRESULT CRenderer::Render_DOF()
 	m_pShader_Blend->End_Pass();
 	m_pShader_Blend->End_Shader();
 
-	m_pTarget_Manager->End_Render_Target(L"Target_DOFAfter");
+	//m_pTarget_Manager->End_Render_Target(L"Target_DOFAfter");
 
 	return S_OK;
 }
