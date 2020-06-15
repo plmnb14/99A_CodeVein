@@ -69,6 +69,19 @@ HRESULT CDeerKing::Ready_GameObject(void * pArg)
 	pBlackBoard->Set_Value(L"PushCol", true);	// 충돌여부 제어변수
 	//pBlackBoard->Set_Value(L"PhyCol", true); // 피격판정 제어 변수
 
+	//소리 제어 변수
+	pBlackBoard->Set_Value(L"SFX_01_Tag", 0);
+	pBlackBoard->Set_Value(L"SFX_01_Play", false);
+	pBlackBoard->Set_Value(L"SFX_01_Stop", false);
+	pBlackBoard->Set_Value(L"SFX_02_Tag", 0);
+	pBlackBoard->Set_Value(L"SFX_02_Play", false);
+	pBlackBoard->Set_Value(L"SFX_02_Stop", false);
+	pBlackBoard->Set_Value(L"Voice_Tag", 0);
+	pBlackBoard->Set_Value(L"Voice_Play", false);
+	pBlackBoard->Set_Value(L"Voice_Stop", false);
+	pBlackBoard->Set_Value(L"Step_Play", false);
+	pBlackBoard->Set_Value(L"Step_Tag", 20);
+
 	pBlackBoard->Set_Value(L"CamShake1", false);
 	pBlackBoard->Set_Value(L"CamShake2", false);
 	pBlackBoard->Set_Value(L"CamShake4", false);
@@ -1053,14 +1066,18 @@ CBT_Composite_Node * CDeerKing::LeftMoveAround()
 
 	CBT_Sequence* MainSeq = Node_Sequence("왼쪽 이동 서성임");
 	CBT_Play_Ani* Show_Ani6 = Node_Ani("왼쪽 이동", 6, 0.f);
+	CBT_SetValue* StepPlay = Node_BOOL_SetValue("발소리 재생", L"Step_Play", true);
 	CBT_MoveAround*	MoveAround0 = Node_MoveAround("왼쪽으로 서성 이동", L"Player_Pos", L"Monster_Speed", L"Monster_Dir", 2.f, 1.5, 0.7);
+	CBT_SetValue* StepStop = Node_BOOL_SetValue("발소리 재생", L"Step_Play", false);
 
 	CBT_ChaseDir* ChaseDir0 = Node_ChaseDir("플레이어 추적", L"Player_Pos", 5, 0);
 
 	Root_Parallel->Set_Main_Child(MainSeq);
 	MainSeq->Add_Child(Show_Ani6);
+	MainSeq->Add_Child(StepPlay);
 	MainSeq->Add_Child(MoveAround0);
-	
+	MainSeq->Add_Child(StepStop);
+
 	Root_Parallel->Set_Sub_Child(ChaseDir0);
 
 	return Root_Parallel;
@@ -1072,13 +1089,17 @@ CBT_Composite_Node * CDeerKing::RightMoveAround()
 
 	CBT_Sequence* MainSeq = Node_Sequence("오른쪽 이동 서성임");
 	CBT_Play_Ani* Show_Ani5 = Node_Ani("오른쪽 이동", 5, 0.f);
+	CBT_SetValue* StepPlay = Node_BOOL_SetValue("발소리 재생", L"Step_Play", true);
 	CBT_MoveAround*	MoveAround0 = Node_MoveAround("왼쪽으로 서성 이동", L"Player_Pos", L"Monster_Speed", L"Monster_Dir", -2.f, 1.5, 0.7);
+	CBT_SetValue* StepStop = Node_BOOL_SetValue("발소리 재생", L"Step_Play", false);
 
 	CBT_ChaseDir* ChaseDir0 = Node_ChaseDir("플레이어 추적", L"Player_Pos", 5, 0);
 
 	Root_Parallel->Set_Main_Child(MainSeq);
 	MainSeq->Add_Child(Show_Ani5);
+	MainSeq->Add_Child(StepPlay);
 	MainSeq->Add_Child(MoveAround0);
+	MainSeq->Add_Child(StepStop);
 
 	Root_Parallel->Set_Sub_Child(ChaseDir0);
 
@@ -2000,7 +2021,10 @@ HRESULT CDeerKing::Update_Value_Of_BB()
 		g_pSoundManager->Play_Sound(const_cast<TCHAR*>(m_mapSound[m_pAIControllerCom->Get_IntValue(L"Voice_Tag")]), CSoundManager::CHANNELID::DearKing_Voice, CSoundManager::SOUND::Effect_Sound);
 	}
 
-
+	if (true == m_pAIControllerCom->Get_BoolValue(L"Step_Play"))	// 재생
+	{
+		g_pSoundManager->Play_Sound(const_cast<TCHAR*>(m_mapSound[m_pAIControllerCom->Get_IntValue(L"Step_Tag")]), CSoundManager::CHANNELID::DearKing_Step, CSoundManager::SOUND::Effect_Sound);
+	}
 
 	// 카메라 흔들기
 	if (true == m_pAIControllerCom->Get_BoolValue(L"CamShake1"))
@@ -2673,9 +2697,11 @@ HRESULT CDeerKing::Ready_Sound()
 	m_mapSound.emplace(4, L"SE_BOSSGUY_KETSUGI_BOOST_000.ogg");
 	m_mapSound.emplace(5, L"SE_BOSSGUY_BOOST_002.ogg");
 
-	
 	m_mapSound.emplace(10, L"SE_BOSSGUY_BARK_ATTACK_002.ogg");
 	
+	m_mapSound.emplace(20, L"SE_FOOT_STEP_SNOW_DEEP_001.ogg");
+	
+
 	return S_OK;
 }
 

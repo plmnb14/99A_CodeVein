@@ -524,7 +524,9 @@ CBT_Composite_Node * CGunGenji::Shot()
 	SubSeq->Add_Child(Sound1Stop);
 	SubSeq->Add_Child(Sound1Play);
 	SubSeq->Add_Child(Sound1Tag);
-
+	SubSeq->Add_Child(VoiceStop);
+	SubSeq->Add_Child(VoicePlay);
+	SubSeq->Add_Child(Random_Voice());
 
 	return Root_Parallel;
 }
@@ -567,6 +569,8 @@ CBT_Composite_Node * CGunGenji::Sudden_Shot()
 	CBT_SetValue* Sound1Stop = Node_BOOL_SetValue("家府1 犁积", L"SFX_01_Stop", true);
 	CBT_SetValue* Sound1Play = Node_BOOL_SetValue("家府1 犁积", L"SFX_01_Play", true);
 	CBT_SetValue* Sound1Tag = Node_INT_SetValue("家府1 捞抚 汲沥", L"SFX_01_Tag", 0);
+	CBT_SetValue* VoiceStop = Node_BOOL_SetValue("格家府 犁积", L"Voice_Stop", true);
+	CBT_SetValue* VoicePlay = Node_BOOL_SetValue("格家府 犁积", L"Voice_Play", true);
 
 	CBT_CreateBullet* Bullet0 = Node_CreateBullet("罢瘤 醚舅", L"Monster_GunGenjiBullet", L"CreateBulletPos", L"NormalShotDir", 20, 1.5, 3.633, 1, 1, 0, CBT_Service_Node::Finite);
 	Root_Parallel->Add_Service(Bullet0);
@@ -581,6 +585,9 @@ CBT_Composite_Node * CGunGenji::Sudden_Shot()
 	SubSeq->Add_Child(Sound1Stop);
 	SubSeq->Add_Child(Sound1Play);
 	SubSeq->Add_Child(Sound1Tag);
+	SubSeq->Add_Child(VoiceStop);
+	SubSeq->Add_Child(VoicePlay);
+	SubSeq->Add_Child(Random_Voice());
 
 	return Root_Parallel;
 }
@@ -598,6 +605,8 @@ CBT_Composite_Node * CGunGenji::Upper_Slash()
 	CBT_SetValue* Sound1Stop = Node_BOOL_SetValue("家府1 犁积", L"SFX_01_Stop", true);
 	CBT_SetValue* Sound1Play = Node_BOOL_SetValue("家府1 犁积", L"SFX_01_Play", true);
 	CBT_SetValue* Sound1Tag = Node_INT_SetValue("家府1 捞抚 汲沥", L"SFX_01_Tag", 1);
+	CBT_SetValue* VoiceStop = Node_BOOL_SetValue("格家府 犁积", L"Voice_Stop", true);
+	CBT_SetValue* VoicePlay = Node_BOOL_SetValue("格家府 犁积", L"Voice_Play", true);
 	CBT_SetValue* TrailOn = Node_BOOL_SetValue("飘饭老 On", L"TrailOn", true);
 	CBT_MoveDirectly* Move1 = Node_MoveDirectly_Rush("捞悼", L"Monster_Speed", L"Monster_Dir", 2, 0.1, 0);
 	CBT_Wait* Wait1 = Node_Wait("措扁1", 0.2, 0);
@@ -615,6 +624,9 @@ CBT_Composite_Node * CGunGenji::Upper_Slash()
 	SubSeq->Add_Child(Sound1Stop);
 	SubSeq->Add_Child(Sound1Play);
 	SubSeq->Add_Child(Sound1Tag);
+	SubSeq->Add_Child(VoiceStop);
+	SubSeq->Add_Child(VoicePlay);
+	SubSeq->Add_Child(Random_Voice());
 	SubSeq->Add_Child(TrailOn);
 	SubSeq->Add_Child(Move1);
 	SubSeq->Add_Child(Wait1);
@@ -634,13 +646,15 @@ CBT_Composite_Node * CGunGenji::Arm_Attack()
 	CBT_Sequence* MainSeq = Node_Sequence("迫崩摹 摹扁");
 	CBT_Play_Ani* Show_Ani98 = Node_Ani("迫崩摹 摹扁", 98, 0.95f);
 	CBT_Play_Ani* Show_Ani1 = Node_Ani("扁夯", 1, 0.3f);
-
+	
 	CBT_Sequence* SubSeq = Node_Sequence("捞悼");
 	CBT_Wait* Wait0 = Node_Wait("措扁0", 0.25, 0);
 	CBT_MoveDirectly* Move0 = Node_MoveDirectly_Rush("捞悼0", L"Monster_Speed", L"Monster_Dir", 2, 0.75, 0);
 	CBT_SetValue* Sound1Stop = Node_BOOL_SetValue("家府1 犁积", L"SFX_01_Stop", true);
 	CBT_SetValue* Sound1Play = Node_BOOL_SetValue("家府1 犁积", L"SFX_01_Play", true);
 	CBT_SetValue* Sound1Tag = Node_INT_SetValue("家府1 捞抚 汲沥", L"SFX_01_Tag", 1);
+	CBT_SetValue* VoiceStop = Node_BOOL_SetValue("格家府 犁积", L"Voice_Stop", true);
+	CBT_SetValue* VoicePlay = Node_BOOL_SetValue("格家府 犁积", L"Voice_Play", true);
 	CBT_SetValue* TrailOn = Node_BOOL_SetValue("飘饭老 On", L"TrailOn", true);
 	CBT_MoveDirectly* Move1 = Node_MoveDirectly_Rush("捞悼0", L"Monster_Speed", L"Monster_Dir", 2, 0.3, 0);
 	CBT_SetValue* TrailOff = Node_BOOL_SetValue("飘饭老 Off", L"TrailOff", true);
@@ -657,6 +671,9 @@ CBT_Composite_Node * CGunGenji::Arm_Attack()
 	SubSeq->Add_Child(Sound1Stop);
 	SubSeq->Add_Child(Sound1Play);
 	SubSeq->Add_Child(Sound1Tag);
+	SubSeq->Add_Child(VoiceStop);
+	SubSeq->Add_Child(VoicePlay);
+	SubSeq->Add_Child(Random_Voice());
 	SubSeq->Add_Child(TrailOn);
 	SubSeq->Add_Child(Move1);
 	SubSeq->Add_Child(TrailOff);
@@ -682,6 +699,8 @@ CBT_Composite_Node * CGunGenji::Sting_Attack()
 	CBT_SetValue* Sound1Stop = Node_BOOL_SetValue("家府1 犁积", L"SFX_01_Stop", true);
 	CBT_SetValue* Sound1Play = Node_BOOL_SetValue("家府1 犁积", L"SFX_01_Play", true);
 	CBT_SetValue* Sound1Tag = Node_INT_SetValue("家府1 捞抚 汲沥", L"SFX_01_Tag", 1);
+	CBT_SetValue* VoiceStop = Node_BOOL_SetValue("格家府 犁积", L"Voice_Stop", true);
+	CBT_SetValue* VoicePlay = Node_BOOL_SetValue("格家府 犁积", L"Voice_Play", true);
 	CBT_Wait* Wait1 = Node_Wait("措扁1", 0.95, 0);
 	CBT_MoveDirectly* Move1 = Node_MoveDirectly_Rush("捞悼1", L"Monster_Speed", L"Monster_Dir", 0.6f, 0.537, 0);
 
@@ -695,6 +714,9 @@ CBT_Composite_Node * CGunGenji::Sting_Attack()
 	SubSeq->Add_Child(Sound1Stop);
 	SubSeq->Add_Child(Sound1Play);
 	SubSeq->Add_Child(Sound1Tag);
+	SubSeq->Add_Child(VoiceStop);
+	SubSeq->Add_Child(VoicePlay);
+	SubSeq->Add_Child(Random_Voice());
 	SubSeq->Add_Child(Wait1);
 	SubSeq->Add_Child(Move1);
 
@@ -717,6 +739,8 @@ CBT_Composite_Node * CGunGenji::Cut_To_Right()
 	CBT_SetValue* Sound1Stop = Node_BOOL_SetValue("家府1 犁积", L"SFX_01_Stop", true);
 	CBT_SetValue* Sound1Play = Node_BOOL_SetValue("家府1 犁积", L"SFX_01_Play", true);
 	CBT_SetValue* Sound1Tag = Node_INT_SetValue("家府1 捞抚 汲沥", L"SFX_01_Tag", 1);
+	CBT_SetValue* VoiceStop = Node_BOOL_SetValue("格家府 犁积", L"Voice_Stop", true);
+	CBT_SetValue* VoicePlay = Node_BOOL_SetValue("格家府 犁积", L"Voice_Play", true);
 	CBT_SetValue* TrailOn = Node_BOOL_SetValue("飘饭老 On", L"TrailOn", true);
 	CBT_MoveDirectly* Move1 = Node_MoveDirectly_Rush("捞悼1", L"Monster_Speed", L"Monster_Dir", 2, 0.35, 0);
 	CBT_SetValue* TrailOff = Node_BOOL_SetValue("飘饭老 Off", L"TrailOff", true);
@@ -733,6 +757,9 @@ CBT_Composite_Node * CGunGenji::Cut_To_Right()
 	SubSeq->Add_Child(Sound1Stop);
 	SubSeq->Add_Child(Sound1Play);
 	SubSeq->Add_Child(Sound1Tag);
+	SubSeq->Add_Child(VoiceStop);
+	SubSeq->Add_Child(VoicePlay);
+	SubSeq->Add_Child(Random_Voice());
 	SubSeq->Add_Child(TrailOn);
 	SubSeq->Add_Child(Move1);
 	SubSeq->Add_Child(TrailOff);
@@ -1032,7 +1059,7 @@ HRESULT CGunGenji::Update_Value_Of_BB()
 
 	if (true == m_pAIControllerCom->Get_BoolValue(L"Step_Play"))	// 犁积
 	{
-		g_pSoundManager->Play_Sound(const_cast<TCHAR*>(m_mapSound[m_pAIControllerCom->Get_IntValue(L"Step_Tag")]), CSoundManager::CHANNELID::SwordGenji_Voice, CSoundManager::SOUND::Effect_Sound);
+		g_pSoundManager->Play_Sound(const_cast<TCHAR*>(m_mapSound[m_pAIControllerCom->Get_IntValue(L"Step_Tag")]), CSoundManager::CHANNELID::GunGenji_Voice, CSoundManager::SOUND::Effect_Sound);
 	}
 
 
