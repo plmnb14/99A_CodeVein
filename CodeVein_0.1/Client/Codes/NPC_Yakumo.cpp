@@ -383,12 +383,22 @@ void CNPC_Yakumo::Check_Dist()
 	// 플레이어에서 E를 누르면, 리액트 컨버세이션을 활성화 시킨다.
 	else if (m_pInteractionButton->Get_ReactConversation() && m_bCanActive == true)
 	{
+		const _float MIN_DIST = 1.f;
+		const _float MAX_DIST = 2.f;
+
+		_float fLen = D3DXVec3Length(&_v3(TARGET_TO_TRANS(m_pPlayer)->Get_Pos() - m_pTransformCom->Get_Pos()));
+
+		// 거리 이내가 아닐 경우, 
+		if (fLen > MAX_DIST || fLen < MIN_DIST)
+			return;
+
 		// 오리진 각도 받아옴
 		m_fOriginAngle = m_pTransformCom->Get_Angle(AXIS_Y);
 
 		m_pTransformCom->Set_Angle(AXIS_Y, m_fConvertAngle);
 
 		m_pInteractionButton->Set_Active(false);
+		m_bByeCheck = false;
 
 		// 최초 1번만 말하고,
 		m_bCanActive = false;
@@ -455,12 +465,12 @@ void CNPC_Yakumo::Check_Bye()
 
 	if (!m_pWeaponShoUI->Get_Active() &&
 		!m_pWeaponShoUI->Get_OtherPopupOn() &&
-		m_pInteractionButton->Get_ReactConversation())
+		!m_bByeCheck)
 	{
 		m_pTransformCom->Set_Angle(AXIS_Y, m_fOriginAngle);
 
 		m_pInteractionButton->Set_ReactConverSation(false);
-
+		m_bByeCheck = true;
 		
 		if (0 == CCalculater::Random_Num(0, 1))
 		{

@@ -154,6 +154,7 @@ private:
 	_mat*					m_matBone[Bone_End];
 	ATK_COMBO_TYPE			m_eAtkCombo;
 	YETI_ANI				m_eState;
+	_int					m_iOrderedPattern;
 
 };
 

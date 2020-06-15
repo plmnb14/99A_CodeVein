@@ -243,7 +243,7 @@ HRESULT CScene_Stage_03::Ready_LightDesc()
 	// 천장 막힌 건물 가운데
 	LightDesc.Type = D3DLIGHT_POINT;
 	LightDesc.Diffuse = D3DXCOLOR(1.f, 0.75f, 0.5f, 1.f)* 2.f;
-	LightDesc.Ambient = D3DXCOLOR(0.2, 0.2, 0.2, 1.f);
+	LightDesc.Ambient = D3DXCOLOR(0.2f, 0.2f, 0.2f, 1.f);
 	LightDesc.Specular = LightDesc.Diffuse;
 	LightDesc.Position = _v3(-2.9f, 2.f, -90.f);
 	LightDesc.Range = 10.f;
