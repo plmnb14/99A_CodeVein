@@ -78,6 +78,7 @@ public:
 	{
 		ATK_NORMAL,
 		ATK_COMBO,
+		ATK_SEQUNCE,
 		ATK_END
 	};
 
@@ -101,6 +102,7 @@ public:
 	{
 		DEAD_DEAD,
 		DEAD_EXCUTION,
+		DEAD_FALL,
 		DEAD_END
 	};
 
@@ -248,11 +250,11 @@ protected:
 	_bool					m_bCanMoveAround = false; //경계ox
 	_bool					m_bIsMoveAround = false; //경계동작 진행중
 
-	_float					m_fSkillMoveSpeed_Cur= 0.f;
+	_float					m_fSkillMoveSpeed_Cur = 0.f;
 	_float					m_fSkillMoveSpeed_Max = 0.f;
-	_float					m_fSkillMoveAccel_Cur = 0.f;
+	_float					m_fSkillMoveAccel_Cur = 0.5f;
 	_float					m_fSkillMoveAccel_Max = 0.f;
-	_float					m_fSkillMoveMultiply = 0.f;
+	_float					m_fSkillMoveMultiply = 1.f;
 
 	_float					m_fRecognitionRange = 0.f;
 	_float					m_fShotRange = 0.f;

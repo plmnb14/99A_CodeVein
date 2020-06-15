@@ -3243,7 +3243,10 @@ void CThaiMan::Play_Dead()
 					m_fDeadEffect_Delay = 0.f;
 
 					Give_Mana_To_Player(5);
-					Check_DropItem(MONSTER_NAMETYPE::M_ThaiMan);
+
+					if (false == m_pRigidCom->Get_IsFall())
+						Check_DropItem(MONSTER_NAMETYPE::M_ThaiMan);
+
 					CObjectPool_Manager::Get_Instance()->Create_Object(L"GameObject_Haze", (void*)&CHaze::HAZE_INFO(_float(CCalculater::Random_Num(100, 300)), m_pTransformCom->Get_Pos(), 0.f));
 				}
 			}

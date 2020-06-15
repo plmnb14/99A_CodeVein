@@ -84,17 +84,17 @@ _int CMonsterUI::Update_GameObject(_double TimeDelta)
 	}
 	//==================================================
 
-	m_pTransformCom->Set_Pos(_v3(m_matMonsterBon->_41, m_matMonsterBon->_42 + 0.7f, m_matMonsterBon->_43));
+	m_pTransformCom->Set_Pos(_v3(m_matMonsterBon->_41, m_matMonsterBon->_42 + 0.9f, m_matMonsterBon->_43));
 
 
 	if (0 == m_iCheck_Renderindex)
-		m_pTransformCom->Set_Pos((_v3(TempBonmatrix._41, TempBonmatrix._42 + 0.7f, (TempBonmatrix._43 - 0.06f))));
+		m_pTransformCom->Set_Pos((_v3(TempBonmatrix._41, TempBonmatrix._42 + 0.9f, (TempBonmatrix._43 - 0.06f))));
 
 	if (1 == m_iCheck_Renderindex)
-		m_pTransformCom->Set_Pos((_v3(TempBonmatrix._41, TempBonmatrix._42 + 0.7f, (TempBonmatrix._43 - 0.02f))));
+		m_pTransformCom->Set_Pos((_v3(TempBonmatrix._41, TempBonmatrix._42 + 0.9f, (TempBonmatrix._43 - 0.02f))));
 
 	if (2 == m_iCheck_Renderindex)
-		m_pTransformCom->Set_Pos((_v3(TempBonmatrix._41, TempBonmatrix._42 + 0.7f, TempBonmatrix._43 - 0.01f)));
+		m_pTransformCom->Set_Pos((_v3(TempBonmatrix._41, TempBonmatrix._42 + 0.9f, TempBonmatrix._43 - 0.01f)));
 
 	//========================================================================
 	_float fNewTargetHp = m_pTarget->Get_Target_Param().fHp_Cur;

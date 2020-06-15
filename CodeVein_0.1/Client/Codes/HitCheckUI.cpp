@@ -102,8 +102,6 @@ HRESULT CHitCheckUI::Render_GameObject()
 
 	m_pShaderCom->End_Shader();
 
-	cout << " 졸라 잘 나오긴해!!" << endl;
-
 	return NOERROR;
 }
 

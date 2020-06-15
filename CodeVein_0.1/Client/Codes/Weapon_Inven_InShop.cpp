@@ -643,7 +643,7 @@ _float CWeapon_Inven_InShop::Get_PlusDamage(_float fDamage, _int iReinforce)
 
 _float CWeapon_Inven_InShop::Get_PlusDef(_float fDef, _int iReinforce)
 {
-	return fDef + (fDef * 0.1 * iReinforce);
+	return fDef + (fDef * 0.1f * iReinforce);
 }
 
 HRESULT CWeapon_Inven_InShop::SetUp_WeaponData(INVEN_SHOP_OPTION eShop)
