@@ -51,6 +51,7 @@ private:
 	vector<UI_DESC*>		m_vecUI_DESC;
 	CExplainMaterialUI*		m_pExplainUI = nullptr;
 	_bool					m_bIsSubActive = false;
+	CMaterial_Slot*			m_pSoundSlot = nullptr;
 
 public:
 	static CMaterial_Inven*	Create(_Device pGraphic_Device);

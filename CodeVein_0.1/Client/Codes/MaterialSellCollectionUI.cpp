@@ -159,8 +159,12 @@ void CMaterialSellCollectionUI::Click_SubUI()
 
 	for (auto& iter : m_vecSlot)
 	{
-		if (iter->Pt_InRect() && !iter->Get_Select())
+		if (iter->Pt_InRect() && !iter->Get_Select() && iter->Get_Type() != CMaterial::MATERIAL_END)
 		{
+			if (m_pSoundSlot != iter)
+				CUI_Manager::Get_Instance()->Stop_Play_UISound(L"Slot_Regist.ogg", CSoundManager::CHANNELID::UI_Click, CSoundManager::Effect_Sound);
+			m_pSoundSlot = iter;
+
 			if (g_pInput_Device->Get_DIMouseState(CInput_Device::DIM_LB))
 			{
 				m_pInfoUI->Set_Type(CMaterial::MATERIAL_TYPE(iter->Get_Type()));

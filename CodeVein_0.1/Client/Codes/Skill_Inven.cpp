@@ -216,20 +216,27 @@ void CSkill_Inven::Click_SubUI()
 	// 스킬 슬롯 선택시
 	for (_uint i = 0; i < m_vecSlot.size(); ++i)
 	{
-		if (m_vecSlot[i]->Pt_InRect() && /*g_pInput_Device->Get_DIMouseState(CInput_Device::DIM_LB) && */(!m_vecSlot[i]->Get_Regist()))
+		if (m_vecSlot[i]->Pt_InRect())
 		{
-			if (g_pInput_Device->Get_DIMouseState(CInput_Device::DIM_LB))
-			{
+			if (m_pSoundSlot != m_vecSlot[i])
 				CUI_Manager::Get_Instance()->Stop_Play_UISound(L"Slot_Regist.ogg", CSoundManager::CHANNELID::UI_Click, CSoundManager::Effect_Sound);
-				Reset_Select_Slot();
-				m_vecSlot[i]->Set_Select(true);
-				CUI_Manager::Get_Instance()->Get_Total_Inven()->Set_Skill_ID(m_iRegistIdx, m_vecSlot[i]->Get_SkillID());
-			}
-			else if (g_pInput_Device->Get_DIMouseState(CInput_Device::DIM_RB))
+			m_pSoundSlot = m_vecSlot[i];
+
+			if ((!m_vecSlot[i]->Get_Regist()))
 			{
-				CUI_Manager::Get_Instance()->Stop_Play_UISound(L"Slot_Regist.ogg", CSoundManager::CHANNELID::UI_Click, CSoundManager::Effect_Sound);
-				CUI_Manager::Get_Instance()->Get_Total_Inven()->Set_Skill_ID(m_iRegistIdx, SkillID_End);
-				m_vecSlot[i]->Set_Select(false);
+				if (g_pInput_Device->Get_DIMouseState(CInput_Device::DIM_LB))
+				{
+					CUI_Manager::Get_Instance()->Stop_Play_UISound(L"Slot_Regist.ogg", CSoundManager::CHANNELID::UI_Click, CSoundManager::Effect_Sound);
+					Reset_Select_Slot();
+					m_vecSlot[i]->Set_Select(true);
+					CUI_Manager::Get_Instance()->Get_Total_Inven()->Set_Skill_ID(m_iRegistIdx, m_vecSlot[i]->Get_SkillID());
+				}
+				else if (g_pInput_Device->Get_DIMouseState(CInput_Device::DIM_RB))
+				{
+					CUI_Manager::Get_Instance()->Stop_Play_UISound(L"Slot_Regist.ogg", CSoundManager::CHANNELID::UI_Click, CSoundManager::Effect_Sound);
+					CUI_Manager::Get_Instance()->Get_Total_Inven()->Set_Skill_ID(m_iRegistIdx, SkillID_End);
+					m_vecSlot[i]->Set_Select(false);
+				}
 			}
 		}
 	}
