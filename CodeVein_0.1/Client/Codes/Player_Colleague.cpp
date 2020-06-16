@@ -1319,18 +1319,23 @@ void CPlayer_Colleague::CollMove_Walk()
 {
 	Function_RotateBody();
 	Colleague_Movement(2.f, m_pTransformCom->Get_Axis(AXIS_Z));
+	//g_pSoundManager->Stop_Sound(CSoundManager::Jack_SFX_01);
+	//g_pSoundManager->Play_Sound(L"Jack_Walk.ogg", CSoundManager::Jack_SFX_01, CSoundManager::Voice_Sound);
 }
 
 void CPlayer_Colleague::CollMove_BackWalk()
 {
 	Function_RotateBody();
 	Colleague_Movement(2.f, -(m_pTransformCom->Get_Axis(AXIS_Z)));
+	//g_pSoundManager->Stop_Sound(CSoundManager::Jack_SFX_01);
+	//g_pSoundManager->Play_Sound(L"Jack_Walk.ogg", CSoundManager::Jack_SFX_01, CSoundManager::Voice_Sound);
 }
 
 void CPlayer_Colleague::CollMove_Run()
 {
 	Function_RotateBody();
 	Colleague_Movement(5.f, m_pTransformCom->Get_Axis(AXIS_Z));
+
 }
 
 void CPlayer_Colleague::CollMove_BackRun()
@@ -1343,6 +1348,8 @@ void CPlayer_Colleague::CollMove_MonWalk()
 {
 	Function_RotateBody();
 	Colleague_Movement(2.f, m_pTransformCom->Get_Axis(AXIS_Z));
+	//g_pSoundManager->Stop_Sound(CSoundManager::Jack_SFX_01);
+	//g_pSoundManager->Play_Sound(L"Jack_Walk.ogg", CSoundManager::Jack_SFX_01, CSoundManager::Voice_Sound);
 }
 
 void CPlayer_Colleague::CollMove_MonRun()
@@ -1375,7 +1382,6 @@ void CPlayer_Colleague::CollDodge_FrontRoll()
 		}
 		else if (0.067f <= AniTime && 1.5f >= AniTime)
 		{
-			// 여기서는 빠르게 해서 속도 확 높여서 구르는 구간
 			if (false == m_bEventTrigger[1])
 			{
 				m_bEventTrigger[1] = true;
