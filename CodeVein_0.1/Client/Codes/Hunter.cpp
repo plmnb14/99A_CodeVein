@@ -611,8 +611,6 @@ void CHunter::Check_AniEvent()
 				if (WEAPON_STATE::WEAPON_Hammer == m_eWeaponState)
 					m_iRandom = 0;
 
-				m_iRandom = MONSTER_ATK_TYPE::ATK_COMBO;
-
 				switch (m_iRandom)
 				{
 				case MONSTER_ATK_TYPE::ATK_NORMAL:
@@ -12909,7 +12907,7 @@ HRESULT CHunter::Ready_Status(void* pArg)
 	m_tObjParam.bCanDodge = true; //회피 가능
 	m_tObjParam.bIsDodge = false;  //회피 진행중 아님
 
-	m_bCanSequencePattern = false; //순차진행 여부
+	m_bCanSequencePattern = true; //순차진행 여부
 	m_bCanPlayDead = false; //죽음 애니 진행시 true;
 	m_bInRecognitionRange = false; //인지 범위 여부
 	m_bInAtkRange = false; //공격 범위 여부
