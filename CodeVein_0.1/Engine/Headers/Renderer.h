@@ -61,6 +61,8 @@ private:
 	_bool						m_bFogFadeOutStart = false;
 	_float						m_fFogDestiny = 0.01f;
 	_float						m_fFogMinDestiny = 0.01f;
+	_float						m_fLinearFogX = 0.f;
+	_float						m_fLinearFogY = 0.f;
 
 private:
 	CTarget_Manager*			m_pTarget_Manager = nullptr;
