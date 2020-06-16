@@ -43,7 +43,7 @@ public:
 	};
 	enum Coll_Movement
 	{
-		Move_Walk, Move_BackWalk, Move_Run, Move_BackRun, Move_End
+		Move_Idle, Move_Walk, Move_BackWalk, Move_Run, Move_BackRun, Move_End
 	};
 	enum Coll_IdleMoment
 	{
@@ -243,6 +243,9 @@ private:
 
 public:
 	HRESULT Teleport_ResetOptions(void * pArg/*_int eSceneID, _int eTeleportID*/);
+	
+private:
+	void	FootWalkTimerUpdate(_double _deltaTime);
 
 
 private:
@@ -281,7 +284,9 @@ private:
 
 	Coll_Target				m_eTarget;
 
-	//Move_Direction			m_eMoveDirection;
+	_bool		m_bCanPlayeWalkSound = true;
+	_float		m_fFootWalkTimer_Cur = 0.5f;
+	_float		m_fFootWalkTimer_Max = 0.5f;
 
 private:
 	list<CGameObject*>*	m_List_pMonTarget[2];
@@ -304,9 +309,9 @@ private:
 	_bool	m_bCheck_PlayerDist = false;
 
 	// 플레이어의 일정 거리
-	_float	m_fPlayer_DistDifference = 30.f;
+	_float	m_fPlayer_DistDifference = 20.f;
 	// 몬스터 인지 거리
-	_float	m_fEnemiesPerceive_Length = 30.f;
+	_float	m_fEnemiesPerceive_Length = 20.f;
 
 
 
@@ -388,6 +393,7 @@ private:
 	_bool	m_bCheck_Be_Careful = false;
 
 	_bool	m_bCheck_Skil_Voice = false;
+	_bool	m_bCheck_Normal_AttVoice = false;
 	_bool	m_bCheck_Dont_Go = false;
 
 

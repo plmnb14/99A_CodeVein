@@ -210,6 +210,7 @@
     <ClInclude Include="..\Headers\CustomSlot.h" />
     <ClInclude Include="..\Headers\Costume_Body.h" />
     <ClInclude Include="..\Headers\Costume_Head.h" />
+    <ClInclude Include="..\Headers\DropBox.h" />
     <ClInclude Include="..\Headers\ExpendCollectionUI.h" />
     <ClInclude Include="..\Headers\ExpendOptionUI.h" />
     <ClInclude Include="..\Headers\ExpendSellUI.h" />
@@ -438,6 +439,7 @@
     <ClCompile Include="..\Codes\CustomSlot.cpp" />
     <ClCompile Include="..\Codes\Costume_Body.cpp" />
     <ClCompile Include="..\Codes\Costume_Head.cpp" />
+    <ClCompile Include="..\Codes\DropBox.cpp" />
     <ClCompile Include="..\Codes\ExpendCollectionUI.cpp" />
     <ClCompile Include="..\Codes\ExpendOptionUI.cpp" />
     <ClCompile Include="..\Codes\ExpendSellUI.cpp" />
