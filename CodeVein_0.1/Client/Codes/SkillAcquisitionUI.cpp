@@ -193,6 +193,7 @@ void CSkillAcquisitionUI::Click_OKMsgUI()
 		if (g_pInput_Device->Get_DIMouseState(CInput_Device::DIM_LB))
 		{
 			m_bIsActive = false;
+			CUI_Manager::Get_Instance()->Stop_Play_UISound(L"Slot_Regist.ogg", CSoundManager::CHANNELID::UI_Click, CSoundManager::Effect_Sound);
 		}
 	}
 }

@@ -30,6 +30,7 @@ private:
 	_uint						m_iBuyCnt = 1; // 물건 사는 개수
 	_uint						m_iCost = 0; // 물건 개당 가격
 	CExpendBuyUI*				m_pBuyUI = nullptr;
+	CExpendOptionUI*			m_pSoundOption = nullptr;
 
 public:
 	static CExpendCollectionUI*	Create(_Device pGraphic_Device);
