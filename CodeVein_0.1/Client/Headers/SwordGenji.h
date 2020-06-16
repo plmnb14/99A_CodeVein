@@ -119,6 +119,9 @@ private:	//패턴들
 	CBT_Composite_Node*		LookPlayer_FarAttack();	//플레이어 바라본 후 랜덤 원거리 공격
 	CBT_Composite_Node*		FarAttack();	// 랜덤 원거리 공격
 
+	// 보이스 랜덤 선택
+	CBT_Composite_Node*		Random_Voice();
+
 	////////////// 시연회용
 
 	CBT_Composite_Node* Show_ChaseAndNeqrAttack();

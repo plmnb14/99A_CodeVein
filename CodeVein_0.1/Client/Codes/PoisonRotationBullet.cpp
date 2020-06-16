@@ -125,8 +125,8 @@ _int CPoisonRotationBullet::Update_GameObject(_double TimeDelta)
 		if (m_bEffect)
 		{
 			m_bEffect = false;
-			g_pSoundManager->Stop_Sound(CSoundManager::CHANNELID::Butterfly_SFX_02);
-			g_pSoundManager->Play_Sound(L"SE_GODDESS_KETSUGI_IMPACT_002.ogg", CSoundManager::CHANNELID::Butterfly_SFX_02, CSoundManager::SOUND::Effect_Sound);
+			//g_pSoundManager->Stop_Sound(CSoundManager::CHANNELID::Butterfly_SFX_02);
+			//g_pSoundManager->Play_Sound(L"SE_GODDESS_KETSUGI_IMPACT_002.ogg", CSoundManager::CHANNELID::Butterfly_SFX_02, CSoundManager::SOUND::Effect_Sound);
 
 		}
 

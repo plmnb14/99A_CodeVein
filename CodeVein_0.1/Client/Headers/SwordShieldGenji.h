@@ -115,6 +115,9 @@ private:	//패턴들
 
 	// 방패들고 이동 -> 방향별로 행동 나눠야함.
 
+	// 보이스 랜덤 선택
+	CBT_Composite_Node*		Random_Voice();
+
 private:
 	EXE_ANI				m_eExecutionAnim = Ani_Execution_LongCoat_B_S;
 
