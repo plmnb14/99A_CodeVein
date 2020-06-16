@@ -3171,7 +3171,7 @@ void CThaiMan::Play_Hit()
 
 				g_pSoundManager->Stop_Sound(CSoundManager::ThaiMan_Voice);
 
-				m_iRandom = CALC::Random_Num(0, 3);
+				m_iRandom = CALC::Random_Num(0, 5);
 
 				switch (m_iRandom)
 				{

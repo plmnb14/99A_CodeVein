@@ -868,9 +868,7 @@ void CYachaMan::Play_R()
 				g_pSoundManager->Stop_Sound(CSoundManager::Yacha_SFX_02);
 				g_pSoundManager->Play_Sound(L"Monster_HeavyWeapon_Sub.ogg", CSoundManager::Yacha_SFX_02, CSoundManager::Effect_Sound);
 
-				m_iRandom = CALC::Random_Num(0, 3);
-
-				switch (m_iRandom)
+				switch (CALC::Random_Num(0, 3))
 				{
 				case 0:
 					g_pSoundManager->Play_Sound(L"Monster_Blunt_Swing0.ogg", CSoundManager::Yacha_SFX_01, CSoundManager::Effect_Sound);
@@ -895,9 +893,7 @@ void CYachaMan::Play_R()
 
 				g_pSoundManager->Stop_Sound(CSoundManager::Yacha_Voice);
 
-				m_iRandom = CALC::Random_Num(0, 6);
-
-				switch (m_iRandom)
+				switch (CALC::Random_Num(0, 6))
 				{
 				case 0:
 					g_pSoundManager->Play_Sound(L"YachaMan_Atk_Voice0.ogg", CSoundManager::Yacha_Voice, CSoundManager::Effect_Sound);
@@ -1030,9 +1026,7 @@ void CYachaMan::Play_Shoulder()
 
 				g_pSoundManager->Stop_Sound(CSoundManager::Yacha_Voice);
 
-				m_iRandom = CALC::Random_Num(0, 6);
-
-				switch (m_iRandom)
+				switch (CALC::Random_Num(0, 6))
 				{
 				case 0:
 					g_pSoundManager->Play_Sound(L"YachaMan_Atk_Voice0.ogg", CSoundManager::Yacha_Voice, CSoundManager::Effect_Sound);
@@ -1141,9 +1135,7 @@ void CYachaMan::Play_TargetHammering()
 				g_pSoundManager->Stop_Sound(CSoundManager::Yacha_SFX_02);
 				g_pSoundManager->Play_Sound(L"Monster_HeavyWeapon_Sub.ogg", CSoundManager::Yacha_SFX_02, CSoundManager::Effect_Sound);
 
-				m_iRandom = CALC::Random_Num(0, 3);
-
-				switch (m_iRandom)
+				switch (CALC::Random_Num(0, 3))
 				{
 				case 0:
 					g_pSoundManager->Play_Sound(L"Monster_Blunt_Swing0.ogg", CSoundManager::Yacha_SFX_01, CSoundManager::Effect_Sound);
