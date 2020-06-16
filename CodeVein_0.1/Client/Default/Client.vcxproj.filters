@@ -652,6 +652,9 @@
     <Filter Include="02.GameObject\Stage\0%29 Player\06%29 PlayerSkillBullet">
       <UniqueIdentifier>{b33520a3-435f-4a59-8ea1-5fea26210cbe}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObject\Stage\7%29 Item\DropBox">
+      <UniqueIdentifier>{9c2cf3e3-9959-45aa-acec-144964749189}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -1368,6 +1371,9 @@
     <ClInclude Include="..\Headers\PlayerSkillBullet.h">
       <Filter>02.GameObject\Stage\0%29 Player\06%29 PlayerSkillBullet</Filter>
     </ClInclude>
+    <ClInclude Include="..\Headers\DropBox.h">
+      <Filter>02.GameObject\Stage\7%29 Item\DropBox</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -2068,6 +2074,9 @@
     </ClCompile>
     <ClCompile Include="..\Codes\PlayerSkillBullet.cpp">
       <Filter>02.GameObject\Stage\0%29 Player\06%29 PlayerSkillBullet</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\DropBox.cpp">
+      <Filter>02.GameObject\Stage\7%29 Item\DropBox</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

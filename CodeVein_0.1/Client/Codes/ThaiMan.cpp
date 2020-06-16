@@ -541,41 +541,29 @@ void CThaiMan::Check_AniEvent()
 	case MONSTER_STATE_TYPE::ATTACK:
 		if (true == m_bCanChooseAtkType)
 		{
+			if (m_iPatternCount >= m_iPatternCountMax)
+			{
+				m_bCanSequencePattern = false;
+				m_iPatternCount = 0;
+			}
+
 			m_tObjParam.bCanAttack = false;
 			m_tObjParam.bIsAttack = true;
 
 			m_bCanChooseAtkType = false;
 
-			switch (CALC::Random_Num(THAIMAN_ANI::Atk_SP03, THAIMAN_ANI::Atk_N01))
+			if (true == m_bCanSequencePattern)
 			{
-			case THAIMAN_ANI::Atk_N01:
-				m_eState = Atk_N01;
-				break;
-			case THAIMAN_ANI::Atk_N02:
-				m_eState = Atk_N02;
-				break;
-			case THAIMAN_ANI::Atk_N03:
-				m_eState = Atk_N03;
-				break;
-			case THAIMAN_ANI::Atk_N04:
-				m_eState = Atk_N04;
-				break;
-			case THAIMAN_ANI::Atk_S01:
-				m_eState = Atk_S01;
-				break;
-			case THAIMAN_ANI::Atk_S02:
-				m_eState = Atk_S02;
-				break;
-			case THAIMAN_ANI::Atk_SP01:
-				m_eState = Atk_SP01;
-				break;
-			case THAIMAN_ANI::Atk_SP02:
-				m_eState = Atk_SP02;
-				break;
-			case THAIMAN_ANI::Atk_SP03:
-				m_eState = Atk_SP03;
-				break;
+				m_eSecondCategory_ATK = MONSTER_ATK_TYPE::ATK_SEQUNCE;
+				Play_SequenceAtk();
 			}
+			else
+			{
+				m_eSecondCategory_ATK = MONSTER_ATK_TYPE::ATK_NORMAL;
+				Play_RandomAtkNormal();
+			}
+
+			return;
 		}
 		else
 		{
@@ -652,6 +640,53 @@ void CThaiMan::Check_DeadEffect(_double TimeDelta)
 	CParticleMgr::Get_Instance()->Create_Effect(L"Monster_DeadSmoke_0", vHeadPos);
 	CParticleMgr::Get_Instance()->Create_Effect(L"Monster_DeadSmoke_0", vHipPos);
 	CParticleMgr::Get_Instance()->Create_Effect(L"Monster_DeadSmoke_0", vPos);
+
+	return;
+}
+
+void CThaiMan::Play_SequenceAtk()
+{
+	switch (m_iPatternCount)
+	{
+	case 0:
+		m_eState = THAIMAN_ANI::Atk_N01;
+		break;
+
+	case 1:
+		m_eState = THAIMAN_ANI::Atk_N02;
+		break;
+
+	case 2:
+		m_eState = THAIMAN_ANI::Atk_N03;
+		break;
+
+	case 3:
+		m_eState = THAIMAN_ANI::Atk_N04;
+		break;
+
+	case 4:
+		m_eState = THAIMAN_ANI::Atk_S01;
+		break;
+
+	case 5:
+		m_eState = THAIMAN_ANI::Atk_S02;
+		break;
+
+	case 6:
+		m_eState = THAIMAN_ANI::Atk_SP01;
+		break;
+
+	case 7:
+		m_eState = THAIMAN_ANI::Atk_SP02;
+		break;
+
+	case 8:
+		m_eState = THAIMAN_ANI::Atk_SP03;
+		break;
+
+	}
+
+	++m_iPatternCount;
 
 	return;
 }
@@ -3136,7 +3171,7 @@ void CThaiMan::Play_Hit()
 
 				g_pSoundManager->Stop_Sound(CSoundManager::ThaiMan_Voice);
 
-				m_iRandom = CALC::Random_Num(0, 3);
+				m_iRandom = CALC::Random_Num(0, 5);
 
 				switch (m_iRandom)
 				{
@@ -3243,7 +3278,10 @@ void CThaiMan::Play_Dead()
 					m_fDeadEffect_Delay = 0.f;
 
 					Give_Mana_To_Player(5);
-					Check_DropItem(MONSTER_NAMETYPE::M_ThaiMan);
+
+					if (false == m_pRigidCom->Get_IsFall())
+						Check_DropItem(MONSTER_NAMETYPE::M_ThaiMan);
+
 					CObjectPool_Manager::Get_Instance()->Create_Object(L"GameObject_Haze", (void*)&CHaze::HAZE_INFO(_float(CCalculater::Random_Num(100, 300)), m_pTransformCom->Get_Pos(), 0.f));
 				}
 			}

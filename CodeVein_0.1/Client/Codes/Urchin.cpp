@@ -356,19 +356,22 @@ void CUrchin::Check_Hit()
 	{
 		if (false == m_tObjParam.bCanHit)
 		{
-			if (true == m_tObjParam.bIsHit)
+			if (false == m_tObjParam.bSuperArmor)
 			{
-				if (true == m_tObjParam.bHitAgain)
+				if (true == m_tObjParam.bIsHit)
 				{
-					m_bEventTrigger[0] = false;
-					m_eFirstCategory = MONSTER_STATE_TYPE::HIT;
-					m_tObjParam.bHitAgain = false;
-					m_pMeshCom->Reset_OldIndx();
+					if (true == m_tObjParam.bHitAgain)
+					{
+						m_bEventTrigger[0] = false;
+						m_eFirstCategory = MONSTER_STATE_TYPE::HIT;
+						m_tObjParam.bHitAgain = false;
+						m_pMeshCom->Reset_OldIndx();
 
-					if (nullptr == m_pAggroTarget)
-						m_eFBLR = FBLR::FRONTLEFT;
-					else
-						Function_FBLR(m_pAggroTarget);
+						if (nullptr == m_pAggroTarget)
+							m_eFBLR = FBLR::FRONTLEFT;
+						else
+							Function_FBLR(m_pAggroTarget);
+					}
 				}
 				else
 				{
@@ -601,72 +604,72 @@ void CUrchin::Play_Rolling()
 		}
 		else if (1.433f <= AniTime)
 		{
-			if (false == m_bEventTrigger[11])
+			if (false == m_bEventTrigger[4])
 			{
-				m_bEventTrigger[11] = true;
+				m_bEventTrigger[4] = true;
 				m_vecAttackCol[0]->Set_Enabled(false);
 				m_tObjParam.bSuperArmor = false;
 			}
 		}
 		else if (1.113f <= AniTime)
 		{
-			if (false == m_bEventTrigger[4])
+			if (false == m_bEventTrigger[5])
 			{
-				m_bEventTrigger[4] = true;
+				m_bEventTrigger[5] = true;
 				m_vecAttackCol[0]->Set_Enabled(true);
 				m_tObjParam.bSuperArmor = true;
 			}
 		}
 		else if (1.100f <= AniTime)
 		{
-			if (false == m_bEventTrigger[5])
+			if (false == m_bEventTrigger[6])
 			{
-				m_bEventTrigger[5] = true;
+				m_bEventTrigger[6] = true;
 				m_vecAttackCol[0]->Set_Enabled(false);
 				m_tObjParam.bSuperArmor = false;
 			}
 		}
 		else if (0.813f <= AniTime)
 		{
-			if (false == m_bEventTrigger[6])
+			if (false == m_bEventTrigger[7])
 			{
-				m_bEventTrigger[6] = true;
+				m_bEventTrigger[7] = true;
 				m_vecAttackCol[0]->Set_Enabled(true);
 				m_tObjParam.bSuperArmor = true;
 			}
 		}
 		else if (0.800f <= AniTime)
 		{
-			if (false == m_bEventTrigger[7])
+			if (false == m_bEventTrigger[8])
 			{
-				m_bEventTrigger[7] = true;
+				m_bEventTrigger[8] = true;
 				m_vecAttackCol[0]->Set_Enabled(false);
 				m_tObjParam.bSuperArmor = false;
 			}
 		}
 		else if (0.533f <= AniTime)
 		{
-			if (false == m_bEventTrigger[8])
+			if (false == m_bEventTrigger[9])
 			{
-				m_bEventTrigger[8] = true;
+				m_bEventTrigger[9] = true;
 				m_vecAttackCol[0]->Set_Enabled(true);
 				m_tObjParam.bSuperArmor = true;
 			}
 		}
 		else if (0.500f <= AniTime)
 		{
-			if (false == m_bEventTrigger[9])
+			if (false == m_bEventTrigger[10])
 			{
-				m_bEventTrigger[9] = true;
+				m_bEventTrigger[10] = true;
 				m_vecAttackCol[0]->Set_Enabled(false);
 				m_tObjParam.bSuperArmor = false;
 			}
 		}
 		else if (0.200f <= AniTime)
 		{
-			if (false == m_bEventTrigger[10])
+			if (false == m_bEventTrigger[11])
 			{
-				m_bEventTrigger[10] = true;
+				m_bEventTrigger[11] = true;
 				m_vecAttackCol[0]->Set_Enabled(true);
 				m_tObjParam.bSuperArmor = true;
 
@@ -1082,7 +1085,10 @@ void CUrchin::Play_Dead()
 				m_fDeadEffect_Delay = 0.f;
 
 				Give_Mana_To_Player(5);
-				Check_DropItem(MONSTER_NAMETYPE::M_Urchin);
+
+				if (false == m_pRigidCom->Get_IsFall())
+					Check_DropItem(MONSTER_NAMETYPE::M_Urchin);
+
 				CObjectPool_Manager::Get_Instance()->Create_Object(L"GameObject_Haze", (void*)&CHaze::HAZE_INFO(_float(CCalculater::Random_Num(100, 300)), m_pTransformCom->Get_Pos(), 0.f));
 			}
 		}
@@ -1108,7 +1114,7 @@ HRESULT CUrchin::Add_Component(void * pArg)
 	MONSTER_STATUS eTemp = *(MONSTER_STATUS*)pArg;
 
 	if (nullptr == pArg)
-		lstrcpy(MeshName, L"Mesh_Urchin_Black");
+		lstrcpy(MeshName, L"Mesh_Urchin_White");
 	else
 	{
 		switch (eTemp.eMonsterColor)
@@ -1118,7 +1124,7 @@ HRESULT CUrchin::Add_Component(void * pArg)
 		case MONSTER_COLOR_TYPE::YELLOW:
 		case MONSTER_COLOR_TYPE::COLOR_NONE:
 		case MONSTER_COLOR_TYPE::BLACK:
-			lstrcpy(MeshName, L"Mesh_Urchin_Black");
+			lstrcpy(MeshName, L"Mesh_Urchin_White");
 			break;
 		case MONSTER_COLOR_TYPE::WHITE:
 			lstrcpy(MeshName, L"Mesh_Urchin_White");
@@ -1153,7 +1159,7 @@ HRESULT CUrchin::Add_Component(void * pArg)
 	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Rigidbody", L"Com_Rigidbody", (CComponent**)&m_pRigidCom)))
 		return E_FAIL;
 
-	m_pColliderCom->Set_Radius(_v3{0.6f, 0.6f, 0.6f});
+	m_pColliderCom->Set_Radius(_v3{0.7f, 0.7f, 0.7f});
 	m_pColliderCom->Set_Dynamic(true);
 	m_pColliderCom->Set_Type(COL_SPHERE);
 	m_pColliderCom->Set_CenterPos(m_pTransformCom->Get_Pos() + _v3{ 0.f , m_pColliderCom->Get_Radius().y , 0.f });
@@ -1251,14 +1257,14 @@ HRESULT CUrchin::Ready_Status(void * pArg)
 	{
 		m_eMonsterColor = Info.eMonsterColor;
 		m_tObjParam.fDamage = 200.f * pow(1.5f, g_eStageIdx_Cur - 1);
-		m_tObjParam.fHp_Max = 2200 * pow(1.5f, g_eStageIdx_Cur - 1);
+		m_tObjParam.fHp_Max = 2200000 * pow(1.5f, g_eStageIdx_Cur - 1);
 		m_tObjParam.fArmor_Max = 50.f;
 	}
 	else
 	{
 		m_eMonsterColor = MONSTER_COLOR_TYPE::BLACK;
 		m_tObjParam.fDamage = 200.f * pow(1.5f, g_eStageIdx_Cur - 1);
-		m_tObjParam.fHp_Max = 2200 * pow(1.5f, g_eStageIdx_Cur - 1);
+		m_tObjParam.fHp_Max = 2200000 * pow(1.5f, g_eStageIdx_Cur - 1);
 		m_tObjParam.fArmor_Max = 50.f;
 	}
 
@@ -1280,16 +1286,20 @@ HRESULT CUrchin::Ready_Status(void * pArg)
 	m_tObjParam.bIsAttack = false;
 	m_tObjParam.bCanDodge = true;
 	m_tObjParam.bIsDodge = false;
+
 	m_bCanPlayDead = false;
 	m_bInRecognitionRange = false;
 	m_bInAtkRange = false;
 	m_bCanChase = false;
 	m_bCanCoolDown = false;
 	m_bIsCoolDown = false;
+
 	m_bCanChooseAtkType = true;
 	m_bIsCombo = false;
+
 	m_bCanIdle = true;
 	m_bIsIdle = false;
+
 	m_bCanMoveAround = true;
 	m_bIsMoveAround = false;
 
@@ -1351,7 +1361,7 @@ HRESULT CUrchin::Ready_Collider()
 	m_vecPhysicCol.push_back(pCollider);
 
 	IF_NULL_VALUE_RETURN(pCollider = static_cast<CCollider*>(g_pManagement->Clone_Component(SCENE_STATIC, L"Collider")), E_FAIL);
-	fRadius = 0.5f;
+	fRadius = 0.7f;
 
 	pCollider->Set_Radius(_v3{ fRadius, fRadius, fRadius });
 	pCollider->Set_Dynamic(true);

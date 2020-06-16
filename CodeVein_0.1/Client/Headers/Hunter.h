@@ -44,7 +44,6 @@ public:
 		NORMAL_SWORD_ELBOW,
 		NORMAL_SWORD_HELMETBREAK,
 		NORMAL_SWORD_CRITICALDRAW
-
 	};
 	
 	enum ATK_COMBO_TYPE 
@@ -220,6 +219,7 @@ private:
 	void Check_AniEvent();
 	void Check_DeadEffect(_double TimeDelta);
 
+	void Play_SequenceAtk();
 	void Play_RandomAtkNormal();
 	void Play_RandomAtkCombo();
 

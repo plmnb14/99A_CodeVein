@@ -29,15 +29,16 @@ public:
 	Yeti_SFX_01, Yeti_SFX_02, Yeti_Voice,
 	//===============================================================
 	Butterfly_SFX_01, Butterfly_SFX_02, ButterFly_Voice,
-	DearKing_SFX_01, DearKing_SFX_02, DearKing_Voice,
+	DearKing_SFX_01, DearKing_SFX_02, DearKing_Voice, DearKing_Step,
 	FireBoy_SFX_01, FireBoy_SFX_02, FireBoy_Voice,
-	IceGirl_SFX_01, IceGirl_SFX_02, IceGirl_Voice,
-	QueenKnight_SFX_01, QueenKnight_SFX_02, QueenKnight_Voice,
+	IceGirl_SFX_01, IceGirl_SFX_02, IceGirl_Voice, IceGirl_Step,
+	QueenKnight_SFX_01, QueenKnight_SFX_02, QueenKnight_Voice, QueenKnight_Step,
 	//===============================================================
 	Player_SFX_01, Player_SFX_02, Player_SFX_03, Player_SFX_04, Player_Voice,
 	Player_FootStep, Player_Hit,
 	//===============================================================
 	Jack_SFX_01, Jack_SFX_02, Jack_SFX_03, Jack_Voice,
+	Jack_FootStep, 
 	//===============================================================
 	Pet_SFX_01, Pet_SFX_02, Pet_SFX_03, Pet_Voice,
 	//===============================================================

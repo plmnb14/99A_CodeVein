@@ -88,6 +88,8 @@ HRESULT CSwordShieldGenji::Ready_GameObject(void * pArg)
 	pBlackBoard->Set_Value(L"Voice_Tag", 0);
 	pBlackBoard->Set_Value(L"Voice_Play", false);
 	pBlackBoard->Set_Value(L"Voice_Stop", false);
+	pBlackBoard->Set_Value(L"Step_Play", false);
+	pBlackBoard->Set_Value(L"Step_Tag", 20);
 
 	CBT_Selector* Start_Sel = Node_Selector("행동 시작"); // 찐
 	//CBT_Sequence* Start_Sel = Node_Sequence("행동 시작"); // 테스트
@@ -497,6 +499,8 @@ CBT_Composite_Node * CSwordShieldGenji::Upper_Slash()
 	CBT_SetValue* Sound1Stop = Node_BOOL_SetValue("소리1 재생", L"SFX_01_Stop", true);
 	CBT_SetValue* Sound1Play = Node_BOOL_SetValue("소리1 재생", L"SFX_01_Play", true);
 	CBT_SetValue* Sound1Tag = Node_INT_SetValue("소리1 이름 설정", L"SFX_01_Tag", 0);
+	CBT_SetValue* VoiceStop = Node_BOOL_SetValue("목소리 재생", L"Voice_Stop", true);
+	CBT_SetValue* VoicePlay = Node_BOOL_SetValue("목소리 재생", L"Voice_Play", true);
 	CBT_SetValue* TrailOn = Node_BOOL_SetValue("트레일 On", L"TrailOn", true);
 	CBT_MoveDirectly* Move1 = Node_MoveDirectly_Rush("이동1", L"Monster_Speed", L"Monster_Dir", 1.f, 0.267, 0);
 	CBT_Wait* Wait2 = Node_Wait("대기2", 0.2, 0);
@@ -515,6 +519,9 @@ CBT_Composite_Node * CSwordShieldGenji::Upper_Slash()
 	SubSeq->Add_Child(Sound1Stop);
 	SubSeq->Add_Child(Sound1Play);
 	SubSeq->Add_Child(Sound1Tag);
+	SubSeq->Add_Child(VoiceStop);
+	SubSeq->Add_Child(VoicePlay);
+	SubSeq->Add_Child(Random_Voice());
 	SubSeq->Add_Child(TrailOn);
 	SubSeq->Add_Child(Move1);
 	SubSeq->Add_Child(Wait2);
@@ -541,6 +548,8 @@ CBT_Composite_Node * CSwordShieldGenji::LongDelay_Sting()
 	CBT_SetValue* Sound1Stop = Node_BOOL_SetValue("소리1 재생", L"SFX_01_Stop", true);
 	CBT_SetValue* Sound1Play = Node_BOOL_SetValue("소리1 재생", L"SFX_01_Play", true);
 	CBT_SetValue* Sound1Tag = Node_INT_SetValue("소리1 이름 설정", L"SFX_01_Tag", 0);
+	CBT_SetValue* VoiceStop = Node_BOOL_SetValue("목소리 재생", L"Voice_Stop", true);
+	CBT_SetValue* VoicePlay = Node_BOOL_SetValue("목소리 재생", L"Voice_Play", true);
 	CBT_Wait* Wait1 = Node_Wait("대기1", 0.916, 0);
 	CBT_MoveDirectly* Move1 = Node_MoveDirectly_Rush("이동1", L"Monster_Speed", L"Monster_Dir", 0.5f, 1.267, 0);
 
@@ -554,6 +563,9 @@ CBT_Composite_Node * CSwordShieldGenji::LongDelay_Sting()
 	SubSeq->Add_Child(Sound1Stop);
 	SubSeq->Add_Child(Sound1Play);
 	SubSeq->Add_Child(Sound1Tag);
+	SubSeq->Add_Child(VoiceStop);
+	SubSeq->Add_Child(VoicePlay);
+	SubSeq->Add_Child(Random_Voice());
 	SubSeq->Add_Child(Wait1);
 	SubSeq->Add_Child(Move1);
 
@@ -576,6 +588,8 @@ CBT_Composite_Node * CSwordShieldGenji::Shield_Attack()
 	CBT_SetValue* Sound1Stop = Node_BOOL_SetValue("소리1 재생", L"SFX_01_Stop", true);
 	CBT_SetValue* Sound1Play = Node_BOOL_SetValue("소리1 재생", L"SFX_01_Play", true);
 	CBT_SetValue* Sound1Tag = Node_INT_SetValue("소리1 이름 설정", L"SFX_01_Tag", 1);
+	CBT_SetValue* VoiceStop = Node_BOOL_SetValue("목소리 재생", L"Voice_Stop", true);
+	CBT_SetValue* VoicePlay = Node_BOOL_SetValue("목소리 재생", L"Voice_Play", true);
 
 	Root_Parallel->Set_Main_Child(MainSeq);
 	MainSeq->Add_Child(Show_Ani78);
@@ -587,6 +601,9 @@ CBT_Composite_Node * CSwordShieldGenji::Shield_Attack()
 	SubSeq->Add_Child(Sound1Stop);
 	SubSeq->Add_Child(Sound1Play);
 	SubSeq->Add_Child(Sound1Tag);
+	SubSeq->Add_Child(VoiceStop);
+	SubSeq->Add_Child(VoicePlay);
+	SubSeq->Add_Child(Random_Voice());
 
 	CBT_UpdateParam* pHitCol = Node_UpdateParam("무기 히트 On", m_pShield->Get_pTarget_Param(), CBT_UpdateParam::Collider, 0.933, 1, 0.134, 0);
 	Root_Parallel->Add_Service(pHitCol);
@@ -607,6 +624,8 @@ CBT_Composite_Node * CSwordShieldGenji::Turning_Cut()
 	CBT_SetValue* Sound1Stop = Node_BOOL_SetValue("소리1 재생", L"SFX_01_Stop", true);
 	CBT_SetValue* Sound1Play = Node_BOOL_SetValue("소리1 재생", L"SFX_01_Play", true);
 	CBT_SetValue* Sound1Tag = Node_INT_SetValue("소리1 이름 설정", L"SFX_01_Tag", 0);
+	CBT_SetValue* VoiceStop = Node_BOOL_SetValue("목소리 재생", L"Voice_Stop", true);
+	CBT_SetValue* VoicePlay = Node_BOOL_SetValue("목소리 재생", L"Voice_Play", true);
 	CBT_SetValue* TrailOn = Node_BOOL_SetValue("트레일 On", L"TrailOn", true);
 	CBT_MoveDirectly* Move1 = Node_MoveDirectly_Rush("이동", L"Monster_Speed", L"Monster_Dir", 2, 0.617, 0);
 	CBT_SetValue* TrailOff = Node_BOOL_SetValue("트레일 Off", L"TrailOff", true);
@@ -621,6 +640,9 @@ CBT_Composite_Node * CSwordShieldGenji::Turning_Cut()
 	SubSeq->Add_Child(Sound1Stop);
 	SubSeq->Add_Child(Sound1Play);
 	SubSeq->Add_Child(Sound1Tag);
+	SubSeq->Add_Child(VoiceStop);
+	SubSeq->Add_Child(VoicePlay);
+	SubSeq->Add_Child(Random_Voice());
 	SubSeq->Add_Child(TrailOn);
 	SubSeq->Add_Child(Move1);
 	SubSeq->Add_Child(TrailOff);
@@ -645,6 +667,8 @@ CBT_Composite_Node * CSwordShieldGenji::ShortDelay_Sting()
 	CBT_SetValue* Sound1Stop = Node_BOOL_SetValue("소리1 재생", L"SFX_01_Stop", true);
 	CBT_SetValue* Sound1Play = Node_BOOL_SetValue("소리1 재생", L"SFX_01_Play", true);
 	CBT_SetValue* Sound1Tag = Node_INT_SetValue("소리1 이름 설정", L"SFX_01_Tag", 0);
+	CBT_SetValue* VoiceStop = Node_BOOL_SetValue("목소리 재생", L"Voice_Stop", true);
+	CBT_SetValue* VoicePlay = Node_BOOL_SetValue("목소리 재생", L"Voice_Play", true);
 	CBT_MoveDirectly* Move2 = Node_MoveDirectly_Rush("이동2", L"Monster_Speed", L"Monster_Dir", 2, 0.1, 0);
 
 	Root_Parallel->Set_Main_Child(MainSeq);
@@ -658,6 +682,9 @@ CBT_Composite_Node * CSwordShieldGenji::ShortDelay_Sting()
 	SubSeq->Add_Child(Sound1Stop);
 	SubSeq->Add_Child(Sound1Play);
 	SubSeq->Add_Child(Sound1Tag);
+	SubSeq->Add_Child(VoiceStop);
+	SubSeq->Add_Child(VoicePlay);
+	SubSeq->Add_Child(Random_Voice());
 	SubSeq->Add_Child(Move2);
 
 	CBT_UpdateParam* pHitCol = Node_UpdateParam("무기 히트 On", m_pSword->Get_pTarget_Param(), CBT_UpdateParam::Collider, 1.05, 1, 0.133, 0);
@@ -680,6 +707,8 @@ CBT_Composite_Node * CSwordShieldGenji::Anomaly_LongSting()
 	CBT_SetValue* Sound1Stop = Node_BOOL_SetValue("소리1 재생", L"SFX_01_Stop", true);
 	CBT_SetValue* Sound1Play = Node_BOOL_SetValue("소리1 재생", L"SFX_01_Play", true);
 	CBT_SetValue* Sound1Tag = Node_INT_SetValue("소리1 이름 설정", L"SFX_01_Tag", 0);
+	CBT_SetValue* VoiceStop = Node_BOOL_SetValue("목소리 재생", L"Voice_Stop", true);
+	CBT_SetValue* VoicePlay = Node_BOOL_SetValue("목소리 재생", L"Voice_Play", true);
 	CBT_Wait* Wait2 = Node_Wait("대기1", 0.816, 0);
 	CBT_MoveDirectly* Move1 = Node_MoveDirectly_Rush("짧은 이동1", L"Monster_Speed", L"Monster_Dir", 0.5f, 1.267, 0);
 
@@ -696,6 +725,9 @@ CBT_Composite_Node * CSwordShieldGenji::Anomaly_LongSting()
 	SubSeq->Add_Child(Sound1Stop);
 	SubSeq->Add_Child(Sound1Play);
 	SubSeq->Add_Child(Sound1Tag);
+	SubSeq->Add_Child(VoiceStop);
+	SubSeq->Add_Child(VoicePlay);
+	SubSeq->Add_Child(Random_Voice());
 	SubSeq->Add_Child(Wait2);
 	SubSeq->Add_Child(Move1);
 
@@ -793,11 +825,22 @@ CBT_Composite_Node * CSwordShieldGenji::LeftMoveAround()
 {
 	CBT_Simple_Parallel* Root_Parallel = Node_Parallel_Immediate("왼쪽 이동 서성임");
 
+	CBT_Sequence* MainSeq = Node_Sequence("추적");
+	CBT_SetValue* StepTag0 = Node_INT_SetValue("발소리 이름 설정", L"Voice_Tag", 21);
+	CBT_SetValue* StepPlay = Node_BOOL_SetValue("발소리 재생", L"Step_Play", true);
 	CBT_MoveAround*	MoveAround0 = Node_MoveAround("왼쪽으로 서성 이동", L"Player_Pos", L"Monster_Speed", L"Monster_Dir", 0.7f, 2, 2);
+	CBT_SetValue* StepStop = Node_BOOL_SetValue("발소리 재생", L"Step_Play", false);
+	CBT_SetValue* StepTag1 = Node_INT_SetValue("발소리 이름 설정", L"Voice_Tag", 20);
 
 	CBT_ChaseDir* ChaseDir0 = Node_ChaseDir("플레이어 추적", L"Player_Pos", 5, 0);
 
-	Root_Parallel->Set_Main_Child(MoveAround0);
+	Root_Parallel->Set_Main_Child(MainSeq);
+	MainSeq->Add_Child(StepTag0);
+	MainSeq->Add_Child(StepPlay);
+	MainSeq->Add_Child(MoveAround0);
+	MainSeq->Add_Child(StepStop);
+	MainSeq->Add_Child(StepTag1);
+
 
 	Root_Parallel->Set_Sub_Child(ChaseDir0);
 
@@ -808,11 +851,21 @@ CBT_Composite_Node * CSwordShieldGenji::RightMoveAround()
 {
 	CBT_Simple_Parallel* Root_Parallel = Node_Parallel_Immediate("오른쪽 이동 서성임");
 
+	CBT_Sequence* MainSeq = Node_Sequence("추적");
+	CBT_SetValue* StepTag0 = Node_INT_SetValue("발소리 이름 설정", L"Voice_Tag", 21);
+	CBT_SetValue* StepPlay = Node_BOOL_SetValue("발소리 재생", L"Step_Play", true);
 	CBT_MoveAround*	MoveAround0 = Node_MoveAround("오른쪽으로 서성 이동", L"Player_Pos", L"Monster_Speed", L"Monster_Dir", -0.7f, 2, 2);
+	CBT_SetValue* StepStop = Node_BOOL_SetValue("발소리 재생", L"Step_Play", false);
+	CBT_SetValue* StepTag1 = Node_INT_SetValue("발소리 이름 설정", L"Voice_Tag", 20);
 
 	CBT_ChaseDir* ChaseDir0 = Node_ChaseDir("플레이어 추적", L"Player_Pos", 5, 0);
 
-	Root_Parallel->Set_Main_Child(MoveAround0);
+	Root_Parallel->Set_Main_Child(MainSeq);
+	MainSeq->Add_Child(StepTag0);
+	MainSeq->Add_Child(StepPlay);
+	MainSeq->Add_Child(MoveAround0);
+	MainSeq->Add_Child(StepStop);
+	MainSeq->Add_Child(StepTag1);
 
 	Root_Parallel->Set_Sub_Child(ChaseDir0);
 
@@ -866,11 +919,17 @@ CBT_Composite_Node * CSwordShieldGenji::Chase()
 {
 	CBT_Simple_Parallel* Root_Parallel = Node_Parallel_Immediate("병렬");
 
+	CBT_Sequence* MainSeq = Node_Sequence("추적");
+	CBT_SetValue* StepPlay = Node_BOOL_SetValue("발소리 재생", L"Step_Play", true);
 	CBT_MoveDirectly* pChase = Node_MoveDirectly_Chase("추적", L"Player_Pos", L"Monster_Speed", L"Monster_Dir", 3.f, 3.5f);
+	CBT_SetValue* StepStop = Node_BOOL_SetValue("발소리 재생", L"Step_Play", false);
 
 	CBT_Play_Ani* Show_Ani16 = Node_Ani("추적", 16, 1.f);
 
-	Root_Parallel->Set_Main_Child(pChase);
+	Root_Parallel->Set_Main_Child(MainSeq);
+	MainSeq->Add_Child(StepPlay);
+	MainSeq->Add_Child(pChase);
+	MainSeq->Add_Child(StepStop);
 
 	Root_Parallel->Set_Sub_Child(Show_Ani16);
 
@@ -899,6 +958,23 @@ CBT_Composite_Node * CSwordShieldGenji::NearAttack()
 	//Root_Sel->Add_Child(Shield_Attack());	방패치기는 따로 관리
 	Root_Sel->Add_Child(Turning_Cut());
 	Root_Sel->Add_Child(ShortDelay_Sting());
+
+	return Root_Sel;
+}
+
+CBT_Composite_Node * CSwordShieldGenji::Random_Voice()
+{
+	CBT_Selector* Root_Sel = Node_Selector_Random("랜덤 원거리 공격");
+
+	CBT_SetValue* VoiceTag0 = Node_INT_SetValue("목소리 이름 설정", L"Voice_Tag", 10);
+	CBT_SetValue* VoiceTag1 = Node_INT_SetValue("목소리 이름 설정", L"Voice_Tag", 11);
+	CBT_SetValue* VoiceTag2 = Node_INT_SetValue("목소리 이름 설정", L"Voice_Tag", 12);
+	CBT_SetValue* VoiceTag3 = Node_INT_SetValue("목소리 이름 설정", L"Voice_Tag", 13);
+
+	Root_Sel->Add_Child(VoiceTag0);
+	Root_Sel->Add_Child(VoiceTag1);
+	Root_Sel->Add_Child(VoiceTag2);
+	Root_Sel->Add_Child(VoiceTag3);
 
 	return Root_Sel;
 }
@@ -977,7 +1053,10 @@ HRESULT CSwordShieldGenji::Update_Value_Of_BB()
 		g_pSoundManager->Play_Sound(const_cast<TCHAR*>(m_mapSound[m_pAIControllerCom->Get_IntValue(L"Voice_Tag")]), CSoundManager::CHANNELID::SwordShieldGenji_Voice, CSoundManager::SOUND::Effect_Sound);
 	}
 
-
+	if (true == m_pAIControllerCom->Get_BoolValue(L"Step_Play"))	// 재생
+	{
+		g_pSoundManager->Play_Sound(const_cast<TCHAR*>(m_mapSound[m_pAIControllerCom->Get_IntValue(L"Step_Tag")]), CSoundManager::CHANNELID::SwordGenji_Voice, CSoundManager::SOUND::Effect_Sound);
+	}
 
 
 	// 1. 트레일 업데이트
@@ -1603,6 +1682,14 @@ HRESULT CSwordShieldGenji::Ready_Sound()
 {
 	m_mapSound.emplace(0, L"SE_GATE_WOMAN_ATTACK_SWING_002.ogg");
 	m_mapSound.emplace(1, L"SE_QUEENS_KNIGHTS_ATTACK_GUARD_001.ogg");
+
+	m_mapSound.emplace(10, L"SE_NEW_BARK_ATTACK_SMALL_MV_000.ogg");
+	m_mapSound.emplace(11, L"SE_NEW_BARK_ATTACK_SMALL_MV_002.ogg");
+	m_mapSound.emplace(12, L"SE_NEW_BARK_ATTACK_SMALL_MV_004.ogg");
+	m_mapSound.emplace(13, L"SE_NEW_BARK_ATTACK_SMALL_MV_006.ogg");
+
+	m_mapSound.emplace(20, L"SE_FOOT_STEP_CARPET_001.ogg");
+	m_mapSound.emplace(21, L"SE_FOOT_STEP_CARPET_001.ogg");
 
 	return S_OK;
 }
