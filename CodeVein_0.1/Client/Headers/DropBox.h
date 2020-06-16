@@ -4,7 +4,6 @@
 #include "GameObject.h"
 #include "Management.h"
 
-#include "ActeiveObject.h"
 #include "DropItem.h"
 
 BEGIN(Client)

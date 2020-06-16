@@ -57,6 +57,7 @@ _int CHunter::Update_GameObject(_double TimeDelta)
 	Check_Hit();
 	Check_Dist();
 	Check_AniEvent();
+	Check_FootSound();
 	Function_CoolDown();
 
 	m_pMeshCom->SetUp_Animation(m_eState);
@@ -389,6 +390,10 @@ void CHunter::Check_Hit()
 				//회피 수치 누적x
 				else
 				{
+					m_pBattleAgentCom->Set_RimColor(_v4(0.f, 0.f, 0.f, 0.f));
+					m_pBattleAgentCom->Set_RimAlpha(0.5f);
+					m_pBattleAgentCom->Set_RimValue(8.f);
+
 					//맞는 도중이라면
 					if (true == m_tObjParam.bIsHit)
 					{
@@ -605,6 +610,8 @@ void CHunter::Check_AniEvent()
 
 				if (WEAPON_STATE::WEAPON_Hammer == m_eWeaponState)
 					m_iRandom = 0;
+
+				m_iRandom = MONSTER_ATK_TYPE::ATK_COMBO;
 
 				switch (m_iRandom)
 				{
@@ -928,6 +935,53 @@ void CHunter::Check_DeadEffect(_double TimeDelta)
 	CParticleMgr::Get_Instance()->Create_Effect(L"Monster_DeadSmoke_0", vHeadPos);
 	CParticleMgr::Get_Instance()->Create_Effect(L"Monster_DeadSmoke_0", vHipPos);
 	CParticleMgr::Get_Instance()->Create_Effect(L"Monster_DeadSmoke_0", vPos);
+
+	return;
+}
+
+void CHunter::Check_FootSound()
+{
+	if (HUNTER_ANI::Walk_F == m_eState ||
+		HUNTER_ANI::Walk_L == m_eState ||
+		HUNTER_ANI::Walk_R == m_eState ||
+		HUNTER_ANI::Run == m_eState)
+	{
+		m_fFootSound += DELTA_60;
+
+		if (m_fFootSound >= m_fFootSoundMax)
+		{
+			m_fFootSound = 0.f;
+
+			g_pSoundManager->Stop_Sound(CSoundManager::Hunter_Step);
+
+			switch (CALC::Random_Num(0, 5))
+			{
+			case 0:
+				g_pSoundManager->Play_Sound(L"Step0.ogg", CSoundManager::Hunter_Step, CSoundManager::Effect_Sound);
+				break;
+
+			case 1:
+				g_pSoundManager->Play_Sound(L"Step1.ogg", CSoundManager::Hunter_Step, CSoundManager::Effect_Sound);
+				break;
+
+			case 2:
+				g_pSoundManager->Play_Sound(L"Step2.ogg", CSoundManager::Hunter_Step, CSoundManager::Effect_Sound);
+				break;
+
+			case 3:
+				g_pSoundManager->Play_Sound(L"Step3.ogg", CSoundManager::Hunter_Step, CSoundManager::Effect_Sound);
+				break;
+
+			case 4:
+				g_pSoundManager->Play_Sound(L"Step4.ogg", CSoundManager::Hunter_Step, CSoundManager::Effect_Sound);
+				break;
+
+			case 5:
+				g_pSoundManager->Play_Sound(L"Step5.ogg", CSoundManager::Hunter_Step, CSoundManager::Effect_Sound);
+				break;
+			}
+		}
+	}
 
 	return;
 }
@@ -12190,6 +12244,8 @@ void CHunter::Play_Move()
 			m_fSkillMoveSpeed_Cur = 4.f;
 			m_fSkillMoveAccel_Cur = 0.f;
 			m_fSkillMoveMultiply = 0.5f;
+
+			m_fFootSoundMax = 0.4f;
 		}
 
 		if (nullptr == m_pAggroTarget)
@@ -12251,6 +12307,8 @@ void CHunter::Play_Move()
 			m_fSkillMoveSpeed_Cur = 2.5f;
 			m_fSkillMoveAccel_Cur = 0.f;
 			m_fSkillMoveMultiply = 0.5f;
+
+			m_fFootSoundMax = 0.48f;
 
 			switch (CALC::Random_Num(HUNTER_ANI::Walk_R, HUNTER_ANI::Walk_B))
 			{
@@ -12334,6 +12392,8 @@ void CHunter::Play_Move()
 			m_fSkillMoveSpeed_Cur = 2.5f;
 			m_fSkillMoveAccel_Cur = 0.f;
 			m_fSkillMoveMultiply = 0.5f;
+
+			m_fFootSoundMax = 0.47f;
 		}
 
 		Function_Movement(m_fSkillMoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_Z));
@@ -12801,7 +12861,7 @@ HRESULT CHunter::Ready_Status(void* pArg)
 		{
 			m_eMonsterColor = MONSTER_COLOR_TYPE::BLACK;
 			m_tObjParam.fDamage = 250.f * pow(1.5f, g_eStageIdx_Cur - 1);
-			m_tObjParam.fHp_Max = 2300.f * pow(1.5f, g_eStageIdx_Cur - 1);
+			m_tObjParam.fHp_Max = 230000.f * pow(1.5f, g_eStageIdx_Cur - 1);
 			m_tObjParam.fArmor_Max = 100.f * pow(1.5f, g_eStageIdx_Cur - 1);
 
 			m_fRecognitionRange = 15.f;
@@ -12849,7 +12909,7 @@ HRESULT CHunter::Ready_Status(void* pArg)
 	m_tObjParam.bCanDodge = true; //회피 가능
 	m_tObjParam.bIsDodge = false;  //회피 진행중 아님
 
-	m_bCanSequencePattern = true; //순차진행 여부
+	m_bCanSequencePattern = false; //순차진행 여부
 	m_bCanPlayDead = false; //죽음 애니 진행시 true;
 	m_bInRecognitionRange = false; //인지 범위 여부
 	m_bInAtkRange = false; //공격 범위 여부
