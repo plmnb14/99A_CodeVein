@@ -89,7 +89,7 @@ _int CSkillReleaseUI::Update_GameObject(_double TimeDelta)
 	{
 		m_iIndex = 2;
 
-		m_vecSkillSlot[0]->Set_SkillID(Skill_ID::Circulating_Pulse);
+		m_vecSkillSlot[0]->Set_SkillID(Skill_ID::Fusillade_Rondo);
 		m_vecSkillSlot[1]->Set_SkillID(SkillID_End);
 		m_vecSkillSlot[2]->Set_SkillID(SkillID_End);
 		m_vecSkillSlot[3]->Set_SkillID(SkillID_End);
@@ -99,8 +99,8 @@ _int CSkillReleaseUI::Update_GameObject(_double TimeDelta)
 	case BloodCode_DarkKnight:
 	{
 		m_iIndex = 4;
-		m_vecSkillSlot[0]->Set_SkillID(Skill_ID::Dragon_Lunge);
-		m_vecSkillSlot[1]->Set_SkillID(Skill_ID::Tormenting_Blast);
+		m_vecSkillSlot[0]->Set_SkillID(Skill_ID::Chariot_Rush);
+		m_vecSkillSlot[1]->Set_SkillID(SkillID_End);
 		m_vecSkillSlot[2]->Set_SkillID(SkillID_End);
 		m_vecSkillSlot[3]->Set_SkillID(SkillID_End);
 		m_vecSkillSlot[4]->Set_SkillID(SkillID_End);
@@ -110,7 +110,7 @@ _int CSkillReleaseUI::Update_GameObject(_double TimeDelta)
 	{
 		m_iIndex = 5;
 		m_vecSkillSlot[0]->Set_SkillID(Skill_ID::Shadow_Assault);
-		m_vecSkillSlot[1]->Set_SkillID(SkillID_End);
+		m_vecSkillSlot[1]->Set_SkillID(Skill_ID::Circulating_Pulse);
 		m_vecSkillSlot[2]->Set_SkillID(SkillID_End);
 		m_vecSkillSlot[3]->Set_SkillID(SkillID_End);
 		m_vecSkillSlot[4]->Set_SkillID(SkillID_End);
@@ -121,18 +121,16 @@ _int CSkillReleaseUI::Update_GameObject(_double TimeDelta)
 		m_iIndex = 8;
 		m_vecSkillSlot[0]->Set_SkillID(Skill_ID::Severing_Abyss);
 		m_vecSkillSlot[1]->Set_SkillID(Skill_ID::Phantom_Assault);
-		m_vecSkillSlot[2]->Set_SkillID(SkillID_End);
+		m_vecSkillSlot[2]->Set_SkillID(Skill_ID::Dragon_Lunge);
 		m_vecSkillSlot[3]->Set_SkillID(SkillID_End);
 		m_vecSkillSlot[4]->Set_SkillID(SkillID_End);
-
-		
 	}
 		break;
 	case BloodCode_Prometheus:
 	{
 		m_iIndex = 12;
 		m_vecSkillSlot[0]->Set_SkillID(Skill_ID::Triple_Annihilator);
-		m_vecSkillSlot[1]->Set_SkillID(SkillID_End);
+		m_vecSkillSlot[1]->Set_SkillID(Skill_ID::Tormenting_Blast);
 		m_vecSkillSlot[2]->Set_SkillID(SkillID_End);
 		m_vecSkillSlot[3]->Set_SkillID(SkillID_End);
 		m_vecSkillSlot[4]->Set_SkillID(SkillID_End);
