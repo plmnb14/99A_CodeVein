@@ -37,7 +37,7 @@ public:
 	Player_SFX_01, Player_SFX_02, Player_SFX_03, Player_SFX_04, Player_Voice,
 	Player_FootStep, Player_Hit,
 	//===============================================================
-	Jack_SFX_01, Jack_SFX_02, Jack_SFX_03, Jack_Voice,
+	Jack_SFX_01, Jack_SFX_02, Jack_SFX_03, Jack_SFX_04, Jack_Voice,
 	Jack_FootStep, 
 	//===============================================================
 	Pet_SFX_01, Pet_SFX_02, Pet_SFX_03, Pet_Voice,
