@@ -220,6 +220,10 @@ void CMaterial_Inven::Click_Inven()
 	{
 		if (pSlot->Pt_InRect() && pSlot->Get_Type() != CMaterial::MATERIAL_END)
 		{
+			if (m_pSoundSlot != pSlot)
+				CUI_Manager::Get_Instance()->Stop_Play_UISound(L"Slot_Regist.ogg", CSoundManager::CHANNELID::UI_Click, CSoundManager::Effect_Sound);
+			m_pSoundSlot = pSlot;
+
 			m_pExplainUI->Set_Type(CMaterial::MATERIAL_TYPE(pSlot->Get_Type()));
 			m_pExplainUI->Set_CurHaveCnt(pSlot->Get_Size());
 			m_pExplainUI->Set_MaximumCnt(5);

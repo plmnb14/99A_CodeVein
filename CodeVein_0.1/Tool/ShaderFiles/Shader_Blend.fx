@@ -164,6 +164,8 @@ struct PS_OUT
 };
 
 float g_FogDestiny;
+float g_LinearFogX;
+float g_LinearFogY;
 PS_OUT PS_MAIN(PS_IN In)
 {
 	PS_OUT			Out = (PS_OUT)0;
@@ -190,12 +192,9 @@ PS_OUT PS_MAIN(PS_IN In)
 
 	float PixelCameraZ = vDepth.y * 500.f;
 	vector fogColor = tex2D(FogColorSampler, In.vTexUV);// vector(0.3, 0.3, 0.3, 1.0);
-	float2 fog;
-	fog.x = 500 / (500 - 0.1);
-	fog.y = -1 / (500 - 0.1);
-	
+
 	// 선형 Fog
-	vector vFog = fog.x + PixelCameraZ * fog.y;
+	vector vFog = g_LinearFogX + PixelCameraZ * g_LinearFogY;
 
 	Out.vColor = vFog * Out.vColor + (1 - vFog) * fogColor;
 
@@ -228,9 +227,6 @@ PS_OUT PS_FOG_EXP(PS_IN In)
 
 	float PixelCameraZ = vDepth.y * 500.f;
 	vector fogColor = tex2D(FogColorSampler, In.vTexUV);// vector(0.3, 0.3, 0.3, 1.0);
-	float2 fog;
-	fog.x = 500 / (500 - 0.1);
-	fog.y = -1 / (500 - 0.1);
 
 	//  지수 Fog
 	vector vFog = 1 / exp(pow(PixelCameraZ * g_FogDestiny, 2));
@@ -337,22 +333,16 @@ PS_OUT PS_BLURH(PS_IN In)
 {
 	PS_OUT			Out = (PS_OUT)0;
 	
-	float3 ppColour = 0;
 	float3 FragmentColor = float3(0.0f, 0.0f, 0.0f);
 	
-	float hstep = 1.0;
-	float vstep = 0.0;
-
 	for (int i = 1; i < 5; i++) {
 		FragmentColor +=
-			tex2D(DiffuseSampler, (float2(In.vTexUV) + float2(hstep*offset[i], vstep*offset[i]) * g_fPixelWidth)).xyz * weight[i] * fBlurColor;
+			tex2D(DiffuseSampler, (float2(In.vTexUV) + float2(1.0*offset[i], 0.0) * g_fPixelWidth)).xyz * weight[i] * fBlurColor;
 		FragmentColor +=
-			tex2D(DiffuseSampler, (float2(In.vTexUV) - float2(hstep*offset[i], vstep*offset[i]) * g_fPixelWidth)).xyz * weight[i] * fBlurColor;
+			tex2D(DiffuseSampler, (float2(In.vTexUV) - float2(1.0*offset[i], 0.0) * g_fPixelWidth)).xyz * weight[i] * fBlurColor;
 	}
-
-	ppColour += FragmentColor;
 	
-	Out.vColor = float4(ppColour, 1.0);
+	Out.vColor = float4(FragmentColor, 1.0);
 	
 	return Out;
 }
@@ -361,21 +351,16 @@ PS_OUT PS_BLURV(PS_IN In)
 {
 	PS_OUT			Out = (PS_OUT)0;
 	
-	float3 ppColour = 0;
 	float3 FragmentColor = float3(0.0f, 0.0f, 0.0f);
 	
-	float hstep = 0.0;
-	float vstep = 1.0;
-
 	for (int i = 1; i < 5; i++) {
 		FragmentColor +=
-			tex2D(DiffuseSampler, (float2(In.vTexUV) + float2(hstep*offset[i], vstep*offset[i]) * g_fPixelHeight)).xyz * weight[i] * fBlurColor;
+			tex2D(DiffuseSampler, (float2(In.vTexUV) + float2(0.0, 1.0*offset[i]) * g_fPixelHeight)).xyz * weight[i] * fBlurColor;
 		FragmentColor +=
-			tex2D(DiffuseSampler, (float2(In.vTexUV) - float2(hstep*offset[i], vstep*offset[i]) * g_fPixelHeight)).xyz * weight[i] * fBlurColor;
+			tex2D(DiffuseSampler, (float2(In.vTexUV) - float2(0.0, 1.0*offset[i]) * g_fPixelHeight)).xyz * weight[i] * fBlurColor;
 	}
-	ppColour += FragmentColor;
 	
-	Out.vColor = float4(ppColour, 1.0);
+	Out.vColor = float4(FragmentColor, 1.0);
 
 	return Out;
 }
@@ -524,15 +509,12 @@ PS_OUT PS_Bloom(PS_IN In) // Extract Bright Color
 {
 	PS_OUT			Out = (PS_OUT)0;
 
-	vector	vDiffuse	= tex2D(DiffuseSampler, In.vTexUV);
+	Out.vColor = tex2D(DiffuseSampler, In.vTexUV);
 	vector	vBloomPower = tex2D(BloomSampler, In.vTexUV);
 
 	float fBloomPower = vBloomPower.x;
-	if (fBloomPower == 0.f)
-		fBloomPower = 0.75f;
-	//fBloomPower = 1.5f; // 너무 밝아서 임시
+	if (fBloomPower == 0.f) fBloomPower = 0.75f;
 
-	Out.vColor = vDiffuse;
 	Out.vColor.rgb -= fBloomPower; // 작은 값일 수록 빛에 민감한 광선
 	// 작은 빛도 블룸되요
 
@@ -552,11 +534,10 @@ PS_OUT PS_Default(PS_IN In)
 	return Out;
 }
 
+int MAX_SAMPLES = 12;
 PS_OUT MotionBlurForObj(PS_IN In)
 {
 	PS_OUT			Out = (PS_OUT)0;
-
-	int MAX_SAMPLES = 12;
 
 	float2 screenTexCoords = In.vTexUV.xy;// *texelSize;
 
@@ -570,7 +551,7 @@ PS_OUT MotionBlurForObj(PS_IN In)
 	velocity.y *= 0.5f;
 	velocity.xy = (clamp(velocity.x, -0.55f, 0.55f), clamp(velocity.y, -0.25f, 0.25f));
 
-	for (int i = 1; i < MAX_SAMPLES; ++i) {
+	for (int i = 1; i < 12; ++i) {
 		float2 offset = velocity.xy * (float(i) / float(MAX_SAMPLES - 1) - 0.4);
 		Out.vColor += tex2D(DiffuseSampler, screenTexCoords + offset);
 	}
@@ -605,7 +586,7 @@ PS_OUT GodRay(PS_IN In)
 
 	float IlluminationDecay = 1.0f; // 일루미네이션 감소 팩터를 설정합니다.
 
-	for (int i = 0; i < NUM_SAMPLES; i++)
+	for (int i = 0; i < 12; i++)
 	{
 		texCoord -= DeltaTexCoord; // 광선을 따라 샘플링
 
@@ -791,7 +772,7 @@ technique Default_Technique
 		magfilter[0] = point;
 	}
 
-	pass DOF // 13
+	pass DOF // 12
 	{
 		ZWriteEnable = false;
 

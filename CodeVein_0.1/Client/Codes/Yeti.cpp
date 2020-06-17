@@ -55,6 +55,7 @@ _int CYeti::Update_GameObject(_double TimeDelta)
 	Check_Hit();
 	Check_Dist();
 	Check_AniEvent();
+	Check_FootSound();
 	Function_CoolDown();
 
 	m_pMeshCom->SetUp_Animation(m_eState);
@@ -360,6 +361,10 @@ void CYeti::Check_Hit()
 		{
 			if (false == m_tObjParam.bSuperArmor)
 			{
+				m_pBattleAgentCom->Set_RimColor(_v4(0.f, 0.f, 0.f, 0.f));
+				m_pBattleAgentCom->Set_RimAlpha(0.5f);
+				m_pBattleAgentCom->Set_RimValue(8.f);
+
 				if (true == m_tObjParam.bIsHit)
 				{
 					if (true == m_tObjParam.bHitAgain)
@@ -481,24 +486,36 @@ void CYeti::Check_AniEvent()
 	case MONSTER_STATE_TYPE::ATTACK:
 		if (true == m_bCanChooseAtkType)
 		{
+			if (m_iPatternCount >= m_iPatternCountMax)
+			{
+				m_bCanSequencePattern = false;
+				m_iPatternCount = 0;
+			}
+
 			m_tObjParam.bCanAttack = false;
 			m_tObjParam.bIsAttack = true;
 
 			m_bCanChooseAtkType = false;
 
-			m_iRandom = CALC::Random_Num(MONSTER_ATK_TYPE::ATK_NORMAL, MONSTER_ATK_TYPE::ATK_COMBO);
-
-			switch (m_iRandom)
+			if (true == m_bCanSequencePattern)
 			{
-			case MONSTER_ATK_TYPE::ATK_NORMAL:
-				m_eSecondCategory_ATK = MONSTER_ATK_TYPE::ATK_NORMAL;
-				Play_RandomAtkNormal();
-				break;
-			case MONSTER_ATK_TYPE::ATK_COMBO:
-				m_eSecondCategory_ATK = MONSTER_ATK_TYPE::ATK_COMBO;
-				m_bIsCombo = true;
-				Play_RandomAtkCombo();
-				break;
+				m_eSecondCategory_ATK = MONSTER_ATK_TYPE::ATK_SEQUNCE;
+				Play_SequenceAtk();
+			}
+			else
+			{
+				switch (CALC::Random_Num(MONSTER_ATK_TYPE::ATK_NORMAL, MONSTER_ATK_TYPE::ATK_COMBO))
+				{
+				case MONSTER_ATK_TYPE::ATK_NORMAL:
+					m_eSecondCategory_ATK = MONSTER_ATK_TYPE::ATK_NORMAL;
+					Play_RandomAtkNormal();
+					break;
+				case MONSTER_ATK_TYPE::ATK_COMBO:
+					m_eSecondCategory_ATK = MONSTER_ATK_TYPE::ATK_COMBO;
+					m_bIsCombo = true;
+					Play_RandomAtkCombo();
+					break;
+				}
 			}
 
 			return;
@@ -560,6 +577,64 @@ void CYeti::Check_AniEvent()
 					break;
 				}
 			}
+			else if (MONSTER_ATK_TYPE::ATK_SEQUNCE == m_eSecondCategory_ATK)
+			{
+				if (true == m_bIsCombo)
+				{
+					switch (m_eAtkCombo)
+					{
+					case ATK_COMBO_TYPE::COMBO_RLRL_SHOULDER:
+						Play_Combo_RLRL_Shoulder();
+						break;
+					case ATK_COMBO_TYPE::COMBO_RLRL_SMASH:
+						Play_Combo_RLRL_Smash();
+						break;
+					case ATK_COMBO_TYPE::COMBO_RLRL_SWING:
+						Play_Combo_RLRL_Swing();
+						break;
+					}
+				}
+				else
+				{
+					switch (m_eState)
+					{
+					case YETI_ANI::Atk_Rush:
+						Play_Rush();
+						break;
+					case YETI_ANI::Atk_RollingSlash:
+						Play_RollingSlash();
+						break;
+					case YETI_ANI::Atk_IceThrowing:
+						Play_IceThrowing();
+						break;
+					case YETI_ANI::Atk_Sp06:
+						Play_RLRL();
+						break;
+					case YETI_ANI::Atk_Sp05:
+						Play_WoodChop();
+						break;
+					case YETI_ANI::Atk_Sp04:
+						Play_FastLR();
+						break;
+					case YETI_ANI::Atk_Sp03:
+						Play_LRSweap();
+						break;
+					case YETI_ANI::Atk_Sp02:
+						Play_RUpperChop();
+						break;
+					case YETI_ANI::Atk_Sp01:
+						Play_SlowLR();
+						break;
+					case YETI_ANI::Atk_Field:
+						//자가 버프 혹은 근처에 일렁거리며 데미지 주기
+						Play_Howling();
+						break;
+					case YETI_ANI::Atk_BodyPress:
+						Play_BodyPress();
+						break;
+					}
+				}
+			}
 		}
 		break;
 
@@ -605,10 +680,123 @@ void CYeti::Check_DeadEffect(_double TimeDelta)
 	CParticleMgr::Get_Instance()->Create_Effect(L"Monster_DeadSmoke_0", vPos);
 }
 
+void CYeti::Check_FootSound()
+{
+	if (YETI_ANI::Walk_F == m_eState ||
+		YETI_ANI::Walk_L == m_eState ||
+		YETI_ANI::Walk_R == m_eState ||
+		YETI_ANI::Run == m_eState)
+	{
+		m_fFootSound += DELTA_60;
+
+		if (m_fFootSound >= m_fFootSoundMax)
+		{
+			m_fFootSound = 0.f;
+
+			g_pSoundManager->Stop_Sound(CSoundManager::Yeti_Step);
+
+			switch (CALC::Random_Num(0, 5))
+			{
+			case 0:
+				g_pSoundManager->Play_Sound(L"Step0.ogg", CSoundManager::Yeti_Step, CSoundManager::Effect_Sound);
+				break;
+
+			case 1:
+				g_pSoundManager->Play_Sound(L"Step1.ogg", CSoundManager::Yeti_Step, CSoundManager::Effect_Sound);
+				break;
+
+			case 2:
+				g_pSoundManager->Play_Sound(L"Step2.ogg", CSoundManager::Yeti_Step, CSoundManager::Effect_Sound);
+				break;
+
+			case 3:
+				g_pSoundManager->Play_Sound(L"Step3.ogg", CSoundManager::Yeti_Step, CSoundManager::Effect_Sound);
+				break;
+
+			case 4:
+				g_pSoundManager->Play_Sound(L"Step4.ogg", CSoundManager::Yeti_Step, CSoundManager::Effect_Sound);
+				break;
+
+			case 5:
+				g_pSoundManager->Play_Sound(L"Step5.ogg", CSoundManager::Yeti_Step, CSoundManager::Effect_Sound);
+				break;
+			}
+		}
+	}
+
+	return;
+}
+
+void CYeti::Play_SequenceAtk()
+{
+	switch (m_iPatternCount)
+	{
+	case 0:
+		m_eState = YETI_ANI::Atk_Rush;
+		break;
+
+	case 1:
+		m_eState = YETI_ANI::Atk_RollingSlash;
+		break;
+
+	case 2:
+		m_eState = YETI_ANI::Atk_IceThrowing;
+		break;
+
+	case 3:
+		m_eState = YETI_ANI::Atk_Sp06;
+		break;
+
+	case 4:
+		m_eState = YETI_ANI::Atk_Sp05;
+		break;
+
+	case 5:
+		m_eState = YETI_ANI::Atk_Sp04;
+		break;
+
+	case 6:
+		m_eState = YETI_ANI::Atk_Sp03;
+		break;
+
+	case 7:
+		m_eState = YETI_ANI::Atk_Sp02;
+		break;
+
+	case 8:
+		m_eState = YETI_ANI::Atk_Sp01;
+		break;
+
+	case 9:
+		m_eState = YETI_ANI::Atk_BodyPress;
+		break;
+
+	case 10:
+		m_bIsCombo = true;
+		m_eAtkCombo = ATK_COMBO_TYPE::COMBO_RLRL_SHOULDER;
+		m_eState = YETI_ANI::Atk_Sp06;
+		break;
+
+	case 11:
+		m_bIsCombo = true;
+		m_eAtkCombo = ATK_COMBO_TYPE::COMBO_RLRL_SMASH;
+		m_eState = YETI_ANI::Atk_Sp06;
+		break;
+
+	case 12:
+		m_bIsCombo = true;
+		m_eAtkCombo = ATK_COMBO_TYPE::COMBO_RLRL_SWING;
+		m_eState = YETI_ANI::Atk_Sp06;
+		break;
+	}
+
+	++m_iPatternCount;
+
+	return;
+}
+
 void CYeti::Play_RandomAtkNormal()
 {
-	_float fLenth = V3_LENGTH(&(TARGET_TO_TRANS(m_pAggroTarget)->Get_Pos() - m_pTransformCom->Get_Pos()));
-
 	switch (CALC::Random_Num(ATK_NORMAL_TYPE::NORMAL_RUSH, ATK_NORMAL_TYPE::NORMAL_BODYPRESS))
 	{
 	case ATK_NORMAL_TYPE::NORMAL_RUSH:
@@ -705,6 +893,28 @@ void CYeti::Play_BodyPress()
 				m_bEventTrigger[1] = true;
 				m_vecAttackCol[0]->Set_Enabled(true);
 				m_tObjParam.bSuperArmor = true;
+
+				g_pSoundManager->Stop_Sound(CSoundManager::Yeti_SFX_02);
+
+				switch (CALC::Random_Num(0, 4))
+				{
+				case 0:
+					g_pSoundManager->Play_Sound(L"Monster_Swing_Sub0.ogg", CSoundManager::Yeti_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 1:
+					g_pSoundManager->Play_Sound(L"Monster_Swing_Sub1.ogg", CSoundManager::Yeti_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 2:
+					g_pSoundManager->Play_Sound(L"Monster_Swing_Sub2.ogg", CSoundManager::Yeti_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 3:
+					g_pSoundManager->Play_Sound(L"Monster_Swing_Sub3.ogg", CSoundManager::Yeti_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 4:
+					g_pSoundManager->Play_Sound(L"Monster_Swing_Sub4.ogg", CSoundManager::Yeti_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				}
+
 			}
 		}
 		else if (4.f <= AniTime)
@@ -715,9 +925,7 @@ void CYeti::Play_BodyPress()
 
 				g_pSoundManager->Stop_Sound(CSoundManager::Yeti_Voice);
 
-				m_iRandom = CALC::Random_Num(0, 6);
-
-				switch (m_iRandom)
+				switch (CALC::Random_Num(0, 6))
 				{
 				case 0:
 					g_pSoundManager->Play_Sound(L"Yeti_Atk_Voice0.ogg", CSoundManager::Yeti_Voice, CSoundManager::Effect_Sound);
@@ -803,6 +1011,44 @@ void CYeti::Play_SlowLR()
 				m_bEventTrigger[1] = true;
 				m_vecAttackCol[2]->Set_Enabled(true);
 				m_tObjParam.bSuperArmor = true;
+
+				g_pSoundManager->Stop_Sound(CSoundManager::Yeti_SFX_01);
+				g_pSoundManager->Stop_Sound(CSoundManager::Yeti_SFX_02);
+
+				switch (CALC::Random_Num(0, 3))
+				{
+				case 0:
+					g_pSoundManager->Play_Sound(L"Monster_BladeWeapon_Sub0.ogg", CSoundManager::Yeti_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				case 1:
+					g_pSoundManager->Play_Sound(L"Monster_BladeWeapon_Sub1.ogg", CSoundManager::Yeti_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				case 2:
+					g_pSoundManager->Play_Sound(L"Monster_BladeWeapon_Sub2.ogg", CSoundManager::Yeti_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				case 3:
+					g_pSoundManager->Play_Sound(L"Monster_BladeWeapon_Sub3.ogg", CSoundManager::Yeti_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				}
+
+				switch (CALC::Random_Num(0, 4))
+				{
+				case 0:
+					g_pSoundManager->Play_Sound(L"Monster_Swing_Sub0.ogg", CSoundManager::Yeti_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 1:
+					g_pSoundManager->Play_Sound(L"Monster_Swing_Sub1.ogg", CSoundManager::Yeti_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 2:
+					g_pSoundManager->Play_Sound(L"Monster_Swing_Sub2.ogg", CSoundManager::Yeti_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 3:
+					g_pSoundManager->Play_Sound(L"Monster_Swing_Sub3.ogg", CSoundManager::Yeti_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 4:
+					g_pSoundManager->Play_Sound(L"Monster_Swing_Sub4.ogg", CSoundManager::Yeti_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				}
 			}
 		}
 		else if (3.f <= AniTime)
@@ -857,6 +1103,44 @@ void CYeti::Play_SlowLR()
 				m_bEventTrigger[3] = true;
 				m_vecAttackCol[1]->Set_Enabled(true);
 				m_tObjParam.bSuperArmor = true;
+
+				g_pSoundManager->Stop_Sound(CSoundManager::Yeti_SFX_01);
+				g_pSoundManager->Stop_Sound(CSoundManager::Yeti_SFX_02);
+
+				switch (CALC::Random_Num(0, 3))
+				{
+				case 0:
+					g_pSoundManager->Play_Sound(L"Monster_BladeWeapon_Sub0.ogg", CSoundManager::Yeti_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				case 1:
+					g_pSoundManager->Play_Sound(L"Monster_BladeWeapon_Sub1.ogg", CSoundManager::Yeti_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				case 2:
+					g_pSoundManager->Play_Sound(L"Monster_BladeWeapon_Sub2.ogg", CSoundManager::Yeti_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				case 3:
+					g_pSoundManager->Play_Sound(L"Monster_BladeWeapon_Sub3.ogg", CSoundManager::Yeti_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				}
+
+				switch (CALC::Random_Num(0, 4))
+				{
+				case 0:
+					g_pSoundManager->Play_Sound(L"Monster_Swing_Sub0.ogg", CSoundManager::Yeti_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 1:
+					g_pSoundManager->Play_Sound(L"Monster_Swing_Sub1.ogg", CSoundManager::Yeti_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 2:
+					g_pSoundManager->Play_Sound(L"Monster_Swing_Sub2.ogg", CSoundManager::Yeti_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 3:
+					g_pSoundManager->Play_Sound(L"Monster_Swing_Sub3.ogg", CSoundManager::Yeti_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 4:
+					g_pSoundManager->Play_Sound(L"Monster_Swing_Sub4.ogg", CSoundManager::Yeti_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				}
 			}
 		}
 		else if (1.2f <= AniTime)
@@ -962,6 +1246,44 @@ void CYeti::Play_RUpperChop()
 				m_bEventTrigger[1] = true;
 				m_vecAttackCol[1]->Set_Enabled(true);
 				m_tObjParam.bSuperArmor = true;
+
+				g_pSoundManager->Stop_Sound(CSoundManager::Yeti_SFX_01);
+				g_pSoundManager->Stop_Sound(CSoundManager::Yeti_SFX_02);
+
+				switch (CALC::Random_Num(0, 3))
+				{
+				case 0:
+					g_pSoundManager->Play_Sound(L"Monster_BladeWeapon_Sub0.ogg", CSoundManager::Yeti_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				case 1:
+					g_pSoundManager->Play_Sound(L"Monster_BladeWeapon_Sub1.ogg", CSoundManager::Yeti_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				case 2:
+					g_pSoundManager->Play_Sound(L"Monster_BladeWeapon_Sub2.ogg", CSoundManager::Yeti_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				case 3:
+					g_pSoundManager->Play_Sound(L"Monster_BladeWeapon_Sub3.ogg", CSoundManager::Yeti_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				}
+
+				switch (CALC::Random_Num(0, 4))
+				{
+				case 0:
+					g_pSoundManager->Play_Sound(L"Monster_Swing_Sub0.ogg", CSoundManager::Yeti_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 1:
+					g_pSoundManager->Play_Sound(L"Monster_Swing_Sub1.ogg", CSoundManager::Yeti_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 2:
+					g_pSoundManager->Play_Sound(L"Monster_Swing_Sub2.ogg", CSoundManager::Yeti_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 3:
+					g_pSoundManager->Play_Sound(L"Monster_Swing_Sub3.ogg", CSoundManager::Yeti_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 4:
+					g_pSoundManager->Play_Sound(L"Monster_Swing_Sub4.ogg", CSoundManager::Yeti_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				}
 			}
 		}
 		else if (4.1f <= AniTime)
@@ -1016,6 +1338,44 @@ void CYeti::Play_RUpperChop()
 				m_bEventTrigger[3] = true;
 				m_vecAttackCol[2]->Set_Enabled(true);
 				m_tObjParam.bSuperArmor = true;
+
+				g_pSoundManager->Stop_Sound(CSoundManager::Yeti_SFX_01);
+				g_pSoundManager->Stop_Sound(CSoundManager::Yeti_SFX_02);
+
+				switch (CALC::Random_Num(0, 3))
+				{
+				case 0:
+					g_pSoundManager->Play_Sound(L"Monster_BladeWeapon_Sub0.ogg", CSoundManager::Yeti_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				case 1:
+					g_pSoundManager->Play_Sound(L"Monster_BladeWeapon_Sub1.ogg", CSoundManager::Yeti_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				case 2:
+					g_pSoundManager->Play_Sound(L"Monster_BladeWeapon_Sub2.ogg", CSoundManager::Yeti_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				case 3:
+					g_pSoundManager->Play_Sound(L"Monster_BladeWeapon_Sub3.ogg", CSoundManager::Yeti_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				}
+
+				switch (CALC::Random_Num(0, 4))
+				{
+				case 0:
+					g_pSoundManager->Play_Sound(L"Monster_Swing_Sub0.ogg", CSoundManager::Yeti_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 1:
+					g_pSoundManager->Play_Sound(L"Monster_Swing_Sub1.ogg", CSoundManager::Yeti_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 2:
+					g_pSoundManager->Play_Sound(L"Monster_Swing_Sub2.ogg", CSoundManager::Yeti_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 3:
+					g_pSoundManager->Play_Sound(L"Monster_Swing_Sub3.ogg", CSoundManager::Yeti_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 4:
+					g_pSoundManager->Play_Sound(L"Monster_Swing_Sub4.ogg", CSoundManager::Yeti_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				}
 			}
 		}
 		else if (3.f <= AniTime)
@@ -1070,6 +1430,44 @@ void CYeti::Play_RUpperChop()
 				m_bEventTrigger[5] = true;
 				m_vecAttackCol[2]->Set_Enabled(true);
 				m_tObjParam.bSuperArmor = true;
+
+				g_pSoundManager->Stop_Sound(CSoundManager::Yeti_SFX_01);
+				g_pSoundManager->Stop_Sound(CSoundManager::Yeti_SFX_02);
+
+				switch (CALC::Random_Num(0, 3))
+				{
+				case 0:
+					g_pSoundManager->Play_Sound(L"Monster_BladeWeapon_Sub0.ogg", CSoundManager::Yeti_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				case 1:
+					g_pSoundManager->Play_Sound(L"Monster_BladeWeapon_Sub1.ogg", CSoundManager::Yeti_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				case 2:
+					g_pSoundManager->Play_Sound(L"Monster_BladeWeapon_Sub2.ogg", CSoundManager::Yeti_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				case 3:
+					g_pSoundManager->Play_Sound(L"Monster_BladeWeapon_Sub3.ogg", CSoundManager::Yeti_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				}
+
+				switch (CALC::Random_Num(0, 4))
+				{
+				case 0:
+					g_pSoundManager->Play_Sound(L"Monster_Swing_Sub0.ogg", CSoundManager::Yeti_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 1:
+					g_pSoundManager->Play_Sound(L"Monster_Swing_Sub1.ogg", CSoundManager::Yeti_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 2:
+					g_pSoundManager->Play_Sound(L"Monster_Swing_Sub2.ogg", CSoundManager::Yeti_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 3:
+					g_pSoundManager->Play_Sound(L"Monster_Swing_Sub3.ogg", CSoundManager::Yeti_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 4:
+					g_pSoundManager->Play_Sound(L"Monster_Swing_Sub4.ogg", CSoundManager::Yeti_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				}
 			}
 		}
 		else if (1.f <= AniTime)
@@ -1188,6 +1586,44 @@ void CYeti::Play_LRSweap()
 				m_bEventTrigger[1] = true;
 				m_vecAttackCol[1]->Set_Enabled(true);
 				m_tObjParam.bSuperArmor = true;
+
+				g_pSoundManager->Stop_Sound(CSoundManager::Yeti_SFX_01);
+				g_pSoundManager->Stop_Sound(CSoundManager::Yeti_SFX_02);
+
+				switch (CALC::Random_Num(0, 3))
+				{
+				case 0:
+					g_pSoundManager->Play_Sound(L"Monster_BladeWeapon_Sub0.ogg", CSoundManager::Yeti_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				case 1:
+					g_pSoundManager->Play_Sound(L"Monster_BladeWeapon_Sub1.ogg", CSoundManager::Yeti_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				case 2:
+					g_pSoundManager->Play_Sound(L"Monster_BladeWeapon_Sub2.ogg", CSoundManager::Yeti_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				case 3:
+					g_pSoundManager->Play_Sound(L"Monster_BladeWeapon_Sub3.ogg", CSoundManager::Yeti_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				}
+
+				switch (CALC::Random_Num(0, 4))
+				{
+				case 0:
+					g_pSoundManager->Play_Sound(L"Monster_Swing_Sub0.ogg", CSoundManager::Yeti_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 1:
+					g_pSoundManager->Play_Sound(L"Monster_Swing_Sub1.ogg", CSoundManager::Yeti_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 2:
+					g_pSoundManager->Play_Sound(L"Monster_Swing_Sub2.ogg", CSoundManager::Yeti_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 3:
+					g_pSoundManager->Play_Sound(L"Monster_Swing_Sub3.ogg", CSoundManager::Yeti_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 4:
+					g_pSoundManager->Play_Sound(L"Monster_Swing_Sub4.ogg", CSoundManager::Yeti_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				}
 			}
 		}
 		else if (2.1f <= AniTime)
@@ -1242,6 +1678,44 @@ void CYeti::Play_LRSweap()
 				m_bEventTrigger[3] = true;
 				m_vecAttackCol[2]->Set_Enabled(true);
 				m_tObjParam.bSuperArmor = true;
+
+				g_pSoundManager->Stop_Sound(CSoundManager::Yeti_SFX_01);
+				g_pSoundManager->Stop_Sound(CSoundManager::Yeti_SFX_02);
+
+				switch (CALC::Random_Num(0, 3))
+				{
+				case 0:
+					g_pSoundManager->Play_Sound(L"Monster_BladeWeapon_Sub0.ogg", CSoundManager::Yeti_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				case 1:
+					g_pSoundManager->Play_Sound(L"Monster_BladeWeapon_Sub1.ogg", CSoundManager::Yeti_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				case 2:
+					g_pSoundManager->Play_Sound(L"Monster_BladeWeapon_Sub2.ogg", CSoundManager::Yeti_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				case 3:
+					g_pSoundManager->Play_Sound(L"Monster_BladeWeapon_Sub3.ogg", CSoundManager::Yeti_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				}
+
+				switch (CALC::Random_Num(0, 4))
+				{
+				case 0:
+					g_pSoundManager->Play_Sound(L"Monster_Swing_Sub0.ogg", CSoundManager::Yeti_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 1:
+					g_pSoundManager->Play_Sound(L"Monster_Swing_Sub1.ogg", CSoundManager::Yeti_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 2:
+					g_pSoundManager->Play_Sound(L"Monster_Swing_Sub2.ogg", CSoundManager::Yeti_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 3:
+					g_pSoundManager->Play_Sound(L"Monster_Swing_Sub3.ogg", CSoundManager::Yeti_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 4:
+					g_pSoundManager->Play_Sound(L"Monster_Swing_Sub4.ogg", CSoundManager::Yeti_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				}
 			}
 		}
 		else if (1.3f <= AniTime)
@@ -1296,6 +1770,44 @@ void CYeti::Play_LRSweap()
 				m_bEventTrigger[5] = true;
 				m_vecAttackCol[1]->Set_Enabled(true);
 				m_tObjParam.bSuperArmor = true;
+
+				g_pSoundManager->Stop_Sound(CSoundManager::Yeti_SFX_01);
+				g_pSoundManager->Stop_Sound(CSoundManager::Yeti_SFX_02);
+
+				switch (CALC::Random_Num(0, 3))
+				{
+				case 0:
+					g_pSoundManager->Play_Sound(L"Monster_BladeWeapon_Sub0.ogg", CSoundManager::Yeti_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				case 1:
+					g_pSoundManager->Play_Sound(L"Monster_BladeWeapon_Sub1.ogg", CSoundManager::Yeti_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				case 2:
+					g_pSoundManager->Play_Sound(L"Monster_BladeWeapon_Sub2.ogg", CSoundManager::Yeti_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				case 3:
+					g_pSoundManager->Play_Sound(L"Monster_BladeWeapon_Sub3.ogg", CSoundManager::Yeti_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				}
+
+				switch (CALC::Random_Num(0, 4))
+				{
+				case 0:
+					g_pSoundManager->Play_Sound(L"Monster_Swing_Sub0.ogg", CSoundManager::Yeti_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 1:
+					g_pSoundManager->Play_Sound(L"Monster_Swing_Sub1.ogg", CSoundManager::Yeti_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 2:
+					g_pSoundManager->Play_Sound(L"Monster_Swing_Sub2.ogg", CSoundManager::Yeti_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 3:
+					g_pSoundManager->Play_Sound(L"Monster_Swing_Sub3.ogg", CSoundManager::Yeti_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 4:
+					g_pSoundManager->Play_Sound(L"Monster_Swing_Sub4.ogg", CSoundManager::Yeti_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				}
 			}
 		}
 		else if (0.5f <= AniTime)
@@ -1414,6 +1926,44 @@ void CYeti::Play_FastLR()
 				m_bEventTrigger[1] = true;
 				m_vecAttackCol[2]->Set_Enabled(true);
 				m_tObjParam.bSuperArmor = true;
+
+				g_pSoundManager->Stop_Sound(CSoundManager::Yeti_SFX_01);
+				g_pSoundManager->Stop_Sound(CSoundManager::Yeti_SFX_02);
+
+				switch (CALC::Random_Num(0, 3))
+				{
+				case 0:
+					g_pSoundManager->Play_Sound(L"Monster_BladeWeapon_Sub0.ogg", CSoundManager::Yeti_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				case 1:
+					g_pSoundManager->Play_Sound(L"Monster_BladeWeapon_Sub1.ogg", CSoundManager::Yeti_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				case 2:
+					g_pSoundManager->Play_Sound(L"Monster_BladeWeapon_Sub2.ogg", CSoundManager::Yeti_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				case 3:
+					g_pSoundManager->Play_Sound(L"Monster_BladeWeapon_Sub3.ogg", CSoundManager::Yeti_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				}
+
+				switch (CALC::Random_Num(0, 4))
+				{
+				case 0:
+					g_pSoundManager->Play_Sound(L"Monster_Swing_Sub0.ogg", CSoundManager::Yeti_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 1:
+					g_pSoundManager->Play_Sound(L"Monster_Swing_Sub1.ogg", CSoundManager::Yeti_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 2:
+					g_pSoundManager->Play_Sound(L"Monster_Swing_Sub2.ogg", CSoundManager::Yeti_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 3:
+					g_pSoundManager->Play_Sound(L"Monster_Swing_Sub3.ogg", CSoundManager::Yeti_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 4:
+					g_pSoundManager->Play_Sound(L"Monster_Swing_Sub4.ogg", CSoundManager::Yeti_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				}
 			}
 		}
 		else if (2.1f <= AniTime)
@@ -1468,6 +2018,44 @@ void CYeti::Play_FastLR()
 				m_bEventTrigger[3] = true;
 				m_vecAttackCol[1]->Set_Enabled(true);
 				m_tObjParam.bSuperArmor = true;
+
+				g_pSoundManager->Stop_Sound(CSoundManager::Yeti_SFX_01);
+				g_pSoundManager->Stop_Sound(CSoundManager::Yeti_SFX_02);
+
+				switch (CALC::Random_Num(0, 3))
+				{
+				case 0:
+					g_pSoundManager->Play_Sound(L"Monster_BladeWeapon_Sub0.ogg", CSoundManager::Yeti_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				case 1:
+					g_pSoundManager->Play_Sound(L"Monster_BladeWeapon_Sub1.ogg", CSoundManager::Yeti_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				case 2:
+					g_pSoundManager->Play_Sound(L"Monster_BladeWeapon_Sub2.ogg", CSoundManager::Yeti_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				case 3:
+					g_pSoundManager->Play_Sound(L"Monster_BladeWeapon_Sub3.ogg", CSoundManager::Yeti_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				}
+
+				switch (CALC::Random_Num(0, 4))
+				{
+				case 0:
+					g_pSoundManager->Play_Sound(L"Monster_Swing_Sub0.ogg", CSoundManager::Yeti_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 1:
+					g_pSoundManager->Play_Sound(L"Monster_Swing_Sub1.ogg", CSoundManager::Yeti_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 2:
+					g_pSoundManager->Play_Sound(L"Monster_Swing_Sub2.ogg", CSoundManager::Yeti_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 3:
+					g_pSoundManager->Play_Sound(L"Monster_Swing_Sub3.ogg", CSoundManager::Yeti_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 4:
+					g_pSoundManager->Play_Sound(L"Monster_Swing_Sub4.ogg", CSoundManager::Yeti_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				}
 			}
 		}
 		else if (0.4f <= AniTime)
@@ -1573,6 +2161,44 @@ void CYeti::Play_WoodChop()
 				m_bEventTrigger[1] = true;
 				m_vecAttackCol[1]->Set_Enabled(true);
 				m_tObjParam.bSuperArmor = true;
+
+				g_pSoundManager->Stop_Sound(CSoundManager::Yeti_SFX_01);
+				g_pSoundManager->Stop_Sound(CSoundManager::Yeti_SFX_02);
+
+				switch (CALC::Random_Num(0, 3))
+				{
+				case 0:
+					g_pSoundManager->Play_Sound(L"Monster_BladeWeapon_Sub0.ogg", CSoundManager::Yeti_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				case 1:
+					g_pSoundManager->Play_Sound(L"Monster_BladeWeapon_Sub1.ogg", CSoundManager::Yeti_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				case 2:
+					g_pSoundManager->Play_Sound(L"Monster_BladeWeapon_Sub2.ogg", CSoundManager::Yeti_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				case 3:
+					g_pSoundManager->Play_Sound(L"Monster_BladeWeapon_Sub3.ogg", CSoundManager::Yeti_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				}
+
+				switch (CALC::Random_Num(0, 4))
+				{
+				case 0:
+					g_pSoundManager->Play_Sound(L"Monster_Swing_Sub0.ogg", CSoundManager::Yeti_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 1:
+					g_pSoundManager->Play_Sound(L"Monster_Swing_Sub1.ogg", CSoundManager::Yeti_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 2:
+					g_pSoundManager->Play_Sound(L"Monster_Swing_Sub2.ogg", CSoundManager::Yeti_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 3:
+					g_pSoundManager->Play_Sound(L"Monster_Swing_Sub3.ogg", CSoundManager::Yeti_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 4:
+					g_pSoundManager->Play_Sound(L"Monster_Swing_Sub4.ogg", CSoundManager::Yeti_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				}
 			}
 		}
 		else if (3.f <= AniTime)
@@ -1651,6 +2277,44 @@ void CYeti::Play_RLRL()
 				m_bEventTrigger[1] = true;
 				m_vecAttackCol[1]->Set_Enabled(true);
 				m_tObjParam.bSuperArmor = true;
+
+				g_pSoundManager->Stop_Sound(CSoundManager::Yeti_SFX_01);
+				g_pSoundManager->Stop_Sound(CSoundManager::Yeti_SFX_02);
+
+				switch (CALC::Random_Num(0, 3))
+				{
+				case 0:
+					g_pSoundManager->Play_Sound(L"Monster_BladeWeapon_Sub0.ogg", CSoundManager::Yeti_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				case 1:
+					g_pSoundManager->Play_Sound(L"Monster_BladeWeapon_Sub1.ogg", CSoundManager::Yeti_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				case 2:
+					g_pSoundManager->Play_Sound(L"Monster_BladeWeapon_Sub2.ogg", CSoundManager::Yeti_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				case 3:
+					g_pSoundManager->Play_Sound(L"Monster_BladeWeapon_Sub3.ogg", CSoundManager::Yeti_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				}
+
+				switch (CALC::Random_Num(0, 4))
+				{
+				case 0:
+					g_pSoundManager->Play_Sound(L"Monster_Swing_Sub0.ogg", CSoundManager::Yeti_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 1:
+					g_pSoundManager->Play_Sound(L"Monster_Swing_Sub1.ogg", CSoundManager::Yeti_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 2:
+					g_pSoundManager->Play_Sound(L"Monster_Swing_Sub2.ogg", CSoundManager::Yeti_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 3:
+					g_pSoundManager->Play_Sound(L"Monster_Swing_Sub3.ogg", CSoundManager::Yeti_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 4:
+					g_pSoundManager->Play_Sound(L"Monster_Swing_Sub4.ogg", CSoundManager::Yeti_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				}
 			}
 		}
 		else if (4.2f <= AniTime)
@@ -1705,6 +2369,44 @@ void CYeti::Play_RLRL()
 				m_bEventTrigger[3] = true;
 				m_vecAttackCol[2]->Set_Enabled(true);
 				m_tObjParam.bSuperArmor = true;
+
+				g_pSoundManager->Stop_Sound(CSoundManager::Yeti_SFX_01);
+				g_pSoundManager->Stop_Sound(CSoundManager::Yeti_SFX_02);
+
+				switch (CALC::Random_Num(0, 3))
+				{
+				case 0:
+					g_pSoundManager->Play_Sound(L"Monster_BladeWeapon_Sub0.ogg", CSoundManager::Yeti_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				case 1:
+					g_pSoundManager->Play_Sound(L"Monster_BladeWeapon_Sub1.ogg", CSoundManager::Yeti_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				case 2:
+					g_pSoundManager->Play_Sound(L"Monster_BladeWeapon_Sub2.ogg", CSoundManager::Yeti_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				case 3:
+					g_pSoundManager->Play_Sound(L"Monster_BladeWeapon_Sub3.ogg", CSoundManager::Yeti_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				}
+
+				switch (CALC::Random_Num(0, 4))
+				{
+				case 0:
+					g_pSoundManager->Play_Sound(L"Monster_Swing_Sub0.ogg", CSoundManager::Yeti_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 1:
+					g_pSoundManager->Play_Sound(L"Monster_Swing_Sub1.ogg", CSoundManager::Yeti_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 2:
+					g_pSoundManager->Play_Sound(L"Monster_Swing_Sub2.ogg", CSoundManager::Yeti_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 3:
+					g_pSoundManager->Play_Sound(L"Monster_Swing_Sub3.ogg", CSoundManager::Yeti_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 4:
+					g_pSoundManager->Play_Sound(L"Monster_Swing_Sub4.ogg", CSoundManager::Yeti_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				}
 			}
 		}
 		else if (3.3f <= AniTime)
@@ -1759,6 +2461,44 @@ void CYeti::Play_RLRL()
 				m_bEventTrigger[5] = true;
 				m_vecAttackCol[1]->Set_Enabled(true);
 				m_tObjParam.bSuperArmor = true;
+
+				g_pSoundManager->Stop_Sound(CSoundManager::Yeti_SFX_01);
+				g_pSoundManager->Stop_Sound(CSoundManager::Yeti_SFX_02);
+
+				switch (CALC::Random_Num(0, 3))
+				{
+				case 0:
+					g_pSoundManager->Play_Sound(L"Monster_BladeWeapon_Sub0.ogg", CSoundManager::Yeti_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				case 1:
+					g_pSoundManager->Play_Sound(L"Monster_BladeWeapon_Sub1.ogg", CSoundManager::Yeti_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				case 2:
+					g_pSoundManager->Play_Sound(L"Monster_BladeWeapon_Sub2.ogg", CSoundManager::Yeti_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				case 3:
+					g_pSoundManager->Play_Sound(L"Monster_BladeWeapon_Sub3.ogg", CSoundManager::Yeti_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				}
+
+				switch (CALC::Random_Num(0, 4))
+				{
+				case 0:
+					g_pSoundManager->Play_Sound(L"Monster_Swing_Sub0.ogg", CSoundManager::Yeti_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 1:
+					g_pSoundManager->Play_Sound(L"Monster_Swing_Sub1.ogg", CSoundManager::Yeti_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 2:
+					g_pSoundManager->Play_Sound(L"Monster_Swing_Sub2.ogg", CSoundManager::Yeti_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 3:
+					g_pSoundManager->Play_Sound(L"Monster_Swing_Sub3.ogg", CSoundManager::Yeti_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 4:
+					g_pSoundManager->Play_Sound(L"Monster_Swing_Sub4.ogg", CSoundManager::Yeti_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				}
 			}
 		}
 		else if (2.4f <= AniTime)
@@ -1813,6 +2553,44 @@ void CYeti::Play_RLRL()
 				m_bEventTrigger[7] = true;
 				m_vecAttackCol[2]->Set_Enabled(true);
 				m_tObjParam.bSuperArmor = true;
+
+				g_pSoundManager->Stop_Sound(CSoundManager::Yeti_SFX_01);
+				g_pSoundManager->Stop_Sound(CSoundManager::Yeti_SFX_02);
+
+				switch (CALC::Random_Num(0, 3))
+				{
+				case 0:
+					g_pSoundManager->Play_Sound(L"Monster_BladeWeapon_Sub0.ogg", CSoundManager::Yeti_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				case 1:
+					g_pSoundManager->Play_Sound(L"Monster_BladeWeapon_Sub1.ogg", CSoundManager::Yeti_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				case 2:
+					g_pSoundManager->Play_Sound(L"Monster_BladeWeapon_Sub2.ogg", CSoundManager::Yeti_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				case 3:
+					g_pSoundManager->Play_Sound(L"Monster_BladeWeapon_Sub3.ogg", CSoundManager::Yeti_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				}
+
+				switch (CALC::Random_Num(0, 4))
+				{
+				case 0:
+					g_pSoundManager->Play_Sound(L"Monster_Swing_Sub0.ogg", CSoundManager::Yeti_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 1:
+					g_pSoundManager->Play_Sound(L"Monster_Swing_Sub1.ogg", CSoundManager::Yeti_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 2:
+					g_pSoundManager->Play_Sound(L"Monster_Swing_Sub2.ogg", CSoundManager::Yeti_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 3:
+					g_pSoundManager->Play_Sound(L"Monster_Swing_Sub3.ogg", CSoundManager::Yeti_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 4:
+					g_pSoundManager->Play_Sound(L"Monster_Swing_Sub4.ogg", CSoundManager::Yeti_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				}
 			}
 		}
 		else if (1.3f <= AniTime)
@@ -2073,9 +2851,7 @@ void CYeti::Play_RollingSlash()
 
 				g_pSoundManager->Stop_Sound(CSoundManager::Yeti_Voice);
 
-				m_iRandom = CALC::Random_Num(0, 6);
-
-				switch (m_iRandom)
+				switch (CALC::Random_Num(0, 6))
 				{
 				case 0:
 					g_pSoundManager->Play_Sound(L"Yeti_Atk_Voice0.ogg", CSoundManager::Yeti_Voice, CSoundManager::Effect_Sound);
@@ -2127,9 +2903,7 @@ void CYeti::Play_RollingSlash()
 
 				g_pSoundManager->Stop_Sound(CSoundManager::Yeti_Voice);
 
-				m_iRandom = CALC::Random_Num(0, 6);
-
-				switch (m_iRandom)
+				switch (CALC::Random_Num(0, 6))
 				{
 				case 0:
 					g_pSoundManager->Play_Sound(L"Yeti_Atk_Voice0.ogg", CSoundManager::Yeti_Voice, CSoundManager::Effect_Sound);
@@ -2210,9 +2984,7 @@ void CYeti::Play_RollingSlash()
 
 				g_pSoundManager->Stop_Sound(CSoundManager::Yeti_Voice);
 
-				m_iRandom = CALC::Random_Num(0, 6);
-
-				switch (m_iRandom)
+				switch (CALC::Random_Num(0, 6))
 				{
 				case 0:
 					g_pSoundManager->Play_Sound(L"Yeti_Atk_Voice0.ogg", CSoundManager::Yeti_Voice, CSoundManager::Effect_Sound);
@@ -2302,9 +3074,7 @@ void CYeti::Play_Rush()
 
 				g_pSoundManager->Stop_Sound(CSoundManager::Yeti_Voice);
 
-				m_iRandom = CALC::Random_Num(0, 6);
-
-				switch (m_iRandom)
+				switch (CALC::Random_Num(0, 6))
 				{
 				case 0:
 					g_pSoundManager->Play_Sound(L"Yeti_Atk_Voice0.ogg", CSoundManager::Yeti_Voice, CSoundManager::Effect_Sound);
@@ -2385,6 +3155,44 @@ void CYeti::Play_Combo_RLRL_Shoulder()
 				m_bEventTrigger[1] = true;
 				m_vecAttackCol[1]->Set_Enabled(true);
 				m_tObjParam.bSuperArmor = true;
+
+				g_pSoundManager->Stop_Sound(CSoundManager::Yeti_SFX_01);
+				g_pSoundManager->Stop_Sound(CSoundManager::Yeti_SFX_02);
+
+				switch (CALC::Random_Num(0, 3))
+				{
+				case 0:
+					g_pSoundManager->Play_Sound(L"Monster_BladeWeapon_Sub0.ogg", CSoundManager::Yeti_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				case 1:
+					g_pSoundManager->Play_Sound(L"Monster_BladeWeapon_Sub1.ogg", CSoundManager::Yeti_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				case 2:
+					g_pSoundManager->Play_Sound(L"Monster_BladeWeapon_Sub2.ogg", CSoundManager::Yeti_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				case 3:
+					g_pSoundManager->Play_Sound(L"Monster_BladeWeapon_Sub3.ogg", CSoundManager::Yeti_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				}
+
+				switch (CALC::Random_Num(0, 4))
+				{
+				case 0:
+					g_pSoundManager->Play_Sound(L"Monster_Swing_Sub0.ogg", CSoundManager::Yeti_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 1:
+					g_pSoundManager->Play_Sound(L"Monster_Swing_Sub1.ogg", CSoundManager::Yeti_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 2:
+					g_pSoundManager->Play_Sound(L"Monster_Swing_Sub2.ogg", CSoundManager::Yeti_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 3:
+					g_pSoundManager->Play_Sound(L"Monster_Swing_Sub3.ogg", CSoundManager::Yeti_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 4:
+					g_pSoundManager->Play_Sound(L"Monster_Swing_Sub4.ogg", CSoundManager::Yeti_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				}
 			}
 		}
 		else if (4.2f <= AniTime)
@@ -2439,6 +3247,44 @@ void CYeti::Play_Combo_RLRL_Shoulder()
 				m_bEventTrigger[4] = true;
 				m_vecAttackCol[2]->Set_Enabled(true);
 				m_tObjParam.bSuperArmor = true;
+
+				g_pSoundManager->Stop_Sound(CSoundManager::Yeti_SFX_01);
+				g_pSoundManager->Stop_Sound(CSoundManager::Yeti_SFX_02);
+
+				switch (CALC::Random_Num(0, 3))
+				{
+				case 0:
+					g_pSoundManager->Play_Sound(L"Monster_BladeWeapon_Sub0.ogg", CSoundManager::Yeti_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				case 1:
+					g_pSoundManager->Play_Sound(L"Monster_BladeWeapon_Sub1.ogg", CSoundManager::Yeti_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				case 2:
+					g_pSoundManager->Play_Sound(L"Monster_BladeWeapon_Sub2.ogg", CSoundManager::Yeti_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				case 3:
+					g_pSoundManager->Play_Sound(L"Monster_BladeWeapon_Sub3.ogg", CSoundManager::Yeti_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				}
+
+				switch (CALC::Random_Num(0, 4))
+				{
+				case 0:
+					g_pSoundManager->Play_Sound(L"Monster_Swing_Sub0.ogg", CSoundManager::Yeti_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 1:
+					g_pSoundManager->Play_Sound(L"Monster_Swing_Sub1.ogg", CSoundManager::Yeti_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 2:
+					g_pSoundManager->Play_Sound(L"Monster_Swing_Sub2.ogg", CSoundManager::Yeti_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 3:
+					g_pSoundManager->Play_Sound(L"Monster_Swing_Sub3.ogg", CSoundManager::Yeti_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 4:
+					g_pSoundManager->Play_Sound(L"Monster_Swing_Sub4.ogg", CSoundManager::Yeti_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				}
 			}
 		}
 		else if (3.3f <= AniTime)
@@ -2493,6 +3339,44 @@ void CYeti::Play_Combo_RLRL_Shoulder()
 				m_bEventTrigger[7] = true;
 				m_vecAttackCol[1]->Set_Enabled(true);
 				m_tObjParam.bSuperArmor = true;
+
+				g_pSoundManager->Stop_Sound(CSoundManager::Yeti_SFX_01);
+				g_pSoundManager->Stop_Sound(CSoundManager::Yeti_SFX_02);
+
+				switch (CALC::Random_Num(0, 3))
+				{
+				case 0:
+					g_pSoundManager->Play_Sound(L"Monster_BladeWeapon_Sub0.ogg", CSoundManager::Yeti_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				case 1:
+					g_pSoundManager->Play_Sound(L"Monster_BladeWeapon_Sub1.ogg", CSoundManager::Yeti_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				case 2:
+					g_pSoundManager->Play_Sound(L"Monster_BladeWeapon_Sub2.ogg", CSoundManager::Yeti_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				case 3:
+					g_pSoundManager->Play_Sound(L"Monster_BladeWeapon_Sub3.ogg", CSoundManager::Yeti_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				}
+
+				switch (CALC::Random_Num(0, 4))
+				{
+				case 0:
+					g_pSoundManager->Play_Sound(L"Monster_Swing_Sub0.ogg", CSoundManager::Yeti_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 1:
+					g_pSoundManager->Play_Sound(L"Monster_Swing_Sub1.ogg", CSoundManager::Yeti_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 2:
+					g_pSoundManager->Play_Sound(L"Monster_Swing_Sub2.ogg", CSoundManager::Yeti_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 3:
+					g_pSoundManager->Play_Sound(L"Monster_Swing_Sub3.ogg", CSoundManager::Yeti_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 4:
+					g_pSoundManager->Play_Sound(L"Monster_Swing_Sub4.ogg", CSoundManager::Yeti_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				}
 			}
 		}
 		else if (2.3f <= AniTime)
@@ -2547,6 +3431,44 @@ void CYeti::Play_Combo_RLRL_Shoulder()
 				m_bEventTrigger[10] = true;
 				m_vecAttackCol[2]->Set_Enabled(true);
 				m_tObjParam.bSuperArmor = true;
+
+				g_pSoundManager->Stop_Sound(CSoundManager::Yeti_SFX_01);
+				g_pSoundManager->Stop_Sound(CSoundManager::Yeti_SFX_02);
+
+				switch (CALC::Random_Num(0, 3))
+				{
+				case 0:
+					g_pSoundManager->Play_Sound(L"Monster_BladeWeapon_Sub0.ogg", CSoundManager::Yeti_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				case 1:
+					g_pSoundManager->Play_Sound(L"Monster_BladeWeapon_Sub1.ogg", CSoundManager::Yeti_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				case 2:
+					g_pSoundManager->Play_Sound(L"Monster_BladeWeapon_Sub2.ogg", CSoundManager::Yeti_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				case 3:
+					g_pSoundManager->Play_Sound(L"Monster_BladeWeapon_Sub3.ogg", CSoundManager::Yeti_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				}
+
+				switch (CALC::Random_Num(0, 4))
+				{
+				case 0:
+					g_pSoundManager->Play_Sound(L"Monster_Swing_Sub0.ogg", CSoundManager::Yeti_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 1:
+					g_pSoundManager->Play_Sound(L"Monster_Swing_Sub1.ogg", CSoundManager::Yeti_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 2:
+					g_pSoundManager->Play_Sound(L"Monster_Swing_Sub2.ogg", CSoundManager::Yeti_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 3:
+					g_pSoundManager->Play_Sound(L"Monster_Swing_Sub3.ogg", CSoundManager::Yeti_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 4:
+					g_pSoundManager->Play_Sound(L"Monster_Swing_Sub4.ogg", CSoundManager::Yeti_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				}
 			}
 		}
 		else if (1.3f <= AniTime)
@@ -2819,6 +3741,44 @@ void CYeti::Play_Combo_RLRL_Smash()
 				m_bEventTrigger[1] = true;
 				m_vecAttackCol[1]->Set_Enabled(true);
 				m_tObjParam.bSuperArmor = true;
+
+				g_pSoundManager->Stop_Sound(CSoundManager::Yeti_SFX_01);
+				g_pSoundManager->Stop_Sound(CSoundManager::Yeti_SFX_02);
+
+				switch (CALC::Random_Num(0, 3))
+				{
+				case 0:
+					g_pSoundManager->Play_Sound(L"Monster_BladeWeapon_Sub0.ogg", CSoundManager::Yeti_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				case 1:
+					g_pSoundManager->Play_Sound(L"Monster_BladeWeapon_Sub1.ogg", CSoundManager::Yeti_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				case 2:
+					g_pSoundManager->Play_Sound(L"Monster_BladeWeapon_Sub2.ogg", CSoundManager::Yeti_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				case 3:
+					g_pSoundManager->Play_Sound(L"Monster_BladeWeapon_Sub3.ogg", CSoundManager::Yeti_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				}
+
+				switch (CALC::Random_Num(0, 4))
+				{
+				case 0:
+					g_pSoundManager->Play_Sound(L"Monster_Swing_Sub0.ogg", CSoundManager::Yeti_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 1:
+					g_pSoundManager->Play_Sound(L"Monster_Swing_Sub1.ogg", CSoundManager::Yeti_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 2:
+					g_pSoundManager->Play_Sound(L"Monster_Swing_Sub2.ogg", CSoundManager::Yeti_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 3:
+					g_pSoundManager->Play_Sound(L"Monster_Swing_Sub3.ogg", CSoundManager::Yeti_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 4:
+					g_pSoundManager->Play_Sound(L"Monster_Swing_Sub4.ogg", CSoundManager::Yeti_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				}
 			}
 		}
 		else if (4.3f <= AniTime)
@@ -2873,6 +3833,44 @@ void CYeti::Play_Combo_RLRL_Smash()
 				m_bEventTrigger[4] = true;
 				m_vecAttackCol[2]->Set_Enabled(true);
 				m_tObjParam.bSuperArmor = true;
+
+				g_pSoundManager->Stop_Sound(CSoundManager::Yeti_SFX_01);
+				g_pSoundManager->Stop_Sound(CSoundManager::Yeti_SFX_02);
+
+				switch (CALC::Random_Num(0, 3))
+				{
+				case 0:
+					g_pSoundManager->Play_Sound(L"Monster_BladeWeapon_Sub0.ogg", CSoundManager::Yeti_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				case 1:
+					g_pSoundManager->Play_Sound(L"Monster_BladeWeapon_Sub1.ogg", CSoundManager::Yeti_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				case 2:
+					g_pSoundManager->Play_Sound(L"Monster_BladeWeapon_Sub2.ogg", CSoundManager::Yeti_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				case 3:
+					g_pSoundManager->Play_Sound(L"Monster_BladeWeapon_Sub3.ogg", CSoundManager::Yeti_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				}
+
+				switch (CALC::Random_Num(0, 4))
+				{
+				case 0:
+					g_pSoundManager->Play_Sound(L"Monster_Swing_Sub0.ogg", CSoundManager::Yeti_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 1:
+					g_pSoundManager->Play_Sound(L"Monster_Swing_Sub1.ogg", CSoundManager::Yeti_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 2:
+					g_pSoundManager->Play_Sound(L"Monster_Swing_Sub2.ogg", CSoundManager::Yeti_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 3:
+					g_pSoundManager->Play_Sound(L"Monster_Swing_Sub3.ogg", CSoundManager::Yeti_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 4:
+					g_pSoundManager->Play_Sound(L"Monster_Swing_Sub4.ogg", CSoundManager::Yeti_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				}
 			}
 		}
 		else if (3.4f <= AniTime)
@@ -2927,6 +3925,44 @@ void CYeti::Play_Combo_RLRL_Smash()
 				m_bEventTrigger[7] = true;
 				m_vecAttackCol[1]->Set_Enabled(true);
 				m_tObjParam.bSuperArmor = true;
+
+				g_pSoundManager->Stop_Sound(CSoundManager::Yeti_SFX_01);
+				g_pSoundManager->Stop_Sound(CSoundManager::Yeti_SFX_02);
+
+				switch (CALC::Random_Num(0, 3))
+				{
+				case 0:
+					g_pSoundManager->Play_Sound(L"Monster_BladeWeapon_Sub0.ogg", CSoundManager::Yeti_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				case 1:
+					g_pSoundManager->Play_Sound(L"Monster_BladeWeapon_Sub1.ogg", CSoundManager::Yeti_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				case 2:
+					g_pSoundManager->Play_Sound(L"Monster_BladeWeapon_Sub2.ogg", CSoundManager::Yeti_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				case 3:
+					g_pSoundManager->Play_Sound(L"Monster_BladeWeapon_Sub3.ogg", CSoundManager::Yeti_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				}
+
+				switch (CALC::Random_Num(0, 4))
+				{
+				case 0:
+					g_pSoundManager->Play_Sound(L"Monster_Swing_Sub0.ogg", CSoundManager::Yeti_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 1:
+					g_pSoundManager->Play_Sound(L"Monster_Swing_Sub1.ogg", CSoundManager::Yeti_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 2:
+					g_pSoundManager->Play_Sound(L"Monster_Swing_Sub2.ogg", CSoundManager::Yeti_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 3:
+					g_pSoundManager->Play_Sound(L"Monster_Swing_Sub3.ogg", CSoundManager::Yeti_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 4:
+					g_pSoundManager->Play_Sound(L"Monster_Swing_Sub4.ogg", CSoundManager::Yeti_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				}
 			}
 		}
 		else if (2.4f <= AniTime)
@@ -2981,6 +4017,44 @@ void CYeti::Play_Combo_RLRL_Smash()
 				m_bEventTrigger[10] = true;
 				m_vecAttackCol[2]->Set_Enabled(true);
 				m_tObjParam.bSuperArmor = true;
+
+				g_pSoundManager->Stop_Sound(CSoundManager::Yeti_SFX_01);
+				g_pSoundManager->Stop_Sound(CSoundManager::Yeti_SFX_02);
+
+				switch (CALC::Random_Num(0, 3))
+				{
+				case 0:
+					g_pSoundManager->Play_Sound(L"Monster_BladeWeapon_Sub0.ogg", CSoundManager::Yeti_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				case 1:
+					g_pSoundManager->Play_Sound(L"Monster_BladeWeapon_Sub1.ogg", CSoundManager::Yeti_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				case 2:
+					g_pSoundManager->Play_Sound(L"Monster_BladeWeapon_Sub2.ogg", CSoundManager::Yeti_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				case 3:
+					g_pSoundManager->Play_Sound(L"Monster_BladeWeapon_Sub3.ogg", CSoundManager::Yeti_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				}
+
+				switch (CALC::Random_Num(0, 4))
+				{
+				case 0:
+					g_pSoundManager->Play_Sound(L"Monster_Swing_Sub0.ogg", CSoundManager::Yeti_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 1:
+					g_pSoundManager->Play_Sound(L"Monster_Swing_Sub1.ogg", CSoundManager::Yeti_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 2:
+					g_pSoundManager->Play_Sound(L"Monster_Swing_Sub2.ogg", CSoundManager::Yeti_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 3:
+					g_pSoundManager->Play_Sound(L"Monster_Swing_Sub3.ogg", CSoundManager::Yeti_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 4:
+					g_pSoundManager->Play_Sound(L"Monster_Swing_Sub4.ogg", CSoundManager::Yeti_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				}
 			}
 		}
 		else if (1.4f <= AniTime)
@@ -3131,6 +4205,44 @@ void CYeti::Play_Combo_RLRL_Smash()
 				m_bEventTrigger[19] = true;
 				m_vecAttackCol[2]->Set_Enabled(true);
 				m_tObjParam.bSuperArmor = true;
+
+				g_pSoundManager->Stop_Sound(CSoundManager::Yeti_SFX_01);
+				g_pSoundManager->Stop_Sound(CSoundManager::Yeti_SFX_02);
+
+				switch (CALC::Random_Num(0, 3))
+				{
+				case 0:
+					g_pSoundManager->Play_Sound(L"Monster_BladeWeapon_Sub0.ogg", CSoundManager::Yeti_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				case 1:
+					g_pSoundManager->Play_Sound(L"Monster_BladeWeapon_Sub1.ogg", CSoundManager::Yeti_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				case 2:
+					g_pSoundManager->Play_Sound(L"Monster_BladeWeapon_Sub2.ogg", CSoundManager::Yeti_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				case 3:
+					g_pSoundManager->Play_Sound(L"Monster_BladeWeapon_Sub3.ogg", CSoundManager::Yeti_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				}
+
+				switch (CALC::Random_Num(0, 4))
+				{
+				case 0:
+					g_pSoundManager->Play_Sound(L"Monster_Swing_Sub0.ogg", CSoundManager::Yeti_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 1:
+					g_pSoundManager->Play_Sound(L"Monster_Swing_Sub1.ogg", CSoundManager::Yeti_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 2:
+					g_pSoundManager->Play_Sound(L"Monster_Swing_Sub2.ogg", CSoundManager::Yeti_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 3:
+					g_pSoundManager->Play_Sound(L"Monster_Swing_Sub3.ogg", CSoundManager::Yeti_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 4:
+					g_pSoundManager->Play_Sound(L"Monster_Swing_Sub4.ogg", CSoundManager::Yeti_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				}
 			}
 		}
 		else if (2.3f <= AniTime)
@@ -3266,6 +4378,44 @@ void CYeti::Play_Combo_RLRL_Swing()
 				m_bEventTrigger[1] = true;
 				m_vecAttackCol[1]->Set_Enabled(true);
 				m_tObjParam.bSuperArmor = true;
+
+				g_pSoundManager->Stop_Sound(CSoundManager::Yeti_SFX_01);
+				g_pSoundManager->Stop_Sound(CSoundManager::Yeti_SFX_02);
+
+				switch (CALC::Random_Num(0, 3))
+				{
+				case 0:
+					g_pSoundManager->Play_Sound(L"Monster_BladeWeapon_Sub0.ogg", CSoundManager::Yeti_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				case 1:
+					g_pSoundManager->Play_Sound(L"Monster_BladeWeapon_Sub1.ogg", CSoundManager::Yeti_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				case 2:
+					g_pSoundManager->Play_Sound(L"Monster_BladeWeapon_Sub2.ogg", CSoundManager::Yeti_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				case 3:
+					g_pSoundManager->Play_Sound(L"Monster_BladeWeapon_Sub3.ogg", CSoundManager::Yeti_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				}
+
+				switch (CALC::Random_Num(0, 4))
+				{
+				case 0:
+					g_pSoundManager->Play_Sound(L"Monster_Swing_Sub0.ogg", CSoundManager::Yeti_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 1:
+					g_pSoundManager->Play_Sound(L"Monster_Swing_Sub1.ogg", CSoundManager::Yeti_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 2:
+					g_pSoundManager->Play_Sound(L"Monster_Swing_Sub2.ogg", CSoundManager::Yeti_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 3:
+					g_pSoundManager->Play_Sound(L"Monster_Swing_Sub3.ogg", CSoundManager::Yeti_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 4:
+					g_pSoundManager->Play_Sound(L"Monster_Swing_Sub4.ogg", CSoundManager::Yeti_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				}
 			}
 		}
 		else if (4.3f <= AniTime)
@@ -3320,6 +4470,44 @@ void CYeti::Play_Combo_RLRL_Swing()
 				m_bEventTrigger[4] = true;
 				m_vecAttackCol[2]->Set_Enabled(true);
 				m_tObjParam.bSuperArmor = true;
+
+				g_pSoundManager->Stop_Sound(CSoundManager::Yeti_SFX_01);
+				g_pSoundManager->Stop_Sound(CSoundManager::Yeti_SFX_02);
+
+				switch (CALC::Random_Num(0, 3))
+				{
+				case 0:
+					g_pSoundManager->Play_Sound(L"Monster_BladeWeapon_Sub0.ogg", CSoundManager::Yeti_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				case 1:
+					g_pSoundManager->Play_Sound(L"Monster_BladeWeapon_Sub1.ogg", CSoundManager::Yeti_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				case 2:
+					g_pSoundManager->Play_Sound(L"Monster_BladeWeapon_Sub2.ogg", CSoundManager::Yeti_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				case 3:
+					g_pSoundManager->Play_Sound(L"Monster_BladeWeapon_Sub3.ogg", CSoundManager::Yeti_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				}
+
+				switch (CALC::Random_Num(0, 4))
+				{
+				case 0:
+					g_pSoundManager->Play_Sound(L"Monster_Swing_Sub0.ogg", CSoundManager::Yeti_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 1:
+					g_pSoundManager->Play_Sound(L"Monster_Swing_Sub1.ogg", CSoundManager::Yeti_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 2:
+					g_pSoundManager->Play_Sound(L"Monster_Swing_Sub2.ogg", CSoundManager::Yeti_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 3:
+					g_pSoundManager->Play_Sound(L"Monster_Swing_Sub3.ogg", CSoundManager::Yeti_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 4:
+					g_pSoundManager->Play_Sound(L"Monster_Swing_Sub4.ogg", CSoundManager::Yeti_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				}
 			}
 		}
 		else if (3.4f <= AniTime)
@@ -3374,6 +4562,44 @@ void CYeti::Play_Combo_RLRL_Swing()
 				m_bEventTrigger[7] = true;
 				m_vecAttackCol[1]->Set_Enabled(true);
 				m_tObjParam.bSuperArmor = true;
+
+				g_pSoundManager->Stop_Sound(CSoundManager::Yeti_SFX_01);
+				g_pSoundManager->Stop_Sound(CSoundManager::Yeti_SFX_02);
+
+				switch (CALC::Random_Num(0, 3))
+				{
+				case 0:
+					g_pSoundManager->Play_Sound(L"Monster_BladeWeapon_Sub0.ogg", CSoundManager::Yeti_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				case 1:
+					g_pSoundManager->Play_Sound(L"Monster_BladeWeapon_Sub1.ogg", CSoundManager::Yeti_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				case 2:
+					g_pSoundManager->Play_Sound(L"Monster_BladeWeapon_Sub2.ogg", CSoundManager::Yeti_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				case 3:
+					g_pSoundManager->Play_Sound(L"Monster_BladeWeapon_Sub3.ogg", CSoundManager::Yeti_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				}
+
+				switch (CALC::Random_Num(0, 4))
+				{
+				case 0:
+					g_pSoundManager->Play_Sound(L"Monster_Swing_Sub0.ogg", CSoundManager::Yeti_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 1:
+					g_pSoundManager->Play_Sound(L"Monster_Swing_Sub1.ogg", CSoundManager::Yeti_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 2:
+					g_pSoundManager->Play_Sound(L"Monster_Swing_Sub2.ogg", CSoundManager::Yeti_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 3:
+					g_pSoundManager->Play_Sound(L"Monster_Swing_Sub3.ogg", CSoundManager::Yeti_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 4:
+					g_pSoundManager->Play_Sound(L"Monster_Swing_Sub4.ogg", CSoundManager::Yeti_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				}
 			}
 		}
 		else if (2.4f <= AniTime)
@@ -3428,6 +4654,44 @@ void CYeti::Play_Combo_RLRL_Swing()
 				m_bEventTrigger[10] = true;
 				m_vecAttackCol[2]->Set_Enabled(true);
 				m_tObjParam.bSuperArmor = true;
+
+				g_pSoundManager->Stop_Sound(CSoundManager::Yeti_SFX_01);
+				g_pSoundManager->Stop_Sound(CSoundManager::Yeti_SFX_02);
+
+				switch (CALC::Random_Num(0, 3))
+				{
+				case 0:
+					g_pSoundManager->Play_Sound(L"Monster_BladeWeapon_Sub0.ogg", CSoundManager::Yeti_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				case 1:
+					g_pSoundManager->Play_Sound(L"Monster_BladeWeapon_Sub1.ogg", CSoundManager::Yeti_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				case 2:
+					g_pSoundManager->Play_Sound(L"Monster_BladeWeapon_Sub2.ogg", CSoundManager::Yeti_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				case 3:
+					g_pSoundManager->Play_Sound(L"Monster_BladeWeapon_Sub3.ogg", CSoundManager::Yeti_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				}
+
+				switch (CALC::Random_Num(0, 4))
+				{
+				case 0:
+					g_pSoundManager->Play_Sound(L"Monster_Swing_Sub0.ogg", CSoundManager::Yeti_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 1:
+					g_pSoundManager->Play_Sound(L"Monster_Swing_Sub1.ogg", CSoundManager::Yeti_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 2:
+					g_pSoundManager->Play_Sound(L"Monster_Swing_Sub2.ogg", CSoundManager::Yeti_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 3:
+					g_pSoundManager->Play_Sound(L"Monster_Swing_Sub3.ogg", CSoundManager::Yeti_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 4:
+					g_pSoundManager->Play_Sound(L"Monster_Swing_Sub4.ogg", CSoundManager::Yeti_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				}
 			}
 		}
 		else if (1.4f <= AniTime)
@@ -3578,6 +4842,44 @@ void CYeti::Play_Combo_RLRL_Swing()
 				m_bEventTrigger[19] = true;
 				m_vecAttackCol[2]->Set_Enabled(true);
 				m_tObjParam.bSuperArmor = true;
+
+				g_pSoundManager->Stop_Sound(CSoundManager::Yeti_SFX_01);
+				g_pSoundManager->Stop_Sound(CSoundManager::Yeti_SFX_02);
+
+				switch (CALC::Random_Num(0, 3))
+				{
+				case 0:
+					g_pSoundManager->Play_Sound(L"Monster_BladeWeapon_Sub0.ogg", CSoundManager::Yeti_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				case 1:
+					g_pSoundManager->Play_Sound(L"Monster_BladeWeapon_Sub1.ogg", CSoundManager::Yeti_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				case 2:
+					g_pSoundManager->Play_Sound(L"Monster_BladeWeapon_Sub2.ogg", CSoundManager::Yeti_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				case 3:
+					g_pSoundManager->Play_Sound(L"Monster_BladeWeapon_Sub3.ogg", CSoundManager::Yeti_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				}
+
+				switch (CALC::Random_Num(0, 4))
+				{
+				case 0:
+					g_pSoundManager->Play_Sound(L"Monster_Swing_Sub0.ogg", CSoundManager::Yeti_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 1:
+					g_pSoundManager->Play_Sound(L"Monster_Swing_Sub1.ogg", CSoundManager::Yeti_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 2:
+					g_pSoundManager->Play_Sound(L"Monster_Swing_Sub2.ogg", CSoundManager::Yeti_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 3:
+					g_pSoundManager->Play_Sound(L"Monster_Swing_Sub3.ogg", CSoundManager::Yeti_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 4:
+					g_pSoundManager->Play_Sound(L"Monster_Swing_Sub4.ogg", CSoundManager::Yeti_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				}
 			}
 		}
 		else if (1.5f <= AniTime)
@@ -3741,6 +5043,8 @@ void CYeti::Play_Move()
 			m_fSkillMoveSpeed_Cur = 4.f;
 			m_fSkillMoveAccel_Cur = 0.f;
 			m_fSkillMoveMultiply = 0.5f;
+
+			m_fFootSoundMax = 0.4f;
 		}
 
 		if (nullptr == m_pAggroTarget)
@@ -3780,6 +5084,8 @@ void CYeti::Play_Move()
 			m_fSkillMoveSpeed_Cur = 2.5f;
 			m_fSkillMoveAccel_Cur = 0.f;
 			m_fSkillMoveMultiply = 0.5f;
+
+			m_fFootSoundMax = 0.46f;
 
 			switch (CALC::Random_Num(YETI_ANI::Walk_R, YETI_ANI::Walk_B))
 			{
@@ -3836,6 +5142,7 @@ void CYeti::Play_Move()
 
 	case MONSTER_MOVE_TYPE::MOVE_WALK:
 		m_eState = YETI_ANI::Walk_F;
+		m_fFootSoundMax = 0.41f;
 
 		if (nullptr == m_pAggroTarget)
 		{
@@ -4182,16 +5489,22 @@ HRESULT CYeti::Ready_Status(void * pArg)
 	m_tObjParam.bIsAttack = false;
 	m_tObjParam.bCanDodge = true;
 	m_tObjParam.bIsDodge = false;
+
+	m_bCanSequencePattern = true;
 	m_bCanPlayDead = false;
 	m_bInRecognitionRange = false;
 	m_bInAtkRange = false;
 	m_bCanChase = false;
+
 	m_bCanCoolDown = false;
 	m_bIsCoolDown = false;
+
 	m_bCanChooseAtkType = true;
 	m_bIsCombo = false;
+
 	m_bCanIdle = true;
 	m_bIsIdle = false;
+
 	m_bCanMoveAround = true;
 	m_bIsMoveAround = false;
 
@@ -4206,6 +5519,9 @@ HRESULT CYeti::Ready_Status(void * pArg)
 
 	m_fCoolDownMax = 0.f;
 	m_fCoolDownCur = 0.f;
+
+	m_iPatternCount = 0;
+	m_iPatternCountMax = 13;
 
 	return S_OK;
 }

@@ -203,6 +203,7 @@ protected:
 	virtual void Free();
 
 protected:
+	CGameObject*		m_pAggroTarget = nullptr;
 	CMonsterUI*			m_pMonsterUI = nullptr;
 	CWeapon*			m_pWeapon = nullptr;
 
@@ -216,8 +217,6 @@ protected:
 	CBattleAgent*		m_pBattleAgentCom = nullptr;
 	CAIController*		m_pAIControllerCom = nullptr;
 	CRigidBody*			m_pRigidCom = nullptr;
-
-	CGameObject*		m_pAggroTarget = nullptr;
 
 protected:
 	MONSTER_STATE_TYPE		m_eFirstCategory = MONSTER_STATE_TYPE::IDLE;
@@ -237,18 +236,23 @@ protected:
 	_double					m_dAniPlayMul = 1;
 
 	_bool					m_bEventTrigger[30] = {};
+	_bool					m_bCanSequencePattern = true; //차례대로 패턴 보여주기ox, 1회 진행 후 랜덤으로 단타,콤보로 넘어갑니다
 	_bool					m_bCanPlayDead = false; //죽음 애니 재생
 	_bool					m_bInRecognitionRange = false; //인지범위ox
 	_bool					m_bInAtkRange = false; //공격범위ox
 	_bool					m_bCanChase = false; //추적ox
+
 	_bool					m_bCanCoolDown = false; //쿨타임ox
 	_bool					m_bIsCoolDown = false; //쿨타임 진행중ox
+
 	_bool					m_bCanChooseAtkType = false; //노말,콤보 가능ox
 	_bool					m_bIsCombo = false; //콤보공격 진행중ox
+
 	_bool					m_bCanIdle = true; //일상ox
 	_bool					m_bIsIdle = false; //일상 진행중ox
+
 	_bool					m_bCanMoveAround = false; //경계ox
-	_bool					m_bIsMoveAround = false; //경계동작 진행중
+	_bool					m_bIsMoveAround = false; //경계동작 진행중ox
 
 	_float					m_fSkillMoveSpeed_Cur = 0.f;
 	_float					m_fSkillMoveSpeed_Max = 0.f;
@@ -267,6 +271,8 @@ protected:
 	_float					m_fDeadEffect_Offset = 0.f;
 
 	_int					m_iRandom = 0;
+	_int					m_iPatternCount = 0;
+	_int					m_iPatternCountMax = 0;
 	_int					m_iDodgeCount = 0;
 	_int					m_iDodgeCountMax = 0;
 

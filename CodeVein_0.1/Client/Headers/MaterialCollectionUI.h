@@ -30,6 +30,7 @@ private:
 	_uint						m_iBuyCnt = 1; // 물건 사는 개수
 	_uint						m_iCost = 0; // 물건 개당 가격
 	CMaterialBuyUI*				m_pBuyUI = nullptr;
+	CMaterialOptionUI*			m_pSoundOption = nullptr;
 
 public:
 	static CMaterialCollectionUI*	Create(_Device pGraphic_Device);

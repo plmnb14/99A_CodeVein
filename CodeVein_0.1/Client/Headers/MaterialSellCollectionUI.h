@@ -41,6 +41,7 @@ private:
 	vector<CMaterial_Slot*>		m_vecSlot;
 	CMaterialSellUI*			m_pMtrlSellUI = nullptr;
 	CMaterial_InfoUI*			m_pInfoUI = nullptr;
+	CMaterial_Slot*				m_pSoundSlot = nullptr;
 	
 public:
 	static CMaterialSellCollectionUI*	Create(_Device pGraphic_Device);

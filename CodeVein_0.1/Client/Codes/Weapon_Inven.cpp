@@ -88,7 +88,7 @@ _int CWeapon_Inven::Update_GameObject(_double TimeDelta)
 		m_bIsSubActive = false;
 	}
 
-	if (!m_bIsActive)
+	if (!m_bIsActive)	
 		return NO_EVENT;
 	else
 		CUI_Manager::Get_Instance()->Get_MouseUI()->Set_Active(true);
@@ -204,20 +204,24 @@ void CWeapon_Inven::Click_Inven()
 	{
 		if (pSlot->Pt_InRect())
 		{
+			if (m_pSoundSlot != pSlot)
+				CUI_Manager::Get_Instance()->Stop_Play_UISound(L"Slot_Regist.ogg", CSoundManager::CHANNELID::UI_Click, CSoundManager::Effect_Sound);
+			m_pSoundSlot = pSlot;
+
 			m_pExplainUI->Set_WeaponParam(pSlot->Get_WeaponParam());
 
 			if (g_pInput_Device->Get_DIMouseState(CInput_Device::DIM_LB) &&
 				!pSlot->Get_Select())
 			{
 				CUI_Manager::Get_Instance()->Stop_Play_UISound(L"Slot_Regist.ogg", CSoundManager::CHANNELID::UI_Click, CSoundManager::Effect_Sound);
-				Regist_Weapon(pSlot);			
+				Regist_Weapon(pSlot);
 			}
 			/*if (g_pInput_Device->Get_DIMouseState(CInput_Device::DIM_RB) &&
 				pSlot->Get_Select())
 			{
 				UnRegist_Weapon(pSlot);
 			}*/
-			
+
 		}
 		iIdx++;
 	}

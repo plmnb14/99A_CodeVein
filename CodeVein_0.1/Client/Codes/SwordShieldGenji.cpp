@@ -825,11 +825,22 @@ CBT_Composite_Node * CSwordShieldGenji::LeftMoveAround()
 {
 	CBT_Simple_Parallel* Root_Parallel = Node_Parallel_Immediate("왼쪽 이동 서성임");
 
+	CBT_Sequence* MainSeq = Node_Sequence("추적");
+	CBT_SetValue* StepTag0 = Node_INT_SetValue("발소리 이름 설정", L"Voice_Tag", 21);
+	CBT_SetValue* StepPlay = Node_BOOL_SetValue("발소리 재생", L"Step_Play", true);
 	CBT_MoveAround*	MoveAround0 = Node_MoveAround("왼쪽으로 서성 이동", L"Player_Pos", L"Monster_Speed", L"Monster_Dir", 0.7f, 2, 2);
+	CBT_SetValue* StepStop = Node_BOOL_SetValue("발소리 재생", L"Step_Play", false);
+	CBT_SetValue* StepTag1 = Node_INT_SetValue("발소리 이름 설정", L"Voice_Tag", 20);
 
 	CBT_ChaseDir* ChaseDir0 = Node_ChaseDir("플레이어 추적", L"Player_Pos", 5, 0);
 
-	Root_Parallel->Set_Main_Child(MoveAround0);
+	Root_Parallel->Set_Main_Child(MainSeq);
+	MainSeq->Add_Child(StepTag0);
+	MainSeq->Add_Child(StepPlay);
+	MainSeq->Add_Child(MoveAround0);
+	MainSeq->Add_Child(StepStop);
+	MainSeq->Add_Child(StepTag1);
+
 
 	Root_Parallel->Set_Sub_Child(ChaseDir0);
 
@@ -840,11 +851,21 @@ CBT_Composite_Node * CSwordShieldGenji::RightMoveAround()
 {
 	CBT_Simple_Parallel* Root_Parallel = Node_Parallel_Immediate("오른쪽 이동 서성임");
 
+	CBT_Sequence* MainSeq = Node_Sequence("추적");
+	CBT_SetValue* StepTag0 = Node_INT_SetValue("발소리 이름 설정", L"Voice_Tag", 21);
+	CBT_SetValue* StepPlay = Node_BOOL_SetValue("발소리 재생", L"Step_Play", true);
 	CBT_MoveAround*	MoveAround0 = Node_MoveAround("오른쪽으로 서성 이동", L"Player_Pos", L"Monster_Speed", L"Monster_Dir", -0.7f, 2, 2);
+	CBT_SetValue* StepStop = Node_BOOL_SetValue("발소리 재생", L"Step_Play", false);
+	CBT_SetValue* StepTag1 = Node_INT_SetValue("발소리 이름 설정", L"Voice_Tag", 20);
 
 	CBT_ChaseDir* ChaseDir0 = Node_ChaseDir("플레이어 추적", L"Player_Pos", 5, 0);
 
-	Root_Parallel->Set_Main_Child(MoveAround0);
+	Root_Parallel->Set_Main_Child(MainSeq);
+	MainSeq->Add_Child(StepTag0);
+	MainSeq->Add_Child(StepPlay);
+	MainSeq->Add_Child(MoveAround0);
+	MainSeq->Add_Child(StepStop);
+	MainSeq->Add_Child(StepTag1);
 
 	Root_Parallel->Set_Sub_Child(ChaseDir0);
 
@@ -1668,6 +1689,7 @@ HRESULT CSwordShieldGenji::Ready_Sound()
 	m_mapSound.emplace(13, L"SE_NEW_BARK_ATTACK_SMALL_MV_006.ogg");
 
 	m_mapSound.emplace(20, L"SE_FOOT_STEP_CARPET_001.ogg");
+	m_mapSound.emplace(21, L"SE_FOOT_STEP_CARPET_001.ogg");
 
 	return S_OK;
 }

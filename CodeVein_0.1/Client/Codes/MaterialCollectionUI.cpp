@@ -86,6 +86,10 @@ void CMaterialCollectionUI::Click_SubUI()
 	{
 		if (iter->Pt_InRect() && iter->Get_Type() != CMaterial::MATERIAL_END)
 		{	
+			if (m_pSoundOption != iter)
+				CUI_Manager::Get_Instance()->Stop_Play_UISound(L"Slot_Regist.ogg", CSoundManager::CHANNELID::UI_Click, CSoundManager::Effect_Sound);
+			m_pSoundOption = iter;
+
 			m_pInfoUI->Set_Type(iter->Get_Type());
 			if (g_pInput_Device->Get_DIMouseState(CInput_Device::DIM_LB))
 			{

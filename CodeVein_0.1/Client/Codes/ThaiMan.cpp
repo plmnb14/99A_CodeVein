@@ -54,6 +54,7 @@ _int CThaiMan::Update_GameObject(_double TimeDelta)
 	Check_Hit();
 	Check_Dist();
 	Check_AniEvent();
+	Check_FootSound();
 	Function_CoolDown();
 
 	m_pMeshCom->SetUp_Animation(m_eState);
@@ -370,6 +371,10 @@ void CThaiMan::Check_Hit()
 				}
 				else
 				{
+					m_pBattleAgentCom->Set_RimColor(_v4(0.f, 0.f, 0.f, 0.f));
+					m_pBattleAgentCom->Set_RimAlpha(0.5f);
+					m_pBattleAgentCom->Set_RimValue(8.f);
+
 					if (true == m_tObjParam.bIsHit)
 					{
 						if (true == m_tObjParam.bHitAgain)
@@ -541,41 +546,29 @@ void CThaiMan::Check_AniEvent()
 	case MONSTER_STATE_TYPE::ATTACK:
 		if (true == m_bCanChooseAtkType)
 		{
+			if (m_iPatternCount >= m_iPatternCountMax)
+			{
+				m_bCanSequencePattern = false;
+				m_iPatternCount = 0;
+			}
+
 			m_tObjParam.bCanAttack = false;
 			m_tObjParam.bIsAttack = true;
 
 			m_bCanChooseAtkType = false;
 
-			switch (CALC::Random_Num(THAIMAN_ANI::Atk_SP03, THAIMAN_ANI::Atk_N01))
+			if (true == m_bCanSequencePattern)
 			{
-			case THAIMAN_ANI::Atk_N01:
-				m_eState = Atk_N01;
-				break;
-			case THAIMAN_ANI::Atk_N02:
-				m_eState = Atk_N02;
-				break;
-			case THAIMAN_ANI::Atk_N03:
-				m_eState = Atk_N03;
-				break;
-			case THAIMAN_ANI::Atk_N04:
-				m_eState = Atk_N04;
-				break;
-			case THAIMAN_ANI::Atk_S01:
-				m_eState = Atk_S01;
-				break;
-			case THAIMAN_ANI::Atk_S02:
-				m_eState = Atk_S02;
-				break;
-			case THAIMAN_ANI::Atk_SP01:
-				m_eState = Atk_SP01;
-				break;
-			case THAIMAN_ANI::Atk_SP02:
-				m_eState = Atk_SP02;
-				break;
-			case THAIMAN_ANI::Atk_SP03:
-				m_eState = Atk_SP03;
-				break;
+				m_eSecondCategory_ATK = MONSTER_ATK_TYPE::ATK_SEQUNCE;
+				Play_SequenceAtk();
 			}
+			else
+			{
+				m_eSecondCategory_ATK = MONSTER_ATK_TYPE::ATK_NORMAL;
+				Play_RandomAtkNormal();
+			}
+
+			return;
 		}
 		else
 		{
@@ -656,6 +649,100 @@ void CThaiMan::Check_DeadEffect(_double TimeDelta)
 	return;
 }
 
+void CThaiMan::Check_FootSound()
+{
+	if (THAIMAN_ANI::Walk_F == m_eState ||
+		THAIMAN_ANI::Walk_L == m_eState ||
+		THAIMAN_ANI::Walk_R == m_eState ||
+		THAIMAN_ANI::Run == m_eState)
+	{
+		m_fFootSound += DELTA_60;
+
+		if (m_fFootSound >= m_fFootSoundMax)
+		{
+			m_fFootSound = 0.f;
+
+			g_pSoundManager->Stop_Sound(CSoundManager::ThaiMan_Step);
+
+			switch (CALC::Random_Num(0, 5))
+			{
+			case 0:
+				g_pSoundManager->Play_Sound(L"Step0.ogg", CSoundManager::ThaiMan_Step, CSoundManager::Effect_Sound);
+				break;
+
+			case 1:
+				g_pSoundManager->Play_Sound(L"Step1.ogg", CSoundManager::ThaiMan_Step, CSoundManager::Effect_Sound);
+				break;
+
+			case 2:
+				g_pSoundManager->Play_Sound(L"Step2.ogg", CSoundManager::ThaiMan_Step, CSoundManager::Effect_Sound);
+				break;
+
+			case 3:
+				g_pSoundManager->Play_Sound(L"Step3.ogg", CSoundManager::ThaiMan_Step, CSoundManager::Effect_Sound);
+				break;
+
+			case 4:
+				g_pSoundManager->Play_Sound(L"Step4.ogg", CSoundManager::ThaiMan_Step, CSoundManager::Effect_Sound);
+				break;
+
+			case 5:
+				g_pSoundManager->Play_Sound(L"Step5.ogg", CSoundManager::ThaiMan_Step, CSoundManager::Effect_Sound);
+				break;
+			}
+		}
+	}
+
+	return;
+}
+
+void CThaiMan::Play_SequenceAtk()
+{
+	switch (m_iPatternCount)
+	{
+	case 0:
+		m_eState = THAIMAN_ANI::Atk_N01;
+		break;
+
+	case 1:
+		m_eState = THAIMAN_ANI::Atk_N02;
+		break;
+
+	case 2:
+		m_eState = THAIMAN_ANI::Atk_N03;
+		break;
+
+	case 3:
+		m_eState = THAIMAN_ANI::Atk_N04;
+		break;
+
+	case 4:
+		m_eState = THAIMAN_ANI::Atk_S01;
+		break;
+
+	case 5:
+		m_eState = THAIMAN_ANI::Atk_S02;
+		break;
+
+	case 6:
+		m_eState = THAIMAN_ANI::Atk_SP01;
+		break;
+
+	case 7:
+		m_eState = THAIMAN_ANI::Atk_SP02;
+		break;
+
+	case 8:
+		m_eState = THAIMAN_ANI::Atk_SP03;
+		break;
+
+	}
+
+	++m_iPatternCount;
+
+	return;
+}
+
 void CThaiMan::Play_RandomAtkNormal()
 {
 	switch (CALC::Random_Num(ATK_NORMAL_TYPE::NORMAL_RDIAGONAL, ATK_NORMAL_TYPE::NORMAL_RDigonalRRScrewRchop))
@@ -727,6 +814,27 @@ void CThaiMan::Play_RDiagonal()
 				m_bEventTrigger[1] = true;
 				m_vecAttackCol[1]->Set_Enabled(true);
 				m_tObjParam.bSuperArmor = true;
+
+				g_pSoundManager->Stop_Sound(CSoundManager::ThaiMan_SFX_02);
+
+				switch (CALC::Random_Num(0, 4))
+				{
+				case 0:
+					g_pSoundManager->Play_Sound(L"Monster_Swing_Sub0.ogg", CSoundManager::ThaiMan_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 1:
+					g_pSoundManager->Play_Sound(L"Monster_Swing_Sub1.ogg", CSoundManager::ThaiMan_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 2:
+					g_pSoundManager->Play_Sound(L"Monster_Swing_Sub2.ogg", CSoundManager::ThaiMan_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 3:
+					g_pSoundManager->Play_Sound(L"Monster_Swing_Sub3.ogg", CSoundManager::ThaiMan_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 4:
+					g_pSoundManager->Play_Sound(L"Monster_Swing_Sub4.ogg", CSoundManager::ThaiMan_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				}
 			}
 		}
 		else if (1.5f <= AniTime)
@@ -737,9 +845,7 @@ void CThaiMan::Play_RDiagonal()
 
 				g_pSoundManager->Stop_Sound(CSoundManager::ThaiMan_Voice);
 
-				m_iRandom = CALC::Random_Num(0, 6);
-
-				switch (m_iRandom)
+				switch (CALC::Random_Num(0, 6))
 				{
 				case 0:
 					g_pSoundManager->Play_Sound(L"ThaiMan_Atk_Voice0.ogg", CSoundManager::ThaiMan_Voice, CSoundManager::Effect_Sound);
@@ -862,6 +968,27 @@ void CThaiMan::Play_L()
 				m_bEventTrigger[1] = true;
 				m_vecAttackCol[0]->Set_Enabled(true);
 				m_tObjParam.bSuperArmor = true;
+
+				g_pSoundManager->Stop_Sound(CSoundManager::ThaiMan_SFX_02);
+
+				switch (CALC::Random_Num(0, 4))
+				{
+				case 0:
+					g_pSoundManager->Play_Sound(L"Monster_Swing_Sub0.ogg", CSoundManager::ThaiMan_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 1:
+					g_pSoundManager->Play_Sound(L"Monster_Swing_Sub1.ogg", CSoundManager::ThaiMan_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 2:
+					g_pSoundManager->Play_Sound(L"Monster_Swing_Sub2.ogg", CSoundManager::ThaiMan_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 3:
+					g_pSoundManager->Play_Sound(L"Monster_Swing_Sub3.ogg", CSoundManager::ThaiMan_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 4:
+					g_pSoundManager->Play_Sound(L"Monster_Swing_Sub4.ogg", CSoundManager::ThaiMan_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				}
 			}
 		}
 		else if (1.f <= AniTime)
@@ -872,9 +999,7 @@ void CThaiMan::Play_L()
 
 				g_pSoundManager->Stop_Sound(CSoundManager::ThaiMan_Voice);
 
-				m_iRandom = CALC::Random_Num(0, 6);
-
-				switch (m_iRandom)
+				switch (CALC::Random_Num(0, 6))
 				{
 				case 0:
 					g_pSoundManager->Play_Sound(L"ThaiMan_Atk_Voice0.ogg", CSoundManager::ThaiMan_Voice, CSoundManager::Effect_Sound);
@@ -997,6 +1122,27 @@ void CThaiMan::Play_BackDumpling()
 				m_bEventTrigger[1] = true;
 				m_vecAttackCol[3]->Set_Enabled(true);
 				m_tObjParam.bSuperArmor = true;
+
+				g_pSoundManager->Stop_Sound(CSoundManager::ThaiMan_SFX_02);
+
+				switch (CALC::Random_Num(0, 4))
+				{
+				case 0:
+					g_pSoundManager->Play_Sound(L"Monster_Swing_Sub0.ogg", CSoundManager::ThaiMan_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 1:
+					g_pSoundManager->Play_Sound(L"Monster_Swing_Sub1.ogg", CSoundManager::ThaiMan_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 2:
+					g_pSoundManager->Play_Sound(L"Monster_Swing_Sub2.ogg", CSoundManager::ThaiMan_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 3:
+					g_pSoundManager->Play_Sound(L"Monster_Swing_Sub3.ogg", CSoundManager::ThaiMan_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 4:
+					g_pSoundManager->Play_Sound(L"Monster_Swing_Sub4.ogg", CSoundManager::ThaiMan_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				}
 			}
 		}
 		else if (1.f <= AniTime)
@@ -1007,9 +1153,7 @@ void CThaiMan::Play_BackDumpling()
 
 				g_pSoundManager->Stop_Sound(CSoundManager::ThaiMan_Voice);
 
-				m_iRandom = CALC::Random_Num(0, 6);
-
-				switch (m_iRandom)
+				switch (CALC::Random_Num(0, 6))
 				{
 				case 0:
 					g_pSoundManager->Play_Sound(L"ThaiMan_Atk_Voice0.ogg", CSoundManager::ThaiMan_Voice, CSoundManager::Effect_Sound);
@@ -1089,6 +1233,27 @@ void CThaiMan::Play_DropKick()
 				m_bEventTrigger[1] = true;
 				m_vecAttackCol[3]->Set_Enabled(true);
 				m_tObjParam.bSuperArmor = true;
+
+				g_pSoundManager->Stop_Sound(CSoundManager::ThaiMan_SFX_02);
+
+				switch (CALC::Random_Num(0, 4))
+				{
+				case 0:
+					g_pSoundManager->Play_Sound(L"Monster_Swing_Sub0.ogg", CSoundManager::ThaiMan_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 1:
+					g_pSoundManager->Play_Sound(L"Monster_Swing_Sub1.ogg", CSoundManager::ThaiMan_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 2:
+					g_pSoundManager->Play_Sound(L"Monster_Swing_Sub2.ogg", CSoundManager::ThaiMan_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 3:
+					g_pSoundManager->Play_Sound(L"Monster_Swing_Sub3.ogg", CSoundManager::ThaiMan_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 4:
+					g_pSoundManager->Play_Sound(L"Monster_Swing_Sub4.ogg", CSoundManager::ThaiMan_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				}
 			}
 		}
 		else if (2.f <= AniTime)
@@ -1099,9 +1264,7 @@ void CThaiMan::Play_DropKick()
 
 				g_pSoundManager->Stop_Sound(CSoundManager::ThaiMan_Voice);
 
-				m_iRandom = CALC::Random_Num(0, 6);
-
-				switch (m_iRandom)
+				switch (CALC::Random_Num(0, 6))
 				{
 				case 0:
 					g_pSoundManager->Play_Sound(L"ThaiMan_Atk_Voice0.ogg", CSoundManager::ThaiMan_Voice, CSoundManager::Effect_Sound);
@@ -1194,6 +1357,27 @@ void CThaiMan::Play_LkBk()
 				m_bEventTrigger[1] = true;
 				m_vecAttackCol[3]->Set_Enabled(true);
 				m_tObjParam.bSuperArmor = true;
+
+				g_pSoundManager->Stop_Sound(CSoundManager::ThaiMan_SFX_02);
+
+				switch (CALC::Random_Num(0, 4))
+				{
+				case 0:
+					g_pSoundManager->Play_Sound(L"Monster_Swing_Sub0.ogg", CSoundManager::ThaiMan_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 1:
+					g_pSoundManager->Play_Sound(L"Monster_Swing_Sub1.ogg", CSoundManager::ThaiMan_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 2:
+					g_pSoundManager->Play_Sound(L"Monster_Swing_Sub2.ogg", CSoundManager::ThaiMan_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 3:
+					g_pSoundManager->Play_Sound(L"Monster_Swing_Sub3.ogg", CSoundManager::ThaiMan_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 4:
+					g_pSoundManager->Play_Sound(L"Monster_Swing_Sub4.ogg", CSoundManager::ThaiMan_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				}
 			}
 		}
 		else if (1.8f <= AniTime)
@@ -1204,9 +1388,7 @@ void CThaiMan::Play_LkBk()
 
 				g_pSoundManager->Stop_Sound(CSoundManager::ThaiMan_Voice);
 
-				m_iRandom = CALC::Random_Num(0, 6);
-
-				switch (m_iRandom)
+				switch (CALC::Random_Num(0, 6))
 				{
 				case 0:
 					g_pSoundManager->Play_Sound(L"ThaiMan_Atk_Voice0.ogg", CSoundManager::ThaiMan_Voice, CSoundManager::Effect_Sound);
@@ -1248,6 +1430,27 @@ void CThaiMan::Play_LkBk()
 				m_bEventTrigger[3] = true;
 				m_vecAttackCol[2]->Set_Enabled(true);
 				m_tObjParam.bSuperArmor = true;
+
+				g_pSoundManager->Stop_Sound(CSoundManager::ThaiMan_SFX_02);
+
+				switch (CALC::Random_Num(0, 4))
+				{
+				case 0:
+					g_pSoundManager->Play_Sound(L"Monster_Swing_Sub0.ogg", CSoundManager::ThaiMan_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 1:
+					g_pSoundManager->Play_Sound(L"Monster_Swing_Sub1.ogg", CSoundManager::ThaiMan_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 2:
+					g_pSoundManager->Play_Sound(L"Monster_Swing_Sub2.ogg", CSoundManager::ThaiMan_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 3:
+					g_pSoundManager->Play_Sound(L"Monster_Swing_Sub3.ogg", CSoundManager::ThaiMan_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 4:
+					g_pSoundManager->Play_Sound(L"Monster_Swing_Sub4.ogg", CSoundManager::ThaiMan_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				}
 			}
 		}
 		else if (0.5f <= AniTime)
@@ -1258,9 +1461,7 @@ void CThaiMan::Play_LkBk()
 
 				g_pSoundManager->Stop_Sound(CSoundManager::ThaiMan_Voice);
 
-				m_iRandom = CALC::Random_Num(0, 6);
-
-				switch (m_iRandom)
+				switch (CALC::Random_Num(0, 6))
 				{
 				case 0:
 					g_pSoundManager->Play_Sound(L"ThaiMan_Atk_Voice0.ogg", CSoundManager::ThaiMan_Voice, CSoundManager::Effect_Sound);
@@ -1439,6 +1640,27 @@ void CThaiMan::Play_Capoeira()
 				m_bEventTrigger[1] = true;
 				m_vecAttackCol[3]->Set_Enabled(true);
 				m_tObjParam.bSuperArmor = true;
+
+				g_pSoundManager->Stop_Sound(CSoundManager::ThaiMan_SFX_02);
+
+				switch (CALC::Random_Num(0, 4))
+				{
+				case 0:
+					g_pSoundManager->Play_Sound(L"Monster_Swing_Sub0.ogg", CSoundManager::ThaiMan_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 1:
+					g_pSoundManager->Play_Sound(L"Monster_Swing_Sub1.ogg", CSoundManager::ThaiMan_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 2:
+					g_pSoundManager->Play_Sound(L"Monster_Swing_Sub2.ogg", CSoundManager::ThaiMan_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 3:
+					g_pSoundManager->Play_Sound(L"Monster_Swing_Sub3.ogg", CSoundManager::ThaiMan_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 4:
+					g_pSoundManager->Play_Sound(L"Monster_Swing_Sub4.ogg", CSoundManager::ThaiMan_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				}
 			}
 		}
 		else if (0.8f <= AniTime)
@@ -1449,9 +1671,7 @@ void CThaiMan::Play_Capoeira()
 
 				g_pSoundManager->Stop_Sound(CSoundManager::ThaiMan_Voice);
 
-				m_iRandom = CALC::Random_Num(0, 6);
-
-				switch (m_iRandom)
+				switch (CALC::Random_Num(0, 6))
 				{
 				case 0:
 					g_pSoundManager->Play_Sound(L"ThaiMan_Atk_Voice0.ogg", CSoundManager::ThaiMan_Voice, CSoundManager::Effect_Sound);
@@ -1493,6 +1713,27 @@ void CThaiMan::Play_Capoeira()
 				m_bEventTrigger[3] = true;
 				m_vecAttackCol[2]->Set_Enabled(true);
 				m_tObjParam.bSuperArmor = true;
+
+				g_pSoundManager->Stop_Sound(CSoundManager::ThaiMan_SFX_02);
+
+				switch (CALC::Random_Num(0, 4))
+				{
+				case 0:
+					g_pSoundManager->Play_Sound(L"Monster_Swing_Sub0.ogg", CSoundManager::ThaiMan_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 1:
+					g_pSoundManager->Play_Sound(L"Monster_Swing_Sub1.ogg", CSoundManager::ThaiMan_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 2:
+					g_pSoundManager->Play_Sound(L"Monster_Swing_Sub2.ogg", CSoundManager::ThaiMan_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 3:
+					g_pSoundManager->Play_Sound(L"Monster_Swing_Sub3.ogg", CSoundManager::ThaiMan_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 4:
+					g_pSoundManager->Play_Sound(L"Monster_Swing_Sub4.ogg", CSoundManager::ThaiMan_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				}
 			}
 		}
 		else if (0.2f <= AniTime)
@@ -1503,9 +1744,7 @@ void CThaiMan::Play_Capoeira()
 
 				g_pSoundManager->Stop_Sound(CSoundManager::ThaiMan_Voice);
 
-				m_iRandom = CALC::Random_Num(0, 6);
-
-				switch (m_iRandom)
+				switch (CALC::Random_Num(0, 6))
 				{
 				case 0:
 					g_pSoundManager->Play_Sound(L"ThaiMan_Atk_Voice0.ogg", CSoundManager::ThaiMan_Voice, CSoundManager::Effect_Sound);
@@ -1585,6 +1824,27 @@ void CThaiMan::Play_RDigonalLUpperRAccel()
 				m_bEventTrigger[1] = true;
 				m_vecAttackCol[1]->Set_Enabled(true);
 				m_tObjParam.bSuperArmor = true;
+
+				g_pSoundManager->Stop_Sound(CSoundManager::ThaiMan_SFX_02);
+
+				switch (CALC::Random_Num(0, 4))
+				{
+				case 0:
+					g_pSoundManager->Play_Sound(L"Monster_Swing_Sub0.ogg", CSoundManager::ThaiMan_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 1:
+					g_pSoundManager->Play_Sound(L"Monster_Swing_Sub1.ogg", CSoundManager::ThaiMan_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 2:
+					g_pSoundManager->Play_Sound(L"Monster_Swing_Sub2.ogg", CSoundManager::ThaiMan_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 3:
+					g_pSoundManager->Play_Sound(L"Monster_Swing_Sub3.ogg", CSoundManager::ThaiMan_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 4:
+					g_pSoundManager->Play_Sound(L"Monster_Swing_Sub4.ogg", CSoundManager::ThaiMan_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				}
 			}
 		}
 		else if (4.3f <= AniTime)
@@ -1595,9 +1855,7 @@ void CThaiMan::Play_RDigonalLUpperRAccel()
 
 				g_pSoundManager->Stop_Sound(CSoundManager::ThaiMan_Voice);
 
-				m_iRandom = CALC::Random_Num(0, 6);
-
-				switch (m_iRandom)
+				switch (CALC::Random_Num(0, 6))
 				{
 				case 0:
 					g_pSoundManager->Play_Sound(L"ThaiMan_Atk_Voice0.ogg", CSoundManager::ThaiMan_Voice, CSoundManager::Effect_Sound);
@@ -1639,6 +1897,27 @@ void CThaiMan::Play_RDigonalLUpperRAccel()
 				m_bEventTrigger[3] = true;
 				m_vecAttackCol[0]->Set_Enabled(true);
 				m_tObjParam.bSuperArmor = true;
+
+				g_pSoundManager->Stop_Sound(CSoundManager::ThaiMan_SFX_02);
+
+				switch (CALC::Random_Num(0, 4))
+				{
+				case 0:
+					g_pSoundManager->Play_Sound(L"Monster_Swing_Sub0.ogg", CSoundManager::ThaiMan_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 1:
+					g_pSoundManager->Play_Sound(L"Monster_Swing_Sub1.ogg", CSoundManager::ThaiMan_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 2:
+					g_pSoundManager->Play_Sound(L"Monster_Swing_Sub2.ogg", CSoundManager::ThaiMan_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 3:
+					g_pSoundManager->Play_Sound(L"Monster_Swing_Sub3.ogg", CSoundManager::ThaiMan_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 4:
+					g_pSoundManager->Play_Sound(L"Monster_Swing_Sub4.ogg", CSoundManager::ThaiMan_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				}
 			}
 		}
 		else if (2.8f <= AniTime)
@@ -1649,9 +1928,7 @@ void CThaiMan::Play_RDigonalLUpperRAccel()
 
 				g_pSoundManager->Stop_Sound(CSoundManager::ThaiMan_Voice);
 
-				m_iRandom = CALC::Random_Num(0, 6);
-
-				switch (m_iRandom)
+				switch (CALC::Random_Num(0, 6))
 				{
 				case 0:
 					g_pSoundManager->Play_Sound(L"ThaiMan_Atk_Voice0.ogg", CSoundManager::ThaiMan_Voice, CSoundManager::Effect_Sound);
@@ -1703,9 +1980,7 @@ void CThaiMan::Play_RDigonalLUpperRAccel()
 
 				g_pSoundManager->Stop_Sound(CSoundManager::ThaiMan_Voice);
 
-				m_iRandom = CALC::Random_Num(0, 6);
-
-				switch (m_iRandom)
+				switch (CALC::Random_Num(0, 6))
 				{
 				case 0:
 					g_pSoundManager->Play_Sound(L"ThaiMan_Atk_Voice0.ogg", CSoundManager::ThaiMan_Voice, CSoundManager::Effect_Sound);
@@ -1940,6 +2215,27 @@ void CThaiMan::Play_RkBkFk()
 				m_bEventTrigger[1] = true;
 				m_vecAttackCol[3]->Set_Enabled(true);
 				m_tObjParam.bSuperArmor = true;
+
+				g_pSoundManager->Stop_Sound(CSoundManager::ThaiMan_SFX_02);
+
+				switch (CALC::Random_Num(0, 4))
+				{
+				case 0:
+					g_pSoundManager->Play_Sound(L"Monster_Swing_Sub0.ogg", CSoundManager::ThaiMan_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 1:
+					g_pSoundManager->Play_Sound(L"Monster_Swing_Sub1.ogg", CSoundManager::ThaiMan_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 2:
+					g_pSoundManager->Play_Sound(L"Monster_Swing_Sub2.ogg", CSoundManager::ThaiMan_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 3:
+					g_pSoundManager->Play_Sound(L"Monster_Swing_Sub3.ogg", CSoundManager::ThaiMan_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 4:
+					g_pSoundManager->Play_Sound(L"Monster_Swing_Sub4.ogg", CSoundManager::ThaiMan_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				}
 			}
 		}
 		else if (3.3f <= AniTime)
@@ -1950,9 +2246,7 @@ void CThaiMan::Play_RkBkFk()
 
 				g_pSoundManager->Stop_Sound(CSoundManager::ThaiMan_Voice);
 
-				m_iRandom = CALC::Random_Num(0, 6);
-
-				switch (m_iRandom)
+				switch (CALC::Random_Num(0, 6))
 				{
 				case 0:
 					g_pSoundManager->Play_Sound(L"ThaiMan_Atk_Voice0.ogg", CSoundManager::ThaiMan_Voice, CSoundManager::Effect_Sound);
@@ -1994,6 +2288,27 @@ void CThaiMan::Play_RkBkFk()
 				m_bEventTrigger[3] = true;
 				m_vecAttackCol[2]->Set_Enabled(true);
 				m_tObjParam.bSuperArmor = true;
+
+				g_pSoundManager->Stop_Sound(CSoundManager::ThaiMan_SFX_02);
+
+				switch (CALC::Random_Num(0, 4))
+				{
+				case 0:
+					g_pSoundManager->Play_Sound(L"Monster_Swing_Sub0.ogg", CSoundManager::ThaiMan_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 1:
+					g_pSoundManager->Play_Sound(L"Monster_Swing_Sub1.ogg", CSoundManager::ThaiMan_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 2:
+					g_pSoundManager->Play_Sound(L"Monster_Swing_Sub2.ogg", CSoundManager::ThaiMan_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 3:
+					g_pSoundManager->Play_Sound(L"Monster_Swing_Sub3.ogg", CSoundManager::ThaiMan_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 4:
+					g_pSoundManager->Play_Sound(L"Monster_Swing_Sub4.ogg", CSoundManager::ThaiMan_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				}
 			}
 		}
 		else if (2.f <= AniTime)
@@ -2004,9 +2319,7 @@ void CThaiMan::Play_RkBkFk()
 
 				g_pSoundManager->Stop_Sound(CSoundManager::ThaiMan_Voice);
 
-				m_iRandom = CALC::Random_Num(0, 6);
-
-				switch (m_iRandom)
+				switch (CALC::Random_Num(0, 6))
 				{
 				case 0:
 					g_pSoundManager->Play_Sound(L"ThaiMan_Atk_Voice0.ogg", CSoundManager::ThaiMan_Voice, CSoundManager::Effect_Sound);
@@ -2048,6 +2361,27 @@ void CThaiMan::Play_RkBkFk()
 				m_bEventTrigger[5] = true;
 				m_vecAttackCol[3]->Set_Enabled(true);
 				m_tObjParam.bSuperArmor = true;
+
+				g_pSoundManager->Stop_Sound(CSoundManager::ThaiMan_SFX_02);
+
+				switch (CALC::Random_Num(0, 4))
+				{
+				case 0:
+					g_pSoundManager->Play_Sound(L"Monster_Swing_Sub0.ogg", CSoundManager::ThaiMan_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 1:
+					g_pSoundManager->Play_Sound(L"Monster_Swing_Sub1.ogg", CSoundManager::ThaiMan_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 2:
+					g_pSoundManager->Play_Sound(L"Monster_Swing_Sub2.ogg", CSoundManager::ThaiMan_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 3:
+					g_pSoundManager->Play_Sound(L"Monster_Swing_Sub3.ogg", CSoundManager::ThaiMan_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 4:
+					g_pSoundManager->Play_Sound(L"Monster_Swing_Sub4.ogg", CSoundManager::ThaiMan_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				}
 			}
 		}
 		else if (0.8f <= AniTime)
@@ -2058,9 +2392,7 @@ void CThaiMan::Play_RkBkFk()
 
 				g_pSoundManager->Stop_Sound(CSoundManager::ThaiMan_Voice);
 
-				m_iRandom = CALC::Random_Num(0, 6);
-
-				switch (m_iRandom)
+				switch (CALC::Random_Num(0, 6))
 				{
 				case 0:
 					g_pSoundManager->Play_Sound(L"ThaiMan_Atk_Voice0.ogg", CSoundManager::ThaiMan_Voice, CSoundManager::Effect_Sound);
@@ -2295,6 +2627,27 @@ void CThaiMan::Play_RDigonalRRScrewRchop()
 				m_bEventTrigger[1] = true;
 				m_vecAttackCol[1]->Set_Enabled(true);
 				m_tObjParam.bSuperArmor = true;
+
+				g_pSoundManager->Stop_Sound(CSoundManager::ThaiMan_SFX_02);
+
+				switch (CALC::Random_Num(0, 4))
+				{
+				case 0:
+					g_pSoundManager->Play_Sound(L"Monster_Swing_Sub0.ogg", CSoundManager::ThaiMan_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 1:
+					g_pSoundManager->Play_Sound(L"Monster_Swing_Sub1.ogg", CSoundManager::ThaiMan_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 2:
+					g_pSoundManager->Play_Sound(L"Monster_Swing_Sub2.ogg", CSoundManager::ThaiMan_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 3:
+					g_pSoundManager->Play_Sound(L"Monster_Swing_Sub3.ogg", CSoundManager::ThaiMan_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 4:
+					g_pSoundManager->Play_Sound(L"Monster_Swing_Sub4.ogg", CSoundManager::ThaiMan_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				}
 			}
 		}
 		else if (4.1f <= AniTime)
@@ -2305,9 +2658,7 @@ void CThaiMan::Play_RDigonalRRScrewRchop()
 
 				g_pSoundManager->Stop_Sound(CSoundManager::ThaiMan_Voice);
 
-				m_iRandom = CALC::Random_Num(0, 6);
-
-				switch (m_iRandom)
+				switch (CALC::Random_Num(0, 6))
 				{
 				case 0:
 					g_pSoundManager->Play_Sound(L"ThaiMan_Atk_Voice0.ogg", CSoundManager::ThaiMan_Voice, CSoundManager::Effect_Sound);
@@ -2349,6 +2700,27 @@ void CThaiMan::Play_RDigonalRRScrewRchop()
 				m_bEventTrigger[3] = true;
 				m_vecAttackCol[1]->Set_Enabled(true);
 				m_tObjParam.bSuperArmor = true;
+
+				g_pSoundManager->Stop_Sound(CSoundManager::ThaiMan_SFX_02);
+
+				switch (CALC::Random_Num(0, 4))
+				{
+				case 0:
+					g_pSoundManager->Play_Sound(L"Monster_Swing_Sub0.ogg", CSoundManager::ThaiMan_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 1:
+					g_pSoundManager->Play_Sound(L"Monster_Swing_Sub1.ogg", CSoundManager::ThaiMan_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 2:
+					g_pSoundManager->Play_Sound(L"Monster_Swing_Sub2.ogg", CSoundManager::ThaiMan_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 3:
+					g_pSoundManager->Play_Sound(L"Monster_Swing_Sub3.ogg", CSoundManager::ThaiMan_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 4:
+					g_pSoundManager->Play_Sound(L"Monster_Swing_Sub4.ogg", CSoundManager::ThaiMan_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				}
 			}
 		}
 		else if (3.f <= AniTime)
@@ -2359,9 +2731,7 @@ void CThaiMan::Play_RDigonalRRScrewRchop()
 
 				g_pSoundManager->Stop_Sound(CSoundManager::ThaiMan_Voice);
 
-				m_iRandom = CALC::Random_Num(0, 6);
-
-				switch (m_iRandom)
+				switch (CALC::Random_Num(0, 6))
 				{
 				case 0:
 					g_pSoundManager->Play_Sound(L"ThaiMan_Atk_Voice0.ogg", CSoundManager::ThaiMan_Voice, CSoundManager::Effect_Sound);
@@ -2403,6 +2773,27 @@ void CThaiMan::Play_RDigonalRRScrewRchop()
 				m_bEventTrigger[5] = true;
 				m_vecAttackCol[1]->Set_Enabled(true);
 				m_tObjParam.bSuperArmor = true;
+
+				g_pSoundManager->Stop_Sound(CSoundManager::ThaiMan_SFX_02);
+
+				switch (CALC::Random_Num(0, 4))
+				{
+				case 0:
+					g_pSoundManager->Play_Sound(L"Monster_Swing_Sub0.ogg", CSoundManager::ThaiMan_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 1:
+					g_pSoundManager->Play_Sound(L"Monster_Swing_Sub1.ogg", CSoundManager::ThaiMan_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 2:
+					g_pSoundManager->Play_Sound(L"Monster_Swing_Sub2.ogg", CSoundManager::ThaiMan_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 3:
+					g_pSoundManager->Play_Sound(L"Monster_Swing_Sub3.ogg", CSoundManager::ThaiMan_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 4:
+					g_pSoundManager->Play_Sound(L"Monster_Swing_Sub4.ogg", CSoundManager::ThaiMan_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				}
 			}
 		}
 		else if (1.5f <= AniTime)
@@ -2413,9 +2804,7 @@ void CThaiMan::Play_RDigonalRRScrewRchop()
 
 				g_pSoundManager->Stop_Sound(CSoundManager::ThaiMan_Voice);
 
-				m_iRandom = CALC::Random_Num(0, 6);
-
-				switch (m_iRandom)
+				switch (CALC::Random_Num(0, 6))
 				{
 				case 0:
 					g_pSoundManager->Play_Sound(L"ThaiMan_Atk_Voice0.ogg", CSoundManager::ThaiMan_Voice, CSoundManager::Effect_Sound);
@@ -2457,6 +2846,27 @@ void CThaiMan::Play_RDigonalRRScrewRchop()
 				m_bEventTrigger[7] = true;
 				m_vecAttackCol[1]->Set_Enabled(true);
 				m_tObjParam.bSuperArmor = true;
+
+				g_pSoundManager->Stop_Sound(CSoundManager::ThaiMan_SFX_02);
+
+				switch (CALC::Random_Num(0, 4))
+				{
+				case 0:
+					g_pSoundManager->Play_Sound(L"Monster_Swing_Sub0.ogg", CSoundManager::ThaiMan_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 1:
+					g_pSoundManager->Play_Sound(L"Monster_Swing_Sub1.ogg", CSoundManager::ThaiMan_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 2:
+					g_pSoundManager->Play_Sound(L"Monster_Swing_Sub2.ogg", CSoundManager::ThaiMan_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 3:
+					g_pSoundManager->Play_Sound(L"Monster_Swing_Sub3.ogg", CSoundManager::ThaiMan_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 4:
+					g_pSoundManager->Play_Sound(L"Monster_Swing_Sub4.ogg", CSoundManager::ThaiMan_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				}
 			}
 		}
 		else if (0.5f <= AniTime)
@@ -2467,9 +2877,7 @@ void CThaiMan::Play_RDigonalRRScrewRchop()
 
 				g_pSoundManager->Stop_Sound(CSoundManager::ThaiMan_Voice);
 
-				m_iRandom = CALC::Random_Num(0, 6);
-
-				switch (m_iRandom)
+				switch (CALC::Random_Num(0, 6))
 				{
 				case 0:
 					g_pSoundManager->Play_Sound(L"ThaiMan_Atk_Voice0.ogg", CSoundManager::ThaiMan_Voice, CSoundManager::Effect_Sound);
@@ -2869,6 +3277,8 @@ void CThaiMan::Play_Move()
 			m_fSkillMoveSpeed_Cur = 4.f;
 			m_fSkillMoveAccel_Cur = 0.f;
 			m_fSkillMoveMultiply = 0.5f;
+
+			m_fFootSoundMax = 0.4f;
 		}
 
 		if (nullptr == m_pAggroTarget)
@@ -2917,6 +3327,7 @@ void CThaiMan::Play_Move()
 		Function_Movement(m_fSkillMoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_Z));
 		Function_DecreMoveMent(m_fSkillMoveMultiply);
 		break;
+
 	case MONSTER_MOVE_TYPE::MOVE_ALERT:
 		if (true == m_bCanMoveAround)
 		{
@@ -2929,6 +3340,8 @@ void CThaiMan::Play_Move()
 			m_fSkillMoveSpeed_Cur = 2.5f;
 			m_fSkillMoveAccel_Cur = 0.f;
 			m_fSkillMoveMultiply = 0.5f;
+
+			m_fFootSoundMax = 0.46f;
 
 			switch (CALC::Random_Num(THAIMAN_ANI::Walk_R, THAIMAN_ANI::Walk_B))
 			{
@@ -3001,6 +3414,7 @@ void CThaiMan::Play_Move()
 
 	case MONSTER_MOVE_TYPE::MOVE_WALK:
 		break;
+
 	case MONSTER_MOVE_TYPE::MOVE_DODGE:
 		if (true == m_tObjParam.bCanDodge)
 		{
@@ -3136,7 +3550,7 @@ void CThaiMan::Play_Hit()
 
 				g_pSoundManager->Stop_Sound(CSoundManager::ThaiMan_Voice);
 
-				m_iRandom = CALC::Random_Num(0, 3);
+				m_iRandom = CALC::Random_Num(0, 5);
 
 				switch (m_iRandom)
 				{

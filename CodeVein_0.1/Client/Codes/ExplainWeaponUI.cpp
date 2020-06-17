@@ -66,8 +66,8 @@ _int CExplainWeaponUI::Update_GameObject(_double TimeDelta)
 	{
 		SetUp_SubUI_Active(false);
 		m_bIsSubActive = false;
+		m_tWeaponParam.iWeaponName = WPN_DATA_End;
 	}
-
 
 	CUI::Update_GameObject(TimeDelta);
 	m_pRendererCom->Add_RenderList(RENDER_UI, this);
