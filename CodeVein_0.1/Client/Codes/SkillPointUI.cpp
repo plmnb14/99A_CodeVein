@@ -75,6 +75,9 @@ _int CSkillPointUI::Update_GameObject(_double TimeDelta)
 
 	if (m_bIsActive)
 	{
+		if (m_tObjParam.sMana_Cur > m_tObjParam.sMana_Max)
+			m_tObjParam.sMana_Cur = m_tObjParam.sMana_Max;
+
 		m_pCurPointFont->Update_NumberValue(_float(m_tObjParam.sMana_Cur));
 		m_pMaxPointFont->Update_NumberValue(_float(m_tObjParam.sMana_Max));
 		m_pCurPointFont->Set_Active(m_bIsActive);
@@ -85,6 +88,8 @@ _int CSkillPointUI::Update_GameObject(_double TimeDelta)
 		m_pCurPointFont->Set_Active(false);
 		m_pMaxPointFont->Set_Active(false);
 	}
+
+	
 	return NO_EVENT;
 }
 

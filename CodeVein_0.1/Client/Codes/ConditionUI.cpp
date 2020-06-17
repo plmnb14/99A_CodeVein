@@ -59,6 +59,9 @@ _int CConditionUI::Update_GameObject(_double TimeDelta)
 
 	D3DXMatrixOrthoLH(&m_matProj, WINCX, WINCY, 0.f, 1.f);
 
+	if (m_fCurValue >= m_fMaxValue)
+		m_fCurValue = m_fMaxValue;
+
 	switch (m_eType)
 	{
 	case CONDITION_HP:
@@ -79,7 +82,7 @@ _int CConditionUI::Update_GameObject(_double TimeDelta)
 	{
 		m_iIndex = 2;
 		m_fCurValue = _float(m_tObjParam.sMana_Cur);
-		m_fMaxValue = _float(100);
+		m_fMaxValue = _float(20);
 	}		
 		break;
 	case CONDITION_ATT:
