@@ -8919,7 +8919,7 @@ void CPlayer::Play_Gun_HeavyAtk()
 					vBirth += (vLook * fLenght);
 					
 					CObjectPool_Manager::Get_Instance()->Create_Object(L"GameObject_PlayerGunBullet",
-						&BULLET_INFO(vBirth, m_pTransform->Get_Axis(AXIS_Z), 10.f, 2.f));
+						&BULLET_INFO(vBirth, m_pTransform->Get_Axis(AXIS_Z), 15.f, 1.2f));
 
 					
 					g_pSoundManager->Stop_Sound(CSoundManager::Player_SFX_02);
