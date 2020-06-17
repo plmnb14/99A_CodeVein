@@ -146,7 +146,17 @@ HRESULT CDecalEffect::Render_GameObject_SetShader(CShader* pShader)
 		nullptr == m_pBufferCom)
 		return E_FAIL;
 		
-	pShader->Begin_Pass(4);
+	_int iPass = m_iPass;
+	if (m_pInfo->bUseRGBA && (m_pInfo->fMaskIndex != -1.f))
+		iPass = 21;
+	else if (m_pInfo->bUseRGBA && (m_pInfo->fMaskIndex == -1.f))
+		iPass = 20;
+	else if (m_pInfo->bUseColorTex && (m_pInfo->fMaskIndex != -1.f))
+		iPass = 19;
+	else if (m_pInfo->bUseColorTex && (m_pInfo->fMaskIndex == -1.f))
+		iPass = 18;
+
+	pShader->Begin_Pass(iPass);
 	
 	// Set Texture
 	if (FAILED(SetUp_ConstantTable(pShader)))
