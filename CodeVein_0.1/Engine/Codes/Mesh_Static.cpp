@@ -373,7 +373,7 @@ HRESULT CMesh_Static::Ready_Component_Prototype(const _tchar * pFilePath, const 
 	D3DXComputeBoundingBox((_v3*)pVertices, m_dwVtxCnt, m_dwStride, &m_pVtxMin, &m_pVtxMax);
 
 	m_fHalfFristumRadius = ceil(D3DXVec3Length(&(m_pVtxMax - m_pVtxMin)));
-	m_fHalfFristumRadius *= 0.5f;
+	//m_fHalfFristumRadius *= 0.5f;
 
 	m_pMesh->UnlockVertexBuffer();
 

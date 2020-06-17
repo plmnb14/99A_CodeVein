@@ -37,16 +37,8 @@ _int CRenderObject::Update_GameObject(_double _TimeDelta)
 	if (false == m_bEnable)
 		return NO_EVENT;
 
-	m_bInFrustum = m_pOptimization->Check_InFrustumforObject(&m_pTransform->Get_Pos(), m_pMesh_Static->Get_FrustumRadius());
-
-	//if (false == m_bUpdated)
-	//{
-		// 스태틱은 한번만 배치되면 되서 계속 갱신할 필요없음
-		//m_bUpdated = true;
-
-		CGameObject::LateInit_GameObject();
-		CGameObject::Update_GameObject(_TimeDelta);
-	//}
+	CGameObject::LateInit_GameObject();
+	CGameObject::Update_GameObject(_TimeDelta);
 
 	// 툴용 업데이트 콜라이더
 	//	Update_Collider();
@@ -57,7 +49,7 @@ _int CRenderObject::Late_Update_GameObject(_double TimeDelta)
 	if (false == m_bEnable)
 		return NO_EVENT;
 
-	if (m_bInFrustum)
+	if (m_pOptimization->Check_InFrustumforObject(&m_pTransform->Get_Pos(), m_pMesh_Static->Get_FrustumRadius()))
 	{
 		m_pRenderer->Add_RenderList(RENDER_NONALPHA, this);
 		m_pRenderer->Add_RenderList(RENDER_MOTIONBLURTARGET, this);
@@ -142,14 +134,7 @@ HRESULT CRenderObject::Render_GameObject_SetPass(CShader* pShader, _int iPass, _
 	//============================================================================================
 	// 공통 변수
 	//============================================================================================
-	CManagement* pManagement = CManagement::Get_Instance();
-	Safe_AddRef(pManagement);
-
-	_mat WorldMatrix, matView, matProj;
-
-	WorldMatrix = m_pTransform->Get_WorldMat();
-	matView		= pManagement->Get_Transform(D3DTS_VIEW);
-	matProj		= pManagement->Get_Transform(D3DTS_PROJECTION);
+	_mat WorldMatrix = m_pTransform->Get_WorldMat();
 
 	if (FAILED(pShader->Set_Value("g_matWorld", &WorldMatrix, sizeof(_mat))))
 		return E_FAIL;
@@ -161,6 +146,12 @@ HRESULT CRenderObject::Render_GameObject_SetPass(CShader* pShader, _int iPass, _
 	//============================================================================================
 	if (_bIsForMotionBlur)
 	{
+		CManagement* pManagement = CManagement::Get_Instance();
+		Safe_AddRef(pManagement);
+
+		_mat matView = pManagement->Get_Transform(D3DTS_VIEW);
+		_mat matProj = pManagement->Get_Transform(D3DTS_PROJECTION);
+
 		sShaderPass = 5;
 
 		if (FAILED(pShader->Set_Value("g_matLastWVP", &m_matLastWVP, sizeof(_mat))))
@@ -171,6 +162,8 @@ HRESULT CRenderObject::Render_GameObject_SetPass(CShader* pShader, _int iPass, _
 		_float fBloomPower = 10.f;
 		if (FAILED(pShader->Set_Value("g_fBloomPower", &fBloomPower, sizeof(_float))))
 			return E_FAIL;
+
+		Safe_Release(pManagement);
 	}
 
 	//============================================================================================
@@ -191,8 +184,6 @@ HRESULT CRenderObject::Render_GameObject_SetPass(CShader* pShader, _int iPass, _
 	}
 
 	//============================================================================================
-
-	Safe_Release(pManagement);
 
 	return NOERROR;
 }

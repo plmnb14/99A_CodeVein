@@ -200,9 +200,6 @@ _int CTexEffect::Update_GameObject(_double TimeDelta)
 
 _int CTexEffect::Late_Update_GameObject(_double TimeDelta)
 {
-	if (nullptr == m_pRendererCom)
-		return E_FAIL;
-
 	if (m_bIsDead || m_fCreateDelay > 0.f)
 		return S_OK;
 		
@@ -242,6 +239,7 @@ HRESULT CTexEffect::Render_GameObject_SetShader(CShader* pShader)
 	pShader->Commit_Changes();
 	
 	m_pBufferCom->Render_VIBuffer();
+
 	pShader->End_Pass();
 	
 	return S_OK;
@@ -249,10 +247,6 @@ HRESULT CTexEffect::Render_GameObject_SetShader(CShader* pShader)
 
 HRESULT CTexEffect::Render_GameObject_HWInstance()
 {
-	if (nullptr == m_pShaderCom ||
-		nullptr == m_pBufferCom)
-		return E_FAIL;
-	
 	//m_pBufferCom->Render_Before_Instancing(m_pTransformCom->Get_WorldMat());
 	
 	m_pShaderCom->Begin_Shader();

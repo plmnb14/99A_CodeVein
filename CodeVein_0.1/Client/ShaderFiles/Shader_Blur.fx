@@ -49,9 +49,8 @@ struct PS_MOTIONBLUR_IN
 struct PS_OUT
 {
 	vector		vVelocity : COLOR0;
-	vector		vNormal : COLOR1; // For RimLight
-	vector		vBloomPower : COLOR2;
-	vector		vDecalDepth : COLOR3;
+	vector		vBloomPower : COLOR1;
+	vector		vDecalDepth : COLOR2;
 };
 
 // 픽셀의 색을 결정한다.
@@ -66,10 +65,7 @@ PS_OUT PS_MOTIONBLUR(PS_MOTIONBLUR_IN In)
 	Out.vVelocity.w = velocity.x >= g_fMinValue && velocity.y >= g_fMinValue ? Out.vVelocity.w : 0.f;
 	Out.vVelocity = vector(velocity.xy, In.vProjPos.z / In.vProjPos.w, 1.f);
 
-	Out.vNormal = vector(0.f, 0.f, 0.f, 0.f);
 	Out.vBloomPower = vector(g_fBloomPower,0.f, 0.f, 0.f);
-
-	Out.vDecalDepth = vector(0.f, 0.f, 0.f, 0.f);
 
 	return Out;
 }
@@ -85,7 +81,6 @@ PS_OUT PS_MOTIONBLUR_Decal(PS_MOTIONBLUR_IN In)
 	Out.vVelocity.w = velocity.x >= g_fMinValue && velocity.y >= g_fMinValue ? Out.vVelocity.w : 0.f;
 	Out.vVelocity = vector(velocity.xy, In.vProjPos.z / In.vProjPos.w, 1.f);
 
-	Out.vNormal = vector(0.f, 0.f, 0.f, 0.f);
 	Out.vBloomPower = vector(g_fBloomPower, 0.f, 0.f, 0.f);
 
 	Out.vDecalDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / 500.f, 1.f, 1.f);
@@ -104,10 +99,7 @@ PS_OUT PS_MOTIONBLUR_Height(PS_MOTIONBLUR_IN In)
 	Out.vVelocity.w = velocity.x >= g_fMinValue && velocity.y >= g_fMinValue ? Out.vVelocity.w : 0.f;
 	Out.vVelocity = vector(velocity.xy, In.vProjPos.z / In.vProjPos.w, 1.f);
 
-	Out.vNormal = vector(1.f, 0.f, 1.f, 1.f);
-	Out.vBloomPower = vector(g_fBloomPower, 0.f, 0.f, 0.f);
-
-	Out.vDecalDepth = vector(0.f, 0.f, 0.f, 0.f);
+	Out.vBloomPower = vector(g_fBloomPower, 0.f, 1.f, 1.f);
 
 	return Out;
 }
@@ -123,10 +115,7 @@ PS_OUT PS_MOTIONBLUR_HeightSkin(PS_MOTIONBLUR_IN In)
 	Out.vVelocity.w = velocity.x >= g_fMinValue && velocity.y >= g_fMinValue ? Out.vVelocity.w : 0.f;
 	Out.vVelocity = vector(velocity.xy, In.vProjPos.z / In.vProjPos.w, 1.f);
 
-	Out.vNormal = vector(1.f, 0.f, 0.f, 1.f);
-	Out.vBloomPower = vector(g_fBloomPower, 0.f, 0.f, 0.f);
-
-	Out.vDecalDepth = vector(0.f, 0.f, 0.f, 0.f);
+	Out.vBloomPower = vector(g_fBloomPower, 0.f, 1.f, 0.f);
 
 	return Out;
 }
@@ -142,10 +131,7 @@ PS_OUT PS_MOTIONBLUR_Alpha(PS_MOTIONBLUR_IN In)
 	Out.vVelocity.w = velocity.x >= g_fMinValue && velocity.y >= g_fMinValue ? Out.vVelocity.w : 0.f;
 	Out.vVelocity = vector(velocity.xy, In.vProjPos.z / In.vProjPos.w, 1.f);
 
-	Out.vNormal = vector(1.f, 0.f, 1.f, 1.f);
-	Out.vBloomPower = vector(g_fBloomPower, 0.f, 0.f, 0.f);
-
-	Out.vDecalDepth = vector(0.f, 0.f, 0.f, 0.f);
+	Out.vBloomPower = vector(g_fBloomPower, 0.f, 1.f, 1.f);
 
 	return Out;
 }
@@ -161,7 +147,6 @@ PS_OUT PS_MOTIONBLUR_RenderOnlyObject(PS_MOTIONBLUR_IN In)
 	Out.vVelocity.w = velocity.x >= g_fMinValue && velocity.y >= g_fMinValue ? Out.vVelocity.w : 0.f;
 	Out.vVelocity = vector(velocity.xy, In.vProjPos.z / In.vProjPos.w, 1.f);
 
-	Out.vNormal = vector(0.f, 0.f, 0.f, 0.f);
 	Out.vBloomPower = vector(g_fBloomPower, 0.f, 0.f, 0.f);
 	Out.vDecalDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / 500.f, 1.f, 1.f);
 

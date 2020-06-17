@@ -157,7 +157,7 @@ HRESULT CWeapon::Render_GameObject_Instancing_SetPass(CShader * pShader)
 	if (FAILED(SetUp_ConstantTable(pShader)))
 		return E_FAIL;
 
-	_uint iNumSubSet = (_uint)m_pMesh_Static->Get_NumMaterials();
+	_uint iNumSubSet = m_pMesh_Static->Get_NumMaterials();
 
 	for (_uint i = 0; i < iNumSubSet; ++i)
 	{
@@ -185,19 +185,10 @@ HRESULT CWeapon::Render_GameObject_Instancing_SetPass(CShader * pShader)
 
 HRESULT CWeapon::Render_GameObject_SetPass(CShader* pShader, _int iPass, _bool _bIsForMotionBlur)
 {
-	if (nullptr == pShader ||
-		nullptr == m_pMesh_Static)
-		return E_FAIL;
-
 	//============================================================================================
 	// 공통 변수
 	//============================================================================================
-
-	_mat	ViewMatrix = CManagement::Get_Instance()->Get_Transform(D3DTS_VIEW);
-	_mat	ProjMatrix = CManagement::Get_Instance()->Get_Transform(D3DTS_PROJECTION);
 	_mat	WorldMatrix = m_pTransform->Get_WorldMat();
-
-	_mat matWVP = WorldMatrix * ViewMatrix * ProjMatrix;
 
 	if (FAILED(pShader->Set_Value("g_matWorld", &WorldMatrix, sizeof(_mat))))
 		return E_FAIL;
@@ -207,12 +198,15 @@ HRESULT CWeapon::Render_GameObject_SetPass(CShader* pShader, _int iPass, _bool _
 	//============================================================================================
 	if (_bIsForMotionBlur)
 	{
+		_mat	ViewMatrix = CManagement::Get_Instance()->Get_Transform(D3DTS_VIEW);
+		_mat	ProjMatrix = CManagement::Get_Instance()->Get_Transform(D3DTS_PROJECTION);
+
 		if (FAILED(pShader->Set_Value("g_matLastWVP", &m_matLastWVP, sizeof(_mat))))
 			return E_FAIL;
 
-		m_matLastWVP = matWVP;
+		m_matLastWVP = WorldMatrix * ViewMatrix * ProjMatrix;
 
-		_float fBloomPower = 0.f;
+		_float fBloomPower = 0.5f;
 		if (FAILED(pShader->Set_Value("g_fBloomPower", &fBloomPower, sizeof(_float))))
 			return E_FAIL;
 	}
