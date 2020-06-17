@@ -439,6 +439,8 @@ HRESULT CSwordGenji::Render_GameObject_SetPass(CShader* pShader, _int iPass, _bo
 		nullptr == m_pMeshCom)
 		return E_FAIL;
 
+	m_pMeshCom->Play_Animation(0);
+
 	//============================================================================================
 	// 공통 변수
 	//============================================================================================
@@ -484,6 +486,8 @@ HRESULT CSwordGenji::Render_GameObject_SetPass(CShader* pShader, _int iPass, _bo
 	for (_uint i = 0; i < _uint(iNumMeshContainer); ++i)
 	{
 		_uint iNumSubSet = (_uint)m_pMeshCom->Get_NumMaterials(i);
+
+		m_pMeshCom->Update_SkinnedMesh(i);
 
 		for (_uint j = 0; j < iNumSubSet; ++j)
 		{

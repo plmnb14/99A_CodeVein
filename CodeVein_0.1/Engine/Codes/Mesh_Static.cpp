@@ -16,6 +16,7 @@ CMesh_Static::CMesh_Static(const CMesh_Static & rhs)
 	, m_pMaterialsBuff(rhs.m_pMaterialsBuff)
 	, m_pMaterials(rhs.m_pMaterials)
 	, m_ppTextures(rhs.m_ppTextures)
+	, m_fHalfFristumRadius(rhs.m_fHalfFristumRadius)
 {
 	Safe_AddRef(m_pMesh);
 	Safe_AddRef(m_pAdjacencyBuff);
@@ -362,45 +363,21 @@ HRESULT CMesh_Static::Ready_Component_Prototype(const _tchar * pFilePath, const 
 
 	pMesh->CloneMesh(pMesh->GetOptions(), DeclCreate, m_pGraphic_Dev, &m_pMesh);
 
+	_byte*		pVertices = nullptr;
+
+	m_pMesh->LockVertexBuffer(0, (void**)&pVertices);
+
+	m_dwVtxCnt = m_pMesh->GetNumVertices();
+	m_dwStride = 52; // sizeof(DeclCreate);// D3DXGetFVFVertexSize(m_pMesh->GetFVF());
+
+	D3DXComputeBoundingBox((_v3*)pVertices, m_dwVtxCnt, m_dwStride, &m_pVtxMin, &m_pVtxMax);
+
+	m_fHalfFristumRadius = ceil(D3DXVec3Length(&(m_pVtxMax - m_pVtxMin)));
+	m_fHalfFristumRadius *= 0.5f;
+
+	m_pMesh->UnlockVertexBuffer();
+
 	Safe_Release(pMesh);
-
-	//m_matPivot = PivotMatrix;
-	//
-	//_byte*		pVertices = nullptr;
-	//
-	//m_pMesh->LockVertexBuffer(0, (void**)&pVertices);
-	//
-	//_ulong dwNumVertices = m_pMesh->GetNumVertices();
-	//
-	//_ulong dwStride = D3DXGetFVFVertexSize(m_pMesh->GetFVF());
-	//
-	//D3DVERTEXELEMENT9		Decl[MAX_FVF_DECL_SIZE];
-	//
-	//m_pMesh->GetDeclaration(Decl);
-	//
-	//_ushort		nNormalOffset = 0;
-	//
-	//for (size_t i = 0; i < MAX_FVF_DECL_SIZE; ++i)
-	//{
-	//	if (Decl[i].Usage == D3DDECLUSAGE_NORMAL)
-	//	{
-	//		nNormalOffset = Decl[i].Offset;
-	//		break;
-	//	}
-	//}
-
-	//for (_ulong i = 0; i < dwNumVertices; ++i)
-	//{
-	//	D3DXVec3TransformCoord((_v3*)(pVertices + (i *  dwStride)), (_v3*)(pVertices + (i *  dwStride)), &m_matPivot);
-	//	D3DXVec3TransformNormal((_v3*)(pVertices + (i *  dwStride) + nNormalOffset), (_v3*)(pVertices + (i *  dwStride) + nNormalOffset), &m_matPivot);
-	//}
-
-	//m_dwVtxCnt = m_pMesh->GetNumVertices();
-	//m_dwStride = D3DXGetFVFVertexSize(m_pMesh->GetFVF());
-
-	//D3DXComputeBoundingBox((_v3*)pVertices, m_dwVtxCnt, m_dwStride, &m_pVtxMin, &m_pVtxMax);
-
-	//m_pMesh->UnlockVertexBuffer();
 
 	return NOERROR;
 }

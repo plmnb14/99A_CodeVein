@@ -6,6 +6,7 @@ BEGIN(Engine)
 
 class CAniCtrl;
 class CHierarchy;
+class CShader;
 class ENGINE_DLL CMesh_Dynamic final : public CComponent
 {
 private:
@@ -36,7 +37,11 @@ public:
 	HRESULT SetTexture_OnShader(LPD3DXEFFECT pEffect, D3DXHANDLE pConstantName, _uint iMeshContainerIdx, _uint iAttributeID, MESHTEXTURE::TYPE eType);
 	HRESULT SetMaterial_OnShader(LPD3DXEFFECT pEffect, D3DXHANDLE pConstantName, _uint iMeshContainerIdx, _uint iAttributeID);
 	HRESULT Update_SkinnedMesh(_int iMeshContainerIdx);
+	HRESULT Update_SkinnedMesh_HardWare(_int iMeshContainerIdx);
 	HRESULT Render_Mesh(_uint iMeshContainerIdx, _uint iAttributeID);
+
+public:
+	HRESULT Set_MatrixPalette_OnShader(CShader* pShader, _int iMeshContainerIdx);
 
 public:
 	void Reset_OldIndx(_short _sAniCtrlNum = 0);

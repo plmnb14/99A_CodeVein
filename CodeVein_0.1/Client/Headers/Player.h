@@ -187,6 +187,7 @@ private:
 	CTransform*				m_pTransform = nullptr;
 	CRenderer*				m_pRenderer = nullptr;
 	CShader*				m_pShader = nullptr;
+	CShader*				m_pSkinnedShader = nullptr;
 	CMesh_Dynamic*			m_pDynamicMesh = nullptr;
 	CNavMesh*				m_pNavMesh = nullptr;
 	CCollider*				m_pCollider = nullptr;
@@ -313,6 +314,7 @@ private:
 	_float					m_fSkillMoveMultiply = 1.f;
 
 private:
+	_float					m_fRightArmTimer = 1.f;
 	_float					m_fCurMoveSpeed = 0.f;
 	_v3						m_vMoveDir = {};
 

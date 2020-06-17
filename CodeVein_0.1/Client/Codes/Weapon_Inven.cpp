@@ -758,6 +758,54 @@ void CWeapon_Inven::Late_Init()
 	Regist_Weapon(m_vecWeaponSlot[1]);
 	pTotal_Inven->Set_WeaponParam(1, tWeaponParam);
 	m_vecWeaponSlot[1]->Set_Select(true);
+
+	//============================================================================
+	// 테스트용 인벤 장비 - 총검
+	//============================================================================
+	tWeaponParam.iWeaponName = Wpn_Gun;
+	tWeaponParam.iWeaponName_InShop = WpnAll_Gun_Bayonet;
+	tWeaponParam.iWeaponType = WEAPON_Gun;
+	tWeaponParam.iPrice = 1000;
+	tWeaponParam.iReinforce = 0;
+	tWeaponParam.fDamage = 1500.f;
+	tWeaponParam.fPlusDamage = 100.f;
+	tWeaponParam.fRadius = 0.6f;
+	tWeaponParam.fTrail_Min = 0.6f;
+	tWeaponParam.fTrail_Max = 1.8f;
+	tWeaponParam.fCol_Height = 1.1f;
+	Add_Weapon(tWeaponParam);
+
+	//============================================================================
+	// 테스트용 인벤 장비 - 대검
+	//============================================================================
+	tWeaponParam.iWeaponName = Wpn_LSword;
+	tWeaponParam.iWeaponName_InShop = WpnAll_LSword_Black;
+	tWeaponParam.iWeaponType = WEAPON_LSword;
+	tWeaponParam.iPrice = 1000;
+	tWeaponParam.iReinforce = 0;
+	tWeaponParam.fDamage = 1500.f;
+	tWeaponParam.fPlusDamage = 100.f;
+	tWeaponParam.fRadius = 0.6f;
+	tWeaponParam.fTrail_Min = 0.6f;
+	tWeaponParam.fTrail_Max = 1.8f;
+	tWeaponParam.fCol_Height = 1.1f;
+	Add_Weapon(tWeaponParam);
+
+	//============================================================================
+	// 테스트용 인벤 장비 - 창
+	//============================================================================
+	tWeaponParam.iWeaponName = Wpn_Halberd;
+	tWeaponParam.iWeaponName_InShop = WpnAll_Halberd_SolidPiercer;
+	tWeaponParam.iWeaponType = WEAPON_Halberd;
+	tWeaponParam.iPrice = 1000;
+	tWeaponParam.iReinforce = 0;
+	tWeaponParam.fDamage = 1500.f;
+	tWeaponParam.fPlusDamage = 100.f;
+	tWeaponParam.fRadius = 0.6f;
+	tWeaponParam.fTrail_Min = 0.6f;
+	tWeaponParam.fTrail_Max = 1.8f;
+	tWeaponParam.fCol_Height = 1.1f;
+	Add_Weapon(tWeaponParam);
 }
 
 void CWeapon_Inven::Reset_SlotSelect()

@@ -435,11 +435,14 @@ HRESULT CRenderer::Draw_RenderList()
 	if (FAILED(Render_NonAlpha()))
 		return E_FAIL;
 
-	if (FAILED(Render_SSAO()))
-		return E_FAIL;
+	//if (FAILED(Render_SSAO()))
+	//	return E_FAIL;
 
 	// VelocityMap, NormalMap For Rim-light
 	if (FAILED(Render_MotionBlurTarget()))
+		return E_FAIL;
+
+	if (FAILED(Render_SSAO()))
 		return E_FAIL;
 
 	if (FAILED(Render_ShadowMap()))
@@ -736,6 +739,14 @@ HRESULT CRenderer::Render_Shadow()
 
 	_mat matWorld, matView, matProj, matLightVP;
 
+	matView = CManagement::Get_Instance()->Get_Transform(D3DTS_VIEW);
+	matProj = CManagement::Get_Instance()->Get_Transform(D3DTS_PROJECTION);
+
+	if (FAILED(m_pShader_Shadow->Set_Value("g_matView", &matView, sizeof(_mat))))
+		return E_FAIL;
+	if (FAILED(m_pShader_Shadow->Set_Value("g_matProj", &matProj, sizeof(_mat))))
+		return E_FAIL;
+
 	_v3 vCamPos = CManagement::Get_Instance()->Get_CamPosition();
 
 	_v3 vLightPos = vCamPos + m_vShadowLightPos;
@@ -789,20 +800,17 @@ HRESULT CRenderer::Render_MotionBlurTarget()
 	if (FAILED(m_pTarget_Manager->Begin_MRT(L"MRT_Velocity")))
 		return E_FAIL;
 
-	CManagement* pManagement = CManagement::Get_Instance();
-	Safe_AddRef(pManagement);
-
 	_mat matView, matProj;
 
-	matView = pManagement->Get_Transform(D3DTS_VIEW);
-	matProj = pManagement->Get_Transform(D3DTS_PROJECTION);
-
-	m_pShader_Blur->Begin_Shader();
+	matView = CManagement::Get_Instance()->Get_Transform(D3DTS_VIEW);
+	matProj = CManagement::Get_Instance()->Get_Transform(D3DTS_PROJECTION);
 
 	if (FAILED(m_pShader_Blur->Set_Value("g_matView", &matView, sizeof(_mat))))
 		return E_FAIL;
 	if (FAILED(m_pShader_Blur->Set_Value("g_matProj", &matProj, sizeof(_mat))))
 		return E_FAIL;
+
+	m_pShader_Blur->Begin_Shader();
 
 	for (auto& pGameObject : m_RenderList[RENDER_MOTIONBLURTARGET])
 	{
@@ -821,11 +829,8 @@ HRESULT CRenderer::Render_MotionBlurTarget()
 
 	m_RenderList[RENDER_MOTIONBLURTARGET].clear();
 
-
 	if (FAILED(m_pTarget_Manager->End_MRT(L"MRT_Velocity")))
 		return E_FAIL;
-
-	Safe_Release(pManagement);
 
 	return NOERROR;
 }
@@ -841,7 +846,6 @@ HRESULT CRenderer::Render_DistortionTarget()
 
 	matView = CManagement::Get_Instance()->Get_Transform(D3DTS_VIEW);
 	matProj = CManagement::Get_Instance()->Get_Transform(D3DTS_PROJECTION);
-
 
 	if (FAILED(m_pShader_Effect->Set_Value("g_matView", &matView, sizeof(_mat))))
 		return E_FAIL;

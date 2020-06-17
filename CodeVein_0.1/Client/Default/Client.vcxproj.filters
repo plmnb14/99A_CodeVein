@@ -2101,5 +2101,8 @@
     <FxCompile Include="..\ShaderFiles\Shader_3dUI.fx">
       <Filter>97.ShaderFiles</Filter>
     </FxCompile>
+    <FxCompile Include="..\ShaderFiles\Shader_Skinned.fx">
+      <Filter>97.ShaderFiles</Filter>
+    </FxCompile>
   </ItemGroup>
 </Project>

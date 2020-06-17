@@ -45,12 +45,12 @@ private:
 		Ani_Idle = 1, Ani_Death = 70, Ani_Dmg01_FL = 67, Ani_Dmg01_FR = 66, Ani_Dmg01_BL = 65, Ani_Dmg01_BR = 64,
 		Ani_StandUp1 = 7, Ani_StandUp2 = 11, 
 		DeadBodyLean_End = 72,
-		Ani_DmgRepel = 105,
-		Ani_Death_F = 62, Ani_Death_B = 63
+		Ani_DmgRepel = 56, //47
+		Ani_Death_F = 68, Ani_Death_B = 63
 	};
 
 	typedef enum Execution_Ani {
-		Ani_Execution_LongCoat_B_S = 53 , Ani_Execution_LongCoat_B = 54
+		Ani_Execution_LongCoat_B_S = 32 , Ani_Execution_LongCoat_B = 33
 	}EXE_ANI;
 
 private:

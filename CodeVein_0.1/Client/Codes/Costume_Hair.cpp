@@ -329,13 +329,6 @@ _int CCostume_Hair::Late_Update_GameObject(_double TimeDelta)
 
 HRESULT CCostume_Hair::Render_GameObject()
 {
-	if (false == m_bEnable)
-		return S_OK;
-
-	if (nullptr == m_pShader ||
-		nullptr == m_pStaticMesh)
-		return E_FAIL;
-
 	// 버텍스 교체
 	Change_Vertex();
 
@@ -371,9 +364,6 @@ HRESULT CCostume_Hair::Render_GameObject()
 
 HRESULT CCostume_Hair::Render_GameObject_Instancing_SetPass(CShader * pShader)
 {
-	IF_NULL_VALUE_RETURN(pShader, E_FAIL);
-	IF_NULL_VALUE_RETURN(m_pStaticMesh, E_FAIL);
-
 	//// 버텍스 교체
 	Change_Vertex();
 
@@ -416,17 +406,14 @@ HRESULT CCostume_Hair::Render_GameObject_Instancing_SetPass(CShader * pShader)
 
 HRESULT CCostume_Hair::Render_GameObject_SetPass(CShader * pShader, _int iPass, _bool _bIsForMotionBlur)
 {
-	if (nullptr == pShader ||
-		nullptr == m_pStaticMesh)
-		return E_FAIL;
-
 	//============================================================================================
 	// 공통 변수
 	//============================================================================================
 
-	_mat	ViewMatrix = CManagement::Get_Instance()->Get_Transform(D3DTS_VIEW);
-	_mat	ProjMatrix = CManagement::Get_Instance()->Get_Transform(D3DTS_PROJECTION);
+	_mat	ViewMatrix = g_pManagement->Get_Transform(D3DTS_VIEW);
+	_mat	ProjMatrix = g_pManagement->Get_Transform(D3DTS_PROJECTION);
 	_mat	WorldMatrix = m_pTransform->Get_WorldMat();
+	_mat matWVP = WorldMatrix * ViewMatrix * ProjMatrix;
 
 	if (FAILED(pShader->Set_Value("g_matWorld", &WorldMatrix, sizeof(_mat))))
 		return E_FAIL;
@@ -436,34 +423,13 @@ HRESULT CCostume_Hair::Render_GameObject_SetPass(CShader * pShader, _int iPass, 
 	//============================================================================================
 	if (_bIsForMotionBlur)
 	{
-		if (FAILED(pShader->Set_Value("g_matView", &ViewMatrix, sizeof(_mat))))
-			return E_FAIL;
-		if (FAILED(pShader->Set_Value("g_matProj", &ProjMatrix, sizeof(_mat))))
-			return E_FAIL;
 		if (FAILED(pShader->Set_Value("g_matLastWVP", &m_matLastWVP, sizeof(_mat))))
 			return E_FAIL;
 
-		m_matLastWVP = WorldMatrix * ViewMatrix * ProjMatrix;
+		m_matLastWVP = matWVP;
 
-		_bool bMotionBlur = true;
-		if (FAILED(pShader->Set_Bool("g_bMotionBlur", bMotionBlur)))
-			return E_FAIL;
-		_bool bDecalTarget = false;
-		if (FAILED(pShader->Set_Bool("g_bDecalTarget", bDecalTarget)))
-			return E_FAIL;
 		_float fBloomPower = 2.f;
 		if (FAILED(pShader->Set_Value("g_fBloomPower", &fBloomPower, sizeof(_float))))
-			return E_FAIL;
-	}
-
-	//============================================================================================
-	// 기타 상수
-	//============================================================================================
-	else
-	{
-		_mat matWVP = WorldMatrix * ViewMatrix * ProjMatrix;
-
-		if (FAILED(pShader->Set_Value("g_matWVP", &matWVP, sizeof(_mat))))
 			return E_FAIL;
 	}
 

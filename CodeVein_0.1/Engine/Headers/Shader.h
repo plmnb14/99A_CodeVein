@@ -17,6 +17,7 @@ private:
 	virtual ~CShader() = default;
 public:
 	HRESULT Set_Bool(D3DXHANDLE Handle, _bool Bool);
+	HRESULT Set_MatrixArray(D3DXHANDLE Handle, const _mat* pData, _uint iByte);
 	HRESULT Set_Value(D3DXHANDLE Handle, const void* pData, _uint iByte);
 	HRESULT Set_Texture(D3DXHANDLE Handle, LPDIRECT3DBASETEXTURE9 pTexture);
 	HRESULT Set_StaticTexture_Auto(CMesh_Static* pMeshStatic , _ulong dwSubsetNum);

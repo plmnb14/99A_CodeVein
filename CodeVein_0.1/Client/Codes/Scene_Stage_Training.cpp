@@ -104,7 +104,7 @@ HRESULT CScene_Stage_Training::Ready_Layer_Enemies()
 	if (FAILED(g_pManagement->Add_Layer(SCENE_STAGE, L"Layer_Boss")))
 		return E_FAIL;
 
-	if (FAILED(g_pManagement->Add_Layer(SCENE_MORTAL, L"Layer_Pet")))
+	if (FAILED(g_pManagement->Add_Layer(SCENE_STAGE, L"Layer_Pet")))
 		return E_FAIL;
 
 	if (FAILED(g_pManagement->Add_Layer(SCENE_STAGE, L"Layer_Item")))
@@ -215,20 +215,20 @@ HRESULT CScene_Stage_Training::Ready_Layer_Enemies()
 	// °Ë°ÕÁö
 	//====================================================================================================================================================
 
-	pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_SwordGenji",
-		&CSwordGenji::INFO(CSwordGenji::Normal, CSwordGenji::Sit1, 70.f, 2.f, 1.f,
-			true, _v3(5.f, 0.f, -2.f), V3_NULL, 0));
-	g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Monster", nullptr);
-
-	pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_SwordGenji",
-		&CSwordGenji::INFO(CSwordGenji::Normal, CSwordGenji::Sit1, 70.f, 2.f, 1.f,
-			true, _v3(10.f, 0.f, -2.f), V3_NULL, 0));
-	g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Monster", nullptr);
-
-	pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_SwordGenji",
-		&CSwordGenji::INFO(CSwordGenji::Normal, CSwordGenji::Sit1, 70.f, 2.f, 1.f,
-			true, _v3(-5.f, 0.f, -2.f), V3_NULL, 0));
-	g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Monster", nullptr);
+	//pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_SwordGenji",
+	//	&CSwordGenji::INFO(CSwordGenji::Normal, CSwordGenji::Sit1, 70.f, 2.f, 1.f,
+	//		true, _v3(5.f, 0.f, -2.f), V3_NULL, 0));
+	//g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Monster", nullptr);
+	//
+	//pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_SwordGenji",
+	//	&CSwordGenji::INFO(CSwordGenji::Normal, CSwordGenji::Sit1, 70.f, 2.f, 1.f,
+	//		true, _v3(10.f, 0.f, -2.f), V3_NULL, 0));
+	//g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Monster", nullptr);
+	//
+	//pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_SwordGenji",
+	//	&CSwordGenji::INFO(CSwordGenji::Normal, CSwordGenji::Sit1, 70.f, 2.f, 1.f,
+	//		true, _v3(-5.f, 0.f, -2.f), V3_NULL, 0));
+	//g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Monster", nullptr);
 
 	//====================================================================================================================================================
 
@@ -239,7 +239,17 @@ HRESULT CScene_Stage_Training::Ready_Layer_Enemies()
 
 	//pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_GunGenji",
 	//	&CGunGenji::INFO(CGunGenji::Normal, CGunGenji::CheckGun, 10.f, 3.f, 2.f,
-	//		true, _v3(3.f, 0.f, -8.f), V3_NULL, 0));
+	//		true, _v3(5.f, 0.f, -8.f), V3_NULL, 0));
+	//g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Monster", nullptr);
+	//
+	//pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_GunGenji",
+	//	&CGunGenji::INFO(CGunGenji::Normal, CGunGenji::CheckGun, 10.f, 3.f, 2.f,
+	//		true, _v3(10.f, 0.f, -8.f), V3_NULL, 0));
+	//g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Monster", nullptr);
+	//
+	//pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_GunGenji",
+	//	&CGunGenji::INFO(CGunGenji::Normal, CGunGenji::CheckGun, 10.f, 3.f, 2.f,
+	//		true, _v3(0.f, 0.f, -8.f), V3_NULL, 0));
 	//g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Monster", nullptr);
 
 	//====================================================================================================================================================

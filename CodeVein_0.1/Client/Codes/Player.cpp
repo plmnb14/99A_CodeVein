@@ -33,16 +33,16 @@ void CPlayer::Set_WeaponSlot(ACTIVE_WEAPON_SLOT eType, WEAPON_DATA eData)
 		if (m_pWeapon[eType])
 			Safe_Release(m_pWeapon[eType]);
 
-		if(m_eActiveSlot == eType)
+		//if(m_eActiveSlot == eType)
 
-		m_bWeaponActive[eType] = false;
-		m_bWeaponActive[!eType] = true;
+		//m_bWeaponActive[eType] = false;
+		//m_bWeaponActive[!eType] = true;
 		m_eActiveSlot = (ACTIVE_WEAPON_SLOT)(!eType);
 
 		return;
 	}
 
-	// 해당 슬롯의 무기를 교체 해 줍니다.
+	// 현재 해당 슬롯에 무기가 있다면 제거합니다.
 	if (m_pWeapon[eType])
 		Safe_Release(m_pWeapon[eType]);
 
@@ -61,11 +61,13 @@ void CPlayer::Set_WeaponSlot(ACTIVE_WEAPON_SLOT eType, WEAPON_DATA eData)
 	m_pWeapon[eType]->Set_AttachBoneMartix(&pFrame->CombinedTransformationMatrix);
 	m_pWeapon[eType]->Set_ParentMatrix(&m_pTransform->Get_WorldMat());
 
-	// 메인 슬롯이라면
-	if (WPN_SLOT_A == eType)
+	// 현재 활성화된 무기일 경우,
+	if (eType == m_eActiveSlot)
 	{
+		// 현재 활성 슬롯의 무기 타입을 바꿔주고
 		m_eMainWpnState = m_pWeapon[eType]->Get_WeaponType();
 
+		// 현재 활성화된 슬롯의 타입에 따라 한손/양손 타입을 정합니다.
 		m_bOneHand = (
 			m_eMainWpnState == WEAPON_SSword ? true :
 			m_eMainWpnState == WEAPON_LSword ? false :
@@ -73,12 +75,6 @@ void CPlayer::Set_WeaponSlot(ACTIVE_WEAPON_SLOT eType, WEAPON_DATA eData)
 			m_eMainWpnState == WEAPON_Gun ? true :
 			m_eMainWpnState == WEAPON_Hammer ? false : true
 			);
-	}
-
-	// 메인 슬롯이라면
-	else if (WPN_SLOT_B == eType)
-	{
-		m_eSubWpnState = m_pWeapon[eType]->Get_WeaponType();
 	}
 }
 
@@ -182,7 +178,6 @@ _int CPlayer::Update_GameObject(_double TimeDelta)
 
 	m_pScreenCornerFade->Update_GameObject(TimeDelta);
 
-
 	if (g_pInput_Device->Key_Down(DIK_Y))
 	{
 		//cout << "===================================================" << endl;
@@ -192,7 +187,6 @@ _int CPlayer::Update_GameObject(_double TimeDelta)
 		//cout << "===================================================" << endl;
 		//cout << D3DXToDegree(m_pTransform->Get_Angle(AXIS_Y)) << endl;
 		//cout << "===================================================" << endl;
-
 	}
 
 	// 머리 위치 업데이트
@@ -210,9 +204,6 @@ _int CPlayer::Update_GameObject(_double TimeDelta)
 
 	Check_Mistletoe();
 	Check_Stamina(TimeDelta);
-
-	IF_NOT_NULL(m_pWeapon[m_eActiveSlot])
-		m_pWeapon[m_eActiveSlot]->Update_GameObject(TimeDelta);
 
 	IF_NOT_NULL(m_pDrainWeapon)
 		m_pDrainWeapon->Update_GameObject(TimeDelta);
@@ -235,36 +226,49 @@ _int CPlayer::Late_Update_GameObject(_double TimeDelta)
 
 	if (nullptr == m_pRenderer ||
 		nullptr == m_pDynamicMesh)
-		return E_FAIL;
+		return NO_EVENT;
 
 
 	if (!m_tObjParam.bInvisible)
 	{
 		if (FAILED(m_pRenderer->Add_RenderList(RENDER_NONALPHA, this)))
-			return E_FAIL;
+			return NO_EVENT;
+
+		if (FAILED(m_pRenderer->Add_RenderList(RENDER_MOTIONBLURTARGET, this)))
+			return NO_EVENT;
+
+		if (FAILED(m_pRenderer->Add_RenderList(RENDER_SHADOWTARGET, this)))
+			return NO_EVENT;
 	}
 
 	else if (m_tObjParam.bInvisible)
 	{
 		if (FAILED(m_pRenderer->Add_RenderList(RENDER_ALPHA, this)))
-			return E_FAIL;
+			return NO_EVENT;
+
+		if (FAILED(m_pRenderer->Add_RenderList(RENDER_MOTIONBLURTARGET, this)))
+			return NO_EVENT;
+
+		if (FAILED(m_pRenderer->Add_RenderList(RENDER_SHADOWTARGET, this)))
+			return NO_EVENT;
 	}
 
 	if (false == m_bDissolve)
 	{
 		if (!m_tObjParam.bInvisible)
 		{
-			if (FAILED(m_pRenderer->Add_RenderList(RENDER_MOTIONBLURTARGET, this)))
-				return E_FAIL;
+			//if (FAILED(m_pRenderer->Add_RenderList(RENDER_MOTIONBLURTARGET, this)))
+			//	return NO_EVENT;
 
-			if (FAILED(m_pRenderer->Add_RenderList(RENDER_SHADOWTARGET, this)))
-				return E_FAIL;
+			//if (FAILED(m_pRenderer->Add_RenderList(RENDER_SHADOWTARGET, this)))
+			//	return NO_EVENT;
 		}
 	}
 
 	Reset_BloodSuck_Options();	
 
 	m_pOuter->Late_Update_GameObject(TimeDelta);
+
 	if (!m_tObjParam.bInvisible)
 	{
 		m_pHair->Late_Update_GameObject(TimeDelta);
@@ -283,9 +287,6 @@ _int CPlayer::Late_Update_GameObject(_double TimeDelta)
 	m_pOuter->Set_LeftArmAnimation(m_eAnim_LeftArm, m_bOffLerp);
 	m_pOuter->Set_RightArmAnimation(m_eAnim_RightArm, m_bOffLerp);
 
-	IF_NOT_NULL(m_pWeapon[m_eActiveSlot])
-		m_pWeapon[m_eActiveSlot]->Late_Update_GameObject(TimeDelta);
-
 	IF_NOT_NULL(m_pDrainWeapon)
 		m_pDrainWeapon->Late_Update_GameObject(TimeDelta);
 
@@ -294,9 +295,6 @@ _int CPlayer::Late_Update_GameObject(_double TimeDelta)
 
 HRESULT CPlayer::Render_GameObject_Instancing_SetPass(CShader * pShader)
 {
-	if (false == m_bEnable)
-		return S_OK;
-
 	if (nullptr == pShader ||
 		nullptr == m_pDynamicMesh)
 		return E_FAIL;
@@ -305,8 +303,8 @@ HRESULT CPlayer::Render_GameObject_Instancing_SetPass(CShader * pShader)
 
 	m_pDynamicMesh->Play_Animation_Lower(dDeltaTime * m_fAnimMutiply);
 	m_pDynamicMesh->Play_Animation_Upper(dDeltaTime * m_fAnimMutiply);
-	m_pDynamicMesh->Play_Animation_RightArm(dDeltaTime * m_fAnimMutiply, !m_bOneHand);
 	m_pDynamicMesh->Play_Animation_LeftArm(dDeltaTime * m_fAnimMutiply);
+	m_pDynamicMesh->Play_Animation_RightArm(dDeltaTime * m_fAnimMutiply, !m_bOneHand);
 
 	m_pHead[m_eHeadType]->Update_GameObject(dDeltaTime);
 	m_pMask[m_eMaskType]->Update_GameObject(dDeltaTime);
@@ -323,18 +321,24 @@ HRESULT CPlayer::Render_GameObject_Instancing_SetPass(CShader * pShader)
 		return E_FAIL;
 
 
-	_uint iNumMeshContainer = _uint(m_pDynamicMesh->Get_NumMeshContainer());
+	_uint iNumMeshContainer = m_pDynamicMesh->Get_NumMeshContainer();
 
 	_bool bOnToonRimLight = true;
 
 	for (_uint i = 0; i < _uint(iNumMeshContainer); ++i)
 	{
-		_uint iNumSubSet = (_uint)m_pDynamicMesh->Get_NumMaterials(i);
+		_uint iNumSubSet = m_pDynamicMesh->Get_NumMaterials(i);
 
 		m_pDynamicMesh->Update_SkinnedMesh(i);
 
+		// 하드웨어 스키닝
+		//m_pDynamicMesh->Update_SkinnedMesh_HardWare(i);
+
 		for (_uint j = 0; j < iNumSubSet; ++j)
 		{
+			// 하드웨어 스키닝
+			//m_pDynamicMesh->Set_MatrixPalette_OnShader(pShader, i);
+
 			m_iPass = m_pDynamicMesh->Get_MaterialPass(i, j);
 
 			if (m_bDissolve)
@@ -370,24 +374,26 @@ HRESULT CPlayer::Render_GameObject_Instancing_SetPass(CShader * pShader)
 			m_pDynamicMesh->Render_Mesh(i, j);
 
 			pShader->End_Pass();
+
 		}
 	}
 
 	bOnToonRimLight = false;
 	pShader->Set_Value("g_bToonRimLight", &bOnToonRimLight, sizeof(_bool));
 
+	m_pNavMesh->Render_NaviMesh();
+
+	IF_NOT_NULL(m_pWeapon[m_eActiveSlot])
+		m_pWeapon[m_eActiveSlot]->Update_GameObject(dDeltaTime);
+
+	IF_NOT_NULL(m_pWeapon[m_eActiveSlot])
+		m_pWeapon[m_eActiveSlot]->Late_Update_GameObject(dDeltaTime);
+
 	return NOERROR;
 }
 
 HRESULT CPlayer::Render_GameObject_SetPass(CShader* pShader, _int iPass, _bool _bIsForMotionBlur)
 {
-	if (false == m_bEnable)
-		return S_OK;
-
-	if (nullptr == pShader ||
-		nullptr == m_pDynamicMesh)
-		return E_FAIL;
-
 	//============================================================================================
 	// 공통 변수
 	//============================================================================================
@@ -407,21 +413,10 @@ HRESULT CPlayer::Render_GameObject_SetPass(CShader* pShader, _int iPass, _bool _
 		if (FAILED(pShader->Set_Value("g_matLastWVP", &m_matLastWVP, sizeof(_mat))))
 			return E_FAIL;
 
-		m_matLastWVP = WorldMatrix * ViewMatrix * ProjMatrix;
+		m_matLastWVP = WorldMatrix * ViewMatrix * ProjMatrix;;
 
 		_float fBloomPower = 20.f;
 		if (FAILED(pShader->Set_Value("g_fBloomPower", &fBloomPower, sizeof(_float))))
-			return E_FAIL;
-	}
-	
-	//============================================================================================
-	// 기타 상수
-	//============================================================================================
-	else
-	{
-		_mat matWVP = WorldMatrix * ViewMatrix * ProjMatrix; 
-
-		if (FAILED(pShader->Set_Value("g_matWVP", &matWVP, sizeof(_mat))))
 			return E_FAIL;
 	}
 
@@ -430,32 +425,28 @@ HRESULT CPlayer::Render_GameObject_SetPass(CShader* pShader, _int iPass, _bool _
 	//============================================================================================
 	_uint iNumMeshContainer = _uint(m_pDynamicMesh->Get_NumMeshContainer());
 
+	_int tmpPass = iPass;
+
 	for (_uint i = 0; i < _uint(iNumMeshContainer); ++i)
 	{
 		_uint iNumSubSet = (_uint)m_pDynamicMesh->Get_NumMaterials(i);
 
 		for (_uint j = 0; j < iNumSubSet; ++j)
 		{
-			_int tmpPass = m_pDynamicMesh->Get_MaterialPass(i, j);
+			tmpPass = iPass;
 
 			if (_bIsForMotionBlur)
 			{
+				tmpPass = m_pDynamicMesh->Get_MaterialPass(i, j);
+
 				if (13 == tmpPass)
 				{
 					// 피부
-					pShader->Begin_Pass(1);
-				}
-
-				else
-				{
-					pShader->Begin_Pass(iPass);
+					tmpPass = 1;
 				}
 			}
 
-			else
-			{
-				pShader->Begin_Pass(iPass);
-			}
+			pShader->Begin_Pass(tmpPass);
 
 			pShader->Commit_Changes();
 
@@ -598,7 +589,7 @@ void CPlayer::FootWalkTimerUpdate(_double _deltaTime)
 	{
 		if (false == m_bCanPlayWalkSound)
 		{
-			m_fFootWalkTimer_Cur += _deltaTime;
+			m_fFootWalkTimer_Cur += (_float)_deltaTime;
 
 			if (m_fFootWalkTimer_Cur >= m_fFootWalkTimer_Max)
 			{
@@ -2381,19 +2372,19 @@ void CPlayer::Key_BloodSuck()
 	}
 
 	// 임시 처형 , 원래는 공격을 카운터 치거나 뒤잡기 해야됨.
-	if (g_pInput_Device->Key_Down(DIK_V))
-	{
-		if (m_bCanExecution)
-		{
-			if (Check_CunterTarget())
-			{
-				m_eActState = ACT_BloodSuck_Execution;
-			}
-
-			//else
-			//	cout << "처형할 대상이 없습니다." << endl;
-		}
-	}
+	//if (g_pInput_Device->Key_Down(DIK_V))
+	//{
+	//	if (m_bCanExecution)
+	//	{
+	//		if (Check_CunterTarget())
+	//		{
+	//			m_eActState = ACT_BloodSuck_Execution;
+	//		}
+	//
+	//		//else
+	//		//	cout << "처형할 대상이 없습니다." << endl;
+	//	}
+	//}
 }
 
 void CPlayer::Key_UI_n_Utiliy(_bool _bActiveUI)
@@ -2687,6 +2678,8 @@ void CPlayer::Play_Idle()
 	m_eAnim_Upper = m_eAnim_Lower;
 	m_eAnim_RightArm = m_eAnim_Lower;
 	m_eAnim_LeftArm = m_eAnim_Lower;
+
+	m_fRightArmTimer = 0.f;
 }
 
 void CPlayer::Play_Run()
@@ -3212,17 +3205,16 @@ void CPlayer::Play_MoveDelay()
 		// 한손 일때
 		if (m_bOneHand)
 		{
-			m_eAnim_LeftArm =
-				m_eAnim_RightArm =
-				(m_eMainWpnState == WEAPON_Gun ? Gun_BlendWalk :
-					m_eMainWpnState == WEAPON_Halberd ? Halberd_BlendWalk: m_eAnim_Lower);
+			m_eAnim_LeftArm = m_eAnim_RightArm =
+				(m_eMainWpnState == WEAPON_Gun ? Gun_BlendRun :
+					m_eMainWpnState == WEAPON_Halberd ? Halberd_BlendRun : m_eAnim_Lower);
 		}
 		// 양손 일때
 		else
 		{
-			m_eAnim_RightArm = 
-				(m_eMainWpnState == WEAPON_Hammer ? Hammer_BlendWalk :
-					m_eMainWpnState == WEAPON_LSword ? Lsword_BlendWalk : Lsword_BlendWalk);
+			m_eAnim_RightArm =
+				(m_eMainWpnState == WEAPON_Hammer ? Hammer_BlendRun :
+					m_eMainWpnState == WEAPON_LSword ? Lsword_BlendRun : Lsword_BlendRun);
 		}
 
 		m_fSkillMoveAccel_Cur = 0.f;
@@ -3240,6 +3232,8 @@ void CPlayer::Play_MoveDelay()
 	{
 		if (m_pDynamicMesh->Is_Finish_Animation_Lower(0.8f))
 		{
+			m_fRightArmTimer = 1.f;
+
 			m_eActState = ACT_Idle;
 
 			m_bOnMoveDelay = false;
@@ -5590,8 +5584,8 @@ void CPlayer::Play_BloodSuckCount()
 
 	else if (true == m_bOnBloodSuck)
 	{
-		//if (m_tObjParam.bIsCounter)
-		//	cout << "카운터에효" << endl;
+		if (m_tObjParam.bIsCounter)
+			cout << "카운터에효" << endl;
 
 		_double dAniTime = m_pDynamicMesh->Get_TrackInfo().Position;
 
@@ -5677,28 +5671,29 @@ void CPlayer::Play_BloodSuckCount()
 			}
 		}
 
-		else if (dAniTime > 2.1)
+		else if (dAniTime > 0.2f)
 		{
+			cout << "으아아아아아" << endl;
+
 			if (false == m_bEventTrigger[2])
 			{
 				m_bEventTrigger[2] = true;
 
-				
+				if (m_tObjParam.bCanCounter)
+				{
+					m_tObjParam.bCanCounter = false;
+					m_tObjParam.bIsCounter = true;
+				}
 			}
 		}
 
-		else if (dAniTime > 0.1)
+		if (dAniTime > 0.1)
 		{
 			if (false == m_bEventTrigger[0])
 			{
 				m_bEventTrigger[0] = true;
 
 				// 카운터가 가능할 경우
-				if (m_tObjParam.bCanCounter)
-				{
-					m_tObjParam.bCanCounter = false;
-					m_tObjParam.bIsCounter = true;
-				}
 
 				// 이펙트 ============================================
 				LPCSTR tmpChar = "Hips";
@@ -11914,6 +11909,10 @@ HRESULT CPlayer::Add_Component()
 	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Shader_Mesh", L"Com_Shader", (CComponent**)&m_pShader)))
 		return E_FAIL;
 
+	// For.Com_Skinned
+	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Shader_Skinned", L"Com_Skinned", (CComponent**)&m_pSkinnedShader)))
+		return E_FAIL;
+
 	// for.Com_Mesh
 	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Mesh_BodyInner_01", L"Com_MeshDynamic", (CComponent**)&m_pDynamicMesh)))
 		return E_FAIL;
@@ -12095,6 +12094,7 @@ void CPlayer::Reset_BattleState()
 	m_tObjParam.bIsAttack = false;
 	m_tObjParam.bCanHit = true;
 	m_tObjParam.bIsHit = false;
+	m_tObjParam.bCanCounter = true;
 
 	m_tObjParam.bCanDodge = true;
 	m_tObjParam.bIsDodge = false;

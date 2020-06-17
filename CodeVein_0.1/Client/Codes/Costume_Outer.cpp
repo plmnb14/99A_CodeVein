@@ -135,9 +135,6 @@ void CCostume_Outer::Calc_AttachBoneTransform()
 	_mat tmpMat;
 	D3DXMatrixIdentity(&tmpMat);
 
-	//memcpy(&tmpMat._41, &(*m_pmatBone)._41, sizeof(_v3));
-	//memcpy(&tmpMat, m_pmatBone, sizeof(_mat));
-
 	m_pTransform->Calc_ParentMat(&(tmpMat * *m_pmatParent));
 }
 
@@ -275,21 +272,19 @@ _int CCostume_Outer::Update_GameObject(_double TimeDelta, _bool bClearCol)
 
 	static _byte iCount = 0;
 
-	if (g_pInput_Device->Key_Down(DIK_G))
-	{
-		++iCount;
+	//if (g_pInput_Device->Key_Down(DIK_G))
+	//{
+	//	++iCount;
 
-		Change_OuterMesh(CClothManager::Cloth_Dynamic(iCount));
+	//	Change_OuterMesh(CClothManager::Cloth_Dynamic(iCount));
 
-		if (CClothManager::Cloth_Dynamic::Dynamic_End - 1 == iCount)
-			iCount = CClothManager::Cloth_Dynamic::None;
-	}
+	//	if (CClothManager::Cloth_Dynamic::Dynamic_End - 1 == iCount)
+	//		iCount = CClothManager::Cloth_Dynamic::None;
+	//}
 
 
 	if(g_pClothManager->Is_Valid_Dynamic(m_eOuterType))
 		g_pClothManager->Update_Cloth_Dynamic(m_eOuterType, bClearCol);
-
-
 
 	return NO_EVENT;
 }
@@ -327,18 +322,6 @@ _int CCostume_Outer::Late_Update_GameObject(_double TimeDelta)
 		}
 	}
 
-	if (false == m_bEnable)
-		return NO_EVENT;
-
-	if (nullptr == m_pRenderer ||
-		nullptr == m_pDynamicMesh)
-		return E_FAIL;
-
-	//m_pDynamicMesh->SetUp_Animation_Lower(m_eAnimLower, m_bLerpOff);
-	//m_pDynamicMesh->SetUp_Animation_Upper(m_eAnimUpper, m_bLerpOff);
-	//m_pDynamicMesh->SetUp_Animation_RightArm(m_eAnimRight, m_bLerpOff);
-	//m_pDynamicMesh->SetUp_Animation_LeftArm(m_eAnimLeft, m_bLerpOff);
-
 	return NO_EVENT;
 }
 
@@ -351,13 +334,6 @@ HRESULT CCostume_Outer::Render_GameObject()
 	if (nullptr == m_pShader ||
 		nullptr == m_pDynamicMesh)
 		return E_FAIL;
-
-	//m_pDynamicMesh->SetUp_Animation(0);
-
-	//m_pDynamicMesh->Play_Animation_Lower(g_pTimer_Manager->Get_DeltaTime(L"Timer_Fps_60") * m_fAnimMultiply);
-	//m_pDynamicMesh->Play_Animation_Upper(g_pTimer_Manager->Get_DeltaTime(L"Timer_Fps_60") * m_fAnimMultiply);
-	//m_pDynamicMesh->Play_Animation_RightArm(g_pTimer_Manager->Get_DeltaTime(L"Timer_Fps_60") * m_fAnimMultiply, false);
-	//m_pDynamicMesh->Play_Animation_LeftArm(g_pTimer_Manager->Get_DeltaTime(L"Timer_Fps_60") * m_fAnimMultiply);
 
 	m_pDynamicMesh->Play_Animation(g_pTimer_Manager->Get_DeltaTime(L"Timer_Fps_60") * m_fAnimMultiply);
 
@@ -414,9 +390,6 @@ HRESULT CCostume_Outer::Render_GameObject()
 
 HRESULT CCostume_Outer::Render_GameObject_Instancing_SetPass(CShader * pShader)
 {
-	IF_NULL_VALUE_RETURN(pShader, E_FAIL);
-	IF_NULL_VALUE_RETURN(m_pDynamicMesh, E_FAIL);
-
 	//// 버텍스 교체
 	if (m_eOuterType != CClothManager::Cloth_Dynamic::None)
 		Change_Vertex();
@@ -425,8 +398,6 @@ HRESULT CCostume_Outer::Render_GameObject_Instancing_SetPass(CShader * pShader)
 	m_pDynamicMesh->Play_Animation_Upper(g_pTimer_Manager->Get_DeltaTime(L"Timer_Fps_60") * m_fAnimMultiply);
 	m_pDynamicMesh->Play_Animation_RightArm(g_pTimer_Manager->Get_DeltaTime(L"Timer_Fps_60") * m_fAnimMultiply, false);
 	m_pDynamicMesh->Play_Animation_LeftArm(g_pTimer_Manager->Get_DeltaTime(L"Timer_Fps_60") * m_fAnimMultiply);
-
-	//m_pDynamicMesh->Play_Animation(g_pTimer_Manager->Get_DeltaTime(L"Timer_Fps_60") * m_fAnimMultiply);
 
 	if (m_tObjParam.bInvisible ||
 		m_bInvisible)
@@ -470,14 +441,6 @@ HRESULT CCostume_Outer::Render_GameObject_Instancing_SetPass(CShader * pShader)
 
 HRESULT CCostume_Outer::Render_GameObject_SetPass(CShader * pShader, _int iPass, _bool _bIsForMotionBlur)
 {
-	if (false == m_bEnable ||
-		m_bInvisible)
-		return S_OK;
-
-	if (nullptr == pShader ||
-		nullptr == m_pDynamicMesh)
-		return E_FAIL;
-
 	//============================================================================================
 	// 공통 변수
 	//============================================================================================
@@ -485,6 +448,8 @@ HRESULT CCostume_Outer::Render_GameObject_SetPass(CShader * pShader, _int iPass,
 	_mat	ViewMatrix = g_pManagement->Get_Transform(D3DTS_VIEW);
 	_mat	ProjMatrix = g_pManagement->Get_Transform(D3DTS_PROJECTION);
 	_mat	WorldMatrix = m_pTransform->Get_WorldMat();
+
+	_mat matWVP = WorldMatrix * ViewMatrix * ProjMatrix;
 
 	if (FAILED(pShader->Set_Value("g_matWorld", &WorldMatrix, sizeof(_mat))))
 		return E_FAIL;
@@ -494,45 +459,24 @@ HRESULT CCostume_Outer::Render_GameObject_SetPass(CShader * pShader, _int iPass,
 	//============================================================================================
 	if (_bIsForMotionBlur)
 	{
-		if (FAILED(pShader->Set_Value("g_matView", &ViewMatrix, sizeof(_mat))))
-			return E_FAIL;
-		if (FAILED(pShader->Set_Value("g_matProj", &ProjMatrix, sizeof(_mat))))
-			return E_FAIL;
 		if (FAILED(pShader->Set_Value("g_matLastWVP", &m_matLastWVP, sizeof(_mat))))
 			return E_FAIL;
 
-		m_matLastWVP = WorldMatrix * ViewMatrix * ProjMatrix;
+		m_matLastWVP = matWVP;
 
-		_bool bMotionBlur = true;
-		if (FAILED(pShader->Set_Bool("g_bMotionBlur", bMotionBlur)))
-			return E_FAIL;
-		_bool bDecalTarget = false;
-		if (FAILED(pShader->Set_Bool("g_bDecalTarget", bDecalTarget)))
-			return E_FAIL;
 		_float fBloomPower = 0.f;
 		if (FAILED(pShader->Set_Value("g_fBloomPower", &fBloomPower, sizeof(_float))))
 			return E_FAIL;
 	}
 
 	//============================================================================================
-	// 기타 상수
-	//============================================================================================
-	else
-	{
-		_mat matWVP = WorldMatrix * ViewMatrix * ProjMatrix;
-
-		if (FAILED(pShader->Set_Value("g_matWVP", &matWVP, sizeof(_mat))))
-			return E_FAIL;
-	}
-
-	//============================================================================================
 	// 쉐이더 실행
 	//============================================================================================
-	_uint iNumMeshContainer = _uint(m_pDynamicMesh->Get_NumMeshContainer());
+	_uint iNumMeshContainer = m_pDynamicMesh->Get_NumMeshContainer();
 
-	for (_uint i = 0; i < _uint(iNumMeshContainer); ++i)
+	for (_uint i = 0; i < iNumMeshContainer; ++i)
 	{
-		_uint iNumSubSet = (_uint)m_pDynamicMesh->Get_NumMaterials(i);
+		_uint iNumSubSet = m_pDynamicMesh->Get_NumMaterials(i);
 
 		for (_uint j = 0; j < iNumSubSet; ++j)
 		{
