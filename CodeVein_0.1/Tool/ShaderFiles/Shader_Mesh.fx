@@ -156,6 +156,21 @@ sampler		FXSampler = sampler_state
 	mipfilter = linear;
 };
 
+
+matrix		g_MatrixPalette[200];
+int			g_iNumBoneInfluences = 8;
+
+struct VS_IN_Dynamic_Skinned
+{
+	float3		vPosition	: POSITION;
+	float3		vNormal		: NORMAL;
+	float3		vTangent	: TANGENT;
+	float3		vBinormal	: BINORMAL;
+	float2		vTexUV		: TEXCOORD0;
+	float4		weights		: BLENDWEIGHT0;
+	int4		boneIndices : BLENDINDICES0;
+};
+
 struct VS_IN
 {
 	float3		vPosition	: POSITION;
@@ -272,6 +287,62 @@ VS_OUT_Flag VS_Flag(VS_IN_Flag In)
 	return Out;
 }
 
+VS_OUT VS_Dynamic_Skinned(VS_IN_Dynamic_Skinned In)
+{
+	VS_OUT			Out = (VS_OUT)0;
+
+	float4 p = float4(0.f, 0.f, 0.f, 1.f);
+	float lastWeight = 0.f;
+	int n = g_iNumBoneInfluences - 1;
+	
+	float3 vInNormal = normalize(In.vNormal);
+	float3 vInTangent = normalize(In.vTangent);
+	float3 vInBinormal = normalize(In.vBinormal);
+	
+	float3 vOutNormal = float3(0.f, 0.f, 0.f);
+	float3 vOutTangent = float3(0.f, 0.f, 0.f);
+	float3 vOutBinormal = float3(0.f, 0.f, 0.f);
+	
+	for (int i = 0; i < n; ++i)
+	{
+		lastWeight += In.weights[i];
+		p += In.weights[i] * mul(In.vPosition, g_MatrixPalette[In.boneIndices[i]]);
+	
+		vOutNormal += In.weights[i] * mul(vInNormal, g_MatrixPalette[In.boneIndices[i]]);
+		vOutTangent += In.weights[i] * mul(vInTangent, g_MatrixPalette[In.boneIndices[i]]);
+		vOutBinormal += In.weights[i] * mul(vInBinormal, g_MatrixPalette[In.boneIndices[i]]);
+	}
+	
+	lastWeight = 1.f - lastWeight;
+	p += lastWeight * mul(In.vPosition, g_MatrixPalette[In.boneIndices[n]]);
+	
+	vOutNormal += lastWeight * mul(vInNormal, g_MatrixPalette[In.boneIndices[n]]);
+	vOutTangent += lastWeight * mul(vInTangent, g_MatrixPalette[In.boneIndices[n]]);
+	vOutBinormal += lastWeight * mul(vInBinormal, g_MatrixPalette[In.boneIndices[n]]);
+	
+	p.w = 1.f;
+
+	matrix		matWV, matWVP;
+
+	matWV = mul(g_matWorld, g_matView);
+	matWVP = mul(matWV, g_matProj);
+
+	Out.vPosition = mul(vector(In.vPosition, 1.f), matWVP);
+	Out.N = normalize(mul(vOutNormal, (float3x3)g_matWorld));
+	Out.T = normalize(mul(vOutTangent, (float3x3)g_matWorld));
+	Out.B = normalize(mul(vOutBinormal, (float3x3)g_matWorld));
+
+	Out.vTexUV = In.vTexUV;
+
+	Out.vProjPos = Out.vPosition;
+
+	float4 vWorldPos = mul(vector(In.vPosition, 1.f), g_matWorld);
+
+	Out.vRimDir = float4(normalize(g_vCamPos - vWorldPos.xyz), 1.f);
+	Out.vRimNormal = float4(normalize(In.vNormal), 0.f);
+
+	return Out;
+}
 // POSITION시멘틱을 가진 멤버변수에 대해서 W값으로 XYZW를 나누는 연산을 수행.(원근 투영)
 // 투영스페이스 상에 존재하는 정점(-1, 1 ~ 1, -1)을 뷰포트영역상의 정점(0, 0 ~ WINCX, WINCY)으로 변환한다.
 // 래스터라이즈 : 세개 정점에 둘러쌓여진 영역안에 존재하는 픽셀의 정보를 정점정보를 기반하여 생성한다.
@@ -1590,7 +1661,7 @@ technique Default_Technique
 	}
 
 	//====================================================================================================
-	// 12 - Default ( D N S E ID )
+	// 12 - Default ( D N S U ID )
 	//====================================================================================================
 	pass Default_DNSUID
 	{
@@ -1705,21 +1776,6 @@ technique Default_Technique
 	}
 
 	//====================================================================================================
-	// 19 - ForFlag ( D )
-	//====================================================================================================
-	//pass Default_DNEU
-	//{
-	//	AlphablendEnable = false;
-	//
-	//	AlphaTestEnable = true;
-	//	AlphaRef = 0;
-	//	AlphaFunc = Greater;
-	//
-	//	VertexShader = compile vs_3_0 VS_Flag();
-	//	PixelShader = compile ps_3_0 PS_Flag();
-	//}
-
-	//====================================================================================================
 	// 19 - Default ( D N S H )
 	//====================================================================================================
 	pass Default_DNSH
@@ -1798,5 +1854,21 @@ technique Default_Technique
 		VertexShader = compile vs_3_0 VS_MAIN();
 		PixelShader = compile ps_3_0 PS_Default_DNU_Custom();
 	}
+
+	//====================================================================================================
+	// 24 - Skinned ( D N S U ID )
+	//====================================================================================================
+	//pass Skinned_DNSUID
+	//{
+	//	cullmode = ccw;
+	//	AlphablendEnable = false;
+	//
+	//	AlphaTestEnable = true;
+	//	AlphaRef = 0;
+	//	AlphaFunc = Greater;
+	//
+	//	VertexShader = compile vs_3_0 VS_MAIN();
+	//	PixelShader = compile ps_3_0 PS_Default_DNSUID();
+	//}
 }
 
