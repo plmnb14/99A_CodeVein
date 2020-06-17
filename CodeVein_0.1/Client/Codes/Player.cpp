@@ -76,17 +76,24 @@ void CPlayer::Set_WeaponSlot(ACTIVE_WEAPON_SLOT eType, WEAPON_DATA eData)
 			m_eMainWpnState == WEAPON_Hammer ? false : true
 			);
 	}
+
+	m_tObjParam.fDamage = m_pWeapon[eType]->Get_WeaponParam(eData).fDamage;
 }
 
-void CPlayer::Set_ArmorSlot(ARMOR_All_DATA eType, _float fMaxHP)
+void CPlayer::Set_ArmorSlot(ARMOR_All_DATA eType, ARMOR_PARAM* pParam)
 {
 	//if (m_pOuter->Get_OuterType() + 1 == eType)
 	//	return;
 
 	m_pOuter->Change_OuterMesh(CClothManager::Cloth_Dynamic(eType + 1));
-	m_tObjParam.fHp_Max = fMaxHP;
-	if (fMaxHP < m_tObjParam.fHp_Cur)
-		m_tObjParam.fHp_Cur = fMaxHP;
+
+	_float fHp_Max = pParam->fHP + pParam->fPlusHP;
+	_float fArmor_Max = pParam->fDef + pParam->fPlusDef;
+	m_tObjParam.fHp_Max = fHp_Max;
+	m_tObjParam.fArmor_Max = fArmor_Max;
+	m_tObjParam.fArmor_Cur = fArmor_Max;
+	if (fHp_Max < m_tObjParam.fHp_Cur)
+		m_tObjParam.fHp_Cur = fHp_Max;
 }
 
 void CPlayer::Set_Target_UI(CGameObject * pGameObject)
