@@ -2,8 +2,8 @@
 
 //#define PlaySound g_pSoundManager;
 
-static const unsigned short g_nWinCX = 1280;
-static const unsigned short g_nWinCY = 720;
+static const unsigned short g_nWinCX = 1600;
+static const unsigned short g_nWinCY = 900;
 
 extern HINSTANCE	g_hInst;
 extern HWND			g_hWnd;

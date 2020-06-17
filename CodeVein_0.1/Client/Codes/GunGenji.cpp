@@ -261,10 +261,6 @@ _int CGunGenji::Late_Update_GameObject(_double TimeDelta)
 {
 	if (false == m_bEnable)
 		return NO_EVENT;
-
-	if (nullptr == m_pRendererCom)
-		return E_FAIL;
-
 	//=============================================================================================
 	// 그림자랑 모션블러는 프리스텀 안에 없으면 안그림
 	//=============================================================================================
@@ -354,9 +350,6 @@ HRESULT CGunGenji::Render_GameObject()
 
 HRESULT CGunGenji::Render_GameObject_Instancing_SetPass(CShader * pShader)
 {
-	IF_NULL_VALUE_RETURN(pShader, E_FAIL);
-	IF_NULL_VALUE_RETURN(m_pMeshCom, E_FAIL);
-
 	m_pMeshCom->Play_Animation(DELTA_60 * m_dAniPlayMul);
 
 	if (m_bInFrustum)
@@ -364,20 +357,17 @@ HRESULT CGunGenji::Render_GameObject_Instancing_SetPass(CShader * pShader)
 		if (FAILED(SetUp_ConstantTable(pShader)))
 			return E_FAIL;
 
-		_uint iNumMeshContainer = _uint(m_pMeshCom->Get_NumMeshContainer());
+		_uint iNumMeshContainer = m_pMeshCom->Get_NumMeshContainer();
 
-		for (_uint i = 0; i < _uint(iNumMeshContainer); ++i)
+		for (_uint i = 0; i < iNumMeshContainer; ++i)
 		{
-			_uint iNumSubSet = (_uint)m_pMeshCom->Get_NumMaterials(i);
+			_uint iNumSubSet = m_pMeshCom->Get_NumMaterials(i);
 
 			m_pMeshCom->Update_SkinnedMesh(i);
 
 			for (_uint j = 0; j < iNumSubSet; ++j)
 			{
-				m_iPass = m_pMeshCom->Get_MaterialPass(i, j);
-
-				if (m_bDissolve)
-					m_iPass = 3;
+				m_iPass = !m_bDissolve ? m_pMeshCom->Get_MaterialPass(i, j) : 3;
 
 				pShader->Begin_Pass(m_iPass);
 
@@ -402,19 +392,10 @@ HRESULT CGunGenji::Render_GameObject_Instancing_SetPass(CShader * pShader)
 
 HRESULT CGunGenji::Render_GameObject_SetPass(CShader* pShader, _int iPass, _bool _bIsForMotionBlur)
 {
-	if (false == m_bEnable)
-		return S_OK;
-
-	if (nullptr == pShader ||
-		nullptr == m_pMeshCom)
-		return E_FAIL;
-
 	//============================================================================================
 	// 공통 변수
 	//============================================================================================
 
-	_mat	ViewMatrix = g_pManagement->Get_Transform(D3DTS_VIEW);
-	_mat	ProjMatrix = g_pManagement->Get_Transform(D3DTS_PROJECTION);
 	_mat	WorldMatrix = m_pTransformCom->Get_WorldMat();
 
 	if (FAILED(pShader->Set_Value("g_matWorld", &WorldMatrix, sizeof(_mat))))
@@ -425,52 +406,35 @@ HRESULT CGunGenji::Render_GameObject_SetPass(CShader* pShader, _int iPass, _bool
 	//============================================================================================
 	if (_bIsForMotionBlur)
 	{
-		if (FAILED(pShader->Set_Value("g_matView", &ViewMatrix, sizeof(_mat))))
-			return E_FAIL;
-		if (FAILED(pShader->Set_Value("g_matProj", &ProjMatrix, sizeof(_mat))))
-			return E_FAIL;
+		_mat	ViewMatrix = g_pManagement->Get_Transform(D3DTS_VIEW);
+		_mat	ProjMatrix = g_pManagement->Get_Transform(D3DTS_PROJECTION);
+
 		if (FAILED(pShader->Set_Value("g_matLastWVP", &m_matLastWVP, sizeof(_mat))))
 			return E_FAIL;
 
 		m_matLastWVP = WorldMatrix * ViewMatrix * ProjMatrix;
 
-		//_bool bMotionBlur = true;
-		//if (FAILED(pShader->Set_Bool("g_bMotionBlur", bMotionBlur)))
-		//	return E_FAIL;
-		//_bool bDecalTarget = false;
-		//if (FAILED(pShader->Set_Bool("g_bDecalTarget", bDecalTarget)))
-		//	return E_FAIL;
 		_float fBloomPower = 0.5f;
 		if (FAILED(pShader->Set_Value("g_fBloomPower", &fBloomPower, sizeof(_float))))
 			return E_FAIL;
 	}
 
 	//============================================================================================
-	// 기타 상수
-	//============================================================================================
-	else
-	{
-		_mat matWVP = WorldMatrix * ViewMatrix * ProjMatrix;
-
-		if (FAILED(pShader->Set_Value("g_matWVP", &matWVP, sizeof(_mat))))
-			return E_FAIL;
-	}
-
-	//============================================================================================
 	// 쉐이더 실행
 	//============================================================================================
-	_uint iNumMeshContainer = _uint(m_pMeshCom->Get_NumMeshContainer());
-
-	for (_uint i = 0; i < _uint(iNumMeshContainer); ++i)
+	//m_pMeshCom->Play_Animation(0.f);
+	
+	_uint iNumMeshContainer = m_pMeshCom->Get_NumMeshContainer();
+	
+	for (_uint i = 0; i < iNumMeshContainer; ++i)
 	{
-		_uint iNumSubSet = (_uint)m_pMeshCom->Get_NumMaterials(i);
+		//m_pMeshCom->Update_SkinnedMesh(i);
+
+		_uint iNumSubSet = m_pMeshCom->Get_NumMaterials(i);
 
 		for (_uint j = 0; j < iNumSubSet; ++j)
 		{
-			_int tmpPass = m_pMeshCom->Get_MaterialPass(i, j);
-
 			pShader->Begin_Pass(iPass);
-			pShader->Commit_Changes();
 
 			pShader->Commit_Changes();
 
@@ -479,7 +443,6 @@ HRESULT CGunGenji::Render_GameObject_SetPass(CShader* pShader, _int iPass, _bool
 			pShader->End_Pass();
 		}
 	}
-
 	//============================================================================================
 
 	return S_OK;

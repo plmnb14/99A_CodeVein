@@ -188,76 +188,11 @@ float3x3 QuaternionToMatrix(float4 quat)
 
 PS_OUT PS_MAIN(PS_IN In) 
 {
+	////////////////////////
+	// 이거 안씀
+	////////////////////////
+
 	PS_OUT			Out = (PS_OUT)0;
-
-	if (g_bUseColorTex)
-	{
-		Out.vColor = pow(tex2D(ColorSampler, In.vTexUV), 2.2);
-		//Out.vColor = tex2D(ColorSampler, In.vTexUV);
-		Out.vColor.a = tex2D(DiffuseSampler, In.vTexUV).x;
-	}
-	else
-	{
-		Out.vColor = pow(tex2D(DiffuseSampler, In.vTexUV), 2.2);
-		//Out.vColor = pow(tex2D(DiffuseSampler, In.vTexUV)  * In.vColor, 2.2);
-		Out.vColor.a = tex2D(DiffuseSampler, In.vTexUV).x;
-	}
-
-	if (g_bUseRGBA)
-	{
-		Out.vColor.xyz = g_vColor.xyz;
-		Out.vColor.a *= g_vColor.a;
-	}
-	else
-	{
-		// ==============================================================================================
-		// [Memo]  g_vColor.x = Hue / g_vColor.y = Contrast / g_vColor.z = Brightness / g_vColor.w = Saturation
-		// ==============================================================================================
-		float3 intensity;
-		float half_angle = 0.5 * radians(g_vColor.x); // Hue is radians of 0 tp 360 degree
-		float4 rot_quat = float4((root3 * sin(half_angle)), cos(half_angle));
-		float3x3 rot_Matrix = QuaternionToMatrix(rot_quat);
-		Out.vColor.rgb = mul(rot_Matrix, Out.vColor.rgb);
-		Out.vColor.rgb = (Out.vColor.rgb - 0.5) *(g_vColor.y + 1.0) + 0.5;
-		Out.vColor.rgb = Out.vColor.rgb + g_vColor.z;
-		intensity = float(dot(Out.vColor.rgb, lumCoeff));
-		Out.vColor.rgb = lerp(intensity, Out.vColor.rgb, g_vColor.w);
-		// End ==========================================================================================
-	}
-
-	if (g_bUseMaskTex)
-	{
-		//float fGradientUV = In.vTexUV + (g_fAlpha);
-		vector vGradientMask = tex2D(GradientSampler, In.vTexUV);
-		Out.vColor.a *= vGradientMask.x;
-	}
-
-	if (g_bDissolve)
-	{
-		float4 fxColor = tex2D(DiffuseSampler, In.vTexUV);
-
-		if (Out.vColor.a == 0.f)
-			clip(-1);
-
-		if (fxColor.r >= g_fDissolve)
-			Out.vColor.a = 1;
-		else
-			Out.vColor.a = 0;
-	}
-
-	if (g_bReverseColor)
-		Out.vColor.rgb = 1 - Out.vColor.rgb;
-
-	// 소프트 이펙트 ==========================================================================================
-	float2		vTexUV;
-	vTexUV.x = (In.vProjPos.x / In.vProjPos.w) * 0.5f + 0.5f;
-	vTexUV.y = (In.vProjPos.y / In.vProjPos.w) * -0.5f + 0.5f;
-
-	vector		vDepthInfo = tex2D(DepthSampler, vTexUV);
-	float		fViewZ = vDepthInfo.y * 500.f;
-
-	Out.vColor.a = (Out.vColor.a * saturate(fViewZ - In.vProjPos.w)) * g_fAlpha;
-	// =========================================================================================================
 
 	return Out;
 }
@@ -266,27 +201,16 @@ PS_OUT Use_RGBA_MASK(PS_IN In)
 {
 	PS_OUT			Out = (PS_OUT)0;
 
-	Out.vColor = pow(tex2D(DiffuseSampler, In.vTexUV), 2.2);
-	Out.vColor.a = tex2D(DiffuseSampler, In.vTexUV).x;
+	float4 vDiffuseSampler = tex2D(DiffuseSampler, In.vTexUV);
+
+	Out.vColor = pow(vDiffuseSampler, 2.2);
+	Out.vColor.a = vDiffuseSampler.x;
 	
 	Out.vColor.xyz = g_vColor.xyz;
 	Out.vColor.a *= g_vColor.a;
 	
 	vector vGradientMask = tex2D(GradientSampler, In.vTexUV);
 	Out.vColor.a *= vGradientMask.x;
-
-	if (g_bDissolve)
-	{
-		float4 fxColor = tex2D(DiffuseSampler, In.vTexUV);
-
-		if (Out.vColor.a == 0.f)
-			clip(-1);
-
-		if (fxColor.r >= g_fDissolve)
-			Out.vColor.a = 1;
-		else
-			Out.vColor.a = 0;
-	}
 
 	// 소프트 이펙트 ==========================================================================================
 	float2		vTexUV;
@@ -306,25 +230,13 @@ PS_OUT Use_RGBA_NoMASK(PS_IN In)
 {
 	PS_OUT			Out = (PS_OUT)0;
 
-	Out.vColor = pow(tex2D(DiffuseSampler, In.vTexUV), 2.2);
-	//Out.vColor = pow(tex2D(DiffuseSampler, In.vTexUV)  * In.vColor, 2.2);
-	Out.vColor.a = tex2D(DiffuseSampler, In.vTexUV).x;
+	float4 vDiffuseSampler = tex2D(DiffuseSampler, In.vTexUV);
+
+	Out.vColor = pow(vDiffuseSampler, 2.2);
+	Out.vColor.a = vDiffuseSampler.x;
 
 	Out.vColor.xyz = g_vColor.xyz;
 	Out.vColor.a *= g_vColor.a;
-	
-	if (g_bDissolve)
-	{
-		float4 fxColor = tex2D(DiffuseSampler, In.vTexUV);
-
-		if (Out.vColor.a == 0.f)
-			clip(-1);
-
-		if (fxColor.r >= g_fDissolve)
-			Out.vColor.a = 1;
-		else
-			Out.vColor.a = 0;
-	}
 
 	// 소프트 이펙트 ==========================================================================================
 	float2		vTexUV;
@@ -345,8 +257,9 @@ PS_OUT Use_ColorTex_MASK(PS_IN In)
 	PS_OUT			Out = (PS_OUT)0;
 
 	Out.vColor = pow(tex2D(ColorSampler, In.vTexUV), 2.2);
-	//Out.vColor = tex2D(ColorSampler, In.vTexUV);
-	Out.vColor.a = tex2D(DiffuseSampler, In.vTexUV).x;
+	
+	float4 vDiffuseSampler = tex2D(DiffuseSampler, In.vTexUV);
+	Out.vColor.a = vDiffuseSampler.x;
 
 	// ==============================================================================================
 	// [Memo]  g_vColor.x = Hue / g_vColor.y = Contrast / g_vColor.z = Brightness / g_vColor.w = Saturation
@@ -364,19 +277,6 @@ PS_OUT Use_ColorTex_MASK(PS_IN In)
 
 	vector vGradientMask = tex2D(GradientSampler, In.vTexUV);
 	Out.vColor.a *= vGradientMask.x;
-
-	if (g_bDissolve)
-	{
-		float4 fxColor = tex2D(DiffuseSampler, In.vTexUV);
-
-		if (Out.vColor.a == 0.f)
-			clip(-1);
-
-		if (fxColor.r >= g_fDissolve)
-			Out.vColor.a = 1;
-		else
-			Out.vColor.a = 0;
-	}
 
 	// 소프트 이펙트 ==========================================================================================
 	float2		vTexUV;
@@ -397,7 +297,9 @@ PS_OUT Use_ColorTex_NoMASK(PS_IN In)
 	PS_OUT			Out = (PS_OUT)0;
 
 	Out.vColor = pow(tex2D(ColorSampler, In.vTexUV), 2.2);
-	Out.vColor.a = tex2D(DiffuseSampler, In.vTexUV).x;
+
+	float4 vDiffuseSampler = tex2D(DiffuseSampler, In.vTexUV);
+	Out.vColor.a = vDiffuseSampler.x;
 
 	float3 intensity;
 	float half_angle = 0.5 * radians(g_vColor.x); // Hue is radians of 0 tp 360 degree
@@ -409,18 +311,166 @@ PS_OUT Use_ColorTex_NoMASK(PS_IN In)
 	intensity = float(dot(Out.vColor.rgb, lumCoeff));
 	Out.vColor.rgb = lerp(intensity, Out.vColor.rgb, g_vColor.w);
 
-	if (g_bDissolve)
-	{
-		float4 fxColor = tex2D(DiffuseSampler, In.vTexUV);
+	// 소프트 이펙트 ==========================================================================================
+	float2		vTexUV;
+	vTexUV.x = (In.vProjPos.x / In.vProjPos.w) * 0.5f + 0.5f;
+	vTexUV.y = (In.vProjPos.y / In.vProjPos.w) * -0.5f + 0.5f;
 
-		if (Out.vColor.a == 0.f)
-			clip(-1);
+	vector		vDepthInfo = tex2D(DepthSampler, vTexUV);
+	float		fViewZ = vDepthInfo.y * 500.f;
 
-		if (fxColor.r >= g_fDissolve)
-			Out.vColor.a = 1;
-		else
-			Out.vColor.a = 0;
-	}
+	Out.vColor.a = (Out.vColor.a * saturate(fViewZ - In.vProjPos.w)) * g_fAlpha;
+	// =========================================================================================================
+
+	return Out;
+}
+
+
+PS_OUT Use_RGBA_MASK_DISSOLVE(PS_IN In)
+{
+	PS_OUT			Out = (PS_OUT)0;
+
+	float4 vDiffuseSampler = tex2D(DiffuseSampler, In.vTexUV);
+
+	Out.vColor = pow(vDiffuseSampler, 2.2);
+	Out.vColor.a = vDiffuseSampler.x;
+
+	Out.vColor.xyz = g_vColor.xyz;
+	Out.vColor.a *= g_vColor.a;
+
+	vector vGradientMask = tex2D(GradientSampler, In.vTexUV);
+	Out.vColor.a *= vGradientMask.x;
+
+	if (Out.vColor.a == 0.f)
+		clip(-1);
+
+	if (vDiffuseSampler.r >= g_fDissolve)
+		Out.vColor.a = 1;
+	else
+		Out.vColor.a = 0;
+
+	// 소프트 이펙트 ==========================================================================================
+	float2		vTexUV;
+	vTexUV.x = (In.vProjPos.x / In.vProjPos.w) * 0.5f + 0.5f;
+	vTexUV.y = (In.vProjPos.y / In.vProjPos.w) * -0.5f + 0.5f;
+
+	vector		vDepthInfo = tex2D(DepthSampler, vTexUV);
+	float		fViewZ = vDepthInfo.y * 500.f;
+
+	Out.vColor.a = (Out.vColor.a * saturate(fViewZ - In.vProjPos.w)) * g_fAlpha;
+	// =========================================================================================================
+
+	return Out;
+}
+
+PS_OUT Use_RGBA_NoMASK_DISSOLVE(PS_IN In)
+{
+	PS_OUT			Out = (PS_OUT)0;
+
+	float4 vDiffuseSampler = tex2D(DiffuseSampler, In.vTexUV);
+
+	Out.vColor = pow(vDiffuseSampler, 2.2);
+	Out.vColor.a = vDiffuseSampler.x;
+
+	Out.vColor.xyz = g_vColor.xyz;
+	Out.vColor.a *= g_vColor.a;
+
+	if (Out.vColor.a == 0.f)
+		clip(-1);
+
+	if (vDiffuseSampler.r >= g_fDissolve)
+		Out.vColor.a = 1;
+	else
+		Out.vColor.a = 0;
+
+	// 소프트 이펙트 ==========================================================================================
+	float2		vTexUV;
+	vTexUV.x = (In.vProjPos.x / In.vProjPos.w) * 0.5f + 0.5f;
+	vTexUV.y = (In.vProjPos.y / In.vProjPos.w) * -0.5f + 0.5f;
+
+	vector		vDepthInfo = tex2D(DepthSampler, vTexUV);
+	float		fViewZ = vDepthInfo.y * 500.f;
+
+	Out.vColor.a = (Out.vColor.a * saturate(fViewZ - In.vProjPos.w)) * g_fAlpha;
+	// =========================================================================================================
+
+	return Out;
+}
+
+PS_OUT Use_ColorTex_MASK_DISSOLVE(PS_IN In)
+{
+	PS_OUT			Out = (PS_OUT)0;
+
+	Out.vColor = pow(tex2D(ColorSampler, In.vTexUV), 2.2);
+
+	float4 vDiffuseSampler = tex2D(DiffuseSampler, In.vTexUV);
+	Out.vColor.a = vDiffuseSampler.x;
+
+	// ==============================================================================================
+	// [Memo]  g_vColor.x = Hue / g_vColor.y = Contrast / g_vColor.z = Brightness / g_vColor.w = Saturation
+	// ==============================================================================================
+	float3 intensity;
+	float half_angle = 0.5 * radians(g_vColor.x); // Hue is radians of 0 tp 360 degree
+	float4 rot_quat = float4((root3 * sin(half_angle)), cos(half_angle));
+	float3x3 rot_Matrix = QuaternionToMatrix(rot_quat);
+	Out.vColor.rgb = mul(rot_Matrix, Out.vColor.rgb);
+	Out.vColor.rgb = (Out.vColor.rgb - 0.5) *(g_vColor.y + 1.0) + 0.5;
+	Out.vColor.rgb = Out.vColor.rgb + g_vColor.z;
+	intensity = float(dot(Out.vColor.rgb, lumCoeff));
+	Out.vColor.rgb = lerp(intensity, Out.vColor.rgb, g_vColor.w);
+	// End ==========================================================================================
+
+	vector vGradientMask = tex2D(GradientSampler, In.vTexUV);
+	Out.vColor.a *= vGradientMask.x;
+
+	if (Out.vColor.a == 0.f)
+		clip(-1);
+
+	if (vDiffuseSampler.r >= g_fDissolve)
+		Out.vColor.a = 1;
+	else
+		Out.vColor.a = 0;
+
+	// 소프트 이펙트 ==========================================================================================
+	float2		vTexUV;
+	vTexUV.x = (In.vProjPos.x / In.vProjPos.w) * 0.5f + 0.5f;
+	vTexUV.y = (In.vProjPos.y / In.vProjPos.w) * -0.5f + 0.5f;
+
+	vector		vDepthInfo = tex2D(DepthSampler, vTexUV);
+	float		fViewZ = vDepthInfo.y * 500.f;
+
+	Out.vColor.a = (Out.vColor.a * saturate(fViewZ - In.vProjPos.w)) * g_fAlpha;
+	// =========================================================================================================
+
+	return Out;
+}
+
+PS_OUT Use_ColorTex_NoMASK_DISSOLVE(PS_IN In)
+{
+	PS_OUT			Out = (PS_OUT)0;
+
+	Out.vColor = pow(tex2D(ColorSampler, In.vTexUV), 2.2);
+
+	float4 vDiffuseSampler = tex2D(DiffuseSampler, In.vTexUV);
+	Out.vColor.a = vDiffuseSampler.x;
+
+	if (Out.vColor.a == 0.f)
+		clip(-1);
+
+	float3 intensity;
+	float half_angle = 0.5 * radians(g_vColor.x); // Hue is radians of 0 tp 360 degree
+	float4 rot_quat = float4((root3 * sin(half_angle)), cos(half_angle));
+	float3x3 rot_Matrix = QuaternionToMatrix(rot_quat);
+	Out.vColor.rgb = mul(rot_Matrix, Out.vColor.rgb);
+	Out.vColor.rgb = (Out.vColor.rgb - 0.5) *(g_vColor.y + 1.0) + 0.5;
+	Out.vColor.rgb = Out.vColor.rgb + g_vColor.z;
+	intensity = float(dot(Out.vColor.rgb, lumCoeff));
+	Out.vColor.rgb = lerp(intensity, Out.vColor.rgb, g_vColor.w);
+
+	if (vDiffuseSampler.r >= g_fDissolve)
+		Out.vColor.a = 1;
+	else
+		Out.vColor.a = 0;
 
 	// 소프트 이펙트 ==========================================================================================
 	float2		vTexUV;
@@ -521,6 +571,8 @@ PS_OUT PS_INSTANCE(PS_INSTANCE_IN In)
 
 PS_OUT PS_DISTORTION(PS_IN In)
 {
+	// 왜곡 이펙트는 많이 생성하는 경우가 없어서 안나눔
+
 	PS_OUT			Out = (PS_OUT)0;
 
 	if (g_bUseColorTex)
@@ -531,7 +583,6 @@ PS_OUT PS_DISTORTION(PS_IN In)
 	else
 	{
 		Out.vColor = tex2D(DiffuseSampler, In.vTexUV);
-		//Out.vColor.a = tex2D(DiffuseSampler, In.vTexUV).x;
 	}
 
 	if (g_bUseMaskTex)
@@ -545,15 +596,6 @@ PS_OUT PS_DISTORTION(PS_IN In)
 	vTexUV.x = (In.vProjPos.x / In.vProjPos.w) * 0.5f + 0.5f;
 	vTexUV.y = (In.vProjPos.y / In.vProjPos.w) * -0.5f + 0.5f;
 
-	//vector		vDepthInfo = tex2D(DepthSampler, vTexUV);
-	//float		fViewZ = vDepthInfo.y * 500.f;
-	//Out.vColor.a = Out.vColor.a * saturate(fViewZ - In.vProjPos.w);
-
-	//float fPower = In.vProjPos.w;
-	//Out.vColor *= (1.f - (Out.vColor.x + Out.vColor.y));
-	//Out.vColor -= (Out.vColor.x + Out.vColor.y);
-	//Out.vColor *= fPower;
-
 	Out.vColor *= g_fAlpha;
 	Out.vColor.z = g_fDistortion;
 	Out.vDistortion = saturate(Out.vColor);
@@ -566,7 +608,6 @@ PS_OUT PS_MESHEFFECT(PS_IN In)
 	PS_OUT			Out = (PS_OUT)0;
 
 	Out.vColor = pow(tex2D(ColorSampler, In.vTexUV), 2.2);
-	//Out.vColor = tex2D(ColorSampler, In.vTexUV);
 	Out.vColor.a = tex2D(DiffuseSampler, In.vTexUV).x;
 
 	if (g_bUseRGBA)
@@ -616,6 +657,10 @@ matrix		g_matViewInv;
 bool g_bRot;
 PS_OUT PS_SSD(PS_IN In)
 {
+	////////////////////////
+	// 이거 안씀
+	////////////////////////
+
 	PS_OUT			Out = (PS_OUT)0;
 
 	float2 screenposition = In.vProjPos.xy / In.vProjPos.w;
@@ -642,20 +687,20 @@ PS_OUT PS_SSD(PS_IN In)
 	
 	float2 decalUV;
 
-	if (g_bRot)
-	{
-		clip(0.5 - abs(decalLocalPos.xy));
-		clip(0.25 - abs(decalLocalPos.z));
-
-		decalUV = decalLocalPos.xy + 0.5f;
-	}
-	else
-	{
+	//if (g_bRot)
+	//{
+	//	clip(0.5 - abs(decalLocalPos.xy));
+	//	clip(0.25 - abs(decalLocalPos.z));
+	//
+	//	decalUV = decalLocalPos.xy + 0.5f;
+	//}
+	//else
+	//{
 		clip(0.5 - abs(decalLocalPos.xz));
 		clip(0.25 - abs(decalLocalPos.y));
 
 		decalUV = decalLocalPos.xz + 0.5f;
-	}
+	//}
 		
 	float4 Color = float4(1, 1, 1, 1);
 	if (g_bUseColorTex)
@@ -713,6 +758,258 @@ PS_OUT PS_SSD(PS_IN In)
 	Color.r += 0.02f;
 	Out.vColor = Color;
 	
+	return Out;
+}
+
+PS_OUT PS_SSD_USE_COLORTEX_NoMASK(PS_IN In)
+{
+	PS_OUT			Out = (PS_OUT)0;
+
+	float2 screenposition = In.vProjPos.xy / In.vProjPos.w;
+	screenposition.x = screenposition.x * 0.5 + 0.5 + (0.5 / 1280.0f);
+	screenposition.y = -screenposition.y * 0.5 + 0.5 + (0.5 / 720.0f);
+	float2 depthUV = float2(screenposition.x, screenposition.y);
+
+	vector vDepthInfo = tex2D(DepthSampler, depthUV);
+	if (0 == vDepthInfo.x)
+		return  Out;
+
+	float		fViewZ = vDepthInfo.y * 500.f;
+	vector		vWorldPos;
+	vWorldPos.x = depthUV.x * 2.f - 1.f;
+	vWorldPos.y = depthUV.y * -2.f + 1.f;
+	vWorldPos.z = vDepthInfo.x;
+	vWorldPos.w = 1.f;
+	vWorldPos = vWorldPos * fViewZ;
+	vWorldPos = mul(vWorldPos, g_matProjInv);
+	vWorldPos = mul(vWorldPos, g_matViewInv);
+
+	float3 decalLocalPos = float3(0, 0, 0);
+	decalLocalPos = mul(float4(vWorldPos.xyz, 1), g_matInvWorld).xyz;
+
+	clip(0.5 - abs(decalLocalPos.xz));
+	clip(0.25 - abs(decalLocalPos.y));
+
+	float2 decalUV = decalLocalPos.xz + 0.5f;
+
+	float4 Color = float4(1, 1, 1, 1);
+
+	Color = tex2D(ColorSampler, decalUV);
+	Color *= tex2D(DiffuseSampler, decalUV).x;
+
+	// ==============================================================================================
+	// [Memo]  g_vColor.x = Hue / g_vColor.y = Contrast / g_vColor.z = Brightness / g_vColor.w = Saturation
+	// ==============================================================================================
+	float3 intensity;
+	float half_angle = 0.5 * radians(g_vColor.x); // Hue is radians of 0 tp 360 degree
+	float4 rot_quat = float4((root3 * sin(half_angle)), cos(half_angle));
+	float3x3 rot_Matrix = QuaternionToMatrix(rot_quat);
+	Color.rgb = mul(rot_Matrix, Color.rgb);
+	Color.rgb = (Color.rgb - 0.5) * (g_vColor.y + 1.0) + 0.5;
+	Color.rgb = Color.rgb + g_vColor.z;
+	intensity = float(dot(Color.rgb, lumCoeff));
+	Color.rgb = lerp(intensity, Color.rgb, g_vColor.w);
+	// End ==========================================================================================
+
+	float4 fxColor = tex2D(DiffuseSampler, decalUV);
+
+	if (Color.a == 0.f)
+		clip(-1);
+
+	if (fxColor.r >= g_fDissolve)
+		Color.a = 1;
+	else
+		Color.a = 0;
+
+	Color.rgb *= 0.03f;
+	Color.r += 0.02f;
+	Out.vColor = Color;
+
+	return Out;
+}
+
+PS_OUT PS_SSD_USE_COLORTEX_MASK(PS_IN In)
+{
+	PS_OUT			Out = (PS_OUT)0;
+
+	float2 screenposition = In.vProjPos.xy / In.vProjPos.w;
+	screenposition.x = screenposition.x * 0.5 + 0.5 + (0.5 / 1280.0f);
+	screenposition.y = -screenposition.y * 0.5 + 0.5 + (0.5 / 720.0f);
+	float2 depthUV = float2(screenposition.x, screenposition.y);
+
+	vector vDepthInfo = tex2D(DepthSampler, depthUV);
+	if (0 == vDepthInfo.x)
+		return  Out;
+
+	float		fViewZ = vDepthInfo.y * 500.f;
+	vector		vWorldPos;
+	vWorldPos.x = depthUV.x * 2.f - 1.f;
+	vWorldPos.y = depthUV.y * -2.f + 1.f;
+	vWorldPos.z = vDepthInfo.x;
+	vWorldPos.w = 1.f;
+	vWorldPos = vWorldPos * fViewZ;
+	vWorldPos = mul(vWorldPos, g_matProjInv);
+	vWorldPos = mul(vWorldPos, g_matViewInv);
+
+	float3 decalLocalPos = float3(0, 0, 0);
+	decalLocalPos = mul(float4(vWorldPos.xyz, 1), g_matInvWorld).xyz;
+
+	clip(0.5 - abs(decalLocalPos.xz));
+	clip(0.25 - abs(decalLocalPos.y));
+
+	float2 decalUV = decalLocalPos.xz + 0.5f;
+
+	float4 Color = float4(1, 1, 1, 1);
+
+	Color = tex2D(ColorSampler, decalUV);
+	Color *= tex2D(DiffuseSampler, decalUV).x;
+
+	// ==============================================================================================
+	// [Memo]  g_vColor.x = Hue / g_vColor.y = Contrast / g_vColor.z = Brightness / g_vColor.w = Saturation
+	// ==============================================================================================
+	float3 intensity;
+	float half_angle = 0.5 * radians(g_vColor.x); // Hue is radians of 0 tp 360 degree
+	float4 rot_quat = float4((root3 * sin(half_angle)), cos(half_angle));
+	float3x3 rot_Matrix = QuaternionToMatrix(rot_quat);
+	Color.rgb = mul(rot_Matrix, Color.rgb);
+	Color.rgb = (Color.rgb - 0.5) * (g_vColor.y + 1.0) + 0.5;
+	Color.rgb = Color.rgb + g_vColor.z;
+	intensity = float(dot(Color.rgb, lumCoeff));
+	Color.rgb = lerp(intensity, Color.rgb, g_vColor.w);
+	// End ==========================================================================================
+
+	float4 fxColor = tex2D(DiffuseSampler, decalUV);
+
+	if (Color.a == 0.f)
+		clip(-1);
+
+	if (fxColor.r >= g_fDissolve)
+		Color.a = 1;
+	else
+		Color.a = 0;
+
+	vector vGradientMask = tex2D(GradientSampler, decalUV);
+	Color.a *= vGradientMask.x;
+
+	Color.rgb *= 0.03f;
+	Color.r += 0.02f;
+	Out.vColor = Color;
+
+	return Out;
+}
+
+PS_OUT PS_SSD_USE_RGBA_NoMASK(PS_IN In)
+{
+	PS_OUT			Out = (PS_OUT)0;
+
+	float2 screenposition = In.vProjPos.xy / In.vProjPos.w;
+	screenposition.x = screenposition.x * 0.5 + 0.5 + (0.5 / 1280.0f);
+	screenposition.y = -screenposition.y * 0.5 + 0.5 + (0.5 / 720.0f);
+	float2 depthUV = float2(screenposition.x, screenposition.y);
+
+	vector vDepthInfo = tex2D(DepthSampler, depthUV);
+	if (0 == vDepthInfo.x)
+		return  Out;
+
+	float		fViewZ = vDepthInfo.y * 500.f;
+	vector		vWorldPos;
+	vWorldPos.x = depthUV.x * 2.f - 1.f;
+	vWorldPos.y = depthUV.y * -2.f + 1.f;
+	vWorldPos.z = vDepthInfo.x;
+	vWorldPos.w = 1.f;
+	vWorldPos = vWorldPos * fViewZ;
+	vWorldPos = mul(vWorldPos, g_matProjInv);
+	vWorldPos = mul(vWorldPos, g_matViewInv);
+
+	float3 decalLocalPos = float3(0, 0, 0);
+	decalLocalPos = mul(float4(vWorldPos.xyz, 1), g_matInvWorld).xyz;
+
+	float2 decalUV;
+
+	clip(0.5 - abs(decalLocalPos.xz));
+	clip(0.25 - abs(decalLocalPos.y));
+
+	decalUV = decalLocalPos.xz + 0.5f;
+
+	float4 Color = float4(1, 1, 1, 1);
+
+	Color = tex2D(DiffuseSampler, decalUV);
+	Color.xyz = g_vColor.xyz;
+	Color.a *= g_vColor.a;
+
+	float4 fxColor = tex2D(DiffuseSampler, decalUV);
+
+	if (Color.a == 0.f)
+		clip(-1);
+
+	if (fxColor.r >= g_fDissolve)
+		Color.a = 1;
+	else
+		Color.a = 0;
+
+	Color.rgb *= 0.03f;
+	Color.r += 0.02f;
+	Out.vColor = Color;
+
+	return Out;
+}
+
+PS_OUT PS_SSD_USE_RGBA_MASK(PS_IN In)
+{
+	PS_OUT			Out = (PS_OUT)0;
+
+	float2 screenposition = In.vProjPos.xy / In.vProjPos.w;
+	screenposition.x = screenposition.x * 0.5 + 0.5 + (0.5 / 1280.0f);
+	screenposition.y = -screenposition.y * 0.5 + 0.5 + (0.5 / 720.0f);
+	float2 depthUV = float2(screenposition.x, screenposition.y);
+
+	vector vDepthInfo = tex2D(DepthSampler, depthUV);
+	if (0 == vDepthInfo.x)
+		return  Out;
+
+	float		fViewZ = vDepthInfo.y * 500.f;
+	vector		vWorldPos;
+	vWorldPos.x = depthUV.x * 2.f - 1.f;
+	vWorldPos.y = depthUV.y * -2.f + 1.f;
+	vWorldPos.z = vDepthInfo.x;
+	vWorldPos.w = 1.f;
+	vWorldPos = vWorldPos * fViewZ;
+	vWorldPos = mul(vWorldPos, g_matProjInv);
+	vWorldPos = mul(vWorldPos, g_matViewInv);
+
+	float3 decalLocalPos = float3(0, 0, 0);
+	decalLocalPos = mul(float4(vWorldPos.xyz, 1), g_matInvWorld).xyz;
+
+	float2 decalUV;
+
+	clip(0.5 - abs(decalLocalPos.xz));
+	clip(0.25 - abs(decalLocalPos.y));
+
+	decalUV = decalLocalPos.xz + 0.5f;
+
+	float4 Color = float4(1, 1, 1, 1);
+
+	Color = tex2D(DiffuseSampler, decalUV);
+	Color.xyz = g_vColor.xyz;
+	Color.a *= g_vColor.a;
+
+	float4 fxColor = tex2D(DiffuseSampler, decalUV);
+
+	if (Color.a == 0.f)
+		clip(-1);
+
+	if (fxColor.r >= g_fDissolve)
+		Color.a = 1;
+	else
+		Color.a = 0;
+
+	vector vGradientMask = tex2D(GradientSampler, decalUV);
+	Color.a *= vGradientMask.x;
+
+	Color.rgb *= 0.03f;
+	Color.r += 0.02f;
+	Out.vColor = Color;
+
 	return Out;
 }
 
@@ -843,9 +1140,6 @@ PS_OUT PS_UV(PS_IN In)
 		else
 			Out.vColor.a = 0;
 	}
-
-	if (g_bReverseColor)
-		Out.vColor.rgb = 1 - Out.vColor.rgb;
 
 	Out.vColor.a = Out.vColor.a * g_fAlpha;
 	return Out;
@@ -1001,7 +1295,7 @@ technique Default_Technique
 		PixelShader = compile ps_3_0 PS_UV();
 	}
 
-	pass Use_RGBA_MASK // 10
+	pass Use_RGBA_MASK_NoDISSOLVE // 10
 	{
 		ZWriteEnable = false;
 		AlphablendEnable = true;
@@ -1014,7 +1308,7 @@ technique Default_Technique
 		PixelShader = compile ps_3_0 Use_RGBA_MASK();
 	}
 
-	pass Use_RGBA_NoMASK // 11
+	pass Use_RGBA_NoMASK_NoDISSOLVE // 11
 	{
 		ZWriteEnable = false;
 		AlphablendEnable = true;
@@ -1027,7 +1321,7 @@ technique Default_Technique
 		PixelShader = compile ps_3_0 Use_RGBA_NoMASK();
 	}
 
-	pass Use_ColorTex_MASK // 12
+	pass Use_ColorTex_MASK_NoDISSOLVE // 12
 	{
 		ZWriteEnable = false;
 		AlphablendEnable = true;
@@ -1040,7 +1334,7 @@ technique Default_Technique
 		PixelShader = compile ps_3_0 Use_ColorTex_MASK();
 	}
 
-	pass Use_ColorTex_NoMASK // 13
+	pass Use_ColorTex_NoMASK_NoDISSOLVE // 13
 	{
 		ZWriteEnable = false;
 		AlphablendEnable = true;
@@ -1051,6 +1345,122 @@ technique Default_Technique
 
 		VertexShader = compile vs_3_0 VS_MAIN();
 		PixelShader = compile ps_3_0 Use_ColorTex_NoMASK();
+	}
+
+	pass Use_RGBA_MASK_DISSOLVE // 14
+	{
+		ZWriteEnable = false;
+		AlphablendEnable = true;
+		srcblend = SrcAlpha;
+		DestBlend = InvSrcAlpha;
+
+		cullmode = none;
+
+		VertexShader = compile vs_3_0 VS_MAIN();
+		PixelShader = compile ps_3_0 Use_RGBA_MASK_DISSOLVE();
+	}
+
+	pass Use_RGBA_NoMASK_DISSOLVE // 15
+	{
+		ZWriteEnable = false;
+		AlphablendEnable = true;
+		srcblend = SrcAlpha;
+		DestBlend = InvSrcAlpha;
+
+		cullmode = none;
+
+		VertexShader = compile vs_3_0 VS_MAIN();
+		PixelShader = compile ps_3_0 Use_RGBA_NoMASK_DISSOLVE();
+	}
+
+	pass Use_ColorTex_MASK_DISSOLVE // 16
+	{
+		ZWriteEnable = false;
+		AlphablendEnable = true;
+		srcblend = SrcAlpha;
+		DestBlend = InvSrcAlpha;
+
+		cullmode = none;
+
+		VertexShader = compile vs_3_0 VS_MAIN();
+		PixelShader = compile ps_3_0 Use_ColorTex_MASK_DISSOLVE();
+	}
+
+	pass Use_ColorTex_NoMASK_DISSOLVE // 17
+	{
+		ZWriteEnable = false;
+		AlphablendEnable = true;
+		srcblend = SrcAlpha;
+		DestBlend = InvSrcAlpha;
+
+		cullmode = none;
+
+		VertexShader = compile vs_3_0 VS_MAIN();
+		PixelShader = compile ps_3_0 Use_ColorTex_NoMASK_DISSOLVE();
+	}
+
+	pass SSD_UseColorTex_NoMask // 18
+	{
+		zwriteenable = false;
+
+		AlphablendEnable = true;
+		AlphaTestEnable = true;
+		srcblend = SrcAlpha;
+		DestBlend = InvSrcAlpha;
+		blendop = add;
+
+		cullmode = none;
+
+		VertexShader = compile vs_3_0 VS_MAIN();
+		PixelShader = compile ps_3_0 PS_SSD_USE_COLORTEX_NoMASK();
+	}
+
+	pass SSD_UseColorTex_Mask // 19
+	{
+		zwriteenable = false;
+
+		AlphablendEnable = true;
+		AlphaTestEnable = true;
+		srcblend = SrcAlpha;
+		DestBlend = InvSrcAlpha;
+		blendop = add;
+
+		cullmode = none;
+
+		VertexShader = compile vs_3_0 VS_MAIN();
+		PixelShader = compile ps_3_0 PS_SSD_USE_COLORTEX_MASK();
+	}
+
+	pass SSD_UseRGBA_NoMask // 20
+	{
+		zwriteenable = false;
+
+		AlphablendEnable = true;
+		AlphaTestEnable = true;
+		srcblend = SrcAlpha;
+		DestBlend = InvSrcAlpha;
+		blendop = add;
+
+		cullmode = none;
+
+		VertexShader = compile vs_3_0 VS_MAIN();
+		PixelShader = compile ps_3_0 PS_SSD_USE_RGBA_NoMASK();
+	}
+
+	pass SSD_UseRGBA_NoMask // 21
+	{
+		zwriteenable = false;
+
+		AlphablendEnable = true;
+		AlphaTestEnable = true;
+		srcblend = SrcAlpha;
+		DestBlend = InvSrcAlpha;
+		blendop = add;
+
+		cullmode = none;
+
+		VertexShader = compile vs_3_0 VS_MAIN();
+		PixelShader = compile ps_3_0 PS_SSD_USE_RGBA_MASK();
 	}
 }
 

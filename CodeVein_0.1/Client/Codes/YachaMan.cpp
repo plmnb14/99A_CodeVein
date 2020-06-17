@@ -56,6 +56,7 @@ _int CYachaMan::Update_GameObject(_double TimeDelta)
 	Check_Hit();
 	Check_Dist();
 	Check_AniEvent();
+	Check_FootSound();
 	Function_CoolDown();
 
 	m_pMeshCom->SetUp_Animation(m_eState);
@@ -168,9 +169,6 @@ HRESULT CYachaMan::Render_GameObject()
 
 HRESULT CYachaMan::Render_GameObject_Instancing_SetPass(CShader * pShader)
 {
-	IF_NULL_VALUE_RETURN(pShader, E_FAIL);
-	IF_NULL_VALUE_RETURN(m_pMeshCom, E_FAIL);
-
 	m_pMeshCom->Play_Animation(DELTA_60 * m_dAniPlayMul);
 
 	if (m_bInFrustum)
@@ -178,20 +176,17 @@ HRESULT CYachaMan::Render_GameObject_Instancing_SetPass(CShader * pShader)
 		if (FAILED(SetUp_ConstantTable(pShader)))
 			return E_FAIL;
 
-		_uint iNumMeshContainer = _uint(m_pMeshCom->Get_NumMeshContainer());
+		_uint iNumMeshContainer = m_pMeshCom->Get_NumMeshContainer();
 
-		for (_uint i = 0; i < _uint(iNumMeshContainer); ++i)
+		for (_uint i = 0; i < iNumMeshContainer; ++i)
 		{
-			_uint iNumSubSet = (_uint)m_pMeshCom->Get_NumMaterials(i);
+			_uint iNumSubSet = m_pMeshCom->Get_NumMaterials(i);
 
 			m_pMeshCom->Update_SkinnedMesh(i);
 
 			for (_uint j = 0; j < iNumSubSet; ++j)
 			{
-				m_iPass = m_pMeshCom->Get_MaterialPass(i, j);
-
-				if (m_bDissolve)
-					m_iPass = 3;
+				m_iPass = !m_bDissolve ? m_pMeshCom->Get_MaterialPass(i, j) : 3;
 
 				pShader->Begin_Pass(m_iPass);
 
@@ -221,17 +216,9 @@ HRESULT CYachaMan::Render_GameObject_Instancing_SetPass(CShader * pShader)
 
 HRESULT CYachaMan::Render_GameObject_SetPass(CShader * pShader, _int iPass, _bool _bIsForMotionBlur)
 {
-	if (false == m_bEnable)
-		return S_OK;
-
-	IF_NULL_VALUE_RETURN(pShader, E_FAIL);
-	IF_NULL_VALUE_RETURN(m_pMeshCom, E_FAIL);
-
 	//============================================================================================
 	// 공통 변수
 	//============================================================================================
-	_mat	ViewMatrix = g_pManagement->Get_Transform(D3DTS_VIEW);
-	_mat	ProjMatrix = g_pManagement->Get_Transform(D3DTS_PROJECTION);
 	_mat	WorldMatrix = m_pTransformCom->Get_WorldMat();
 
 	if (FAILED(pShader->Set_Value("g_matWorld", &WorldMatrix, sizeof(_mat))))
@@ -242,48 +229,33 @@ HRESULT CYachaMan::Render_GameObject_SetPass(CShader * pShader, _int iPass, _boo
 	//============================================================================================
 	if (_bIsForMotionBlur)
 	{
+		_mat	ViewMatrix = g_pManagement->Get_Transform(D3DTS_VIEW);
+		_mat	ProjMatrix = g_pManagement->Get_Transform(D3DTS_PROJECTION);
+
 		if (FAILED(pShader->Set_Value("g_matLastWVP", &m_matLastWVP, sizeof(_mat))))
 			return E_FAIL;
 
 		m_matLastWVP = WorldMatrix * ViewMatrix * ProjMatrix;
 
-		//_bool bMotionBlur = true;
-		//if (FAILED(pShader->Set_Bool("g_bMotionBlur", bMotionBlur)))
-		//	return E_FAIL;
-		//_bool bDecalTarget = false;
-		//if (FAILED(pShader->Set_Bool("g_bDecalTarget", bDecalTarget)))
-		//	return E_FAIL;
 		_float fBloomPower = 0.5f;
 		if (FAILED(pShader->Set_Value("g_fBloomPower", &fBloomPower, sizeof(_float))))
 			return E_FAIL;
 	}
 
 	//============================================================================================
-	// 기타 상수
-	//============================================================================================
-	else
-	{
-		_mat matWVP = WorldMatrix * ViewMatrix * ProjMatrix;
-
-		if (FAILED(pShader->Set_Value("g_matWVP", &matWVP, sizeof(_mat))))
-			return E_FAIL;
-	}
-
-	//============================================================================================
 	// 쉐이더 실행
 	//============================================================================================
-	_uint iNumMeshContainer = _uint(m_pMeshCom->Get_NumMeshContainer());
+	_uint iNumMeshContainer = m_pMeshCom->Get_NumMeshContainer();
 
-	for (_uint i = 0; i < _uint(iNumMeshContainer); ++i)
+	for (_uint i = 0; i < iNumMeshContainer; ++i)
 	{
-		_uint iNumSubSet = (_uint)m_pMeshCom->Get_NumMaterials(i);
+		//m_pMeshCom->Update_SkinnedMesh(i);
+
+		_uint iNumSubSet = m_pMeshCom->Get_NumMaterials(i);
 
 		for (_uint j = 0; j < iNumSubSet; ++j)
 		{
-			_int tmpPass = m_pMeshCom->Get_MaterialPass(i, j);
-
 			pShader->Begin_Pass(iPass);
-			pShader->Commit_Changes();
 
 			pShader->Commit_Changes();
 
@@ -292,7 +264,6 @@ HRESULT CYachaMan::Render_GameObject_SetPass(CShader * pShader, _int iPass, _boo
 			pShader->End_Pass();
 		}
 	}
-
 	//============================================================================================
 
 	return S_OK;
@@ -376,6 +347,10 @@ void CYachaMan::Check_Hit()
 				}
 				else
 				{
+					m_pBattleAgentCom->Set_RimColor(_v4(0.f, 0.f, 0.f, 0.f));
+					m_pBattleAgentCom->Set_RimAlpha(0.5f);
+					m_pBattleAgentCom->Set_RimValue(8.f);
+
 					if (true == m_tObjParam.bIsHit)
 					{
 						if (true == m_tObjParam.bHitAgain)
@@ -708,6 +683,53 @@ void CYachaMan::Check_DeadEffect(_double TimeDelta)
 	CParticleMgr::Get_Instance()->Create_Effect(L"Monster_DeadSmoke_0", vHeadPos);
 	CParticleMgr::Get_Instance()->Create_Effect(L"Monster_DeadSmoke_0", vHipPos);
 	CParticleMgr::Get_Instance()->Create_Effect(L"Monster_DeadSmoke_0", vPos);
+
+	return;
+}
+
+void CYachaMan::Check_FootSound()
+{
+	if (YACHAMAN_ANI::Walk_F == m_eState ||
+		YACHAMAN_ANI::Walk_L == m_eState ||
+		YACHAMAN_ANI::Walk_R == m_eState ||
+		YACHAMAN_ANI::Run == m_eState)
+	{
+		m_fFootSound += DELTA_60;
+
+		if (m_fFootSound >= m_fFootSoundMax)
+		{
+			m_fFootSound = 0.f;
+
+			g_pSoundManager->Stop_Sound(CSoundManager::Yacha_Step);
+
+			switch (CALC::Random_Num(0, 5))
+			{
+			case 0:
+				g_pSoundManager->Play_Sound(L"Step0.ogg", CSoundManager::Yacha_Step, CSoundManager::Effect_Sound);
+				break;
+
+			case 1:
+				g_pSoundManager->Play_Sound(L"Step1.ogg", CSoundManager::Yacha_Step, CSoundManager::Effect_Sound);
+				break;
+
+			case 2:
+				g_pSoundManager->Play_Sound(L"Step2.ogg", CSoundManager::Yacha_Step, CSoundManager::Effect_Sound);
+				break;
+
+			case 3:
+				g_pSoundManager->Play_Sound(L"Step3.ogg", CSoundManager::Yacha_Step, CSoundManager::Effect_Sound);
+				break;
+
+			case 4:
+				g_pSoundManager->Play_Sound(L"Step4.ogg", CSoundManager::Yacha_Step, CSoundManager::Effect_Sound);
+				break;
+
+			case 5:
+				g_pSoundManager->Play_Sound(L"Step5.ogg", CSoundManager::Yacha_Step, CSoundManager::Effect_Sound);
+				break;
+			}
+		}
+	}
 
 	return;
 }
@@ -4010,6 +4032,8 @@ void CYachaMan::Play_Move()
 			m_fSkillMoveSpeed_Cur = 4.f;
 			m_fSkillMoveAccel_Cur = 0.f;
 			m_fSkillMoveMultiply = 0.5f;
+
+			m_fFootSoundMax = 0.4f;
 		}
 
 		if (nullptr == m_pAggroTarget)
@@ -4074,6 +4098,8 @@ void CYachaMan::Play_Move()
 			m_fSkillMoveSpeed_Cur = 2.5f;
 			m_fSkillMoveAccel_Cur = 0.f;
 			m_fSkillMoveMultiply = 0.5f;
+
+			m_fFootSoundMax = 0.47f;
 
 			switch (CALC::Random_Num(YACHAMAN_ANI::Walk_R, YACHAMAN_ANI::Walk_B))
 			{

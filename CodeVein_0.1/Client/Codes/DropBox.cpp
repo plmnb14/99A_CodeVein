@@ -44,7 +44,7 @@ _int CDropBox::Update_GameObject(_double TimeDelta)
 		}
 	}
 
-	return _int();
+	return S_OK;
 }
 
 _int CDropBox::Late_Update_GameObject(_double TimeDelta)

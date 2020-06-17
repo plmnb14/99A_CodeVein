@@ -117,6 +117,7 @@ private:
 	void Check_Dist();
 	void Check_AniEvent();
 	void Check_DeadEffect(_double TimeDelta);
+	void Check_FootSound();
 
 	void Play_SequenceAtk();
 	void Play_RandomAtkNormal();
@@ -156,6 +157,8 @@ private:
 	_mat*					m_matBone[Bone_End];
 	ATK_COMBO_TYPE			m_eAtkCombo;
 	YACHAMAN_ANI			m_eState;
+	_float					m_fFootSound = 0.f;
+	_float					m_fFootSoundMax = 0.f;
 
 };
 

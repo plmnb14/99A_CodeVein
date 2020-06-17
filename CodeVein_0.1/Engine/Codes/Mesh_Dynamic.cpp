@@ -1,6 +1,7 @@
 #include "..\Headers\Mesh_Dynamic.h"
 #include "Hierarchy.h"
 #include "AniCtrl.h"
+#include "Shader.h"
 
 
 CMesh_Dynamic::CMesh_Dynamic(LPDIRECT3DDEVICE9 pGraphic_Device)
@@ -251,9 +252,40 @@ HRESULT CMesh_Dynamic::Update_SkinnedMesh(_int iMeshContainerIdx)
 	return NOERROR;
 }
 
+HRESULT CMesh_Dynamic::Update_SkinnedMesh_HardWare(_int iMeshContainerIdx)
+{
+	//LPD3DXBONECOMBINATION pBoneCom = reinterpret_cast<LPD3DXBONECOMBINATION>(m_MeshContainerList[iMeshContainerIdx]->pBoneCombinationBuffer->GetBufferPointer());
+	//
+	//for (_ulong i = 0; i < m_MeshContainerList[iMeshContainerIdx]->dwNumAttributeGroups; i++)
+	//{
+	//	for (_ulong dwPaletteEntry = 0; dwPaletteEntry < 200; dwPaletteEntry++)
+	//	{
+	//		_ulong dwMatrixIndex = pBoneCom[i].BoneId[dwPaletteEntry];
+	//
+	//		if (dwMatrixIndex != UINT_MAX)
+	//		{
+	//			D3DXMatrixMultiply(
+	//				&m_MeshContainerList[iMeshContainerIdx]->pRenderMatrices[dwPaletteEntry],
+	//				&m_MeshContainerList[iMeshContainerIdx]->pOffsetMatrices[dwMatrixIndex],
+	//				m_MeshContainerList[iMeshContainerIdx]->ppCombinedTransformationMatrices[dwMatrixIndex]
+	//			);
+	//		}
+	//	}
+	//}
+
+	return NOERROR;
+}
+
 HRESULT CMesh_Dynamic::Render_Mesh(_uint iMeshContainerIdx, _uint iAttributeID)
 {
 	m_MeshContainerList[iMeshContainerIdx]->MeshData.pMesh->DrawSubset(iAttributeID);
+
+	return NOERROR;
+}
+
+HRESULT CMesh_Dynamic::Set_MatrixPalette_OnShader(CShader * pShader, _int iMeshContainerIdx)
+{
+	pShader->Set_MatrixArray("g_MatrixPalette", m_MeshContainerList[iMeshContainerIdx]->pRenderMatrices, 200);
 
 	return NOERROR;
 }

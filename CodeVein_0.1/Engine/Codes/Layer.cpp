@@ -36,22 +36,18 @@ _int CLayer::Update_Layer(_double TimeDelta)
 {
 	_int	iProgress = 0;
 
-	//for (auto& pGameObject : m_ObjectList)
-	//{
-	//	if (nullptr != pGameObject)
-	//	{
-	//		iProgress = pGameObject->Update_GameObject(TimeDelta);
-	//		if (0 > iProgress)
-	//			break;
-	//	}
-	//}
-
 	auto& iter_begin = m_ObjectList.begin();
 	auto& iter_end = m_ObjectList.end();
 	for (; iter_begin != iter_end; )
 	{
 		if (nullptr != *iter_begin)
 		{
+			//if (!(*iter_begin)->Get_Enable())
+			//{
+			//	iter_begin++;
+			//	continue;
+			//}
+
 			iProgress = (*iter_begin)->Update_GameObject(TimeDelta);
 			
 			if (DEAD_OBJ == iProgress)
@@ -63,9 +59,6 @@ _int CLayer::Update_Layer(_double TimeDelta)
 
 			else
 				iter_begin++;
-	
-			//if (0 > iProgress)
-			//	break;
 		}
 	}
 
@@ -80,7 +73,13 @@ _int CLayer::Late_Update_Layer(_double TimeDelta)
 	{
 		if (nullptr != pGameObject)
 		{
+			//if (!pGameObject->Get_Enable())
+			//{
+			//	continue;
+			//}
+
 			iProgress = pGameObject->Late_Update_GameObject(TimeDelta);
+
 			if (0 > iProgress)
 				break;
 		}

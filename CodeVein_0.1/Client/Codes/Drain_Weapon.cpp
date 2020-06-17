@@ -146,19 +146,9 @@ HRESULT CDrain_Weapon::Render_GameObject()
 
 HRESULT CDrain_Weapon::Render_GameObject_SetPass(CShader * pShader, _int iPass, _bool _bIsForMotionBlur)
 {
-	if (false == m_bEnable)
-		return S_OK;
-
-	if (nullptr == pShader ||
-		nullptr == m_pMesh_Dynamic)
-		return E_FAIL;
-
 	//============================================================================================
 	// 공통 변수
 	//============================================================================================
-
-	_mat	ViewMatrix = g_pManagement->Get_Transform(D3DTS_VIEW);
-	_mat	ProjMatrix = g_pManagement->Get_Transform(D3DTS_PROJECTION);
 	_mat	WorldMatrix = m_pTransform->Get_WorldMat();
 
 	if (FAILED(pShader->Set_Value("g_matWorld", &WorldMatrix, sizeof(_mat))))
@@ -169,32 +159,17 @@ HRESULT CDrain_Weapon::Render_GameObject_SetPass(CShader * pShader, _int iPass, 
 	//============================================================================================
 	if (_bIsForMotionBlur)
 	{
+		_mat	ViewMatrix = g_pManagement->Get_Transform(D3DTS_VIEW);
+		_mat	ProjMatrix = g_pManagement->Get_Transform(D3DTS_PROJECTION);
+
 		if (FAILED(pShader->Set_Value("g_matLastWVP", &m_matLastWVP, sizeof(_mat))))
 			return E_FAIL;
 
 		m_matLastWVP = WorldMatrix * ViewMatrix * ProjMatrix;
 
-		_bool bMotionBlur = true;
-		if (FAILED(pShader->Set_Bool("g_bMotionBlur", bMotionBlur)))
-			return E_FAIL;
-
-		_bool bDecalTarget = false;
-		if (FAILED(pShader->Set_Bool("g_bDecalTarget", bDecalTarget)))
-			return E_FAIL;
 
 		_float fBloomPower = 10.f;
 		if (FAILED(pShader->Set_Value("g_fBloomPower", &fBloomPower, sizeof(_float))))
-			return E_FAIL;
-	}
-
-	//============================================================================================
-	// 기타 상수
-	//============================================================================================
-	else
-	{
-		_mat matWVP = WorldMatrix * ViewMatrix * ProjMatrix;
-
-		if (FAILED(pShader->Set_Value("g_matWVP", &matWVP, sizeof(_mat))))
 			return E_FAIL;
 	}
 
@@ -210,6 +185,7 @@ HRESULT CDrain_Weapon::Render_GameObject_SetPass(CShader * pShader, _int iPass, 
 		for (_uint j = 0; j < iNumSubSet; ++j)
 		{
 			pShader->Begin_Pass(iPass);
+
 			pShader->Commit_Changes();
 
 			m_pMesh_Dynamic->Render_Mesh(i, j);
@@ -225,10 +201,6 @@ HRESULT CDrain_Weapon::Render_GameObject_SetPass(CShader * pShader, _int iPass, 
 
 HRESULT CDrain_Weapon::Render_GameObject_Instancing_SetPass(CShader * pShader)
 {
-	if (nullptr == pShader ||
-		nullptr == m_pMesh_Dynamic)
-		return E_FAIL;
-
 	m_pMesh_Dynamic->Play_Animation(g_pTimer_Manager->Get_DeltaTime(L"Timer_Fps_60") * m_fAnimMultiply);
 
 	if (FAILED(SetUp_ConstantTable(pShader)))
@@ -249,8 +221,6 @@ HRESULT CDrain_Weapon::Render_GameObject_Instancing_SetPass(CShader * pShader)
 
 			if (m_bDissolve)
 				m_iPass = 3;
-
-			//cout << "현재 패스 : " << m_iPass << endl;
 
 			pShader->Begin_Pass(m_iPass);
 
