@@ -61,6 +61,7 @@ private:
 	_uint					m_iMaximumCnt = 3;
 	CExplainExpendUI*		m_pExplainUI = nullptr;
 	_bool					m_bIsSubActive = false;
+	CExpendables_Slot*		m_pSoundSlot = nullptr;
 
 public:
 	static CExpendables_Inven*	Create(_Device pGraphic_Device);

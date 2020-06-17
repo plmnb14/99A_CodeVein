@@ -133,12 +133,6 @@ HRESULT CTexEffect::LateInit_GameObject()
 		!lstrcmp(L"SpawnParticle_ForBoss_Point", m_szParticleName) ||
 		!lstrcmp(L"SpawnParticle_ForBoss_Point_Sub", m_szParticleName) ||
 		//!lstrcmp(L"Monster_DeadSmoke_0", m_szParticleName) ||
-		!lstrcmp(L"ItemObject", m_szParticleName) ||
-		!lstrcmp(L"ItemObject_Red", m_szParticleName) ||
-		!lstrcmp(L"ItemObject_Blue", m_szParticleName) ||
-		!lstrcmp(L"ItemObject_Purple", m_szParticleName) ||
-		!lstrcmp(L"ItemObject_Yellow", m_szParticleName) ||
-		!lstrcmp(L"ItemObject_Green", m_szParticleName) ||
 		!lstrcmp(L"FireBoy_FireBullet_Particle_01", m_szParticleName) ||
 		!lstrcmp(L"FireBoy_FireBullet_Particle_02", m_szParticleName) ||
 		!lstrcmp(L"FireBoy_FireGround_Particle", m_szParticleName) ||

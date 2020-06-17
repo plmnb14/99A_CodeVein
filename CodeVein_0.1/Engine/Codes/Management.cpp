@@ -570,9 +570,9 @@ void CManagement::Create_AutoFindEffect(_tchar* szName, _float fLifeTime, CTrans
 	CParticleMgr::Get_Instance()->Create_AutoFindEffect(szName, fLifeTime, vPos, pFollowTrans);
 }
 
-void CManagement::Create_Hit_Effect(CCollider* pAttackCol, CCollider* pHittedCol, CTransform* pHittedTrans, _float fPower)
+void CManagement::Create_Hit_Effect(CCollider* pAttackCol, CCollider* pHittedCol, CTransform* pHittedTrans, _float fPower, _bool bLongSpark)
 {
-	CParticleMgr::Get_Instance()->Create_Hit_Effect(pAttackCol, pHittedCol, pHittedTrans, fPower);
+	CParticleMgr::Get_Instance()->Create_Hit_Effect(pAttackCol, pHittedCol, pHittedTrans, fPower, bLongSpark);
 }
 
 void CManagement::Create_Spawn_Effect(_float fDelay, _v3 vPos, _v3 vFinishPos, CTransform* pFollowTrans)

@@ -27,11 +27,11 @@ HRESULT CEffect_LongSpark::Ready_GameObject(void* pArg)
 		return S_OK;
 	}
 
-	m_fSpeed = _float(CCalculater::Random_Num_Double(7.0, 10.0));
-	m_fRotSpeed = _float(CCalculater::Random_Num_Double(0.6, 1.0));
+	m_fSpeed = _float(CCalculater::Random_Num_Double(7.0, 8.5));
+	m_fRotSpeed = _float(CCalculater::Random_Num_Double(1.0, 1.3));
 	m_dLifeTime = 5.f;
 	m_fAccel = 1.f;
-	m_fJumpPower = 5.f;
+	m_fJumpPower = 0.f;
 	m_fAngleZ = 0.f;
 
 	m_dCurTime = 0.f;
@@ -49,24 +49,16 @@ HRESULT CEffect_LongSpark::Ready_GameObject(void* pArg)
 	_mat matY, matZ;
 	D3DXMatrixInverse(&matView, NULL, &matView);
 	_v3 vViewLook = _v3(matView._31, matView._32, matView._33);
-	D3DXMatrixRotationAxis(&matZ, &vViewLook,	D3DXToRadian(_float(CCalculater::Random_Num_Double(0.0, 30.0))));
+	D3DXMatrixRotationAxis(&matZ, &vViewLook,	D3DXToRadian(_float(CCalculater::Random_Num_Double(0.0, 10.0))));
 
 	if (CCalculater::Random_Num(0, 1) == 0)
 		m_bLeft = true;
 
-	m_fDelay = _float(CCalculater::Random_Num_Double(0.0, 0.05));
-	m_fRandAngle = _float(CCalculater::Random_Num_Double(0.0, 30.0));
+	m_fDelay = _float(CCalculater::Random_Num_Double(0.0, 0.1));
+	m_fRandAngle = _float(CCalculater::Random_Num_Double(0.0, 10.0));
 
 	_tchar szBuff[256] = L"";
-	if(!m_bLeft)
-		wsprintf(szBuff, L"Hit_LongSpark_R_%d", CCalculater::Random_Num(0, 2));
-	else
-		wsprintf(szBuff, L"Hit_LongSpark_L_%d", CCalculater::Random_Num(0, 2));
-
-	//if (CCalculater::Random_Num(0, 2) == 0)
-	//{
-	//	wsprintf(szBuff, L"Hit_LongSpark_Distortion_%d", 0);
-	//}
+	wsprintf(szBuff, L"Hit_LongSpark_R_%d", CCalculater::Random_Num(0, 2));
 
 	m_pBulletBody = CParticleMgr::Get_Instance()->Create_EffectReturn(szBuff);
 	m_pBulletBody->Set_Desc(V3_NULL, nullptr);
@@ -93,7 +85,7 @@ _int CEffect_LongSpark::Update_GameObject(_double TimeDelta)
 	m_fSpeed -= m_fSpeed * _float(TimeDelta) * 2.f;
 	if (m_fSpeed < 0.25f)
 		m_fSpeed = 0.25f;
-	m_fRotSpeed += m_fRotSpeed * _float(TimeDelta) * 1.0f;
+	m_fRotSpeed += m_fRotSpeed * _float(TimeDelta) * 1.8f;
 		
 	// 시간 초과
 	if (m_dCurTime > m_dLifeTime)
@@ -125,8 +117,8 @@ _int CEffect_LongSpark::Late_Update_GameObject(_double TimeDelta)
 	if (nullptr == m_pRendererCom)
 		return E_FAIL;
 
-	if (FAILED(m_pRendererCom->Add_RenderList(RENDER_EFFECT, this)))
-		return E_FAIL;
+	//if (FAILED(m_pRendererCom->Add_RenderList(RENDER_EFFECT, this)))
+	//	return E_FAIL;
 
 	return NOERROR;
 }
@@ -143,38 +135,35 @@ void CEffect_LongSpark::Check_Move(_double TimeDelta)
 	_v3 vViewRight = _v3(matView._11, matView._12, matView._13);
 	_v3 vViewLook = _v3(matView._31, matView._32, matView._33);
 	
-	if (m_bLeft)
-	{
-		m_fRandAngle = -m_fRandAngle;
-		vViewRight = -vViewRight;
-	}
-	
-	_mat matZ;
-	D3DXMatrixRotationAxis(&matZ, &vViewLook, D3DXToRadian(m_fRandAngle));
-	_v3 vDir = *D3DXVec3TransformNormal(&_v3(), &vViewRight, &(matZ));
 	_v3 vNormalizeDir;
-	D3DXVec3Normalize(&vNormalizeDir, &(vDir));
+	D3DXVec3Normalize(&vNormalizeDir, &(vViewRight));
 
 	_v3 vMove = vNormalizeDir * m_fSpeed * _float(TimeDelta);
 
-	m_fAccel += _float(TimeDelta) * m_fSpeed * 0.5f;
-	const _float _GRAVITY = 6.f;
+	if (m_bLeft)
+		vMove = -vMove;
+	else
+		m_fRandAngle = -m_fRandAngle;
+	
+	m_fAccel += _float(TimeDelta) * m_fSpeed * 0.7f;
+	const _float _GRAVITY = 1.f;
 	_float fY = (m_fJumpPower * m_fAccel + -_GRAVITY * m_fAccel * m_fAccel * 0.5f) *  _float(TimeDelta);
 	m_vPos += vMove;
 	m_vPos.y += fY;
 	//m_pTransformCom->Set_Pos(m_vPos);
 
-	_float fRotValue = (-90.f);
+	memcpy(&matView._41, &m_vPos, sizeof(_v3));
+	m_pTransformCom->Set_WorldMat(matView);
+	
+	_float fRotValue = (-70.f);
 	if (m_bLeft)
 		fRotValue = -fRotValue;
 	m_fAngleZ += fRotValue * m_fRotSpeed * _float(TimeDelta);
-	_float fAngle = m_fAngleZ + m_fRandAngle;
-	if (m_bLeft && fAngle > 90.f)fAngle = 90.f;
-	if (!m_bLeft && fAngle < -90.f)fAngle = -90.f;
-	D3DXMatrixRotationAxis(&matView, &vViewLook, D3DXToRadian(fAngle));
-	memcpy(&matView._41, &m_vPos, sizeof(_v3));
+	_float fAngle = m_fAngleZ;
+	if (m_bLeft && fAngle > 70.f) fAngle = 70.f;
+	if (!m_bLeft && fAngle < -70.f) fAngle = -70.f;
 
-	m_pTransformCom->Set_WorldMat(matView);
+	m_pBulletBody->Set_Angle(_v3(0, 0, fAngle));
 }
 
 void CEffect_LongSpark::Check_Delay(_double TimeDelta)

@@ -109,6 +109,8 @@ private:	//패턴들
 	CBT_Composite_Node*		NearAttack();	// 랜덤 근접 공격
 	CBT_Composite_Node*		FarAttack();	// 랜덤 원거리 공격
 
+	// 보이스 랜덤 선택
+	CBT_Composite_Node*		Random_Voice();
 
 	//////////////////// 시연회용
 

@@ -107,7 +107,7 @@ HRESULT CPlayerHP::Render_GameObject()
 
 	_uint iPass = 0;
 	_uint iIndex = 0;
-	LOOP(5)
+	LOOP(6)
 	{
 		if (0 == i)
 		{
@@ -120,17 +120,24 @@ HRESULT CPlayerHP::Render_GameObject()
 		{
 			m_fSizeX = 300.f;
 			m_fSizeY = 64.f;
+			iIndex = 6;
+			iPass = 3;
+		}
+		else if (2 == i)
+		{
+			m_fSizeX = 300.f;
+			m_fSizeY = 64.f;
 			iIndex = 1;
 			iPass = 2;
 		}
-		else if (2 == i)
+		else if (3 == i)
 		{
 			m_fSizeX = 300.f;
 			m_fSizeY = 32.f;
 			iIndex = 5;
 			iPass = 10;
 		}
-		else if (3 == i)
+		else if (4 == i)
 		{
 			m_fSizeX = 300.f;
 			m_fSizeY = 64.f;
@@ -154,7 +161,7 @@ HRESULT CPlayerHP::Render_GameObject()
 		
 		if (FAILED(SetUp_ConstantTable(iIndex)))
 			return E_FAIL;
-		//(i == 1) ? (iPass = 2) : (iPass = 1);
+		
 
 		m_pShaderCom->Begin_Shader();
 
@@ -201,7 +208,15 @@ HRESULT CPlayerHP::SetUp_ConstantTable(_uint iIndex)
 	if (nullptr == m_pShaderCom)
 		return E_FAIL;
 
-	//if (iIndex == 1)
+	if (6 == iIndex)
+	{
+		m_fPercentage = m_fOldHP / m_fTotalHP;
+	}
+	else
+	{
+		m_fPercentage = m_fPlayerHP / m_fTotalHP;
+	}
+	
 	{
 		if (FAILED(m_pShaderCom->Set_Value("g_matWorld", &m_matWorld, sizeof(_mat))))
 			return E_FAIL;
@@ -222,17 +237,7 @@ HRESULT CPlayerHP::SetUp_ConstantTable(_uint iIndex)
 		if (FAILED(m_pTextureCom->SetUp_OnShader("g_DiffuseTexture", m_pShaderCom, iIndex)))
 			return E_FAIL;
 	}
-	/*else
-	{
-		if (FAILED(m_pShaderCom->Set_Value("g_matWorld", &m_matWorld, sizeof(_mat))))
-			return E_FAIL;
-		if (FAILED(m_pShaderCom->Set_Value("g_matView", &m_matView, sizeof(_mat))))
-			return E_FAIL;
-		if (FAILED(m_pShaderCom->Set_Value("g_matProj", &m_matProj, sizeof(_mat))))
-			return E_FAIL;
-		if (FAILED(m_pTextureCom->SetUp_OnShader("g_DiffuseTexture", m_pShaderCom, iIndex)))
-			return E_FAIL;
-	}*/
+	
 
 	return NOERROR;
 }
@@ -263,6 +268,14 @@ void CPlayerHP::SetUp_State(_double TimeDelta)
 	m_fTotalHP = m_pTarget->Get_Target_Param().fHp_Max;
 	m_fPlayerHP = m_pTarget->Get_Target_Param().fHp_Cur;
 
+	if (m_fOldHP <= m_fPlayerHP)
+		m_fOldHP = m_fPlayerHP;
+	else
+		m_fOldHP -= _float(TimeDelta) * 50.f;
+
+	if (m_fOldHP >= m_fTotalHP)
+		m_fOldHP = m_fTotalHP;
+
 	if (m_fPlayerHP <= 0.f)
 		m_fPlayerHP = 0.f;
 	else if (m_fPlayerHP >= m_fTotalHP)
@@ -273,7 +286,7 @@ void CPlayerHP::SetUp_State(_double TimeDelta)
 
 	m_vecNoiseDir += -0.08f * _float(TimeDelta) * V2_ONE;
 
-	m_fPercentage = m_fPlayerHP / m_fTotalHP;
+	//m_fPercentage = m_fPlayerHP / m_fTotalHP;
 }
 
 CPlayerHP * CPlayerHP::Create(_Device pGraphic_Device)

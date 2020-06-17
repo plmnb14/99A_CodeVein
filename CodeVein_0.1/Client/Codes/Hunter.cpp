@@ -57,6 +57,7 @@ _int CHunter::Update_GameObject(_double TimeDelta)
 	Check_Hit();
 	Check_Dist();
 	Check_AniEvent();
+	Check_FootSound();
 	Function_CoolDown();
 
 	m_pMeshCom->SetUp_Animation(m_eState);
@@ -389,6 +390,10 @@ void CHunter::Check_Hit()
 				//회피 수치 누적x
 				else
 				{
+					m_pBattleAgentCom->Set_RimColor(_v4(0.f, 0.f, 0.f, 0.f));
+					m_pBattleAgentCom->Set_RimAlpha(0.5f);
+					m_pBattleAgentCom->Set_RimValue(8.f);
+
 					//맞는 도중이라면
 					if (true == m_tObjParam.bIsHit)
 					{
@@ -583,27 +588,41 @@ void CHunter::Check_AniEvent()
 	case MONSTER_STATE_TYPE::ATTACK:
 		if (true == m_bCanChooseAtkType)
 		{
+			if (m_iPatternCount >= m_iPatternCountMax)
+			{
+				m_bCanSequencePattern = false;
+				m_iPatternCount = 0;
+			}
+
 			m_tObjParam.bCanAttack = false;
 			m_tObjParam.bIsAttack = true;
 
 			m_bCanChooseAtkType = false;
 
-			m_iRandom = CALC::Random_Num(MONSTER_ATK_TYPE::ATK_NORMAL, MONSTER_ATK_TYPE::ATK_COMBO);
-
-			if (WEAPON_STATE::WEAPON_Hammer == m_eWeaponState)
-				m_iRandom = 0;
-
-			switch (m_iRandom)
+			if (true == m_bCanSequencePattern)
 			{
-			case MONSTER_ATK_TYPE::ATK_NORMAL:
-				m_eSecondCategory_ATK = MONSTER_ATK_TYPE::ATK_NORMAL;
-				Play_RandomAtkNormal();
-				break;
-			case MONSTER_ATK_TYPE::ATK_COMBO:
-				m_eSecondCategory_ATK = MONSTER_ATK_TYPE::ATK_COMBO;
-				Play_RandomAtkCombo();
-				m_bIsCombo = true;
-				break;
+				m_eSecondCategory_ATK = MONSTER_ATK_TYPE::ATK_SEQUNCE;
+				Play_SequenceAtk();
+			}
+			else
+			{
+				m_iRandom = CALC::Random_Num(MONSTER_ATK_TYPE::ATK_NORMAL, MONSTER_ATK_TYPE::ATK_COMBO);
+
+				if (WEAPON_STATE::WEAPON_Hammer == m_eWeaponState)
+					m_iRandom = 0;
+
+				switch (m_iRandom)
+				{
+				case MONSTER_ATK_TYPE::ATK_NORMAL:
+					m_eSecondCategory_ATK = MONSTER_ATK_TYPE::ATK_NORMAL;
+					Play_RandomAtkNormal();
+					break;
+				case MONSTER_ATK_TYPE::ATK_COMBO:
+					m_eSecondCategory_ATK = MONSTER_ATK_TYPE::ATK_COMBO;
+					Play_RandomAtkCombo();
+					m_bIsCombo = true;
+					break;
+				}
 			}
 
 			return;
@@ -739,6 +758,138 @@ void CHunter::Check_AniEvent()
 					break;
 				}
 			}
+			else if (MONSTER_ATK_TYPE::ATK_SEQUNCE == m_eSecondCategory_ATK)
+			{
+				if (true == m_bIsCombo)
+				{
+					switch (m_eAtkCombo)
+					{
+					case ATK_COMBO_TYPE::COMBO_GUN_SHOT:
+						Play_Gun_Combo_Shot();
+						break;
+					case ATK_COMBO_TYPE::COMBO_GUN_CQC:
+						Play_Gun_Combo_CQC();
+						break;
+					case ATK_COMBO_TYPE::COMBO_HALBERD_THIRDATK:
+						Play_Halberd_Combo_ThirdAtk();
+						break;
+					case ATK_COMBO_TYPE::COMBO_HALBERD_PIERCETWICE:
+						Play_Halberd_Combo_PierceTwice();
+						break;
+					case ATK_COMBO_TYPE::COMBO_HALBERD_PIERCEWIND:
+						Play_Halberd_Combo_PierceWind();
+						break;
+					case ATK_COMBO_TYPE::COMBO_LSWORD_NORMAL:
+						Play_LSword_Combo_Normal();
+						break;
+					case ATK_COMBO_TYPE::COMBO_LSWORD_STRONG:
+						Play_LSword_Combo_Strong();
+						break;
+					case ATK_COMBO_TYPE::COMBO_SWORD_STEPPIERCE:
+						Play_SSword_Combo_StepPierce();
+						break;
+					case ATK_COMBO_TYPE::COMBO_SWORD_STRONG:
+						Play_SSword_Combo_Strong();
+						break;
+					case ATK_COMBO_TYPE::COMBO_SWORD_Diagonal_L:
+						Play_SSword_Combo_Diagonal_L();
+						break;
+					}
+				}
+				else
+				{
+					switch (m_eState)
+					{
+					case HUNTER_ANI::SSword_Atk_Sp02:
+						Play_SSword_CriticalDraw();
+						break;
+					case HUNTER_ANI::SSword_Atk_Sp01:
+						Play_SSword_HelmetBreak();
+						break;
+					case HUNTER_ANI::SSword_Atk_S01:
+						Play_SSword_Elbow();
+						break;
+					case HUNTER_ANI::SSword_Atk_N05:
+						Play_SSword_WoodChop();
+						break;
+					case HUNTER_ANI::SSword_Atk_N04:
+						Play_SSword_Upper_L();
+						break;
+					case HUNTER_ANI::SSword_Atk_N01:
+						Play_SSword_Upper();
+						break;
+					case HUNTER_ANI::SSword_Atk_RaiseUp:
+						Play_SSword_RaiseUp();
+						break;
+					case HUNTER_ANI::SSword_Atk_Jump:
+						Play_SSword_Jump();
+						break;
+					case HUNTER_ANI::LSword_Atk_Smash:
+						Play_LSword_Smash();
+						break;
+					case HUNTER_ANI::LSword_Atk_S01:
+						Play_LSword_RDiagonal();
+						break;
+					case HUNTER_ANI::LSword_Atk_N01:
+						Play_LSword_Right();
+						break;
+					case HUNTER_ANI::LSword_Atk_Kick:
+						Play_LSword_KneeKick();
+						break;
+					case HUNTER_ANI::Hammer_Atk_TwoUpper:
+						Play_Hammer_TwoUpper();
+						break;
+					case HUNTER_ANI::Hammer_Atk_Smash:
+						Play_Hammer_Smash();
+						break;
+					case HUNTER_ANI::Hammer_Atk_Slash:
+						Play_Hammer_Slash();
+						break;
+					case HUNTER_ANI::Hammer_Atk_N:
+						Play_Hammer_Upper();
+						break;
+					case HUNTER_ANI::Halberd_Atk_TwoUpper:
+						Play_Halberd_TwoUpper();
+						break;
+					case HUNTER_ANI::Halberd_Atk_TwoSlash:
+						Play_Halberd_SlashForth();
+						break;
+					case HUNTER_ANI::Halberd_Atk_Sweep:
+						Play_Halberd_Sweap();
+						break;
+					case HUNTER_ANI::Halberd_Atk_Sp03:
+						Play_Halberd_Swing_Jump();
+						break;
+					case HUNTER_ANI::Halberd_Atk_Sp02:
+						Play_Halberd_ClockTwice();
+						break;
+					case HUNTER_ANI::Halberd_Atk_S01:
+						Play_Halberd_DeepPierce();
+						break;
+					case HUNTER_ANI::Halberd_Atk_N01:
+						Play_Halberd_Pierce();
+						break;
+					case HUNTER_ANI::Halberd_Atk_RaiseUp:
+						Play_Halberd_RiseUp();
+						break;
+					case HUNTER_ANI::Halberd_Atk_Force:
+						Play_Halberd_StepPierce();
+						break;
+					case HUNTER_ANI::Bayonet_Atk_Snipe:
+						Play_Gun_Snipe();
+						break;
+					case HUNTER_ANI::Bayonet_Atk_Shoot01:
+						Play_Gun_Shoot();
+						break;
+					case HUNTER_ANI::Bayonet_Atk_N01:
+						Play_Gun_R();
+						break;
+					case HUNTER_ANI::Bayonet_Atk_Kick:
+						Play_Gun_Kick();
+						break;
+					}
+				}
+			}
 		}
 		break;
 
@@ -786,6 +937,278 @@ void CHunter::Check_DeadEffect(_double TimeDelta)
 	return;
 }
 
+void CHunter::Check_FootSound()
+{
+	if (HUNTER_ANI::Walk_F == m_eState ||
+		HUNTER_ANI::Walk_L == m_eState ||
+		HUNTER_ANI::Walk_R == m_eState ||
+		HUNTER_ANI::Run == m_eState)
+	{
+		m_fFootSound += DELTA_60;
+
+		if (m_fFootSound >= m_fFootSoundMax)
+		{
+			m_fFootSound = 0.f;
+
+			g_pSoundManager->Stop_Sound(CSoundManager::Hunter_Step);
+
+			switch (CALC::Random_Num(0, 5))
+			{
+			case 0:
+				g_pSoundManager->Play_Sound(L"Step0.ogg", CSoundManager::Hunter_Step, CSoundManager::Effect_Sound);
+				break;
+
+			case 1:
+				g_pSoundManager->Play_Sound(L"Step1.ogg", CSoundManager::Hunter_Step, CSoundManager::Effect_Sound);
+				break;
+
+			case 2:
+				g_pSoundManager->Play_Sound(L"Step2.ogg", CSoundManager::Hunter_Step, CSoundManager::Effect_Sound);
+				break;
+
+			case 3:
+				g_pSoundManager->Play_Sound(L"Step3.ogg", CSoundManager::Hunter_Step, CSoundManager::Effect_Sound);
+				break;
+
+			case 4:
+				g_pSoundManager->Play_Sound(L"Step4.ogg", CSoundManager::Hunter_Step, CSoundManager::Effect_Sound);
+				break;
+
+			case 5:
+				g_pSoundManager->Play_Sound(L"Step5.ogg", CSoundManager::Hunter_Step, CSoundManager::Effect_Sound);
+				break;
+			}
+		}
+	}
+
+	return;
+}
+
+void CHunter::Play_SequenceAtk()
+{
+	//처음 목표가 없을 경우
+	if (nullptr == m_pAggroTarget)
+	{
+		Function_Find_Target();
+
+		if (nullptr == m_pAggroTarget)
+		{
+			//목표를 재 탐색했으나 존재 하지 않을 경우
+			m_bCanCoolDown = false;
+			m_bIsCoolDown = false;
+			m_fCoolDownMax = 0.f;
+			m_fCoolDownCur = 0.f;
+			Function_ResetAfterAtk();
+			m_eFirstCategory = MONSTER_STATE_TYPE::IDLE;
+
+			if (false == m_bIsIdle)
+			{
+				switch (CALC::Random_Num(MONSTER_IDLE_TYPE::IDLE_IDLE, MONSTER_IDLE_TYPE::IDLE_STAND))
+				{
+				case MONSTER_IDLE_TYPE::IDLE_IDLE:
+					m_eSecondCategory_IDLE = MONSTER_IDLE_TYPE::IDLE_IDLE;
+					break;
+				case MONSTER_IDLE_TYPE::IDLE_CROUCH:
+				case MONSTER_IDLE_TYPE::IDLE_EAT:
+					m_eSecondCategory_IDLE = MONSTER_IDLE_TYPE::IDLE_CROUCH;
+					break;
+				case MONSTER_IDLE_TYPE::IDLE_SIT:
+				case MONSTER_IDLE_TYPE::IDLE_LURK:
+					m_eSecondCategory_IDLE = MONSTER_IDLE_TYPE::IDLE_SIT;
+					break;
+				case MONSTER_IDLE_TYPE::IDLE_STAND:
+				case MONSTER_IDLE_TYPE::IDLE_SCRATCH:
+					m_eSecondCategory_IDLE = MONSTER_IDLE_TYPE::IDLE_STAND;
+					break;
+				}
+			}
+
+			Play_Idle();
+
+			return;
+		}
+	}
+
+	_float fLenth = V3_LENGTH(&(m_pTransformCom->Get_Pos() - TARGET_TO_TRANS(m_pAggroTarget)->Get_Pos()));
+
+	switch (m_eWeaponState)
+	{
+	case WEAPON_STATE::WEAPON_SSword:
+		switch (m_iPatternCount)
+		{
+		case 0:
+			m_eState = HUNTER_ANI::SSword_Atk_Jump;
+			break;
+		case 1:
+			m_eState = HUNTER_ANI::SSword_Atk_RaiseUp;
+			break;
+		case 2:
+			m_eState = HUNTER_ANI::SSword_Atk_N01;
+			break;
+		case 3:
+			m_eState = HUNTER_ANI::SSword_Atk_N04;
+			break;
+		case 4:
+			m_eState = HUNTER_ANI::SSword_Atk_N05;
+			break;
+		case 5:
+			m_eState = HUNTER_ANI::SSword_Atk_S01;
+			break;
+		case 6:
+			m_eState = HUNTER_ANI::SSword_Atk_Sp01;
+			break;
+		case 7:
+			m_eState = HUNTER_ANI::SSword_Atk_Sp02;
+			break;
+		case 8:
+			m_bIsCombo = true;
+			m_eAtkCombo = ATK_COMBO_TYPE::COMBO_SWORD_STEPPIERCE;
+			m_eState = HUNTER_ANI::SSword_Atk_Sp03_Start;
+			break;
+		case 9:
+			m_bIsCombo = true;
+			m_eAtkCombo = ATK_COMBO_TYPE::COMBO_SWORD_STRONG;
+			m_eState = HUNTER_ANI::SSword_Atk_S01;
+			break;
+		case 10:
+			m_bIsCombo = true;
+			m_eAtkCombo = ATK_COMBO_TYPE::COMBO_SWORD_Diagonal_L;
+			m_eState = HUNTER_ANI::SSword_Atk_N02;
+			break;
+		}
+		break;
+
+	case WEAPON_STATE::WEAPON_LSword:
+		switch (m_iPatternCount)
+		{
+		case 0:
+			m_eState = HUNTER_ANI::LSword_Atk_Kick;
+			break;
+		case 1:
+			m_eState = HUNTER_ANI::LSword_Atk_N01;
+			break;
+		case 2:
+			m_eState = HUNTER_ANI::LSword_Atk_S01;
+			break;
+		case 3:
+			m_eState = HUNTER_ANI::LSword_Atk_Smash;
+			break;
+		case 4:
+			m_bIsCombo = true;
+			m_eAtkCombo = ATK_COMBO_TYPE::COMBO_LSWORD_NORMAL;
+			m_eState = HUNTER_ANI::LSword_Atk_N01;
+			break;
+		case 5:
+			m_bIsCombo = true;
+			m_eAtkCombo = ATK_COMBO_TYPE::COMBO_LSWORD_STRONG;
+			m_eState = HUNTER_ANI::LSword_Atk_S01;
+			break;
+		}
+		break;
+
+	case WEAPON_STATE::WEAPON_Hammer:
+		switch (m_iPatternCount)
+		{
+		case 0:
+			m_eState = HUNTER_ANI::Hammer_Atk_N;
+			break;
+		case 1:
+			m_eState = HUNTER_ANI::Hammer_Atk_Smash;
+			break;
+		case 2:
+			m_eState = HUNTER_ANI::Hammer_Atk_Slash;
+			break;
+		case 3:
+			m_eState = HUNTER_ANI::Hammer_Atk_TwoUpper;
+			break;
+		}
+		break;
+
+	case WEAPON_STATE::WEAPON_Halberd:
+		switch (m_iPatternCount)
+		{
+		case 0:
+			m_eState = HUNTER_ANI::Halberd_Atk_Force;
+			break;
+		case 1:
+			m_eState = HUNTER_ANI::Halberd_Atk_RaiseUp;
+			break;
+		case 2:
+			m_eState = HUNTER_ANI::Halberd_Atk_N01;
+			break;
+		case 3:
+			m_eState = HUNTER_ANI::Halberd_Atk_S01;
+			break;
+		case 4:
+			m_eState = HUNTER_ANI::Halberd_Atk_Sp02;
+			break;
+		case 5:
+			m_eState = HUNTER_ANI::Halberd_Atk_Sp03;
+			break;
+		case 6:
+			m_eState = HUNTER_ANI::Halberd_Atk_Sweep;
+			break;
+		case 7:
+			m_eState = HUNTER_ANI::Halberd_Atk_TwoSlash;
+			break;
+		case 8:
+			m_eState = HUNTER_ANI::Halberd_Atk_TwoUpper;
+			break;
+		case 9:
+			m_bIsCombo = true;
+			m_eAtkCombo = ATK_COMBO_TYPE::COMBO_HALBERD_THIRDATK;
+			m_eState = HUNTER_ANI::Halberd_Atk_N01;
+			break;
+		case 10:
+			m_bIsCombo = true;
+			m_eAtkCombo = ATK_COMBO_TYPE::COMBO_HALBERD_PIERCETWICE;
+			m_eState = HUNTER_ANI::Halberd_Atk_S01;
+			break;
+		case 11:
+			m_bIsCombo = true;
+			m_eAtkCombo = ATK_COMBO_TYPE::COMBO_HALBERD_PIERCEWIND;
+			m_eState = HUNTER_ANI::Halberd_Atk_S01;
+			break;
+		}
+		break;
+
+	case WEAPON_STATE::WEAPON_Gun:
+		switch (m_iPatternCount)
+		{
+		case 0:
+			m_eState = HUNTER_ANI::Bayonet_Atk_Kick;
+			break;
+		case 1:
+			m_eState = HUNTER_ANI::Bayonet_Atk_N01;
+			break;
+		case 2:
+			m_eState = HUNTER_ANI::Bayonet_Atk_Shoot01;
+			break;
+		case 3:
+			m_eState = HUNTER_ANI::Bayonet_Atk_Snipe;
+			break;
+		case 4:
+			if (m_fAtkRange < fLenth &&  m_fShotRange > fLenth)
+			{
+				m_eAtkCombo = ATK_COMBO_TYPE::COMBO_GUN_CQC;
+				m_eState = HUNTER_ANI::Bayonet_Atk_N01;
+			}
+			else
+			{
+				m_eAtkCombo = ATK_COMBO_TYPE::COMBO_GUN_SHOT;
+				m_eState = HUNTER_ANI::Bayonet_Atk_Shoot01;
+			}
+			m_bIsCombo = true;
+			break;
+		}
+		break;
+	}
+
+	++m_iPatternCount;
+
+	return;
+}
+
 void CHunter::Play_RandomAtkNormal()
 {		
 	switch (m_eWeaponState)
@@ -807,6 +1230,7 @@ void CHunter::Play_RandomAtkNormal()
 			break;
 		}
 		break;
+
 	case WEAPON_STATE::WEAPON_Halberd:
 		switch (CALC::Random_Num(ATK_NORMAL_TYPE::NORMAL_HALBERD_STEPPIERCE, ATK_NORMAL_TYPE::NORMAL_HALBERD_TWOUPPER))
 		{
@@ -839,6 +1263,7 @@ void CHunter::Play_RandomAtkNormal()
 			break;
 		}
 		break;
+
 	case WEAPON_STATE::WEAPON_Hammer:
 		switch (CALC::Random_Num(ATK_NORMAL_TYPE::NORMAL_HAMMER_UPPER, ATK_NORMAL_TYPE::NORMAL_HAMMER_TWOUPPER))
 		{
@@ -856,6 +1281,7 @@ void CHunter::Play_RandomAtkNormal()
 			break;
 		}
 		break;
+
 	case WEAPON_STATE::WEAPON_LSword:
 		switch (CALC::Random_Num(ATK_NORMAL_TYPE::NORMAL_LSWORD_KNEEKICK, ATK_NORMAL_TYPE::NORMAL_LSWORD_SMASH))
 		{
@@ -873,6 +1299,7 @@ void CHunter::Play_RandomAtkNormal()
 			break;
 		}
 		break;
+
 	case WEAPON_STATE::WEAPON_SSword:
 		switch (CALC::Random_Num(ATK_NORMAL_TYPE::NORMAL_SWORD_JUMP, ATK_NORMAL_TYPE::NORMAL_SWORD_CRITICALDRAW))
 		{
@@ -1157,8 +1584,9 @@ void CHunter::Play_Gun_R()
 				m_tObjParam.bSuperArmor = true;
 
 				g_pSoundManager->Stop_Sound(CSoundManager::Hunter_SFX_01);
+				g_pSoundManager->Stop_Sound(CSoundManager::Hunter_SFX_02);
 
-				m_iRandom = CALC::Random_Num(0, 3);
+				m_iRandom = CALC::Random_Num(0, 5);
 
 				switch (m_iRandom)
 				{
@@ -1173,6 +1601,28 @@ void CHunter::Play_Gun_R()
 					break;
 				case 3:
 					g_pSoundManager->Play_Sound(L"Monster_Blade_Swing3.ogg", CSoundManager::Hunter_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				case 4:
+					g_pSoundManager->Play_Sound(L"Monster_Blade_Swing4.ogg", CSoundManager::Hunter_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				case 5:
+					g_pSoundManager->Play_Sound(L"Monster_Blade_Swing5.ogg", CSoundManager::Hunter_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				}
+
+				switch (CALC::Random_Num(0, 3))
+				{
+				case 0:
+					g_pSoundManager->Play_Sound(L"Monster_BladeWeapon_Sub0.ogg", CSoundManager::Hunter_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 1:
+					g_pSoundManager->Play_Sound(L"Monster_BladeWeapon_Sub1.ogg", CSoundManager::Hunter_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 2:
+					g_pSoundManager->Play_Sound(L"Monster_BladeWeapon_Sub2.ogg", CSoundManager::Hunter_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 3:
+					g_pSoundManager->Play_Sound(L"Monster_BladeWeapon_Sub3.ogg", CSoundManager::Hunter_SFX_02, CSoundManager::Effect_Sound);
 					break;
 				}
 			}
@@ -1519,6 +1969,10 @@ void CHunter::Play_Gun_Combo_Shot()
 			m_tObjParam.bSuperArmor = false;
 			m_eState = HUNTER_ANI::Bayonet_Atk_Shoot02;
 
+			m_pBattleAgentCom->Set_RimColor(_v4(0.f, 0.f, 0.f, 0.f));
+			m_pBattleAgentCom->Set_RimAlpha(0.5f);
+			m_pBattleAgentCom->Set_RimValue(8.f);
+
 			return;
 		}
 		else if (3.333f <= AniTime)
@@ -1527,6 +1981,10 @@ void CHunter::Play_Gun_Combo_Shot()
 			{
 				m_bEventTrigger[0] = true;
 				m_tObjParam.bSuperArmor = true;
+
+				m_pBattleAgentCom->Set_RimColor(_v4(1.f, 0.f, 0.f, 0.f));
+				m_pBattleAgentCom->Set_RimAlpha(1.f);
+				m_pBattleAgentCom->Set_RimValue(5.f);
 
 				_mat matTemp = *m_matBone[Bone_RightHandAttach] * m_pTransformCom->Get_WorldMat(); //뼈위치* 월드
 
@@ -1565,9 +2023,9 @@ void CHunter::Play_Gun_Combo_Shot()
 		}
 		else if (3.f <= AniTime)
 		{
-			if (false == m_bEventTrigger[5])
+			if (false == m_bEventTrigger[1])
 			{
-				m_bEventTrigger[5] = true;
+				m_bEventTrigger[1] = true;
 
 				g_pSoundManager->Stop_Sound(CSoundManager::Hunter_Voice);
 
@@ -1653,14 +2111,22 @@ void CHunter::Play_Gun_Combo_Shot()
 			m_tObjParam.bSuperArmor = false;
 			m_eState = HUNTER_ANI::Bayonet_Atk_Snipe;
 
+			m_pBattleAgentCom->Set_RimColor(_v4(0.f, 0.f, 0.f, 0.f));
+			m_pBattleAgentCom->Set_RimAlpha(0.5f);
+			m_pBattleAgentCom->Set_RimValue(8.f);
+
 			return;
 		}
 		else if (2.100f <= AniTime)
 		{
-			if (false == m_bEventTrigger[1])
+			if (false == m_bEventTrigger[2])
 			{
-				m_bEventTrigger[1] = true;
+				m_bEventTrigger[2] = true;
 				m_tObjParam.bSuperArmor = true;
+
+				m_pBattleAgentCom->Set_RimColor(_v4(1.f, 0.f, 0.f, 0.f));
+				m_pBattleAgentCom->Set_RimAlpha(1.f);
+				m_pBattleAgentCom->Set_RimValue(5.f);
 
 				_mat matTemp = *m_matBone[Bone_RightHandAttach] * m_pTransformCom->Get_WorldMat(); //뼈위치* 월드
 
@@ -1699,9 +2165,9 @@ void CHunter::Play_Gun_Combo_Shot()
 		}
 		else if (2.f <= AniTime)
 		{
-			if (false == m_bEventTrigger[6])
+			if (false == m_bEventTrigger[3])
 			{
-				m_bEventTrigger[6] = true;
+				m_bEventTrigger[3] = true;
 
 				g_pSoundManager->Stop_Sound(CSoundManager::Hunter_Voice);
 
@@ -1736,18 +2202,26 @@ void CHunter::Play_Gun_Combo_Shot()
 		}
 		else if (0.667f <= AniTime)
 		{
-			if (false == m_bEventTrigger[2])
+			if (false == m_bEventTrigger[4])
 			{
-				m_bEventTrigger[2] = true;
+				m_bEventTrigger[4] = true;
 				m_tObjParam.bSuperArmor = false;
+
+				m_pBattleAgentCom->Set_RimColor(_v4(0.f, 0.f, 0.f, 0.f));
+				m_pBattleAgentCom->Set_RimAlpha(0.5f);
+				m_pBattleAgentCom->Set_RimValue(8.f);
 			}
 		}
 		else if (0.f <= AniTime)
 		{
-			if (false == m_bEventTrigger[3])
+			if (false == m_bEventTrigger[5])
 			{
-				m_bEventTrigger[3] = true;
+				m_bEventTrigger[5] = true;
 				m_tObjParam.bSuperArmor = true;
+
+				m_pBattleAgentCom->Set_RimColor(_v4(1.f, 0.f, 0.f, 0.f));
+				m_pBattleAgentCom->Set_RimAlpha(1.f);
+				m_pBattleAgentCom->Set_RimValue(5.f);
 
 				_mat matTemp = *m_matBone[Bone_RightHandAttach] * m_pTransformCom->Get_WorldMat(); //뼈위치* 월드
 
@@ -1836,13 +2310,17 @@ void CHunter::Play_Gun_Combo_Shot()
 			m_bCanCoolDown = true;
 			m_fCoolDownMax = 0.8f;
 
+			m_pBattleAgentCom->Set_RimColor(_v4(0.f, 0.f, 0.f, 0.f));
+			m_pBattleAgentCom->Set_RimAlpha(0.5f);
+			m_pBattleAgentCom->Set_RimValue(8.f);
+
 			return;
 		}
 		else if (3.333f < AniTime)
 		{
-			if (false == m_bEventTrigger[4])
+			if (false == m_bEventTrigger[6])
 			{
-				m_bEventTrigger[4] = true;
+				m_bEventTrigger[6] = true;
 				m_tObjParam.bSuperArmor = true;
 
 				_mat matTemp = *m_matBone[Bone_RightHandAttach] * m_pTransformCom->Get_WorldMat(); //뼈위치* 월드
@@ -1890,6 +2368,17 @@ void CHunter::Play_Gun_Combo_Shot()
 				}
 
 				CObjectPool_Manager::Get_Instance()->Create_Object(L"Monster_HunterBullet", &BULLET_INFO(vBirth, m_pTransformCom->Get_Axis(AXIS_Z), 8.f, 1.5));
+			}
+		}
+		else if (2.9f < AniTime)
+		{
+			if (false == m_bEventTrigger[7])
+			{
+				m_bEventTrigger[7] = true;
+
+				m_pBattleAgentCom->Set_RimColor(_v4(1.f, 0.f, 0.f, 0.f));
+				m_pBattleAgentCom->Set_RimAlpha(1.f);
+				m_pBattleAgentCom->Set_RimValue(5.f);
 			}
 		}
 		else if (0.f < AniTime)
@@ -1955,6 +2444,10 @@ void CHunter::Play_Gun_Combo_CQC()
 			m_pWeapon->Set_Enable_Trail(false);
 			m_eState = HUNTER_ANI::Bayonet_Atk_N02;
 
+			m_pBattleAgentCom->Set_RimColor(_v4(0.f, 0.f, 0.f, 0.f));
+			m_pBattleAgentCom->Set_RimAlpha(0.5f);
+			m_pBattleAgentCom->Set_RimValue(8.f);
+
 			return;
 		}
 		else if (1.967f <= AniTime)
@@ -1979,13 +2472,15 @@ void CHunter::Play_Gun_Combo_CQC()
 			if (false == m_bEventTrigger[2])
 			{
 				m_bEventTrigger[2] = true;
+				m_dAniPlayMul = 1;
 				m_pWeapon->Set_Target_CanAttack(true);
 				m_pWeapon->Set_Enable_Trail(true);
 				m_tObjParam.bSuperArmor = true;
 
 				g_pSoundManager->Stop_Sound(CSoundManager::Hunter_SFX_01);
+				g_pSoundManager->Stop_Sound(CSoundManager::Hunter_SFX_02);
 
-				m_iRandom = CALC::Random_Num(0, 3);
+				m_iRandom = CALC::Random_Num(0, 5);
 
 				switch (m_iRandom)
 				{
@@ -2001,14 +2496,42 @@ void CHunter::Play_Gun_Combo_CQC()
 				case 3:
 					g_pSoundManager->Play_Sound(L"Monster_Blade_Swing3.ogg", CSoundManager::Hunter_SFX_01, CSoundManager::Effect_Sound);
 					break;
+				case 4:
+					g_pSoundManager->Play_Sound(L"Monster_Blade_Swing4.ogg", CSoundManager::Hunter_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				case 5:
+					g_pSoundManager->Play_Sound(L"Monster_Blade_Swing5.ogg", CSoundManager::Hunter_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				}
+
+				switch (CALC::Random_Num(0, 3))
+				{
+				case 0:
+					g_pSoundManager->Play_Sound(L"Monster_BladeWeapon_Sub0.ogg", CSoundManager::Hunter_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 1:
+					g_pSoundManager->Play_Sound(L"Monster_BladeWeapon_Sub1.ogg", CSoundManager::Hunter_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 2:
+					g_pSoundManager->Play_Sound(L"Monster_BladeWeapon_Sub2.ogg", CSoundManager::Hunter_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 3:
+					g_pSoundManager->Play_Sound(L"Monster_BladeWeapon_Sub3.ogg", CSoundManager::Hunter_SFX_02, CSoundManager::Effect_Sound);
+					break;
 				}
 			}
 		}
 		else if (1.f <= AniTime)
 		{
-			if (false == m_bEventTrigger[16])
+			if (false == m_bEventTrigger[3])
 			{
-				m_bEventTrigger[16] = true;
+				m_bEventTrigger[3] = true;
+
+				m_dAniPlayMul = 0.5;
+
+				m_pBattleAgentCom->Set_RimColor(_v4(1.f, 0.f, 0.f, 0.f));
+				m_pBattleAgentCom->Set_RimAlpha(1.f);
+				m_pBattleAgentCom->Set_RimValue(5.f);
 
 				g_pSoundManager->Stop_Sound(CSoundManager::Hunter_Voice);
 
@@ -2043,9 +2566,9 @@ void CHunter::Play_Gun_Combo_CQC()
 
 		if (1.267f < AniTime && 1.767f > AniTime)
 		{
-			if (false == m_bEventTrigger[3])
+			if (false == m_bEventTrigger[4])
 			{
-				m_bEventTrigger[3] = true;
+				m_bEventTrigger[4] = true;
 				m_fSkillMoveSpeed_Cur = 6.f;
 				m_fSkillMoveAccel_Cur = 0.f;
 				m_fSkillMoveMultiply = 1.5f;
@@ -2107,6 +2630,10 @@ void CHunter::Play_Gun_Combo_CQC()
 			m_pWeapon->Set_Enable_Trail(false);
 			m_eState = HUNTER_ANI::Bayonet_Atk_N03;
 
+			m_pBattleAgentCom->Set_RimColor(_v4(0.f, 0.f, 0.f, 0.f));
+			m_pBattleAgentCom->Set_RimAlpha(0.5f);
+			m_pBattleAgentCom->Set_RimValue(8.f);
+
 			return;
 		}
 		else if (1.700f <= AniTime)
@@ -2124,6 +2651,7 @@ void CHunter::Play_Gun_Combo_CQC()
 				m_bEventTrigger[6] = true;
 				m_pWeapon->Set_Target_CanAttack(false);
 				m_tObjParam.bSuperArmor = false;
+				m_dAniPlayMul = 1;
 			}
 		}
 		else if (1.133f <= AniTime)
@@ -2136,8 +2664,9 @@ void CHunter::Play_Gun_Combo_CQC()
 				m_tObjParam.bSuperArmor = true;
 
 				g_pSoundManager->Stop_Sound(CSoundManager::Hunter_SFX_01);
+				g_pSoundManager->Stop_Sound(CSoundManager::Hunter_SFX_02);
 
-				m_iRandom = CALC::Random_Num(0, 3);
+				m_iRandom = CALC::Random_Num(0, 5);
 
 				switch (m_iRandom)
 				{
@@ -2153,14 +2682,42 @@ void CHunter::Play_Gun_Combo_CQC()
 				case 3:
 					g_pSoundManager->Play_Sound(L"Monster_Blade_Swing3.ogg", CSoundManager::Hunter_SFX_01, CSoundManager::Effect_Sound);
 					break;
+				case 4:
+					g_pSoundManager->Play_Sound(L"Monster_Blade_Swing4.ogg", CSoundManager::Hunter_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				case 5:
+					g_pSoundManager->Play_Sound(L"Monster_Blade_Swing5.ogg", CSoundManager::Hunter_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				}
+
+				switch (CALC::Random_Num(0, 3))
+				{
+				case 0:
+					g_pSoundManager->Play_Sound(L"Monster_BladeWeapon_Sub0.ogg", CSoundManager::Hunter_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 1:
+					g_pSoundManager->Play_Sound(L"Monster_BladeWeapon_Sub1.ogg", CSoundManager::Hunter_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 2:
+					g_pSoundManager->Play_Sound(L"Monster_BladeWeapon_Sub2.ogg", CSoundManager::Hunter_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 3:
+					g_pSoundManager->Play_Sound(L"Monster_BladeWeapon_Sub3.ogg", CSoundManager::Hunter_SFX_02, CSoundManager::Effect_Sound);
+					break;
 				}
 			}
 		}
 		else if (1.f <= AniTime)
 		{
-			if (false == m_bEventTrigger[17])
+			if (false == m_bEventTrigger[8])
 			{
-				m_bEventTrigger[17] = true;
+				m_bEventTrigger[8] = true;
+
+				m_dAniPlayMul = 0.5;
+
+				m_pBattleAgentCom->Set_RimColor(_v4(1.f, 0.f, 0.f, 0.f));
+				m_pBattleAgentCom->Set_RimAlpha(1.f);
+				m_pBattleAgentCom->Set_RimValue(5.f);
 
 				g_pSoundManager->Stop_Sound(CSoundManager::Hunter_Voice);
 
@@ -2195,9 +2752,9 @@ void CHunter::Play_Gun_Combo_CQC()
 
 		if (0.600f < AniTime && 3.627f > AniTime)
 		{
-			if (false == m_bEventTrigger[8])
+			if (false == m_bEventTrigger[9])
 			{
-				m_bEventTrigger[8] = true;
+				m_bEventTrigger[9] = true;
 				m_fSkillMoveSpeed_Cur = 6.f;
 				m_fSkillMoveAccel_Cur = 0.f;
 				m_fSkillMoveMultiply = 1.f;
@@ -2254,41 +2811,47 @@ void CHunter::Play_Gun_Combo_CQC()
 	{
 		if (m_pMeshCom->Is_Finish_Animation(0.9f))
 		{
-			m_fCoolDownMax = 0.8f;
-			m_bCanCoolDown = true;
 			Function_ResetAfterAtk();
+			m_bCanCoolDown = true;
+			m_fCoolDownMax = 0.8f;
+
+			m_pBattleAgentCom->Set_RimColor(_v4(0.f, 0.f, 0.f, 0.f));
+			m_pBattleAgentCom->Set_RimAlpha(0.5f);
+			m_pBattleAgentCom->Set_RimValue(8.f);
 
 			return;
 		}
 		else if (2.067f < AniTime)
 		{
-			if (false == m_bEventTrigger[9])
+			if (false == m_bEventTrigger[10])
 			{
-				m_bEventTrigger[9] = true;
+				m_bEventTrigger[10] = true;
 				m_pWeapon->Set_Enable_Trail(false);
 			}
 		}
 		else if (1.767f <= AniTime)
 		{
-			if (false == m_bEventTrigger[10])
+			if (false == m_bEventTrigger[11])
 			{
-				m_bEventTrigger[10] = true;
+				m_bEventTrigger[11] = true;
 				m_pWeapon->Set_Target_CanAttack(false);
 				m_tObjParam.bSuperArmor = false;
 			}
 		}
 		else if (1.567f <= AniTime)
 		{
-			if (false == m_bEventTrigger[11])
+			if (false == m_bEventTrigger[12])
 			{
-				m_bEventTrigger[11] = true;
+				m_bEventTrigger[12] = true;
+				m_dAniPlayMul = 1;
 				m_pWeapon->Set_Target_CanAttack(true);
 				m_pWeapon->Set_Enable_Trail(true);
 				m_tObjParam.bSuperArmor = true;
 
 				g_pSoundManager->Stop_Sound(CSoundManager::Hunter_SFX_01);
+				g_pSoundManager->Stop_Sound(CSoundManager::Hunter_SFX_02);
 
-				m_iRandom = CALC::Random_Num(0, 3);
+				m_iRandom = CALC::Random_Num(0, 5);
 
 				switch (m_iRandom)
 				{
@@ -2304,14 +2867,42 @@ void CHunter::Play_Gun_Combo_CQC()
 				case 3:
 					g_pSoundManager->Play_Sound(L"Monster_Blade_Swing3.ogg", CSoundManager::Hunter_SFX_01, CSoundManager::Effect_Sound);
 					break;
+				case 4:
+					g_pSoundManager->Play_Sound(L"Monster_Blade_Swing4.ogg", CSoundManager::Hunter_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				case 5:
+					g_pSoundManager->Play_Sound(L"Monster_Blade_Swing5.ogg", CSoundManager::Hunter_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				}
+
+				switch (CALC::Random_Num(0, 3))
+				{
+				case 0:
+					g_pSoundManager->Play_Sound(L"Monster_BladeWeapon_Sub0.ogg", CSoundManager::Hunter_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 1:
+					g_pSoundManager->Play_Sound(L"Monster_BladeWeapon_Sub1.ogg", CSoundManager::Hunter_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 2:
+					g_pSoundManager->Play_Sound(L"Monster_BladeWeapon_Sub2.ogg", CSoundManager::Hunter_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 3:
+					g_pSoundManager->Play_Sound(L"Monster_BladeWeapon_Sub3.ogg", CSoundManager::Hunter_SFX_02, CSoundManager::Effect_Sound);
+					break;
 				}
 			}
 		}
 		else if (1.f <= AniTime)
 		{
-			if (false == m_bEventTrigger[18])
+			if (false == m_bEventTrigger[13])
 			{
-				m_bEventTrigger[18] = true;
+				m_bEventTrigger[13] = true;
+
+				m_dAniPlayMul = 0.5;
+
+				m_pBattleAgentCom->Set_RimColor(_v4(1.f, 0.f, 0.f, 0.f));
+				m_pBattleAgentCom->Set_RimAlpha(1.f);
+				m_pBattleAgentCom->Set_RimValue(5.f);
 
 				g_pSoundManager->Stop_Sound(CSoundManager::Hunter_Voice);
 
@@ -2346,9 +2937,9 @@ void CHunter::Play_Gun_Combo_CQC()
 
 		if (0.367f < AniTime && 1.867f >AniTime)
 		{
-			if (false == m_bEventTrigger[15])
+			if (false == m_bEventTrigger[14])
 			{
-				m_bEventTrigger[15] = true;
+				m_bEventTrigger[14] = true;
 				m_fSkillMoveSpeed_Cur = 6.f;
 				m_fSkillMoveAccel_Cur = 0.f;
 				m_fSkillMoveMultiply = 1.f;
@@ -2451,8 +3042,9 @@ void CHunter::Play_Halberd_StepPierce()
 				m_tObjParam.bSuperArmor = true;
 
 				g_pSoundManager->Stop_Sound(CSoundManager::Hunter_SFX_01);
+				g_pSoundManager->Stop_Sound(CSoundManager::Hunter_SFX_02);
 
-				m_iRandom = CALC::Random_Num(0, 3);
+				m_iRandom = CALC::Random_Num(0, 5);
 
 				switch (m_iRandom)
 				{
@@ -2467,6 +3059,28 @@ void CHunter::Play_Halberd_StepPierce()
 					break;
 				case 3:
 					g_pSoundManager->Play_Sound(L"Monster_Blade_Swing3.ogg", CSoundManager::Hunter_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				case 4:
+					g_pSoundManager->Play_Sound(L"Monster_Blade_Swing4.ogg", CSoundManager::Hunter_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				case 5:
+					g_pSoundManager->Play_Sound(L"Monster_Blade_Swing5.ogg", CSoundManager::Hunter_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				}
+
+				switch (CALC::Random_Num(0, 3))
+				{
+				case 0:
+					g_pSoundManager->Play_Sound(L"Monster_BladeWeapon_Sub0.ogg", CSoundManager::Hunter_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 1:
+					g_pSoundManager->Play_Sound(L"Monster_BladeWeapon_Sub1.ogg", CSoundManager::Hunter_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 2:
+					g_pSoundManager->Play_Sound(L"Monster_BladeWeapon_Sub2.ogg", CSoundManager::Hunter_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 3:
+					g_pSoundManager->Play_Sound(L"Monster_BladeWeapon_Sub3.ogg", CSoundManager::Hunter_SFX_02, CSoundManager::Effect_Sound);
 					break;
 				}
 			}
@@ -2571,9 +3185,10 @@ void CHunter::Play_Halberd_RiseUp()
 				m_pWeapon->Set_Enable_Trail(true);
 				m_tObjParam.bSuperArmor = true;
 
+				g_pSoundManager->Stop_Sound(CSoundManager::Hunter_SFX_02);
 				g_pSoundManager->Stop_Sound(CSoundManager::Hunter_SFX_01);
 
-				m_iRandom = CALC::Random_Num(0, 3);
+				m_iRandom = CALC::Random_Num(0, 5);
 
 				switch (m_iRandom)
 				{
@@ -2588,6 +3203,28 @@ void CHunter::Play_Halberd_RiseUp()
 					break;
 				case 3:
 					g_pSoundManager->Play_Sound(L"Monster_Blade_Swing3.ogg", CSoundManager::Hunter_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				case 4:
+					g_pSoundManager->Play_Sound(L"Monster_Blade_Swing4.ogg", CSoundManager::Hunter_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				case 5:
+					g_pSoundManager->Play_Sound(L"Monster_Blade_Swing5.ogg", CSoundManager::Hunter_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				}
+
+				switch (CALC::Random_Num(0, 3))
+				{
+				case 0:
+					g_pSoundManager->Play_Sound(L"Monster_BladeWeapon_Sub0.ogg", CSoundManager::Hunter_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 1:
+					g_pSoundManager->Play_Sound(L"Monster_BladeWeapon_Sub1.ogg", CSoundManager::Hunter_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 2:
+					g_pSoundManager->Play_Sound(L"Monster_BladeWeapon_Sub2.ogg", CSoundManager::Hunter_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 3:
+					g_pSoundManager->Play_Sound(L"Monster_BladeWeapon_Sub3.ogg", CSoundManager::Hunter_SFX_02, CSoundManager::Effect_Sound);
 					break;
 				}
 			}
@@ -2693,8 +3330,9 @@ void CHunter::Play_Halberd_Pierce()
 				m_tObjParam.bSuperArmor = true;
 
 				g_pSoundManager->Stop_Sound(CSoundManager::Hunter_SFX_01);
+				g_pSoundManager->Stop_Sound(CSoundManager::Hunter_SFX_02);
 
-				m_iRandom = CALC::Random_Num(0, 3);
+				m_iRandom = CALC::Random_Num(0, 5);
 
 				switch (m_iRandom)
 				{
@@ -2709,6 +3347,28 @@ void CHunter::Play_Halberd_Pierce()
 					break;
 				case 3:
 					g_pSoundManager->Play_Sound(L"Monster_Blade_Swing3.ogg", CSoundManager::Hunter_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				case 4:
+					g_pSoundManager->Play_Sound(L"Monster_Blade_Swing4.ogg", CSoundManager::Hunter_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				case 5:
+					g_pSoundManager->Play_Sound(L"Monster_Blade_Swing5.ogg", CSoundManager::Hunter_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				}
+
+				switch (CALC::Random_Num(0, 3))
+				{
+				case 0:
+					g_pSoundManager->Play_Sound(L"Monster_BladeWeapon_Sub0.ogg", CSoundManager::Hunter_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 1:
+					g_pSoundManager->Play_Sound(L"Monster_BladeWeapon_Sub1.ogg", CSoundManager::Hunter_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 2:
+					g_pSoundManager->Play_Sound(L"Monster_BladeWeapon_Sub2.ogg", CSoundManager::Hunter_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 3:
+					g_pSoundManager->Play_Sound(L"Monster_BladeWeapon_Sub3.ogg", CSoundManager::Hunter_SFX_02, CSoundManager::Effect_Sound);
 					break;
 				}
 			}
@@ -2827,8 +3487,9 @@ void CHunter::Play_Halberd_DeepPierce()
 				m_tObjParam.bSuperArmor = true;
 
 				g_pSoundManager->Stop_Sound(CSoundManager::Hunter_SFX_01);
+				g_pSoundManager->Stop_Sound(CSoundManager::Hunter_SFX_02);
 
-				m_iRandom = CALC::Random_Num(0, 3);
+				m_iRandom = CALC::Random_Num(0, 5);
 
 				switch (m_iRandom)
 				{
@@ -2843,6 +3504,28 @@ void CHunter::Play_Halberd_DeepPierce()
 					break;
 				case 3:
 					g_pSoundManager->Play_Sound(L"Monster_Blade_Swing3.ogg", CSoundManager::Hunter_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				case 4:
+					g_pSoundManager->Play_Sound(L"Monster_Blade_Swing4.ogg", CSoundManager::Hunter_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				case 5:
+					g_pSoundManager->Play_Sound(L"Monster_Blade_Swing5.ogg", CSoundManager::Hunter_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				}
+
+				switch (CALC::Random_Num(0, 3))
+				{
+				case 0:
+					g_pSoundManager->Play_Sound(L"Monster_BladeWeapon_Sub0.ogg", CSoundManager::Hunter_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 1:
+					g_pSoundManager->Play_Sound(L"Monster_BladeWeapon_Sub1.ogg", CSoundManager::Hunter_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 2:
+					g_pSoundManager->Play_Sound(L"Monster_BladeWeapon_Sub2.ogg", CSoundManager::Hunter_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 3:
+					g_pSoundManager->Play_Sound(L"Monster_BladeWeapon_Sub3.ogg", CSoundManager::Hunter_SFX_02, CSoundManager::Effect_Sound);
 					break;
 				}
 			}
@@ -2948,8 +3631,9 @@ void CHunter::Play_Halberd_ClockTwice()
 				m_tObjParam.bSuperArmor = true;
 
 				g_pSoundManager->Stop_Sound(CSoundManager::Hunter_SFX_01);
+				g_pSoundManager->Stop_Sound(CSoundManager::Hunter_SFX_02);
 
-				m_iRandom = CALC::Random_Num(0, 3);
+				m_iRandom = CALC::Random_Num(0, 5);
 
 				switch (m_iRandom)
 				{
@@ -2964,6 +3648,28 @@ void CHunter::Play_Halberd_ClockTwice()
 					break;
 				case 3:
 					g_pSoundManager->Play_Sound(L"Monster_Blade_Swing3.ogg", CSoundManager::Hunter_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				case 4:
+					g_pSoundManager->Play_Sound(L"Monster_Blade_Swing4.ogg", CSoundManager::Hunter_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				case 5:
+					g_pSoundManager->Play_Sound(L"Monster_Blade_Swing5.ogg", CSoundManager::Hunter_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				}
+
+				switch (CALC::Random_Num(0, 3))
+				{
+				case 0:
+					g_pSoundManager->Play_Sound(L"Monster_BladeWeapon_Sub0.ogg", CSoundManager::Hunter_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 1:
+					g_pSoundManager->Play_Sound(L"Monster_BladeWeapon_Sub1.ogg", CSoundManager::Hunter_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 2:
+					g_pSoundManager->Play_Sound(L"Monster_BladeWeapon_Sub2.ogg", CSoundManager::Hunter_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 3:
+					g_pSoundManager->Play_Sound(L"Monster_BladeWeapon_Sub3.ogg", CSoundManager::Hunter_SFX_02, CSoundManager::Effect_Sound);
 					break;
 				}
 			}
@@ -3002,6 +3708,7 @@ void CHunter::Play_Halberd_ClockTwice()
 					g_pSoundManager->Play_Sound(L"Hunter_Atk_Voice6.ogg", CSoundManager::Hunter_Voice, CSoundManager::Effect_Sound);
 					break;
 				}
+
 			}
 		}
 		else if (2.567f <= AniTime)
@@ -3031,8 +3738,9 @@ void CHunter::Play_Halberd_ClockTwice()
 				m_tObjParam.bSuperArmor = true;
 
 				g_pSoundManager->Stop_Sound(CSoundManager::Hunter_SFX_01);
+				g_pSoundManager->Stop_Sound(CSoundManager::Hunter_SFX_02);
 
-				m_iRandom = CALC::Random_Num(0, 3);
+				m_iRandom = CALC::Random_Num(0, 5);
 
 				switch (m_iRandom)
 				{
@@ -3047,6 +3755,28 @@ void CHunter::Play_Halberd_ClockTwice()
 					break;
 				case 3:
 					g_pSoundManager->Play_Sound(L"Monster_Blade_Swing3.ogg", CSoundManager::Hunter_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				case 4:
+					g_pSoundManager->Play_Sound(L"Monster_Blade_Swing4.ogg", CSoundManager::Hunter_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				case 5:
+					g_pSoundManager->Play_Sound(L"Monster_Blade_Swing5.ogg", CSoundManager::Hunter_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				}
+
+				switch (CALC::Random_Num(0, 3))
+				{
+				case 0:
+					g_pSoundManager->Play_Sound(L"Monster_BladeWeapon_Sub0.ogg", CSoundManager::Hunter_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 1:
+					g_pSoundManager->Play_Sound(L"Monster_BladeWeapon_Sub1.ogg", CSoundManager::Hunter_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 2:
+					g_pSoundManager->Play_Sound(L"Monster_BladeWeapon_Sub2.ogg", CSoundManager::Hunter_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 3:
+					g_pSoundManager->Play_Sound(L"Monster_BladeWeapon_Sub3.ogg", CSoundManager::Hunter_SFX_02, CSoundManager::Effect_Sound);
 					break;
 				}
 			}
@@ -3191,8 +3921,9 @@ void CHunter::Play_Halberd_Swing_Jump()
 				m_tObjParam.bSuperArmor = true;
 
 				g_pSoundManager->Stop_Sound(CSoundManager::Hunter_SFX_01);
+				g_pSoundManager->Stop_Sound(CSoundManager::Hunter_SFX_02);
 
-				m_iRandom = CALC::Random_Num(0, 3);
+				m_iRandom = CALC::Random_Num(0, 5);
 
 				switch (m_iRandom)
 				{
@@ -3207,6 +3938,28 @@ void CHunter::Play_Halberd_Swing_Jump()
 					break;
 				case 3:
 					g_pSoundManager->Play_Sound(L"Monster_Blade_Swing3.ogg", CSoundManager::Hunter_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				case 4:
+					g_pSoundManager->Play_Sound(L"Monster_Blade_Swing4.ogg", CSoundManager::Hunter_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				case 5:
+					g_pSoundManager->Play_Sound(L"Monster_Blade_Swing5.ogg", CSoundManager::Hunter_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				}
+
+				switch (CALC::Random_Num(0, 3))
+				{
+				case 0:
+					g_pSoundManager->Play_Sound(L"Monster_BladeWeapon_Sub0.ogg", CSoundManager::Hunter_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 1:
+					g_pSoundManager->Play_Sound(L"Monster_BladeWeapon_Sub1.ogg", CSoundManager::Hunter_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 2:
+					g_pSoundManager->Play_Sound(L"Monster_BladeWeapon_Sub2.ogg", CSoundManager::Hunter_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 3:
+					g_pSoundManager->Play_Sound(L"Monster_BladeWeapon_Sub3.ogg", CSoundManager::Hunter_SFX_02, CSoundManager::Effect_Sound);
 					break;
 				}
 			}
@@ -3274,8 +4027,9 @@ void CHunter::Play_Halberd_Swing_Jump()
 				m_tObjParam.bSuperArmor = true;
 
 				g_pSoundManager->Stop_Sound(CSoundManager::Hunter_SFX_01);
+				g_pSoundManager->Stop_Sound(CSoundManager::Hunter_SFX_02);
 
-				m_iRandom = CALC::Random_Num(0, 3);
+				m_iRandom = CALC::Random_Num(0, 5);
 
 				switch (m_iRandom)
 				{
@@ -3290,6 +4044,28 @@ void CHunter::Play_Halberd_Swing_Jump()
 					break;
 				case 3:
 					g_pSoundManager->Play_Sound(L"Monster_Blade_Swing3.ogg", CSoundManager::Hunter_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				case 4:
+					g_pSoundManager->Play_Sound(L"Monster_Blade_Swing4.ogg", CSoundManager::Hunter_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				case 5:
+					g_pSoundManager->Play_Sound(L"Monster_Blade_Swing5.ogg", CSoundManager::Hunter_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				}
+
+				switch (CALC::Random_Num(0, 3))
+				{
+				case 0:
+					g_pSoundManager->Play_Sound(L"Monster_BladeWeapon_Sub0.ogg", CSoundManager::Hunter_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 1:
+					g_pSoundManager->Play_Sound(L"Monster_BladeWeapon_Sub1.ogg", CSoundManager::Hunter_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 2:
+					g_pSoundManager->Play_Sound(L"Monster_BladeWeapon_Sub2.ogg", CSoundManager::Hunter_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 3:
+					g_pSoundManager->Play_Sound(L"Monster_BladeWeapon_Sub3.ogg", CSoundManager::Hunter_SFX_02, CSoundManager::Effect_Sound);
 					break;
 				}
 			}
@@ -3422,8 +4198,9 @@ void CHunter::Play_Halberd_Sweap()
 				m_tObjParam.bSuperArmor = true;
 
 				g_pSoundManager->Stop_Sound(CSoundManager::Hunter_SFX_01);
+				g_pSoundManager->Stop_Sound(CSoundManager::Hunter_SFX_02);
 
-				m_iRandom = CALC::Random_Num(0, 3);
+				m_iRandom = CALC::Random_Num(0, 5);
 
 				switch (m_iRandom)
 				{
@@ -3438,6 +4215,28 @@ void CHunter::Play_Halberd_Sweap()
 					break;
 				case 3:
 					g_pSoundManager->Play_Sound(L"Monster_Blade_Swing3.ogg", CSoundManager::Hunter_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				case 4:
+					g_pSoundManager->Play_Sound(L"Monster_Blade_Swing4.ogg", CSoundManager::Hunter_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				case 5:
+					g_pSoundManager->Play_Sound(L"Monster_Blade_Swing5.ogg", CSoundManager::Hunter_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				}
+
+				switch (CALC::Random_Num(0, 3))
+				{
+				case 0:
+					g_pSoundManager->Play_Sound(L"Monster_BladeWeapon_Sub0.ogg", CSoundManager::Hunter_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 1:
+					g_pSoundManager->Play_Sound(L"Monster_BladeWeapon_Sub1.ogg", CSoundManager::Hunter_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 2:
+					g_pSoundManager->Play_Sound(L"Monster_BladeWeapon_Sub2.ogg", CSoundManager::Hunter_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 3:
+					g_pSoundManager->Play_Sound(L"Monster_BladeWeapon_Sub3.ogg", CSoundManager::Hunter_SFX_02, CSoundManager::Effect_Sound);
 					break;
 				}
 			}
@@ -3498,8 +4297,9 @@ void CHunter::Play_Halberd_Sweap()
 				m_tObjParam.bSuperArmor = true;
 
 				g_pSoundManager->Stop_Sound(CSoundManager::Hunter_SFX_01);
+				g_pSoundManager->Stop_Sound(CSoundManager::Hunter_SFX_02);
 
-				m_iRandom = CALC::Random_Num(0, 3);
+				m_iRandom = CALC::Random_Num(0, 5);
 
 				switch (m_iRandom)
 				{
@@ -3514,6 +4314,28 @@ void CHunter::Play_Halberd_Sweap()
 					break;
 				case 3:
 					g_pSoundManager->Play_Sound(L"Monster_Blade_Swing3.ogg", CSoundManager::Hunter_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				case 4:
+					g_pSoundManager->Play_Sound(L"Monster_Blade_Swing4.ogg", CSoundManager::Hunter_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				case 5:
+					g_pSoundManager->Play_Sound(L"Monster_Blade_Swing5.ogg", CSoundManager::Hunter_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				}
+
+				switch (CALC::Random_Num(0, 3))
+				{
+				case 0:
+					g_pSoundManager->Play_Sound(L"Monster_BladeWeapon_Sub0.ogg", CSoundManager::Hunter_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 1:
+					g_pSoundManager->Play_Sound(L"Monster_BladeWeapon_Sub1.ogg", CSoundManager::Hunter_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 2:
+					g_pSoundManager->Play_Sound(L"Monster_BladeWeapon_Sub2.ogg", CSoundManager::Hunter_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 3:
+					g_pSoundManager->Play_Sound(L"Monster_BladeWeapon_Sub3.ogg", CSoundManager::Hunter_SFX_02, CSoundManager::Effect_Sound);
 					break;
 				}
 			}
@@ -3581,8 +4403,9 @@ void CHunter::Play_Halberd_Sweap()
 				m_tObjParam.bSuperArmor = true;
 
 				g_pSoundManager->Stop_Sound(CSoundManager::Hunter_SFX_01);
+				g_pSoundManager->Stop_Sound(CSoundManager::Hunter_SFX_02);
 
-				m_iRandom = CALC::Random_Num(0, 3);
+				m_iRandom = CALC::Random_Num(0, 5);
 
 				switch (m_iRandom)
 				{
@@ -3597,6 +4420,28 @@ void CHunter::Play_Halberd_Sweap()
 					break;
 				case 3:
 					g_pSoundManager->Play_Sound(L"Monster_Blade_Swing3.ogg", CSoundManager::Hunter_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				case 4:
+					g_pSoundManager->Play_Sound(L"Monster_Blade_Swing4.ogg", CSoundManager::Hunter_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				case 5:
+					g_pSoundManager->Play_Sound(L"Monster_Blade_Swing5.ogg", CSoundManager::Hunter_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				}
+
+				switch (CALC::Random_Num(0, 3))
+				{
+				case 0:
+					g_pSoundManager->Play_Sound(L"Monster_BladeWeapon_Sub0.ogg", CSoundManager::Hunter_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 1:
+					g_pSoundManager->Play_Sound(L"Monster_BladeWeapon_Sub1.ogg", CSoundManager::Hunter_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 2:
+					g_pSoundManager->Play_Sound(L"Monster_BladeWeapon_Sub2.ogg", CSoundManager::Hunter_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 3:
+					g_pSoundManager->Play_Sound(L"Monster_BladeWeapon_Sub3.ogg", CSoundManager::Hunter_SFX_02, CSoundManager::Effect_Sound);
 					break;
 				}
 			}
@@ -3664,8 +4509,9 @@ void CHunter::Play_Halberd_Sweap()
 				m_tObjParam.bSuperArmor = true;
 
 				g_pSoundManager->Stop_Sound(CSoundManager::Hunter_SFX_01);
+				g_pSoundManager->Stop_Sound(CSoundManager::Hunter_SFX_02);
 
-				m_iRandom = CALC::Random_Num(0, 3);
+				m_iRandom = CALC::Random_Num(0, 5);
 
 				switch (m_iRandom)
 				{
@@ -3680,6 +4526,28 @@ void CHunter::Play_Halberd_Sweap()
 					break;
 				case 3:
 					g_pSoundManager->Play_Sound(L"Monster_Blade_Swing3.ogg", CSoundManager::Hunter_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				case 4:
+					g_pSoundManager->Play_Sound(L"Monster_Blade_Swing4.ogg", CSoundManager::Hunter_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				case 5:
+					g_pSoundManager->Play_Sound(L"Monster_Blade_Swing5.ogg", CSoundManager::Hunter_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				}
+
+				switch (CALC::Random_Num(0, 3))
+				{
+				case 0:
+					g_pSoundManager->Play_Sound(L"Monster_BladeWeapon_Sub0.ogg", CSoundManager::Hunter_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 1:
+					g_pSoundManager->Play_Sound(L"Monster_BladeWeapon_Sub1.ogg", CSoundManager::Hunter_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 2:
+					g_pSoundManager->Play_Sound(L"Monster_BladeWeapon_Sub2.ogg", CSoundManager::Hunter_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 3:
+					g_pSoundManager->Play_Sound(L"Monster_BladeWeapon_Sub3.ogg", CSoundManager::Hunter_SFX_02, CSoundManager::Effect_Sound);
 					break;
 				}
 			}
@@ -3747,8 +4615,9 @@ void CHunter::Play_Halberd_Sweap()
 				m_tObjParam.bSuperArmor = true;
 
 				g_pSoundManager->Stop_Sound(CSoundManager::Hunter_SFX_01);
+				g_pSoundManager->Stop_Sound(CSoundManager::Hunter_SFX_02);
 
-				m_iRandom = CALC::Random_Num(0, 3);
+				m_iRandom = CALC::Random_Num(0, 5);
 
 				switch (m_iRandom)
 				{
@@ -3763,6 +4632,28 @@ void CHunter::Play_Halberd_Sweap()
 					break;
 				case 3:
 					g_pSoundManager->Play_Sound(L"Monster_Blade_Swing3.ogg", CSoundManager::Hunter_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				case 4:
+					g_pSoundManager->Play_Sound(L"Monster_Blade_Swing4.ogg", CSoundManager::Hunter_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				case 5:
+					g_pSoundManager->Play_Sound(L"Monster_Blade_Swing5.ogg", CSoundManager::Hunter_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				}
+
+				switch (CALC::Random_Num(0, 3))
+				{
+				case 0:
+					g_pSoundManager->Play_Sound(L"Monster_BladeWeapon_Sub0.ogg", CSoundManager::Hunter_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 1:
+					g_pSoundManager->Play_Sound(L"Monster_BladeWeapon_Sub1.ogg", CSoundManager::Hunter_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 2:
+					g_pSoundManager->Play_Sound(L"Monster_BladeWeapon_Sub2.ogg", CSoundManager::Hunter_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 3:
+					g_pSoundManager->Play_Sound(L"Monster_BladeWeapon_Sub3.ogg", CSoundManager::Hunter_SFX_02, CSoundManager::Effect_Sound);
 					break;
 				}
 			}
@@ -3907,8 +4798,9 @@ void CHunter::Play_Halberd_SlashForth()
 				m_tObjParam.bSuperArmor = true;
 
 				g_pSoundManager->Stop_Sound(CSoundManager::Hunter_SFX_01);
+				g_pSoundManager->Stop_Sound(CSoundManager::Hunter_SFX_02);
 
-				m_iRandom = CALC::Random_Num(0, 3);
+				m_iRandom = CALC::Random_Num(0, 5);
 
 				switch (m_iRandom)
 				{
@@ -3923,6 +4815,28 @@ void CHunter::Play_Halberd_SlashForth()
 					break;
 				case 3:
 					g_pSoundManager->Play_Sound(L"Monster_Blade_Swing3.ogg", CSoundManager::Hunter_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				case 4:
+					g_pSoundManager->Play_Sound(L"Monster_Blade_Swing4.ogg", CSoundManager::Hunter_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				case 5:
+					g_pSoundManager->Play_Sound(L"Monster_Blade_Swing5.ogg", CSoundManager::Hunter_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				}
+
+				switch (CALC::Random_Num(0, 3))
+				{
+				case 0:
+					g_pSoundManager->Play_Sound(L"Monster_BladeWeapon_Sub0.ogg", CSoundManager::Hunter_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 1:
+					g_pSoundManager->Play_Sound(L"Monster_BladeWeapon_Sub1.ogg", CSoundManager::Hunter_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 2:
+					g_pSoundManager->Play_Sound(L"Monster_BladeWeapon_Sub2.ogg", CSoundManager::Hunter_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 3:
+					g_pSoundManager->Play_Sound(L"Monster_BladeWeapon_Sub3.ogg", CSoundManager::Hunter_SFX_02, CSoundManager::Effect_Sound);
 					break;
 				}
 			}
@@ -3983,8 +4897,9 @@ void CHunter::Play_Halberd_SlashForth()
 				m_tObjParam.bSuperArmor = true;
 
 				g_pSoundManager->Stop_Sound(CSoundManager::Hunter_SFX_01);
+				g_pSoundManager->Stop_Sound(CSoundManager::Hunter_SFX_02);
 
-				m_iRandom = CALC::Random_Num(0, 3);
+				m_iRandom = CALC::Random_Num(0, 5);
 
 				switch (m_iRandom)
 				{
@@ -3999,6 +4914,28 @@ void CHunter::Play_Halberd_SlashForth()
 					break;
 				case 3:
 					g_pSoundManager->Play_Sound(L"Monster_Blade_Swing3.ogg", CSoundManager::Hunter_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				case 4:
+					g_pSoundManager->Play_Sound(L"Monster_Blade_Swing4.ogg", CSoundManager::Hunter_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				case 5:
+					g_pSoundManager->Play_Sound(L"Monster_Blade_Swing5.ogg", CSoundManager::Hunter_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				}
+
+				switch (CALC::Random_Num(0, 3))
+				{
+				case 0:
+					g_pSoundManager->Play_Sound(L"Monster_BladeWeapon_Sub0.ogg", CSoundManager::Hunter_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 1:
+					g_pSoundManager->Play_Sound(L"Monster_BladeWeapon_Sub1.ogg", CSoundManager::Hunter_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 2:
+					g_pSoundManager->Play_Sound(L"Monster_BladeWeapon_Sub2.ogg", CSoundManager::Hunter_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 3:
+					g_pSoundManager->Play_Sound(L"Monster_BladeWeapon_Sub3.ogg", CSoundManager::Hunter_SFX_02, CSoundManager::Effect_Sound);
 					break;
 				}
 			}
@@ -4059,8 +4996,9 @@ void CHunter::Play_Halberd_SlashForth()
 				m_tObjParam.bSuperArmor = true;
 
 				g_pSoundManager->Stop_Sound(CSoundManager::Hunter_SFX_01);
+				g_pSoundManager->Stop_Sound(CSoundManager::Hunter_SFX_02);
 
-				m_iRandom = CALC::Random_Num(0, 3);
+				m_iRandom = CALC::Random_Num(0, 5);
 
 				switch (m_iRandom)
 				{
@@ -4075,6 +5013,28 @@ void CHunter::Play_Halberd_SlashForth()
 					break;
 				case 3:
 					g_pSoundManager->Play_Sound(L"Monster_Blade_Swing3.ogg", CSoundManager::Hunter_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				case 4:
+					g_pSoundManager->Play_Sound(L"Monster_Blade_Swing4.ogg", CSoundManager::Hunter_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				case 5:
+					g_pSoundManager->Play_Sound(L"Monster_Blade_Swing5.ogg", CSoundManager::Hunter_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				}
+
+				switch (CALC::Random_Num(0, 3))
+				{
+				case 0:
+					g_pSoundManager->Play_Sound(L"Monster_BladeWeapon_Sub0.ogg", CSoundManager::Hunter_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 1:
+					g_pSoundManager->Play_Sound(L"Monster_BladeWeapon_Sub1.ogg", CSoundManager::Hunter_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 2:
+					g_pSoundManager->Play_Sound(L"Monster_BladeWeapon_Sub2.ogg", CSoundManager::Hunter_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 3:
+					g_pSoundManager->Play_Sound(L"Monster_BladeWeapon_Sub3.ogg", CSoundManager::Hunter_SFX_02, CSoundManager::Effect_Sound);
 					break;
 				}
 			}
@@ -4135,8 +5095,9 @@ void CHunter::Play_Halberd_SlashForth()
 				m_tObjParam.bSuperArmor = true;
 
 				g_pSoundManager->Stop_Sound(CSoundManager::Hunter_SFX_01);
+				g_pSoundManager->Stop_Sound(CSoundManager::Hunter_SFX_02);
 
-				m_iRandom = CALC::Random_Num(0, 3);
+				m_iRandom = CALC::Random_Num(0, 5);
 
 				switch (m_iRandom)
 				{
@@ -4151,6 +5112,28 @@ void CHunter::Play_Halberd_SlashForth()
 					break;
 				case 3:
 					g_pSoundManager->Play_Sound(L"Monster_Blade_Swing3.ogg", CSoundManager::Hunter_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				case 4:
+					g_pSoundManager->Play_Sound(L"Monster_Blade_Swing4.ogg", CSoundManager::Hunter_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				case 5:
+					g_pSoundManager->Play_Sound(L"Monster_Blade_Swing5.ogg", CSoundManager::Hunter_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				}
+
+				switch (CALC::Random_Num(0, 3))
+				{
+				case 0:
+					g_pSoundManager->Play_Sound(L"Monster_BladeWeapon_Sub0.ogg", CSoundManager::Hunter_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 1:
+					g_pSoundManager->Play_Sound(L"Monster_BladeWeapon_Sub1.ogg", CSoundManager::Hunter_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 2:
+					g_pSoundManager->Play_Sound(L"Monster_BladeWeapon_Sub2.ogg", CSoundManager::Hunter_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 3:
+					g_pSoundManager->Play_Sound(L"Monster_BladeWeapon_Sub3.ogg", CSoundManager::Hunter_SFX_02, CSoundManager::Effect_Sound);
 					break;
 				}
 			}
@@ -4295,8 +5278,9 @@ void CHunter::Play_Halberd_TwoUpper()
 				m_tObjParam.bSuperArmor = true;
 
 				g_pSoundManager->Stop_Sound(CSoundManager::Hunter_SFX_01);
+				g_pSoundManager->Stop_Sound(CSoundManager::Hunter_SFX_02);
 
-				m_iRandom = CALC::Random_Num(0, 3);
+				m_iRandom = CALC::Random_Num(0, 5);
 
 				switch (m_iRandom)
 				{
@@ -4311,6 +5295,28 @@ void CHunter::Play_Halberd_TwoUpper()
 					break;
 				case 3:
 					g_pSoundManager->Play_Sound(L"Monster_Blade_Swing3.ogg", CSoundManager::Hunter_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				case 4:
+					g_pSoundManager->Play_Sound(L"Monster_Blade_Swing4.ogg", CSoundManager::Hunter_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				case 5:
+					g_pSoundManager->Play_Sound(L"Monster_Blade_Swing5.ogg", CSoundManager::Hunter_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				}
+
+				switch (CALC::Random_Num(0, 3))
+				{
+				case 0:
+					g_pSoundManager->Play_Sound(L"Monster_BladeWeapon_Sub0.ogg", CSoundManager::Hunter_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 1:
+					g_pSoundManager->Play_Sound(L"Monster_BladeWeapon_Sub1.ogg", CSoundManager::Hunter_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 2:
+					g_pSoundManager->Play_Sound(L"Monster_BladeWeapon_Sub2.ogg", CSoundManager::Hunter_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 3:
+					g_pSoundManager->Play_Sound(L"Monster_BladeWeapon_Sub3.ogg", CSoundManager::Hunter_SFX_02, CSoundManager::Effect_Sound);
 					break;
 				}
 			}
@@ -4378,8 +5384,9 @@ void CHunter::Play_Halberd_TwoUpper()
 				m_tObjParam.bSuperArmor = true;
 
 				g_pSoundManager->Stop_Sound(CSoundManager::Hunter_SFX_01);
+				g_pSoundManager->Stop_Sound(CSoundManager::Hunter_SFX_02);
 
-				m_iRandom = CALC::Random_Num(0, 3);
+				m_iRandom = CALC::Random_Num(0, 5);
 
 				switch (m_iRandom)
 				{
@@ -4394,6 +5401,28 @@ void CHunter::Play_Halberd_TwoUpper()
 					break;
 				case 3:
 					g_pSoundManager->Play_Sound(L"Monster_Blade_Swing3.ogg", CSoundManager::Hunter_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				case 4:
+					g_pSoundManager->Play_Sound(L"Monster_Blade_Swing4.ogg", CSoundManager::Hunter_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				case 5:
+					g_pSoundManager->Play_Sound(L"Monster_Blade_Swing5.ogg", CSoundManager::Hunter_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				}
+
+				switch (CALC::Random_Num(0, 3))
+				{
+				case 0:
+					g_pSoundManager->Play_Sound(L"Monster_BladeWeapon_Sub0.ogg", CSoundManager::Hunter_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 1:
+					g_pSoundManager->Play_Sound(L"Monster_BladeWeapon_Sub1.ogg", CSoundManager::Hunter_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 2:
+					g_pSoundManager->Play_Sound(L"Monster_BladeWeapon_Sub2.ogg", CSoundManager::Hunter_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 3:
+					g_pSoundManager->Play_Sound(L"Monster_BladeWeapon_Sub3.ogg", CSoundManager::Hunter_SFX_02, CSoundManager::Effect_Sound);
 					break;
 				}
 			}
@@ -4505,6 +5534,10 @@ void CHunter::Play_Halberd_Combo_ThirdAtk()
 			m_pWeapon->Set_Enable_Trail(false);
 			m_eState = HUNTER_ANI::Halberd_Atk_N02;
 
+			m_pBattleAgentCom->Set_RimColor(_v4(0.f, 0.f, 0.f, 0.f));
+			m_pBattleAgentCom->Set_RimAlpha(0.5f);
+			m_pBattleAgentCom->Set_RimValue(8.f);
+
 			return;
 		}
 		else if (4.233f <= AniTime)
@@ -4529,13 +5562,15 @@ void CHunter::Play_Halberd_Combo_ThirdAtk()
 			if (false == m_bEventTrigger[2])
 			{
 				m_bEventTrigger[2] = true;
+				m_dAniPlayMul = 1;
 				m_pWeapon->Set_Target_CanAttack(true);
 				m_pWeapon->Set_Enable_Trail(true);
 				m_tObjParam.bSuperArmor = true;
 
 				g_pSoundManager->Stop_Sound(CSoundManager::Hunter_SFX_01);
+				g_pSoundManager->Stop_Sound(CSoundManager::Hunter_SFX_02);
 
-				m_iRandom = CALC::Random_Num(0, 3);
+				m_iRandom = CALC::Random_Num(0, 5);
 
 				switch (m_iRandom)
 				{
@@ -4551,14 +5586,42 @@ void CHunter::Play_Halberd_Combo_ThirdAtk()
 				case 3:
 					g_pSoundManager->Play_Sound(L"Monster_Blade_Swing3.ogg", CSoundManager::Hunter_SFX_01, CSoundManager::Effect_Sound);
 					break;
+				case 4:
+					g_pSoundManager->Play_Sound(L"Monster_Blade_Swing4.ogg", CSoundManager::Hunter_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				case 5:
+					g_pSoundManager->Play_Sound(L"Monster_Blade_Swing5.ogg", CSoundManager::Hunter_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				}
+
+				switch (CALC::Random_Num(0, 3))
+				{
+				case 0:
+					g_pSoundManager->Play_Sound(L"Monster_BladeWeapon_Sub0.ogg", CSoundManager::Hunter_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 1:
+					g_pSoundManager->Play_Sound(L"Monster_BladeWeapon_Sub1.ogg", CSoundManager::Hunter_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 2:
+					g_pSoundManager->Play_Sound(L"Monster_BladeWeapon_Sub2.ogg", CSoundManager::Hunter_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 3:
+					g_pSoundManager->Play_Sound(L"Monster_BladeWeapon_Sub3.ogg", CSoundManager::Hunter_SFX_02, CSoundManager::Effect_Sound);
+					break;
 				}
 			}
 		}
 		else if (2.f <= AniTime)
 		{
-			if (false == m_bEventTrigger[16])
+			if (false == m_bEventTrigger[3])
 			{
-				m_bEventTrigger[16] = true;
+				m_bEventTrigger[3] = true;
+
+				m_dAniPlayMul = 0.5;
+
+				m_pBattleAgentCom->Set_RimColor(_v4(1.f, 0.f, 0.f, 0.f));
+				m_pBattleAgentCom->Set_RimAlpha(1.f);
+				m_pBattleAgentCom->Set_RimValue(5.f);
 
 				g_pSoundManager->Stop_Sound(CSoundManager::Hunter_Voice);
 
@@ -4593,9 +5656,9 @@ void CHunter::Play_Halberd_Combo_ThirdAtk()
 
 		if (2.333f < AniTime && 2.700f > AniTime)
 		{
-			if (false == m_bEventTrigger[3])
+			if (false == m_bEventTrigger[4])
 			{
-				m_bEventTrigger[3] = true;
+				m_bEventTrigger[4] = true;
 				m_fSkillMoveSpeed_Cur = 6.f;
 				m_fSkillMoveAccel_Cur = 0.f;
 				m_fSkillMoveMultiply = 1.5f;
@@ -4649,9 +5712,9 @@ void CHunter::Play_Halberd_Combo_ThirdAtk()
 		}
 		else if (2.267f < AniTime && 1.733f > AniTime)
 		{
-			if (false == m_bEventTrigger[4])
+			if (false == m_bEventTrigger[5])
 			{
-				m_bEventTrigger[4] = true;
+				m_bEventTrigger[5] = true;
 				m_fSkillMoveSpeed_Cur = 8.f;
 				m_fSkillMoveAccel_Cur = 0.f;
 				m_fSkillMoveMultiply = 1.5f;
@@ -4713,37 +5776,43 @@ void CHunter::Play_Halberd_Combo_ThirdAtk()
 			m_pWeapon->Set_Enable_Trail(false);
 			m_eState = HUNTER_ANI::Halberd_Atk_N03;
 
+			m_pBattleAgentCom->Set_RimColor(_v4(0.f, 0.f, 0.f, 0.f));
+			m_pBattleAgentCom->Set_RimAlpha(0.5f);
+			m_pBattleAgentCom->Set_RimValue(8.f);
+
 			return;
 		}
 		else if (2.433f <= AniTime)
 		{
-			if (false == m_bEventTrigger[5])
+			if (false == m_bEventTrigger[6])
 			{
-				m_bEventTrigger[5] = true;
+				m_bEventTrigger[6] = true;
 				m_pWeapon->Set_Enable_Trail(false);
 			}
 		}
 		else if (2.133f <= AniTime)
 		{
-			if (false == m_bEventTrigger[6])
+			if (false == m_bEventTrigger[7])
 			{
-				m_bEventTrigger[6] = true;
+				m_bEventTrigger[7] = true;
+				m_dAniPlayMul = 1;
 				m_pWeapon->Set_Target_CanAttack(false);
 				m_tObjParam.bSuperArmor = false;
 			}
 		}
 		else if (2.033f <= AniTime)
 		{
-			if (false == m_bEventTrigger[7])
+			if (false == m_bEventTrigger[8])
 			{
-				m_bEventTrigger[7] = true;
+				m_bEventTrigger[8] = true;
 				m_pWeapon->Set_Target_CanAttack(true);
 				m_pWeapon->Set_Enable_Trail(true);
 				m_tObjParam.bSuperArmor = true;
 
 				g_pSoundManager->Stop_Sound(CSoundManager::Hunter_SFX_01);
+				g_pSoundManager->Stop_Sound(CSoundManager::Hunter_SFX_02);
 
-				m_iRandom = CALC::Random_Num(0, 3);
+				m_iRandom = CALC::Random_Num(0, 5);
 
 				switch (m_iRandom)
 				{
@@ -4759,14 +5828,42 @@ void CHunter::Play_Halberd_Combo_ThirdAtk()
 				case 3:
 					g_pSoundManager->Play_Sound(L"Monster_Blade_Swing3.ogg", CSoundManager::Hunter_SFX_01, CSoundManager::Effect_Sound);
 					break;
+				case 4:
+					g_pSoundManager->Play_Sound(L"Monster_Blade_Swing4.ogg", CSoundManager::Hunter_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				case 5:
+					g_pSoundManager->Play_Sound(L"Monster_Blade_Swing5.ogg", CSoundManager::Hunter_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				}
+
+				switch (CALC::Random_Num(0, 3))
+				{
+				case 0:
+					g_pSoundManager->Play_Sound(L"Monster_BladeWeapon_Sub0.ogg", CSoundManager::Hunter_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 1:
+					g_pSoundManager->Play_Sound(L"Monster_BladeWeapon_Sub1.ogg", CSoundManager::Hunter_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 2:
+					g_pSoundManager->Play_Sound(L"Monster_BladeWeapon_Sub2.ogg", CSoundManager::Hunter_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 3:
+					g_pSoundManager->Play_Sound(L"Monster_BladeWeapon_Sub3.ogg", CSoundManager::Hunter_SFX_02, CSoundManager::Effect_Sound);
+					break;
 				}
 			}
 		}
 		else if (2.f <= AniTime)
 		{
-			if (false == m_bEventTrigger[17])
+			if (false == m_bEventTrigger[9])
 			{
-				m_bEventTrigger[17] = true;
+				m_bEventTrigger[9] = true;
+
+				m_dAniPlayMul = 0.5;
+
+				m_pBattleAgentCom->Set_RimColor(_v4(1.f, 0.f, 0.f, 0.f));
+				m_pBattleAgentCom->Set_RimAlpha(1.f);
+				m_pBattleAgentCom->Set_RimValue(5.f);
 
 				g_pSoundManager->Stop_Sound(CSoundManager::Hunter_Voice);
 
@@ -4801,9 +5898,9 @@ void CHunter::Play_Halberd_Combo_ThirdAtk()
 
 		if (0.833f < AniTime && 1.900f > AniTime)
 		{
-			if (false == m_bEventTrigger[8])
+			if (false == m_bEventTrigger[10])
 			{
-				m_bEventTrigger[8] = true;
+				m_bEventTrigger[10] = true;
 				m_fSkillMoveSpeed_Cur = 6.f;
 				m_fSkillMoveAccel_Cur = 0.f;
 				m_fSkillMoveMultiply = 1.f;
@@ -4864,37 +5961,42 @@ void CHunter::Play_Halberd_Combo_ThirdAtk()
 			m_bCanCoolDown = true;
 			m_fCoolDownMax = 1.2f;
 
+			m_pBattleAgentCom->Set_RimColor(_v4(0.f, 0.f, 0.f, 0.f));
+			m_pBattleAgentCom->Set_RimAlpha(0.5f);
+			m_pBattleAgentCom->Set_RimValue(8.f);
+
 			return;
 		}
 		else if (2.767f < AniTime)
 		{
-			if (false == m_bEventTrigger[9])
+			if (false == m_bEventTrigger[11])
 			{
-				m_bEventTrigger[9] = true;
+				m_bEventTrigger[11] = true;
 				m_pWeapon->Set_Enable_Trail(false);
 			}
 		}
 		else if (2.467f <= AniTime)
 		{
-			if (false == m_bEventTrigger[11])
+			if (false == m_bEventTrigger[12])
 			{
-				m_bEventTrigger[11] = true;
+				m_bEventTrigger[12] = true;
 				m_pWeapon->Set_Target_CanAttack(false);
 				m_tObjParam.bSuperArmor = false;
 			}
 		}
 		else if (2.167f <= AniTime)
 		{
-			if (false == m_bEventTrigger[12])
+			if (false == m_bEventTrigger[13])
 			{
-				m_bEventTrigger[12] = true;
+				m_bEventTrigger[13] = true;
 				m_pWeapon->Set_Target_CanAttack(true);
 				m_pWeapon->Set_Enable_Trail(true);
 				m_tObjParam.bSuperArmor = true;
 
 				g_pSoundManager->Stop_Sound(CSoundManager::Hunter_SFX_01);
+				g_pSoundManager->Stop_Sound(CSoundManager::Hunter_SFX_02);
 
-				m_iRandom = CALC::Random_Num(0, 3);
+				m_iRandom = CALC::Random_Num(0, 5);
 
 				switch (m_iRandom)
 				{
@@ -4910,14 +6012,36 @@ void CHunter::Play_Halberd_Combo_ThirdAtk()
 				case 3:
 					g_pSoundManager->Play_Sound(L"Monster_Blade_Swing3.ogg", CSoundManager::Hunter_SFX_01, CSoundManager::Effect_Sound);
 					break;
+				case 4:
+					g_pSoundManager->Play_Sound(L"Monster_Blade_Swing4.ogg", CSoundManager::Hunter_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				case 5:
+					g_pSoundManager->Play_Sound(L"Monster_Blade_Swing5.ogg", CSoundManager::Hunter_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				}
+
+				switch (CALC::Random_Num(0, 3))
+				{
+				case 0:
+					g_pSoundManager->Play_Sound(L"Monster_BladeWeapon_Sub0.ogg", CSoundManager::Hunter_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 1:
+					g_pSoundManager->Play_Sound(L"Monster_BladeWeapon_Sub1.ogg", CSoundManager::Hunter_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 2:
+					g_pSoundManager->Play_Sound(L"Monster_BladeWeapon_Sub2.ogg", CSoundManager::Hunter_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 3:
+					g_pSoundManager->Play_Sound(L"Monster_BladeWeapon_Sub3.ogg", CSoundManager::Hunter_SFX_02, CSoundManager::Effect_Sound);
+					break;
 				}
 			}
 		}
 		else if (2.f <= AniTime)
 		{
-			if (false == m_bEventTrigger[18])
+			if (false == m_bEventTrigger[14])
 			{
-				m_bEventTrigger[18] = true;
+				m_bEventTrigger[14] = true;
 
 				g_pSoundManager->Stop_Sound(CSoundManager::Hunter_Voice);
 
@@ -4951,25 +6075,27 @@ void CHunter::Play_Halberd_Combo_ThirdAtk()
 		}
 		else if (0.967f <= AniTime)
 		{
-			if (false == m_bEventTrigger[13])
+			if (false == m_bEventTrigger[15])
 			{
-				m_bEventTrigger[13] = true;
+				m_bEventTrigger[15] = true;
 				m_pWeapon->Set_Target_CanAttack(false);
 				m_tObjParam.bSuperArmor = false;
 			}
 		}
 		else if (0.633f <= AniTime)
 		{
-			if (false == m_bEventTrigger[14])
+			if (false == m_bEventTrigger[16])
 			{
-				m_bEventTrigger[14] = true;
+				m_bEventTrigger[16] = true;
+				m_dAniPlayMul = 1;
 				m_pWeapon->Set_Target_CanAttack(true);
 				m_pWeapon->Set_Enable_Trail(true);
 				m_tObjParam.bSuperArmor = true;
 
 				g_pSoundManager->Stop_Sound(CSoundManager::Hunter_SFX_01);
+				g_pSoundManager->Stop_Sound(CSoundManager::Hunter_SFX_02);
 
-				m_iRandom = CALC::Random_Num(0, 3);
+				m_iRandom = CALC::Random_Num(0, 5);
 
 				switch (m_iRandom)
 				{
@@ -4985,14 +6111,42 @@ void CHunter::Play_Halberd_Combo_ThirdAtk()
 				case 3:
 					g_pSoundManager->Play_Sound(L"Monster_Blade_Swing3.ogg", CSoundManager::Hunter_SFX_01, CSoundManager::Effect_Sound);
 					break;
+				case 4:
+					g_pSoundManager->Play_Sound(L"Monster_Blade_Swing4.ogg", CSoundManager::Hunter_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				case 5:
+					g_pSoundManager->Play_Sound(L"Monster_Blade_Swing5.ogg", CSoundManager::Hunter_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				}
+
+				switch (CALC::Random_Num(0, 3))
+				{
+				case 0:
+					g_pSoundManager->Play_Sound(L"Monster_BladeWeapon_Sub0.ogg", CSoundManager::Hunter_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 1:
+					g_pSoundManager->Play_Sound(L"Monster_BladeWeapon_Sub1.ogg", CSoundManager::Hunter_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 2:
+					g_pSoundManager->Play_Sound(L"Monster_BladeWeapon_Sub2.ogg", CSoundManager::Hunter_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 3:
+					g_pSoundManager->Play_Sound(L"Monster_BladeWeapon_Sub3.ogg", CSoundManager::Hunter_SFX_02, CSoundManager::Effect_Sound);
+					break;
 				}
 			}
 		}
 		else if (0.2f <= AniTime)
 		{
-			if (false == m_bEventTrigger[19])
+			if (false == m_bEventTrigger[17])
 			{
-				m_bEventTrigger[19] = true;
+				m_bEventTrigger[17] = true;
+
+				m_dAniPlayMul = 0.5;
+
+				m_pBattleAgentCom->Set_RimColor(_v4(1.f, 0.f, 0.f, 0.f));
+				m_pBattleAgentCom->Set_RimAlpha(1.f);
+				m_pBattleAgentCom->Set_RimValue(5.f);
 
 				g_pSoundManager->Stop_Sound(CSoundManager::Hunter_Voice);
 
@@ -5027,9 +6181,9 @@ void CHunter::Play_Halberd_Combo_ThirdAtk()
 
 		if (2.133f < AniTime && 2.433f >AniTime)
 		{
-			if (false == m_bEventTrigger[15])
+			if (false == m_bEventTrigger[18])
 			{
-				m_bEventTrigger[15] = true;
+				m_bEventTrigger[18] = true;
 				m_fSkillMoveSpeed_Cur = 6.f;
 				m_fSkillMoveAccel_Cur = 0.f;
 				m_fSkillMoveMultiply = 1.f;
@@ -5099,6 +6253,10 @@ void CHunter::Play_Halberd_Combo_PierceTwice()
 			m_pWeapon->Set_Enable_Trail(false);
 			m_eState = HUNTER_ANI::Halberd_Atk_S03;
 
+			m_pBattleAgentCom->Set_RimColor(_v4(0.f, 0.f, 0.f, 0.f));
+			m_pBattleAgentCom->Set_RimAlpha(0.5f);
+			m_pBattleAgentCom->Set_RimValue(8.f);
+
 			return;
 		}
 		else if (3.867f <= AniTime)
@@ -5123,13 +6281,15 @@ void CHunter::Play_Halberd_Combo_PierceTwice()
 			if (false == m_bEventTrigger[2])
 			{
 				m_bEventTrigger[2] = true;
+				m_dAniPlayMul = 1;
 				m_pWeapon->Set_Target_CanAttack(true);
 				m_pWeapon->Set_Enable_Trail(true);
 				m_tObjParam.bSuperArmor = true;
 
 				g_pSoundManager->Stop_Sound(CSoundManager::Hunter_SFX_01);
+				g_pSoundManager->Stop_Sound(CSoundManager::Hunter_SFX_02);
 
-				m_iRandom = CALC::Random_Num(0, 3);
+				m_iRandom = CALC::Random_Num(0, 5);
 
 				switch (m_iRandom)
 				{
@@ -5145,14 +6305,42 @@ void CHunter::Play_Halberd_Combo_PierceTwice()
 				case 3:
 					g_pSoundManager->Play_Sound(L"Monster_Blade_Swing3.ogg", CSoundManager::Hunter_SFX_01, CSoundManager::Effect_Sound);
 					break;
+				case 4:
+					g_pSoundManager->Play_Sound(L"Monster_Blade_Swing4.ogg", CSoundManager::Hunter_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				case 5:
+					g_pSoundManager->Play_Sound(L"Monster_Blade_Swing5.ogg", CSoundManager::Hunter_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				}
+
+				switch (CALC::Random_Num(0, 3))
+				{
+				case 0:
+					g_pSoundManager->Play_Sound(L"Monster_BladeWeapon_Sub0.ogg", CSoundManager::Hunter_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 1:
+					g_pSoundManager->Play_Sound(L"Monster_BladeWeapon_Sub1.ogg", CSoundManager::Hunter_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 2:
+					g_pSoundManager->Play_Sound(L"Monster_BladeWeapon_Sub2.ogg", CSoundManager::Hunter_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 3:
+					g_pSoundManager->Play_Sound(L"Monster_BladeWeapon_Sub3.ogg", CSoundManager::Hunter_SFX_02, CSoundManager::Effect_Sound);
+					break;
 				}
 			}
 		}
 		else if (2.1f <= AniTime)
 		{
-			if (false == m_bEventTrigger[8])
+			if (false == m_bEventTrigger[3])
 			{
-				m_bEventTrigger[8] = true;
+				m_bEventTrigger[3] = true;
+
+				m_dAniPlayMul = 0.5;
+
+				m_pBattleAgentCom->Set_RimColor(_v4(1.f, 0.f, 0.f, 0.f));
+				m_pBattleAgentCom->Set_RimAlpha(1.f);
+				m_pBattleAgentCom->Set_RimValue(5.f);
 
 				g_pSoundManager->Stop_Sound(CSoundManager::Hunter_Voice);
 
@@ -5187,9 +6375,9 @@ void CHunter::Play_Halberd_Combo_PierceTwice()
 
 		if (1.133f < AniTime && 1.800f >AniTime)
 		{
-			if (false == m_bEventTrigger[3])
+			if (false == m_bEventTrigger[4])
 			{
-				m_bEventTrigger[3] = true;
+				m_bEventTrigger[4] = true;
 				m_fSkillMoveSpeed_Cur = 8.f;
 				m_fSkillMoveAccel_Cur = 0.f;
 				m_fSkillMoveMultiply = 1.5f;
@@ -5250,21 +6438,25 @@ void CHunter::Play_Halberd_Combo_PierceTwice()
 			m_bCanCoolDown = true;
 			m_fCoolDownMax = 0.8f;
 
+			m_pBattleAgentCom->Set_RimColor(_v4(0.f, 0.f, 0.f, 0.f));
+			m_pBattleAgentCom->Set_RimAlpha(0.5f);
+			m_pBattleAgentCom->Set_RimValue(8.f);
+
 			return;
 		}
 		else if (2.733f <= AniTime)
 		{
-			if (false == m_bEventTrigger[4])
+			if (false == m_bEventTrigger[5])
 			{
-				m_bEventTrigger[4] = true;
+				m_bEventTrigger[5] = true;
 				m_pWeapon->Set_Enable_Trail(false);
 			}
 		}
 		else if (2.433f <= AniTime)
 		{
-			if (false == m_bEventTrigger[5])
+			if (false == m_bEventTrigger[6])
 			{
-				m_bEventTrigger[5] = true;
+				m_bEventTrigger[6] = true;
 				m_pWeapon->Set_Target_CanAttack(false);
 				m_tObjParam.bSuperArmor = false;
 			}
@@ -5272,16 +6464,18 @@ void CHunter::Play_Halberd_Combo_PierceTwice()
 		}
 		else if (1.700f <= AniTime)
 		{
-			if (false == m_bEventTrigger[6])
+			if (false == m_bEventTrigger[7])
 			{
-				m_bEventTrigger[6] = true;
+				m_bEventTrigger[7] = true;
+				m_dAniPlayMul = 1;
 				m_pWeapon->Set_Target_CanAttack(true);
 				m_pWeapon->Set_Enable_Trail(true);
 				m_tObjParam.bSuperArmor = true;
 
 				g_pSoundManager->Stop_Sound(CSoundManager::Hunter_SFX_01);
+				g_pSoundManager->Stop_Sound(CSoundManager::Hunter_SFX_02);
 
-				m_iRandom = CALC::Random_Num(0, 3);
+				m_iRandom = CALC::Random_Num(0, 5);
 
 				switch (m_iRandom)
 				{
@@ -5297,14 +6491,42 @@ void CHunter::Play_Halberd_Combo_PierceTwice()
 				case 3:
 					g_pSoundManager->Play_Sound(L"Monster_Blade_Swing3.ogg", CSoundManager::Hunter_SFX_01, CSoundManager::Effect_Sound);
 					break;
+				case 4:
+					g_pSoundManager->Play_Sound(L"Monster_Blade_Swing4.ogg", CSoundManager::Hunter_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				case 5:
+					g_pSoundManager->Play_Sound(L"Monster_Blade_Swing5.ogg", CSoundManager::Hunter_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				}
+
+				switch (CALC::Random_Num(0, 3))
+				{
+				case 0:
+					g_pSoundManager->Play_Sound(L"Monster_BladeWeapon_Sub0.ogg", CSoundManager::Hunter_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 1:
+					g_pSoundManager->Play_Sound(L"Monster_BladeWeapon_Sub1.ogg", CSoundManager::Hunter_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 2:
+					g_pSoundManager->Play_Sound(L"Monster_BladeWeapon_Sub2.ogg", CSoundManager::Hunter_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 3:
+					g_pSoundManager->Play_Sound(L"Monster_BladeWeapon_Sub3.ogg", CSoundManager::Hunter_SFX_02, CSoundManager::Effect_Sound);
+					break;
 				}
 			}
 		}
 		else if (1.2f <= AniTime)
 		{
-			if (false == m_bEventTrigger[9])
+			if (false == m_bEventTrigger[8])
 			{
-				m_bEventTrigger[9] = true;
+				m_bEventTrigger[8] = true;
+
+				m_dAniPlayMul = 0.5;
+
+				m_pBattleAgentCom->Set_RimColor(_v4(1.f, 0.f, 0.f, 0.f));
+				m_pBattleAgentCom->Set_RimAlpha(1.f);
+				m_pBattleAgentCom->Set_RimValue(5.f);
 
 				g_pSoundManager->Stop_Sound(CSoundManager::Hunter_Voice);
 
@@ -5339,9 +6561,9 @@ void CHunter::Play_Halberd_Combo_PierceTwice()
 
 		if (1.333f < AniTime && 1.700f > AniTime)
 		{
-			if (false == m_bEventTrigger[7])
+			if (false == m_bEventTrigger[9])
 			{
-				m_bEventTrigger[7] = true;
+				m_bEventTrigger[9] = true;
 				m_fSkillMoveSpeed_Cur = 8.f;
 				m_fSkillMoveAccel_Cur = 0.f;
 				m_fSkillMoveMultiply = 1.5f;
@@ -5411,6 +6633,10 @@ void CHunter::Play_Halberd_Combo_PierceWind()
 			m_pWeapon->Set_Enable_Trail(false);
 			m_eState = HUNTER_ANI::Halberd_Atk_S02;
 
+			m_pBattleAgentCom->Set_RimColor(_v4(0.f, 0.f, 0.f, 0.f));
+			m_pBattleAgentCom->Set_RimAlpha(0.5f);
+			m_pBattleAgentCom->Set_RimValue(8.f);
+
 			return;
 		}
 		else if (3.867f <= AniTime)
@@ -5440,8 +6666,9 @@ void CHunter::Play_Halberd_Combo_PierceWind()
 				m_tObjParam.bSuperArmor = true;
 
 				g_pSoundManager->Stop_Sound(CSoundManager::Hunter_SFX_01);
+				g_pSoundManager->Stop_Sound(CSoundManager::Hunter_SFX_02);
 
-				m_iRandom = CALC::Random_Num(0, 3);
+				m_iRandom = CALC::Random_Num(0, 5);
 
 				switch (m_iRandom)
 				{
@@ -5457,14 +6684,36 @@ void CHunter::Play_Halberd_Combo_PierceWind()
 				case 3:
 					g_pSoundManager->Play_Sound(L"Monster_Blade_Swing3.ogg", CSoundManager::Hunter_SFX_01, CSoundManager::Effect_Sound);
 					break;
+				case 4:
+					g_pSoundManager->Play_Sound(L"Monster_Blade_Swing4.ogg", CSoundManager::Hunter_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				case 5:
+					g_pSoundManager->Play_Sound(L"Monster_Blade_Swing5.ogg", CSoundManager::Hunter_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				}
+
+				switch (CALC::Random_Num(0, 3))
+				{
+				case 0:
+					g_pSoundManager->Play_Sound(L"Monster_BladeWeapon_Sub0.ogg", CSoundManager::Hunter_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 1:
+					g_pSoundManager->Play_Sound(L"Monster_BladeWeapon_Sub1.ogg", CSoundManager::Hunter_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 2:
+					g_pSoundManager->Play_Sound(L"Monster_BladeWeapon_Sub2.ogg", CSoundManager::Hunter_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 3:
+					g_pSoundManager->Play_Sound(L"Monster_BladeWeapon_Sub3.ogg", CSoundManager::Hunter_SFX_02, CSoundManager::Effect_Sound);
+					break;
 				}
 			}
 		}
 		else if (2.1f <= AniTime)
 		{
-			if (false == m_bEventTrigger[8])
+			if (false == m_bEventTrigger[3])
 			{
-				m_bEventTrigger[8] = true;
+				m_bEventTrigger[3] = true;
 
 				g_pSoundManager->Stop_Sound(CSoundManager::Hunter_Voice);
 
@@ -5499,9 +6748,9 @@ void CHunter::Play_Halberd_Combo_PierceWind()
 
 		if (1.133f < AniTime && 1.800f >AniTime)
 		{
-			if (false == m_bEventTrigger[3])
+			if (false == m_bEventTrigger[4])
 			{
-				m_bEventTrigger[3] = true;
+				m_bEventTrigger[4] = true;
 				m_fSkillMoveSpeed_Cur = 8.f;
 				m_fSkillMoveAccel_Cur = 0.f;
 				m_fSkillMoveMultiply = 1.5f;
@@ -5562,37 +6811,43 @@ void CHunter::Play_Halberd_Combo_PierceWind()
 			m_bCanCoolDown = true;
 			m_fCoolDownMax = 0.8f;
 
+			m_pBattleAgentCom->Set_RimColor(_v4(0.f, 0.f, 0.f, 0.f));
+			m_pBattleAgentCom->Set_RimAlpha(0.5f);
+			m_pBattleAgentCom->Set_RimValue(8.f);
+
 			return;
 		}
 		else if (2.467f <= AniTime)
 		{
-			if (false == m_bEventTrigger[4])
+			if (false == m_bEventTrigger[5])
 			{
-				m_bEventTrigger[4] = true;
+				m_bEventTrigger[5] = true;
 				m_pWeapon->Set_Enable_Trail(false);
 			}
 		}
 		else if (2.167f <= AniTime)
 		{
-			if (false == m_bEventTrigger[5])
+			if (false == m_bEventTrigger[6])
 			{
-				m_bEventTrigger[5] = true;
+				m_bEventTrigger[6] = true;
 				m_pWeapon->Set_Target_CanAttack(false);
 				m_tObjParam.bSuperArmor = false;
 			}
 		}
 		else if (2.033f <= AniTime)
 		{
-			if (false == m_bEventTrigger[6])
+			if (false == m_bEventTrigger[7])
 			{
-				m_bEventTrigger[6] = true;
+				m_bEventTrigger[7] = true;
+				m_dAniPlayMul = 1;
 				m_pWeapon->Set_Target_CanAttack(true);
 				m_pWeapon->Set_Enable_Trail(true);
 				m_tObjParam.bSuperArmor = true;
 
 				g_pSoundManager->Stop_Sound(CSoundManager::Hunter_SFX_01);
+				g_pSoundManager->Stop_Sound(CSoundManager::Hunter_SFX_02);
 
-				m_iRandom = CALC::Random_Num(0, 3);
+				m_iRandom = CALC::Random_Num(0, 5);
 
 				switch (m_iRandom)
 				{
@@ -5608,14 +6863,42 @@ void CHunter::Play_Halberd_Combo_PierceWind()
 				case 3:
 					g_pSoundManager->Play_Sound(L"Monster_Blade_Swing3.ogg", CSoundManager::Hunter_SFX_01, CSoundManager::Effect_Sound);
 					break;
+				case 4:
+					g_pSoundManager->Play_Sound(L"Monster_Blade_Swing4.ogg", CSoundManager::Hunter_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				case 5:
+					g_pSoundManager->Play_Sound(L"Monster_Blade_Swing5.ogg", CSoundManager::Hunter_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				}
+
+				switch (CALC::Random_Num(0, 3))
+				{
+				case 0:
+					g_pSoundManager->Play_Sound(L"Monster_BladeWeapon_Sub0.ogg", CSoundManager::Hunter_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 1:
+					g_pSoundManager->Play_Sound(L"Monster_BladeWeapon_Sub1.ogg", CSoundManager::Hunter_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 2:
+					g_pSoundManager->Play_Sound(L"Monster_BladeWeapon_Sub2.ogg", CSoundManager::Hunter_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 3:
+					g_pSoundManager->Play_Sound(L"Monster_BladeWeapon_Sub3.ogg", CSoundManager::Hunter_SFX_02, CSoundManager::Effect_Sound);
+					break;
 				}
 			}
 		}
 		else if (1.9f <= AniTime)
 		{
-			if (false == m_bEventTrigger[9])
+			if (false == m_bEventTrigger[8])
 			{
-				m_bEventTrigger[9] = true;
+				m_bEventTrigger[8] = true;
+
+				m_dAniPlayMul = 0.5;
+
+				m_pBattleAgentCom->Set_RimColor(_v4(1.f, 0.f, 0.f, 0.f));
+				m_pBattleAgentCom->Set_RimAlpha(1.f);
+				m_pBattleAgentCom->Set_RimValue(5.f);
 
 				g_pSoundManager->Stop_Sound(CSoundManager::Hunter_Voice);
 
@@ -5650,9 +6933,9 @@ void CHunter::Play_Halberd_Combo_PierceWind()
 
 		if (0.667f < AniTime && 1.833f > AniTime)
 		{
-			if (false == m_bEventTrigger[7])
+			if (false == m_bEventTrigger[9])
 			{
-				m_bEventTrigger[7] = true;
+				m_bEventTrigger[9] = true;
 				m_fSkillMoveSpeed_Cur = 6.f;
 				m_fSkillMoveAccel_Cur = 0.f;
 				m_fSkillMoveMultiply = 1.f;
@@ -6932,6 +8215,10 @@ void CHunter::Play_LSword_Combo_Normal()
 			m_pWeapon->Set_Enable_Trail(false);
 			m_eState = HUNTER_ANI::LSword_Atk_N02;
 
+			m_pBattleAgentCom->Set_RimColor(_v4(0.f, 0.f, 0.f, 0.f));
+			m_pBattleAgentCom->Set_RimAlpha(0.5f);
+			m_pBattleAgentCom->Set_RimValue(8.f);
+
 			return;
 		}
 		else if (2.000f <= AniTime)
@@ -6956,6 +8243,7 @@ void CHunter::Play_LSword_Combo_Normal()
 			if (false == m_bEventTrigger[2])
 			{
 				m_bEventTrigger[2] = true;
+				m_dAniPlayMul = 1;
 				m_pWeapon->Set_Target_CanAttack(true);
 				m_pWeapon->Set_Enable_Trail(true);
 				m_tObjParam.bSuperArmor = true;
@@ -6983,9 +8271,15 @@ void CHunter::Play_LSword_Combo_Normal()
 		}
 		else if (1.5f <= AniTime)
 		{
-			if (false == m_bEventTrigger[13])
+			if (false == m_bEventTrigger[3])
 			{
-				m_bEventTrigger[13] = true;
+				m_bEventTrigger[3] = true;
+
+				m_dAniPlayMul = 0.5;
+
+				m_pBattleAgentCom->Set_RimColor(_v4(1.f, 0.f, 0.f, 0.f));
+				m_pBattleAgentCom->Set_RimAlpha(1.f);
+				m_pBattleAgentCom->Set_RimValue(5.f);
 
 				g_pSoundManager->Stop_Sound(CSoundManager::Hunter_Voice);
 
@@ -7020,9 +8314,9 @@ void CHunter::Play_LSword_Combo_Normal()
 
 		if (0.700f < AniTime && 1.233f > AniTime)
 		{
-			if (false == m_bEventTrigger[3])
+			if (false == m_bEventTrigger[4])
 			{
-				m_bEventTrigger[3] = true;
+				m_bEventTrigger[4] = true;
 				m_fSkillMoveSpeed_Cur = 6.f;
 				m_fSkillMoveAccel_Cur = 0.f;
 				m_fSkillMoveMultiply = 1.f;
@@ -7041,30 +8335,35 @@ void CHunter::Play_LSword_Combo_Normal()
 			m_pWeapon->Set_Enable_Trail(false);
 			m_eState = HUNTER_ANI::LSword_Atk_N03;
 
+			m_pBattleAgentCom->Set_RimColor(_v4(0.f, 0.f, 0.f, 0.f));
+			m_pBattleAgentCom->Set_RimAlpha(0.5f);
+			m_pBattleAgentCom->Set_RimValue(8.f);
+
 			return;
 		}
 		else if (2.033f <= AniTime)
 		{
-			if (false == m_bEventTrigger[4])
+			if (false == m_bEventTrigger[5])
 			{
-				m_bEventTrigger[4] = true;
+				m_bEventTrigger[5] = true;
 				m_pWeapon->Set_Enable_Trail(false);
 			}
 		}
 		else if (1.733f <= AniTime)
 		{
-			if (false == m_bEventTrigger[5])
+			if (false == m_bEventTrigger[6])
 			{
-				m_bEventTrigger[5] = true;
+				m_bEventTrigger[6] = true;
 				m_pWeapon->Set_Target_CanAttack(false);
 				m_tObjParam.bSuperArmor = false;
 			}
 		}
 		else if (1.600f <= AniTime)
 		{
-			if (false == m_bEventTrigger[6])
+			if (false == m_bEventTrigger[7])
 			{
-				m_bEventTrigger[6] = true;
+				m_bEventTrigger[7] = true;
+				m_dAniPlayMul = 1;
 				m_pWeapon->Set_Target_CanAttack(true);
 				m_pWeapon->Set_Enable_Trail(true);
 				m_tObjParam.bSuperArmor = true;
@@ -7094,9 +8393,15 @@ void CHunter::Play_LSword_Combo_Normal()
 		}
 		else if (1.5f <= AniTime)
 		{
-			if (false == m_bEventTrigger[14])
+			if (false == m_bEventTrigger[8])
 			{
-				m_bEventTrigger[14] = true;
+				m_bEventTrigger[8] = true;
+
+				m_dAniPlayMul = 0.5;
+
+				m_pBattleAgentCom->Set_RimColor(_v4(1.f, 0.f, 0.f, 0.f));
+				m_pBattleAgentCom->Set_RimAlpha(1.f);
+				m_pBattleAgentCom->Set_RimValue(5.f);
 
 				g_pSoundManager->Stop_Sound(CSoundManager::Hunter_Voice);
 
@@ -7131,9 +8436,9 @@ void CHunter::Play_LSword_Combo_Normal()
 
 		if (0.433f < AniTime && 1.333f > AniTime)
 		{
-			if (false == m_bEventTrigger[7])
+			if (false == m_bEventTrigger[9])
 			{
-				m_bEventTrigger[7] = true;
+				m_bEventTrigger[9] = true;
 				m_fSkillMoveSpeed_Cur = 6.f;
 				m_fSkillMoveAccel_Cur = 0.f;
 				m_fSkillMoveMultiply = 1.f;
@@ -7194,30 +8499,35 @@ void CHunter::Play_LSword_Combo_Normal()
 			m_bCanCoolDown = true;
 			m_fCoolDownMax = 1.2f;
 
+			m_pBattleAgentCom->Set_RimColor(_v4(0.f, 0.f, 0.f, 0.f));
+			m_pBattleAgentCom->Set_RimAlpha(0.5f);
+			m_pBattleAgentCom->Set_RimValue(8.f);
+
 			return;
 		}
 		else if (2.200f < AniTime)
 		{
-			if (false == m_bEventTrigger[8])
+			if (false == m_bEventTrigger[10])
 			{
-				m_bEventTrigger[8] = true;
+				m_bEventTrigger[10] = true;
 				m_pWeapon->Set_Enable_Trail(false);
 			}
 		}
 		else if (1.900f <= AniTime)
 		{
-			if (false == m_bEventTrigger[9])
+			if (false == m_bEventTrigger[11])
 			{
-				m_bEventTrigger[9] = true;
+				m_bEventTrigger[11] = true;
 				m_pWeapon->Set_Target_CanAttack(false);
 				m_tObjParam.bSuperArmor = false;
 			}
 		}
 		else if (1.733f <= AniTime)
 		{
-			if (false == m_bEventTrigger[10])
+			if (false == m_bEventTrigger[12])
 			{
-				m_bEventTrigger[10] = true;
+				m_bEventTrigger[12] = true;
+				m_dAniPlayMul = 1;
 				m_pWeapon->Set_Target_CanAttack(true);
 				m_pWeapon->Set_Enable_Trail(true);
 				m_tObjParam.bSuperArmor = true;
@@ -7247,9 +8557,15 @@ void CHunter::Play_LSword_Combo_Normal()
 		}
 		else if (1.6f <= AniTime)
 		{
-			if (false == m_bEventTrigger[15])
+			if (false == m_bEventTrigger[13])
 			{
-				m_bEventTrigger[15] = true;
+				m_bEventTrigger[13] = true;
+
+				m_dAniPlayMul = 0.5;
+
+				m_pBattleAgentCom->Set_RimColor(_v4(1.f, 0.f, 0.f, 0.f));
+				m_pBattleAgentCom->Set_RimAlpha(1.f);
+				m_pBattleAgentCom->Set_RimValue(5.f);
 
 				g_pSoundManager->Stop_Sound(CSoundManager::Hunter_Voice);
 
@@ -7284,9 +8600,9 @@ void CHunter::Play_LSword_Combo_Normal()
 
 		if (1.633f < AniTime && 2.500f > AniTime)
 		{
-			if (false == m_bEventTrigger[11])
+			if (false == m_bEventTrigger[14])
 			{
-				m_bEventTrigger[11] = true;
+				m_bEventTrigger[14] = true;
 				m_fSkillMoveSpeed_Cur = 6.f;
 				m_fSkillMoveAccel_Cur = 0.f;
 				m_fSkillMoveMultiply = 1.f;
@@ -7297,9 +8613,9 @@ void CHunter::Play_LSword_Combo_Normal()
 		}
 		else if (0.533f < AniTime && 1.467f > AniTime)
 		{
-			if (false == m_bEventTrigger[12])
+			if (false == m_bEventTrigger[15])
 			{
-				m_bEventTrigger[12] = true;
+				m_bEventTrigger[15] = true;
 				m_fSkillMoveSpeed_Cur = 6.f;
 				m_fSkillMoveAccel_Cur = 0.f;
 				m_fSkillMoveMultiply = 1.f;
@@ -7369,6 +8685,10 @@ void CHunter::Play_LSword_Combo_Strong()
 			m_pWeapon->Set_Enable_Trail(false);
 			m_eState = HUNTER_ANI::LSword_Atk_S02;
 
+			m_pBattleAgentCom->Set_RimColor(_v4(0.f, 0.f, 0.f, 0.f));
+			m_pBattleAgentCom->Set_RimAlpha(0.5f);
+			m_pBattleAgentCom->Set_RimValue(8.f);
+
 			return;
 		}
 		else if (1.967f <= AniTime)
@@ -7388,19 +8708,20 @@ void CHunter::Play_LSword_Combo_Strong()
 				m_tObjParam.bSuperArmor = false;
 			}
 		}
-		else if (1.60f <= AniTime)
+		else if (1.600f <= AniTime)
 		{
-			if (false == m_bEventTrigger[13])
+			if (false == m_bEventTrigger[2])
 			{
-				m_bEventTrigger[13] = true;
+				m_bEventTrigger[2] = true;
 				g_pManagement->Create_Effect(L"Weapon_HeavyDust", m_pWeapon->Get_HeadPos());
 			}
 		}
 		else if (1.500f <= AniTime)
 		{
-			if (false == m_bEventTrigger[2])
+			if (false == m_bEventTrigger[3])
 			{
-				m_bEventTrigger[2] = true;
+				m_bEventTrigger[3] = true;
+				m_dAniPlayMul = 1;
 				m_pWeapon->Set_Target_CanAttack(true);
 				m_pWeapon->Set_Enable_Trail(true);
 				m_tObjParam.bSuperArmor = true;
@@ -7430,9 +8751,15 @@ void CHunter::Play_LSword_Combo_Strong()
 		}
 		else if (1.4f <= AniTime)
 		{
-			if (false == m_bEventTrigger[14])
+			if (false == m_bEventTrigger[4])
 			{
-				m_bEventTrigger[14] = true;
+				m_bEventTrigger[4] = true;
+
+				m_dAniPlayMul = 0.5;
+
+				m_pBattleAgentCom->Set_RimColor(_v4(1.f, 0.f, 0.f, 0.f));
+				m_pBattleAgentCom->Set_RimAlpha(1.f);
+				m_pBattleAgentCom->Set_RimValue(5.f);
 
 				g_pSoundManager->Stop_Sound(CSoundManager::Hunter_Voice);
 
@@ -7467,9 +8794,9 @@ void CHunter::Play_LSword_Combo_Strong()
 
 		if (0.533f < AniTime && 1.300f > AniTime)
 		{
-			if (false == m_bEventTrigger[3])
+			if (false == m_bEventTrigger[5])
 			{
-				m_bEventTrigger[3] = true;
+				m_bEventTrigger[5] = true;
 				m_fSkillMoveSpeed_Cur = 6.f;
 				m_fSkillMoveAccel_Cur = 0.f;
 				m_fSkillMoveMultiply = 1.f;
@@ -7531,30 +8858,35 @@ void CHunter::Play_LSword_Combo_Strong()
 			m_pWeapon->Set_Enable_Trail(false);
 			m_eState = HUNTER_ANI::LSword_Atk_S03;
 
+			m_pBattleAgentCom->Set_RimColor(_v4(0.f, 0.f, 0.f, 0.f));
+			m_pBattleAgentCom->Set_RimAlpha(0.5f);
+			m_pBattleAgentCom->Set_RimValue(8.f);
+
 			return;
 		}
 		else if (2.200f <= AniTime)
 		{
-			if (false == m_bEventTrigger[4])
+			if (false == m_bEventTrigger[6])
 			{
-				m_bEventTrigger[4] = true;
+				m_bEventTrigger[6] = true;
 				m_pWeapon->Set_Enable_Trail(false);
 			}
 		}
 		else if (1.900f <= AniTime)
 		{
-			if (false == m_bEventTrigger[5])
+			if (false == m_bEventTrigger[7])
 			{
-				m_bEventTrigger[5] = true;
+				m_bEventTrigger[7] = true;
 				m_pWeapon->Set_Target_CanAttack(false);
 				m_tObjParam.bSuperArmor = false;
 			}
 		}
 		else if (1.667f <= AniTime)
 		{
-			if (false == m_bEventTrigger[6])
+			if (false == m_bEventTrigger[8])
 			{
-				m_bEventTrigger[6] = true;
+				m_bEventTrigger[8] = true;
+				m_dAniPlayMul = 1;
 				m_pWeapon->Set_Target_CanAttack(true);
 				m_pWeapon->Set_Enable_Trail(true);
 				m_tObjParam.bSuperArmor = true;
@@ -7584,9 +8916,15 @@ void CHunter::Play_LSword_Combo_Strong()
 		}
 		else if (1.5f <= AniTime)
 		{
-			if (false == m_bEventTrigger[15])
+			if (false == m_bEventTrigger[9])
 			{
-				m_bEventTrigger[15] = true;
+				m_bEventTrigger[9] = true;
+
+				m_dAniPlayMul = 0.5;
+
+				m_pBattleAgentCom->Set_RimColor(_v4(1.f, 0.f, 0.f, 0.f));
+				m_pBattleAgentCom->Set_RimAlpha(1.f);
+				m_pBattleAgentCom->Set_RimValue(5.f);
 
 				g_pSoundManager->Stop_Sound(CSoundManager::Hunter_Voice);
 
@@ -7621,9 +8959,9 @@ void CHunter::Play_LSword_Combo_Strong()
 
 		if (0.767f < AniTime && 1.500f > AniTime)
 		{
-			if (false == m_bEventTrigger[7])
+			if (false == m_bEventTrigger[10])
 			{
-				m_bEventTrigger[7] = true;
+				m_bEventTrigger[10] = true;
 				m_fSkillMoveSpeed_Cur = 6.f;
 				m_fSkillMoveAccel_Cur = 0.f;
 				m_fSkillMoveMultiply = 1.f;
@@ -7684,30 +9022,35 @@ void CHunter::Play_LSword_Combo_Strong()
 			m_bCanCoolDown = true;
 			m_fCoolDownMax = 1.2f;
 
+			m_pBattleAgentCom->Set_RimColor(_v4(0.f, 0.f, 0.f, 0.f));
+			m_pBattleAgentCom->Set_RimAlpha(0.5f);
+			m_pBattleAgentCom->Set_RimValue(8.f);
+
 			return;
 		}
 		else if (2.067f < AniTime)
 		{
-			if (false == m_bEventTrigger[8])
+			if (false == m_bEventTrigger[11])
 			{
-				m_bEventTrigger[8] = true;
+				m_bEventTrigger[11] = true;
 				m_pWeapon->Set_Enable_Trail(false);
 			}
 		}
 		else if (1.767f <= AniTime)
 		{
-			if (false == m_bEventTrigger[9])
+			if (false == m_bEventTrigger[12])
 			{
-				m_bEventTrigger[9] = true;
+				m_bEventTrigger[12] = true;
 				m_pWeapon->Set_Target_CanAttack(false);
 				m_tObjParam.bSuperArmor = false;
 			}
 		}
 		else if (1.667f <= AniTime)
 		{
-			if (false == m_bEventTrigger[10])
+			if (false == m_bEventTrigger[13])
 			{
-				m_bEventTrigger[10] = true;
+				m_bEventTrigger[13] = true;
+				m_dAniPlayMul = 1;
 				m_pWeapon->Set_Target_CanAttack(true);
 				m_pWeapon->Set_Enable_Trail(true);
 				m_tObjParam.bSuperArmor = true;
@@ -7716,7 +9059,7 @@ void CHunter::Play_LSword_Combo_Strong()
 				g_pSoundManager->Stop_Sound(CSoundManager::Hunter_SFX_02);
 				g_pSoundManager->Play_Sound(L"Monster_HeavyWeapon_Sub.ogg", CSoundManager::Hunter_SFX_02, CSoundManager::Effect_Sound);
 
-				m_iRandom = CALC::Random_Num(0, 3);
+				m_iRandom = CALC::Random_Num(0, 5);
 
 				switch (m_iRandom)
 				{
@@ -7732,14 +9075,26 @@ void CHunter::Play_LSword_Combo_Strong()
 				case 3:
 					g_pSoundManager->Play_Sound(L"Monster_Blunt_Swing3.ogg", CSoundManager::Hunter_SFX_01, CSoundManager::Effect_Sound);
 					break;
+				case 4:
+					g_pSoundManager->Play_Sound(L"Monster_Blade_Swing4.ogg", CSoundManager::Hunter_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				case 5:
+					g_pSoundManager->Play_Sound(L"Monster_Blade_Swing5.ogg", CSoundManager::Hunter_SFX_01, CSoundManager::Effect_Sound);
+					break;
 				}
 			}
 		}
 		else if (1.5f <= AniTime)
 		{
-			if (false == m_bEventTrigger[16])
+			if (false == m_bEventTrigger[14])
 			{
-				m_bEventTrigger[16] = true;
+				m_bEventTrigger[14] = true;
+
+				m_dAniPlayMul = 0.5;
+
+				m_pBattleAgentCom->Set_RimColor(_v4(1.f, 0.f, 0.f, 0.f));
+				m_pBattleAgentCom->Set_RimAlpha(1.f);
+				m_pBattleAgentCom->Set_RimValue(5.f);
 
 				g_pSoundManager->Stop_Sound(CSoundManager::Hunter_Voice);
 
@@ -7774,9 +9129,9 @@ void CHunter::Play_LSword_Combo_Strong()
 
 		if (1.700f < AniTime && 2.367f > AniTime)
 		{
-			if (false == m_bEventTrigger[11])
+			if (false == m_bEventTrigger[15])
 			{
-				m_bEventTrigger[11] = true;
+				m_bEventTrigger[15] = true;
 				m_fSkillMoveSpeed_Cur = 6.f;
 				m_fSkillMoveAccel_Cur = 0.f;
 				m_fSkillMoveMultiply = 1.f;
@@ -7787,9 +9142,9 @@ void CHunter::Play_LSword_Combo_Strong()
 		}
 		else if (0.333f < AniTime && 1.200f > AniTime)
 		{
-			if (false == m_bEventTrigger[12])
+			if (false == m_bEventTrigger[16])
 			{
-				m_bEventTrigger[12] = true;
+				m_bEventTrigger[16] = true;
 				m_fSkillMoveSpeed_Cur = 6.f;
 				m_fSkillMoveAccel_Cur = 0.f;
 				m_fSkillMoveMultiply = 1.f;
@@ -7892,8 +9247,9 @@ void CHunter::Play_SSword_Jump()
 				m_tObjParam.bSuperArmor = true;
 
 				g_pSoundManager->Stop_Sound(CSoundManager::Hunter_SFX_01);
+				g_pSoundManager->Stop_Sound(CSoundManager::Hunter_SFX_02);
 
-				m_iRandom = CALC::Random_Num(0, 3);
+				m_iRandom = CALC::Random_Num(0, 5);
 
 				switch (m_iRandom)
 				{
@@ -7908,6 +9264,30 @@ void CHunter::Play_SSword_Jump()
 					break;
 				case 3:
 					g_pSoundManager->Play_Sound(L"Monster_Blade_Swing3.ogg", CSoundManager::Hunter_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				case 4:
+					g_pSoundManager->Play_Sound(L"Monster_Blade_Swing4.ogg", CSoundManager::Hunter_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				case 5:
+					g_pSoundManager->Play_Sound(L"Monster_Blade_Swing5.ogg", CSoundManager::Hunter_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				}
+
+				m_iRandom = CALC::Random_Num(0, 3);
+
+				switch (m_iRandom)
+				{
+				case 0:
+					g_pSoundManager->Play_Sound(L"Monster_BladeWeapon_Sub0.ogg", CSoundManager::Hunter_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 1:
+					g_pSoundManager->Play_Sound(L"Monster_BladeWeapon_Sub1.ogg", CSoundManager::Hunter_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 2:
+					g_pSoundManager->Play_Sound(L"Monster_BladeWeapon_Sub2.ogg", CSoundManager::Hunter_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 3:
+					g_pSoundManager->Play_Sound(L"Monster_BladeWeapon_Sub3.ogg", CSoundManager::Hunter_SFX_02, CSoundManager::Effect_Sound);
 					break;
 				}
 			}
@@ -8026,8 +9406,9 @@ void CHunter::Play_SSword_RaiseUp()
 				m_tObjParam.bSuperArmor = true;
 
 				g_pSoundManager->Stop_Sound(CSoundManager::Hunter_SFX_01);
+				g_pSoundManager->Stop_Sound(CSoundManager::Hunter_SFX_02);
 
-				m_iRandom = CALC::Random_Num(0, 3);
+				m_iRandom = CALC::Random_Num(0, 5);
 
 				switch (m_iRandom)
 				{
@@ -8042,6 +9423,30 @@ void CHunter::Play_SSword_RaiseUp()
 					break;
 				case 3:
 					g_pSoundManager->Play_Sound(L"Monster_Blade_Swing3.ogg", CSoundManager::Hunter_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				case 4:
+					g_pSoundManager->Play_Sound(L"Monster_Blade_Swing4.ogg", CSoundManager::Hunter_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				case 5:
+					g_pSoundManager->Play_Sound(L"Monster_Blade_Swing5.ogg", CSoundManager::Hunter_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				}
+
+				m_iRandom = CALC::Random_Num(0, 3);
+
+				switch (m_iRandom)
+				{
+				case 0:
+					g_pSoundManager->Play_Sound(L"Monster_BladeWeapon_Sub0.ogg", CSoundManager::Hunter_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 1:
+					g_pSoundManager->Play_Sound(L"Monster_BladeWeapon_Sub1.ogg", CSoundManager::Hunter_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 2:
+					g_pSoundManager->Play_Sound(L"Monster_BladeWeapon_Sub2.ogg", CSoundManager::Hunter_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 3:
+					g_pSoundManager->Play_Sound(L"Monster_BladeWeapon_Sub3.ogg", CSoundManager::Hunter_SFX_02, CSoundManager::Effect_Sound);
 					break;
 				}
 			}
@@ -8147,8 +9552,9 @@ void CHunter::Play_SSword_Upper()
 				m_tObjParam.bSuperArmor = true;
 
 				g_pSoundManager->Stop_Sound(CSoundManager::Hunter_SFX_01);
+				g_pSoundManager->Stop_Sound(CSoundManager::Hunter_SFX_02);
 
-				m_iRandom = CALC::Random_Num(0, 3);
+				m_iRandom = CALC::Random_Num(0, 5);
 
 				switch (m_iRandom)
 				{
@@ -8163,6 +9569,28 @@ void CHunter::Play_SSword_Upper()
 					break;
 				case 3:
 					g_pSoundManager->Play_Sound(L"Monster_Blade_Swing3.ogg", CSoundManager::Hunter_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				case 4:
+					g_pSoundManager->Play_Sound(L"Monster_Blade_Swing4.ogg", CSoundManager::Hunter_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				case 5:
+					g_pSoundManager->Play_Sound(L"Monster_Blade_Swing5.ogg", CSoundManager::Hunter_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				}
+
+				switch (CALC::Random_Num(0, 3))
+				{
+				case 0:
+					g_pSoundManager->Play_Sound(L"Monster_BladeWeapon_Sub0.ogg", CSoundManager::Hunter_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 1:
+					g_pSoundManager->Play_Sound(L"Monster_BladeWeapon_Sub1.ogg", CSoundManager::Hunter_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 2:
+					g_pSoundManager->Play_Sound(L"Monster_BladeWeapon_Sub2.ogg", CSoundManager::Hunter_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 3:
+					g_pSoundManager->Play_Sound(L"Monster_BladeWeapon_Sub3.ogg", CSoundManager::Hunter_SFX_02, CSoundManager::Effect_Sound);
 					break;
 				}
 			}
@@ -8268,8 +9696,9 @@ void CHunter::Play_SSword_Upper_L()
 				m_tObjParam.bSuperArmor = true;
 
 				g_pSoundManager->Stop_Sound(CSoundManager::Hunter_SFX_01);
+				g_pSoundManager->Stop_Sound(CSoundManager::Hunter_SFX_02);
 
-				m_iRandom = CALC::Random_Num(0, 3);
+				m_iRandom = CALC::Random_Num(0, 5);
 
 				switch (m_iRandom)
 				{
@@ -8284,6 +9713,28 @@ void CHunter::Play_SSword_Upper_L()
 					break;
 				case 3:
 					g_pSoundManager->Play_Sound(L"Monster_Blade_Swing3.ogg", CSoundManager::Hunter_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				case 4:
+					g_pSoundManager->Play_Sound(L"Monster_Blade_Swing4.ogg", CSoundManager::Hunter_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				case 5:
+					g_pSoundManager->Play_Sound(L"Monster_Blade_Swing5.ogg", CSoundManager::Hunter_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				}
+
+				switch (CALC::Random_Num(0, 3))
+				{
+				case 0:
+					g_pSoundManager->Play_Sound(L"Monster_BladeWeapon_Sub0.ogg", CSoundManager::Hunter_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 1:
+					g_pSoundManager->Play_Sound(L"Monster_BladeWeapon_Sub1.ogg", CSoundManager::Hunter_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 2:
+					g_pSoundManager->Play_Sound(L"Monster_BladeWeapon_Sub2.ogg", CSoundManager::Hunter_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 3:
+					g_pSoundManager->Play_Sound(L"Monster_BladeWeapon_Sub3.ogg", CSoundManager::Hunter_SFX_02, CSoundManager::Effect_Sound);
 					break;
 				}
 			}
@@ -8389,8 +9840,9 @@ void CHunter::Play_SSword_WoodChop()
 				m_tObjParam.bSuperArmor = true;
 
 				g_pSoundManager->Stop_Sound(CSoundManager::Hunter_SFX_01);
+				g_pSoundManager->Stop_Sound(CSoundManager::Hunter_SFX_02);
 
-				m_iRandom = CALC::Random_Num(0, 3);
+				m_iRandom = CALC::Random_Num(0, 5);
 
 				switch (m_iRandom)
 				{
@@ -8405,6 +9857,28 @@ void CHunter::Play_SSword_WoodChop()
 					break;
 				case 3:
 					g_pSoundManager->Play_Sound(L"Monster_Blade_Swing3.ogg", CSoundManager::Hunter_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				case 4:
+					g_pSoundManager->Play_Sound(L"Monster_Blade_Swing4.ogg", CSoundManager::Hunter_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				case 5:
+					g_pSoundManager->Play_Sound(L"Monster_Blade_Swing5.ogg", CSoundManager::Hunter_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				}
+
+				switch (CALC::Random_Num(0, 3))
+				{
+				case 0:
+					g_pSoundManager->Play_Sound(L"Monster_BladeWeapon_Sub0.ogg", CSoundManager::Hunter_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 1:
+					g_pSoundManager->Play_Sound(L"Monster_BladeWeapon_Sub1.ogg", CSoundManager::Hunter_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 2:
+					g_pSoundManager->Play_Sound(L"Monster_BladeWeapon_Sub2.ogg", CSoundManager::Hunter_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 3:
+					g_pSoundManager->Play_Sound(L"Monster_BladeWeapon_Sub3.ogg", CSoundManager::Hunter_SFX_02, CSoundManager::Effect_Sound);
 					break;
 				}
 			}
@@ -8689,8 +10163,9 @@ void CHunter::Play_SSword_HelmetBreak()
 				m_tObjParam.bSuperArmor = true;
 
 				g_pSoundManager->Stop_Sound(CSoundManager::Hunter_SFX_01);
+				g_pSoundManager->Stop_Sound(CSoundManager::Hunter_SFX_02);
 
-				m_iRandom = CALC::Random_Num(0, 3);
+				m_iRandom = CALC::Random_Num(0, 5);
 
 				switch (m_iRandom)
 				{
@@ -8705,6 +10180,28 @@ void CHunter::Play_SSword_HelmetBreak()
 					break;
 				case 3:
 					g_pSoundManager->Play_Sound(L"Monster_Blade_Swing3.ogg", CSoundManager::Hunter_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				case 4:
+					g_pSoundManager->Play_Sound(L"Monster_Blade_Swing4.ogg", CSoundManager::Hunter_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				case 5:
+					g_pSoundManager->Play_Sound(L"Monster_Blade_Swing5.ogg", CSoundManager::Hunter_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				}
+
+				switch (CALC::Random_Num(0, 3))
+				{
+				case 0:
+					g_pSoundManager->Play_Sound(L"Monster_BladeWeapon_Sub0.ogg", CSoundManager::Hunter_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 1:
+					g_pSoundManager->Play_Sound(L"Monster_BladeWeapon_Sub1.ogg", CSoundManager::Hunter_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 2:
+					g_pSoundManager->Play_Sound(L"Monster_BladeWeapon_Sub2.ogg", CSoundManager::Hunter_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 3:
+					g_pSoundManager->Play_Sound(L"Monster_BladeWeapon_Sub3.ogg", CSoundManager::Hunter_SFX_02, CSoundManager::Effect_Sound);
 					break;
 				}
 			}
@@ -8853,8 +10350,9 @@ void CHunter::Play_SSword_CriticalDraw()
 				m_tObjParam.bSuperArmor = true;
 
 				g_pSoundManager->Stop_Sound(CSoundManager::Hunter_SFX_01);
+				g_pSoundManager->Stop_Sound(CSoundManager::Hunter_SFX_02);
 
-				m_iRandom = CALC::Random_Num(0, 3);
+				m_iRandom = CALC::Random_Num(0, 5);
 
 				switch (m_iRandom)
 				{
@@ -8869,6 +10367,28 @@ void CHunter::Play_SSword_CriticalDraw()
 					break;
 				case 3:
 					g_pSoundManager->Play_Sound(L"Monster_Blade_Swing3.ogg", CSoundManager::Hunter_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				case 4:
+					g_pSoundManager->Play_Sound(L"Monster_Blade_Swing4.ogg", CSoundManager::Hunter_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				case 5:
+					g_pSoundManager->Play_Sound(L"Monster_Blade_Swing5.ogg", CSoundManager::Hunter_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				}
+
+				switch (CALC::Random_Num(0, 3))
+				{
+				case 0:
+					g_pSoundManager->Play_Sound(L"Monster_BladeWeapon_Sub0.ogg", CSoundManager::Hunter_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 1:
+					g_pSoundManager->Play_Sound(L"Monster_BladeWeapon_Sub1.ogg", CSoundManager::Hunter_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 2:
+					g_pSoundManager->Play_Sound(L"Monster_BladeWeapon_Sub2.ogg", CSoundManager::Hunter_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 3:
+					g_pSoundManager->Play_Sound(L"Monster_BladeWeapon_Sub3.ogg", CSoundManager::Hunter_SFX_02, CSoundManager::Effect_Sound);
 					break;
 				}
 			}
@@ -9096,6 +10616,10 @@ void CHunter::Play_SSword_Combo_StepPierce()
 			m_fSkillMoveSpeed_Cur = 20.f;
 			m_fSkillMoveAccel_Cur = 2.f;
 			m_fSkillMoveMultiply = 0.5f;
+
+			m_pBattleAgentCom->Set_RimColor(_v4(1.f, 0.f, 0.f, 0.f));
+			m_pBattleAgentCom->Set_RimAlpha(1.f);
+			m_pBattleAgentCom->Set_RimValue(5.f);
 		}
 
 		Function_Movement(m_fSkillMoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_Z));
@@ -9108,6 +10632,10 @@ void CHunter::Play_SSword_Combo_StepPierce()
 			Function_ResetAfterAtk();
 			m_bCanCoolDown = true;
 			m_fCoolDownMax = 1.2f;
+
+			m_pBattleAgentCom->Set_RimColor(_v4(0.f, 0.f, 0.f, 0.f));
+			m_pBattleAgentCom->Set_RimAlpha(0.5f);
+			m_pBattleAgentCom->Set_RimValue(8.f);
 
 			return;
 		}
@@ -9137,8 +10665,9 @@ void CHunter::Play_SSword_Combo_StepPierce()
 				m_tObjParam.bSuperArmor = true;
 
 				g_pSoundManager->Stop_Sound(CSoundManager::Hunter_SFX_01);
+				g_pSoundManager->Stop_Sound(CSoundManager::Hunter_SFX_02);
 
-				m_iRandom = CALC::Random_Num(0, 3);
+				m_iRandom = CALC::Random_Num(0, 5);
 
 				switch (m_iRandom)
 				{
@@ -9153,6 +10682,28 @@ void CHunter::Play_SSword_Combo_StepPierce()
 					break;
 				case 3:
 					g_pSoundManager->Play_Sound(L"Monster_Blade_Swing3.ogg", CSoundManager::Hunter_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				case 4:
+					g_pSoundManager->Play_Sound(L"Monster_Blade_Swing4.ogg", CSoundManager::Hunter_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				case 5:
+					g_pSoundManager->Play_Sound(L"Monster_Blade_Swing5.ogg", CSoundManager::Hunter_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				}
+
+				switch (CALC::Random_Num(0, 3))
+				{
+				case 0:
+					g_pSoundManager->Play_Sound(L"Monster_BladeWeapon_Sub0.ogg", CSoundManager::Hunter_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 1:
+					g_pSoundManager->Play_Sound(L"Monster_BladeWeapon_Sub1.ogg", CSoundManager::Hunter_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 2:
+					g_pSoundManager->Play_Sound(L"Monster_BladeWeapon_Sub2.ogg", CSoundManager::Hunter_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 3:
+					g_pSoundManager->Play_Sound(L"Monster_BladeWeapon_Sub3.ogg", CSoundManager::Hunter_SFX_02, CSoundManager::Effect_Sound);
 					break;
 				}
 			}
@@ -9240,8 +10791,9 @@ void CHunter::Play_SSword_Combo_StepPierce()
 				m_tObjParam.bSuperArmor = true;
 
 				g_pSoundManager->Stop_Sound(CSoundManager::Hunter_SFX_01);
+				g_pSoundManager->Stop_Sound(CSoundManager::Hunter_SFX_02);
 
-				m_iRandom = CALC::Random_Num(0, 3);
+				m_iRandom = CALC::Random_Num(0, 5);
 
 				switch (m_iRandom)
 				{
@@ -9256,6 +10808,28 @@ void CHunter::Play_SSword_Combo_StepPierce()
 					break;
 				case 3:
 					g_pSoundManager->Play_Sound(L"Monster_Blade_Swing3.ogg", CSoundManager::Hunter_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				case 4:
+					g_pSoundManager->Play_Sound(L"Monster_Blade_Swing4.ogg", CSoundManager::Hunter_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				case 5:
+					g_pSoundManager->Play_Sound(L"Monster_Blade_Swing5.ogg", CSoundManager::Hunter_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				}
+
+				switch (CALC::Random_Num(0, 3))
+				{
+				case 0:
+					g_pSoundManager->Play_Sound(L"Monster_BladeWeapon_Sub0.ogg", CSoundManager::Hunter_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 1:
+					g_pSoundManager->Play_Sound(L"Monster_BladeWeapon_Sub1.ogg", CSoundManager::Hunter_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 2:
+					g_pSoundManager->Play_Sound(L"Monster_BladeWeapon_Sub2.ogg", CSoundManager::Hunter_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 3:
+					g_pSoundManager->Play_Sound(L"Monster_BladeWeapon_Sub3.ogg", CSoundManager::Hunter_SFX_02, CSoundManager::Effect_Sound);
 					break;
 				}
 			}
@@ -9287,8 +10861,9 @@ void CHunter::Play_SSword_Combo_StepPierce()
 				m_tObjParam.bSuperArmor = false;
 
 				g_pSoundManager->Stop_Sound(CSoundManager::Hunter_SFX_01);
+				g_pSoundManager->Stop_Sound(CSoundManager::Hunter_SFX_02);
 
-				m_iRandom = CALC::Random_Num(0, 3);
+				m_iRandom = CALC::Random_Num(0, 5);
 
 				switch (m_iRandom)
 				{
@@ -9303,6 +10878,28 @@ void CHunter::Play_SSword_Combo_StepPierce()
 					break;
 				case 3:
 					g_pSoundManager->Play_Sound(L"Monster_Blade_Swing3.ogg", CSoundManager::Hunter_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				case 4:
+					g_pSoundManager->Play_Sound(L"Monster_Blade_Swing4.ogg", CSoundManager::Hunter_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				case 5:
+					g_pSoundManager->Play_Sound(L"Monster_Blade_Swing5.ogg", CSoundManager::Hunter_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				}
+
+				switch (CALC::Random_Num(0, 3))
+				{
+				case 0:
+					g_pSoundManager->Play_Sound(L"Monster_BladeWeapon_Sub0.ogg", CSoundManager::Hunter_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 1:
+					g_pSoundManager->Play_Sound(L"Monster_BladeWeapon_Sub1.ogg", CSoundManager::Hunter_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 2:
+					g_pSoundManager->Play_Sound(L"Monster_BladeWeapon_Sub2.ogg", CSoundManager::Hunter_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 3:
+					g_pSoundManager->Play_Sound(L"Monster_BladeWeapon_Sub3.ogg", CSoundManager::Hunter_SFX_02, CSoundManager::Effect_Sound);
 					break;
 				}
 			}
@@ -9375,6 +10972,10 @@ void CHunter::Play_SSword_Combo_Strong()
 			m_tObjParam.bSuperArmor = true;
 			m_eState = HUNTER_ANI::SSword_Atk_S02;
 
+			m_pBattleAgentCom->Set_RimColor(_v4(0.f, 0.f, 0.f, 0.f));
+			m_pBattleAgentCom->Set_RimAlpha(0.5f);
+			m_pBattleAgentCom->Set_RimValue(8.f);
+
 			return;
 		}
 		else if (1.433f <= AniTime)
@@ -9391,12 +10992,14 @@ void CHunter::Play_SSword_Combo_Strong()
 			if (false == m_bEventTrigger[2])
 			{
 				m_bEventTrigger[2] = true;
+				m_dAniPlayMul = 1;
 				m_vecAttackCol[0]->Set_Enabled(true);
 				m_tObjParam.bSuperArmor = true;
 
 				g_pSoundManager->Stop_Sound(CSoundManager::Hunter_SFX_01);
+				g_pSoundManager->Stop_Sound(CSoundManager::Hunter_SFX_02);
 
-				m_iRandom = CALC::Random_Num(0, 3);
+				m_iRandom = CALC::Random_Num(0, 5);
 
 				switch (m_iRandom)
 				{
@@ -9412,14 +11015,42 @@ void CHunter::Play_SSword_Combo_Strong()
 				case 3:
 					g_pSoundManager->Play_Sound(L"Monster_Blade_Swing3.ogg", CSoundManager::Hunter_SFX_01, CSoundManager::Effect_Sound);
 					break;
+				case 4:
+					g_pSoundManager->Play_Sound(L"Monster_Blade_Swing4.ogg", CSoundManager::Hunter_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				case 5:
+					g_pSoundManager->Play_Sound(L"Monster_Blade_Swing5.ogg", CSoundManager::Hunter_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				}
+
+				switch (CALC::Random_Num(0, 3))
+				{
+				case 0:
+					g_pSoundManager->Play_Sound(L"Monster_BladeWeapon_Sub0.ogg", CSoundManager::Hunter_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 1:
+					g_pSoundManager->Play_Sound(L"Monster_BladeWeapon_Sub1.ogg", CSoundManager::Hunter_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 2:
+					g_pSoundManager->Play_Sound(L"Monster_BladeWeapon_Sub2.ogg", CSoundManager::Hunter_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 3:
+					g_pSoundManager->Play_Sound(L"Monster_BladeWeapon_Sub3.ogg", CSoundManager::Hunter_SFX_02, CSoundManager::Effect_Sound);
+					break;
 				}
 			}
 		}
 		else if (1.f <= AniTime)
 		{
-			if (false == m_bEventTrigger[15])
+			if (false == m_bEventTrigger[3])
 			{
-				m_bEventTrigger[15] = true;
+				m_bEventTrigger[3] = true;
+
+				m_dAniPlayMul = 0.5;
+
+				m_pBattleAgentCom->Set_RimColor(_v4(1.f, 0.f, 0.f, 0.f));
+				m_pBattleAgentCom->Set_RimAlpha(1.f);
+				m_pBattleAgentCom->Set_RimValue(5.f);
 
 				g_pSoundManager->Stop_Sound(CSoundManager::Hunter_Voice);
 
@@ -9454,9 +11085,9 @@ void CHunter::Play_SSword_Combo_Strong()
 
 		if (0.667f < AniTime && 1.267f > AniTime)
 		{
-			if (false == m_bEventTrigger[3])
+			if (false == m_bEventTrigger[4])
 			{
-				m_bEventTrigger[3] = true;
+				m_bEventTrigger[4] = true;
 				m_fSkillMoveSpeed_Cur = 5.f;
 				m_fSkillMoveAccel_Cur = 0.f;
 				m_fSkillMoveMultiply = 1.f;
@@ -9516,37 +11147,42 @@ void CHunter::Play_SSword_Combo_Strong()
 			m_tObjParam.bSuperArmor = true;
 			m_eState = HUNTER_ANI::SSword_Atk_S03;
 
+			m_pBattleAgentCom->Set_RimColor(_v4(0.f, 0.f, 0.f, 0.f));
+			m_pBattleAgentCom->Set_RimAlpha(0.5f);
+			m_pBattleAgentCom->Set_RimValue(8.f);
+
 			return;
 		}
 		else if (3.900f <= AniTime)
 		{
-			if (false == m_bEventTrigger[4])
+			if (false == m_bEventTrigger[5])
 			{
-				m_bEventTrigger[4] = true;
+				m_bEventTrigger[5] = true;
 				m_pWeapon->Set_Enable_Trail(false);
 			}
 		}
 		else if (3.600f <= AniTime)
 		{
-			if (false == m_bEventTrigger[5])
+			if (false == m_bEventTrigger[6])
 			{
-				m_bEventTrigger[5] = true;
+				m_bEventTrigger[6] = true;
 				m_pWeapon->Set_Target_CanAttack(false);
 				m_tObjParam.bSuperArmor = false;
 			}
 		}
 		else if (3.533f <= AniTime)
 		{
-			if (false == m_bEventTrigger[6])
+			if (false == m_bEventTrigger[7])
 			{
-				m_bEventTrigger[6] = true;
+				m_bEventTrigger[7] = true;
 				m_pWeapon->Set_Target_CanAttack(true);
 				m_pWeapon->Set_Enable_Trail(true);
 				m_tObjParam.bSuperArmor = true;
 
 				g_pSoundManager->Stop_Sound(CSoundManager::Hunter_SFX_01);
+				g_pSoundManager->Stop_Sound(CSoundManager::Hunter_SFX_02);
 
-				m_iRandom = CALC::Random_Num(0, 3);
+				m_iRandom = CALC::Random_Num(0, 5);
 
 				switch (m_iRandom)
 				{
@@ -9562,14 +11198,36 @@ void CHunter::Play_SSword_Combo_Strong()
 				case 3:
 					g_pSoundManager->Play_Sound(L"Monster_Blade_Swing3.ogg", CSoundManager::Hunter_SFX_01, CSoundManager::Effect_Sound);
 					break;
+				case 4:
+					g_pSoundManager->Play_Sound(L"Monster_Blade_Swing4.ogg", CSoundManager::Hunter_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				case 5:
+					g_pSoundManager->Play_Sound(L"Monster_Blade_Swing5.ogg", CSoundManager::Hunter_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				}
+
+				switch (CALC::Random_Num(0, 3))
+				{
+				case 0:
+					g_pSoundManager->Play_Sound(L"Monster_BladeWeapon_Sub0.ogg", CSoundManager::Hunter_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 1:
+					g_pSoundManager->Play_Sound(L"Monster_BladeWeapon_Sub1.ogg", CSoundManager::Hunter_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 2:
+					g_pSoundManager->Play_Sound(L"Monster_BladeWeapon_Sub2.ogg", CSoundManager::Hunter_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 3:
+					g_pSoundManager->Play_Sound(L"Monster_BladeWeapon_Sub3.ogg", CSoundManager::Hunter_SFX_02, CSoundManager::Effect_Sound);
+					break;
 				}
 			}
 		}
 		else if (3.2f <= AniTime)
 		{
-			if (false == m_bEventTrigger[16])
+			if (false == m_bEventTrigger[8])
 			{
-				m_bEventTrigger[16] = true;
+				m_bEventTrigger[8] = true;
 
 				g_pSoundManager->Stop_Sound(CSoundManager::Hunter_Voice);
 
@@ -9603,33 +11261,35 @@ void CHunter::Play_SSword_Combo_Strong()
 		}
 		else if (1.900f <= AniTime)
 		{
-			if (false == m_bEventTrigger[7])
+			if (false == m_bEventTrigger[9])
 			{
-				m_bEventTrigger[7] = true;
+				m_bEventTrigger[9] = true;
 				m_pWeapon->Set_Enable_Trail(false);
 			}
 		}
 		else if (1.600f <= AniTime)
 		{
-			if (false == m_bEventTrigger[8])
+			if (false == m_bEventTrigger[10])
 			{
-				m_bEventTrigger[8] = true;
+				m_bEventTrigger[10] = true;
 				m_pWeapon->Set_Target_CanAttack(false);
 				m_tObjParam.bSuperArmor = false;
 			}
 		}
 		else if (1.500f <= AniTime)
 		{
-			if (false == m_bEventTrigger[9])
+			if (false == m_bEventTrigger[11])
 			{
-				m_bEventTrigger[9] = true;
+				m_bEventTrigger[11] = true;
+				m_dAniPlayMul = 1;
 				m_pWeapon->Set_Target_CanAttack(true);
 				m_pWeapon->Set_Enable_Trail(true);
 				m_tObjParam.bSuperArmor = true;
 
 				g_pSoundManager->Stop_Sound(CSoundManager::Hunter_SFX_01);
+				g_pSoundManager->Stop_Sound(CSoundManager::Hunter_SFX_02);
 
-				m_iRandom = CALC::Random_Num(0, 3);
+				m_iRandom = CALC::Random_Num(0, 5);
 
 				switch (m_iRandom)
 				{
@@ -9645,14 +11305,42 @@ void CHunter::Play_SSword_Combo_Strong()
 				case 3:
 					g_pSoundManager->Play_Sound(L"Monster_Blade_Swing3.ogg", CSoundManager::Hunter_SFX_01, CSoundManager::Effect_Sound);
 					break;
+				case 4:
+					g_pSoundManager->Play_Sound(L"Monster_Blade_Swing4.ogg", CSoundManager::Hunter_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				case 5:
+					g_pSoundManager->Play_Sound(L"Monster_Blade_Swing5.ogg", CSoundManager::Hunter_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				}
+
+				switch (CALC::Random_Num(0, 3))
+				{
+				case 0:
+					g_pSoundManager->Play_Sound(L"Monster_BladeWeapon_Sub0.ogg", CSoundManager::Hunter_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 1:
+					g_pSoundManager->Play_Sound(L"Monster_BladeWeapon_Sub1.ogg", CSoundManager::Hunter_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 2:
+					g_pSoundManager->Play_Sound(L"Monster_BladeWeapon_Sub2.ogg", CSoundManager::Hunter_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 3:
+					g_pSoundManager->Play_Sound(L"Monster_BladeWeapon_Sub3.ogg", CSoundManager::Hunter_SFX_02, CSoundManager::Effect_Sound);
+					break;
 				}
 			}
 		}
 		else if (1.2f <= AniTime)
 		{
-			if (false == m_bEventTrigger[17])
+			if (false == m_bEventTrigger[12])
 			{
-				m_bEventTrigger[17] = true;
+				m_bEventTrigger[12] = true;
+
+				m_dAniPlayMul = 0.5;
+
+				m_pBattleAgentCom->Set_RimColor(_v4(1.f, 0.f, 0.f, 0.f));
+				m_pBattleAgentCom->Set_RimAlpha(1.f);
+				m_pBattleAgentCom->Set_RimValue(5.f);
 
 				g_pSoundManager->Stop_Sound(CSoundManager::Hunter_Voice);
 
@@ -9687,9 +11375,9 @@ void CHunter::Play_SSword_Combo_Strong()
 
 		if (2.733f < AniTime && 3.500f > AniTime)
 		{
-			if (false == m_bEventTrigger[10])
+			if (false == m_bEventTrigger[13])
 			{
-				m_bEventTrigger[10] = true;
+				m_bEventTrigger[13] = true;
 				m_fSkillMoveSpeed_Cur = 6.f;
 				m_fSkillMoveAccel_Cur = 0.f;
 				m_fSkillMoveMultiply = 1.f;
@@ -9700,9 +11388,9 @@ void CHunter::Play_SSword_Combo_Strong()
 		}
 		else if (0.533f < AniTime && 1.300f > AniTime)
 		{
-			if (false == m_bEventTrigger[11])
+			if (false == m_bEventTrigger[14])
 			{
-				m_bEventTrigger[11] = true;
+				m_bEventTrigger[14] = true;
 				m_fSkillMoveSpeed_Cur = 6.f;
 				m_fSkillMoveAccel_Cur = 0.f;
 				m_fSkillMoveMultiply = 1.f;
@@ -9763,37 +11451,42 @@ void CHunter::Play_SSword_Combo_Strong()
 			m_bCanCoolDown = true;
 			m_fCoolDownMax = 1.2f;
 
+			m_pBattleAgentCom->Set_RimColor(_v4(0.f, 0.f, 0.f, 0.f));
+			m_pBattleAgentCom->Set_RimAlpha(0.5f);
+			m_pBattleAgentCom->Set_RimValue(8.f);
+
 			return;
 		}
 		else if (3.433f <= AniTime)
 		{
-			if (false == m_bEventTrigger[12])
+			if (false == m_bEventTrigger[15])
 			{
-				m_bEventTrigger[12] = true;
+				m_bEventTrigger[15] = true;
 				m_pWeapon->Set_Enable_Trail(false);
 			}
 		}
 		else if (3.133f <= AniTime)
 		{
-			if (false == m_bEventTrigger[13])
+			if (false == m_bEventTrigger[16])
 			{
-				m_bEventTrigger[13] = true;
+				m_bEventTrigger[16] = true;
 				m_pWeapon->Set_Target_CanAttack(false);
 				m_tObjParam.bSuperArmor = false;
 			}
 		}
 		else if (2.867f <= AniTime)
 		{
-			if (false == m_bEventTrigger[14])
+			if (false == m_bEventTrigger[17])
 			{
-				m_bEventTrigger[14] = true;
+				m_bEventTrigger[17] = true;
 				m_pWeapon->Set_Target_CanAttack(true);
 				m_pWeapon->Set_Enable_Trail(true);
 				m_tObjParam.bSuperArmor = true;
 
 				g_pSoundManager->Stop_Sound(CSoundManager::Hunter_SFX_01);
+				g_pSoundManager->Stop_Sound(CSoundManager::Hunter_SFX_02);
 
-				m_iRandom = CALC::Random_Num(0, 3);
+				m_iRandom = CALC::Random_Num(0, 5);
 
 				switch (m_iRandom)
 				{
@@ -9809,6 +11502,28 @@ void CHunter::Play_SSword_Combo_Strong()
 				case 3:
 					g_pSoundManager->Play_Sound(L"Monster_Blade_Swing3.ogg", CSoundManager::Hunter_SFX_01, CSoundManager::Effect_Sound);
 					break;
+				case 4:
+					g_pSoundManager->Play_Sound(L"Monster_Blade_Swing4.ogg", CSoundManager::Hunter_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				case 5:
+					g_pSoundManager->Play_Sound(L"Monster_Blade_Swing5.ogg", CSoundManager::Hunter_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				}
+
+				switch (CALC::Random_Num(0, 3))
+				{
+				case 0:
+					g_pSoundManager->Play_Sound(L"Monster_BladeWeapon_Sub0.ogg", CSoundManager::Hunter_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 1:
+					g_pSoundManager->Play_Sound(L"Monster_BladeWeapon_Sub1.ogg", CSoundManager::Hunter_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 2:
+					g_pSoundManager->Play_Sound(L"Monster_BladeWeapon_Sub2.ogg", CSoundManager::Hunter_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 3:
+					g_pSoundManager->Play_Sound(L"Monster_BladeWeapon_Sub3.ogg", CSoundManager::Hunter_SFX_02, CSoundManager::Effect_Sound);
+					break;
 				}
 			}
 		}
@@ -9817,7 +11532,7 @@ void CHunter::Play_SSword_Combo_Strong()
 			if (false == m_bEventTrigger[18])
 			{
 				m_bEventTrigger[18] = true;
-
+				m_dAniPlayMul = 1;
 				g_pSoundManager->Stop_Sound(CSoundManager::Hunter_Voice);
 
 				m_iRandom = CALC::Random_Num(0, 6);
@@ -9848,6 +11563,19 @@ void CHunter::Play_SSword_Combo_Strong()
 				}
 			}
 		}
+		else if (2.2f <= AniTime)
+		{
+			if (false == m_bEventTrigger[19])
+			{
+				m_bEventTrigger[19] = true;
+
+				m_dAniPlayMul = 0.5;
+
+				m_pBattleAgentCom->Set_RimColor(_v4(1.f, 0.f, 0.f, 0.f));
+				m_pBattleAgentCom->Set_RimAlpha(1.f);
+				m_pBattleAgentCom->Set_RimValue(5.f);
+			}
+		}
 	}
 
 	return;
@@ -9863,6 +11591,10 @@ void CHunter::Play_SSword_Combo_Diagonal_L()
 		{
 			m_tObjParam.bSuperArmor = true;
 			m_eState = HUNTER_ANI::SSword_Atk_N03;
+
+			m_pBattleAgentCom->Set_RimColor(_v4(0.f, 0.f, 0.f, 0.f));
+			m_pBattleAgentCom->Set_RimAlpha(0.5f);
+			m_pBattleAgentCom->Set_RimValue(8.f);
 
 			return;
 		}
@@ -9888,13 +11620,15 @@ void CHunter::Play_SSword_Combo_Diagonal_L()
 			if (false == m_bEventTrigger[2])
 			{
 				m_bEventTrigger[2] = true;
+				m_dAniPlayMul = 1;
 				m_pWeapon->Set_Target_CanAttack(true);
 				m_pWeapon->Set_Enable_Trail(true);
 				m_tObjParam.bSuperArmor = true;
 
 				g_pSoundManager->Stop_Sound(CSoundManager::Hunter_SFX_01);
+				g_pSoundManager->Stop_Sound(CSoundManager::Hunter_SFX_02);
 
-				m_iRandom = CALC::Random_Num(0, 3);
+				m_iRandom = CALC::Random_Num(0, 5);
 
 				switch (m_iRandom)
 				{
@@ -9910,14 +11644,42 @@ void CHunter::Play_SSword_Combo_Diagonal_L()
 				case 3:
 					g_pSoundManager->Play_Sound(L"Monster_Blade_Swing3.ogg", CSoundManager::Hunter_SFX_01, CSoundManager::Effect_Sound);
 					break;
+				case 4:
+					g_pSoundManager->Play_Sound(L"Monster_Blade_Swing4.ogg", CSoundManager::Hunter_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				case 5:
+					g_pSoundManager->Play_Sound(L"Monster_Blade_Swing5.ogg", CSoundManager::Hunter_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				}
+
+				switch (CALC::Random_Num(0, 3))
+				{
+				case 0:
+					g_pSoundManager->Play_Sound(L"Monster_BladeWeapon_Sub0.ogg", CSoundManager::Hunter_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 1:
+					g_pSoundManager->Play_Sound(L"Monster_BladeWeapon_Sub1.ogg", CSoundManager::Hunter_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 2:
+					g_pSoundManager->Play_Sound(L"Monster_BladeWeapon_Sub2.ogg", CSoundManager::Hunter_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 3:
+					g_pSoundManager->Play_Sound(L"Monster_BladeWeapon_Sub3.ogg", CSoundManager::Hunter_SFX_02, CSoundManager::Effect_Sound);
+					break;
 				}
 			}
 		}
 		else if (1.f <= AniTime)
 		{
-			if (false == m_bEventTrigger[9])
+			if (false == m_bEventTrigger[3])
 			{
-				m_bEventTrigger[9] = true;
+				m_bEventTrigger[3] = true;
+
+				m_dAniPlayMul = 0.5;
+
+				m_pBattleAgentCom->Set_RimColor(_v4(1.f, 0.f, 0.f, 0.f));
+				m_pBattleAgentCom->Set_RimAlpha(1.f);
+				m_pBattleAgentCom->Set_RimValue(5.f);
 
 				g_pSoundManager->Stop_Sound(CSoundManager::Hunter_Voice);
 
@@ -9952,9 +11714,9 @@ void CHunter::Play_SSword_Combo_Diagonal_L()
 
 		if (0.900f < AniTime && 1.333f > AniTime)
 		{
-			if (false == m_bEventTrigger[3])
+			if (false == m_bEventTrigger[4])
 			{
-				m_bEventTrigger[3] = true;
+				m_bEventTrigger[4] = true;
 				m_fSkillMoveSpeed_Cur = 6.f;
 				m_fSkillMoveAccel_Cur = 0.f;
 				m_fSkillMoveMultiply = 1.5f;
@@ -10015,13 +11777,17 @@ void CHunter::Play_SSword_Combo_Diagonal_L()
 			m_bCanCoolDown = true;
 			m_fCoolDownMax = 1.2f;
 
+			m_pBattleAgentCom->Set_RimColor(_v4(0.f, 0.f, 0.f, 0.f));
+			m_pBattleAgentCom->Set_RimAlpha(0.5f);
+			m_pBattleAgentCom->Set_RimValue(8.f);
+
 			return;
 		}
 		else if (1.700f <= AniTime)
 		{
-			if (false == m_bEventTrigger[4])
+			if (false == m_bEventTrigger[5])
 			{
-				m_bEventTrigger[4] = true;
+				m_bEventTrigger[5] = true;
 				m_pWeapon->Set_Enable_Trail(false);
 			}
 		}
@@ -10039,13 +11805,15 @@ void CHunter::Play_SSword_Combo_Diagonal_L()
 			if (false == m_bEventTrigger[7])
 			{
 				m_bEventTrigger[7] = true;
+				m_dAniPlayMul = 1;
 				m_pWeapon->Set_Target_CanAttack(true);
 				m_pWeapon->Set_Enable_Trail(true);
 				m_tObjParam.bSuperArmor = true;
 
 				g_pSoundManager->Stop_Sound(CSoundManager::Hunter_SFX_01);
+				g_pSoundManager->Stop_Sound(CSoundManager::Hunter_SFX_02);
 
-				m_iRandom = CALC::Random_Num(0, 3);
+				m_iRandom = CALC::Random_Num(0, 5);
 
 				switch (m_iRandom)
 				{
@@ -10061,14 +11829,42 @@ void CHunter::Play_SSword_Combo_Diagonal_L()
 				case 3:
 					g_pSoundManager->Play_Sound(L"Monster_Blade_Swing3.ogg", CSoundManager::Hunter_SFX_01, CSoundManager::Effect_Sound);
 					break;
+				case 4:
+					g_pSoundManager->Play_Sound(L"Monster_Blade_Swing4.ogg", CSoundManager::Hunter_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				case 5:
+					g_pSoundManager->Play_Sound(L"Monster_Blade_Swing5.ogg", CSoundManager::Hunter_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				}
+
+				switch (CALC::Random_Num(0, 3))
+				{
+				case 0:
+					g_pSoundManager->Play_Sound(L"Monster_BladeWeapon_Sub0.ogg", CSoundManager::Hunter_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 1:
+					g_pSoundManager->Play_Sound(L"Monster_BladeWeapon_Sub1.ogg", CSoundManager::Hunter_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 2:
+					g_pSoundManager->Play_Sound(L"Monster_BladeWeapon_Sub2.ogg", CSoundManager::Hunter_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 3:
+					g_pSoundManager->Play_Sound(L"Monster_BladeWeapon_Sub3.ogg", CSoundManager::Hunter_SFX_02, CSoundManager::Effect_Sound);
+					break;
 				}
 			}
 		}
 		else if (1.f <= AniTime)
 		{
-			if (false == m_bEventTrigger[10])
+			if (false == m_bEventTrigger[8])
 			{
-				m_bEventTrigger[10] = true;
+				m_bEventTrigger[8] = true;
+
+				m_dAniPlayMul = 0.5;
+
+				m_pBattleAgentCom->Set_RimColor(_v4(1.f, 0.f, 0.f, 0.f));
+				m_pBattleAgentCom->Set_RimAlpha(1.f);
+				m_pBattleAgentCom->Set_RimValue(5.f);
 
 				g_pSoundManager->Stop_Sound(CSoundManager::Hunter_Voice);
 
@@ -10103,9 +11899,9 @@ void CHunter::Play_SSword_Combo_Diagonal_L()
 
 		if (1.000f < AniTime && 1.567f > AniTime)
 		{
-			if (false == m_bEventTrigger[8])
+			if (false == m_bEventTrigger[9])
 			{
-				m_bEventTrigger[8] = true;
+				m_bEventTrigger[9] = true;
 				m_fSkillMoveSpeed_Cur = 6.f;
 				m_fSkillMoveAccel_Cur = 0.f;
 				m_fSkillMoveMultiply = 1.f;
@@ -10446,6 +12242,8 @@ void CHunter::Play_Move()
 			m_fSkillMoveSpeed_Cur = 4.f;
 			m_fSkillMoveAccel_Cur = 0.f;
 			m_fSkillMoveMultiply = 0.5f;
+
+			m_fFootSoundMax = 0.4f;
 		}
 
 		if (nullptr == m_pAggroTarget)
@@ -10507,6 +12305,8 @@ void CHunter::Play_Move()
 			m_fSkillMoveSpeed_Cur = 2.5f;
 			m_fSkillMoveAccel_Cur = 0.f;
 			m_fSkillMoveMultiply = 0.5f;
+
+			m_fFootSoundMax = 0.48f;
 
 			switch (CALC::Random_Num(HUNTER_ANI::Walk_R, HUNTER_ANI::Walk_B))
 			{
@@ -10590,6 +12390,8 @@ void CHunter::Play_Move()
 			m_fSkillMoveSpeed_Cur = 2.5f;
 			m_fSkillMoveAccel_Cur = 0.f;
 			m_fSkillMoveMultiply = 0.5f;
+
+			m_fFootSoundMax = 0.47f;
 		}
 
 		Function_Movement(m_fSkillMoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_Z));
@@ -10881,7 +12683,10 @@ void CHunter::Play_Dead()
 					m_fDeadEffect_Delay = 0.f;
 
 					Give_Mana_To_Player(5);
-					Check_DropItem(MONSTER_NAMETYPE::M_Hunter);
+
+					if (false == m_pRigidCom->Get_IsFall())
+						Check_DropItem(MONSTER_NAMETYPE::M_Hunter);
+
 					CObjectPool_Manager::Get_Instance()->Create_Object(L"GameObject_Haze", (void*)&CHaze::HAZE_INFO(_float(CCalculater::Random_Num(100, 300)), m_pTransformCom->Get_Pos(), 0.f));
 				}
 			}
@@ -11054,7 +12859,7 @@ HRESULT CHunter::Ready_Status(void* pArg)
 		{
 			m_eMonsterColor = MONSTER_COLOR_TYPE::BLACK;
 			m_tObjParam.fDamage = 250.f * pow(1.5f, g_eStageIdx_Cur - 1);
-			m_tObjParam.fHp_Max = 2300.f * pow(1.5f, g_eStageIdx_Cur - 1);
+			m_tObjParam.fHp_Max = 230000.f * pow(1.5f, g_eStageIdx_Cur - 1);
 			m_tObjParam.fArmor_Max = 100.f * pow(1.5f, g_eStageIdx_Cur - 1);
 
 			m_fRecognitionRange = 15.f;
@@ -11102,6 +12907,7 @@ HRESULT CHunter::Ready_Status(void* pArg)
 	m_tObjParam.bCanDodge = true; //회피 가능
 	m_tObjParam.bIsDodge = false;  //회피 진행중 아님
 
+	m_bCanSequencePattern = true; //순차진행 여부
 	m_bCanPlayDead = false; //죽음 애니 진행시 true;
 	m_bInRecognitionRange = false; //인지 범위 여부
 	m_bInAtkRange = false; //공격 범위 여부
@@ -11142,22 +12948,27 @@ HRESULT CHunter::Ready_Weapon()
 	case WEAPON_STATE::WEAPON_Gun:
 		m_pWeapon->Change_WeaponData(Wpn_Gun_Black);
 		m_pWeapon->Set_WeaponDamage(WEAPON_DATA::Wpn_Gun_Black, 250.f * pow(1.5f, g_eStageIdx_Cur - 1));
+		m_iPatternCountMax = 5;
 		break;
 	case WEAPON_STATE::WEAPON_Halberd:
 		m_pWeapon->Change_WeaponData(Wpn_Halberd_Black);
 		m_pWeapon->Set_WeaponDamage(WEAPON_DATA::Wpn_Halberd_Black, 250.f * pow(1.5f, g_eStageIdx_Cur - 1));
+		m_iPatternCountMax = 12;
 		break;
 	case WEAPON_STATE::WEAPON_Hammer:
 		m_pWeapon->Change_WeaponData(Wpn_Hammer_Black);
 		m_pWeapon->Set_WeaponDamage(WEAPON_DATA::Wpn_Hammer_Black, 250.f * pow(1.5f, g_eStageIdx_Cur - 1));
+		m_iPatternCountMax = 4;
 		break;
 	case WEAPON_STATE::WEAPON_LSword:
 		m_pWeapon->Change_WeaponData(Wpn_LSword_Black);
 		m_pWeapon->Set_WeaponDamage(WEAPON_DATA::Wpn_LSword_Black, 250.f * pow(1.5f, g_eStageIdx_Cur - 1));
+		m_iPatternCountMax = 6;
 		break;
 	case WEAPON_STATE::WEAPON_SSword:
 		m_pWeapon->Change_WeaponData(Wpn_SSword_Black);
 		m_pWeapon->Set_WeaponDamage(WEAPON_DATA::Wpn_SSword_Black, 250.f * pow(1.5f, g_eStageIdx_Cur - 1));
+		m_iPatternCountMax = 11;
 		break;
 	}
 

@@ -390,6 +390,15 @@ void CNPC_Yokumo::Check_Dist()
 	// 플레이어에서 E를 누르면, 리액트 컨버세이션을 활성화 시킨다.
 	else if (m_pInteractionButton->Get_ReactConversation() && m_bCanActive == true)
 	{
+		const _float MIN_DIST = 1.f;
+		const _float MAX_DIST = 2.f;
+
+		_float fLen = D3DXVec3Length(&_v3(TARGET_TO_TRANS(m_pPlayer)->Get_Pos() - m_pTransformCom->Get_Pos()));
+
+		// 거리 이내가 아닐 경우, 
+		if (fLen > MAX_DIST || fLen < MIN_DIST)
+			return;
+
 		// 오리진 각도 받아옴
 		m_fOriginAngle = m_pTransformCom->Get_Angle(AXIS_Y);
 
@@ -453,6 +462,15 @@ void CNPC_Yokumo::Check_Anim()
 
 void CNPC_Yokumo::Check_Bye()
 {
+	const _float MIN_DIST = 1.f;
+	const _float MAX_DIST = 2.f;
+
+	_float fLen = D3DXVec3Length(&_v3(TARGET_TO_TRANS(m_pPlayer)->Get_Pos() - m_pTransformCom->Get_Pos()));
+
+	// 거리 이내가 아닐 경우, 
+	if (fLen > MAX_DIST || fLen < MIN_DIST)
+		return;
+
 	if (!m_pShopUI->Get_Active() &&
 		!m_pUIManager->Get_Yokumo_NPCUI()->Get_Active() &&
 		!m_pUIManager->Get_GeneralStoreSellUI()->Get_Active() &&

@@ -40,6 +40,7 @@ _int CExplainArmorUI::Update_GameObject(_double TimeDelta)
 	{
 		SetUp_SubUI_Active(false);
 		m_bIsSubActive = false;
+		m_tArmorParam.iArmorName = ArmorAll_END;
 	}
 
 	if(m_bIsActive)
@@ -51,10 +52,15 @@ _int CExplainArmorUI::Update_GameObject(_double TimeDelta)
 		m_pPlusHPFont->Update_NumberValue(_float(m_tArmorParam.fPlusHP));
 
 		m_pReinForceFont->Set_UI_Pos(630.f, 255.f);	
-		m_pPlusDefFont->Set_UI_Pos(630.f, 299.f);	
+		m_pPlusDefFont->Set_UI_Pos(630.f, 279.f);	
 		m_pDefFont->Set_UI_Pos(630.f, 425.f);
 		m_pHPFont->Set_UI_Pos(630.f, 520.f);
-		SetUp_SubUI_Active(true);
+		m_pPlusHPFont->Set_UI_Pos(630.f, 300.f);
+
+		if(m_tArmorParam.iArmorName == ArmorAll_END)
+			SetUp_SubUI_Active(false);
+		else
+			SetUp_SubUI_Active(true);
 	}
 	else if (!m_bIsActive || m_tArmorParam.iArmorName == ArmorAll_END)
 	{
@@ -293,6 +299,12 @@ void CExplainArmorUI::SetUp_TexIdx()
 	{
 		m_iInfoIdx = 8;
 		m_iArmorIconIdx = 16;
+	}
+	break;
+	default:
+	{
+		m_iInfoIdx = 17;
+		m_iArmorIconIdx = 17;
 	}
 	break;
 	}

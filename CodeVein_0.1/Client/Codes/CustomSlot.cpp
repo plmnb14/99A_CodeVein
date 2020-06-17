@@ -179,7 +179,8 @@ HRESULT CCustomSlot::Render_GameObject()
 
 _bool CCustomSlot::Pt_InRect()
 {
-	return g_pInput_Device->MousePt_InRect(m_fPosX, m_fPosY, m_fSizeX, m_fSizeY, g_hWnd);
+	_float fHoverSize = 50.f;
+	return g_pInput_Device->MousePt_InRect(m_fPosX, m_fPosY, fHoverSize, fHoverSize, g_hWnd);
 }
 
 HRESULT CCustomSlot::Add_Component()

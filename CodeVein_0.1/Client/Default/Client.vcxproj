@@ -210,6 +210,7 @@
     <ClInclude Include="..\Headers\CustomSlot.h" />
     <ClInclude Include="..\Headers\Costume_Body.h" />
     <ClInclude Include="..\Headers\Costume_Head.h" />
+    <ClInclude Include="..\Headers\DropBox.h" />
     <ClInclude Include="..\Headers\ExpendCollectionUI.h" />
     <ClInclude Include="..\Headers\ExpendOptionUI.h" />
     <ClInclude Include="..\Headers\ExpendSellUI.h" />
@@ -239,6 +240,8 @@
     <ClInclude Include="..\Headers\NPC_Yokumo.h" />
     <ClInclude Include="..\Headers\Pet_DeerKing.h" />
     <ClInclude Include="..\Headers\PickUp_ItemUIManager.h" />
+    <ClInclude Include="..\Headers\PlayerGunBullet.h" />
+    <ClInclude Include="..\Headers\PlayerSkillBullet.h" />
     <ClInclude Include="..\Headers\PurchaseFailUI.h" />
     <ClInclude Include="..\Headers\ScriptUI.h" />
     <ClInclude Include="..\Headers\Costume_Mask.h" />
@@ -436,6 +439,7 @@
     <ClCompile Include="..\Codes\CustomSlot.cpp" />
     <ClCompile Include="..\Codes\Costume_Body.cpp" />
     <ClCompile Include="..\Codes\Costume_Head.cpp" />
+    <ClCompile Include="..\Codes\DropBox.cpp" />
     <ClCompile Include="..\Codes\ExpendCollectionUI.cpp" />
     <ClCompile Include="..\Codes\ExpendOptionUI.cpp" />
     <ClCompile Include="..\Codes\ExpendSellUI.cpp" />
@@ -465,6 +469,8 @@
     <ClCompile Include="..\Codes\NPC_Yokumo.cpp" />
     <ClCompile Include="..\Codes\Pet_DeerKing.cpp" />
     <ClCompile Include="..\Codes\PickUp_ItemUIManager.cpp" />
+    <ClCompile Include="..\Codes\PlayerGunBullet.cpp" />
+    <ClCompile Include="..\Codes\PlayerSkillBullet.cpp" />
     <ClCompile Include="..\Codes\PurchaseFailUI.cpp" />
     <ClCompile Include="..\Codes\ScriptUI.cpp" />
     <ClCompile Include="..\Codes\Costume_Mask.cpp" />

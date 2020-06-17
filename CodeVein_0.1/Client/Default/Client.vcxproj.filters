@@ -646,6 +646,15 @@
     <Filter Include="02.GameObject\Stage\5%29 UI\UI\18. GeneralStoreUI%28잡화점%29\05. GeneralStoreSellUI\03. MaterialSellUI">
       <UniqueIdentifier>{e7188671-adf6-4330-af61-32f0aacb0c8c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObject\Stage\0%29 Player\05%29 PlayerGunBullet">
+      <UniqueIdentifier>{90f6eb04-a51c-4722-9b21-2a9a33f00cd6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Stage\0%29 Player\06%29 PlayerSkillBullet">
+      <UniqueIdentifier>{b33520a3-435f-4a59-8ea1-5fea26210cbe}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Stage\7%29 Item\DropBox">
+      <UniqueIdentifier>{9c2cf3e3-9959-45aa-acec-144964749189}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -1356,6 +1365,15 @@
     <ClInclude Include="..\Headers\MaterialSellUI.h">
       <Filter>02.GameObject\Stage\5%29 UI\UI\18. GeneralStoreUI%28잡화점%29\05. GeneralStoreSellUI\03. MaterialSellUI</Filter>
     </ClInclude>
+    <ClInclude Include="..\Headers\PlayerGunBullet.h">
+      <Filter>02.GameObject\Stage\0%29 Player\05%29 PlayerGunBullet</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\PlayerSkillBullet.h">
+      <Filter>02.GameObject\Stage\0%29 Player\06%29 PlayerSkillBullet</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\DropBox.h">
+      <Filter>02.GameObject\Stage\7%29 Item\DropBox</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -2050,6 +2068,15 @@
     </ClCompile>
     <ClCompile Include="..\Codes\MaterialSellUI.cpp">
       <Filter>02.GameObject\Stage\5%29 UI\UI\18. GeneralStoreUI%28잡화점%29\05. GeneralStoreSellUI\03. MaterialSellUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\PlayerGunBullet.cpp">
+      <Filter>02.GameObject\Stage\0%29 Player\05%29 PlayerGunBullet</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\PlayerSkillBullet.cpp">
+      <Filter>02.GameObject\Stage\0%29 Player\06%29 PlayerSkillBullet</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\DropBox.cpp">
+      <Filter>02.GameObject\Stage\7%29 Item\DropBox</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

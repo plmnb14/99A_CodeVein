@@ -74,6 +74,8 @@ HRESULT CIceGirl::Ready_GameObject(void * pArg)
 	pBlackBoard->Set_Value(L"Voice_Tag", 0);
 	pBlackBoard->Set_Value(L"Voice_Play", false);
 	pBlackBoard->Set_Value(L"Voice_Stop", false);
+	pBlackBoard->Set_Value(L"Step_Play", false);
+	pBlackBoard->Set_Value(L"Step_Tag", 20);
 
 	CBT_Selector* Start_Sel = Node_Selector("행동 시작");
 	//CBT_Sequence* Start_Sel = Node_Sequence("행동 시작");	//테스트
@@ -1652,13 +1654,17 @@ CBT_Composite_Node * CIceGirl::Chase_Timer(_double dRunTime, _float fSpeed)
 	CBT_Simple_Parallel* Root_Parallel = Node_Parallel_Immediate("병렬");
 
 	CBT_Sequence* MainSeq = Node_Sequence("이동");
+	CBT_SetValue* StepPlay = Node_BOOL_SetValue("발소리 재생", L"Step_Play", true);
 	CBT_Wait* Wait0 = Node_Wait("대기0", dRunTime, 0);
+	CBT_SetValue* StepStop = Node_BOOL_SetValue("발소리 재생", L"Step_Play", false);
 
 	CBT_Sequence* SubSeq = Node_Sequence("추적");
 	CBT_MoveDirectly* Chase0 = Node_MoveDirectly_Chase("추적", L"Player_Pos", L"Monster_Speed", L"Monster_Dir", fSpeed, 3);
 
 	Root_Parallel->Set_Main_Child(MainSeq);
+	MainSeq->Add_Child(StepPlay);
 	MainSeq->Add_Child(Wait0);
+	MainSeq->Add_Child(StepStop);
 
 	Root_Parallel->Set_Sub_Child(SubSeq);
 	SubSeq->Add_Child(Chase0);
@@ -2081,6 +2087,10 @@ HRESULT CIceGirl::Update_Value_Of_BB()
 		g_pSoundManager->Play_Sound(const_cast<TCHAR*>(m_mapSound[m_pAIControllerCom->Get_IntValue(L"Voice_Tag")]), CSoundManager::CHANNELID::IceGirl_Voice, CSoundManager::SOUND::Effect_Sound);
 	}
 
+	if (true == m_pAIControllerCom->Get_BoolValue(L"Step_Play"))	// 재생
+	{
+		g_pSoundManager->Play_Sound(const_cast<TCHAR*>(m_mapSound[m_pAIControllerCom->Get_IntValue(L"Step_Tag")]), CSoundManager::CHANNELID::IceGirl_Step, CSoundManager::SOUND::Effect_Sound);
+	}
 
 	// 1. 베기 -> 얼음 소환 좌표
 	_v3 vSelfLook = *D3DXVec3Normalize(&_v3(), (_v3*)&m_pTransformCom->Get_WorldMat().m[2]);
@@ -2732,6 +2742,7 @@ HRESULT CIceGirl::Ready_Sound()
 	m_mapSound.emplace(15, L"Los_AttackThrust01_01_gate_f.ogg");
 	m_mapSound.emplace(16, L"Los_AttackSpecial01_02_gate_f.ogg");
 
+	m_mapSound.emplace(20, L"SE_FOOT_STEP_CARPET_001.ogg");
 
 	return S_OK;
 }
