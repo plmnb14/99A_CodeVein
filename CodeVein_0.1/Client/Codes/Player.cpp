@@ -389,6 +389,8 @@ HRESULT CPlayer::Render_GameObject_Instancing_SetPass(CShader * pShader)
 	IF_NOT_NULL(m_pWeapon[m_eActiveSlot])
 		m_pWeapon[m_eActiveSlot]->Late_Update_GameObject(dDeltaTime);
 
+	Draw_Collider();
+
 	return NOERROR;
 }
 

@@ -177,6 +177,8 @@ HRESULT CWeapon::Render_GameObject_Instancing_SetPass(CShader * pShader)
 		pShader->End_Pass();
 	}
 
+	Draw_Collider();
+
 	// 기즈모 할땐 켜야할것 같아요
 	//Draw_Collider();
 
