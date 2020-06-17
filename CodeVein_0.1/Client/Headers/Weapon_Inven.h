@@ -68,6 +68,7 @@ private:
 	_uint					m_iRegistIndex = 0;
 	CWeapon_Slot*			m_pRegistSlot[2];
 	CInventory_Icon*		m_pExitIcon = nullptr;
+	CWeapon_Slot*			m_pSoundSlot = nullptr;
 
 public:
 	static CWeapon_Inven*	Create(_Device pGraphic_Device);

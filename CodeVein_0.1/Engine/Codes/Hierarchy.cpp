@@ -47,19 +47,19 @@ STDMETHODIMP CHierarchy::CreateMeshContainer(LPCSTR Name, CONST D3DXMESHDATA * p
 	LPD3DXMESH		pMesh = pMeshData->pMesh;
 	Safe_AddRef(pMesh);
 
-	_ulong dwMeshContainerCnt = pMesh->GetNumFaces();
-
-	pMeshContainer->pAdjacency = new _ulong[pMesh->GetNumFaces() * 3];
-	memcpy(pMeshContainer->pAdjacency, pAdjacency, sizeof(_ulong) * pMesh->GetNumFaces() * 3);
+	//_ulong dwMeshContainerCnt = pMesh->GetNumFaces();
+	//
+	//pMeshContainer->pAdjacency = new _ulong[pMesh->GetNumFaces() * 3];
+	//memcpy(pMeshContainer->pAdjacency, pAdjacency, sizeof(_ulong) * pMesh->GetNumFaces() * 3);
 
 	_ulong dwFVF = pMesh->GetFVF();
 
 	D3DVERTEXELEMENT9		Decl[MAX_FVF_DECL_SIZE];
 	pMesh->GetDeclaration(Decl);
-
 	pMesh->CloneMesh(pMesh->GetOptions(), Decl, m_pGraphic_Device, &pMeshContainer->MeshData.pMesh);
 
 
+	//
 	Safe_Release(pMesh);
 
 	pMeshContainer->NumMaterials = NumMaterials;
@@ -373,6 +373,8 @@ STDMETHODIMP CHierarchy::CreateMeshContainer(LPCSTR Name, CONST D3DXMESHDATA * p
 
 	if (FAILED(pMeshContainer->MeshData.pMesh->CloneMesh(pMesh->GetOptions(), Decl, m_pGraphic_Device, &pMeshContainer->pOriginalMesh)))
 		return E_FAIL;
+
+	Safe_Release(pMesh);
 
 
 	*ppNewMeshContainer = pMeshContainer;

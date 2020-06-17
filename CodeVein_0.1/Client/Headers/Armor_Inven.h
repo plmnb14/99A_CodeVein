@@ -53,6 +53,7 @@ private:
 	CExplainArmorUI*		m_pExplainUI = nullptr;
 	_bool					m_bIsSubActive = false;
 	CInventory_Icon*		m_pExitIcon = nullptr;
+	CArmor_Slot*			m_pSoundSlot = nullptr;
 
 	_bool					m_bLateInit = false;
 	CPlayer*				m_pPlayer = nullptr;

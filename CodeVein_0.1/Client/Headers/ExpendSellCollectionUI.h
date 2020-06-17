@@ -41,6 +41,7 @@ private:
 	vector<CExpendables_Slot*>	m_vecSlot;
 	CExpendSellUI*				m_pExpendSellUI = nullptr;
 	CExpend_InfoUI*				m_pInfoUI = nullptr;
+	CExpendables_Slot*			m_pSoundSlot = nullptr;
 
 public:
 	static CExpendSellCollectionUI*		Create(_Device pGraphic_Device);

@@ -121,8 +121,11 @@ private:
 	void Check_Dist();
 	void Check_AniEvent();
 	void Check_DeadEffect(_double TimeDelta);
-	
+	void Check_FootSound();
+
+	void Play_SequenceAtk();
 	void Play_RandomAtkNormal();
+
 	void Play_RDiagonal(); //n1 ¿ì´ë°¢
 	void Play_L(); //n2 ÁÂÈ¾
 	void Play_BackDumpling(); //n3 ¹é´ýºí¸µ
@@ -155,6 +158,8 @@ public:
 private:
 	_mat*					m_matBone[Bone_End];
 	THAIMAN_ANI				m_eState;
+	_float					m_fFootSound = 0.f;
+	_float					m_fFootSoundMax = 0.f;
 
 };
 

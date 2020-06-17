@@ -187,6 +187,10 @@ void CArmor_Inven::Click_Inven()
 	{
 		if (pSlot->Pt_InRect())
 		{
+			if (m_pSoundSlot != pSlot)
+				CUI_Manager::Get_Instance()->Stop_Play_UISound(L"Slot_Regist.ogg", CSoundManager::CHANNELID::UI_Click, CSoundManager::Effect_Sound);
+			m_pSoundSlot = pSlot;
+
 			ARMOR_PARAM tParam = pSlot->Get_ArmorParam();
 			m_pExplainUI->Set_ArmorParam(tParam);
 
@@ -197,14 +201,13 @@ void CArmor_Inven::Click_Inven()
 				Reset_SelectSlot();
 				pSlot->Set_Select(true);
 				pTotal_Inven->Set_ArmorParam(tParam);
-				
+
 				_float fMaxHP = tParam.fHP + tParam.fPlusHP;
 				m_pPlayer->Set_ArmorSlot((ARMOR_All_DATA)tParam.iArmorName, fMaxHP);
-				
+
 				CUI_Manager::Get_Instance()->Stop_Play_UISound(L"Slot_Regist.ogg", CSoundManager::CHANNELID::UI_Click, CSoundManager::Effect_Sound);
-			}			
+			}
 		}
-		
 	}
 
 	if (m_pExitIcon->Pt_InRect() && g_pInput_Device->Get_DIMouseState(CInput_Device::DIM_LB))

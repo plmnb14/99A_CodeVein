@@ -25,7 +25,7 @@ HRESULT CMainApp::Ready_MainApp()
 		return E_FAIL;
 
 	// º¼·ýÁ¶Àý
-	g_pSoundManager->Set_Volume(CSoundManager::Master_Volume, 0.0f);
+	g_pSoundManager->Set_Volume(CSoundManager::Master_Volume, 0.5f);
 
 	g_pSoundManager->Set_Volume(CSoundManager::Effect_Volume, 0.8f);
 	g_pSoundManager->Set_Volume(CSoundManager::BGM_Volume, 0.8f); 
@@ -201,23 +201,23 @@ void CMainApp::Global_KeyInput()
 			CCameraMgr::Get_Instance()->Set_CamView(BACK_VIEW);
 	}
 
-	//// All Gizmo's Toggle On / Off
-	//if (g_pInput_Device->Key_Down(DIK_NUMPAD6))
-	//{
-	//	g_pManagement->Gizmo_Toggle();
-	//}
-	//
-	//// Cell Gizmo's Toggle On / Off
-	//if (g_pInput_Device->Key_Down(DIK_NUMPAD7))
-	//{
-	//	g_pManagement->Gizmo_CellEnable();
-	//}
-	//
-	//// Collider Gizmo Toggle On / Off
-	//if (g_pInput_Device->Key_Down(DIK_NUMPAD8))
-	//{
-	//	g_pManagement->Gizmo_ColliderEnable();
-	//}
+	// All Gizmo's Toggle On / Off
+	if (g_pInput_Device->Key_Down(DIK_I))
+	{
+		g_pManagement->Gizmo_Toggle();
+	}
+
+	// Cell Gizmo's Toggle On / Off
+	if (g_pInput_Device->Key_Down(DIK_O))
+	{
+		g_pManagement->Gizmo_CellEnable();
+	}
+
+	// Collider Gizmo Toggle On / Off
+	if (g_pInput_Device->Key_Down(DIK_P))
+	{
+		g_pManagement->Gizmo_ColliderEnable();
+	}
 
 	// Frame Toggle On / Off
 	if (g_pInput_Device->Key_Down(DIK_SLASH))

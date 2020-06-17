@@ -54,6 +54,7 @@ private:
 	CInventory_Icon*		m_pExitIcon = nullptr;
 	CExplainSkillUI*		m_pExplainUI = nullptr;
 	_bool					m_bIsSubActive = false;
+	CSkillSlot*				m_pSoundSlot = nullptr;
 
 public:
 	static CSkill_Inven*		Create(_Device pGraphic_Device);

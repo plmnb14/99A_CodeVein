@@ -200,9 +200,6 @@ _int CTexEffect::Update_GameObject(_double TimeDelta)
 
 _int CTexEffect::Late_Update_GameObject(_double TimeDelta)
 {
-	if (nullptr == m_pRendererCom)
-		return E_FAIL;
-
 	if (m_bIsDead || m_fCreateDelay > 0.f)
 		return S_OK;
 		
@@ -224,14 +221,24 @@ HRESULT CTexEffect::Render_GameObject_SetShader(CShader* pShader)
 		return E_FAIL;
 		
 	_int iPass = m_iPass;
-	if (!m_pInfo->bDistortion && m_pInfo->bUseRGBA && (m_pInfo->fMaskIndex != -1.f))
+	if(m_pInfo->bDistortion)
+		iPass = m_iPass;
+	else if (m_pInfo->bUseRGBA && (m_pInfo->fMaskIndex != -1.f) && !m_pInfo->bDissolve)
 		iPass = 10;
-	else if (!m_pInfo->bDistortion && m_pInfo->bUseRGBA && (m_pInfo->fMaskIndex == -1.f))
+	else if (m_pInfo->bUseRGBA && (m_pInfo->fMaskIndex == -1.f) && !m_pInfo->bDissolve)
 		iPass = 11;
-	else if (!m_pInfo->bDistortion && m_pInfo->bUseColorTex && (m_pInfo->fMaskIndex != -1.f))
+	else if (m_pInfo->bUseColorTex && (m_pInfo->fMaskIndex != -1.f) && !m_pInfo->bDissolve)
 		iPass = 12;
-	else if (!m_pInfo->bDistortion && m_pInfo->bUseColorTex && (m_pInfo->fMaskIndex == -1.f))
+	else if (m_pInfo->bUseColorTex && (m_pInfo->fMaskIndex == -1.f) && !m_pInfo->bDissolve)
 		iPass = 13;
+	else if (m_pInfo->bUseRGBA && (m_pInfo->fMaskIndex != -1.f) && m_pInfo->bDissolve)
+		iPass = 14;
+	else if (m_pInfo->bUseRGBA && (m_pInfo->fMaskIndex == -1.f) && m_pInfo->bDissolve)
+		iPass = 15;
+	else if (m_pInfo->bUseColorTex && (m_pInfo->fMaskIndex != -1.f) && m_pInfo->bDissolve)
+		iPass = 16;
+	else if (m_pInfo->bUseColorTex && (m_pInfo->fMaskIndex == -1.f) && m_pInfo->bDissolve)
+		iPass = 17;
 
 	pShader->Begin_Pass(iPass);
 	
@@ -242,6 +249,7 @@ HRESULT CTexEffect::Render_GameObject_SetShader(CShader* pShader)
 	pShader->Commit_Changes();
 	
 	m_pBufferCom->Render_VIBuffer();
+
 	pShader->End_Pass();
 	
 	return S_OK;
@@ -249,10 +257,6 @@ HRESULT CTexEffect::Render_GameObject_SetShader(CShader* pShader)
 
 HRESULT CTexEffect::Render_GameObject_HWInstance()
 {
-	if (nullptr == m_pShaderCom ||
-		nullptr == m_pBufferCom)
-		return E_FAIL;
-	
 	//m_pBufferCom->Render_Before_Instancing(m_pTransformCom->Get_WorldMat());
 	
 	m_pShaderCom->Begin_Shader();

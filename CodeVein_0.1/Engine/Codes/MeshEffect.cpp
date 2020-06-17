@@ -152,10 +152,6 @@ HRESULT CMeshEffect::Render_GameObject()
 
 HRESULT CMeshEffect::Render_GameObject_SetShader(CShader * pShader)
 {
-	if (nullptr == pShader ||
-		nullptr == m_pMeshCom)
-		return E_FAIL;
-
 	if (m_iPass == 0)
 	{
 		//cout << "J : Mesh Pass is Zero" << endl;
@@ -191,10 +187,6 @@ HRESULT CMeshEffect::Render_GameObject_SetShader(CShader * pShader)
 
 HRESULT CMeshEffect::Render_GameObject_SetPass(CShader* pShader, _int iPass, _bool _bIsForMotionBlur)
 {
-	if (nullptr == pShader ||
-		nullptr == m_pMeshCom)
-		return E_FAIL;
-
 	_mat		ViewMatrix = CManagement::Get_Instance()->Get_Transform(D3DTS_VIEW);
 	_mat		ProjMatrix = CManagement::Get_Instance()->Get_Transform(D3DTS_PROJECTION);
 

@@ -49,10 +49,12 @@ void CGizmo::Draw_Sphere(_v3 _vVertex, _float _fRadius)
 	if (!m_bEnableCollider)
 		return;
 
-	m_Color = COLOR_GREEN(0.5f);
+	m_Color = COLOR_GREEN(1.f);
 
 	_mat matView, matViewInverse;
 	_mat matWorld, matScale, matPos;
+
+	_mat matShaderView, matShaderProj;
 
 	m_pGraphicDev->GetTransform(D3DTS_VIEW, &matView);
 
@@ -113,7 +115,7 @@ void CGizmo::Draw_Sphere(_v3 _vVertex, _float _fRadius)
 
 	Init_Shader(matViewInverse);
 
-	m_pGraphicDev->SetFVF(VTXFVF_COL);
+	//m_pGraphicDev->SetFVF(VTXFVF_COL);
 
 	_float fAlpha = 1.f;
 
@@ -122,7 +124,10 @@ void CGizmo::Draw_Sphere(_v3 _vVertex, _float _fRadius)
 
 	m_pGraphicDev->DrawPrimitiveUP(D3DPT_LINESTRIP, 20, pVtxCol_Z, sizeof(VTX_COL));
 
+	//m_pGizmoShader->Set_Value("g_GizmoColor", &m_Color, sizeof(_v4));
 	m_pGizmoShader->Set_Value("g_matWorld", &matWorld, sizeof(_mat));
+	//m_pGizmoShader->Set_Value("g_matView", &matShaderView, sizeof(_mat));
+	//m_pGizmoShader->Set_Value("g_matProj", &matShaderProj, sizeof(_mat));
 	m_pGizmoShader->Set_Value("g_fAlpha", &fAlpha, sizeof(float));
 
 	m_pGizmoShader->Commit_Changes();
@@ -581,7 +586,7 @@ HRESULT CGizmo::Init_Shader(_mat _DefaultMat)
 	if (FAILED(m_pGizmoShader->Set_Value("g_matProj", &ProjMatrix, sizeof(_mat))))
 		return E_FAIL;
 
-	if (FAILED(m_pGizmoShader->Set_Value("g_GizmoColor", &m_Color, sizeof(_mat))))
+	if (FAILED(m_pGizmoShader->Set_Value("g_GizmoColor", &m_Color, sizeof(_v4))))
 		return E_FAIL;
 
 	Safe_Release(pManagement);

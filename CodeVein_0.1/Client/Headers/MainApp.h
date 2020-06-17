@@ -25,7 +25,7 @@ public:
 
 private:
 	_float					m_fFrameDeltaTimer = 0.f;
-	_bool					m_bFrameRender = true;
+	_bool					m_bFrameRender = false;
 
 private:
 	CRenderer*				m_pRenderer = nullptr;

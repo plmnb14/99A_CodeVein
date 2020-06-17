@@ -448,9 +448,17 @@ namespace Engine
 	{
 		LPD3DXMESH			pOriginalMesh;
 		MESHTEXTURE*		pMeshTexture; // 서브셋갯수만큼 구조체르 생성한다.(각 서브셋마다 최대 네개의 텍스쳐를 보관할 수 있도록)
+		LPD3DXBUFFER		pBoneCombinationBuffer;
 		D3DXMATRIX*			pOffsetMatrices;
 		D3DXMATRIX**		ppCombinedTransformationMatrices;
 		D3DXMATRIX*			pRenderMatrices;
+
+		//_ulong				dwNumAttributeGroups;
+		//D3DXATTRIBUTERANGE*	pAttributeTable;
+
+		//_ulong				dwMaxVertexInfluneces;
+		//_ulong				dwNumBoneComboEntries;
+
 		unsigned long		dwNumBones;
 
 	}D3DXMESHCONTAINER_DERIVED, *LPD3DXMESHCONTAINER_DERIVED;

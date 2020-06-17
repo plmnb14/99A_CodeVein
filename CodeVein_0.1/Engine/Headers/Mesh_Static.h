@@ -19,10 +19,11 @@ public:
 
 public:
 	_ulong Get_NumMaterials() const { return m_dwNumMaterials; }
-	_ulong Get_MaterialPass(_ulong dwPass) { return m_sMaterialPass[dwPass]; }
+	_ushort Get_MaterialPass(_ulong dwPass) { return m_sMaterialPass[dwPass]; }
 	LPDIRECT3DBASETEXTURE9 Get_Texture(_ulong dwMaterialIndex, MESHTEXTURE::TYPE eType);
 
 	LPD3DXMESH	Get_pMesh() { return m_pMesh; }
+	_float Get_FrustumRadius() { return m_fHalfFristumRadius; }
 
 public:
 	virtual HRESULT Ready_Component_Prototype(const _tchar* pFilePath, const _tchar* pFileName, _mat PivotMatrix);
@@ -38,13 +39,15 @@ private:
 	D3DXMATERIAL*			m_pMaterials = nullptr;
 	MESHTEXTURE*			m_ppTextures = nullptr;
 	_ulong					m_dwNumMaterials = 0;
-	_mat					m_matPivot;
+	_mat					m_matPivot = {};
 
-	_ulong					m_dwVtxCnt;
-	_ulong					m_dwStride;
+	_ulong					m_dwVtxCnt = 0;
+	_ulong					m_dwStride = 0;
 
-	_v3						m_pVtxMin;
-	_v3						m_pVtxMax;
+	_float					m_fHalfFristumRadius = 0.f;
+
+	_v3						m_pVtxMin = {};
+	_v3						m_pVtxMax = {};
 
 	_ushort					m_sMaterialPass[STR_128] = {};
 

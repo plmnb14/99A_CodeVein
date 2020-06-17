@@ -64,8 +64,8 @@ HRESULT CCostume_Mask::Add_Components(const _tchar * pMeshName)
 		return E_FAIL;
 
 	// For.Com_Shader
-	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Shader_Mesh", L"Com_Shader", (CComponent**)&m_pShader)))
-		return E_FAIL;
+	//if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Shader_Mesh", L"Com_Shader", (CComponent**)&m_pShader)))
+	//	return E_FAIL;
 
 	// for.Com_Mesh
 	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, pMeshName, L"Com_StaticMesh", (CComponent**)&m_pStaticMesh)))
@@ -200,9 +200,6 @@ HRESULT CCostume_Mask::Render_GameObject_Instancing_SetPass(CShader * pShader)
 	if (false == m_bEnable)
 		return NO_EVENT;
 
-	IF_NULL_VALUE_RETURN(pShader, E_FAIL);
-	IF_NULL_VALUE_RETURN(m_pStaticMesh, E_FAIL);
-
 	if (m_tObjParam.bInvisible)
 		return S_OK;
 
@@ -233,10 +230,6 @@ HRESULT CCostume_Mask::Render_GameObject_Instancing_SetPass(CShader * pShader)
 
 HRESULT CCostume_Mask::Render_GameObject_SetPass(CShader * pShader, _int iPass, _bool _bIsForMotionBlur)
 {
-	if (nullptr == pShader ||
-		nullptr == m_pStaticMesh)
-		return E_FAIL;
-
 	//============================================================================================
 	// 공통 변수
 	//============================================================================================
@@ -244,6 +237,8 @@ HRESULT CCostume_Mask::Render_GameObject_SetPass(CShader * pShader, _int iPass, 
 	_mat	ViewMatrix = g_pManagement->Get_Transform(D3DTS_VIEW);
 	_mat	ProjMatrix = g_pManagement->Get_Transform(D3DTS_PROJECTION);
 	_mat	WorldMatrix = m_pTransform->Get_WorldMat();
+
+	_mat matWVP = WorldMatrix * ViewMatrix * ProjMatrix;
 
 	if (FAILED(pShader->Set_Value("g_matWorld", &WorldMatrix, sizeof(_mat))))
 		return E_FAIL;
@@ -253,34 +248,13 @@ HRESULT CCostume_Mask::Render_GameObject_SetPass(CShader * pShader, _int iPass, 
 	//============================================================================================
 	if (_bIsForMotionBlur)
 	{
-		if (FAILED(pShader->Set_Value("g_matView", &ViewMatrix, sizeof(_mat))))
-			return E_FAIL;
-		if (FAILED(pShader->Set_Value("g_matProj", &ProjMatrix, sizeof(_mat))))
-			return E_FAIL;
 		if (FAILED(pShader->Set_Value("g_matLastWVP", &m_matLastWVP, sizeof(_mat))))
 			return E_FAIL;
 
-		m_matLastWVP = WorldMatrix * ViewMatrix * ProjMatrix;
+		m_matLastWVP = matWVP;
 
-		_bool bMotionBlur = true;
-		if (FAILED(pShader->Set_Bool("g_bMotionBlur", bMotionBlur)))
-			return E_FAIL;
-		_bool bDecalTarget = false;
-		if (FAILED(pShader->Set_Bool("g_bDecalTarget", bDecalTarget)))
-			return E_FAIL;
 		_float fBloomPower = 0.f;
 		if (FAILED(pShader->Set_Value("g_fBloomPower", &fBloomPower, sizeof(_float))))
-			return E_FAIL;
-	}
-
-	//============================================================================================
-	// 기타 상수
-	//============================================================================================
-	else
-	{
-		_mat matWVP = WorldMatrix * ViewMatrix * ProjMatrix;
-
-		if (FAILED(pShader->Set_Value("g_matWVP", &matWVP, sizeof(_mat))))
 			return E_FAIL;
 	}
 

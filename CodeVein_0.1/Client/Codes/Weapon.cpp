@@ -70,6 +70,12 @@ _int CWeapon::Late_Update_GameObject(_double TimeDelta)
 		nullptr == m_pMesh_Static)
 		return E_FAIL;
 
+	//Cacl_AttachBoneTransform();
+	//
+	//OnCollisionEnter();
+	//
+	//Update_Trails(TimeDelta);
+
 	_v3 vPos;
 	memcpy(vPos, &m_pTransform->Get_WorldMat()._41, sizeof(_v3));
 
@@ -148,14 +154,10 @@ HRESULT CWeapon::Render_GameObject()
 
 HRESULT CWeapon::Render_GameObject_Instancing_SetPass(CShader * pShader)
 {
-	if (nullptr == pShader ||
-		nullptr == m_pMesh_Static)
-		return E_FAIL;
-
 	if (FAILED(SetUp_ConstantTable(pShader)))
 		return E_FAIL;
 
-	_uint iNumSubSet = (_uint)m_pMesh_Static->Get_NumMaterials();
+	_uint iNumSubSet = m_pMesh_Static->Get_NumMaterials();
 
 	for (_uint i = 0; i < iNumSubSet; ++i)
 	{
@@ -175,6 +177,9 @@ HRESULT CWeapon::Render_GameObject_Instancing_SetPass(CShader * pShader)
 		pShader->End_Pass();
 	}
 
+	Draw_Collider();
+
+	// 기즈모 할땐 켜야할것 같아요
 	//Draw_Collider();
 
 	return NOERROR;
@@ -182,16 +187,9 @@ HRESULT CWeapon::Render_GameObject_Instancing_SetPass(CShader * pShader)
 
 HRESULT CWeapon::Render_GameObject_SetPass(CShader* pShader, _int iPass, _bool _bIsForMotionBlur)
 {
-	if (nullptr == pShader ||
-		nullptr == m_pMesh_Static)
-		return E_FAIL;
-
 	//============================================================================================
 	// 공통 변수
 	//============================================================================================
-
-	_mat	ViewMatrix = CManagement::Get_Instance()->Get_Transform(D3DTS_VIEW);
-	_mat	ProjMatrix = CManagement::Get_Instance()->Get_Transform(D3DTS_PROJECTION);
 	_mat	WorldMatrix = m_pTransform->Get_WorldMat();
 
 	if (FAILED(pShader->Set_Value("g_matWorld", &WorldMatrix, sizeof(_mat))))
@@ -202,30 +200,16 @@ HRESULT CWeapon::Render_GameObject_SetPass(CShader* pShader, _int iPass, _bool _
 	//============================================================================================
 	if (_bIsForMotionBlur)
 	{
+		_mat	ViewMatrix = CManagement::Get_Instance()->Get_Transform(D3DTS_VIEW);
+		_mat	ProjMatrix = CManagement::Get_Instance()->Get_Transform(D3DTS_PROJECTION);
+
 		if (FAILED(pShader->Set_Value("g_matLastWVP", &m_matLastWVP, sizeof(_mat))))
 			return E_FAIL;
 
 		m_matLastWVP = WorldMatrix * ViewMatrix * ProjMatrix;
 
-		_bool bMotionBlur = true;
-		if (FAILED(pShader->Set_Bool("g_bMotionBlur", bMotionBlur)))
-			return E_FAIL;
-		_bool bDecalTarget = false;
-		if (FAILED(pShader->Set_Bool("g_bDecalTarget", bDecalTarget)))
-			return E_FAIL;
-		_float fBloomPower = 0.f;
+		_float fBloomPower = 0.5f;
 		if (FAILED(pShader->Set_Value("g_fBloomPower", &fBloomPower, sizeof(_float))))
-			return E_FAIL;
-	}
-
-	//============================================================================================
-	// 기타 상수
-	//============================================================================================
-	else
-	{
-		_mat matWVP = WorldMatrix * ViewMatrix * ProjMatrix;
-
-		if (FAILED(pShader->Set_Value("g_matWVP", &matWVP, sizeof(_mat))))
 			return E_FAIL;
 	}
 
@@ -327,6 +311,8 @@ void CWeapon::OnCollisionEvent(list<CGameObject*> plistGameObject, _bool _bIsPla
 					// 충돌하는 대상이 카운터중이면,
 					if (nullptr != m_pTarget && true == iter->Get_Target_IsCounter())
 					{
+						cout << "카우너중!" << endl;
+
 						// 카운터하는 대상의 전방에 내가 포함되나 본다.
 						if (m_pBattleAgent->Check_TargetIsFrontOfMe(TARGET_TO_TRANS(iter), TARGET_TO_TRANS(m_pTarget)))
 						{
@@ -349,6 +335,7 @@ void CWeapon::OnCollisionEvent(list<CGameObject*> plistGameObject, _bool _bIsPla
 
 							// 포함되면, 나의 주인은 카운터 당한 상태이다.
 							m_pTarget->Set_Target_CanRepel(false);
+
 							// 무기 또한 공격불가
 							m_tObjParam.bCanAttack = false;
 						}
@@ -932,7 +919,9 @@ HRESULT CWeapon::Add_Component()
 HRESULT CWeapon::SetUp_Default()
 {
 	// Transform
-	m_pTransform->Set_Pos(V3_NULL);
+	_v3 tmpPos = _v3(0.f, 0.f, -0.01f);
+
+	m_pTransform->Set_Pos(tmpPos);
 	m_pTransform->Set_Scale(V3_ONE);
 	m_pTransform->Set_Angle(AXIS_X, D3DXToRadian(-90.f));
 

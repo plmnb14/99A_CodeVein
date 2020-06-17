@@ -57,6 +57,7 @@ _int CMonkey::Update_GameObject(_double TimeDelta)
 	Check_Hit();
 	Check_Dist();
 	Check_AniEvent();
+	Check_FootSound();
 	Function_CoolDown();
 
 	m_pMeshCom->SetUp_Animation(m_eState);
@@ -169,9 +170,6 @@ HRESULT CMonkey::Render_GameObject()
 
 HRESULT CMonkey::Render_GameObject_Instancing_SetPass(CShader * pShader)
 {
-	IF_NULL_VALUE_RETURN(pShader, E_FAIL);
-	IF_NULL_VALUE_RETURN(m_pMeshCom, E_FAIL);
-
 	m_pMeshCom->Play_Animation(DELTA_60 * m_dAniPlayMul);
 
 	if (m_bInFrustum)
@@ -179,20 +177,17 @@ HRESULT CMonkey::Render_GameObject_Instancing_SetPass(CShader * pShader)
 		if (FAILED(SetUp_ConstantTable(pShader)))
 			return E_FAIL;
 
-		_uint iNumMeshContainer = _uint(m_pMeshCom->Get_NumMeshContainer());
+		_uint iNumMeshContainer = m_pMeshCom->Get_NumMeshContainer();
 
-		for (_uint i = 0; i < _uint(iNumMeshContainer); ++i)
+		for (_uint i = 0; i < iNumMeshContainer; ++i)
 		{
-			_uint iNumSubSet = (_uint)m_pMeshCom->Get_NumMaterials(i);
+			_uint iNumSubSet = m_pMeshCom->Get_NumMaterials(i);
 
 			m_pMeshCom->Update_SkinnedMesh(i);
 
 			for (_uint j = 0; j < iNumSubSet; ++j)
 			{
-				m_iPass = m_pMeshCom->Get_MaterialPass(i, j);
-
-				if (m_bDissolve)
-					m_iPass = 3;
+				m_iPass = !m_bDissolve ? m_pMeshCom->Get_MaterialPass(i, j) : 3;
 
 				pShader->Begin_Pass(m_iPass);
 
@@ -222,17 +217,9 @@ HRESULT CMonkey::Render_GameObject_Instancing_SetPass(CShader * pShader)
 
 HRESULT CMonkey::Render_GameObject_SetPass(CShader * pShader, _int iPass, _bool _bIsForMotionBlur)
 {
-	if (false == m_bEnable)
-		return S_OK;
-
-	IF_NULL_VALUE_RETURN(pShader, E_FAIL);
-	IF_NULL_VALUE_RETURN(m_pMeshCom, E_FAIL);
-
 	//============================================================================================
 	// 공통 변수
 	//============================================================================================
-	_mat	ViewMatrix = g_pManagement->Get_Transform(D3DTS_VIEW);
-	_mat	ProjMatrix = g_pManagement->Get_Transform(D3DTS_PROJECTION);
 	_mat	WorldMatrix = m_pTransformCom->Get_WorldMat();
 
 	if (FAILED(pShader->Set_Value("g_matWorld", &WorldMatrix, sizeof(_mat))))
@@ -243,52 +230,33 @@ HRESULT CMonkey::Render_GameObject_SetPass(CShader * pShader, _int iPass, _bool 
 	//============================================================================================
 	if (_bIsForMotionBlur)
 	{
-		if (FAILED(pShader->Set_Value("g_matView", &ViewMatrix, sizeof(_mat))))
-			return E_FAIL;
-		if (FAILED(pShader->Set_Value("g_matProj", &ProjMatrix, sizeof(_mat))))
-			return E_FAIL;
+		_mat	ViewMatrix = g_pManagement->Get_Transform(D3DTS_VIEW);
+		_mat	ProjMatrix = g_pManagement->Get_Transform(D3DTS_PROJECTION);
+
 		if (FAILED(pShader->Set_Value("g_matLastWVP", &m_matLastWVP, sizeof(_mat))))
 			return E_FAIL;
 
 		m_matLastWVP = WorldMatrix * ViewMatrix * ProjMatrix;
 
-		//_bool bMotionBlur = true;
-		//if (FAILED(pShader->Set_Bool("g_bMotionBlur", bMotionBlur)))
-		//	return E_FAIL;
-		//_bool bDecalTarget = false;
-		//if (FAILED(pShader->Set_Bool("g_bDecalTarget", bDecalTarget)))
-		//	return E_FAIL;
 		_float fBloomPower = 0.5f;
 		if (FAILED(pShader->Set_Value("g_fBloomPower", &fBloomPower, sizeof(_float))))
 			return E_FAIL;
 	}
 
 	//============================================================================================
-	// 기타 상수
-	//============================================================================================
-	else
-	{
-		_mat matWVP = WorldMatrix * ViewMatrix * ProjMatrix;
-
-		if (FAILED(pShader->Set_Value("g_matWVP", &matWVP, sizeof(_mat))))
-			return E_FAIL;
-	}
-
-	//============================================================================================
 	// 쉐이더 실행
 	//============================================================================================
-	_uint iNumMeshContainer = _uint(m_pMeshCom->Get_NumMeshContainer());
+	_uint iNumMeshContainer = m_pMeshCom->Get_NumMeshContainer();
 
-	for (_uint i = 0; i < _uint(iNumMeshContainer); ++i)
+	for (_uint i = 0; i < iNumMeshContainer; ++i)
 	{
-		_uint iNumSubSet = (_uint)m_pMeshCom->Get_NumMaterials(i);
+		//m_pMeshCom->Update_SkinnedMesh(i);
+
+		_uint iNumSubSet = m_pMeshCom->Get_NumMaterials(i);
 
 		for (_uint j = 0; j < iNumSubSet; ++j)
 		{
-			_int tmpPass = m_pMeshCom->Get_MaterialPass(i, j);
-
 			pShader->Begin_Pass(iPass);
-			pShader->Commit_Changes();
 
 			pShader->Commit_Changes();
 
@@ -297,7 +265,6 @@ HRESULT CMonkey::Render_GameObject_SetPass(CShader * pShader, _int iPass, _bool 
 			pShader->End_Pass();
 		}
 	}
-
 	//============================================================================================
 
 	return S_OK;
@@ -384,6 +351,10 @@ void CMonkey::Check_Hit()
 				}
 				else
 				{
+					m_pBattleAgentCom->Set_RimColor(_v4(0.f, 0.f, 0.f, 0.f));
+					m_pBattleAgentCom->Set_RimAlpha(0.5f);
+					m_pBattleAgentCom->Set_RimValue(8.f);
+
 					if (true == m_tObjParam.bIsHit)
 					{
 						if (true == m_tObjParam.bHitAgain)
@@ -542,23 +513,38 @@ void CMonkey::Check_AniEvent()
 	case MONSTER_STATE_TYPE::ATTACK:
 		if (true == m_bCanChooseAtkType)
 		{
+			if (m_iPatternCount >= m_iPatternCountMax)
+			{
+				m_bCanSequencePattern = false;
+				m_iPatternCount = 0;
+			}
+
 			m_tObjParam.bCanAttack = false;
 			m_tObjParam.bIsAttack = true;
 
 			m_bCanChooseAtkType = false;
 
-			switch (CALC::Random_Num(MONSTER_ATK_TYPE::ATK_NORMAL, MONSTER_ATK_TYPE::ATK_COMBO))
+			if (true == m_bCanSequencePattern)
 			{
-			case MONSTER_ATK_TYPE::ATK_NORMAL:
-				m_eSecondCategory_ATK = MONSTER_ATK_TYPE::ATK_NORMAL;
-				Play_RandomAtkNormal();
-				break;
-			case MONSTER_ATK_TYPE::ATK_COMBO:
-				m_eSecondCategory_ATK = MONSTER_ATK_TYPE::ATK_COMBO;
-				Play_RandomAtkCombo();
-				m_bIsCombo = true;
-				break;
+				m_eSecondCategory_ATK = MONSTER_ATK_TYPE::ATK_SEQUNCE;
+				Play_SequenceAtk();
 			}
+			else
+			{
+				switch (CALC::Random_Num(MONSTER_ATK_TYPE::ATK_NORMAL, MONSTER_ATK_TYPE::ATK_COMBO))
+				{
+				case MONSTER_ATK_TYPE::ATK_NORMAL:
+					m_eSecondCategory_ATK = MONSTER_ATK_TYPE::ATK_NORMAL;
+					Play_RandomAtkNormal();
+					break;
+				case MONSTER_ATK_TYPE::ATK_COMBO:
+					m_eSecondCategory_ATK = MONSTER_ATK_TYPE::ATK_COMBO;
+					Play_RandomAtkCombo();
+					m_bIsCombo = true;
+					break;
+				}
+			}
+
 			return;
 		}
 		else
@@ -600,6 +586,48 @@ void CMonkey::Check_AniEvent()
 				case ATK_COMBO_TYPE::COMBO_RUNATK:
 					Play_Combo_RunAtk();
 					break;
+				}
+			}
+			else if (MONSTER_ATK_TYPE::ATK_SEQUNCE == m_eSecondCategory_ATK)
+			{
+				if (true == m_bIsCombo)
+				{
+					switch (m_eAtkCombo)
+					{
+					case ATK_COMBO_TYPE::COMBO_NORMAL:
+						Play_Combo_Normal();
+						break;
+					case ATK_COMBO_TYPE::COMBO_JUMP_CLOCK:
+						Play_Combo_Jump_Clock();
+						break;
+					case ATK_COMBO_TYPE::COMBO_RUNATK:
+						Play_Combo_RunAtk();
+						break;
+					}
+				}
+				else
+				{
+					switch (m_eState)
+					{
+					case MONKEY_ANI::Atk_N02:
+						Play_Atk_RotBody();
+						break;
+					case MONKEY_ANI::Atk_N01:
+						Play_RDiagonal();
+						break;
+					case MONKEY_ANI::Atk_Jump03:
+						Play_JumpDown();
+						break;
+					case MONKEY_ANI::Atk_Jump02:
+						Play_JumpLHand();
+						break;
+					case MONKEY_ANI::Atk_Jump01:
+						Play_Jump_RotBody();
+						break;
+					case MONKEY_ANI::Atk_FangShoot:
+						Play_FangShot();
+						break;
+					}
 				}
 			}
 		}
@@ -649,6 +677,96 @@ void CMonkey::Check_DeadEffect(_double TimeDelta)
 	return;
 }
 
+void CMonkey::Check_FootSound()
+{
+	if (MONKEY_ANI::Walk == m_eState ||
+		MONKEY_ANI::NF_Walk == m_eState ||
+		MONKEY_ANI::Run == m_eState)
+	{
+		m_fFootSound += DELTA_60;
+
+		if (m_fFootSound >= m_fFootSoundMax)
+		{
+			m_fFootSound = 0.f;
+
+			g_pSoundManager->Stop_Sound(CSoundManager::Monkey_Step);
+
+			switch (CALC::Random_Num(0, 5))
+			{
+			case 0:
+				g_pSoundManager->Play_Sound(L"Step0.ogg", CSoundManager::Monkey_Step, CSoundManager::Effect_Sound);
+				break;
+
+			case 1:
+				g_pSoundManager->Play_Sound(L"Step1.ogg", CSoundManager::Monkey_Step, CSoundManager::Effect_Sound);
+				break;
+
+			case 2:
+				g_pSoundManager->Play_Sound(L"Step2.ogg", CSoundManager::Monkey_Step, CSoundManager::Effect_Sound);
+				break;
+
+			case 3:
+				g_pSoundManager->Play_Sound(L"Step3.ogg", CSoundManager::Monkey_Step, CSoundManager::Effect_Sound);
+				break;
+
+			case 4:
+				g_pSoundManager->Play_Sound(L"Step4.ogg", CSoundManager::Monkey_Step, CSoundManager::Effect_Sound);
+				break;
+
+			case 5:
+				g_pSoundManager->Play_Sound(L"Step5.ogg", CSoundManager::Monkey_Step, CSoundManager::Effect_Sound);
+				break;
+			}
+		}
+	}
+
+	return;
+}
+
+void CMonkey::Play_SequenceAtk()
+{
+	switch (m_iPatternCount)
+	{
+	case 0:
+		m_eState = MONKEY_ANI::Atk_N02;
+		break;
+	case 1:
+		m_eState = MONKEY_ANI::Atk_N01;
+		break;
+	case 2:
+		m_eState = MONKEY_ANI::Atk_Jump03;
+		break;
+	case 3:
+		m_eState = MONKEY_ANI::Atk_Jump02;
+		break;
+	case 4:
+		m_eState = MONKEY_ANI::Atk_Jump01;
+		break;
+	case 5:
+		m_eState = MONKEY_ANI::Atk_FangShoot;
+		break;
+	case 6:
+		m_bIsCombo = true;
+		m_eAtkCombo = ATK_COMBO_TYPE::COMBO_JUMP_CLOCK;
+		m_eState = MONKEY_ANI::Atk_Jump01;
+		break;
+	case 7:
+		m_bIsCombo = true;
+		m_eAtkCombo = ATK_COMBO_TYPE::COMBO_NORMAL;
+		m_eState = MONKEY_ANI::Atk_N01;
+		break;
+	case 8:
+		m_bIsCombo = true;
+		m_eAtkCombo = ATK_COMBO_TYPE::COMBO_RUNATK;
+		m_eState = MONKEY_ANI::Atk_Sp_Start;
+		break;
+	}
+
+	++m_iPatternCount;
+
+	return;
+}
+
 void CMonkey::Play_RandomAtkNormal()
 {
 	_float fLenth = V3_LENGTH(&(TARGET_TO_TRANS(m_pAggroTarget)->Get_Pos() - m_pTransformCom->Get_Pos()));
@@ -685,8 +803,6 @@ void CMonkey::Play_RandomAtkNormal()
 
 void CMonkey::Play_RandomAtkCombo()
 {
-	_float fLenth = V3_LENGTH(&(TARGET_TO_TRANS(m_pAggroTarget)->Get_Pos() - m_pTransformCom->Get_Pos()));
-
 	switch (CALC::Random_Num(ATK_COMBO_TYPE::COMBO_JUMP_CLOCK, ATK_COMBO_TYPE::COMBO_RUNATK))
 	{
 	case ATK_COMBO_TYPE::COMBO_JUMP_CLOCK:
@@ -861,10 +977,9 @@ void CMonkey::Play_Jump_RotBody()
 				m_tObjParam.bSuperArmor = true;
 
 				g_pSoundManager->Stop_Sound(CSoundManager::Monkey_SFX_01);
+				g_pSoundManager->Stop_Sound(CSoundManager::Monkey_SFX_02);
 
-				m_iRandom = CALC::Random_Num(0, 3);
-
-				switch (m_iRandom)
+				switch (CALC::Random_Num(0, 5))
 				{
 				case 0:
 					g_pSoundManager->Play_Sound(L"Monster_Blade_Swing0.ogg", CSoundManager::Monkey_SFX_01, CSoundManager::Effect_Sound);
@@ -877,6 +992,28 @@ void CMonkey::Play_Jump_RotBody()
 					break;
 				case 3:
 					g_pSoundManager->Play_Sound(L"Monster_Blade_Swing3.ogg", CSoundManager::Monkey_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				case 4:
+					g_pSoundManager->Play_Sound(L"Monster_Blade_Swing4.ogg", CSoundManager::Hunter_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				case 5:
+					g_pSoundManager->Play_Sound(L"Monster_Blade_Swing5.ogg", CSoundManager::Hunter_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				}
+
+				switch (CALC::Random_Num(0, 3))
+				{
+				case 0:
+					g_pSoundManager->Play_Sound(L"Monster_BladeWeapon_Sub0.ogg", CSoundManager::Monkey_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 1:
+					g_pSoundManager->Play_Sound(L"Monster_BladeWeapon_Sub1.ogg", CSoundManager::Monkey_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 2:
+					g_pSoundManager->Play_Sound(L"Monster_BladeWeapon_Sub2.ogg", CSoundManager::Monkey_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 3:
+					g_pSoundManager->Play_Sound(L"Monster_BladeWeapon_Sub3.ogg", CSoundManager::Monkey_SFX_02, CSoundManager::Effect_Sound);
 					break;
 				}
 			}
@@ -1074,10 +1211,9 @@ void CMonkey::Play_JumpDown()
 				m_tObjParam.bSuperArmor = true;
 
 				g_pSoundManager->Stop_Sound(CSoundManager::Monkey_SFX_01);
+				g_pSoundManager->Stop_Sound(CSoundManager::Monkey_SFX_02);
 
-				m_iRandom = CALC::Random_Num(0, 3);
-
-				switch (m_iRandom)
+				switch (CALC::Random_Num(0, 5))
 				{
 				case 0:
 					g_pSoundManager->Play_Sound(L"Monster_Blade_Swing0.ogg", CSoundManager::Monkey_SFX_01, CSoundManager::Effect_Sound);
@@ -1090,6 +1226,28 @@ void CMonkey::Play_JumpDown()
 					break;
 				case 3:
 					g_pSoundManager->Play_Sound(L"Monster_Blade_Swing3.ogg", CSoundManager::Monkey_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				case 4:
+					g_pSoundManager->Play_Sound(L"Monster_Blade_Swing4.ogg", CSoundManager::Hunter_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				case 5:
+					g_pSoundManager->Play_Sound(L"Monster_Blade_Swing5.ogg", CSoundManager::Hunter_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				}
+
+				switch (CALC::Random_Num(0, 3))
+				{
+				case 0:
+					g_pSoundManager->Play_Sound(L"Monster_BladeWeapon_Sub0.ogg", CSoundManager::Monkey_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 1:
+					g_pSoundManager->Play_Sound(L"Monster_BladeWeapon_Sub1.ogg", CSoundManager::Monkey_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 2:
+					g_pSoundManager->Play_Sound(L"Monster_BladeWeapon_Sub2.ogg", CSoundManager::Monkey_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 3:
+					g_pSoundManager->Play_Sound(L"Monster_BladeWeapon_Sub3.ogg", CSoundManager::Monkey_SFX_02, CSoundManager::Effect_Sound);
 					break;
 				}
 			}
@@ -1195,10 +1353,9 @@ void CMonkey::Play_RDiagonal()
 				m_tObjParam.bSuperArmor = true;
 
 				g_pSoundManager->Stop_Sound(CSoundManager::Monkey_SFX_01);
+				g_pSoundManager->Stop_Sound(CSoundManager::Monkey_SFX_02);
 
-				m_iRandom = CALC::Random_Num(0, 3);
-
-				switch (m_iRandom)
+				switch (CALC::Random_Num(0, 5))
 				{
 				case 0:
 					g_pSoundManager->Play_Sound(L"Monster_Blade_Swing0.ogg", CSoundManager::Monkey_SFX_01, CSoundManager::Effect_Sound);
@@ -1211,6 +1368,28 @@ void CMonkey::Play_RDiagonal()
 					break;
 				case 3:
 					g_pSoundManager->Play_Sound(L"Monster_Blade_Swing3.ogg", CSoundManager::Monkey_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				case 4:
+					g_pSoundManager->Play_Sound(L"Monster_Blade_Swing4.ogg", CSoundManager::Hunter_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				case 5:
+					g_pSoundManager->Play_Sound(L"Monster_Blade_Swing5.ogg", CSoundManager::Hunter_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				}
+
+				switch (CALC::Random_Num(0, 3))
+				{
+				case 0:
+					g_pSoundManager->Play_Sound(L"Monster_BladeWeapon_Sub0.ogg", CSoundManager::Monkey_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 1:
+					g_pSoundManager->Play_Sound(L"Monster_BladeWeapon_Sub1.ogg", CSoundManager::Monkey_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 2:
+					g_pSoundManager->Play_Sound(L"Monster_BladeWeapon_Sub2.ogg", CSoundManager::Monkey_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 3:
+					g_pSoundManager->Play_Sound(L"Monster_BladeWeapon_Sub3.ogg", CSoundManager::Monkey_SFX_02, CSoundManager::Effect_Sound);
 					break;
 				}
 			}
@@ -1315,10 +1494,9 @@ void CMonkey::Play_Atk_RotBody()
 				m_pWeapon->Set_Enable_Trail(true);
 
 				g_pSoundManager->Stop_Sound(CSoundManager::Monkey_SFX_01);
+				g_pSoundManager->Stop_Sound(CSoundManager::Monkey_SFX_02);
 
-				m_iRandom = CALC::Random_Num(0, 3);
-
-				switch (m_iRandom)
+				switch (CALC::Random_Num(0, 5))
 				{
 				case 0:
 					g_pSoundManager->Play_Sound(L"Monster_Blade_Swing0.ogg", CSoundManager::Monkey_SFX_01, CSoundManager::Effect_Sound);
@@ -1331,6 +1509,28 @@ void CMonkey::Play_Atk_RotBody()
 					break;
 				case 3:
 					g_pSoundManager->Play_Sound(L"Monster_Blade_Swing3.ogg", CSoundManager::Monkey_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				case 4:
+					g_pSoundManager->Play_Sound(L"Monster_Blade_Swing4.ogg", CSoundManager::Hunter_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				case 5:
+					g_pSoundManager->Play_Sound(L"Monster_Blade_Swing5.ogg", CSoundManager::Hunter_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				}
+
+				switch (CALC::Random_Num(0, 3))
+				{
+				case 0:
+					g_pSoundManager->Play_Sound(L"Monster_BladeWeapon_Sub0.ogg", CSoundManager::Monkey_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 1:
+					g_pSoundManager->Play_Sound(L"Monster_BladeWeapon_Sub1.ogg", CSoundManager::Monkey_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 2:
+					g_pSoundManager->Play_Sound(L"Monster_BladeWeapon_Sub2.ogg", CSoundManager::Monkey_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 3:
+					g_pSoundManager->Play_Sound(L"Monster_BladeWeapon_Sub3.ogg", CSoundManager::Monkey_SFX_02, CSoundManager::Effect_Sound);
 					break;
 				}
 			}
@@ -1430,10 +1630,9 @@ void CMonkey::Play_Combo_Normal()
 				m_tObjParam.bSuperArmor = true;
 
 				g_pSoundManager->Stop_Sound(CSoundManager::Monkey_SFX_01);
+				g_pSoundManager->Stop_Sound(CSoundManager::Monkey_SFX_02);
 
-				m_iRandom = CALC::Random_Num(0, 3);
-
-				switch (m_iRandom)
+				switch (CALC::Random_Num(0, 5))
 				{
 				case 0:
 					g_pSoundManager->Play_Sound(L"Monster_Blade_Swing0.ogg", CSoundManager::Monkey_SFX_01, CSoundManager::Effect_Sound);
@@ -1446,6 +1645,28 @@ void CMonkey::Play_Combo_Normal()
 					break;
 				case 3:
 					g_pSoundManager->Play_Sound(L"Monster_Blade_Swing3.ogg", CSoundManager::Monkey_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				case 4:
+					g_pSoundManager->Play_Sound(L"Monster_Blade_Swing4.ogg", CSoundManager::Hunter_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				case 5:
+					g_pSoundManager->Play_Sound(L"Monster_Blade_Swing5.ogg", CSoundManager::Hunter_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				}
+
+				switch (CALC::Random_Num(0, 3))
+				{
+				case 0:
+					g_pSoundManager->Play_Sound(L"Monster_BladeWeapon_Sub0.ogg", CSoundManager::Monkey_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 1:
+					g_pSoundManager->Play_Sound(L"Monster_BladeWeapon_Sub1.ogg", CSoundManager::Monkey_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 2:
+					g_pSoundManager->Play_Sound(L"Monster_BladeWeapon_Sub2.ogg", CSoundManager::Monkey_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 3:
+					g_pSoundManager->Play_Sound(L"Monster_BladeWeapon_Sub3.ogg", CSoundManager::Monkey_SFX_02, CSoundManager::Effect_Sound);
 					break;
 				}
 			}
@@ -1538,10 +1759,9 @@ void CMonkey::Play_Combo_Normal()
 				m_tObjParam.bSuperArmor = true;
 
 				g_pSoundManager->Stop_Sound(CSoundManager::Monkey_SFX_01);
+				g_pSoundManager->Stop_Sound(CSoundManager::Monkey_SFX_02);
 
-				m_iRandom = CALC::Random_Num(0, 3);
-
-				switch (m_iRandom)
+				switch (CALC::Random_Num(0, 5))
 				{
 				case 0:
 					g_pSoundManager->Play_Sound(L"Monster_Blade_Swing0.ogg", CSoundManager::Monkey_SFX_01, CSoundManager::Effect_Sound);
@@ -1554,6 +1774,28 @@ void CMonkey::Play_Combo_Normal()
 					break;
 				case 3:
 					g_pSoundManager->Play_Sound(L"Monster_Blade_Swing3.ogg", CSoundManager::Monkey_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				case 4:
+					g_pSoundManager->Play_Sound(L"Monster_Blade_Swing4.ogg", CSoundManager::Hunter_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				case 5:
+					g_pSoundManager->Play_Sound(L"Monster_Blade_Swing5.ogg", CSoundManager::Hunter_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				}
+
+				switch (CALC::Random_Num(0, 3))
+				{
+				case 0:
+					g_pSoundManager->Play_Sound(L"Monster_BladeWeapon_Sub0.ogg", CSoundManager::Monkey_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 1:
+					g_pSoundManager->Play_Sound(L"Monster_BladeWeapon_Sub1.ogg", CSoundManager::Monkey_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 2:
+					g_pSoundManager->Play_Sound(L"Monster_BladeWeapon_Sub2.ogg", CSoundManager::Monkey_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 3:
+					g_pSoundManager->Play_Sound(L"Monster_BladeWeapon_Sub3.ogg", CSoundManager::Monkey_SFX_02, CSoundManager::Effect_Sound);
 					break;
 				}
 			}
@@ -1653,10 +1895,9 @@ void CMonkey::Play_Combo_Jump_Clock()
 				m_tObjParam.bSuperArmor = true;
 
 				g_pSoundManager->Stop_Sound(CSoundManager::Monkey_SFX_01);
+				g_pSoundManager->Stop_Sound(CSoundManager::Monkey_SFX_02);
 
-				m_iRandom = CALC::Random_Num(0, 3);
-
-				switch (m_iRandom)
+				switch (CALC::Random_Num(0, 5))
 				{
 				case 0:
 					g_pSoundManager->Play_Sound(L"Monster_Blade_Swing0.ogg", CSoundManager::Monkey_SFX_01, CSoundManager::Effect_Sound);
@@ -1669,6 +1910,28 @@ void CMonkey::Play_Combo_Jump_Clock()
 					break;
 				case 3:
 					g_pSoundManager->Play_Sound(L"Monster_Blade_Swing3.ogg", CSoundManager::Monkey_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				case 4:
+					g_pSoundManager->Play_Sound(L"Monster_Blade_Swing4.ogg", CSoundManager::Hunter_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				case 5:
+					g_pSoundManager->Play_Sound(L"Monster_Blade_Swing5.ogg", CSoundManager::Hunter_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				}
+
+				switch (CALC::Random_Num(0, 3))
+				{
+				case 0:
+					g_pSoundManager->Play_Sound(L"Monster_BladeWeapon_Sub0.ogg", CSoundManager::Monkey_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 1:
+					g_pSoundManager->Play_Sound(L"Monster_BladeWeapon_Sub1.ogg", CSoundManager::Monkey_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 2:
+					g_pSoundManager->Play_Sound(L"Monster_BladeWeapon_Sub2.ogg", CSoundManager::Monkey_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 3:
+					g_pSoundManager->Play_Sound(L"Monster_BladeWeapon_Sub3.ogg", CSoundManager::Monkey_SFX_02, CSoundManager::Effect_Sound);
 					break;
 				}
 			}
@@ -1761,10 +2024,9 @@ void CMonkey::Play_Combo_Jump_Clock()
 				m_tObjParam.bSuperArmor = true;
 
 				g_pSoundManager->Stop_Sound(CSoundManager::Monkey_SFX_01);
+				g_pSoundManager->Stop_Sound(CSoundManager::Monkey_SFX_02);
 
-				m_iRandom = CALC::Random_Num(0, 3);
-
-				switch (m_iRandom)
+				switch (CALC::Random_Num(0, 5))
 				{
 				case 0:
 					g_pSoundManager->Play_Sound(L"Monster_Blade_Swing0.ogg", CSoundManager::Monkey_SFX_01, CSoundManager::Effect_Sound);
@@ -1777,6 +2039,28 @@ void CMonkey::Play_Combo_Jump_Clock()
 					break;
 				case 3:
 					g_pSoundManager->Play_Sound(L"Monster_Blade_Swing3.ogg", CSoundManager::Monkey_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				case 4:
+					g_pSoundManager->Play_Sound(L"Monster_Blade_Swing4.ogg", CSoundManager::Hunter_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				case 5:
+					g_pSoundManager->Play_Sound(L"Monster_Blade_Swing5.ogg", CSoundManager::Hunter_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				}
+
+				switch (CALC::Random_Num(0, 3))
+				{
+				case 0:
+					g_pSoundManager->Play_Sound(L"Monster_BladeWeapon_Sub0.ogg", CSoundManager::Monkey_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 1:
+					g_pSoundManager->Play_Sound(L"Monster_BladeWeapon_Sub1.ogg", CSoundManager::Monkey_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 2:
+					g_pSoundManager->Play_Sound(L"Monster_BladeWeapon_Sub2.ogg", CSoundManager::Monkey_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 3:
+					g_pSoundManager->Play_Sound(L"Monster_BladeWeapon_Sub3.ogg", CSoundManager::Monkey_SFX_02, CSoundManager::Effect_Sound);
 					break;
 				}
 			}
@@ -2161,6 +2445,8 @@ void CMonkey::Play_Move()
 			m_fSkillMoveSpeed_Cur = 4.f;
 			m_fSkillMoveAccel_Cur = 0.f;
 			m_fSkillMoveMultiply = 0.5f;
+
+			m_fFootSoundMax = 0.4f;
 		}
 
 		if (nullptr == m_pAggroTarget)
@@ -2718,16 +3004,22 @@ HRESULT CMonkey::Ready_Status(void * pArg)
 	m_tObjParam.bIsAttack = false;
 	m_tObjParam.bCanDodge = true;
 	m_tObjParam.bIsDodge = false;
+
+	m_bCanSequencePattern = true;
 	m_bCanPlayDead = false;
 	m_bInRecognitionRange = false;
 	m_bInAtkRange = false;
 	m_bCanChase = false;
+
 	m_bCanCoolDown = false;
 	m_bIsCoolDown = false;
+
 	m_bCanChooseAtkType = true;
 	m_bIsCombo = false;
+
 	m_bCanIdle = true;
 	m_bIsIdle = false;
+
 	m_bCanMoveAround = true;
 	m_bIsMoveAround = false;
 
@@ -2742,6 +3034,9 @@ HRESULT CMonkey::Ready_Status(void * pArg)
 
 	m_fCoolDownMax = 0.f;
 	m_fCoolDownCur = 0.f;
+
+	m_iPatternCount = 0;
+	m_iPatternCountMax = 9;
 
 	return S_OK;
 }

@@ -16,7 +16,7 @@ CRenderObject::CRenderObject(const CRenderObject& rhs)
 
 CRenderObject::CRenderObject(const CRenderObject & rhs, _bool _OnTool)
 	:CGameObject(rhs)
-	, m_eGroup(rhs.m_eGroup)
+	//, m_eGroup(rhs.m_eGroup)
 	, m_iIndex(rhs.m_iIndex)
 {
 	memcpy(m_szName, rhs.m_szName, sizeof(_tchar[STR_128]));
@@ -37,53 +37,31 @@ _int CRenderObject::Update_GameObject(_double _TimeDelta)
 	if (false == m_bEnable)
 		return NO_EVENT;
 
-	if(nullptr == m_pMesh_Static)
-		return NO_EVENT;
+	CGameObject::LateInit_GameObject();
+	CGameObject::Update_GameObject(_TimeDelta);
 
-	if (nullptr == m_pOptimization)
-		return NO_EVENT;
-
-	_float fFrustumRadius = m_bAdvencedCull ? 100.f : 10.f;
-	m_bInFrustum = m_pOptimization->Check_InFrustumforObject(&m_pTransform->Get_Pos(), fFrustumRadius);
-
-	if (false == m_bUpdated)
-	{
-		// 스태틱은 한번만 배치되면 되서 계속 갱신할 필요없음
-		//m_bUpdated = true;
-
-		CGameObject::LateInit_GameObject();
-		CGameObject::Update_GameObject(_TimeDelta);
-	}
-
-	//if (m_bOnTool)
-		Update_Collider();
-
-	return S_OK;
+	// 툴용 업데이트 콜라이더
+	//	Update_Collider();
 }
 
 _int CRenderObject::Late_Update_GameObject(_double TimeDelta)
 {
-	if (false == m_bEnable ||
-		nullptr == m_pOptimization ||
-		nullptr == m_pRenderer)
+	if (false == m_bEnable)
 		return NO_EVENT;
+
+	if (m_pOptimization->Check_InFrustumforObject(&m_pTransform->Get_Pos(), m_pMesh_Static->Get_FrustumRadius()))
+	{
+		m_pRenderer->Add_RenderList(RENDER_NONALPHA, this);
+		m_pRenderer->Add_RenderList(RENDER_MOTIONBLURTARGET, this);
+	}
 
 	m_pRenderer->Add_RenderList(RENDER_SHADOWTARGET, this);
 
-	//if (m_bInFrustum)
-	//{
-		m_pRenderer->Add_RenderList(RENDER_NONALPHA, this);
-		m_pRenderer->Add_RenderList(RENDER_MOTIONBLURTARGET, this);
-	//}
-
-	return _int();
+	return NO_EVENT;
 }
 
 HRESULT CRenderObject::Render_GameObject()
 {
-	if (false == m_bEnable)
-		return NO_EVENT;
-
 	CManagement* pManagement = CManagement::Get_Instance();
 	Safe_AddRef(pManagement);
 
@@ -131,18 +109,13 @@ HRESULT CRenderObject::Render_GameObject()
 
 HRESULT CRenderObject::Render_GameObject_Instancing_SetPass(CShader * pShader)
 {
-	if (false == m_bEnable)
-		return NO_EVENT;
-
 	Init_Shader(pShader);
 
-	_ulong dwSubsetCnt = m_pMesh_Static->Get_NumMaterials();
-
-	for (_ulong i = 0; i < dwSubsetCnt; ++i)
+	for (_ulong i = 0; i < m_pMesh_Static->Get_NumMaterials(); ++i)
 	{
-		m_iPass = m_pMesh_Static->Get_MaterialPass(i);
+		_ulong dwPass = m_pMesh_Static->Get_MaterialPass(i);
 
-		pShader->Begin_Pass(m_iPass);
+		pShader->Begin_Pass(dwPass);
 
 		pShader->Set_StaticTexture_Auto(m_pMesh_Static, i);
 
@@ -158,34 +131,29 @@ HRESULT CRenderObject::Render_GameObject_Instancing_SetPass(CShader * pShader)
 
 HRESULT CRenderObject::Render_GameObject_SetPass(CShader* pShader, _int iPass, _bool _bIsForMotionBlur)
 {
-	if (false == m_bEnable)
-		return NO_EVENT;
-
-	if (nullptr == pShader ||
-		nullptr == m_pMesh_Static)
-		return E_FAIL;
 	//============================================================================================
 	// 공통 변수
 	//============================================================================================
-
-	_mat	WorldMatrix = m_pTransform->Get_WorldMat();
+	_mat WorldMatrix = m_pTransform->Get_WorldMat();
 
 	if (FAILED(pShader->Set_Value("g_matWorld", &WorldMatrix, sizeof(_mat))))
 		return E_FAIL;
 
-	CManagement* pManagement = CManagement::Get_Instance();
-	Safe_AddRef(pManagement);
-
-	_mat matView, matProj;
-
-	matView = pManagement->Get_Transform(D3DTS_VIEW);
-	matProj = pManagement->Get_Transform(D3DTS_PROJECTION);
+	_ushort sShaderPass = iPass;
 
 	//============================================================================================
 	// 모션 블러 상수
 	//============================================================================================
 	if (_bIsForMotionBlur)
 	{
+		CManagement* pManagement = CManagement::Get_Instance();
+		Safe_AddRef(pManagement);
+
+		_mat matView = pManagement->Get_Transform(D3DTS_VIEW);
+		_mat matProj = pManagement->Get_Transform(D3DTS_PROJECTION);
+
+		sShaderPass = 5;
+
 		if (FAILED(pShader->Set_Value("g_matLastWVP", &m_matLastWVP, sizeof(_mat))))
 			return E_FAIL;
 
@@ -194,20 +162,9 @@ HRESULT CRenderObject::Render_GameObject_SetPass(CShader* pShader, _int iPass, _
 		_float fBloomPower = 10.f;
 		if (FAILED(pShader->Set_Value("g_fBloomPower", &fBloomPower, sizeof(_float))))
 			return E_FAIL;
+
+		Safe_Release(pManagement);
 	}
-
-	//============================================================================================
-	// 기타 상수
-	//============================================================================================
-	else
-	{
-		_mat matWVP = WorldMatrix * matView * matProj;
-
-		if (FAILED(pShader->Set_Value("g_matWVP", &matWVP, sizeof(_mat))))
-			return E_FAIL;
-	}
-
-
 
 	//============================================================================================
 	// 쉐이더 시작
@@ -215,14 +172,9 @@ HRESULT CRenderObject::Render_GameObject_SetPass(CShader* pShader, _int iPass, _
 
 	_ulong dwSubCnt = m_pMesh_Static->Get_NumMaterials();
 
-	_short iShaderPass = iPass;
-
-	if (_bIsForMotionBlur)
-		iShaderPass = 5;
-
 	for (_ulong i = 0; i < dwSubCnt; ++i)
 	{
-		pShader->Begin_Pass(iShaderPass);
+		pShader->Begin_Pass(sShaderPass);
 
 		pShader->Commit_Changes();
 
@@ -232,8 +184,6 @@ HRESULT CRenderObject::Render_GameObject_SetPass(CShader* pShader, _int iPass, _
 	}
 
 	//============================================================================================
-
-	Safe_Release(pManagement);
 
 	return NOERROR;
 }
@@ -342,10 +292,10 @@ void CRenderObject::Change_Mesh(const _tchar* _MeshName)
 	return;
 }
 
-void CRenderObject::Set_RenderGroup(RENDERID _eGroup)
-{
-	m_eGroup = _eGroup;
-}
+//void CRenderObject::Set_RenderGroup(RENDERID _eGroup)
+//{
+//	m_eGroup = _eGroup;
+//}
 
 void CRenderObject::SetUp_IndividualShaderValue()
 {
@@ -457,11 +407,7 @@ HRESULT CRenderObject::LateInit_GameObject()
 
 void CRenderObject::Init_Shader(CShader* pShader)
 {
-	_mat		matWorld, matView, matProj;
-
-	matWorld = m_pTransform->Get_WorldMat();
-
-	pShader->Set_Value("g_matWorld", &matWorld, sizeof(_mat));
+	pShader->Set_Value("g_matWorld", &m_pTransform->Get_WorldMat(), sizeof(_mat));
 
 	//=============================================================================================
 	// 쉐이더 재질정보 수치 입력
@@ -497,15 +443,15 @@ HRESULT CRenderObject::Ready_GameObject(void * pAvg)
 	m_pTransform->Set_Angle(Info.vAngle);
 	m_pTransform->Set_Scale(Info.vScale);
 
-	if(nullptr != m_pMesh_Static)
-		m_dwSubsetCnt = m_pMesh_Static->Get_NumMaterials();
+	//if(nullptr != m_pMesh_Static)
+	//	m_dwSubsetCnt = m_pMesh_Static->Get_NumMaterials();
 
 	SetUp_IndividualShaderValue();
 
-	Check_Stage_01();
-	Check_Stage_02();
-	Check_Stage_03();
-	Check_Stage_04();
+	//Check_Stage_01();
+	//Check_Stage_02();
+	//Check_Stage_03();
+	//Check_Stage_04();
 
 	return S_OK;
 }
@@ -521,16 +467,16 @@ HRESULT CRenderObject::Add_Components(_tchar * szMeshName)
 		return E_FAIL;
 
 	// For.Com_Shader
-	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Shader_Mesh", L"Com_Shader", (CComponent**)&m_pShader)))
-		return E_FAIL;
+	//if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Shader_Mesh", L"Com_Shader", (CComponent**)&m_pShader)))
+	//	return E_FAIL;
 
 	// for.Com_Mesh
 	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, szMeshName, L"Com_StaticMesh", (CComponent**)&m_pMesh_Static)))
 		return E_FAIL;
 
 	// for.Com_Mesh
-	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Collider", L"Com_Collider", (CComponent**)&m_pCollider)))
-		return E_FAIL;
+	//if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Collider", L"Com_Collider", (CComponent**)&m_pCollider)))
+	//	return E_FAIL;
 
 	// for.Com_Optimization
 	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Optimization", L"Com_Opimaization", (CComponent**)& m_pOptimization)))
@@ -541,95 +487,95 @@ HRESULT CRenderObject::Add_Components(_tchar * szMeshName)
 	return S_OK;
 }
 
-void CRenderObject::Check_Stage_01()
-{
-	if (!lstrcmp(L"Mesh_Building_C", m_szName))
-	{
-		m_bAdvencedCull = true;
-	}
-
-	if (!lstrcmp(L"Mesh_Building_D", m_szName))
-	{
-		m_bAdvencedCull = true;
-	}
-
-	if (!lstrcmp(L"Mesh_Building_E", m_szName))
-	{
-		m_bAdvencedCull = true;
-	}
-}
-
-void CRenderObject::Check_Stage_02()
-{
-	if (!lstrcmp(L"Mesh_SM_MERGED_SplineGaia88", m_szName))
-	{
-		m_bAdvencedCull = true;
-	}
-	if (!lstrcmp(L"Mesh_SM_MERGED_SplineGaia199", m_szName))
-		m_bAdvencedCull = true;
-	if (!lstrcmp(L"Mesh_SM_MERGED_SplineGaia319", m_szName))
-		m_bAdvencedCull = true;
-	if (!lstrcmp(L"Mesh_SM_MERGED_SplineGaia436", m_szName))
-		m_bAdvencedCull = true;
-	if (!lstrcmp(L"Mesh_SM_MERGED_SplineGaia445", m_szName))
-		m_bAdvencedCull = true;
-	if (!lstrcmp(L"Mesh_SM_MERGED_SplineGaia449", m_szName))
-		m_bAdvencedCull = true;
-	if (!lstrcmp(L"Mesh_SM_MERGED_SplineGaia471", m_szName))
-		m_bAdvencedCull = true;
-	if (!lstrcmp(L"Mesh_SM_MERGED_SplineGaia473", m_szName))
-		m_bAdvencedCull = true;
-	if (!lstrcmp(L"Mesh_SM_MERGED_SplineGaia475", m_szName))
-		m_bAdvencedCull = true;
-	if (!lstrcmp(L"Mesh_SM_MERGED_SplineGaia582", m_szName))
-		m_bAdvencedCull = true;
-	if (!lstrcmp(L"Mesh_SM_MERGED_SplineGaia586", m_szName))
-		m_bAdvencedCull = true;
-	if (!lstrcmp(L"Mesh_SM_MERGED_SplineGaia611", m_szName))
-		m_bAdvencedCull = true;
-	if (!lstrcmp(L"Mesh_SM_MERGED_SplineGaia618", m_szName))
-		m_bAdvencedCull = true;
-	if (!lstrcmp(L"Mesh_SM_MERGED_SplineGaia667", m_szName))
-		m_bAdvencedCull = true;
-	if (!lstrcmp(L"Mesh_SM_MERGED_SplineGaia726", m_szName))
-		m_bAdvencedCull = true;
-	if (!lstrcmp(L"Mesh_SM_MERGED_SplineGaia784", m_szName))
-		m_bAdvencedCull = true;
-	if (!lstrcmp(L"SM_MERGED_SplineGaia791", m_szName))
-		m_bAdvencedCull = true;
-	if (!lstrcmp(L"Mesh_SM_MERGED_SplineGaia891", m_szName))
-		m_bAdvencedCull = true;
-	if (!lstrcmp(L"Mesh_SM_GroundBase02_st09a1", m_szName))
-		m_bAdvencedCull = true;
-	if (!lstrcmp(L"Mesh_SM_GroundBase04_st09a1", m_szName))
-		m_bAdvencedCull = true;
-}
-
-void CRenderObject::Check_Stage_03()
-{
-	// 맵 외벽
-	if (!lstrcmp(L"Mesh_SM_TowerSenRL2Top_st07a1", m_szName))
-	{
-		m_bAdvencedCull = true;
-	}
-	if (!lstrcmp(L"Mesh_Room_Stage3_1", m_szName))
-		m_bAdvencedCull = true;
-	if (!lstrcmp(L"Mesh_Room_Stage3_2", m_szName))
-		m_bAdvencedCull = true;
-}
-
-void CRenderObject::Check_Stage_04()
-{
-	if (!lstrcmp(L"Mesh_DuomoFloorB", m_szName))
-		m_bAdvencedCull = true;
-	if (!lstrcmp(L"Mesh_Cathedral_PillarL_Center_Round", m_szName))
-		m_bAdvencedCull = true;
-	if (!lstrcmp(L"Mesh_Cathedral_TowerWall_Under_A", m_szName))
-		m_bAdvencedCull = true;
-	if (!lstrcmp(L"Mesh_Cathedral_TowerWall_Under_B", m_szName))
-		m_bAdvencedCull = true;
-	if (!lstrcmp(L"Mesh_Cathedral_TowerFloor_D", m_szName))
-		m_bAdvencedCull = true;
-	if (!lstrcmp(L"Mesh_Cathedral_Floor_Center_Round", m_szName))
-		m_bAdvencedCull = true;
-}
+//void CRenderObject::Check_Stage_01()
+//{
+//	if (!lstrcmp(L"Mesh_Building_C", m_szName))
+//	{
+//		m_bAdvencedCull = true;
+//	}
+//
+//	if (!lstrcmp(L"Mesh_Building_D", m_szName))
+//	{
+//		m_bAdvencedCull = true;
+//	}
+//
+//	if (!lstrcmp(L"Mesh_Building_E", m_szName))
+//	{
+//		m_bAdvencedCull = true;
+//	}
+//}
+//
+//void CRenderObject::Check_Stage_02()
+//{
+//	if (!lstrcmp(L"Mesh_SM_MERGED_SplineGaia88", m_szName))
+//	{
+//		m_bAdvencedCull = true;
+//	}
+//	if (!lstrcmp(L"Mesh_SM_MERGED_SplineGaia199", m_szName))
+//		m_bAdvencedCull = true;
+//	if (!lstrcmp(L"Mesh_SM_MERGED_SplineGaia319", m_szName))
+//		m_bAdvencedCull = true;
+//	if (!lstrcmp(L"Mesh_SM_MERGED_SplineGaia436", m_szName))
+//		m_bAdvencedCull = true;
+//	if (!lstrcmp(L"Mesh_SM_MERGED_SplineGaia445", m_szName))
+//		m_bAdvencedCull = true;
+//	if (!lstrcmp(L"Mesh_SM_MERGED_SplineGaia449", m_szName))
+//		m_bAdvencedCull = true;
+//	if (!lstrcmp(L"Mesh_SM_MERGED_SplineGaia471", m_szName))
+//		m_bAdvencedCull = true;
+//	if (!lstrcmp(L"Mesh_SM_MERGED_SplineGaia473", m_szName))
+//		m_bAdvencedCull = true;
+//	if (!lstrcmp(L"Mesh_SM_MERGED_SplineGaia475", m_szName))
+//		m_bAdvencedCull = true;
+//	if (!lstrcmp(L"Mesh_SM_MERGED_SplineGaia582", m_szName))
+//		m_bAdvencedCull = true;
+//	if (!lstrcmp(L"Mesh_SM_MERGED_SplineGaia586", m_szName))
+//		m_bAdvencedCull = true;
+//	if (!lstrcmp(L"Mesh_SM_MERGED_SplineGaia611", m_szName))
+//		m_bAdvencedCull = true;
+//	if (!lstrcmp(L"Mesh_SM_MERGED_SplineGaia618", m_szName))
+//		m_bAdvencedCull = true;
+//	if (!lstrcmp(L"Mesh_SM_MERGED_SplineGaia667", m_szName))
+//		m_bAdvencedCull = true;
+//	if (!lstrcmp(L"Mesh_SM_MERGED_SplineGaia726", m_szName))
+//		m_bAdvencedCull = true;
+//	if (!lstrcmp(L"Mesh_SM_MERGED_SplineGaia784", m_szName))
+//		m_bAdvencedCull = true;
+//	if (!lstrcmp(L"SM_MERGED_SplineGaia791", m_szName))
+//		m_bAdvencedCull = true;
+//	if (!lstrcmp(L"Mesh_SM_MERGED_SplineGaia891", m_szName))
+//		m_bAdvencedCull = true;
+//	if (!lstrcmp(L"Mesh_SM_GroundBase02_st09a1", m_szName))
+//		m_bAdvencedCull = true;
+//	if (!lstrcmp(L"Mesh_SM_GroundBase04_st09a1", m_szName))
+//		m_bAdvencedCull = true;
+//}
+//
+//void CRenderObject::Check_Stage_03()
+//{
+//	// 맵 외벽
+//	if (!lstrcmp(L"Mesh_SM_TowerSenRL2Top_st07a1", m_szName))
+//	{
+//		m_bAdvencedCull = true;
+//	}
+//	if (!lstrcmp(L"Mesh_Room_Stage3_1", m_szName))
+//		m_bAdvencedCull = true;
+//	if (!lstrcmp(L"Mesh_Room_Stage3_2", m_szName))
+//		m_bAdvencedCull = true;
+//}
+//
+//void CRenderObject::Check_Stage_04()
+//{
+//	if (!lstrcmp(L"Mesh_DuomoFloorB", m_szName))
+//		m_bAdvencedCull = true;
+//	if (!lstrcmp(L"Mesh_Cathedral_PillarL_Center_Round", m_szName))
+//		m_bAdvencedCull = true;
+//	if (!lstrcmp(L"Mesh_Cathedral_TowerWall_Under_A", m_szName))
+//		m_bAdvencedCull = true;
+//	if (!lstrcmp(L"Mesh_Cathedral_TowerWall_Under_B", m_szName))
+//		m_bAdvencedCull = true;
+//	if (!lstrcmp(L"Mesh_Cathedral_TowerFloor_D", m_szName))
+//		m_bAdvencedCull = true;
+//	if (!lstrcmp(L"Mesh_Cathedral_Floor_Center_Round", m_szName))
+//		m_bAdvencedCull = true;
+//}

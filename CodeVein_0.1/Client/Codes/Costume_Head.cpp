@@ -106,7 +106,6 @@ HRESULT CCostume_Head::SetUp_ConstantTable(CShader* pShader)
 	//=============================================================================================
 	// ±âº» ¸ÞÆ®¸¯½º
 	//=============================================================================================
-
 	if (FAILED(pShader->Set_Value("g_matWorld", &m_pTransform->Get_WorldMat(), sizeof(_mat))))
 		return E_FAIL;
 
@@ -203,12 +202,6 @@ _int CCostume_Head::Late_Update_GameObject(_double TimeDelta)
 
 HRESULT CCostume_Head::Render_GameObject_Instancing_SetPass(CShader * pShader)
 {
-	if (false == m_bEnable)
-		return NO_EVENT;
-
-	IF_NULL_VALUE_RETURN(pShader, E_FAIL);
-	IF_NULL_VALUE_RETURN(m_pStaticMesh, E_FAIL);
-
 	if (m_tObjParam.bInvisible)
 		return S_OK;
 
@@ -246,10 +239,6 @@ HRESULT CCostume_Head::Render_GameObject_Instancing_SetPass(CShader * pShader)
 
 HRESULT CCostume_Head::Render_GameObject_SetPass(CShader * pShader, _int iPass, _bool _bIsForMotionBlur)
 {
-	if (nullptr == pShader ||
-		nullptr == m_pStaticMesh)
-		return E_FAIL;
-
 	//============================================================================================
 	// °øÅë º¯¼ö
 	//============================================================================================
@@ -257,6 +246,8 @@ HRESULT CCostume_Head::Render_GameObject_SetPass(CShader * pShader, _int iPass, 
 	_mat	ViewMatrix = g_pManagement->Get_Transform(D3DTS_VIEW);
 	_mat	ProjMatrix = g_pManagement->Get_Transform(D3DTS_PROJECTION);
 	_mat	WorldMatrix = m_pTransform->Get_WorldMat();
+
+	_mat matWVP = WorldMatrix * ViewMatrix * ProjMatrix;
 
 	if (FAILED(pShader->Set_Value("g_matWorld", &WorldMatrix, sizeof(_mat))))
 		return E_FAIL;
@@ -269,27 +260,10 @@ HRESULT CCostume_Head::Render_GameObject_SetPass(CShader * pShader, _int iPass, 
 		if (FAILED(pShader->Set_Value("g_matLastWVP", &m_matLastWVP, sizeof(_mat))))
 			return E_FAIL;
 
-		m_matLastWVP = WorldMatrix * ViewMatrix * ProjMatrix;
+		m_matLastWVP = matWVP;
 
-		_bool bMotionBlur = true;
-		if (FAILED(pShader->Set_Bool("g_bMotionBlur", bMotionBlur)))
-			return E_FAIL;
-		_bool bDecalTarget = false;
-		if (FAILED(pShader->Set_Bool("g_bDecalTarget", bDecalTarget)))
-			return E_FAIL;
 		_float fBloomPower = 20.f;
 		if (FAILED(pShader->Set_Value("g_fBloomPower", &fBloomPower, sizeof(_float))))
-			return E_FAIL;
-	}
-
-	//============================================================================================
-	// ±âÅ¸ »ó¼ö
-	//============================================================================================
-	else
-	{
-		_mat matWVP = WorldMatrix * ViewMatrix * ProjMatrix;
-
-		if (FAILED(pShader->Set_Value("g_matWVP", &matWVP, sizeof(_mat))))
 			return E_FAIL;
 	}
 
@@ -297,28 +271,32 @@ HRESULT CCostume_Head::Render_GameObject_SetPass(CShader * pShader, _int iPass, 
 	// ½¦ÀÌ´õ ½ÃÀÛ
 	//============================================================================================
 
-	_ulong dwNumSubSet = m_pStaticMesh->Get_NumMaterials();
+	_uint dwNumSubSet = m_pStaticMesh->Get_NumMaterials();
+	_uint tmpPass = iPass;
 
-	for (_ulong i = 0; i < dwNumSubSet; ++i)
+	for (_uint i = 0; i < dwNumSubSet; ++i)
 	{
-		_ulong tmpPass = m_pStaticMesh->Get_MaterialPass(i);
-
-		if (14 == tmpPass || 15 == tmpPass)
+		if (_bIsForMotionBlur)
 		{
-			// ´«½ç , ´«
-			pShader->Begin_Pass(3);
+			tmpPass = m_pStaticMesh->Get_MaterialPass(i);
+
+			if (14 == tmpPass || 15 == tmpPass)
+			{
+				// ´«½ç , ´«
+				tmpPass = 3;
+			}
+
+			else if (22 == tmpPass)
+			{
+				// ¾ó±¼
+				tmpPass = 2;
+			}
+
+			else
+				tmpPass = iPass;
 		}
 
-		else if (22 == tmpPass)
-		{
-			// ¾ó±¼
-			pShader->Begin_Pass(2);
-		}
-
-		else
-		{
-			pShader->Begin_Pass(iPass);
-		}
+		pShader->Begin_Pass(tmpPass);
 
 		pShader->Commit_Changes();
 

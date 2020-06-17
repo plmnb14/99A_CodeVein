@@ -26,6 +26,14 @@ HRESULT CShader::Set_Bool(D3DXHANDLE Handle, _bool Bool)
 	return m_pEffect->SetBool(Handle, Bool);	
 }
 
+HRESULT CShader::Set_MatrixArray(D3DXHANDLE Handle, const _mat* pData, _uint iByte)
+{
+	if (nullptr == m_pEffect)
+		return E_FAIL;
+
+	return m_pEffect->SetMatrixArray(Handle, pData, iByte);
+}
+
 HRESULT CShader::Set_Value(D3DXHANDLE Handle, const void* pData, _uint iByte)
 {
 	if (nullptr == m_pEffect)

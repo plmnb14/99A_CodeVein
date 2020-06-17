@@ -102,18 +102,9 @@ HRESULT CYetiTrap::Render_GameObject()
 
 HRESULT CYetiTrap::Render_GameObject_SetPass(CShader * pShader, _int iPass, _bool _bIsForMotionBlur)
 {
-	if (false == m_bEnable)
-		return NO_EVENT;
-
-	if (nullptr == pShader ||
-		nullptr == m_pMesh_Static)
-		return E_FAIL;
 	//============================================================================================
 	// 공통 변수
 	//============================================================================================
-
-	_mat	ViewMatrix = CManagement::Get_Instance()->Get_Transform(D3DTS_VIEW);
-	_mat	ProjMatrix = CManagement::Get_Instance()->Get_Transform(D3DTS_PROJECTION);
 	_mat	WorldMatrix = m_pTransform->Get_WorldMat();
 
 	if (FAILED(pShader->Set_Value("g_matWorld", &WorldMatrix, sizeof(_mat))))
@@ -124,37 +115,18 @@ HRESULT CYetiTrap::Render_GameObject_SetPass(CShader * pShader, _int iPass, _boo
 	//============================================================================================
 	if (_bIsForMotionBlur)
 	{
-		if (FAILED(pShader->Set_Value("g_matView", &ViewMatrix, sizeof(_mat))))
-			return E_FAIL;
-		if (FAILED(pShader->Set_Value("g_matProj", &ProjMatrix, sizeof(_mat))))
-			return E_FAIL;
+		_mat	ViewMatrix = CManagement::Get_Instance()->Get_Transform(D3DTS_VIEW);
+		_mat	ProjMatrix = CManagement::Get_Instance()->Get_Transform(D3DTS_PROJECTION);
+
 		if (FAILED(pShader->Set_Value("g_matLastWVP", &m_matLastWVP, sizeof(_mat))))
 			return E_FAIL;
 
 		m_matLastWVP = WorldMatrix * ViewMatrix * ProjMatrix;
 
-		_bool bMotionBlur = true;
-		if (FAILED(pShader->Set_Bool("g_bMotionBlur", bMotionBlur)))
-			return E_FAIL;
-		_bool bDecalTarget = false;
-		if (FAILED(pShader->Set_Bool("g_bDecalTarget", bDecalTarget)))
-			return E_FAIL;
 		_float fBloomPower = 0.f;
 		if (FAILED(pShader->Set_Value("g_fBloomPower", &fBloomPower, sizeof(_float))))
 			return E_FAIL;
 	}
-
-	//============================================================================================
-	// 기타 상수
-	//============================================================================================
-	else
-	{
-		_mat matWVP = WorldMatrix * ViewMatrix * ProjMatrix;
-
-		if (FAILED(pShader->Set_Value("g_matWVP", &matWVP, sizeof(_mat))))
-			return E_FAIL;
-	}
-
 	//============================================================================================
 	// 쉐이더 시작
 	//============================================================================================
@@ -179,9 +151,6 @@ HRESULT CYetiTrap::Render_GameObject_SetPass(CShader * pShader, _int iPass, _boo
 
 HRESULT CYetiTrap::Render_GameObject_Instancing_SetPass(CShader * pShader)
 {
-	if (false == m_bEnable)
-		return S_OK;
-
 	if (FAILED(SetUp_ConstantTable(m_pShader)))
 		return E_FAIL;
 
@@ -270,15 +239,6 @@ HRESULT CYetiTrap::Add_Component(void* pArg)
 
 HRESULT CYetiTrap::SetUp_ConstantTable(CShader * pShader)
 {
-	IF_NULL_VALUE_RETURN(pShader, E_FAIL);
-
-	_mat		ViewMatrix = g_pManagement->Get_Transform(D3DTS_VIEW);
-	_mat		ProjMatrix = g_pManagement->Get_Transform(D3DTS_PROJECTION);
-
-	//=============================================================================================
-	// 기본 메트릭스
-	//=============================================================================================
-
 	if (FAILED(pShader->Set_Value("g_matWorld", &m_pTransform->Get_WorldMat(), sizeof(_mat))))
 
 	//=============================================================================================
