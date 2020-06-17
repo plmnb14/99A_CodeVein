@@ -1696,7 +1696,216 @@ void CPlayer_Colleague::CollAtt_CenterDown()
 	}
 	else
 	{
-		if (m_pDynamicMesh->Is_Finish_Animation_Lower(0.9f) && m_eColleague_Ani == CPlayer_Colleague::Ani_Jump_CenterAtt_Skil)
+		if (m_pDynamicMesh->Is_Finish_Animation_Lower(0.9f))
+		{
+			Function_Reset_State();
+			m_eMovetype = CPlayer_Colleague::Coll_Idle;
+			m_bTestRendom = true;
+			m_bMyHiting = false;
+			m_bCheck_Attcing = false;
+			m_fCoolTimer_limit = 8.f;
+			m_bChecking_MyHit = true;
+			++m_iNormalAtt_Count;
+			g_pSoundManager->Stop_Sound(CSoundManager::Jack_Voice);
+			g_pSoundManager->Stop_Sound(CSoundManager::Jack_SFX_02);
+			g_pSoundManager->Stop_Sound(CSoundManager::Jack_SFX_01);
+			m_bCheck_Skil_Voice = false;
+			m_iCenter_Count = 0;
+			return;
+		}
+
+		else if (m_pDynamicMesh->Get_TrackInfo().Position >= 3.233f)
+		{
+			if (m_bEventTrigger[9] == false)
+			{
+				m_bEventTrigger[9] = true;
+
+				m_pSword->Set_Enable_Trail(false);
+			}
+		}
+
+		else if (m_pDynamicMesh->Get_TrackInfo().Position >= 3.033f)
+		{
+			if (m_bEventTrigger[8] == false)
+			{
+				m_bEventTrigger[8] = true;
+
+				m_pSword->Set_Target_CanAttack(false);
+				m_pSword->Set_Enable_Record(false);
+			}
+		}
+
+		else if (m_pDynamicMesh->Get_TrackInfo().Position >= 2.887f)
+		{
+			if (m_bEventTrigger[7] == false)
+			{
+				m_bEventTrigger[7] = true;
+
+				g_pManagement->Create_Effect_Delay(L"Player_Skill_Ring_Hor", 0.f, vEffPos, m_pTransformCom);
+				g_pManagement->Create_Effect_Delay(L"Player_Skill_Ring_Ver", 0.f, vEffPos, m_pTransformCom);
+				g_pManagement->Create_Effect_Delay(L"Player_Skill_RedCircle_Flash", 0.f, vEffPos, m_pTransformCom);
+				g_pManagement->Create_Effect_Delay(L"Player_Skill_RedParticle_Explosion", 0.f, vEffPos, m_pTransformCom);
+
+				g_pSoundManager->Stop_Sound(CSoundManager::Player_SFX_01);
+				g_pSoundManager->Play_Sound(L"PlayerSkill02_Eff.ogg", CSoundManager::Player_SFX_01, CSoundManager::Effect_Sound);
+			}
+		}
+
+		else if (m_pDynamicMesh->Get_TrackInfo().Position >= 2.867f)
+		{
+			if (m_bEventTrigger[6] == false)
+			{
+				m_bEventTrigger[6] = true;
+
+				g_pManagement->Create_Effect_Delay(L"Player_Skill_ScratchBlur_Ver", 0.f, vEffPos, m_pTransformCom);
+				g_pManagement->Create_Effect_Delay(L"Player_Skill_ScratchBlur_Sub_Ver", 0.f, vEffPos, m_pTransformCom);
+				g_pManagement->Create_Effect_Delay(L"Player_Skill_Scratch_Ver", 0.f, vEffPos, m_pTransformCom);
+				g_pManagement->Create_Effect_Delay(L"Hit_Slash_0", 0.f, vEffPos, m_pTransformCom);
+				g_pManagement->Create_Effect_Delay(L"Hit_Slash_1", 0.f, vEffPos, m_pTransformCom);
+				g_pManagement->Create_Effect_Delay(L"Hit_Slash_2", 0.f, vEffPos, m_pTransformCom);
+				g_pManagement->Create_Effect_Delay(L"Hit_Slash_3", 0.f, vEffPos, m_pTransformCom);
+				g_pManagement->Create_Effect_Delay(L"Hit_Slash_Particle_0", 0.f, vEffPos, m_pTransformCom);
+
+				g_pSoundManager->Stop_Sound(CSoundManager::Player_SFX_04);
+				g_pSoundManager->Play_Sound(L"SE_BLACK_KNIGHT_WIND_CUT_002.ogg", CSoundManager::Player_SFX_04, CSoundManager::Effect_Sound);
+			}
+		}
+
+		else if (m_pDynamicMesh->Get_TrackInfo().Position >= 2.767f)
+		{
+			if (m_bEventTrigger[5] == false)
+			{
+				m_bEventTrigger[5] = true;
+
+				m_pSword->Set_Target_CanAttack(true);
+				m_pSword->Set_Enable_Record(true);
+			}
+		}
+
+		else if (m_pDynamicMesh->Get_TrackInfo().Position >= 2.6f)
+		{
+			if (m_bEventTrigger[4] == false)
+			{
+				m_bEventTrigger[4] = true;
+
+				m_pSword->Set_Enable_Trail(true);
+			}
+		}
+
+		else if (m_pDynamicMesh->Get_TrackInfo().Position >= 1.967f)
+		{
+			if (m_bEventTrigger[3] == false)
+			{
+				m_bEventTrigger[3] = true;
+
+				g_pManagement->Create_Effect_Delay(L"Player_Skill_ScratchBlur_Hor", 0.f, vEffPos, m_pTransformCom);
+				g_pManagement->Create_Effect_Delay(L"Player_Skill_ScratchBlur_Sub_Hor", 0.f, vEffPos, m_pTransformCom);
+				g_pManagement->Create_Effect_Delay(L"Player_Skill_Scratch_Hor", 0.f, vEffPos, m_pTransformCom);
+				g_pManagement->Create_Effect_Delay(L"Hit_Slash_0", 0.f, vEffPos, m_pTransformCom);
+				g_pManagement->Create_Effect_Delay(L"Hit_Slash_1", 0.f, vEffPos, m_pTransformCom);
+				g_pManagement->Create_Effect_Delay(L"Hit_Slash_2", 0.f, vEffPos, m_pTransformCom);
+				g_pManagement->Create_Effect_Delay(L"Hit_Slash_3", 0.f, vEffPos, m_pTransformCom);
+				g_pManagement->Create_Effect_Delay(L"Hit_Slash_Particle_0", 0.f, vEffPos, m_pTransformCom);
+				g_pManagement->Create_Effect_Delay(L"Player_Skill_RedParticle_Explosion", 0.f, vEffPos, m_pTransformCom);
+
+				g_pSoundManager->Stop_Sound(CSoundManager::Player_SFX_02);
+				g_pSoundManager->Play_Sound(L"SE_BLACK_KNIGHT_WIND_CUT_000.ogg", CSoundManager::Player_SFX_02, CSoundManager::Effect_Sound);
+			}
+		}
+
+
+		if (m_pDynamicMesh->Get_TrackInfo().Position >= 2.867f && m_pDynamicMesh->Get_TrackInfo().Position < 3.333f)
+		{
+			if (m_bEventTrigger[12] == false)
+			{
+				m_bEventTrigger[12] = true;
+
+				m_fAtt_MoveAccel_Cur = 1.f;
+				m_fAtt_MoveAccel_Cur = 0.f;
+				m_fAni_Multiply = 0.f;
+
+				//m_fAnimMutiply = 1.f;
+			}
+			Colleague_Movement(m_fAtt_MoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_Z));
+			Colleague_SkilMovement(m_fAni_Multiply);
+		}
+
+		else if (m_pDynamicMesh->Get_TrackInfo().Position >= 2.f)
+		{
+			if (m_bEventTrigger[2] == false)
+			{
+				m_bEventTrigger[2] = true;
+
+				m_tObjParam.bInvisible = false;
+				m_pSword->Set_Invisible(false);
+				//m_pOuter->Set_Invisible(false);
+				m_fAni_Multiply = 1.f;
+			}
+		}
+
+		else if (m_pDynamicMesh->Get_TrackInfo().Position >= 1.9f)
+		{
+			if (m_bEventTrigger[10] == false)
+			{
+				m_bEventTrigger[10] = true;
+
+				_v3 vEffPos_Dis = _v3(0.f, 1.5f, 0.f) - m_pTransformCom->Get_Axis(AXIS_Z) * 1.f;
+				m_tObjParam.bCanHit = true;
+
+				g_pManagement->Create_Effect_Delay(L"Player_Skill_Distortion_Circle", 0.f, vEffPos_Dis, m_pTransformCom);
+
+				g_pSoundManager->Stop_Sound(CSoundManager::Player_SFX_03);
+				g_pSoundManager->Play_Sound(L"SE_BLACK_KNIGHT_JUMP_000.ogg", CSoundManager::Player_SFX_03, CSoundManager::Effect_Sound);
+			}
+		}
+
+		if (m_pDynamicMesh->Get_TrackInfo().Position >= 1.167f && m_pDynamicMesh->Get_TrackInfo().Position < 2.1f)
+		{
+			if (m_bEventTrigger[0] == false)
+			{
+				m_bEventTrigger[0] = true;
+
+				
+				m_fAtt_MoveSpeed_Cur = 30.f;
+				m_fAtt_MoveAccel_Cur = 0.f;
+				m_fAni_Multiply = 5.f;
+
+				//m_fAni_Multiply = 1.5f;
+
+				m_tObjParam.bInvisible = true;
+				m_pSword->Set_Invisible(true);
+				//m_pOuter->Set_Invisible(true);
+			}
+
+			if (m_bEventTrigger[1] == false)
+			{
+				m_bEventTrigger[1] = true;
+
+				_v3 vEffPos_Dis = _v3(0.f, 1.5f, 0.f) + m_pTransformCom->Get_Axis(AXIS_Z) * 1.5f;
+				//m_tObjParam.bCanHit = false;
+
+				g_pManagement->Create_Effect_Delay(L"Player_Skill_Distortion_Circle", 0.f, vEffPos_Dis, m_pTransformCom);
+
+				g_pSoundManager->Stop_Sound(CSoundManager::Player_SFX_01);
+				g_pSoundManager->Play_Sound(L"SE_QUEENS_KNIGHTS_WARP_001.ogg", CSoundManager::Player_SFX_01, CSoundManager::Effect_Sound);
+			}
+			Colleague_Movement(m_fAtt_MoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_Z));
+			Colleague_SkilMovement(m_fAni_Multiply);
+		}
+
+		else if (m_pDynamicMesh->Get_TrackInfo().Position > 0.5f)
+		{
+			if (m_bEventTrigger[11] == false)
+			{
+				m_bEventTrigger[11] = true;
+
+				// µðÁ¹ºê Àá±ñ »©µÒ
+				// Start_Dissolve(1.f, false);
+			}
+		}
+
+
+		/*if (m_pDynamicMesh->Is_Finish_Animation_Lower(0.9f) && m_eColleague_Ani == CPlayer_Colleague::Ani_Jump_CenterAtt_Skil)
 		{
 			Function_Reset_State();
 			m_eMovetype = CPlayer_Colleague::Coll_Idle;
@@ -1845,7 +2054,7 @@ void CPlayer_Colleague::CollAtt_CenterDown()
 				CParticleMgr::Get_Instance()->Create_Skill_Start_Effect(V3_NULL, vEffPos, m_pTransformCom);
 				g_pManagement->Create_ParticleEffect_Delay(L"Player_Skill_DarkSmokeAura", 0.5f, 0.f, _v3(0, 1.1f, 0.f), m_pTransformCom);
 			}
-		}
+		}*/
 
 	}
 	return;
