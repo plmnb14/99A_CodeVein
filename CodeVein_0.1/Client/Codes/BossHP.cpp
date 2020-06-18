@@ -120,14 +120,14 @@ HRESULT CBossHP::Render_GameObject()
 			
 		else if (i == 1)
 		{
-			iIndex = 1;
-			iPass = 2;
+			iIndex = 4;
+			iPass = 3;
 		}
 			
 		else if (i == 2)
 		{
-			iIndex = 4;
-			iPass = 3;
+			iIndex = 1;
+			iPass = 2;
 		}
 		if (FAILED(SetUp_ConstantTable(iIndex)))
 			return E_FAIL;
@@ -206,19 +206,14 @@ HRESULT CBossHP::SetUp_ConstantTable(_uint iIndex)
 
 void CBossHP::SetUp_State(_double TimeDelta)
 {
-	/*if (m_fBossHP >= m_fTotalHP)
-		m_fBossHP = m_fTotalHP;
-	if (m_fBossHP <= 0.f)
-		m_fBossHP = 0.f;*/
-	if (!m_bIsActive)
-		return;
-	m_fBossHP = m_pTarget->Get_Target_Hp();
+	// 수정
 	m_fTotalHP = m_pTarget->Get_Target_Param().fHp_Max;
+	m_fBossHP = m_pTarget->Get_Target_Param().fHp_Cur;
 
 	if (m_fOldHP <= m_fBossHP)
 		m_fOldHP = m_fBossHP;
 	else
-		m_fOldHP -= _float(TimeDelta) * 150.f;
+		m_fOldHP -= _float(TimeDelta) * 200.f;
 
 	if (m_fOldHP >= m_fTotalHP)
 		m_fOldHP = m_fTotalHP;
@@ -229,9 +224,7 @@ void CBossHP::SetUp_State(_double TimeDelta)
 		m_fBossHP = m_fTotalHP;
 
 	// Texture UV 흐르는 속도
-	m_fSpeed += -0.05f * _float(TimeDelta);
-
-	
+	m_fSpeed += -0.1f * _float(TimeDelta);
 }
 
 CBossHP * CBossHP::Create(_Device pGraphic_Device)
