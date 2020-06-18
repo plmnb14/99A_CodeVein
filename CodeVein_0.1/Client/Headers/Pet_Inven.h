@@ -1,13 +1,11 @@
 #pragma once
 
-#include "Client_Defines.h"
-#include "Client_Item_Enum.h"
-#include "UI.h"
-
 #include "Pet_Slot.h"
 #include "Inventory_Icon.h"
 
 BEGIN(Client)
+
+class CPet;
 
 class CPet_Inven final : public CUI
 {
@@ -23,18 +21,17 @@ public:
 	virtual _int			Late_Update_GameObject(_double TimeDelta);
 	virtual HRESULT			Render_GameObject();
 
-	void					Add_Pet(CPet::PET_TYPE ePetType);
+	void					Add_Pet(ITEM_NAMETYPE ePetName);
 
 private:
 	void					Click_Inven();
 	void					Reset_SlotSelect();
-	void					Check_Call_Pet(_bool _Check_Get_SlotSelect, _uint _Idx, CPet::PET_TYPE _eType);
-
+	void					Check_Call_Pet(_bool _Check_Get_SlotSelect, _uint _Idx, ITEM_NAMETYPE _eType);
+	void					SetUp_SlotPos();
+	void					SetUp_SubUI_Active(_bool bIsActive);
 	HRESULT					Add_Component();
 	HRESULT					SetUp_Default();
 	HRESULT					SetUp_ConstantTable();
-	void					SetUp_SlotPos();
-	void					SetUp_SubUI_Active(_bool bIsActive);
 
 public:
 	static CPet_Inven*		Create(_Device pGraphic_Device);
@@ -50,13 +47,8 @@ private:
 
 	_bool					m_bIsSubActive = false;
 	CInventory_Icon*		m_pExitIcon = nullptr;
-	CInventory_Icon*		m_pSummonsBtn = nullptr;
 
 	vector<CPet_Slot*>		m_vecPetSlot;
-	//CPet::PET_TYPE			m_eNowType = CPet::PET_TYPE::PET_TYPE_END;
-	//
-	//_bool					m_bCanActivePet = true;
-	//_uint					m_ivectorNum = 999999;
 
 };
 

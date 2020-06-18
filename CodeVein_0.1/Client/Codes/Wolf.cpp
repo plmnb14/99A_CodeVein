@@ -612,8 +612,43 @@ void CWolf::Play_Bite_LRL()
 				m_vecAttackCol[0]->Set_Enabled(true);
 				m_tObjParam.bSuperArmor = true;
 
-				g_pSoundManager->Stop_Sound(CSoundManager::Wolf_SFX_01);
-				g_pSoundManager->Play_Sound(L"Wolf_Bite4.ogg", CSoundManager::Wolf_SFX_01, CSoundManager::Effect_Sound);
+				g_pSoundManager->Stop_Sound(CSoundManager::Wolf_SFX_02);
+				g_pSoundManager->Stop_Sound(CSoundManager::Wolf_Voice);
+
+				switch (CALC::Random_Num(0, 4))
+				{
+				case 0:
+					g_pSoundManager->Play_Sound(L"Monster_Swing_Sub0.ogg", CSoundManager::Wolf_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 1:
+					g_pSoundManager->Play_Sound(L"Monster_Swing_Sub1.ogg", CSoundManager::Wolf_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 2:
+					g_pSoundManager->Play_Sound(L"Monster_Swing_Sub2.ogg", CSoundManager::Wolf_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 3:
+					g_pSoundManager->Play_Sound(L"Monster_Swing_Sub3.ogg", CSoundManager::Wolf_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 4:
+					g_pSoundManager->Play_Sound(L"Monster_Swing_Sub4.ogg", CSoundManager::Wolf_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				}
+
+				switch (CALC::Random_Num(0, 3))
+				{
+				case 0:
+					g_pSoundManager->Play_Sound(L"Wolf_Bite0.ogg", CSoundManager::Wolf_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 1:
+					g_pSoundManager->Play_Sound(L"Wolf_Bite1.ogg", CSoundManager::Wolf_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 2:
+					g_pSoundManager->Play_Sound(L"Wolf_Bite2.ogg", CSoundManager::Wolf_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 3:
+					g_pSoundManager->Play_Sound(L"Wolf_Bite2.ogg", CSoundManager::Wolf_Voice, CSoundManager::Effect_Sound);
+					break;
+				}
 			}
 		}
 		else if (3.367 <= AniTime)
@@ -634,7 +669,42 @@ void CWolf::Play_Bite_LRL()
 				m_tObjParam.bSuperArmor = true;
 
 				g_pSoundManager->Stop_Sound(CSoundManager::Wolf_SFX_02);
-				g_pSoundManager->Play_Sound(L"Wolf_Bite4.ogg", CSoundManager::Wolf_SFX_01, CSoundManager::Effect_Sound);
+				g_pSoundManager->Stop_Sound(CSoundManager::Wolf_Voice);
+
+				switch (CALC::Random_Num(0, 4))
+				{
+				case 0:
+					g_pSoundManager->Play_Sound(L"Monster_Swing_Sub0.ogg", CSoundManager::Wolf_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 1:
+					g_pSoundManager->Play_Sound(L"Monster_Swing_Sub1.ogg", CSoundManager::Wolf_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 2:
+					g_pSoundManager->Play_Sound(L"Monster_Swing_Sub2.ogg", CSoundManager::Wolf_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 3:
+					g_pSoundManager->Play_Sound(L"Monster_Swing_Sub3.ogg", CSoundManager::Wolf_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 4:
+					g_pSoundManager->Play_Sound(L"Monster_Swing_Sub4.ogg", CSoundManager::Wolf_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				}
+
+				switch (CALC::Random_Num(0, 3))
+				{
+				case 0:
+					g_pSoundManager->Play_Sound(L"Wolf_Bite0.ogg", CSoundManager::Wolf_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 1:
+					g_pSoundManager->Play_Sound(L"Wolf_Bite1.ogg", CSoundManager::Wolf_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 2:
+					g_pSoundManager->Play_Sound(L"Wolf_Bite2.ogg", CSoundManager::Wolf_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 3:
+					g_pSoundManager->Play_Sound(L"Wolf_Bite2.ogg", CSoundManager::Wolf_Voice, CSoundManager::Effect_Sound);
+					break;
+				}
 			}
 		}
 		else if (2.167 <= AniTime)
@@ -654,8 +724,43 @@ void CWolf::Play_Bite_LRL()
 				m_vecAttackCol[0]->Set_Enabled(true);
 				m_tObjParam.bSuperArmor = true;
 
-				g_pSoundManager->Stop_Sound(CSoundManager::Wolf_SFX_01);
-				g_pSoundManager->Play_Sound(L"Wolf_Bite4.ogg", CSoundManager::Wolf_SFX_01, CSoundManager::Effect_Sound);
+				g_pSoundManager->Stop_Sound(CSoundManager::Wolf_SFX_02);
+				g_pSoundManager->Stop_Sound(CSoundManager::Wolf_Voice);
+
+				switch (CALC::Random_Num(0, 4))
+				{
+				case 0:
+					g_pSoundManager->Play_Sound(L"Monster_Swing_Sub0.ogg", CSoundManager::Wolf_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 1:
+					g_pSoundManager->Play_Sound(L"Monster_Swing_Sub1.ogg", CSoundManager::Wolf_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 2:
+					g_pSoundManager->Play_Sound(L"Monster_Swing_Sub2.ogg", CSoundManager::Wolf_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 3:
+					g_pSoundManager->Play_Sound(L"Monster_Swing_Sub3.ogg", CSoundManager::Wolf_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 4:
+					g_pSoundManager->Play_Sound(L"Monster_Swing_Sub4.ogg", CSoundManager::Wolf_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				}
+
+				switch (CALC::Random_Num(0, 3))
+				{
+				case 0:
+					g_pSoundManager->Play_Sound(L"Wolf_Bite0.ogg", CSoundManager::Wolf_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 1:
+					g_pSoundManager->Play_Sound(L"Wolf_Bite1.ogg", CSoundManager::Wolf_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 2:
+					g_pSoundManager->Play_Sound(L"Wolf_Bite2.ogg", CSoundManager::Wolf_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 3:
+					g_pSoundManager->Play_Sound(L"Wolf_Bite2.ogg", CSoundManager::Wolf_Voice, CSoundManager::Effect_Sound);
+					break;
+				}
 			}
 		}
 
@@ -739,8 +844,43 @@ void CWolf::Play_RDodgeAtk()
 				m_vecAttackCol[0]->Set_Enabled(true);
 				m_tObjParam.bSuperArmor = true;
 
-				g_pSoundManager->Stop_Sound(CSoundManager::Wolf_SFX_01);
-				g_pSoundManager->Play_Sound(L"Wolf_Bite3.ogg", CSoundManager::Wolf_SFX_01, CSoundManager::Effect_Sound);
+				g_pSoundManager->Stop_Sound(CSoundManager::Wolf_SFX_02);
+				g_pSoundManager->Stop_Sound(CSoundManager::Wolf_Voice);
+
+				switch (CALC::Random_Num(0, 4))
+				{
+				case 0:
+					g_pSoundManager->Play_Sound(L"Monster_Swing_Sub0.ogg", CSoundManager::Wolf_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 1:
+					g_pSoundManager->Play_Sound(L"Monster_Swing_Sub1.ogg", CSoundManager::Wolf_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 2:
+					g_pSoundManager->Play_Sound(L"Monster_Swing_Sub2.ogg", CSoundManager::Wolf_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 3:
+					g_pSoundManager->Play_Sound(L"Monster_Swing_Sub3.ogg", CSoundManager::Wolf_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 4:
+					g_pSoundManager->Play_Sound(L"Monster_Swing_Sub4.ogg", CSoundManager::Wolf_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				}
+
+				switch (CALC::Random_Num(0, 3))
+				{
+				case 0:
+					g_pSoundManager->Play_Sound(L"Wolf_Bite0.ogg", CSoundManager::Wolf_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 1:
+					g_pSoundManager->Play_Sound(L"Wolf_Bite1.ogg", CSoundManager::Wolf_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 2:
+					g_pSoundManager->Play_Sound(L"Wolf_Bite2.ogg", CSoundManager::Wolf_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 3:
+					g_pSoundManager->Play_Sound(L"Wolf_Bite2.ogg", CSoundManager::Wolf_Voice, CSoundManager::Effect_Sound);
+					break;
+				}
 			}
 		}
 
@@ -811,8 +951,43 @@ void CWolf::Play_LDodgeAtk()
 				m_vecAttackCol[0]->Set_Enabled(true);
 				m_tObjParam.bSuperArmor = true;
 
-				g_pSoundManager->Stop_Sound(CSoundManager::Wolf_SFX_01);
-				g_pSoundManager->Play_Sound(L"Wolf_Bite2.ogg", CSoundManager::Wolf_SFX_01, CSoundManager::Effect_Sound);
+				g_pSoundManager->Stop_Sound(CSoundManager::Wolf_SFX_02);
+				g_pSoundManager->Stop_Sound(CSoundManager::Wolf_Voice);
+
+				switch (CALC::Random_Num(0, 4))
+				{
+				case 0:
+					g_pSoundManager->Play_Sound(L"Monster_Swing_Sub0.ogg", CSoundManager::Wolf_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 1:
+					g_pSoundManager->Play_Sound(L"Monster_Swing_Sub1.ogg", CSoundManager::Wolf_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 2:
+					g_pSoundManager->Play_Sound(L"Monster_Swing_Sub2.ogg", CSoundManager::Wolf_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 3:
+					g_pSoundManager->Play_Sound(L"Monster_Swing_Sub3.ogg", CSoundManager::Wolf_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 4:
+					g_pSoundManager->Play_Sound(L"Monster_Swing_Sub4.ogg", CSoundManager::Wolf_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				}
+
+				switch (CALC::Random_Num(0, 3))
+				{
+				case 0:
+					g_pSoundManager->Play_Sound(L"Wolf_Bite0.ogg", CSoundManager::Wolf_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 1:
+					g_pSoundManager->Play_Sound(L"Wolf_Bite1.ogg", CSoundManager::Wolf_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 2:
+					g_pSoundManager->Play_Sound(L"Wolf_Bite2.ogg", CSoundManager::Wolf_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 3:
+					g_pSoundManager->Play_Sound(L"Wolf_Bite2.ogg", CSoundManager::Wolf_Voice, CSoundManager::Effect_Sound);
+					break;
+				}
 			}
 		}
 
@@ -883,8 +1058,43 @@ void CWolf::Play_Frisbee()
 				m_vecAttackCol[0]->Set_Enabled(true);
 				m_tObjParam.bSuperArmor = true;
 
-				g_pSoundManager->Stop_Sound(CSoundManager::Wolf_SFX_01);
-				g_pSoundManager->Play_Sound(L"Wolf_Bite1.ogg", CSoundManager::Wolf_SFX_01, CSoundManager::Effect_Sound);
+				g_pSoundManager->Stop_Sound(CSoundManager::Wolf_SFX_02);
+				g_pSoundManager->Stop_Sound(CSoundManager::Wolf_Voice);
+
+				switch (CALC::Random_Num(0, 4))
+				{
+				case 0:
+					g_pSoundManager->Play_Sound(L"Monster_Swing_Sub0.ogg", CSoundManager::Wolf_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 1:
+					g_pSoundManager->Play_Sound(L"Monster_Swing_Sub1.ogg", CSoundManager::Wolf_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 2:
+					g_pSoundManager->Play_Sound(L"Monster_Swing_Sub2.ogg", CSoundManager::Wolf_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 3:
+					g_pSoundManager->Play_Sound(L"Monster_Swing_Sub3.ogg", CSoundManager::Wolf_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				case 4:
+					g_pSoundManager->Play_Sound(L"Monster_Swing_Sub4.ogg", CSoundManager::Wolf_SFX_02, CSoundManager::Effect_Sound);
+					break;
+				}
+
+				switch (CALC::Random_Num(0, 3))
+				{
+				case 0:
+					g_pSoundManager->Play_Sound(L"Wolf_Bite0.ogg", CSoundManager::Wolf_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 1:
+					g_pSoundManager->Play_Sound(L"Wolf_Bite1.ogg", CSoundManager::Wolf_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 2:
+					g_pSoundManager->Play_Sound(L"Wolf_Bite2.ogg", CSoundManager::Wolf_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 3:
+					g_pSoundManager->Play_Sound(L"Wolf_Bite2.ogg", CSoundManager::Wolf_Voice, CSoundManager::Effect_Sound);
+					break;
+				}
 			}
 		}
 
@@ -908,6 +1118,8 @@ void CWolf::Play_Frisbee()
 
 void CWolf::Play_Idle()
 {
+	_double AniTime = m_pMeshCom->Get_TrackInfo().Position;
+
 	switch (m_eSecondCategory_IDLE)
 	{
 	case MONSTER_IDLE_TYPE::IDLE_IDLE:
@@ -995,9 +1207,58 @@ void CWolf::Play_Idle()
 				{
 					if (m_pMeshCom->Is_Finish_Animation(0.95f))
 					{
-						m_bCanIdle = true;
-						m_bIsIdle = false;
+						Function_ResetAfterAtk();
 						m_eState = WOLF_ANI::Threat;
+					}
+					else if (2.733f <= AniTime)
+					{
+						if (false == m_bEventTrigger[0])
+						{
+							m_bEventTrigger[0] = true;
+
+							g_pSoundManager->Stop_Sound(CSoundManager::Wolf_Voice);
+
+							switch (CALC::Random_Num(0, 3))
+							{
+							case 0:
+								g_pSoundManager->Play_Sound(L"Wolf_Bite0.ogg", CSoundManager::Wolf_Voice, CSoundManager::Effect_Sound);
+								break;
+							case 1:
+								g_pSoundManager->Play_Sound(L"Wolf_Bite1.ogg", CSoundManager::Wolf_Voice, CSoundManager::Effect_Sound);
+								break;
+							case 2:
+								g_pSoundManager->Play_Sound(L"Wolf_Bite2.ogg", CSoundManager::Wolf_Voice, CSoundManager::Effect_Sound);
+								break;
+							case 3:
+								g_pSoundManager->Play_Sound(L"Wolf_Bite2.ogg", CSoundManager::Wolf_Voice, CSoundManager::Effect_Sound);
+								break;
+							}
+						}
+					}
+					else if (3.633f <= AniTime)
+					{
+						if (false == m_bEventTrigger[1])
+						{
+							m_bEventTrigger[1] = true;
+
+							g_pSoundManager->Stop_Sound(CSoundManager::Wolf_Voice);
+
+							switch (CALC::Random_Num(0, 3))
+							{
+							case 0:
+								g_pSoundManager->Play_Sound(L"Wolf_Bite0.ogg", CSoundManager::Wolf_Voice, CSoundManager::Effect_Sound);
+								break;
+							case 1:
+								g_pSoundManager->Play_Sound(L"Wolf_Bite1.ogg", CSoundManager::Wolf_Voice, CSoundManager::Effect_Sound);
+								break;
+							case 2:
+								g_pSoundManager->Play_Sound(L"Wolf_Bite2.ogg", CSoundManager::Wolf_Voice, CSoundManager::Effect_Sound);
+								break;
+							case 3:
+								g_pSoundManager->Play_Sound(L"Wolf_Bite2.ogg", CSoundManager::Wolf_Voice, CSoundManager::Effect_Sound);
+								break;
+							}
+						}
 					}
 				}
 			}
@@ -1029,9 +1290,58 @@ void CWolf::Play_Idle()
 				{
 					if (m_pMeshCom->Is_Finish_Animation(0.95f))
 					{
-						m_bCanIdle = true;
-						m_bIsIdle = false;
+						Function_ResetAfterAtk();
 						m_eState = WOLF_ANI::Threat;
+					}
+				}
+				else if (3.100f <= AniTime)
+				{
+					if (false == m_bEventTrigger[0])
+					{
+						m_bEventTrigger[0] = true;
+
+						g_pSoundManager->Stop_Sound(CSoundManager::Wolf_Voice);
+
+						switch (CALC::Random_Num(0, 3))
+						{
+						case 0:
+							g_pSoundManager->Play_Sound(L"Wolf_Bite0.ogg", CSoundManager::Wolf_Voice, CSoundManager::Effect_Sound);
+							break;
+						case 1:
+							g_pSoundManager->Play_Sound(L"Wolf_Bite1.ogg", CSoundManager::Wolf_Voice, CSoundManager::Effect_Sound);
+							break;
+						case 2:
+							g_pSoundManager->Play_Sound(L"Wolf_Bite2.ogg", CSoundManager::Wolf_Voice, CSoundManager::Effect_Sound);
+							break;
+						case 3:
+							g_pSoundManager->Play_Sound(L"Wolf_Bite2.ogg", CSoundManager::Wolf_Voice, CSoundManager::Effect_Sound);
+							break;
+						}
+					}
+				}
+				else if (2.033f <= AniTime)
+				{
+					if (false == m_bEventTrigger[1])
+					{
+						m_bEventTrigger[1] = true;
+
+						g_pSoundManager->Stop_Sound(CSoundManager::Wolf_Voice);
+
+						switch (CALC::Random_Num(0, 3))
+						{
+						case 0:
+							g_pSoundManager->Play_Sound(L"Wolf_Bite0.ogg", CSoundManager::Wolf_Voice, CSoundManager::Effect_Sound);
+							break;
+						case 1:
+							g_pSoundManager->Play_Sound(L"Wolf_Bite1.ogg", CSoundManager::Wolf_Voice, CSoundManager::Effect_Sound);
+							break;
+						case 2:
+							g_pSoundManager->Play_Sound(L"Wolf_Bite2.ogg", CSoundManager::Wolf_Voice, CSoundManager::Effect_Sound);
+							break;
+						case 3:
+							g_pSoundManager->Play_Sound(L"Wolf_Bite2.ogg", CSoundManager::Wolf_Voice, CSoundManager::Effect_Sound);
+							break;
+						}
 					}
 				}
 			}
