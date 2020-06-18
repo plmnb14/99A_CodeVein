@@ -428,8 +428,7 @@ void CToolView::Global_KeyDown()
 	// Util
 //////////////////////////////////////////////////////////////////////////////////////
 
-	if (Engine::CInput_Device::Get_Instance()->Key_Down(
-	))
+	if (Engine::CInput_Device::Get_Instance()->Key_Down(DIK_NUMPAD6))
 	{
 		// ±âÁî¸ð On / Off
 		CManagement::Get_Instance()->Gizmo_Toggle();
