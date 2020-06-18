@@ -53,8 +53,8 @@ _int CBossHP::Update_GameObject(_double TimeDelta)
 {
 	CUI::Update_GameObject(TimeDelta);
 
-	//if (nullptr == m_pTarget)
-	//	return NO_EVENT;
+	if (nullptr == m_pTarget)
+		return NO_EVENT;
 	
 	SetUp_State(TimeDelta);
 
@@ -110,7 +110,7 @@ HRESULT CBossHP::Render_GameObject()
 	_uint iPass = 0;
 	_uint iIndex = 0;
 
-	for (_uint i = 0; i < 2; ++i)
+	for (_uint i = 0; i < 3; ++i)
 	{
 		if (i == 0)
 		{
@@ -124,11 +124,11 @@ HRESULT CBossHP::Render_GameObject()
 			iPass = 2;
 		}
 			
-		/*else if (i == 2)
+		else if (i == 2)
 		{
-			iIndex = 3;
-			iPass = 1;
-		}*/
+			iIndex = 4;
+			iPass = 3;
+		}
 		if (FAILED(SetUp_ConstantTable(iIndex)))
 			return E_FAIL;
 		m_pShaderCom->Begin_Shader();
@@ -176,38 +176,29 @@ HRESULT CBossHP::SetUp_ConstantTable(_uint iIndex)
 	if (nullptr == m_pShaderCom)
 		return E_FAIL;
 
-	/*if (iIndex == 0)
-	{
-		if (FAILED(m_pShaderCom->Set_Value("g_matWorld", &m_matWorld, sizeof(_mat))))
-			return E_FAIL;
-		if (FAILED(m_pShaderCom->Set_Value("g_matView", &m_matView, sizeof(_mat))))
+	if(1 == iIndex)
+		m_fPercentage = m_fBossHP / m_fTotalHP;
+	else if(4 == iIndex)
+		m_fPercentage = m_fOldHP / m_fTotalHP;
 
-			return E_FAIL;
-		if (FAILED(m_pShaderCom->Set_Value("g_matProj", &m_matProj, sizeof(_mat))))
-			return E_FAIL;
-
-		if (FAILED(m_pTextureCom->SetUp_OnShader("g_DiffuseTexture", m_pShaderCom, iIndex)))
-			return E_FAIL;
-	}
-	else if (iIndex == 1)*/
-	{
-		if (FAILED(m_pShaderCom->Set_Value("g_matWorld", &m_matWorld, sizeof(_mat))))
-			return E_FAIL;
-		if (FAILED(m_pShaderCom->Set_Value("g_matView", &m_matView, sizeof(_mat))))
-			return E_FAIL;
-		if (FAILED(m_pShaderCom->Set_Value("g_matProj", &m_matProj, sizeof(_mat))))
-			return E_FAIL;
-		if (FAILED(m_pShaderCom->Set_Value("g_fSpeed", &m_fSpeed, sizeof(_float))))
-			return E_FAIL;
-		if (FAILED(m_pShaderCom->Set_Value("g_fPosX", &m_fPosX, sizeof(_float))))
-			return E_FAIL;
-		if (FAILED(m_pShaderCom->Set_Value("g_fSizeX", &m_fSizeX, sizeof(_float))))
-			return E_FAIL;
-		if (FAILED(m_pShaderCom->Set_Value("g_fPercentage", &m_fPercentage, sizeof(_float))))
-			return E_FAIL;
-		if (FAILED(m_pTextureCom->SetUp_OnShader("g_DiffuseTexture", m_pShaderCom, iIndex)))
-			return E_FAIL;
-	}
+	
+	if (FAILED(m_pShaderCom->Set_Value("g_matWorld", &m_matWorld, sizeof(_mat))))
+		return E_FAIL;
+	if (FAILED(m_pShaderCom->Set_Value("g_matView", &m_matView, sizeof(_mat))))
+		return E_FAIL;
+	if (FAILED(m_pShaderCom->Set_Value("g_matProj", &m_matProj, sizeof(_mat))))
+		return E_FAIL;
+	if (FAILED(m_pShaderCom->Set_Value("g_fSpeed", &m_fSpeed, sizeof(_float))))
+		return E_FAIL;
+	/*if (FAILED(m_pShaderCom->Set_Value("g_fPosX", &m_fPosX, sizeof(_float))))
+		return E_FAIL;
+	if (FAILED(m_pShaderCom->Set_Value("g_fSizeX", &m_fSizeX, sizeof(_float))))
+		return E_FAIL;*/
+	if (FAILED(m_pShaderCom->Set_Value("g_fPercentage", &m_fPercentage, sizeof(_float))))
+		return E_FAIL;
+	if (FAILED(m_pTextureCom->SetUp_OnShader("g_DiffuseTexture", m_pShaderCom, iIndex)))
+		return E_FAIL;
+	
 	
 
 	return NOERROR;
@@ -215,19 +206,32 @@ HRESULT CBossHP::SetUp_ConstantTable(_uint iIndex)
 
 void CBossHP::SetUp_State(_double TimeDelta)
 {
-	if (m_fBossHP >= m_fTotalHP)
+	/*if (m_fBossHP >= m_fTotalHP)
 		m_fBossHP = m_fTotalHP;
 	if (m_fBossHP <= 0.f)
-		m_fBossHP = 0.f;
+		m_fBossHP = 0.f;*/
 	if (!m_bIsActive)
 		return;
-	//m_fBossHP = m_pTarget->Get_Target_Hp();
-	//m_fTotalHP = m_pTarget->Get_Target_Param().fHp_Max;
+	m_fBossHP = m_pTarget->Get_Target_Hp();
+	m_fTotalHP = m_pTarget->Get_Target_Param().fHp_Max;
+
+	if (m_fOldHP <= m_fBossHP)
+		m_fOldHP = m_fBossHP;
+	else
+		m_fOldHP -= _float(TimeDelta) * 150.f;
+
+	if (m_fOldHP >= m_fTotalHP)
+		m_fOldHP = m_fTotalHP;
+
+	if (m_fBossHP <= 0.f)
+		m_fBossHP = 0.f;
+	else if (m_fBossHP >= m_fTotalHP)
+		m_fBossHP = m_fTotalHP;
 
 	// Texture UV Èå¸£´Â ¼Óµµ
 	m_fSpeed += -0.05f * _float(TimeDelta);
 
-	m_fPercentage = m_fBossHP / m_fTotalHP;
+	
 }
 
 CBossHP * CBossHP::Create(_Device pGraphic_Device)
