@@ -659,6 +659,12 @@ void CPlayer_Colleague::Check_DeadEffect(_double TimeDelta)
 
 void CPlayer_Colleague::Check_Do_List(_double TimeDelta)
 {
+	if (m_eMovetype == CPlayer_Colleague::Coll_Hit)
+	{
+		m_iNormalAtt_Count = 0;
+		m_iCenter_Count = 0;
+	}
+
 	if (m_eMovetype == CPlayer_Colleague::Coll_Hit ||
 		m_eMovetype == CPlayer_Colleague::Coll_Dead ||
 		m_eMovetype == CPlayer_Colleague::Coll_Heal ||
@@ -739,8 +745,8 @@ void CPlayer_Colleague::Check_Do_List(_double TimeDelta)
 
 	if (true == m_bCheck_PlayerDist &&
 		(m_eColl_MoveMent == CPlayer_Colleague::Move_Run ||
-		m_eColl_MoveMent == CPlayer_Colleague::Move_BackRun ||
-			m_eColl_Sub_AttMoment == CPlayer_Colleague::Att_MonRun))
+		m_eColl_MoveMent == CPlayer_Colleague::Move_BackRun /*||
+			m_eColl_Sub_AttMoment == CPlayer_Colleague::Att_MonRun*/))
 	{
 		m_fFootWalkTimer_Max = 0.4f;
 
@@ -754,8 +760,8 @@ void CPlayer_Colleague::Check_Do_List(_double TimeDelta)
 		}
 	}
 	if (true == m_bCheck_PlayerDist &&
-		(m_eColl_Sub_AttMoment == CPlayer_Colleague::Att_MonBackWalk ||
-			m_eColl_Sub_AttMoment == CPlayer_Colleague::Att_MonWalk ||
+		(/*m_eColl_Sub_AttMoment == CPlayer_Colleague::Att_MonBackWalk ||
+			m_eColl_Sub_AttMoment == CPlayer_Colleague::Att_MonWalk ||*/
 			m_eColl_MoveMent == CPlayer_Colleague::Move_BackWalk ||
 			m_eColl_MoveMent == CPlayer_Colleague::Move_Walk))
 	{
@@ -1254,9 +1260,12 @@ void CPlayer_Colleague::Play_Hit()
 	if (m_eMovetype == CPlayer_Colleague::Coll_Dead || m_eMovetype == CPlayer_Colleague::Coll_Heal)
 		return;
 
+	if (false == m_bNest_Skil_CoolTImer)
+		return;
+
 	if (false == m_tObjParam.bIsHit)
 	{
-		Function_Reset_State();
+		//Function_Reset_State();
 		m_tObjParam.bIsHit = true;
 
 		// È÷Æ® °ü·Ã µ¿ÀÛ Àç»ý
@@ -1284,12 +1293,12 @@ void CPlayer_Colleague::Play_Hit()
 	{
 		if (m_pDynamicMesh->Is_Finish_Animation(0.86f))
 		{
-			Function_Reset_State();
-
 			m_fCoolTimer_limit = 0.5f;
+			m_fCoolTimer_Skil_limit = 0.5f;
 
 			m_eMovetype = CPlayer_Colleague::Coll_Idle;
-			g_pSoundManager->Stop_Sound(CSoundManager::Jack_Voice);
+
+			Function_Reset_State();
 
 			return;
 		}
@@ -1297,8 +1306,8 @@ void CPlayer_Colleague::Play_Hit()
 		{
 			if (false == m_tObjParam.bCanHit)
 			{
-				m_tObjParam.bCanHit = true;
-				Function_FBRL();
+				//m_tObjParam.bCanHit = true;
+				//Function_FBRL();
 			}
 		}
 	}
@@ -1527,11 +1536,10 @@ void CPlayer_Colleague::CollAtt_ThreeCombo()
 		m_bCheck_Attcing = false;
 		m_fCoolTimer_limit = 5.f;
 		m_bChecking_MyHit = true;
-		//++m_iNormalAtt_Count;
-		//++m_iCenter_Count;
 		g_pSoundManager->Stop_Sound(CSoundManager::Jack_Voice);
 		g_pSoundManager->Stop_Sound(CSoundManager::Jack_SFX_02);
-		m_bCheck_Skil_Voice = false;
+		++m_iNormalAtt_Count;
+		++m_iCenter_Count;
 		return;
 	}
 	else if (m_pDynamicMesh->Get_TrackInfo().Position >= 1.7f)
@@ -1614,6 +1622,9 @@ void CPlayer_Colleague::CollAtt_ThreeCombo()
 			m_fAtt_MoveAccel_Cur = 0.f;
 			m_fAtt_MoveSpeed_Cur = 4.f;
 			m_fAni_Multiply = 0.f;
+
+			//++m_iNormalAtt_Count;
+			//++m_iCenter_Count;
 		}
 		Function_RotateBody();
 		Colleague_SkilMovement(m_fAni_Multiply);
@@ -1681,8 +1692,6 @@ void CPlayer_Colleague::CollAtt_ThreeCombo()
 			g_pSoundManager->Stop_Sound(CSoundManager::Jack_Voice);
 			g_pSoundManager->Play_Sound(L"Letheargy_CooA.ogg", CSoundManager::Jack_Voice, CSoundManager::Voice_Sound);
 
-			++m_iNormalAtt_Count;
-			++m_iCenter_Count;
 		}
 	}
 	//}
@@ -1693,7 +1702,7 @@ void CPlayer_Colleague::CollAtt_ThreeCombo()
 void CPlayer_Colleague::CollAtt_CenterDown()
 {
 	_double		AniTime = m_pDynamicMesh->Get_TrackInfo().Position;
-	_v3 vEffPos = _v3(0.f, 1.5f, 0.f) + m_pTransformCom->Get_Axis(AXIS_Z) * 1.5f;
+	_v3			vEffPos = _v3(0.f, 1.5f, 0.f) + m_pTransformCom->Get_Axis(AXIS_Z) * 1.5f;
 
 
 	if (true == m_tObjParam.bCanAttack)
@@ -1703,194 +1712,22 @@ void CPlayer_Colleague::CollAtt_CenterDown()
 	}
 	else
 	{
-		/*if (m_pDynamicMesh->Is_Finish_Animation_Lower(0.9f))
+		if (m_pDynamicMesh->Is_Finish_Animation_Lower(0.9f)/* && m_eColleague_Ani == CPlayer_Colleague::Ani_Jump_CenterAtt_Skil*/)
 		{
 			Function_Reset_State();
 			m_eMovetype = CPlayer_Colleague::Coll_Idle;
+			m_bTestRendom = true;
+			m_bMyHiting = false;
+			m_bCheck_Attcing = false;
+			m_fCoolTimer_limit = 8.f;
+			m_bChecking_MyHit = true;
+			g_pSoundManager->Stop_Sound(CSoundManager::Jack_Voice);
+			g_pSoundManager->Stop_Sound(CSoundManager::Jack_SFX_02);
+			g_pSoundManager->Stop_Sound(CSoundManager::Jack_SFX_01);
 			m_iCenter_Count = 0;
-			m_bTestRendom = true;
-			m_bMyHiting = false;
-			m_bCheck_Attcing = false;
-			m_fCoolTimer_limit = 8.f;
-			m_bChecking_MyHit = true;
-			++m_iNormalAtt_Count;
-			g_pSoundManager->Stop_Sound(CSoundManager::Jack_Voice);
-			g_pSoundManager->Stop_Sound(CSoundManager::Jack_SFX_01);
-			g_pSoundManager->Stop_Sound(CSoundManager::Jack_SFX_02);
-			g_pSoundManager->Stop_Sound(CSoundManager::Jack_SFX_03);
-			g_pSoundManager->Stop_Sound(CSoundManager::Jack_SFX_04);
-			m_bCheck_Skil_Voice = false;
 			return;
 		}
-		else if (m_pDynamicMesh->Get_TrackInfo().Position >= 3.233f)
-		{
-			if (m_bEventTrigger[9] == false)
-			{
-				m_bEventTrigger[9] = true;
-				m_pSword->Set_Enable_Trail(false);
-			}
-		}
-		else if (m_pDynamicMesh->Get_TrackInfo().Position >= 3.033f)
-		{
-			if (m_bEventTrigger[8] == false)
-			{
-				m_bEventTrigger[8] = true;
-				m_pSword->Set_Target_CanAttack(false);
-				m_pSword->Set_Enable_Record(false);
-			}
-		}
-		else if (m_pDynamicMesh->Get_TrackInfo().Position >= 2.887f)
-		{
-			if (m_bEventTrigger[7] == false)
-			{
-				m_bEventTrigger[7] = true;
-				g_pManagement->Create_Effect_Delay(L"Player_Skill_Ring_Hor", 0.f, vEffPos, m_pTransformCom);
-				g_pManagement->Create_Effect_Delay(L"Player_Skill_Ring_Ver", 0.f, vEffPos, m_pTransformCom);
-				g_pManagement->Create_Effect_Delay(L"Player_Skill_RedCircle_Flash", 0.f, vEffPos, m_pTransformCom);
-				g_pManagement->Create_Effect_Delay(L"Player_Skill_RedParticle_Explosion", 0.f, vEffPos, m_pTransformCom);
-				g_pSoundManager->Stop_Sound(CSoundManager::Player_SFX_01);
-				g_pSoundManager->Play_Sound(L"PlayerSkill02_Eff.ogg", CSoundManager::Player_SFX_01, CSoundManager::Effect_Sound);
-			}
-		}
-		else if (m_pDynamicMesh->Get_TrackInfo().Position >= 2.867f)
-		{
-			if (m_bEventTrigger[6] == false)
-			{
-				m_bEventTrigger[6] = true;
-				g_pManagement->Create_Effect_Delay(L"Player_Skill_ScratchBlur_Ver", 0.f, vEffPos, m_pTransformCom);
-				g_pManagement->Create_Effect_Delay(L"Player_Skill_ScratchBlur_Sub_Ver", 0.f, vEffPos, m_pTransformCom);
-				g_pManagement->Create_Effect_Delay(L"Player_Skill_Scratch_Ver", 0.f, vEffPos, m_pTransformCom);
-				g_pManagement->Create_Effect_Delay(L"Hit_Slash_0", 0.f, vEffPos, m_pTransformCom);
-				g_pManagement->Create_Effect_Delay(L"Hit_Slash_1", 0.f, vEffPos, m_pTransformCom);
-				g_pManagement->Create_Effect_Delay(L"Hit_Slash_2", 0.f, vEffPos, m_pTransformCom);
-				g_pManagement->Create_Effect_Delay(L"Hit_Slash_3", 0.f, vEffPos, m_pTransformCom);
-				g_pManagement->Create_Effect_Delay(L"Hit_Slash_Particle_0", 0.f, vEffPos, m_pTransformCom);
-				g_pSoundManager->Stop_Sound(CSoundManager::Player_SFX_04);
-				g_pSoundManager->Play_Sound(L"SE_BLACK_KNIGHT_WIND_CUT_002.ogg", CSoundManager::Player_SFX_04, CSoundManager::Effect_Sound);
-			}
-		}
-		else if (m_pDynamicMesh->Get_TrackInfo().Position >= 2.767f)
-		{
-			if (m_bEventTrigger[5] == false)
-			{
-				m_bEventTrigger[5] = true;
-				m_pSword->Set_Target_CanAttack(true);
-				m_pSword->Set_Enable_Record(true);
-			}
-		}
-		else if (m_pDynamicMesh->Get_TrackInfo().Position >= 2.6f)
-		{
-			if (m_bEventTrigger[4] == false)
-			{
-				m_bEventTrigger[4] = true;
-				m_pSword->Set_Enable_Trail(true);
-			}
-		}
-		else if (m_pDynamicMesh->Get_TrackInfo().Position >= 1.967f)
-		{
-			if (m_bEventTrigger[3] == false)
-			{
-				m_bEventTrigger[3] = true;
-				g_pManagement->Create_Effect_Delay(L"Player_Skill_ScratchBlur_Hor", 0.f, vEffPos, m_pTransformCom);
-				g_pManagement->Create_Effect_Delay(L"Player_Skill_ScratchBlur_Sub_Hor", 0.f, vEffPos, m_pTransformCom);
-				g_pManagement->Create_Effect_Delay(L"Player_Skill_Scratch_Hor", 0.f, vEffPos, m_pTransformCom);
-				g_pManagement->Create_Effect_Delay(L"Hit_Slash_0", 0.f, vEffPos, m_pTransformCom);
-				g_pManagement->Create_Effect_Delay(L"Hit_Slash_1", 0.f, vEffPos, m_pTransformCom);
-				g_pManagement->Create_Effect_Delay(L"Hit_Slash_2", 0.f, vEffPos, m_pTransformCom);
-				g_pManagement->Create_Effect_Delay(L"Hit_Slash_3", 0.f, vEffPos, m_pTransformCom);
-				g_pManagement->Create_Effect_Delay(L"Hit_Slash_Particle_0", 0.f, vEffPos, m_pTransformCom);
-				g_pManagement->Create_Effect_Delay(L"Player_Skill_RedParticle_Explosion", 0.f, vEffPos, m_pTransformCom);
-				g_pSoundManager->Stop_Sound(CSoundManager::Player_SFX_02);
-				g_pSoundManager->Play_Sound(L"SE_BLACK_KNIGHT_WIND_CUT_000.ogg", CSoundManager::Player_SFX_02, CSoundManager::Effect_Sound);
-			}
-		}
-		if (m_pDynamicMesh->Get_TrackInfo().Position >= 2.867f && m_pDynamicMesh->Get_TrackInfo().Position < 3.333f)
-		{
-			if (m_bEventTrigger[12] == false)
-			{
-				m_bEventTrigger[12] = true;
-				m_fAtt_MoveSpeed_Cur = 1.f;
-				m_fAtt_MoveAccel_Cur = 0.f;
-				m_fAni_Multiply = 0.f;
-				//m_fAnimMutiply = 1.f;
-			}
-			Colleague_Movement(m_fAtt_MoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_Z));
-			Colleague_SkilMovement(m_fAni_Multiply);
-		}
-		else if (m_pDynamicMesh->Get_TrackInfo().Position >= 2.f)
-		{
-			if (m_bEventTrigger[2] == false)
-			{
-				m_bEventTrigger[2] = true;
-				m_tObjParam.bInvisible = false;
-				m_pSword->Set_Invisible(false);
-				m_fAni_Multiply = 1.f;
-			}
-		}
-		else if (m_pDynamicMesh->Get_TrackInfo().Position >= 1.9f)
-		{
-			if (m_bEventTrigger[10] == false)
-			{
-				m_bEventTrigger[10] = true;
-				_v3 vEffPos_Dis = _v3(0.f, 1.5f, 0.f) - m_pTransformCom->Get_Axis(AXIS_Z) * 1.f;
-				m_tObjParam.bCanHit = true;
-				g_pManagement->Create_Effect_Delay(L"Player_Skill_Distortion_Circle", 0.f, vEffPos_Dis, m_pTransformCom);
-				g_pSoundManager->Stop_Sound(CSoundManager::Player_SFX_03);
-				g_pSoundManager->Play_Sound(L"SE_BLACK_KNIGHT_JUMP_000.ogg", CSoundManager::Player_SFX_03, CSoundManager::Effect_Sound);
-			}
-		}
-		if (m_pDynamicMesh->Get_TrackInfo().Position >= 1.167f && m_pDynamicMesh->Get_TrackInfo().Position < 2.1f)
-		{
-			if (m_bEventTrigger[0] == false)
-			{
-				m_bEventTrigger[0] = true;
-				m_fAtt_MoveSpeed_Cur = 30.f;
-				m_fAtt_MoveAccel_Cur = 0.f;
-				m_fAni_Multiply = 5.f;
-				//m_fAnimMutiply = 1.5f;
-				m_tObjParam.bInvisible = true;
-				m_pSword->Set_Invisible(true);
-			}
-			if (m_bEventTrigger[1] == false)
-			{
-				m_bEventTrigger[1] = true;
-				_v3 vEffPos_Dis = _v3(0.f, 1.5f, 0.f) + m_pTransformCom->Get_Axis(AXIS_Z) * 1.5f;
-				//m_tObjParam.bCanHit = false;
-				g_pManagement->Create_Effect_Delay(L"Player_Skill_Distortion_Circle", 0.f, vEffPos_Dis, m_pTransformCom);
-				g_pSoundManager->Stop_Sound(CSoundManager::Player_SFX_01);
-				g_pSoundManager->Play_Sound(L"SE_QUEENS_KNIGHTS_WARP_001.ogg", CSoundManager::Player_SFX_01, CSoundManager::Effect_Sound);
-			}
-			Colleague_Movement(m_fAtt_MoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_Z));
-			Colleague_SkilMovement(m_fAni_Multiply);
-		}
-		else if (m_pDynamicMesh->Get_TrackInfo().Position > 0.5f)
-		{
-			if (m_bEventTrigger[11] == false)
-			{
-				m_bEventTrigger[11] = true;
-				// µðÁ¹ºê Àá±ñ »©µÒ
-				// Start_Dissolve(1.f, false);
-			}
-		}*/
 
-
-		if (m_pDynamicMesh->Is_Finish_Animation_Lower(0.9f) && m_eColleague_Ani == CPlayer_Colleague::Ani_Jump_CenterAtt_Skil)
-		{
-			Function_Reset_State();
-			m_eMovetype = CPlayer_Colleague::Coll_Idle;
-			m_bTestRendom = true;
-			m_bMyHiting = false;
-			m_bCheck_Attcing = false;
-			m_fCoolTimer_limit = 8.f;
-			m_bChecking_MyHit = true;
-			++m_iNormalAtt_Count;
-			g_pSoundManager->Stop_Sound(CSoundManager::Jack_Voice);
-			g_pSoundManager->Stop_Sound(CSoundManager::Jack_SFX_02);
-			g_pSoundManager->Stop_Sound(CSoundManager::Jack_SFX_01);
-			m_bCheck_Skil_Voice = false;
-			//m_iCenter_Count = 0;
-			return;
-		}
 		else if (m_pDynamicMesh->Get_TrackInfo().Position >= 1.7f)
 		{
 			if (m_bEventTrigger[6] == false)
@@ -2025,6 +1862,7 @@ void CPlayer_Colleague::CollAtt_CenterDown()
 
 				g_pSoundManager->Stop_Sound(CSoundManager::Jack_Voice);
 				g_pSoundManager->Play_Sound(L"Skil_Three.ogg", CSoundManager::Jack_Voice, CSoundManager::Voice_Sound);
+
 				m_iCenter_Count = 0;
 			}
 		}
@@ -2101,6 +1939,12 @@ void CPlayer_Colleague::CollAtt_SlowGun()
 
 void CPlayer_Colleague::CollAtt_Normal()
 {
+	if (m_eMovetype == CPlayer_Colleague::Coll_Hit)
+	{
+		m_iNormalAtt_Count = 0;
+		m_iCenter_Count = 0;
+	}
+
 	if (m_eMovetype == CPlayer_Colleague::Coll_Hit ||
 		m_eMovetype == CPlayer_Colleague::Coll_Dead ||
 		m_eMovetype == CPlayer_Colleague::Coll_Heal)
@@ -2121,18 +1965,18 @@ void CPlayer_Colleague::CollAtt_Normal()
 
 	if (fMonLenght > 4.f)
 	{
-		m_eMovetype = CPlayer_Colleague::Coll_Attack;
+		//m_eMovetype = CPlayer_Colleague::Coll_Attack;
 		m_eColl_Sub_AttMoment = CPlayer_Colleague::Att_MonRun;
 	}
 	if (true == m_bNest_Att_CoolTimer && (7.3f >= fMonLenght && 4.f < fMonLenght))
 	{
 		// ³ë¸Ö¿¡¼­ ÃÑÀ» ½ð´Ù
-		m_eMovetype = CPlayer_Colleague::Coll_Attack;
+		//m_eMovetype = CPlayer_Colleague::Coll_Attack;
 		m_eColl_Sub_AttMoment = CPlayer_Colleague::Att_SlowGun;
 	}
 	else if ((fMonLenght <= 4.f && fMonLenght > 3.f))
 	{
-		m_eMovetype = CPlayer_Colleague::Coll_Attack;
+		//m_eMovetype = CPlayer_Colleague::Coll_Attack;
 		m_eColl_Sub_AttMoment = CPlayer_Colleague::Att_MonWalk;
 	}
 	/*else if ((1.5f >= fMonLenght && 0.f <= fMonLenght) && )
@@ -2145,40 +1989,41 @@ void CPlayer_Colleague::CollAtt_Normal()
 		if (m_iNormalAtt_Count > 4)
 			m_iNormalAtt_Count = 0;
 
-		if (2 <= m_iCenter_Count)
+		if (2 == m_iCenter_Count)
 		{
-			m_eMovetype = CPlayer_Colleague::Coll_Attack;
+			//m_eMovetype = CPlayer_Colleague::Coll_Attack;
 			m_eColl_Sub_AttMoment = CPlayer_Colleague::Att_CenterDown;
+			m_iCenter_Count = 0;
 			return;
 		}
-		else if (m_iNormalAtt_Count == 4)
+		else if (m_iNormalAtt_Count >= 4)
 		{
 			// ¿©±â¼­ »ï´Üº£±â
-			m_eMovetype = CPlayer_Colleague::Coll_Attack;
+			//m_eMovetype = CPlayer_Colleague::Coll_Attack;
 			m_eColl_Sub_AttMoment = CPlayer_Colleague::Att_ThreeCombo;
 			return;
 		}
 		else if (m_iNormalAtt_Count == 3)
 		{
-			m_eMovetype = CPlayer_Colleague::Coll_Attack;
+			//m_eMovetype = CPlayer_Colleague::Coll_Attack;
 			m_eColl_Sub_AttMoment = CPlayer_Colleague::Att_Base4;
 			return;
 		}
 		else if (m_iNormalAtt_Count == 2)
 		{
-			m_eMovetype = CPlayer_Colleague::Coll_Attack;
+			//m_eMovetype = CPlayer_Colleague::Coll_Attack;
 			m_eColl_Sub_AttMoment = CPlayer_Colleague::Att_Base3;
 			return;
 		}
 		else if (m_iNormalAtt_Count == 1)
 		{
-			m_eMovetype = CPlayer_Colleague::Coll_Attack;
+			//m_eMovetype = CPlayer_Colleague::Coll_Attack;
 			m_eColl_Sub_AttMoment = CPlayer_Colleague::Att_Base2;
 			return;
 		}
 		else if (m_iNormalAtt_Count == 0)
 		{
-			m_eMovetype = CPlayer_Colleague::Coll_Attack;
+			//m_eMovetype = CPlayer_Colleague::Coll_Attack;
 			m_eColl_Sub_AttMoment = CPlayer_Colleague::Att_Base1;
 			return;
 		}
@@ -2209,7 +2054,6 @@ void CPlayer_Colleague::CollAtt_Base1()
 			Function_Reset_State();
 			m_eMovetype = CPlayer_Colleague::Coll_Idle;
 			m_bChecking_MyHit = true;
-			//++m_iNormalAtt_Count;
 			m_bMyHiting = false;
 			m_bCheck_Attcing = false;
 			m_fCoolTimer_limit = 0.045f;
@@ -2218,6 +2062,7 @@ void CPlayer_Colleague::CollAtt_Base1()
 			g_pSoundManager->Stop_Sound(CSoundManager::Jack_SFX_01);
 			g_pSoundManager->Stop_Sound(CSoundManager::Jack_SFX_02);
 			m_bCheck_Normal_AttVoice = false;
+			++m_iNormalAtt_Count;
 			return;
 		}
 		else if (1.167f <= AniTime)
@@ -2247,15 +2092,14 @@ void CPlayer_Colleague::CollAtt_Base1()
 				m_pSword->Set_Enable_Trail(true);
 			}
 		}
-		else if (0.f <= AniTime)
+
+		if (0.f <= AniTime)
 		{
 			if (false == m_bEventTrigger[4])
 			{
 				m_bEventTrigger[4] = true;
 				g_pSoundManager->Stop_Sound(CSoundManager::Jack_Voice);
 				g_pSoundManager->Play_Sound(L"Letheargy_Hmm.ogg", CSoundManager::Jack_Voice, CSoundManager::Voice_Sound);
-
-				++m_iNormalAtt_Count;
 			}
 		}
 		if (0.6f <= AniTime && 0.8f >= AniTime)
@@ -2299,7 +2143,6 @@ void CPlayer_Colleague::CollAtt_Base2()
 
 			Function_Reset_State();
 			m_eMovetype = CPlayer_Colleague::Coll_Idle;
-			//++m_iNormalAtt_Count;
 			m_bMyHiting = false;
 			m_bCheck_Attcing = false;
 			m_fCoolTimer_limit = 0.045f;
@@ -2309,6 +2152,7 @@ void CPlayer_Colleague::CollAtt_Base2()
 			g_pSoundManager->Stop_Sound(CSoundManager::Jack_SFX_01);
 			g_pSoundManager->Stop_Sound(CSoundManager::Jack_SFX_02);
 			m_bCheck_Normal_AttVoice = false;
+			++m_iNormalAtt_Count;
 			return;
 		}
 		else if (0.933f <= AniTime)
@@ -2331,15 +2175,14 @@ void CPlayer_Colleague::CollAtt_Base2()
 				m_pSword->Set_Enable_Trail(true);
 			}
 		}
-		else if (0.f <= AniTime)
+
+		if (0.f <= AniTime)
 		{
 			if (false == m_bEventTrigger[7])
 			{
 				m_bEventTrigger[7] = true;
 				g_pSoundManager->Stop_Sound(CSoundManager::Jack_Voice);
 				g_pSoundManager->Play_Sound(L"Letheargy_Hmm.ogg", CSoundManager::Jack_Voice, CSoundManager::Voice_Sound);
-
-				++m_iNormalAtt_Count;
 			}
 		}
 		if (0.f <= AniTime && 0.833f >= AniTime)
@@ -2382,7 +2225,6 @@ void CPlayer_Colleague::CollAtt_Base3()
 
 			Function_Reset_State();
 			m_eMovetype = CPlayer_Colleague::Coll_Idle;
-			//++m_iNormalAtt_Count;
 			m_bMyHiting = false;
 			m_bCheck_Attcing = false;
 			m_fCoolTimer_limit = 0.04f;
@@ -2392,6 +2234,7 @@ void CPlayer_Colleague::CollAtt_Base3()
 			g_pSoundManager->Stop_Sound(CSoundManager::Jack_SFX_01);
 			g_pSoundManager->Stop_Sound(CSoundManager::Jack_SFX_02);
 			m_bCheck_Normal_AttVoice = false;
+			++m_iNormalAtt_Count;
 			return;
 		}
 		else if (0.9f <= AniTime)
@@ -2428,15 +2271,14 @@ void CPlayer_Colleague::CollAtt_Base3()
 				m_pSword->Set_Enable_Trail(true);
 			}
 		}
-		else if (0.f <= AniTime)
+
+		if (0.f <= AniTime)
 		{
 			if (false == m_bEventTrigger[12])
 			{
 				m_bEventTrigger[12] = true;
 				g_pSoundManager->Stop_Sound(CSoundManager::Jack_Voice);
 				g_pSoundManager->Play_Sound(L"Letheargy_Hmm.ogg", CSoundManager::Jack_Voice, CSoundManager::Voice_Sound);
-
-				++m_iNormalAtt_Count;
 			}
 		}
 		if (0.167f <= AniTime && 0.833f >= AniTime)
@@ -2478,7 +2320,6 @@ void CPlayer_Colleague::CollAtt_Base4()
 		{
 			Function_Reset_State();
 			m_eMovetype = CPlayer_Colleague::Coll_Idle;
-			//++m_iNormalAtt_Count;
 			m_bMyHiting = false;
 			m_bCheck_Attcing = false;
 			m_fCoolTimer_limit = 0.04f;
@@ -2488,6 +2329,7 @@ void CPlayer_Colleague::CollAtt_Base4()
 			g_pSoundManager->Stop_Sound(CSoundManager::Jack_SFX_01);
 			g_pSoundManager->Stop_Sound(CSoundManager::Jack_SFX_02);
 			m_bCheck_Normal_AttVoice = false;
+			++m_iNormalAtt_Count;
 			return;
 		}
 		else if (1.1f <= AniTime)
@@ -2524,6 +2366,7 @@ void CPlayer_Colleague::CollAtt_Base4()
 				m_pSword->Set_Enable_Trail(true);
 			}
 		}
+
 		else if (0.f <= AniTime)
 		{
 			if (false == m_bEventTrigger[16])
@@ -2531,8 +2374,6 @@ void CPlayer_Colleague::CollAtt_Base4()
 				m_bEventTrigger[16] = true;
 				g_pSoundManager->Stop_Sound(CSoundManager::Jack_Voice);
 				g_pSoundManager->Play_Sound(L"Letheargy_Hap2.ogg", CSoundManager::Jack_Voice, CSoundManager::Voice_Sound);
-
-				++m_iNormalAtt_Count;
 			}
 		}
 		if (0.333f <= AniTime && 0.867f >= AniTime)
@@ -2590,7 +2431,7 @@ void CPlayer_Colleague::CollHeal_ForMe()
 		{
 			if (false == m_bEventTrigger[0])
 			{
-				//--m_iMyHeal_Count;
+				--m_iMyHeal_Count;
 
 				m_bEventTrigger[0] = true;
 				m_bCheck_HealMyHp = true;
@@ -2616,7 +2457,7 @@ void CPlayer_Colleague::CollHeal_ForMe()
 			{
 				m_bEventTrigger[1] = true;
 
-				--m_iMyHeal_Count;
+				//--m_iMyHeal_Count;
 			}
 		}
 	}
@@ -3167,6 +3008,10 @@ HRESULT CPlayer_Colleague::Teleport_ResetOptions(void * pArg)
 void CPlayer_Colleague::FootWalkTimerUpdate(_double _deltaTime)
 {
 	if (m_eMovetype == CPlayer_Colleague::Coll_Move ||
+		m_eColl_MoveMent == CPlayer_Colleague::Move_Walk ||
+		m_eColl_MoveMent == CPlayer_Colleague::Move_BackWalk ||
+		m_eColl_MoveMent == CPlayer_Colleague::Move_Run ||
+		m_eColl_MoveMent == CPlayer_Colleague::Move_BackRun ||
 		m_eColl_Sub_AttMoment == CPlayer_Colleague::Att_MonWalk ||
 		m_eColl_Sub_AttMoment == CPlayer_Colleague::Att_MonRun ||
 		m_eColl_Sub_AttMoment == CPlayer_Colleague::Att_MonBackWalk)
