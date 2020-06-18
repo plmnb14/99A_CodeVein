@@ -102,6 +102,7 @@ HRESULT CFireBoy::Ready_GameObject(void * pArg)
 	/////////////
 	// UI 추가(지원)
 	m_pBossUI = static_cast<CBossHP*>(g_pManagement->Clone_GameObject_Return(L"GameObject_BossHP", nullptr));
+	m_pBossUI->Set_Target(this);
 	m_pBossUI->Set_UI_Pos(WINCX * 0.5f, WINCY * 0.1f);
 	m_pBossUI->Set_BossName(CBossNameUI::Index_FireBoy);
 	if (FAILED(g_pManagement->Add_GameOject_ToLayer_NoClone(m_pBossUI, SCENE_STAGE, L"Layer_BossHP", nullptr)))
@@ -162,10 +163,10 @@ _int CFireBoy::Update_GameObject(_double TimeDelta)
 			
 		// 보스UI 업데이트
 		// 체력이 0이 되었을때 밀림현상 방지.
-		if(0 >= m_tObjParam.fHp_Cur)
+		/*if(0 >= m_tObjParam.fHp_Cur)
 			m_pBossUI->Set_BossHPInfo(0, 100);
 		else
-			m_pBossUI->Set_BossHPInfo(m_tObjParam.fHp_Cur, m_tObjParam.fHp_Max);
+			m_pBossUI->Set_BossHPInfo(m_tObjParam.fHp_Cur, m_tObjParam.fHp_Max);*/
 	}
 
 	if (false == m_bReadyDead)
