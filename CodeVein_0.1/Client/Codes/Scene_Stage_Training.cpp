@@ -73,6 +73,22 @@ _int CScene_Stage_Training::Update_Scene(_double TimeDelta)
 	//Create_Fog(TimeDelta);
 	//Create_Snow(TimeDelta);
 
+	if (g_pInput_Device->Key_Down(DIK_F1))
+	{
+		CGameObject* pInstance = nullptr;
+		pInstance = g_pManagement->Clone_GameObject_Return(L"GameObject_Colleague",
+			&CPlayer_Colleague::JACK_INFO(_v3(0.f, 0.f, 0.f), 0.f, 0));
+		g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Colleague", nullptr);
+	}
+	if (g_pInput_Device->Key_Down(DIK_F2))
+	{
+		CGameObject* pInstance = nullptr;
+		pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_Hunter",
+			&CMonster::MONSTER_STATUS(CMonster::MONSTER_COLOR_TYPE::COLOR_NONE, WEAPON_STATE::WEAPON_SSword,
+				true, _v3(4.f, 0.f, 4.f), V3_NULL, 0));
+		g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Monster", nullptr);
+	}
+
 	return _int();
 }
 
