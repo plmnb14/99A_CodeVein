@@ -111,10 +111,10 @@ HRESULT CCostume_Mask::SetUp_ConstantTable(CShader* pShader)
 	_float	fEmissivePower = 0.f;	// 이미시브 : 높을 수록, 자체 발광이 강해짐.
 	_float	fSpecularPower = 30.f;	// 메탈니스 : 높을 수록, 정반사가 강해짐.
 	_float	fRoughnessPower = 3.f;	// 러프니스 : 높을 수록, 빛 산란이 적어짐(빛이 응집됨).
-	_float	fMinSpecular = 1.f;	// 최소 빛	: 최소 단위의 빛을 더해줌.
-	_float	fID_R = 1.0f;	// ID_R : R채널 ID 값 , 1이 최대
-	_float	fID_G = 0.5f;	// ID_G : G채널 ID 값 , 1이 최대
-	_float	fID_B = 0.1f;	// ID_B	: B채널 ID 값 , 1이 최대
+	_float	fMinSpecular = 0.5f;	// 최소 빛	: 최소 단위의 빛을 더해줌.
+	//_float	fID_R = 1.0f;	// ID_R : R채널 ID 값 , 1이 최대
+	//_float	fID_G = 0.5f;	// ID_G : G채널 ID 값 , 1이 최대
+	//_float	fID_B = 0.1f;	// ID_B	: B채널 ID 값 , 1이 최대
 
 	if (FAILED(pShader->Set_Value("g_fEmissivePower", &fEmissivePower, sizeof(_float))))
 		return E_FAIL;
@@ -124,12 +124,12 @@ HRESULT CCostume_Mask::SetUp_ConstantTable(CShader* pShader)
 		return E_FAIL;
 	if (FAILED(pShader->Set_Value("g_fMinSpecular", &fMinSpecular, sizeof(_float))))
 		return E_FAIL;
-	if (FAILED(pShader->Set_Value("g_fID_R_Power", &fID_R, sizeof(_float))))
-		return E_FAIL;
-	if (FAILED(pShader->Set_Value("g_fID_G_Power", &fID_G, sizeof(_float))))
-		return E_FAIL;
-	if (FAILED(pShader->Set_Value("g_fID_B_Power", &fID_B, sizeof(_float))))
-		return E_FAIL;
+	//if (FAILED(pShader->Set_Value("g_fID_R_Power", &fID_R, sizeof(_float))))
+	//	return E_FAIL;
+	//if (FAILED(pShader->Set_Value("g_fID_G_Power", &fID_G, sizeof(_float))))
+	//	return E_FAIL;
+	//if (FAILED(pShader->Set_Value("g_fID_B_Power", &fID_B, sizeof(_float))))
+	//	return E_FAIL;
 	//=============================================================================================
 
 	m_pBattleAgent->Update_RimParam_OnShader(pShader);
@@ -253,7 +253,7 @@ HRESULT CCostume_Mask::Render_GameObject_SetPass(CShader * pShader, _int iPass, 
 
 		m_matLastWVP = matWVP;
 
-		_float fBloomPower = 0.f;
+		_float fBloomPower = 0.5f;
 		if (FAILED(pShader->Set_Value("g_fBloomPower", &fBloomPower, sizeof(_float))))
 			return E_FAIL;
 	}

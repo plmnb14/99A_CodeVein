@@ -198,7 +198,6 @@ PS_OUT PS_UI_DOWN(PS_IN In)
 {
 	PS_OUT			Out = (PS_OUT)0;
 
-
 	Out.vColor = tex2D(DiffuseSampler, In.vTexUV);
 
 	Out.vColor.r = 0.f;
@@ -225,8 +224,7 @@ PS_OUT PS_SKILL_UI(PS_IN2 In)
 
 	Out.vColor = tex2D(DiffuseSampler, In.vTexUV);
 
-	if (In.vTexUV.y < 1.f - In.fTexPercent)
-		Out.vColor.a = 0.f;
+	Out.vColor.a = In.vTexUV.y >= 1.f - In.fTexPercent ? Out.vColor.a : 0.f;
 	
 	return Out;
 }

@@ -188,11 +188,23 @@ float3x3 QuaternionToMatrix(float4 quat)
 
 PS_OUT PS_MAIN(PS_IN In) 
 {
-	////////////////////////
-	// ¿Ã∞≈ æ»æ∏
-	////////////////////////
-
 	PS_OUT			Out = (PS_OUT)0;
+
+	float4 vDiffuseSampler = tex2D(DiffuseSampler, In.vTexUV);
+
+	Out.vColor = pow(vDiffuseSampler, 2.2);
+	Out.vColor.a = vDiffuseSampler.x;
+
+	// º“«¡∆Æ ¿Ã∆Â∆Æ ==========================================================================================
+	float2		vTexUV;
+	vTexUV.x = (In.vProjPos.x / In.vProjPos.w) * 0.5f + 0.5f;
+	vTexUV.y = (In.vProjPos.y / In.vProjPos.w) * -0.5f + 0.5f;
+
+	vector		vDepthInfo = tex2D(DepthSampler, vTexUV);
+	float		fViewZ = vDepthInfo.y * 500.f;
+
+	Out.vColor.a = (Out.vColor.a * saturate(fViewZ - In.vProjPos.w)) * g_fAlpha;
+	// =========================================================================================================
 
 	return Out;
 }
@@ -657,10 +669,6 @@ matrix		g_matViewInv;
 bool g_bRot;
 PS_OUT PS_SSD(PS_IN In)
 {
-	////////////////////////
-	// ¿Ã∞≈ æ»æ∏
-	////////////////////////
-
 	PS_OUT			Out = (PS_OUT)0;
 
 	float2 screenposition = In.vProjPos.xy / In.vProjPos.w;
@@ -687,20 +695,20 @@ PS_OUT PS_SSD(PS_IN In)
 	
 	float2 decalUV;
 
-	//if (g_bRot)
-	//{
-	//	clip(0.5 - abs(decalLocalPos.xy));
-	//	clip(0.25 - abs(decalLocalPos.z));
-	//
-	//	decalUV = decalLocalPos.xy + 0.5f;
-	//}
-	//else
-	//{
+	if (g_bRot)
+	{
+		clip(0.5 - abs(decalLocalPos.xy));
+		clip(0.25 - abs(decalLocalPos.z));
+	
+		decalUV = decalLocalPos.xy + 0.5f;
+	}
+	else
+	{
 		clip(0.5 - abs(decalLocalPos.xz));
 		clip(0.25 - abs(decalLocalPos.y));
 
 		decalUV = decalLocalPos.xz + 0.5f;
-	//}
+	}
 		
 	float4 Color = float4(1, 1, 1, 1);
 	if (g_bUseColorTex)

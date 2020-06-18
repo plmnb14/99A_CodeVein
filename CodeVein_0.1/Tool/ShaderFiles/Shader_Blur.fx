@@ -1,25 +1,8 @@
 
-
-matrix		g_matWorld, g_matView, g_matProj, g_matLastWVP;
-matrix		g_matWVP;
-bool		g_bMotionBlur = true;
-bool        g_bDecalTarget = false;
-float		g_MinValue = 0.25f;
+matrix		g_matWorld, g_matView, g_matProj;
+matrix		g_matWVP, g_matLastWVP;
+float		g_fMinValue = 0.25f;
 float		g_fBloomPower = 0.f;
-
-texture		g_HeightTexture;
-
-//====================================================================================================
-// Height Map
-//====================================================================================================
-sampler		HeightSampler = sampler_state
-{
-	texture = g_HeightTexture;
-	minfilter = linear;
-	magfilter = linear;
-	mipfilter = linear;
-};
-//====================================================================================================
 
 struct VS_IN
 {
@@ -33,8 +16,7 @@ struct VS_IN
 struct VS_MOTIONBLUR_OUT
 {
 	float4		vPosition : POSITION;
-	float4		vNormal : NORMAL;
-	float2		vTexUV : TEXCOORD0;
+	float2		vTexUV	: TEXCOORD0;
 	float4		vLastPos : TEXCOORD1;
 	float4		vProjPos : TEXCOORD2;
 };
@@ -43,16 +25,14 @@ VS_MOTIONBLUR_OUT VS_MOTIONBLUR(VS_IN In)
 {
 	VS_MOTIONBLUR_OUT	Out = (VS_MOTIONBLUR_OUT)0;
 
-	float4 currentPos = mul(float4(In.vPosition.xyz, 1.f), g_matWVP);
+	matrix		matWV, matWVP;
 
-	// Use the world position, and transform by the previous view-projection matrix.    
-	float4 previousPos = mul(float4(In.vPosition.xyz, 1.f), g_matLastWVP);
+	matWV = mul(g_matWorld, g_matView);
+	matWVP = mul(matWV, g_matProj);
 
-	Out.vPosition = currentPos;
+	Out.vPosition = mul(float4(In.vPosition.xyz, 1.f), matWVP);
 	Out.vProjPos = Out.vPosition;
-	Out.vLastPos = previousPos;
-
-	Out.vNormal = normalize(mul(vector(In.vNormal, 0.f), g_matWorld));
+	Out.vLastPos = mul(float4(In.vPosition.xyz, 1.f), g_matLastWVP);
 	Out.vTexUV = In.vTexUV;
 
 	return Out;
@@ -61,7 +41,6 @@ VS_MOTIONBLUR_OUT VS_MOTIONBLUR(VS_IN In)
 struct PS_MOTIONBLUR_IN
 {
 	float4		vPosition : POSITION;
-	float4		vNormal : NORMAL;
 	float2		vTexUV : TEXCOORD0;
 	float4		vLastPos : TEXCOORD1;
 	float4		vProjPos : TEXCOORD2;
@@ -70,9 +49,8 @@ struct PS_MOTIONBLUR_IN
 struct PS_OUT
 {
 	vector		vVelocity : COLOR0;
-	vector		vNormal : COLOR1; // For RimLight
-	vector		vBloomPower : COLOR2;
-	vector		vDecalDepth : COLOR3;
+	vector		vBloomPower : COLOR1;
+	vector		vDecalDepth : COLOR2;
 };
 
 // 픽셀의 색을 결정한다.
@@ -84,13 +62,9 @@ PS_OUT PS_MOTIONBLUR(PS_MOTIONBLUR_IN In)
 	float2 b = (In.vLastPos.xy / In.vLastPos.w) * 0.5f + 0.5f;
 	float2 velocity = pow(((a - b) * 0.5f + 0.5f), 3.0f);
 
-	float fMinValue = 0.25f;
-	Out.vVelocity.w = velocity.x < fMinValue && velocity.y < fMinValue ? 0.f : Out.vVelocity.w;
+	Out.vVelocity.w = velocity.x >= g_fMinValue && velocity.y >= g_fMinValue ? Out.vVelocity.w : 0.f;
 	Out.vVelocity = vector(velocity.xy, In.vProjPos.z / In.vProjPos.w, 1.f);
-	
-	float HeightValue = tex2D(HeightSampler, In.vTexUV).x;
 
-	Out.vNormal = vector(0.f, 0.f, 0.f, 0.f);
 	Out.vBloomPower = vector(g_fBloomPower,0.f, 0.f, 0.f);
 
 	return Out;
@@ -104,13 +78,9 @@ PS_OUT PS_MOTIONBLUR_Decal(PS_MOTIONBLUR_IN In)
 	float2 b = (In.vLastPos.xy / In.vLastPos.w) * 0.5f + 0.5f;
 	float2 velocity = pow(((a - b) * 0.5f + 0.5f), 3.0f);
 
-	float fMinValue = 0.25f;
-	Out.vVelocity.w = velocity.x < fMinValue && velocity.y < fMinValue ? 0.f : Out.vVelocity.w;
+	Out.vVelocity.w = velocity.x >= g_fMinValue && velocity.y >= g_fMinValue ? Out.vVelocity.w : 0.f;
 	Out.vVelocity = vector(velocity.xy, In.vProjPos.z / In.vProjPos.w, 1.f);
 
-	float HeightValue = tex2D(HeightSampler, In.vTexUV).x;
-
-	Out.vNormal = vector(0.f, 0.f, 0.f, 0.f);
 	Out.vBloomPower = vector(g_fBloomPower, 0.f, 0.f, 0.f);
 
 	Out.vDecalDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / 500.f, 1.f, 1.f);
@@ -126,14 +96,10 @@ PS_OUT PS_MOTIONBLUR_Height(PS_MOTIONBLUR_IN In)
 	float2 b = (In.vLastPos.xy / In.vLastPos.w) * 0.5f + 0.5f;
 	float2 velocity = pow(((a - b) * 0.5f + 0.5f), 3.0f);
 
-	float fMinValue = 0.25f;
-	Out.vVelocity.w = velocity.x >= fMinValue && velocity.y >= fMinValue ? Out.vVelocity.w : 0.f;
+	Out.vVelocity.w = velocity.x >= g_fMinValue && velocity.y >= g_fMinValue ? Out.vVelocity.w : 0.f;
 	Out.vVelocity = vector(velocity.xy, In.vProjPos.z / In.vProjPos.w, 1.f);
 
-	float HeightValue = tex2D(HeightSampler, In.vTexUV).x;
-
-	Out.vNormal = vector(1.f, 0.f, 1.f, 1.f);
-	Out.vBloomPower = vector(g_fBloomPower, 0.f, 0.f, 0.f);
+	Out.vBloomPower = vector(g_fBloomPower, 0.f, 1.f, 1.f);
 
 	return Out;
 }
@@ -146,11 +112,10 @@ PS_OUT PS_MOTIONBLUR_HeightSkin(PS_MOTIONBLUR_IN In)
 	float2 b = (In.vLastPos.xy / In.vLastPos.w) * 0.5f + 0.5f;
 	float2 velocity = pow(((a - b) * 0.5f + 0.5f), 3.0f);
 
-	Out.vVelocity.w = velocity.x >= g_MinValue && velocity.y >= g_MinValue ? Out.vVelocity.w : 0.f;
+	Out.vVelocity.w = velocity.x >= g_fMinValue && velocity.y >= g_fMinValue ? Out.vVelocity.w : 0.f;
 	Out.vVelocity = vector(velocity.xy, In.vProjPos.z / In.vProjPos.w, 1.f);
 
-	Out.vNormal = vector(1.f, 0.f, 0.f, 1.f);
-	Out.vBloomPower = vector(g_fBloomPower, 0.f, 0.f, 0.f);
+	Out.vBloomPower = vector(g_fBloomPower, 0.f, 1.f, 0.f);
 
 	return Out;
 }
@@ -163,10 +128,10 @@ PS_OUT PS_MOTIONBLUR_Alpha(PS_MOTIONBLUR_IN In)
 	float2 b = (In.vLastPos.xy / In.vLastPos.w) * 0.5f + 0.5f;
 	float2 velocity = pow(((a - b) * 0.5f + 0.5f), 3.0f);
 
-	Out.vVelocity.w = velocity.x >= g_MinValue && velocity.y >= g_MinValue ? Out.vVelocity.w : 0.f;
+	Out.vVelocity.w = velocity.x >= g_fMinValue && velocity.y >= g_fMinValue ? Out.vVelocity.w : 0.f;
 	Out.vVelocity = vector(velocity.xy, In.vProjPos.z / In.vProjPos.w, 1.f);
-	Out.vNormal = vector(1.f, 0.f, 1.f, 1.f);
-	Out.vBloomPower = vector(g_fBloomPower, 0.f, 0.f, 0.f);
+
+	Out.vBloomPower = vector(g_fBloomPower, 0.f, 1.f, 1.f);
 
 	return Out;
 }
@@ -179,12 +144,9 @@ PS_OUT PS_MOTIONBLUR_RenderOnlyObject(PS_MOTIONBLUR_IN In)
 	float2 b = (In.vLastPos.xy / In.vLastPos.w) * 0.5f + 0.5f; 
 	float2 velocity = pow(((a - b) * 0.5f + 0.5f) , 3.0f);
 
-	Out.vVelocity.w = velocity.x >= g_MinValue && velocity.y >= g_MinValue ? Out.vVelocity.w : 0.f;
+	Out.vVelocity.w = velocity.x >= g_fMinValue && velocity.y >= g_fMinValue ? Out.vVelocity.w : 0.f;
 	Out.vVelocity = vector(velocity.xy, In.vProjPos.z / In.vProjPos.w, 1.f);
 
-	float HeightValue = tex2D(HeightSampler, In.vTexUV).x;
-
-	Out.vNormal = vector(0.f, 0.f, 0.f, 0.f);
 	Out.vBloomPower = vector(g_fBloomPower, 0.f, 0.f, 0.f);
 	Out.vDecalDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / 500.f, 1.f, 1.f);
 

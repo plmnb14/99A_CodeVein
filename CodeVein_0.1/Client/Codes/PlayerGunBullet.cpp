@@ -95,6 +95,8 @@ _int CPlayerGunBullet::Update_GameObject(_double TimeDelta)
 		{
 			m_bEffect = false;
 		}
+
+		CParticleMgr::Get_Instance()->Create_Effect_Offset(L"Bullet_Tail_Particle", 0.15f, m_pTransformCom->Get_Pos());
 	}
 
 	return S_OK;
@@ -165,7 +167,7 @@ void CPlayerGunBullet::Update_Trails(_double TimeDelta)
 	{
 		m_pTrailEffect->Set_ParentTransform(&matWorld);
 		m_pTrailEffect->Ready_Info(vBegin + vDir * -0.05f, vBegin + vDir * 0.05f);
-		// m_pTrailEffect->Update_GameObject(TimeDelta);
+		m_pTrailEffect->Update_GameObject(TimeDelta);
 	}
 
 	return;

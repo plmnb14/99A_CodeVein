@@ -101,6 +101,7 @@ HRESULT CDamegeNumUI::LateInit_GameObject()
 	m_iMaxHP = (_uint)m_pTarget->Get_Target_Param().fHp_Max;
 
 	m_pTransformCom->Set_Scale(_v3(0.1f, 0.1f, 0.1f));
+	m_pTransformCom->Set_Pos(_v3(0.0f, 0.9f, 0.0f));
 
 	return S_OK;
 }
