@@ -79,6 +79,9 @@ _int CPlayer_Colleague::Update_GameObject(_double TimeDelta)
 	if (nullptr != m_pTarget && true == m_pTarget->Get_Dead())
 		return NOERROR;
 
+	if (true == m_bIsDead)
+		m_eMovetype = CPlayer_Colleague::Coll_Dead;
+
 	//====================================================================================================
 	// ÄÃ¸µ
 	//====================================================================================================
@@ -2690,10 +2693,6 @@ void CPlayer_Colleague::Function_Reset_State()
 
 	m_bChecking_MyHit = false;
 	m_bMyHiting = false;
-	//m_bBase_Att[0] = false;
-	//m_bBase_Att[1] = false;
-	//m_bBase_Att[2] = false;
-	//m_bBase_Att[3] = false;
 
 	m_bChecking_SkilHit = false;
 }
@@ -2709,6 +2708,8 @@ void CPlayer_Colleague::Enter_Collision()
 
 void CPlayer_Colleague::Check_Collision_PushOut()
 {
+	
+
 	list<CGameObject*> tmpList[3];
 
 	tmpList[0] = g_pManagement->Get_GameObjectList(L"Layer_Player", SCENE_MORTAL);
@@ -2723,6 +2724,9 @@ void CPlayer_Colleague::Check_Collision_PushOut()
 		for (auto& Obj_iter : list_iter)
 		{
 			CCollider* pCollider = TARGET_TO_COL(Obj_iter);
+
+			if (nullptr == pCollider)
+				return;
 
 			if (m_pCollider->Check_Sphere(pCollider, m_pTransformCom->Get_Axis(AXIS_Z), m_fAtt_MoveSpeed_Cur * DELTA_60))
 			{

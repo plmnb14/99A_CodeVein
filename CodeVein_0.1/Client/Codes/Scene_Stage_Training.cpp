@@ -73,20 +73,47 @@ _int CScene_Stage_Training::Update_Scene(_double TimeDelta)
 	//Create_Fog(TimeDelta);
 	//Create_Snow(TimeDelta);
 
-	if (g_pInput_Device->Key_Down(DIK_F1))
+	CGameObject* pInstance = nullptr;
+
+	if (true == g_bSummons_Mode)
 	{
-		CGameObject* pInstance = nullptr;
-		pInstance = g_pManagement->Clone_GameObject_Return(L"GameObject_Colleague",
-			&CPlayer_Colleague::JACK_INFO(_v3(0.f, 0.f, 0.f), 0.f, 0));
-		g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Colleague", nullptr);
-	}
-	if (g_pInput_Device->Key_Down(DIK_F2))
-	{
-		CGameObject* pInstance = nullptr;
-		pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_Hunter",
-			&CMonster::MONSTER_STATUS(CMonster::MONSTER_COLOR_TYPE::COLOR_NONE, WEAPON_STATE::WEAPON_SSword,
-				true, _v3(4.f, 0.f, 4.f), V3_NULL, 0));
-		g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Monster", nullptr);
+		if (g_pInput_Device->Key_Down(DIK_NUMPAD9))
+		{
+			pInstance = g_pManagement->Clone_GameObject_Return(L"GameObject_Colleague",
+				&CPlayer_Colleague::JACK_INFO(_v3(0.f, 0.f, 0.f), 0.f, 0));
+			g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Colleague", nullptr);
+		}
+		else if (g_pInput_Device->Key_Down(DIK_NUMPAD8))
+		{
+			pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_Hunter",
+				&CMonster::MONSTER_STATUS(CMonster::MONSTER_COLOR_TYPE::COLOR_NONE, WEAPON_STATE::WEAPON_SSword,
+					true, _v3(4.f, 0.f, 4.f), V3_NULL, 0));
+			g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Monster", nullptr);
+		}
+
+		if (g_pInput_Device->Key_Down(DIK_O))
+		{
+			auto& Moniter = g_pManagement->Get_GameObjectList(L"Layer_Monster", SCENE_STAGE);
+			//auto& Colleague = g_pManagement->Get_GameObjectList(L"Layer_Colleague", SCENE_STAGE);
+
+			CGameObject* Coll = g_pManagement->Get_GameObjectBack(L"Layer_Colleague", SCENE_STAGE);
+
+			if (!Moniter.empty())
+			{
+				for (auto& Monster_iter : Moniter)
+				{
+					Monster_iter->Set_Enable(false);
+					Monster_iter->Set_Dead();
+					Monster_iter = nullptr;
+				}
+			}
+			if (nullptr != Coll)
+			{
+				Coll->Set_Enable(false);
+				Coll->Set_Dead();
+				Coll = nullptr;
+			}
+		}
 	}
 
 	return _int();
@@ -253,10 +280,10 @@ HRESULT CScene_Stage_Training::Ready_Layer_Enemies()
 	// ÃÑ°ÕÁö
 	//====================================================================================================================================================
 
-pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_GunGenji",
-	&CGunGenji::INFO(CGunGenji::Normal, CGunGenji::CheckGun, 10.f, 3.f, 2.f,
-		true, _v3(5.f, 0.f, -8.f), V3_NULL, 0));
-g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Monster", nullptr);
+//pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_GunGenji",
+//	&CGunGenji::INFO(CGunGenji::Normal, CGunGenji::CheckGun, 10.f, 3.f, 2.f,
+//		true, _v3(5.f, 0.f, -8.f), V3_NULL, 0));
+//g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Monster", nullptr);
 
 	//pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_GunGenji",
 	//	&CGunGenji::INFO(CGunGenji::Normal, CGunGenji::CheckGun, 10.f, 3.f, 2.f,
