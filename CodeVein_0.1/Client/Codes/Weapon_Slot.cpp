@@ -52,64 +52,26 @@ _int CWeapon_Slot::Update_GameObject(_double TimeDelta)
 	switch (m_tWeaponParam.iWeaponName)
 	{
 	case Wpn_SSword:
-		m_iIndex = 4;
-		break;
 	case Wpn_SSword_Black:
-		m_iIndex = 5;
-		break;
 	case Wpn_SSword_Military:
-		m_iIndex = 6;
-		break;
 	case Wpn_SSword_Slave:
-		m_iIndex = 7;
-		break;
 	case Wpn_LSword:
-		m_iIndex = 8;
-		break;
 	case Wpn_LSword_Black:
-		m_iIndex = 9;
-		break;
 	case Wpn_LSword_Military:
-		m_iIndex = 10;
-		break;
 	case Wpn_LSword_Slave:
-		m_iIndex = 11;
-		break;
 	case Wpn_Halberd:
-		m_iIndex = 12;
-		break;
 	case Wpn_Halberd_Black:
-		m_iIndex = 13;
-		break;
 	case Wpn_Halberd_Military:
-		m_iIndex = 14;
-		break;
 	case Wpn_Halberd_Slave:
-		m_iIndex = 15;
-		break;
 	case Wpn_Hammer:
-		m_iIndex = 16;
-		break;
 	case Wpn_Hammer_Black:
-		m_iIndex = 17;
-		break;
 	case Wpn_Hammer_Military:
-		m_iIndex = 18;
-		break;
 	case Wpn_Hammer_Slave:
-		m_iIndex = 19;
-		break;
 	case Wpn_Gun:
-		m_iIndex = 20;
-		break;
 	case Wpn_Gun_Black:
-		m_iIndex = 21;
-		break;
 	case Wpn_Gun_Military:
-		m_iIndex = 22;
-		break;
 	case Wpn_Gun_Slave:
-		m_iIndex = 23;
+		m_iIndex = m_tWeaponParam.iWeaponName_InShop;
 		break;
 	default:
 		m_iIndex = 0;

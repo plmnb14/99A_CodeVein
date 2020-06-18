@@ -26,6 +26,9 @@ public:
 	void	Set_RegistIndex(_uint iIdx) { m_iRegistIndex = iIdx; }
 
 public:
+	void	Update_PlayerWeaponStat();
+
+public:
 	virtual HRESULT			Ready_GameObject_Prototype();
 	virtual HRESULT			Ready_GameObject(void* pArg);
 	virtual _int			Update_GameObject(_double TimeDelta);

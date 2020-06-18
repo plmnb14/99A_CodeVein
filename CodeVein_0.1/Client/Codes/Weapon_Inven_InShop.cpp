@@ -3,6 +3,7 @@
 
 #include "UI_Manager.h"
 #include "Weapon.h"
+#include "Player.h"
 
 CWeapon_Inven_InShop::CWeapon_Inven_InShop(_Device pDevice)
 	: CUI(pDevice)
@@ -602,6 +603,8 @@ void CWeapon_Inven_InShop::Upgrade_Weapon(WPN_PARAM tParam)
 				return;
 
 			(*pVecSlot)[idx]->Set_WeaponParam(tParam);
+			m_pPlayer = static_cast<CPlayer*>(g_pManagement->Get_GameObjectBack(L"Layer_Player", SCENE_MORTAL));
+
 			break;
 		}
 		++idx;
@@ -673,8 +676,8 @@ HRESULT CWeapon_Inven_InShop::SetUp_WeaponData(INVEN_SHOP_OPTION eShop)
 		tParam.iReinforce = 0;
 		tParam.fDef = 100;
 		tParam.fPlusDef = 30;
-		tParam.fHP = 930;
-		tParam.fPlusHP = 60;
+		tParam.fHP = 2930;
+		tParam.fPlusHP = 600;
 		tParam.iPrice = 700;
 		m_tArmorParam[tParam.iArmorName] = tParam;
 
@@ -683,8 +686,8 @@ HRESULT CWeapon_Inven_InShop::SetUp_WeaponData(INVEN_SHOP_OPTION eShop)
 		tParam.iReinforce = 0;
 		tParam.fDef = 120;
 		tParam.fPlusDef = 10;
-		tParam.fHP = 1000;
-		tParam.fPlusHP = 100;
+		tParam.fHP = 3000;
+		tParam.fPlusHP = 500;
 		tParam.iPrice = 1200;
 		m_tArmorParam[tParam.iArmorName] = tParam;
 
@@ -693,8 +696,8 @@ HRESULT CWeapon_Inven_InShop::SetUp_WeaponData(INVEN_SHOP_OPTION eShop)
 		tParam.iReinforce = 0;
 		tParam.fDef = 105;
 		tParam.fPlusDef = 30;
-		tParam.fHP = 1095;
-		tParam.fPlusHP = 60;
+		tParam.fHP = 3095;
+		tParam.fPlusHP = 600;
 		tParam.iPrice = 1200;
 		m_tArmorParam[tParam.iArmorName] = tParam;
 
@@ -703,8 +706,8 @@ HRESULT CWeapon_Inven_InShop::SetUp_WeaponData(INVEN_SHOP_OPTION eShop)
 		tParam.iReinforce = 0;
 		tParam.fDef = 110;
 		tParam.fPlusDef = 30;
-		tParam.fHP = 1400;
-		tParam.fPlusHP = 160;
+		tParam.fHP = 3400;
+		tParam.fPlusHP = 660;
 		tParam.iPrice = 1500;
 		m_tArmorParam[tParam.iArmorName] = tParam;
 
@@ -713,8 +716,8 @@ HRESULT CWeapon_Inven_InShop::SetUp_WeaponData(INVEN_SHOP_OPTION eShop)
 		tParam.iReinforce = 0;
 		tParam.fDef = 120;
 		tParam.fPlusDef = 30;
-		tParam.fHP = 1300;
-		tParam.fPlusHP = 120;
+		tParam.fHP = 3300;
+		tParam.fPlusHP = 620;
 		tParam.iPrice = 1500;
 		m_tArmorParam[tParam.iArmorName] = tParam;
 
@@ -723,8 +726,8 @@ HRESULT CWeapon_Inven_InShop::SetUp_WeaponData(INVEN_SHOP_OPTION eShop)
 		tParam.iReinforce = 0;
 		tParam.fDef = 100;
 		tParam.fPlusDef = 30;
-		tParam.fHP = 1900;
-		tParam.fPlusHP = 110;
+		tParam.fHP = 3900;
+		tParam.fPlusHP = 610;
 		tParam.iPrice = 1500;
 		m_tArmorParam[tParam.iArmorName] = tParam;
 
@@ -733,8 +736,8 @@ HRESULT CWeapon_Inven_InShop::SetUp_WeaponData(INVEN_SHOP_OPTION eShop)
 		tParam.iReinforce = 0;
 		tParam.fDef = 160;
 		tParam.fPlusDef = 30;
-		tParam.fHP = 1590;
-		tParam.fPlusHP = 140;
+		tParam.fHP = 3590;
+		tParam.fPlusHP = 640;
 		tParam.iPrice = 2000;
 		m_tArmorParam[tParam.iArmorName] = tParam;
 
@@ -743,8 +746,8 @@ HRESULT CWeapon_Inven_InShop::SetUp_WeaponData(INVEN_SHOP_OPTION eShop)
 		tParam.iReinforce = 0;
 		tParam.fDef = 140;
 		tParam.fPlusDef = 30;
-		tParam.fHP = 1550;
-		tParam.fPlusHP = 200;
+		tParam.fHP = 3550;
+		tParam.fPlusHP = 700;
 		tParam.iPrice = 2000;
 		m_tArmorParam[tParam.iArmorName] = tParam;
 
@@ -761,6 +764,15 @@ HRESULT CWeapon_Inven_InShop::SetUp_WeaponData(INVEN_SHOP_OPTION eShop)
 	}
 
 	return S_OK;
+}
+
+void CWeapon_Inven_InShop::Late_Init()
+{
+	if (m_bLateInit)
+		return;
+
+	m_bLateInit = true;
+	m_pPlayer = static_cast<CPlayer*>(g_pManagement->Get_GameObjectBack(L"Layer_Player", SCENE_MORTAL));
 }
 
 void CWeapon_Inven_InShop::Add_Weapon(WPN_PARAM tAddWpnParam)

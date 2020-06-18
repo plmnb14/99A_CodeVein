@@ -26,8 +26,10 @@ CPlayer::CPlayer(const CPlayer & rhs)
 
 }
 
-void CPlayer::Set_WeaponSlot(ACTIVE_WEAPON_SLOT eType, WEAPON_DATA eData)
+void CPlayer::Set_WeaponSlot(ACTIVE_WEAPON_SLOT eType, WPN_PARAM* pParam)
 {
+	WEAPON_DATA eData = (WEAPON_DATA)pParam->iWeaponName;
+	
 	if (WEAPON_DATA::WPN_DATA_End == eData)
 	{
 		if (m_pWeapon[eType])
@@ -52,10 +54,7 @@ void CPlayer::Set_WeaponSlot(ACTIVE_WEAPON_SLOT eType, WEAPON_DATA eData)
 
 	D3DXFRAME_DERIVED*	pFrame = (D3DXFRAME_DERIVED*)m_pDynamicMesh->Get_BonInfo(tmpChar, 2);
 
-	WPN_PARAM tmpParam = m_pUIManager->Get_Weapon_Inven()->Get_UseWeaponParam(eType);
-
 	m_pWeapon[eType] = static_cast<CWeapon*>(g_pManagement->Clone_GameObject_Return(L"GameObject_Weapon", NULL));
-	//m_pWeapon[eType]->Set_WeaponParam(tmpParam, tmpParam.iWeaponName);
 	m_pWeapon[eType]->Change_WeaponData(eData);
 	m_pWeapon[eType]->Set_Friendly(true);
 	m_pWeapon[eType]->Set_AttachBoneMartix(&pFrame->CombinedTransformationMatrix);
@@ -77,6 +76,8 @@ void CPlayer::Set_WeaponSlot(ACTIVE_WEAPON_SLOT eType, WEAPON_DATA eData)
 			);
 	}
 
+	// 인벤이 무기, 아머의 주소를 가진게 아니라 구조체데이터만 갖고있길래 이렇게 함
+	m_pWeapon[eType]->Set_WeaponParam(*pParam, eData);
 	m_tObjParam.fDamage = m_pWeapon[eType]->Get_WeaponParam(eData).fDamage;
 }
 

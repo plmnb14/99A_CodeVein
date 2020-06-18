@@ -57,6 +57,17 @@ HRESULT CDeerKingBullet::Ready_GameObject(void * pArg)
 	m_tObjParam.bCanAttack = true;
 	m_tObjParam.fDamage = 250.f * pow(1.5f, g_eStageIdx_Cur - 1);
 
+	CSoundManager::CHANNELID eChannel = CSoundManager::CHANNELID::Effect_SFX_01;
+	_int iRand = CCalculater::Random_Num(0, 2);
+	if (0 == iRand)
+		eChannel = CSoundManager::CHANNELID::Effect_SFX_01;
+	else if (1 == iRand)
+		eChannel = CSoundManager::CHANNELID::Effect_SFX_02;
+	else if (2 == iRand)
+		eChannel = CSoundManager::CHANNELID::Effect_SFX_03;
+
+	g_pSoundManager->Stop_Sound(eChannel);
+	g_pSoundManager->Play_Sound(L"PlayerGunSkill_ReadyEff.ogg", eChannel, CSoundManager::Effect_Sound);
 
 	return NOERROR;
 }
@@ -102,6 +113,19 @@ _int CDeerKingBullet::Update_GameObject(_double TimeDelta)
 			m_pBulletBody->Reset_Init();
 			//m_pBulletBody->Set_Scale(_v3(0.2f, 0.4f, 0.4f));
 			g_pManagement->Add_GameOject_ToLayer_NoClone(m_pBulletBody, SCENE_STAGE, L"Layer_Effect", nullptr);
+
+			CSoundManager::CHANNELID eChannel = CSoundManager::CHANNELID::Effect_SFX_01;
+			_int iRand = CCalculater::Random_Num(0, 2);
+			if (0 == iRand)
+				eChannel = CSoundManager::CHANNELID::Effect_SFX_01;
+			else if (1 == iRand)
+				eChannel = CSoundManager::CHANNELID::Effect_SFX_02;
+			else if (2 == iRand)
+				eChannel = CSoundManager::CHANNELID::Effect_SFX_03;
+
+			g_pSoundManager->Stop_Sound(eChannel);
+			g_pSoundManager->Play_Sound(L"PlayerGunSkill_ShotEff.ogg", eChannel, CSoundManager::Effect_Sound);
+
 		}
 	}
 	else

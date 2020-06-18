@@ -151,6 +151,7 @@ void CPlayerGunBullet::Enter_Collision()
 {
 	Update_Collider();
 	Check_CollisionEvent(g_pManagement->Get_GameObjectList(L"Layer_Monster", SCENE_STAGE));
+	Check_CollisionEvent(g_pManagement->Get_GameObjectList(L"Layer_Boss", SCENE_STAGE));
 
 	return;
 }

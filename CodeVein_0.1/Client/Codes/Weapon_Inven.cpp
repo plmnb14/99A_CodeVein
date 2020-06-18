@@ -31,6 +31,15 @@ HRESULT CWeapon_Inven::Set_WeaponData_FromWeapon()
 	return S_OK;
 }
 
+void CWeapon_Inven::Update_PlayerWeaponStat()
+{
+	for (auto iter : m_vecWeaponSlot)
+	{
+		if(iter->Get_Select())
+			m_pPlayer->Set_WeaponSlot((CPlayer::ACTIVE_WEAPON_SLOT)m_iRegistIndex, &iter->Get_WeaponParam());
+	}
+}
+
 HRESULT CWeapon_Inven::Ready_GameObject_Prototype()
 {
 	CUI::Ready_GameObject_Prototype();
@@ -272,7 +281,7 @@ void CWeapon_Inven::Regist_Weapon(CWeapon_Slot* pWeaponSlot)
 	CTotal_Inven* pTotal_Inven = CUI_Manager::Get_Instance()->Get_Total_Inven();
 
 	pTotal_Inven->Set_WeaponParam(m_iRegistIndex, pWeaponSlot->Get_WeaponParam());
-	m_pPlayer->Set_WeaponSlot((CPlayer::ACTIVE_WEAPON_SLOT)m_iRegistIndex, (WEAPON_DATA)pWeaponSlot->Get_WeaponParam().iWeaponName);
+	m_pPlayer->Set_WeaponSlot((CPlayer::ACTIVE_WEAPON_SLOT)m_iRegistIndex, &pWeaponSlot->Get_WeaponParam());
 }
 
 void CWeapon_Inven::UnRegist_Weapon(CWeapon_Slot * pWeaponSlot)
@@ -306,7 +315,7 @@ void CWeapon_Inven::UnRegist_Weapon(CWeapon_Slot * pWeaponSlot)
 		m_UseWeaponParam[0].fCol_Height = 0.f;
 		pWeaponSlot->Set_Select(false);
 
-		m_pPlayer->Set_WeaponSlot((CPlayer::ACTIVE_WEAPON_SLOT)0, WEAPON_DATA::WPN_DATA_End);
+		m_pPlayer->Set_WeaponSlot((CPlayer::ACTIVE_WEAPON_SLOT)0, &pWeaponSlot->Get_WeaponParam());
 
 		CUI_Manager::Get_Instance()->Stop_Play_UISound(L"Slot_Regist.ogg", CSoundManager::CHANNELID::UI_Click, CSoundManager::Effect_Sound);
 	}
@@ -324,7 +333,7 @@ void CWeapon_Inven::UnRegist_Weapon(CWeapon_Slot * pWeaponSlot)
 		m_UseWeaponParam[1].fCol_Height = 0.f;
 		pWeaponSlot->Set_Select(false);
 
-		m_pPlayer->Set_WeaponSlot((CPlayer::ACTIVE_WEAPON_SLOT)1, WEAPON_DATA::WPN_DATA_End);
+		m_pPlayer->Set_WeaponSlot((CPlayer::ACTIVE_WEAPON_SLOT)1, &pWeaponSlot->Get_WeaponParam());
 
 		CUI_Manager::Get_Instance()->Stop_Play_UISound(L"Slot_Regist.ogg", CSoundManager::CHANNELID::UI_Click, CSoundManager::Effect_Sound);
 	}

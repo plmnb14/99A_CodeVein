@@ -5,6 +5,7 @@
 #include "Weapon_Slot.h"
 
 BEGIN(Client)
+class CPlayer;
 class CWeaponUpgradeUI;
 class CWeaponBuyPopupUI;
 class CWeapon_Inven;
@@ -71,6 +72,7 @@ private:
 	void					Click_ArmorInven();
 
 	HRESULT					SetUp_WeaponData(INVEN_SHOP_OPTION eShop);
+	void					Late_Init();
 
 public:
 	void Add_Weapon(WPN_PARAM tAddWpnParam);
@@ -107,6 +109,9 @@ private:
 	CWeapon*				m_pTempWeapon = nullptr;
 	_bool					m_bCloseUpgradePopup = false;
 	_bool					m_bIsSubActive = false;
+
+	CPlayer*				m_pPlayer = nullptr;
+	_bool					m_bLateInit = false;
 
 public:
 	static CWeapon_Inven_InShop*	Create(_Device pGraphic_Device);
