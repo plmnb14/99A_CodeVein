@@ -41,7 +41,7 @@ _int CRenderObject::Update_GameObject(_double _TimeDelta)
 	CGameObject::Update_GameObject(_TimeDelta);
 
 	// 툴용 업데이트 콜라이더
-	//	Update_Collider();
+		Update_Collider();
 }
 
 _int CRenderObject::Late_Update_GameObject(_double TimeDelta)
@@ -467,16 +467,16 @@ HRESULT CRenderObject::Add_Components(_tchar * szMeshName)
 		return E_FAIL;
 
 	// For.Com_Shader
-	//if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Shader_Mesh", L"Com_Shader", (CComponent**)&m_pShader)))
-	//	return E_FAIL;
+	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Shader_Mesh", L"Com_Shader", (CComponent**)&m_pShader)))
+		return E_FAIL;
 
 	// for.Com_Mesh
 	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, szMeshName, L"Com_StaticMesh", (CComponent**)&m_pMesh_Static)))
 		return E_FAIL;
 
 	// for.Com_Mesh
-	//if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Collider", L"Com_Collider", (CComponent**)&m_pCollider)))
-	//	return E_FAIL;
+	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Collider", L"Com_Collider", (CComponent**)&m_pCollider)))
+		return E_FAIL;
 
 	// for.Com_Optimization
 	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Optimization", L"Com_Opimaization", (CComponent**)& m_pOptimization)))
