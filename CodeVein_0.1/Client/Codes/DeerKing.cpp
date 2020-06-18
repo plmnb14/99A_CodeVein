@@ -1658,6 +1658,7 @@ CBT_Composite_Node * CDeerKing::FarAttack_Fianl()
 
 	Root_Sel->Add_Child(Jump_Fist());
 	Root_Sel->Add_Child(Rush_Body());
+	Root_Sel->Add_Child(Jump_In_Place());
 	Root_Sel->Add_Child(Throwing());
 	Root_Sel->Add_Child(Blade_Attack());
 	Root_Sel->Add_Child(MoveAround());
@@ -1802,14 +1803,14 @@ void CDeerKing::Update_Shield()
 
 	_v3 vShield_Pos = *(_v3*)&transInfo.matWorld.m[3];
 
-	if (-1.f >= transInfo.matWorld.m[3][1])
+	if (-0.5f >= transInfo.matWorld.m[3][1])
 	{		
 		g_pSoundManager->Stop_Sound(CSoundManager::CHANNELID::DearKing_SFX_02);
 		g_pSoundManager->Play_Sound(const_cast<TCHAR*>(L"SE_BOSSGUY_MATERIAL_011.ogg"), CSoundManager::CHANNELID::DearKing_SFX_02, CSoundManager::SOUND::Effect_Sound);
 
 		SHAKE_CAM_lv2;
 
-		vShield_Pos.y = -1.f;
+		vShield_Pos.y = -0.5f;
 		m_bFinish_Throw_Shield = true;
 
 		// 방패 떨어진 자리에 이펙트 발생시키기
