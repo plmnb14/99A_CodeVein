@@ -531,9 +531,6 @@ HRESULT CPet::Ready_BoneMatrix(void * pArg)
 
 void CPet::Free()
 {
-	//IF_NOT_NULL(m_pTarget)
-	//	Safe_Release(m_pTarget);
-
 	IF_NOT_NULL(m_pPlayer)
 		Safe_Release(m_pPlayer);
 

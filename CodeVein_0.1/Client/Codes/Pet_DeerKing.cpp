@@ -1425,7 +1425,7 @@ HRESULT CPet_DeerKing::Ready_Status(void * pArg)
 	m_fAtkRange = 4.f; //목표 근거리범위
 	m_fPersonalRange = 2.f; //사회적 거리두기 범위
 
-	m_eType = PET_TYPE::PET_DEERKING;
+	m_eType = ITEM_NAMETYPE::NAMETYPE_Pet_DeerKing;
 	m_eFirstCategory = PET_STATE_TYPE::IDLE;
 	m_eTarget = PET_TARGET_TYPE::PET_TARGET_NONE;
 	m_eFBLR = FBLR::FRONT;

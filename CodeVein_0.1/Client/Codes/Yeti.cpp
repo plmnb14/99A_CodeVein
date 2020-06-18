@@ -327,6 +327,9 @@ void CYeti::Check_Hit()
 				m_pBattleAgentCom->Set_RimAlpha(0.5f);
 				m_pBattleAgentCom->Set_RimValue(8.f);
 
+				if (true == m_bIsMoveAround &&  3 == CALC::Random_Num(0,3))
+					Function_ResetAfterAtk();
+
 				if (true == m_tObjParam.bIsHit)
 				{
 					if (true == m_tObjParam.bHitAgain)
@@ -5041,7 +5044,7 @@ void CYeti::Play_Move()
 			m_bIsMoveAround = true;
 
 			m_bCanCoolDown = true;
-			m_fCoolDownMax = CALC::Random_Num(2, 4) * 1.0f;
+			m_fCoolDownMax = CALC::Random_Num(1, 3) * 1.0f;
 
 			m_fSkillMoveSpeed_Cur = 2.5f;
 			m_fSkillMoveAccel_Cur = 0.f;

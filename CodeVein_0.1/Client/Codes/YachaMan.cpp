@@ -4683,7 +4683,6 @@ HRESULT CYachaMan::Ready_Status(void * pArg)
 		m_fShotRange = 10.f;
 		m_fAtkRange = 5.f;
 		m_fPersonalRange = 2.f;
-		m_iDodgeCountMax = 5;
 	}
 	else
 	{
@@ -4696,7 +4695,6 @@ HRESULT CYachaMan::Ready_Status(void * pArg)
 		m_fShotRange = 10.f;
 		m_fAtkRange = 5.f;
 		m_fPersonalRange = 2.f;
-		m_iDodgeCountMax = 5;
 	}
 
 	m_eFirstCategory = MONSTER_STATE_TYPE::IDLE;
@@ -4767,6 +4765,7 @@ HRESULT CYachaMan::Ready_Status(void * pArg)
 	m_fCoolDownMax = 0.f;
 	m_fCoolDownCur = 0.f;
 
+	m_iDodgeCountMax = CALC::Random_Num(3, 5);
 	m_iPatternCount = 0;
 	m_iPatternCountMax = 9;
 
