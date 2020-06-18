@@ -45,6 +45,7 @@ private:
 	CBossDecoUI* m_pDecoUI = nullptr;
 	CBossNameUI* m_pBossNameUI = nullptr;
 	CBossNameUI::BossName_INDEX m_eBossNameIdx = CBossNameUI::Index_None;
+	_float m_fOldHP = 0.f;
 
 private:
 	CTransform*				m_pTransformCom = nullptr;

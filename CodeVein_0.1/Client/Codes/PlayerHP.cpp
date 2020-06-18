@@ -271,7 +271,7 @@ void CPlayerHP::SetUp_State(_double TimeDelta)
 	if (m_fOldHP <= m_fPlayerHP)
 		m_fOldHP = m_fPlayerHP;
 	else
-		m_fOldHP -= _float(TimeDelta) * 50.f;
+		m_fOldHP -= _float(TimeDelta) * 150.f;
 
 	if (m_fOldHP >= m_fTotalHP)
 		m_fOldHP = m_fTotalHP;
