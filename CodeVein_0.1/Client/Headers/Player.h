@@ -123,6 +123,7 @@ public:
 
 public:
 	void Set_WeaponSlot(ACTIVE_WEAPON_SLOT eType, WPN_PARAM* pParam);
+	void Set_WeaponSlot_UpdateStatOnly(WPN_PARAM* pParam);
 	void Set_ArmorSlot(ARMOR_All_DATA eType, ARMOR_PARAM* pParam);
 	void Set_Target_UI(CGameObject* pGameObject);
 

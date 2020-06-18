@@ -76,9 +76,17 @@ void CPlayer::Set_WeaponSlot(ACTIVE_WEAPON_SLOT eType, WPN_PARAM* pParam)
 			);
 	}
 
-	// 인벤이 무기, 아머의 주소를 가진게 아니라 구조체데이터만 갖고있길래 이렇게 함
 	m_pWeapon[eType]->Set_WeaponParam(*pParam, eData);
 	m_tObjParam.fDamage = m_pWeapon[eType]->Get_WeaponParam(eData).fDamage;
+}
+
+void CPlayer::Set_WeaponSlot_UpdateStatOnly(WPN_PARAM * pParam)
+{
+	WEAPON_DATA eData = (WEAPON_DATA)pParam->iWeaponName;
+
+	m_pWeapon[0]->Set_WeaponParam(*pParam, eData);
+	m_pWeapon[1]->Set_WeaponParam(*pParam, eData);
+	m_tObjParam.fDamage = m_pWeapon[m_eActiveSlot]->Get_WeaponParam(eData).fDamage;
 }
 
 void CPlayer::Set_ArmorSlot(ARMOR_All_DATA eType, ARMOR_PARAM* pParam)
@@ -88,10 +96,11 @@ void CPlayer::Set_ArmorSlot(ARMOR_All_DATA eType, ARMOR_PARAM* pParam)
 
 	m_pOuter->Change_OuterMesh(CClothManager::Cloth_Dynamic(eType + 1));
 
-	_float fHp_Max = pParam->fHP + pParam->fPlusHP + m_tObjParam.fHp_Max;
+	_float fHp_Max = pParam->fHP + pParam->fPlusHP;
 	_float fArmor_Max = pParam->fDef + pParam->fPlusDef;
 
 	m_tObjParam.fHp_Max = fHp_Max;
+	m_tObjParam.fHp_Cur = fHp_Max;
 	m_tObjParam.fArmor_Max = fArmor_Max;
 	m_tObjParam.fArmor_Cur = fArmor_Max;
 

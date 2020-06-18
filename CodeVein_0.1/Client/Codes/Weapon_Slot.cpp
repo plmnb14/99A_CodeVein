@@ -71,7 +71,7 @@ _int CWeapon_Slot::Update_GameObject(_double TimeDelta)
 	case Wpn_Gun_Black:
 	case Wpn_Gun_Military:
 	case Wpn_Gun_Slave:
-		m_iIndex = m_tWeaponParam.iWeaponName_InShop;
+		m_iIndex = m_tWeaponParam.iWeaponName_InShop + 3;
 		break;
 	default:
 		m_iIndex = 0;

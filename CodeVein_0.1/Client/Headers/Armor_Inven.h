@@ -20,6 +20,9 @@ public:
 	vector<CArmor_Slot*>* Get_VecArmorSlot() { return &m_vecArmorSlot; }
 
 public:
+	void	Update_PlayerArmorStat(ARMOR_PARAM* pParam);
+
+public:
 	virtual HRESULT			Ready_GameObject_Prototype();
 	virtual HRESULT			Ready_GameObject(void* pArg);
 	virtual _int			Update_GameObject(_double TimeDelta);

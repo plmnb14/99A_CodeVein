@@ -3,7 +3,6 @@
 
 #include "UI_Manager.h"
 #include "Weapon.h"
-#include "Player.h"
 
 CWeapon_Inven_InShop::CWeapon_Inven_InShop(_Device pDevice)
 	: CUI(pDevice)
@@ -603,7 +602,7 @@ void CWeapon_Inven_InShop::Upgrade_Weapon(WPN_PARAM tParam)
 				return;
 
 			(*pVecSlot)[idx]->Set_WeaponParam(tParam);
-			m_pPlayer = static_cast<CPlayer*>(g_pManagement->Get_GameObjectBack(L"Layer_Player", SCENE_MORTAL));
+			m_pWeaponInventory->Update_PlayerWeaponStat();
 
 			break;
 		}
@@ -627,6 +626,8 @@ void CWeapon_Inven_InShop::Upgrade_Armor(ARMOR_PARAM tParam)
 				return;
 
 			(*pVecSlot)[idx]->Set_ArmorParam(tParam);
+			m_pArmorInventory->Update_PlayerArmorStat(&tParam);
+
 			break;
 		}
 		++idx;
@@ -636,12 +637,12 @@ void CWeapon_Inven_InShop::Upgrade_Armor(ARMOR_PARAM tParam)
 
 _float CWeapon_Inven_InShop::Get_UpgradePrice(_int iReinforce)
 {
-	return (iReinforce * 1.5f) * 80 + 50;
+	return (iReinforce * 1.5f) * 500 + 500;
 }
 
 _float CWeapon_Inven_InShop::Get_PlusDamage(_float fDamage, _int iReinforce)
 {
-	return fDamage + (fDamage * 0.3f * iReinforce);
+	return fDamage * 0.1f + (fDamage * 0.3f * iReinforce);
 }
 
 _float CWeapon_Inven_InShop::Get_PlusDef(_float fDef, _int iReinforce)
@@ -764,15 +765,6 @@ HRESULT CWeapon_Inven_InShop::SetUp_WeaponData(INVEN_SHOP_OPTION eShop)
 	}
 
 	return S_OK;
-}
-
-void CWeapon_Inven_InShop::Late_Init()
-{
-	if (m_bLateInit)
-		return;
-
-	m_bLateInit = true;
-	m_pPlayer = static_cast<CPlayer*>(g_pManagement->Get_GameObjectBack(L"Layer_Player", SCENE_MORTAL));
 }
 
 void CWeapon_Inven_InShop::Add_Weapon(WPN_PARAM tAddWpnParam)

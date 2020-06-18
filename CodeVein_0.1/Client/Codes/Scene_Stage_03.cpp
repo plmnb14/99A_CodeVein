@@ -248,7 +248,73 @@ HRESULT CScene_Stage_03::Ready_LightDesc()
 	LightDesc.Position = _v3(-2.9f, 2.f, -90.f);
 	LightDesc.Range = 10.f;
 	LightDesc.fAlpha = 1.f;
-	
+
+	if (FAILED(g_pManagement->Add_Light(m_pGraphic_Device, LightDesc, CLight_Manager::Static_Light)))
+		return E_FAIL;
+
+	LightDesc.Type = D3DLIGHT_POINT;
+	LightDesc.Diffuse = D3DXCOLOR(1.f, 0.8f, 0.8f, 1.f)* 2.f;
+	LightDesc.Ambient = D3DXCOLOR(0.2f, 0.2f, 0.2f, 1.f);
+	LightDesc.Specular = LightDesc.Diffuse;
+	LightDesc.Position = _v3(50.f, -8.f, -1.3f);
+	LightDesc.Range = 10.f;
+	LightDesc.fAlpha = 1.f;
+
+	if (FAILED(g_pManagement->Add_Light(m_pGraphic_Device, LightDesc, CLight_Manager::Static_Light)))
+		return E_FAIL;
+
+	LightDesc.Type = D3DLIGHT_POINT;
+	LightDesc.Diffuse = D3DXCOLOR(1.f, 0.8f, 0.8f, 1.f)* 2.f;
+	LightDesc.Ambient = D3DXCOLOR(0.2f, 0.2f, 0.2f, 1.f);
+	LightDesc.Specular = LightDesc.Diffuse;
+	LightDesc.Position = _v3(51.f, -2.f, -14.5f);
+	LightDesc.Range = 10.f;
+	LightDesc.fAlpha = 1.f;
+
+	if (FAILED(g_pManagement->Add_Light(m_pGraphic_Device, LightDesc, CLight_Manager::Static_Light)))
+		return E_FAIL;
+
+	LightDesc.Type = D3DLIGHT_POINT;
+	LightDesc.Diffuse = D3DXCOLOR(1.f, 0.8f, 0.8f, 1.f)* 2.f;
+	LightDesc.Ambient = D3DXCOLOR(0.2f, 0.2f, 0.2f, 1.f);
+	LightDesc.Specular = LightDesc.Diffuse;
+	LightDesc.Position = _v3(51.f, -1.f, -29.5f);
+	LightDesc.Range = 10.f;
+	LightDesc.fAlpha = 1.f;
+
+	if (FAILED(g_pManagement->Add_Light(m_pGraphic_Device, LightDesc, CLight_Manager::Static_Light)))
+		return E_FAIL;
+
+	LightDesc.Type = D3DLIGHT_POINT;
+	LightDesc.Diffuse = D3DXCOLOR(1.f, 0.8f, 0.8f, 1.f)* 2.f;
+	LightDesc.Ambient = D3DXCOLOR(0.2f, 0.2f, 0.2f, 1.f);
+	LightDesc.Specular = LightDesc.Diffuse;
+	LightDesc.Position = _v3(49.f, 0.f, -43.5f);
+	LightDesc.Range = 10.f;
+	LightDesc.fAlpha = 1.f;
+
+	if (FAILED(g_pManagement->Add_Light(m_pGraphic_Device, LightDesc, CLight_Manager::Static_Light)))
+		return E_FAIL;
+
+	LightDesc.Type = D3DLIGHT_POINT;
+	LightDesc.Diffuse = D3DXCOLOR(1.f, 0.8f, 0.8f, 1.f)* 2.f;
+	LightDesc.Ambient = D3DXCOLOR(0.2f, 0.2f, 0.2f, 1.f);
+	LightDesc.Specular = LightDesc.Diffuse;
+	LightDesc.Position = _v3(36.f, 2.f, -55.5f);
+	LightDesc.Range = 10.f;
+	LightDesc.fAlpha = 1.f;
+
+	if (FAILED(g_pManagement->Add_Light(m_pGraphic_Device, LightDesc, CLight_Manager::Static_Light)))
+		return E_FAIL;
+
+	LightDesc.Type = D3DLIGHT_POINT;
+	LightDesc.Diffuse = D3DXCOLOR(1.f, 0.8f, 0.8f, 1.f)* 2.f;
+	LightDesc.Ambient = D3DXCOLOR(0.2f, 0.2f, 0.2f, 1.f);
+	LightDesc.Specular = LightDesc.Diffuse;
+	LightDesc.Position = _v3(35.f, 2.f, -85.5f);
+	LightDesc.Range = 10.f;
+	LightDesc.fAlpha = 1.f;
+
 	if (FAILED(g_pManagement->Add_Light(m_pGraphic_Device, LightDesc, CLight_Manager::Static_Light)))
 		return E_FAIL;
 

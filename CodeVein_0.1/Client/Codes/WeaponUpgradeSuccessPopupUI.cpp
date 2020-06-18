@@ -132,7 +132,8 @@ _int CWeaponUpgradeSuccessPopupUI::Update_GameObject(_double TimeDelta)
 
 					ARMOR_PARAM tParam = pArmorSlot->Get_ArmorParam();
 					tParam.iReinforce += 1;
-					tParam.fPlusDef = m_pInven->Get_PlusDamage(tParam.fDef, tParam.iReinforce);
+					tParam.fPlusHP = m_pInven->Get_PlusDamage(tParam.fHP, tParam.iReinforce);
+					tParam.fPlusDef = m_pInven->Get_PlusDef(tParam.fDef, tParam.iReinforce);
 					pArmorSlot->Set_ArmorParam(tParam);
 					m_pInven->Upgrade_Armor(tParam);
 				}

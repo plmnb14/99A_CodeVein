@@ -36,7 +36,7 @@ void CWeapon_Inven::Update_PlayerWeaponStat()
 	for (auto iter : m_vecWeaponSlot)
 	{
 		if(iter->Get_Select())
-			m_pPlayer->Set_WeaponSlot((CPlayer::ACTIVE_WEAPON_SLOT)m_iRegistIndex, &iter->Get_WeaponParam());
+			m_pPlayer->Set_WeaponSlot_UpdateStatOnly(&iter->Get_WeaponParam());
 	}
 }
 
@@ -721,6 +721,8 @@ void CWeapon_Inven::Late_Init()
 		return;
 
 	m_bLateInit = true;
+	
+	SetUp_WeaponData();
 
 	m_pPlayer = static_cast<CPlayer*>(g_pManagement->Get_GameObjectBack(L"Layer_Player", SCENE_MORTAL));
 

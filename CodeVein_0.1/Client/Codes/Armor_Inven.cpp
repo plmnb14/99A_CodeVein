@@ -18,6 +18,18 @@ ARMOR_PARAM CArmor_Inven::Get_UseArmorParam()
 	return m_tRegistParam;
 }
 
+void CArmor_Inven::Update_PlayerArmorStat(ARMOR_PARAM* pParam)
+{
+	//m_pPlayer->Set_ArmorSlot((ARMOR_All_DATA)pParam->iArmorName, pParam);
+
+	for (auto& pSlot : m_vecArmorSlot)
+	{
+		if(pSlot->Get_Select())
+			m_pPlayer->Set_ArmorSlot((ARMOR_All_DATA)pSlot->Get_ArmorParam().iArmorName, &pSlot->Get_ArmorParam());
+	}
+
+}
+
 HRESULT CArmor_Inven::Ready_GameObject_Prototype()
 {
 	CUI::Ready_GameObject_Prototype();
