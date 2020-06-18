@@ -189,7 +189,7 @@ void CScriptManager::St01_Sub0()
 		{
 			m_bEventTrigger[Script_Stage01][0] = true;
 
-			m_vecObjectPool[0]->Set_Enable(true);
+			//m_vecObjectPool[0]->Set_Enable(true);
 			m_vecObjectPool[1]->Set_Enable(true);
 			m_vecObjectPool[2]->Set_Enable(true);
 			m_vecObjectPool[3]->Set_Enable(true);
@@ -245,7 +245,7 @@ void CScriptManager::St01_Sub2()
 			m_vecObjectPool[14]->Set_Enable(true);
 			m_vecObjectPool[15]->Set_Enable(true);
 			m_vecObjectPool[16]->Set_Enable(true);
-			m_vecObjectPool[17]->Set_Enable(true);
+			//m_vecObjectPool[17]->Set_Enable(true);
 			m_vecObjectPool[18]->Set_Enable(true);
 		}
 	}
@@ -782,8 +782,8 @@ void CScriptManager::Ready_Stage01_DynamicObject()
 		// ================================================================================================================
 		// °Ë°Õ, °Ë°Õ, °Ë°Õ, Ã¢°Õ
 		// ================================================================================================================
-		_v4(149.756f, -18.08f, 89.3907f, 176.f),
-		_v4(144.419f, -18.08f, 78.1315f, 77.f),
+		_v4(149.756f, -18.08f, 89.3907f, 180.f),
+		_v4(144.419f, -18.08f, 78.1315f, 180.f),
 		_v4(141.593f, -17.7f, 102.344f, -281.f),
 		_v4(138.36f, -17.7f, 110.634f, 131.f),
 		// ================================================================================================================
@@ -837,7 +837,7 @@ void CScriptManager::Ready_Stage01_DynamicObject()
 	// °Ë°Õ, °Ë°Õ, °Ë°Õ, Ã¢°Õ
 	// ================================================================================================================
 	pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_SwordGenji",
-		&CSwordGenji::INFO(CSwordGenji::Normal, CSwordGenji::NF_Ani::Talk, 10.f, 10.f, 2.f,
+		&CSwordGenji::INFO(CSwordGenji::Normal, CSwordGenji::NF_Ani::Talk, 5.f, 5.f, 2.f,
 			true, _v3(vPos[iIndex].x, vPos[iIndex].y, vPos[iIndex].z), _v3(0.f, D3DXToRadian(vPos[iIndex].w), 0.f), 1));
 	pInstance->Set_Enable(false);
 	m_vecObjectPool.push_back(pInstance);

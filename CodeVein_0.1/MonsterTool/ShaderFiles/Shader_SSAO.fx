@@ -133,12 +133,9 @@ float Generate_AmbientOcclusion(in float2 uv, in float2 tcoord, in float3 p, in 
 
 PS_OUT PS_SSAO(PS_IN In)
 {
-	// 뷰시점 거리 체크만 안넣어놨어요.
-	// 시간이 없어서 추가해야됨.
-
 	PS_OUT			Out = (PS_OUT)0;
 
-	Out.vSSAO.rgb = 1.f;
+	Out.vSSAO.xyz = 1.f;
 
 	float2 vVec[4] = { float2(1.f,0.f) , float2(-1.f,0.f), float2(0.f,1.f), float2(0.f,-1.f) };
 
@@ -149,7 +146,6 @@ PS_OUT PS_SSAO(PS_IN In)
 	float ao = 0.f;
 	float rad = g_fSampleRad / p.z;
 
-	//int	iterations = lerp(6.0 , 2.0, p.z / 500.f);
 	int	iterations = 4;
 	for (int i = 0; i < iterations; ++i)
 	{
@@ -164,12 +160,10 @@ PS_OUT PS_SSAO(PS_IN In)
 
 	ao /= (float)iterations * 4.f;
 
-	//Out.vSSAO = ao;
 	Out.vSSAO	= 1.f - ao;
 	Out.vSSAO.a = 1.f;
 
-
-	float	fSkin = tex2D(SkinSampler, In.vTexUV).x;
+	float	fSkin = tex2D(SkinSampler, In.vTexUV).z;
 	
 	Out.vSSAO = fSkin < 0.99f ? Out.vSSAO.x : 1.f;
 

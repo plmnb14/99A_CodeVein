@@ -213,6 +213,17 @@ HRESULT CShader::Set_StaticTexture_Auto(CMesh_Static * pMeshStatic, _ulong dwSub
 		break;
 	}
 
+	case 24:	// D N E U ID
+	{
+		m_pEffect->SetTexture("g_DiffuseTexture", pMeshStatic->Get_Texture(dwSubsetNum, MESHTEXTURE::TYPE_DIFFUSE_MAP));
+		m_pEffect->SetTexture("g_NormalTexture", pMeshStatic->Get_Texture(dwSubsetNum, MESHTEXTURE::TYPE_NORMAL_MAP));
+		m_pEffect->SetTexture("g_EmissiveTexture", pMeshStatic->Get_Texture(dwSubsetNum, MESHTEXTURE::TYPE_EMISSIVE_MAP));
+		m_pEffect->SetTexture("g_UnionTexture", pMeshStatic->Get_Texture(dwSubsetNum, MESHTEXTURE::TYPE_UNION_MAP));
+		m_pEffect->SetTexture("g_IDTexture", pMeshStatic->Get_Texture(dwSubsetNum, MESHTEXTURE::TYPE_ID_MAP));
+
+		break;
+	}
+
 	}
 
 	return S_OK;

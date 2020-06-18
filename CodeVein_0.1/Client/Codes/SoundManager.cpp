@@ -32,6 +32,12 @@ void CSoundManager::Play_Sound(TCHAR * pSoundKey, CHANNELID eID, SOUND _eSoundGr
 	if (m_mapSound.empty())
 		return;
 
+	if (_eSoundGroup == BGM_Sound)
+		return;
+
+	if (_eSoundGroup == Ambient_Sound)
+		return;
+
 	auto& iter = find_if(m_mapSound.begin(), m_mapSound.end(), CMyStrCmp(pSoundKey));
 
 	if (m_mapSound.end() == iter)
@@ -48,6 +54,8 @@ void CSoundManager::Play_Sound(TCHAR * pSoundKey, CHANNELID eID, SOUND _eSoundGr
 
 void CSoundManager::Play_BGM(TCHAR * pSoundKey,  _bool _bIsAmbient)
 {
+	return;
+
 	if (m_mapSound.empty())
 		return;
 
@@ -75,6 +83,8 @@ void CSoundManager::Play_BGM(TCHAR * pSoundKey,  _bool _bIsAmbient)
 
 void CSoundManager::Play_BGM_Type(TCHAR * pSoundKey, _bool _bIsAmbient)
 {
+	return;
+
 	if (m_mapSound.empty())
 		return;
 

@@ -1628,7 +1628,7 @@ void CPlayer_Colleague::CollAtt_ThreeCombo()
 		{
 			m_bEventTrigger[9] = true;
 
-			cout << "Skill_ShadowAssault_ScratchBlur_2226 : " << m_pDynamicMesh->Get_TrackInfo().Position << endl;
+			//cout << "Skill_ShadowAssault_ScratchBlur_2226 : " << m_pDynamicMesh->Get_TrackInfo().Position << endl;
 
 			g_pManagement->Create_Effect_Delay(L"Player_Skill_ShadowAssault_ScratchBlur", 0.f, vEffPos, m_pTransformCom);
 			g_pManagement->Create_Effect_Delay(L"Player_Skill_ShadowAssault_Scratch", 0.f, vEffPos, m_pTransformCom);

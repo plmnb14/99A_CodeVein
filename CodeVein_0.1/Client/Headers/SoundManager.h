@@ -34,7 +34,7 @@ public:
 	IceGirl_SFX_01, IceGirl_SFX_02, IceGirl_Voice, IceGirl_Step,
 	QueenKnight_SFX_01, QueenKnight_SFX_02, QueenKnight_Voice, QueenKnight_Step,
 	//===============================================================
-	Player_SFX_01, Player_SFX_02, Player_SFX_03, Player_SFX_04, Player_Voice,
+	Player_SFX_01, Player_SFX_02, Player_SFX_03, Player_SFX_04, Player_SFX_05, Player_Voice,
 	Player_FootStep, Player_Hit,
 	//===============================================================
 	Jack_SFX_01, Jack_SFX_02, Jack_SFX_03, Jack_SFX_04, Jack_Voice,

@@ -1,11 +1,10 @@
 
-matrix		g_matWorld;
-matrix		g_matWVP;
+matrix		g_matWorld, g_matView, g_matProj;
 matrix		g_matLightVP;
 matrix		g_matBias;
 
-int g_iScreenX = 1980;
-int g_iScreenY = 720;
+int g_iScreenX = 1600;
+int g_iScreenY = 900;
 
 //==========================================================================
 
@@ -68,9 +67,14 @@ VS_OUT_ShadowRender VS_SHADOW(VS_IN_ShadowRender In)
 {
 	VS_OUT_ShadowRender Out = (VS_OUT_ShadowRender)0;
 
+	matrix		matWV, matWVP;
+
+	matWV = mul(g_matWorld, g_matView);
+	matWVP = mul(matWV, g_matProj);
+
 	matrix matLightWVP = mul(g_matWorld , g_matLightVP);
 
-	Out.vPosition = mul(float4(In.vPosition.xyz, 1), g_matWVP);
+	Out.vPosition = mul(float4(In.vPosition.xyz, 1), matWVP);
 	Out.vDepth = mul(float4(In.vPosition.xyz, 1), matLightWVP);
 	Out.vShadowUV = mul(Out.vDepth, g_matBias);
 
@@ -147,7 +151,7 @@ PS_OUT PS_SHADOW(PS_IN_ShadowRender In)
 		//float a = (fDepthValue * In.vDepth.w < In.vDepth.z - bias) ? 0.2f : 1.f;
 		//fShadowTerms[i] = float(a);
 		
-		fShadowTerm += (fDepthValue * In.vDepth.w < In.vDepth.z - bias) ? 0.2f : 1.f;;
+		fShadowTerm += (fDepthValue * In.vDepth.w < In.vDepth.z - bias) ? 0.3f : 1.f;
 	}
 	
 	fShadowTerm /= 9.f;
