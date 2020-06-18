@@ -1237,13 +1237,14 @@ void CPlayer_Colleague::Play_Dead()
 	{
 		if (m_pDynamicMesh->Is_Finish_Animation(0.9f))
 		{
-			//Check_DeadEffect();
 			m_bEnable = true;
 			m_dPlayAni_Time = 0;
 			g_pSoundManager->Stop_Sound(CSoundManager::Jack_Voice);
 			g_pSoundManager->Stop_Sound(CSoundManager::Jack_SFX_01);
 			g_pSoundManager->Stop_Sound(CSoundManager::Jack_SFX_02);
 			g_pSoundManager->Stop_Sound(CSoundManager::Jack_SFX_03);
+
+			Check_DeadEffect(m_dTimeDelta);
 		}
 	}
 }
@@ -1354,8 +1355,8 @@ void CPlayer_Colleague::CollDodge_FrontRoll()
 	{
 		m_tObjParam.bCanDodge = false;
 		m_tObjParam.bIsDodge = true;
-		g_pSoundManager->Stop_Sound(CSoundManager::Jack_Voice);
-		g_pSoundManager->Play_Sound(L"Jack_Dodge.ogg", CSoundManager::Jack_Voice, CSoundManager::Voice_Sound);
+		//g_pSoundManager->Stop_Sound(CSoundManager::Jack_Voice);
+		//g_pSoundManager->Play_Sound(L"Jack_Dodge.ogg", CSoundManager::Jack_Voice, CSoundManager::Voice_Sound);
 	}
 	else
 	{
@@ -1391,8 +1392,8 @@ void CPlayer_Colleague::CollDodge_BackRoll()
 	{
 		m_tObjParam.bCanDodge = false;
 		m_tObjParam.bIsDodge = true;
-		g_pSoundManager->Stop_Sound(CSoundManager::Jack_SFX_03);
-		g_pSoundManager->Play_Sound(L"Jack_Dodge.ogg", CSoundManager::Jack_SFX_03, CSoundManager::Effect_Sound);
+		//g_pSoundManager->Stop_Sound(CSoundManager::Jack_SFX_03);
+		//g_pSoundManager->Play_Sound(L"Jack_Dodge.ogg", CSoundManager::Jack_SFX_03, CSoundManager::Effect_Sound);
 	}
 	else
 	{
@@ -1428,8 +1429,8 @@ void CPlayer_Colleague::CollDodge_LeftRoll()
 	{
 		m_tObjParam.bCanDodge = false;
 		m_tObjParam.bIsDodge = true;
-		g_pSoundManager->Stop_Sound(CSoundManager::Jack_SFX_03);
-		g_pSoundManager->Play_Sound(L"Jack_Dodge.ogg", CSoundManager::Jack_SFX_03, CSoundManager::Effect_Sound);
+		//g_pSoundManager->Stop_Sound(CSoundManager::Jack_SFX_03);
+		//g_pSoundManager->Play_Sound(L"Jack_Dodge.ogg", CSoundManager::Jack_SFX_03, CSoundManager::Effect_Sound);
 	}
 	else
 	{
@@ -1465,8 +1466,8 @@ void CPlayer_Colleague::CollDodge_RightRoll()
 	{
 		m_tObjParam.bCanDodge = false;
 		m_tObjParam.bIsDodge = true;
-		g_pSoundManager->Stop_Sound(CSoundManager::Jack_SFX_03);
-		g_pSoundManager->Play_Sound(L"Jack_Dodge.ogg", CSoundManager::Jack_SFX_03, CSoundManager::Effect_Sound);
+		//g_pSoundManager->Stop_Sound(CSoundManager::Jack_SFX_03);
+		//g_pSoundManager->Play_Sound(L"Jack_Dodge.ogg", CSoundManager::Jack_SFX_03, CSoundManager::Effect_Sound);
 	}
 	else
 	{
@@ -1627,7 +1628,7 @@ void CPlayer_Colleague::CollAtt_ThreeCombo()
 		{
 			m_bEventTrigger[9] = true;
 
-			cout << "Skill_ShadowAssault_ScratchBlur_2226 : " << m_pDynamicMesh->Get_TrackInfo().Position << endl;
+			//cout << "Skill_ShadowAssault_ScratchBlur_2226 : " << m_pDynamicMesh->Get_TrackInfo().Position << endl;
 
 			g_pManagement->Create_Effect_Delay(L"Player_Skill_ShadowAssault_ScratchBlur", 0.f, vEffPos, m_pTransformCom);
 			g_pManagement->Create_Effect_Delay(L"Player_Skill_ShadowAssault_Scratch", 0.f, vEffPos, m_pTransformCom);
@@ -1676,6 +1677,11 @@ void CPlayer_Colleague::CollAtt_ThreeCombo()
 			g_pManagement->Create_Effect_Delay(L"Player_Skill_BloodTornadeMesh_3", 0.46f, V3_NULL, m_pTransformCom);
 			g_pManagement->Create_Effect_Delay(L"Player_Skill_BloodTornadeMesh", 0.5f, V3_NULL, m_pTransformCom);
 			g_pManagement->Create_Effect_Delay(L"Player_Skill_BloodTornadeMesh_2", 0.62f, V3_NULL, m_pTransformCom);
+
+			g_pSoundManager->Stop_Sound(CSoundManager::Jack_Voice);
+			g_pSoundManager->Play_Sound(L"Letheargy_CooA.ogg", CSoundManager::Jack_Voice, CSoundManager::Voice_Sound);
+			g_pSoundManager->Stop_Sound(CSoundManager::Jack_SFX_02);
+			g_pSoundManager->Play_Sound(L"Jack_Sword_Swing.ogg", CSoundManager::Jack_SFX_02, CSoundManager::Voice_Sound);
 		}
 	}
 	//}
@@ -1696,6 +1702,177 @@ void CPlayer_Colleague::CollAtt_CenterDown()
 	}
 	else
 	{
+		/*if (m_pDynamicMesh->Is_Finish_Animation_Lower(0.9f))
+		{
+			Function_Reset_State();
+			m_eMovetype = CPlayer_Colleague::Coll_Idle;
+			m_iCenter_Count = 0;
+			m_bTestRendom = true;
+			m_bMyHiting = false;
+			m_bCheck_Attcing = false;
+			m_fCoolTimer_limit = 8.f;
+			m_bChecking_MyHit = true;
+			++m_iNormalAtt_Count;
+			g_pSoundManager->Stop_Sound(CSoundManager::Jack_Voice);
+			g_pSoundManager->Stop_Sound(CSoundManager::Jack_SFX_01);
+			g_pSoundManager->Stop_Sound(CSoundManager::Jack_SFX_02);
+			g_pSoundManager->Stop_Sound(CSoundManager::Jack_SFX_03);
+			g_pSoundManager->Stop_Sound(CSoundManager::Jack_SFX_04);
+			m_bCheck_Skil_Voice = false;
+			return;
+		}
+		else if (m_pDynamicMesh->Get_TrackInfo().Position >= 3.233f)
+		{
+			if (m_bEventTrigger[9] == false)
+			{
+				m_bEventTrigger[9] = true;
+				m_pSword->Set_Enable_Trail(false);
+			}
+		}
+		else if (m_pDynamicMesh->Get_TrackInfo().Position >= 3.033f)
+		{
+			if (m_bEventTrigger[8] == false)
+			{
+				m_bEventTrigger[8] = true;
+				m_pSword->Set_Target_CanAttack(false);
+				m_pSword->Set_Enable_Record(false);
+			}
+		}
+		else if (m_pDynamicMesh->Get_TrackInfo().Position >= 2.887f)
+		{
+			if (m_bEventTrigger[7] == false)
+			{
+				m_bEventTrigger[7] = true;
+				g_pManagement->Create_Effect_Delay(L"Player_Skill_Ring_Hor", 0.f, vEffPos, m_pTransformCom);
+				g_pManagement->Create_Effect_Delay(L"Player_Skill_Ring_Ver", 0.f, vEffPos, m_pTransformCom);
+				g_pManagement->Create_Effect_Delay(L"Player_Skill_RedCircle_Flash", 0.f, vEffPos, m_pTransformCom);
+				g_pManagement->Create_Effect_Delay(L"Player_Skill_RedParticle_Explosion", 0.f, vEffPos, m_pTransformCom);
+				g_pSoundManager->Stop_Sound(CSoundManager::Player_SFX_01);
+				g_pSoundManager->Play_Sound(L"PlayerSkill02_Eff.ogg", CSoundManager::Player_SFX_01, CSoundManager::Effect_Sound);
+			}
+		}
+		else if (m_pDynamicMesh->Get_TrackInfo().Position >= 2.867f)
+		{
+			if (m_bEventTrigger[6] == false)
+			{
+				m_bEventTrigger[6] = true;
+				g_pManagement->Create_Effect_Delay(L"Player_Skill_ScratchBlur_Ver", 0.f, vEffPos, m_pTransformCom);
+				g_pManagement->Create_Effect_Delay(L"Player_Skill_ScratchBlur_Sub_Ver", 0.f, vEffPos, m_pTransformCom);
+				g_pManagement->Create_Effect_Delay(L"Player_Skill_Scratch_Ver", 0.f, vEffPos, m_pTransformCom);
+				g_pManagement->Create_Effect_Delay(L"Hit_Slash_0", 0.f, vEffPos, m_pTransformCom);
+				g_pManagement->Create_Effect_Delay(L"Hit_Slash_1", 0.f, vEffPos, m_pTransformCom);
+				g_pManagement->Create_Effect_Delay(L"Hit_Slash_2", 0.f, vEffPos, m_pTransformCom);
+				g_pManagement->Create_Effect_Delay(L"Hit_Slash_3", 0.f, vEffPos, m_pTransformCom);
+				g_pManagement->Create_Effect_Delay(L"Hit_Slash_Particle_0", 0.f, vEffPos, m_pTransformCom);
+				g_pSoundManager->Stop_Sound(CSoundManager::Player_SFX_04);
+				g_pSoundManager->Play_Sound(L"SE_BLACK_KNIGHT_WIND_CUT_002.ogg", CSoundManager::Player_SFX_04, CSoundManager::Effect_Sound);
+			}
+		}
+		else if (m_pDynamicMesh->Get_TrackInfo().Position >= 2.767f)
+		{
+			if (m_bEventTrigger[5] == false)
+			{
+				m_bEventTrigger[5] = true;
+				m_pSword->Set_Target_CanAttack(true);
+				m_pSword->Set_Enable_Record(true);
+			}
+		}
+		else if (m_pDynamicMesh->Get_TrackInfo().Position >= 2.6f)
+		{
+			if (m_bEventTrigger[4] == false)
+			{
+				m_bEventTrigger[4] = true;
+				m_pSword->Set_Enable_Trail(true);
+			}
+		}
+		else if (m_pDynamicMesh->Get_TrackInfo().Position >= 1.967f)
+		{
+			if (m_bEventTrigger[3] == false)
+			{
+				m_bEventTrigger[3] = true;
+				g_pManagement->Create_Effect_Delay(L"Player_Skill_ScratchBlur_Hor", 0.f, vEffPos, m_pTransformCom);
+				g_pManagement->Create_Effect_Delay(L"Player_Skill_ScratchBlur_Sub_Hor", 0.f, vEffPos, m_pTransformCom);
+				g_pManagement->Create_Effect_Delay(L"Player_Skill_Scratch_Hor", 0.f, vEffPos, m_pTransformCom);
+				g_pManagement->Create_Effect_Delay(L"Hit_Slash_0", 0.f, vEffPos, m_pTransformCom);
+				g_pManagement->Create_Effect_Delay(L"Hit_Slash_1", 0.f, vEffPos, m_pTransformCom);
+				g_pManagement->Create_Effect_Delay(L"Hit_Slash_2", 0.f, vEffPos, m_pTransformCom);
+				g_pManagement->Create_Effect_Delay(L"Hit_Slash_3", 0.f, vEffPos, m_pTransformCom);
+				g_pManagement->Create_Effect_Delay(L"Hit_Slash_Particle_0", 0.f, vEffPos, m_pTransformCom);
+				g_pManagement->Create_Effect_Delay(L"Player_Skill_RedParticle_Explosion", 0.f, vEffPos, m_pTransformCom);
+				g_pSoundManager->Stop_Sound(CSoundManager::Player_SFX_02);
+				g_pSoundManager->Play_Sound(L"SE_BLACK_KNIGHT_WIND_CUT_000.ogg", CSoundManager::Player_SFX_02, CSoundManager::Effect_Sound);
+			}
+		}
+		if (m_pDynamicMesh->Get_TrackInfo().Position >= 2.867f && m_pDynamicMesh->Get_TrackInfo().Position < 3.333f)
+		{
+			if (m_bEventTrigger[12] == false)
+			{
+				m_bEventTrigger[12] = true;
+				m_fAtt_MoveSpeed_Cur = 1.f;
+				m_fAtt_MoveAccel_Cur = 0.f;
+				m_fAni_Multiply = 0.f;
+				//m_fAnimMutiply = 1.f;
+			}
+			Colleague_Movement(m_fAtt_MoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_Z));
+			Colleague_SkilMovement(m_fAni_Multiply);
+		}
+		else if (m_pDynamicMesh->Get_TrackInfo().Position >= 2.f)
+		{
+			if (m_bEventTrigger[2] == false)
+			{
+				m_bEventTrigger[2] = true;
+				m_tObjParam.bInvisible = false;
+				m_pSword->Set_Invisible(false);
+				m_fAni_Multiply = 1.f;
+			}
+		}
+		else if (m_pDynamicMesh->Get_TrackInfo().Position >= 1.9f)
+		{
+			if (m_bEventTrigger[10] == false)
+			{
+				m_bEventTrigger[10] = true;
+				_v3 vEffPos_Dis = _v3(0.f, 1.5f, 0.f) - m_pTransformCom->Get_Axis(AXIS_Z) * 1.f;
+				m_tObjParam.bCanHit = true;
+				g_pManagement->Create_Effect_Delay(L"Player_Skill_Distortion_Circle", 0.f, vEffPos_Dis, m_pTransformCom);
+				g_pSoundManager->Stop_Sound(CSoundManager::Player_SFX_03);
+				g_pSoundManager->Play_Sound(L"SE_BLACK_KNIGHT_JUMP_000.ogg", CSoundManager::Player_SFX_03, CSoundManager::Effect_Sound);
+			}
+		}
+		if (m_pDynamicMesh->Get_TrackInfo().Position >= 1.167f && m_pDynamicMesh->Get_TrackInfo().Position < 2.1f)
+		{
+			if (m_bEventTrigger[0] == false)
+			{
+				m_bEventTrigger[0] = true;
+				m_fAtt_MoveSpeed_Cur = 30.f;
+				m_fAtt_MoveAccel_Cur = 0.f;
+				m_fAni_Multiply = 5.f;
+				//m_fAnimMutiply = 1.5f;
+				m_tObjParam.bInvisible = true;
+				m_pSword->Set_Invisible(true);
+			}
+			if (m_bEventTrigger[1] == false)
+			{
+				m_bEventTrigger[1] = true;
+				_v3 vEffPos_Dis = _v3(0.f, 1.5f, 0.f) + m_pTransformCom->Get_Axis(AXIS_Z) * 1.5f;
+				//m_tObjParam.bCanHit = false;
+				g_pManagement->Create_Effect_Delay(L"Player_Skill_Distortion_Circle", 0.f, vEffPos_Dis, m_pTransformCom);
+				g_pSoundManager->Stop_Sound(CSoundManager::Player_SFX_01);
+				g_pSoundManager->Play_Sound(L"SE_QUEENS_KNIGHTS_WARP_001.ogg", CSoundManager::Player_SFX_01, CSoundManager::Effect_Sound);
+			}
+			Colleague_Movement(m_fAtt_MoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_Z));
+			Colleague_SkilMovement(m_fAni_Multiply);
+		}
+		else if (m_pDynamicMesh->Get_TrackInfo().Position > 0.5f)
+		{
+			if (m_bEventTrigger[11] == false)
+			{
+				m_bEventTrigger[11] = true;
+				// 디졸브 잠깐 빼둠
+				// Start_Dissolve(1.f, false);
+			}
+		}*/
+
+
 		if (m_pDynamicMesh->Is_Finish_Animation_Lower(0.9f) && m_eColleague_Ani == CPlayer_Colleague::Ani_Jump_CenterAtt_Skil)
 		{
 			Function_Reset_State();
@@ -1844,6 +2021,11 @@ void CPlayer_Colleague::CollAtt_CenterDown()
 				_v3 vEffPos = m_pTransformCom->Get_Pos() + _v3(0.f, 1.3f, 0.f);
 				CParticleMgr::Get_Instance()->Create_Skill_Start_Effect(V3_NULL, vEffPos, m_pTransformCom);
 				g_pManagement->Create_ParticleEffect_Delay(L"Player_Skill_DarkSmokeAura", 0.5f, 0.f, _v3(0, 1.1f, 0.f), m_pTransformCom);
+
+				g_pSoundManager->Stop_Sound(CSoundManager::Jack_Voice);
+				g_pSoundManager->Play_Sound(L"Skil_Three.ogg", CSoundManager::Jack_Voice, CSoundManager::Voice_Sound);
+				g_pSoundManager->Stop_Sound(CSoundManager::Jack_SFX_02);
+				g_pSoundManager->Play_Sound(L"Jack_Sword_Swing.ogg", CSoundManager::Jack_SFX_02, CSoundManager::Voice_Sound);
 			}
 		}
 
@@ -1961,89 +2143,48 @@ void CPlayer_Colleague::CollAtt_Normal()
 	else if ((fMonLenght <= 3.f/* && false == m_bCheck_Attcing*/))
 	{
 		if (m_iNormalAtt_Count > 4)
+		{
 			m_iNormalAtt_Count = 0;
+			return;
+		}
+			
 
 		if (2 <= m_iCenter_Count)
 		{
 			m_eMovetype = CPlayer_Colleague::Coll_Attack;
 			m_eColl_Sub_AttMoment = CPlayer_Colleague::Att_CenterDown;
-			if (false == m_bCheck_Skil_Voice)
-			{
-				m_bCheck_Skil_Voice = true;
-				g_pSoundManager->Stop_Sound(CSoundManager::Jack_Voice);
-				g_pSoundManager->Play_Sound(L"Skil_Three.ogg", CSoundManager::Jack_Voice, CSoundManager::Voice_Sound);
-				g_pSoundManager->Stop_Sound(CSoundManager::Jack_SFX_02);
-				g_pSoundManager->Play_Sound(L"Jack_Sword_Swing.ogg", CSoundManager::Jack_SFX_02, CSoundManager::Voice_Sound);
-			}
+			return;
 		}
 		else if (m_iNormalAtt_Count == 4)
 		{
 			// 여기서 삼단베기
 			m_eMovetype = CPlayer_Colleague::Coll_Attack;
 			m_eColl_Sub_AttMoment = CPlayer_Colleague::Att_ThreeCombo;
-
-			if (false == m_bCheck_Skil_Voice)
-			{
-				m_bCheck_Skil_Voice = true;
-				g_pSoundManager->Stop_Sound(CSoundManager::Jack_Voice);
-				g_pSoundManager->Play_Sound(L"Letheargy_CooA.ogg", CSoundManager::Jack_Voice, CSoundManager::Voice_Sound);
-				g_pSoundManager->Stop_Sound(CSoundManager::Jack_SFX_02);
-				g_pSoundManager->Play_Sound(L"Jack_Sword_Swing.ogg", CSoundManager::Jack_SFX_02, CSoundManager::Voice_Sound);
-			}
+			return;
 		}
 		else if (m_iNormalAtt_Count == 3)
 		{
 			m_eMovetype = CPlayer_Colleague::Coll_Attack;
 			m_eColl_Sub_AttMoment = CPlayer_Colleague::Att_Base4;
-			if (false == m_bCheck_Normal_AttVoice)
-			{
-				m_bCheck_Normal_AttVoice = true;
-				g_pSoundManager->Stop_Sound(CSoundManager::Jack_Voice);
-				g_pSoundManager->Play_Sound(L"Letheargy_Hap2.ogg", CSoundManager::Jack_Voice, CSoundManager::Voice_Sound);
-				g_pSoundManager->Stop_Sound(CSoundManager::Jack_SFX_02);
-				g_pSoundManager->Play_Sound(L"Jack_Sword_Swing.ogg", CSoundManager::Jack_SFX_02, CSoundManager::Voice_Sound);
-			}
+			return;
 		}
 		else if (m_iNormalAtt_Count == 2)
 		{
 			m_eMovetype = CPlayer_Colleague::Coll_Attack;
 			m_eColl_Sub_AttMoment = CPlayer_Colleague::Att_Base3;
-
-			if (false == m_bCheck_Normal_AttVoice)
-			{
-				m_bCheck_Normal_AttVoice = true;
-				g_pSoundManager->Stop_Sound(CSoundManager::Jack_Voice);
-				g_pSoundManager->Play_Sound(L"Letheargy_Hmm.ogg", CSoundManager::Jack_Voice, CSoundManager::Voice_Sound);
-				g_pSoundManager->Stop_Sound(CSoundManager::Jack_SFX_02);
-				g_pSoundManager->Play_Sound(L"Jack_Sword_Swing.ogg", CSoundManager::Jack_SFX_02, CSoundManager::Voice_Sound);
-			}
+			return;
 		}
 		else if (m_iNormalAtt_Count == 1)
 		{
 			m_eMovetype = CPlayer_Colleague::Coll_Attack;
 			m_eColl_Sub_AttMoment = CPlayer_Colleague::Att_Base2;
-			if (false == m_bCheck_Normal_AttVoice)
-			{
-				m_bCheck_Normal_AttVoice = true;
-				g_pSoundManager->Stop_Sound(CSoundManager::Jack_Voice);
-				g_pSoundManager->Play_Sound(L"Letheargy_Hmm.ogg", CSoundManager::Jack_Voice, CSoundManager::Voice_Sound);
-				g_pSoundManager->Stop_Sound(CSoundManager::Jack_SFX_02);
-				g_pSoundManager->Play_Sound(L"Jack_Sword_Swing.ogg", CSoundManager::Jack_SFX_02, CSoundManager::Voice_Sound);
-			}
+			return;
 		}
 		else if (m_iNormalAtt_Count == 0)
 		{
 			m_eMovetype = CPlayer_Colleague::Coll_Attack;
 			m_eColl_Sub_AttMoment = CPlayer_Colleague::Att_Base1;
-
-			if (false == m_bCheck_Normal_AttVoice)
-			{
-				m_bCheck_Normal_AttVoice = true;
-				g_pSoundManager->Stop_Sound(CSoundManager::Jack_Voice);
-				g_pSoundManager->Play_Sound(L"Letheargy_Hmm.ogg", CSoundManager::Jack_Voice, CSoundManager::Voice_Sound);
-				g_pSoundManager->Stop_Sound(CSoundManager::Jack_SFX_02);
-				g_pSoundManager->Play_Sound(L"Jack_Sword_Swing.ogg", CSoundManager::Jack_SFX_02, CSoundManager::Voice_Sound);
-			}
+			return;
 		}
 	}
 
@@ -2070,7 +2211,7 @@ void CPlayer_Colleague::CollAtt_Base1()
 		if (m_pDynamicMesh->Is_Finish_Animation(0.45f) && m_eColleague_Ani == CPlayer_Colleague::One_Att)
 		{
 			Function_Reset_State();
-			//			m_eMovetype = CPlayer_Colleague::Coll_Idle;
+			m_eMovetype = CPlayer_Colleague::Coll_Idle;
 			m_bChecking_MyHit = true;
 			++m_iNormalAtt_Count;
 			m_bMyHiting = false;
@@ -2112,12 +2253,22 @@ void CPlayer_Colleague::CollAtt_Base1()
 				g_pSoundManager->Play_Sound(L"Jack_Hit_Attack00.ogg", CSoundManager::Jack_SFX_01, CSoundManager::Voice_Sound);
 			}
 		}
-
-		if (0.6f <= AniTime && 0.8f >= AniTime)
+		else if (0.f <= AniTime)
 		{
 			if (false == m_bEventTrigger[4])
 			{
 				m_bEventTrigger[4] = true;
+				//g_pSoundManager->Stop_Sound(CSoundManager::Jack_Voice);
+				//g_pSoundManager->Play_Sound(L"Letheargy_Hmm.ogg", CSoundManager::Jack_Voice, CSoundManager::Voice_Sound);
+				//g_pSoundManager->Stop_Sound(CSoundManager::Jack_SFX_02);
+				//g_pSoundManager->Play_Sound(L"Jack_Sword_Swing.ogg", CSoundManager::Jack_SFX_02, CSoundManager::Voice_Sound);
+			}
+		}
+		if (0.6f <= AniTime && 0.8f >= AniTime)
+		{
+			if (false == m_bEventTrigger[5])
+			{
+				m_bEventTrigger[5] = true;
 				m_fAtt_MoveSpeed_Cur = 4.f;
 				m_fAtt_MoveAccel_Cur = 0.f;	// 엑셀 값은 항상 0 초기화
 				m_fAni_Multiply = 0.45f;	// 감폭 수치. 값이 클수록 빨리 감소. 0일시 등속운동(원래는 감속) // 보통은 1 ~ 0.5사이
@@ -2204,11 +2355,22 @@ void CPlayer_Colleague::CollAtt_Base2()
 				g_pSoundManager->Play_Sound(L"Jack_Hit_Attack01.ogg", CSoundManager::Jack_SFX_01, CSoundManager::Voice_Sound);
 			}
 		}
-		if (0.f <= AniTime && 0.833f >= AniTime)
+		else if (0.f <= AniTime)
 		{
 			if (false == m_bEventTrigger[7])
 			{
 				m_bEventTrigger[7] = true;
+				//g_pSoundManager->Stop_Sound(CSoundManager::Jack_Voice);
+				//g_pSoundManager->Play_Sound(L"Letheargy_Hmm.ogg", CSoundManager::Jack_Voice, CSoundManager::Voice_Sound);
+				//g_pSoundManager->Stop_Sound(CSoundManager::Jack_SFX_02);
+				//g_pSoundManager->Play_Sound(L"Jack_Sword_Swing.ogg", CSoundManager::Jack_SFX_02, CSoundManager::Voice_Sound);
+			}
+		}
+		if (0.f <= AniTime && 0.833f >= AniTime)
+		{
+			if (false == m_bEventTrigger[8])
+			{
+				m_bEventTrigger[8] = true;
 				m_fAtt_MoveSpeed_Cur = 5.1f;
 				m_fAtt_MoveAccel_Cur = 0.f;	// 엑셀 값은 항상 0 초기화
 				m_fAni_Multiply = 0.6f;	// 감폭 수치. 값이 클수록 빨리 감소. 0일시 등속운동(원래는 감속) // 보통은 1 ~ 0.5사이
@@ -2292,11 +2454,22 @@ void CPlayer_Colleague::CollAtt_Base3()
 				m_pSword->Set_Enable_Trail(true);
 			}
 		}
-		if (0.167f <= AniTime && 0.833f >= AniTime)
+		else if (0.f <= AniTime)
 		{
 			if (false == m_bEventTrigger[12])
 			{
 				m_bEventTrigger[12] = true;
+				//g_pSoundManager->Stop_Sound(CSoundManager::Jack_Voice);
+				//g_pSoundManager->Play_Sound(L"Letheargy_Hmm.ogg", CSoundManager::Jack_Voice, CSoundManager::Voice_Sound);
+				//g_pSoundManager->Stop_Sound(CSoundManager::Jack_SFX_02);
+				//g_pSoundManager->Play_Sound(L"Jack_Sword_Swing.ogg", CSoundManager::Jack_SFX_02, CSoundManager::Voice_Sound);
+			}
+		}
+		if (0.167f <= AniTime && 0.833f >= AniTime)
+		{
+			if (false == m_bEventTrigger[13])
+			{
+				m_bEventTrigger[13] = true;
 				m_fAtt_MoveSpeed_Cur = 4.f;
 				m_fAtt_MoveAccel_Cur = 0.f;	// 엑셀 값은 항상 0 초기화
 				m_fAni_Multiply = 0.6f;	// 감폭 수치. 값이 클수록 빨리 감소. 0일시 등속운동(원래는 감속) // 보통은 1 ~ 0.5사이
@@ -2379,11 +2552,19 @@ void CPlayer_Colleague::CollAtt_Base4()
 				m_pSword->Set_Enable_Trail(true);
 			}
 		}
+		if (false == m_bEventTrigger[16])
+		{
+			m_bEventTrigger[16] = true;
+			//g_pSoundManager->Stop_Sound(CSoundManager::Jack_Voice);
+			//g_pSoundManager->Play_Sound(L"Letheargy_Hap2.ogg", CSoundManager::Jack_Voice, CSoundManager::Voice_Sound);
+			//g_pSoundManager->Stop_Sound(CSoundManager::Jack_SFX_02);
+			//g_pSoundManager->Play_Sound(L"Jack_Sword_Swing.ogg", CSoundManager::Jack_SFX_02, CSoundManager::Voice_Sound);
+		}
 		if (0.333f <= AniTime && 0.867f >= AniTime)
 		{
-			if (false == m_bEventTrigger[16])
+			if (false == m_bEventTrigger[17])
 			{
-				m_bEventTrigger[16] = true;
+				m_bEventTrigger[17] = true;
 				m_fAtt_MoveSpeed_Cur = 4.f;
 				m_fAtt_MoveAccel_Cur = 0.f;	// 엑셀 값은 항상 0 초기화
 				m_fAni_Multiply = 0.6f;	// 감폭 수치. 값이 클수록 빨리 감소. 0일시 등속운동(원래는 감속) // 보통은 1 ~ 0.5사이

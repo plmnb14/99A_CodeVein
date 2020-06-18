@@ -82,7 +82,10 @@ _int CScene_Stage_Base::Update_Scene(_double TimeDelta)
 	{
 		m_bLoadingCheck = true;
 		g_pSoundManager->Stop_Sound(CSoundManager::Effect_SFX_01);
-		g_pSoundManager->Play_Sound(L"Loading_End.wav", CSoundManager::Effect_SFX_01, CSoundManager::Effect_Sound);
+		g_pSoundManager->Play_Sound(L"Go_To_Next_02.wav", CSoundManager::Effect_SFX_01, CSoundManager::Effect_Sound);
+
+		//Loading_End.wav
+		//SE_Gifts_Open_000.ogg
 	}
 	//====================================================================================================
 	// 만약에 하나의 사운드를 계속해서 재생하고 싶다면

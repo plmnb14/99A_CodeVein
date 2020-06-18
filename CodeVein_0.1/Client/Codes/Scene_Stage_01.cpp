@@ -60,7 +60,7 @@ _int CScene_Stage_01::Update_Scene(_double TimeDelta)
 	Create_Fog(TimeDelta);
 	Create_Dust(TimeDelta);
 
-	//if (false == m_fCheck_ColleagueSummons && g_pInput_Device->Key_Down(DIK_O))
+	//if (false == m_fCheck_ColleagueSummons && g_pInput_Device->Key_Down(DIK_L))
 	//{
 	//	m_fCheck_ColleagueSummons = true;
 	//

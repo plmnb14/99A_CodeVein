@@ -82,7 +82,7 @@ _int CScene_Stage_02::Update_Scene(_double TimeDelta)
 
 HRESULT CScene_Stage_02::Render_Scene()
 {
-	if (g_pInput_Device->Key_Down(DIK_H))
+	/*if (g_pInput_Device->Key_Down(DIK_H))
 	{
 		g_eSceneID_Cur = SCENE_STAGE_BASE;
 		g_eSTeleportID_Cur = TeleportID_Home_1;
@@ -100,7 +100,7 @@ HRESULT CScene_Stage_02::Render_Scene()
 
 		if (FAILED(g_pManagement->SetUp_CurrentScene(pScene)))
 			return -1;
-	}
+	}*/
 
 	return S_OK;
 }

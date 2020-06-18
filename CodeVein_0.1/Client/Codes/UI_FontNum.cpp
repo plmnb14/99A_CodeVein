@@ -27,7 +27,7 @@ HRESULT CUI_FontNum::Ready_GameObject(void * pArg)
 
 	CUI::Ready_GameObject(pArg);
 
-	m_pTransform->Set_Pos(_v3(0.f, 0.7f, 0.f));
+	m_pTransform->Set_Pos(_v3(0.f, 0.9f, 0.f));
 	m_pTransform->Set_Scale(_v3(0.1f, 0.1f, 0.1f));
 
 	m_vOldScale = m_pTransform->Get_Size();

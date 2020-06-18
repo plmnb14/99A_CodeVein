@@ -151,7 +151,7 @@ PS_OUT PS_SHADOW(PS_IN_ShadowRender In)
 		//float a = (fDepthValue * In.vDepth.w < In.vDepth.z - bias) ? 0.2f : 1.f;
 		//fShadowTerms[i] = float(a);
 		
-		fShadowTerm += (fDepthValue * In.vDepth.w < In.vDepth.z - bias) ? 0.2f : 1.f;;
+		fShadowTerm += (fDepthValue * In.vDepth.w < In.vDepth.z - bias) ? 0.3f : 1.f;
 	}
 	
 	fShadowTerm /= 9.f;

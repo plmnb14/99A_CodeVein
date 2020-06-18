@@ -115,6 +115,9 @@ HRESULT CMesh_Static::Ready_Component_Prototype(const _tchar * pFilePath, const 
 
 			D3DXCreateTextureFromFile(m_pGraphic_Dev, szFullPath, &m_ppTextures[i].pTextures[MESHTEXTURE::TYPE_DIFFUSE_MAP]);
 			m_bIncludeMap[MESHTEXTURE::TYPE_DIFFUSE_MAP] = true;
+
+			if(FAILED(Change_TextureFileName(szFullPath, L"C", L"C")))
+				continue;
 		}
 		//==================================================================================================================================
 		// N - Normal
@@ -232,7 +235,7 @@ HRESULT CMesh_Static::Ready_Component_Prototype(const _tchar * pFilePath, const 
 		////==================================================================================================================================
 		//// T - Transparency Map
 		////==================================================================================================================================
-		Change_TextureFileName(szFullPath, L"M", L"T");
+		Change_TextureFileName(szFullPath, L"Q", L"T");
 		if (NO_EVENT == _waccess(szFullPath, 0))
 		{
 			//D3DXCreateTextureFromFileEx(
@@ -311,16 +314,20 @@ HRESULT CMesh_Static::Ready_Component_Prototype(const _tchar * pFilePath, const 
 				// D N E
 				m_sMaterialPass[i] = 5;
 
-				if (m_bIncludeMap[MESHTEXTURE::TYPE_ID_MAP] == true)
+				if (m_bIncludeMap[MESHTEXTURE::TYPE_UNION_MAP] == true)
 				{
-					m_sMaterialPass[i] = 17;
-				}
-
-				else if (m_bIncludeMap[MESHTEXTURE::TYPE_UNION_MAP] == true)
-				{
-
 					// D N E U
 					m_sMaterialPass[i] = 18;
+
+					if (m_bIncludeMap[MESHTEXTURE::TYPE_ID_MAP] == true)
+					{
+						m_sMaterialPass[i] = 24;
+					}
+				}
+
+				else if (m_bIncludeMap[MESHTEXTURE::TYPE_ID_MAP] == true)
+				{
+					m_sMaterialPass[i] = 17;
 				}
 
 				continue;
@@ -372,7 +379,7 @@ HRESULT CMesh_Static::Ready_Component_Prototype(const _tchar * pFilePath, const 
 
 	D3DXComputeBoundingBox((_v3*)pVertices, m_dwVtxCnt, m_dwStride, &m_pVtxMin, &m_pVtxMax);
 
-	m_fHalfFristumRadius = ceil(D3DXVec3Length(&(m_pVtxMax - m_pVtxMin)));
+	m_fHalfFristumRadius = ceil(D3DXVec3Length(&(m_pVtxMax - m_pVtxMin))) * 2.f;
 	//m_fHalfFristumRadius *= 0.5f;
 
 	m_pMesh->UnlockVertexBuffer();
@@ -426,7 +433,12 @@ HRESULT CMesh_Static::Change_TextureFileName(_tchar* pFilePath, _tchar * pSourMa
 	for (_int i = iLength; i >= 0; --i)
 	{
 		if (iLength - 5 > i)
+		{
+			if (pDestMark == L"C")
+				return E_FAIL;
+
 			break;
+		}
 
 		if (pFilePath[i] == *pSourMark)
 		{

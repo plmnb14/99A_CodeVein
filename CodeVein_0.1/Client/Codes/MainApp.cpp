@@ -28,8 +28,8 @@ HRESULT CMainApp::Ready_MainApp()
 	g_pSoundManager->Set_Volume(CSoundManager::Master_Volume, 0.5f);
 
 	g_pSoundManager->Set_Volume(CSoundManager::Effect_Volume, 0.8f);
-	g_pSoundManager->Set_Volume(CSoundManager::BGM_Volume, 0.8f); 
-	g_pSoundManager->Set_Volume(CSoundManager::Ambien_Volume, 1.f);
+	g_pSoundManager->Set_Volume(CSoundManager::BGM_Volume, 0.0f); // 0.8f 
+	g_pSoundManager->Set_Volume(CSoundManager::Ambien_Volume, 0.f); // 1.f
 	g_pSoundManager->Set_Volume(CSoundManager::Voice_Volume, 0.7f);
 
 	return S_OK;

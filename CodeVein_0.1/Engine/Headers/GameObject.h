@@ -89,7 +89,10 @@ public:
 
 public:
 	void Add_Target_Mana(_short _sMana) { m_tObjParam.sMana_Cur += _sMana; };
-	void Add_Target_Hp(_float _fHp) { m_tObjParam.fHp_Cur += _fHp; };
+	void Add_Target_Hp(_float _fHp) {
+										m_tObjParam.fHp_Cur += _fHp;
+										if (m_tObjParam.fHp_Cur > m_tObjParam.fHp_Max) m_tObjParam.fHp_Cur = m_tObjParam.fHp_Max;
+									 };
 	void Add_Target_Stamina(_float _fStamina) { m_tObjParam.fStamina_Cur += _fStamina; };
 	void Add_Target_HoldGage(_float _fHoldGage) { m_tObjParam.fHoldGage_Cur += _fHoldGage; };
 

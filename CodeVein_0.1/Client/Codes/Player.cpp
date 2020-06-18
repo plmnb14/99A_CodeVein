@@ -55,7 +55,7 @@ void CPlayer::Set_WeaponSlot(ACTIVE_WEAPON_SLOT eType, WEAPON_DATA eData)
 	WPN_PARAM tmpParam = m_pUIManager->Get_Weapon_Inven()->Get_UseWeaponParam(eType);
 
 	m_pWeapon[eType] = static_cast<CWeapon*>(g_pManagement->Clone_GameObject_Return(L"GameObject_Weapon", NULL));
-	m_pWeapon[eType]->Set_WeaponParam(tmpParam, tmpParam.iWeaponName);
+	//m_pWeapon[eType]->Set_WeaponParam(tmpParam, tmpParam.iWeaponName);
 	m_pWeapon[eType]->Change_WeaponData(eData);
 	m_pWeapon[eType]->Set_Friendly(true);
 	m_pWeapon[eType]->Set_AttachBoneMartix(&pFrame->CombinedTransformationMatrix);
@@ -76,17 +76,26 @@ void CPlayer::Set_WeaponSlot(ACTIVE_WEAPON_SLOT eType, WEAPON_DATA eData)
 			m_eMainWpnState == WEAPON_Hammer ? false : true
 			);
 	}
+
+	m_tObjParam.fDamage = m_pWeapon[eType]->Get_WeaponParam(eData).fDamage;
 }
 
-void CPlayer::Set_ArmorSlot(ARMOR_All_DATA eType, _float fMaxHP)
+void CPlayer::Set_ArmorSlot(ARMOR_All_DATA eType, ARMOR_PARAM* pParam)
 {
 	//if (m_pOuter->Get_OuterType() + 1 == eType)
 	//	return;
 
 	m_pOuter->Change_OuterMesh(CClothManager::Cloth_Dynamic(eType + 1));
-	m_tObjParam.fHp_Max = fMaxHP;
-	if (fMaxHP < m_tObjParam.fHp_Cur)
-		m_tObjParam.fHp_Cur = fMaxHP;
+
+	_float fHp_Max = pParam->fHP + pParam->fPlusHP + m_tObjParam.fHp_Max;
+	_float fArmor_Max = pParam->fDef + pParam->fPlusDef;
+
+	m_tObjParam.fHp_Max = fHp_Max;
+	m_tObjParam.fArmor_Max = fArmor_Max;
+	m_tObjParam.fArmor_Cur = fArmor_Max;
+
+	if (fHp_Max < m_tObjParam.fHp_Cur)
+		m_tObjParam.fHp_Cur = fHp_Max;
 }
 
 void CPlayer::Set_Target_UI(CGameObject * pGameObject)
@@ -143,7 +152,7 @@ HRESULT CPlayer::Ready_GameObject(void * pArg)
 	m_tObjParam.fStamina_Max = 100.f;
 	m_tObjParam.fStamina_Cur = 100.f;
 
-	m_fStaminaCost_Dodge = 20.f;
+	m_fStaminaCost_Dodge = 18.f;
 	m_fStaminaCost_WeakAttack = 7.f;
 	m_fStaminaCost_HeavyAttack = 12.f;
 	m_fStamina_RecoverySpeed = 15.f;
@@ -178,16 +187,16 @@ _int CPlayer::Update_GameObject(_double TimeDelta)
 
 	m_pScreenCornerFade->Update_GameObject(TimeDelta);
 
-	if (g_pInput_Device->Key_Down(DIK_Y))
-	{
-		//cout << "===================================================" << endl;
-		//cout << m_pTransform->Get_Pos().x << endl;
-		//cout << m_pTransform->Get_Pos().y << endl;
-		//cout << m_pTransform->Get_Pos().z << endl;
-		//cout << "===================================================" << endl;
-		//cout << D3DXToDegree(m_pTransform->Get_Angle(AXIS_Y)) << endl;
-		//cout << "===================================================" << endl;
-	}
+	//if (g_pInput_Device->Key_Down(DIK_Y))
+	//{
+	//	cout << "===================================================" << endl;
+	//	cout << m_pTransform->Get_Pos().x << endl;
+	//	cout << m_pTransform->Get_Pos().y << endl;
+	//	cout << m_pTransform->Get_Pos().z << endl;
+	//	cout << "===================================================" << endl;
+	//	cout << D3DXToDegree(m_pTransform->Get_Angle(AXIS_Y)) << endl;
+	//	cout << "===================================================" << endl;
+	//}
 
 	// 머리 위치 업데이트
 	CGameObject::Update_GameObject(TimeDelta);
@@ -241,27 +250,19 @@ _int CPlayer::Late_Update_GameObject(_double TimeDelta)
 			return NO_EVENT;
 	}
 
+	// 투명일 경우
 	else if (m_tObjParam.bInvisible)
 	{
 		if (FAILED(m_pRenderer->Add_RenderList(RENDER_ALPHA, this)))
 			return NO_EVENT;
 
-		if (FAILED(m_pRenderer->Add_RenderList(RENDER_MOTIONBLURTARGET, this)))
-			return NO_EVENT;
-
-		if (FAILED(m_pRenderer->Add_RenderList(RENDER_SHADOWTARGET, this)))
-			return NO_EVENT;
-	}
-
-	if (false == m_bDissolve)
-	{
-		if (!m_tObjParam.bInvisible)
+		if (m_bDissolve)
 		{
-			//if (FAILED(m_pRenderer->Add_RenderList(RENDER_MOTIONBLURTARGET, this)))
-			//	return NO_EVENT;
+			if (FAILED(m_pRenderer->Add_RenderList(RENDER_MOTIONBLURTARGET, this)))
+				return NO_EVENT;
 
-			//if (FAILED(m_pRenderer->Add_RenderList(RENDER_SHADOWTARGET, this)))
-			//	return NO_EVENT;
+			if (FAILED(m_pRenderer->Add_RenderList(RENDER_SHADOWTARGET, this)))
+				return NO_EVENT;
 		}
 	}
 
@@ -514,10 +515,10 @@ void CPlayer::Teleport_ResetOptions(_int _eSceneID, _int _eTeleportID)
 		vShadowLightPos = _v3(-100.f, 50.f, 0.f);
 
 		vPos = _eTeleportID == TeleportID_St01_1 ? _v3(150.484f, -18.08f, 70.417f) :
-			_eTeleportID == TeleportID_St01_2 ? V3_NULL : V3_NULL;
+			_eTeleportID == TeleportID_St01_2 ? _v3(60.082f, 0.1f, 156.867f) : V3_NULL;
 
 		fAngle = _eTeleportID == TeleportID_St01_1 ? 0.f :
-			_eTeleportID == TeleportID_St01_2 ? 0.f : 0.f;
+			_eTeleportID == TeleportID_St01_2 ? -108.f : 0.f;
 
 		break;
 	}
@@ -1991,7 +1992,13 @@ void CPlayer::Key_Attack()
 				m_tInfo.fMoveSpeed_Cur = 0.f;
 				m_tInfo.fMoveAccel_Cur = 0.f;
 
-				m_tObjParam.fStamina_Cur -= m_fStaminaCost_WeakAttack;
+				if(m_eMainWpnState == WEAPON_LSword || m_eMainWpnState == WEAPON_Hammer)
+					m_tObjParam.fStamina_Cur -= m_fStaminaCost_WeakAttack * 2.f;
+
+				else if(m_eMainWpnState == WEAPON_Halberd)
+					m_tObjParam.fStamina_Cur -= m_fStaminaCost_WeakAttack * 1.5f;
+				else
+					m_tObjParam.fStamina_Cur -= m_fStaminaCost_WeakAttack;
 
 				if (m_bSprint)
 				{
@@ -2069,7 +2076,13 @@ void CPlayer::Key_Attack()
 				LOOP(16)
 					m_bEventTrigger[i] = false;
 
-				m_tObjParam.fStamina_Cur -= m_fStaminaCost_HeavyAttack;
+				if (m_eMainWpnState == WEAPON_LSword || m_eMainWpnState == WEAPON_Hammer)
+					m_tObjParam.fStamina_Cur -= m_fStaminaCost_WeakAttack * 4.f;
+
+				else if (m_eMainWpnState == WEAPON_Halberd)
+					m_tObjParam.fStamina_Cur -= m_fStaminaCost_WeakAttack * 3.f;
+				else
+					m_tObjParam.fStamina_Cur -= m_fStaminaCost_WeakAttack * 2.f;
 
 				if (m_bSprint)
 				{
@@ -2088,16 +2101,6 @@ void CPlayer::Key_Attack()
 					m_fAtkEndTime = 0.75f;
 
 					m_bCharging = true;
-
-					LPCSTR tmpChar = "RightHandAttach";
-					_mat   matAttach;
-					D3DXFRAME_DERIVED*	pFamre = (D3DXFRAME_DERIVED*)m_pDynamicMesh->Get_BonInfo(tmpChar, 2);
-					matAttach = pFamre->CombinedTransformationMatrix * m_pTransform->Get_WorldMat();
-					_v3 vEffPos = _v3(matAttach._41, matAttach._42, matAttach._43);
-
-					g_pManagement->Create_Effect_Delay(L"Player_ChargeSpark_Particle", 0.f	, vEffPos, nullptr);
-					g_pManagement->Create_Effect_Delay(L"Player_ChargeSpark_Small"	 , 0.f	, vEffPos, nullptr);
-					g_pManagement->Create_Effect_Delay(L"Player_ChargeSpark_Big"	 , 0.f	, vEffPos, nullptr);
 				}
 			}
 		}
@@ -3265,6 +3268,75 @@ void CPlayer::Play_Dodge()
 {
 	if (false == m_bOnDodge)
 	{
+		_int iSwitchNum = CALC::Random_Num(0, 3);
+
+		switch (iSwitchNum)
+		{
+		case 0:
+		{
+			g_pSoundManager->Stop_Sound(CSoundManager::Player_SFX_03);
+			g_pSoundManager->Play_Sound(L"Dodge_Sound_01.wav", CSoundManager::Player_SFX_03, CSoundManager::Effect_Sound);
+
+			break;
+		}
+		case 1:
+		{
+			g_pSoundManager->Stop_Sound(CSoundManager::Player_SFX_03);
+			g_pSoundManager->Play_Sound(L"Dodge_Sound_02.wav", CSoundManager::Player_SFX_03, CSoundManager::Effect_Sound);
+
+
+			break;
+		}
+		case 2:
+		{
+			g_pSoundManager->Stop_Sound(CSoundManager::Player_SFX_03);
+			g_pSoundManager->Play_Sound(L"Dodge_Sound_03.wav", CSoundManager::Player_SFX_03, CSoundManager::Effect_Sound);
+
+
+			break;
+		}
+
+		case 3:
+		{
+			g_pSoundManager->Stop_Sound(CSoundManager::Player_SFX_03);
+			g_pSoundManager->Play_Sound(L"Dodge_Sound_04.wav", CSoundManager::Player_SFX_03, CSoundManager::Effect_Sound);
+
+
+			break;
+		}
+		}
+
+		iSwitchNum = CALC::Random_Num(0, 3);
+
+		switch (iSwitchNum)
+		{
+		case 0:
+		{
+			g_pSoundManager->Stop_Sound(CSoundManager::Player_SFX_04);
+			g_pSoundManager->Play_Sound(L"Dodge_Additional_01.wav", CSoundManager::Player_SFX_04, CSoundManager::Effect_Sound);
+
+			break;
+		}
+		case 1:
+		{
+			g_pSoundManager->Stop_Sound(CSoundManager::Player_SFX_04);
+			g_pSoundManager->Play_Sound(L"Dodge_Additional_02.wav", CSoundManager::Player_SFX_04, CSoundManager::Effect_Sound);
+
+
+			break;
+		}
+		case 2:
+		{
+			g_pSoundManager->Stop_Sound(CSoundManager::Player_SFX_04);
+			g_pSoundManager->Play_Sound(L"Dodge_Additional_03.wav", CSoundManager::Player_SFX_04, CSoundManager::Effect_Sound);
+
+			break;
+		}
+		}
+
+		g_pSoundManager->Stop_Sound(CSoundManager::Player_SFX_02);
+		g_pSoundManager->Play_Sound(L"Dodge_Dust_01.wav", CSoundManager::Player_SFX_02, CSoundManager::Effect_Sound);
+
 		g_pManagement->Create_AutoFindEffect(L"Player_SpaceBar_StepParticle", 1.f, m_pTransform, _v3(0.f, 1.f, 0.f));
 		g_pManagement->Create_Effect(L"Player_FootSmoke_Jump", m_pTransform->Get_Pos());
 		g_pManagement->Create_Effect(L"Player_FootSmoke_DodgeBack", V3_NULL, m_pTransform);
@@ -5586,9 +5658,6 @@ void CPlayer::Play_BloodSuckCount()
 
 	else if (true == m_bOnBloodSuck)
 	{
-		if (m_tObjParam.bIsCounter)
-			cout << "카운터에효" << endl;
-
 		_double dAniTime = m_pDynamicMesh->Get_TrackInfo().Position;
 
 		if (m_pDynamicMesh->Is_Finish_Animation_Lower(0.9f))
@@ -5675,7 +5744,7 @@ void CPlayer::Play_BloodSuckCount()
 
 		else if (dAniTime > 0.2f)
 		{
-			cout << "으아아아아아" << endl;
+			//cout << "으아아아아아" << endl;
 
 			if (false == m_bEventTrigger[2])
 			{
@@ -6033,6 +6102,8 @@ void CPlayer::Play_Skills()
 				{
 					m_bEventTrigger[10] = true;
 
+					m_pWeapon[m_eActiveSlot]->Set_SkillPercent(3.5f);
+
 					g_pSoundManager->Stop_Sound(CSoundManager::Player_SFX_02);
 					g_pSoundManager->Play_Sound(L"SE_BLACK_KNIGHT_JUMP_001.ogg", CSoundManager::Player_SFX_02, CSoundManager::Effect_Sound);
 				}
@@ -6133,6 +6204,8 @@ void CPlayer::Play_Skills()
 				if (m_bEventTrigger[5] == false)
 				{
 					m_bEventTrigger[5] = true;
+
+					m_pWeapon[m_eActiveSlot]->Set_SkillPercent(2.f);
 
 					m_pWeapon[m_eActiveSlot]->Set_Target_CanAttack(true);
 					m_pWeapon[m_eActiveSlot]->Set_Enable_Record(true);
@@ -6303,6 +6376,8 @@ void CPlayer::Play_Skills()
 				if (m_bEventTrigger[9] == false)
 				{
 					m_bEventTrigger[9] = true;
+
+					m_pWeapon[m_eActiveSlot]->Set_SkillPercent(1.5f);
 
 					m_pWeapon[m_eActiveSlot]->Set_Enable_Record(true);
 					m_pWeapon[m_eActiveSlot]->Set_Target_CanAttack(true);
@@ -6497,6 +6572,8 @@ void CPlayer::Play_Skills()
 			{
 				if (m_bEventTrigger[0] == false)
 				{
+					m_pWeapon[m_eActiveSlot]->Set_SkillPercent(1.5f);
+
 					m_bEventTrigger[0] = true;
 
 					m_fSkillMoveSpeed_Cur = 6.f;
@@ -6598,6 +6675,8 @@ void CPlayer::Play_Skills()
 			{
 				if (m_bEventTrigger[0] == false)
 				{
+					m_pWeapon[m_eActiveSlot]->Set_SkillPercent(2.5f);
+
 					m_bEventTrigger[0] = true;
 
 					m_fSkillMoveAccel_Cur = 0.f;
@@ -6710,6 +6789,8 @@ void CPlayer::Play_Skills()
 				{
 					m_bEventTrigger[9] = true;
 
+					m_pWeapon[m_eActiveSlot]->Set_SkillPercent(3.f);
+
 					m_pWeapon[m_eActiveSlot]->Set_Enable_Record(true);
 					m_pWeapon[m_eActiveSlot]->Set_Target_CanAttack(true);
 				}
@@ -6732,6 +6813,8 @@ void CPlayer::Play_Skills()
 				{
 					m_bEventTrigger[7] = true;
 
+					m_pWeapon[m_eActiveSlot]->Set_SkillPercent(1.5f);
+
 					m_pWeapon[m_eActiveSlot]->Set_Enable_Record(true);
 					m_pWeapon[m_eActiveSlot]->Set_Target_CanAttack(true);
 				}
@@ -6753,6 +6836,8 @@ void CPlayer::Play_Skills()
 				if (m_bEventTrigger[5] == false)
 				{
 					m_bEventTrigger[5] = true;
+
+					m_pWeapon[m_eActiveSlot]->Set_SkillPercent(1.5f);
 
 					m_pWeapon[m_eActiveSlot]->Set_Enable_Record(true);
 					m_pWeapon[m_eActiveSlot]->Set_Target_CanAttack(true);
@@ -6958,6 +7043,8 @@ void CPlayer::Play_Skills()
 				{
 					m_bEventTrigger[9] = true;
 
+					m_pWeapon[m_eActiveSlot]->Set_SkillPercent(3.f);
+
 					m_pWeapon[m_eActiveSlot]->Set_Enable_Record(true);
 					m_pWeapon[m_eActiveSlot]->Set_Target_CanAttack(true);
 				}
@@ -6981,6 +7068,8 @@ void CPlayer::Play_Skills()
 				if (m_bEventTrigger[7] == false)
 				{
 					m_bEventTrigger[7] = true;
+
+					m_pWeapon[m_eActiveSlot]->Set_SkillPercent(1.5f);
 
 					m_pWeapon[m_eActiveSlot]->Set_Enable_Record(true);
 					m_pWeapon[m_eActiveSlot]->Set_Target_CanAttack(true);
@@ -7223,6 +7312,8 @@ void CPlayer::Play_Skills()
 
 					m_pWeapon[m_eActiveSlot]->Set_Enable_Record(true);
 					m_pWeapon[m_eActiveSlot]->Set_Target_CanAttack(true);
+
+					m_pWeapon[m_eActiveSlot]->Set_SkillPercent(2.75f);
 				}
 			}
 
@@ -7245,6 +7336,8 @@ void CPlayer::Play_Skills()
 
 					m_pWeapon[m_eActiveSlot]->Set_Enable_Record(true);
 					m_pWeapon[m_eActiveSlot]->Set_Target_CanAttack(true);
+
+					m_pWeapon[m_eActiveSlot]->Set_SkillPercent(2.f);
 				}
 			}
 
@@ -7524,6 +7617,11 @@ void CPlayer::Play_Ssword_WeakAtk()
 			m_fSkillMoveMultiply = (m_sWeakAtkCnt == 1 ? 1.f :
 									m_sWeakAtkCnt == 3 ? 1.5f :
 									m_sWeakAtkCnt == 4 ? 1.35f : 0.75f);
+
+			if (4 == m_sWeakAtkCnt)
+			{
+				m_sWeakAtkCnt = 0;
+			}
 		}
 
 		m_bOnAttack = true;
@@ -8111,6 +8209,21 @@ void CPlayer::Play_Ssword_HeavyAtk()
 				Skill_Movement(m_fSkillMoveSpeed_Cur, m_pTransform->Get_Axis(AXIS_Z));
 			}
 
+			if (m_pDynamicMesh->Get_TrackInfo().Position > 1.f)
+			{
+				if (m_bEventTrigger[0] == false)
+				{
+					m_bEventTrigger[10] = true;
+
+					_mat matAttach = *m_matHandBone * m_pTransform->Get_WorldMat();
+					_v3 vEffPos = _v3(matAttach._41, matAttach._42, matAttach._43);
+
+					g_pManagement->Create_Effect_Delay(L"Player_ChargeSpark_Particle", 0.f, vEffPos, nullptr);
+					g_pManagement->Create_Effect_Delay(L"Player_ChargeSpark_Small", 0.f, vEffPos, nullptr);
+					g_pManagement->Create_Effect_Delay(L"Player_ChargeSpark_Big", 0.f, vEffPos, nullptr);
+				}
+			}
+
 			break;
 		}
 
@@ -8218,9 +8331,9 @@ void CPlayer::Play_Ssword_HeavyAtk()
 
 				if (m_pDynamicMesh->Get_TrackInfo().Position >= 1.95f)
 				{
-					if (m_bEventTrigger[2] == false)
+					if (m_bEventTrigger[3] == false)
 					{
-						m_bEventTrigger[2] = true;
+						m_bEventTrigger[3] = true;
 
 						m_pWeapon[m_eActiveSlot]->Set_Enable_Trail(false);
 					}
@@ -8228,11 +8341,25 @@ void CPlayer::Play_Ssword_HeavyAtk()
 
 				else if (m_pDynamicMesh->Get_TrackInfo().Position >= 1.866f)
 				{
+					if (m_bEventTrigger[2] == false)
+					{
+						m_bEventTrigger[2] = true;
+
+						m_pWeapon[m_eActiveSlot]->Set_Target_CanAttack(false);
+					}
+				}
+
+				else if (m_pDynamicMesh->Get_TrackInfo().Position >= 1.6f)
+				{
 					if (m_bEventTrigger[1] == false)
 					{
 						m_bEventTrigger[1] = true;
 
-						m_pWeapon[m_eActiveSlot]->Set_Target_CanAttack(false);
+						g_pSoundManager->Stop_Sound(CSoundManager::Player_SFX_02);
+						g_pSoundManager->Play_Sound(L"Swing_Fast_02.wav", CSoundManager::Player_SFX_02, CSoundManager::Effect_Sound);
+
+						g_pSoundManager->Stop_Sound(CSoundManager::Player_SFX_03);
+						g_pSoundManager->Play_Sound(L"SSword_Swing_03.wav", CSoundManager::Player_SFX_03, CSoundManager::Effect_Sound);
 					}
 				}
 
@@ -8304,6 +8431,9 @@ void CPlayer::Play_Gun_WeakAtk()
 				m_sWeakAtkCnt == 2 ? 1.3f :
 				m_sWeakAtkCnt == 2 ? 1.8f :
 				m_sWeakAtkCnt == 3 ? 1.1f : 1.3f);
+
+			if (m_sWeakAtkCnt == 4)
+				m_sWeakAtkCnt = 0;
 		}
 
 		m_bOnAttack = true;
@@ -8562,6 +8692,20 @@ void CPlayer::Play_Gun_WeakAtk()
 				m_eActState = ACT_Idle;
 			}
 
+			else if (m_pDynamicMesh->Get_TrackInfo().Position >= 2.9f)
+			{
+				if (m_bEventTrigger[5] == false)
+				{
+					m_bEventTrigger[5] = true;
+
+					Reset_BattleState();
+
+					m_eActState = ACT_Idle;
+
+					break;
+				}
+			}
+
 			else if (m_pDynamicMesh->Get_TrackInfo().Position >= 1.367f)
 			{
 				if (m_bEventTrigger[4] == false)
@@ -8677,6 +8821,12 @@ void CPlayer::Play_Gun_WeakAtk()
 
 					m_pWeapon[m_eActiveSlot]->Set_Target_CanAttack(true);
 					m_pWeapon[m_eActiveSlot]->Set_Enable_Record(true);
+
+					g_pSoundManager->Stop_Sound(CSoundManager::Player_SFX_02);
+					g_pSoundManager->Play_Sound(L"Swing_Wind_01.wav", CSoundManager::Player_SFX_01, CSoundManager::Effect_Sound);
+
+					g_pSoundManager->Stop_Sound(CSoundManager::Player_SFX_03);
+					g_pSoundManager->Play_Sound(L"Swing_Fast_02.wav", CSoundManager::Player_SFX_02, CSoundManager::Effect_Sound);
 				}
 			}
 
@@ -8762,6 +8912,12 @@ void CPlayer::Play_Gun_WeakAtk()
 
 					m_pWeapon[m_eActiveSlot]->Set_Target_CanAttack(true);
 					m_pWeapon[m_eActiveSlot]->Set_Enable_Record(true);
+
+					g_pSoundManager->Stop_Sound(CSoundManager::Player_SFX_02);
+					g_pSoundManager->Play_Sound(L"Swing_Wind_01.wav", CSoundManager::Player_SFX_01, CSoundManager::Effect_Sound);
+
+					g_pSoundManager->Stop_Sound(CSoundManager::Player_SFX_03);
+					g_pSoundManager->Play_Sound(L"Swing_Fast_02.wav", CSoundManager::Player_SFX_02, CSoundManager::Effect_Sound);
 				}
 			}
 
@@ -8825,12 +8981,12 @@ void CPlayer::Play_Gun_HeavyAtk()
 
 			else
 			{
-				m_eAnim_Lower = Gun_HeavyAtk_01;
+				m_eAnim_Lower = Gun_HeavyAtk_02;
 			}
 		}
 		else
 		{
-			m_eAnim_Lower = Gun_Charge;
+			m_eAnim_Lower = Gun_HeavyAtk_02;
 		}
 
 		m_bOnAttack = true;
@@ -8864,7 +9020,7 @@ void CPlayer::Play_Gun_HeavyAtk()
 			Decre_Skill_Movement(m_fSkillMoveMultiply);
 			Skill_Movement(m_fSkillMoveSpeed_Cur, -m_pTransform->Get_Axis(AXIS_Z));
 
-			if (m_pDynamicMesh->Is_Finish_Animation_Lower(0.92f))
+			if (m_pDynamicMesh->Is_Finish_Animation_Lower(0.90f))
 			{
 				Reset_BattleState();
 
@@ -8875,40 +9031,20 @@ void CPlayer::Play_Gun_HeavyAtk()
 
 		case Gun_HeavyAtk_02:
 		{
-			if (m_pDynamicMesh->Get_TrackInfo().Position >= 2.467f && m_pDynamicMesh->Get_TrackInfo().Position < 3.8f)
+			if (m_pDynamicMesh->Is_Finish_Animation_Lower(0.9f))
 			{
-				if (m_bEventTrigger[0] == false)
-				{
-					m_bEventTrigger[0] = true;
-			
-					m_fSkillMoveAccel_Cur = 0.f;
-					m_fSkillMoveSpeed_Cur = 0.1f;
-					m_fSkillMoveMultiply = 0.0f;
-				}
-			
-				Decre_Skill_Movement(m_fSkillMoveMultiply);
-				Skill_Movement(m_fSkillMoveSpeed_Cur, m_pTransform->Get_Axis(AXIS_Z));
-			}
-			else if (m_pDynamicMesh->Get_TrackInfo().Position >= 0.2f && m_pDynamicMesh->Get_TrackInfo().Position < 0.8f)
-			{
-				if (m_bEventTrigger[1] == false)
-				{
-					m_bEventTrigger[1] = true;
-			
-					m_fSkillMoveAccel_Cur = 0.f;
-					m_fSkillMoveSpeed_Cur = 0.15f;
-					m_fSkillMoveMultiply = 0.0f;
-				}
-			
-				Decre_Skill_Movement(m_fSkillMoveMultiply);
-				Skill_Movement(m_fSkillMoveSpeed_Cur, -m_pTransform->Get_Axis(AXIS_Z));
+				Reset_BattleState();
+
+				m_eActState = ACT_Idle;
+
+				break;
 			}
 
-			if (m_pDynamicMesh->Get_TrackInfo().Position >= 1.0f)
+			if (m_pDynamicMesh->Get_TrackInfo().Position >= 0.7f)
 			{
-				if (false == m_bEventTrigger[2])
+				if (false == m_bEventTrigger[3])
 				{
-					m_bEventTrigger[2] = true;
+					m_bEventTrigger[3] = true;
 
 					_v3	vBirth, vLook;
 					_float	fLenght = 1.f;
@@ -8921,28 +9057,53 @@ void CPlayer::Play_Gun_HeavyAtk()
 					CObjectPool_Manager::Get_Instance()->Create_Object(L"GameObject_PlayerGunBullet",
 						&BULLET_INFO(vBirth, m_pTransform->Get_Axis(AXIS_Z), 15.f, 1.2f));
 
-					
 					g_pSoundManager->Stop_Sound(CSoundManager::Player_SFX_02);
-					g_pSoundManager->Play_Sound(L"PlayerGun_Shot.ogg", CSoundManager::Player_SFX_02, CSoundManager::Effect_Sound);
+					g_pSoundManager->Play_Sound(L"Gun_Shot_03.wav", CSoundManager::Player_SFX_02, CSoundManager::Effect_Sound);
 				}
 			}
+
+			else if (m_pDynamicMesh->Get_TrackInfo().Position >= 0.5f)
+			{
+				if (false == m_bEventTrigger[2])
+				{
+					m_bEventTrigger[2] = true;
+
+					_mat matAttach = *m_matHandBone * m_pTransform->Get_WorldMat();
+					_v3 vEffPos = _v3(matAttach._41, matAttach._42, matAttach._43);
+
+					g_pManagement->Create_Effect_Delay(L"Player_ChargeSpark_Particle", 0.f, vEffPos, nullptr);
+					g_pManagement->Create_Effect_Delay(L"Player_ChargeSpark_Small", 0.f, vEffPos, nullptr);
+					g_pManagement->Create_Effect_Delay(L"Player_ChargeSpark_Big", 0.f, vEffPos, nullptr);
+				}
+			}
+
 			else if (m_pDynamicMesh->Get_TrackInfo().Position >= 0.3f)
 			{
-				if (false == m_bEventTrigger[3])
+				if (false == m_bEventTrigger[1])
 				{
-					m_bEventTrigger[3] = true;
+					m_bEventTrigger[1] = true;
 
 					g_pSoundManager->Stop_Sound(CSoundManager::Player_SFX_01);
 					g_pSoundManager->Play_Sound(L"PlayerGun_Ready.ogg", CSoundManager::Player_SFX_01, CSoundManager::Effect_Sound);
 				}
 			}
 
-			if (m_pDynamicMesh->Is_Finish_Animation_Lower(0.92f))
-			{
-				Reset_BattleState();
 
-				m_eActState = ACT_Idle;
+			if (m_pDynamicMesh->Get_TrackInfo().Position >= 2.133f && m_pDynamicMesh->Get_TrackInfo().Position < 2.9f)
+			{
+				if (m_bEventTrigger[0] == false)
+				{
+					m_bEventTrigger[0] = true;
+
+					m_fSkillMoveAccel_Cur = 0.f;
+					m_fSkillMoveSpeed_Cur = 0.05f;
+					m_fSkillMoveMultiply = 0.f;
+				}
+
+				Decre_Skill_Movement(m_fSkillMoveMultiply);
+				Skill_Movement(m_fSkillMoveSpeed_Cur, m_pTransform->Get_Axis(AXIS_Z));
 			}
+
 			break;
 		}
 
@@ -9052,10 +9213,9 @@ void CPlayer::Play_Halverd_WeakAtk()
 
 			else if (m_sWeakAtkCnt == 4)
 			{
+				m_sWeakAtkCnt = 0;
 				m_eAnim_Lower = Halberd_WeakAtk_08;
 			}
-
-			m_sWeakAtkCnt = 0;
 		}
 
 		m_bOnAttack = true;
@@ -9392,7 +9552,7 @@ void CPlayer::Play_Halverd_WeakAtk()
 
 		case Halberd_WeakAtk_08:
 		{
-			if (m_pDynamicMesh->Is_Finish_Animation_Lower(0.9f))
+			if (m_pDynamicMesh->Get_TrackInfo().Position >= 5.4f)
 			{
 				Reset_BattleState();
 
@@ -9558,7 +9718,7 @@ void CPlayer::Play_Halverd_HeavyAtk()
 
 		else
 		{
-			m_eAnim_Lower = Halberd_HeavyAtk_06;
+			m_eAnim_Lower = Halberd_HeavyAtk_07;
 		}
 
 		m_bOnAttack = true;
@@ -9687,6 +9847,111 @@ void CPlayer::Play_Halverd_HeavyAtk()
 
 		}
 
+		case Halberd_HeavyAtk_07:
+		{
+			if (m_pDynamicMesh->Is_Finish_Animation_Lower(0.9f))
+			{
+				Reset_BattleState();
+
+				m_eActState = ACT_Idle;
+			}
+
+			else if (m_pDynamicMesh->Get_TrackInfo().Position >= 2.567f)
+			{
+				if (m_bEventTrigger[6] == false)
+				{
+					m_bEventTrigger[6] = true;
+
+					m_pWeapon[m_eActiveSlot]->Set_Enable_Trail(false);
+				}
+			}
+
+			else if (m_pDynamicMesh->Get_TrackInfo().Position >= 2.367f)
+			{
+				if (m_bEventTrigger[5] == false)
+				{
+					m_bEventTrigger[5] = true;
+
+					m_pWeapon[m_eActiveSlot]->Set_Target_CanAttack(false);
+					m_pWeapon[m_eActiveSlot]->Set_Enable_Record(false);
+				}
+			}
+
+			else if (m_pDynamicMesh->Get_TrackInfo().Position >= 2.2f)
+			{
+				if (m_bEventTrigger[4] == false)
+				{
+					m_bEventTrigger[4] = true;
+
+					m_pWeapon[m_eActiveSlot]->Set_Target_CanAttack(true);
+					m_pWeapon[m_eActiveSlot]->Set_Enable_Record(true);
+				}
+			}
+
+			else if (m_pDynamicMesh->Get_TrackInfo().Position >= 2.167f)
+			{
+				if (m_bEventTrigger[3] == false)
+				{
+					m_bEventTrigger[3] = true;
+
+					g_pSoundManager->Stop_Sound(CSoundManager::Player_SFX_01);
+					g_pSoundManager->Play_Sound(L"Monster_Blunt_Swing1.ogg", CSoundManager::Player_SFX_01, CSoundManager::Effect_Sound);
+					g_pSoundManager->Stop_Sound(CSoundManager::Player_SFX_02);
+					g_pSoundManager->Play_Sound(L"Swing_Wind_01.wav", CSoundManager::Player_SFX_02, CSoundManager::Effect_Sound);
+				}
+			}
+
+			else if (m_pDynamicMesh->Get_TrackInfo().Position >= 2.f)
+			{
+				if (m_bEventTrigger[2] == false)
+				{
+					m_bEventTrigger[2] = true;
+
+					m_pWeapon[m_eActiveSlot]->Set_Enable_Trail(true);
+				}
+			}
+
+			else if (m_pDynamicMesh->Get_TrackInfo().Position >= 1.633f)
+			{
+				if (m_bEventTrigger[1] == false)
+				{
+					m_bEventTrigger[1] = true;
+
+					_mat matAttach = *m_matHandBone * m_pTransform->Get_WorldMat();
+					_v3 vEffPos = _v3(matAttach._41, matAttach._42, matAttach._43);
+
+					g_pManagement->Create_Effect_Delay(L"Player_ChargeSpark_Particle", 0.f, vEffPos, nullptr);
+					g_pManagement->Create_Effect_Delay(L"Player_ChargeSpark_Small", 0.f, vEffPos, nullptr);
+					g_pManagement->Create_Effect_Delay(L"Player_ChargeSpark_Big", 0.f, vEffPos, nullptr);
+				}
+			}
+
+
+			if (m_pDynamicMesh->Get_TrackInfo().Position >= 1.833f && m_pDynamicMesh->Get_TrackInfo().Position < 2.1F)
+			{
+				if (m_bEventTrigger[0] == false)
+				{
+					m_bEventTrigger[0] = true;
+
+					m_fSkillMoveAccel_Cur = 0.f;
+					m_fSkillMoveSpeed_Cur = 5.f;
+					m_fSkillMoveMultiply = 0.2f;
+
+					g_pSoundManager->Stop_Sound(CSoundManager::Player_SFX_01);
+					g_pSoundManager->Play_Sound(L"Swing_Wind_01.wav", CSoundManager::Player_SFX_01, CSoundManager::Effect_Sound);
+
+					g_pSoundManager->Stop_Sound(CSoundManager::Player_SFX_02);
+					g_pSoundManager->Play_Sound(L"Swing_Fast_02.wav", CSoundManager::Player_SFX_02, CSoundManager::Effect_Sound);
+				}
+
+				Decre_Skill_Movement(m_fSkillMoveMultiply);
+				Skill_Movement(m_fSkillMoveSpeed_Cur, -m_pTransform->Get_Axis(AXIS_Z));
+			}
+
+			break;
+
+		}
+
 		case Halberd_DownAtk_02:
 		{
 			if (m_pDynamicMesh->Is_Finish_Animation_Lower(0.9f))
@@ -9696,7 +9961,14 @@ void CPlayer::Play_Halverd_HeavyAtk()
 				m_eActState = ACT_Idle;
 			}
 
-			else if (m_pDynamicMesh->Get_TrackInfo().Position >= 1.8f)
+			//if (m_pDynamicMesh->Get_TrackInfo().Position >= 1.9f)
+			//{
+			//	Reset_BattleState();
+			//
+			//	m_eActState = ACT_Idle;
+			//}
+
+			else if (m_pDynamicMesh->Get_TrackInfo().Position >= 1.9f)
 			{
 				if (m_bEventTrigger[5] == false)
 				{
@@ -9706,7 +9978,7 @@ void CPlayer::Play_Halverd_HeavyAtk()
 				}
 			}
 
-			else if (m_pDynamicMesh->Get_TrackInfo().Position >= 1.6f)
+			else if (m_pDynamicMesh->Get_TrackInfo().Position >= 1.7f)
 			{
 				if (m_bEventTrigger[4] == false)
 				{
@@ -9717,7 +9989,7 @@ void CPlayer::Play_Halverd_HeavyAtk()
 				}
 			}
 
-			else if (m_pDynamicMesh->Get_TrackInfo().Position >= 1.167f)
+			else if (m_pDynamicMesh->Get_TrackInfo().Position >= 1.2f)
 			{
 				if (m_bEventTrigger[3] == false)
 				{
@@ -9733,7 +10005,7 @@ void CPlayer::Play_Halverd_HeavyAtk()
 				}
 			}
 
-			else if (m_pDynamicMesh->Get_TrackInfo().Position >= 0.967f)
+			else if (m_pDynamicMesh->Get_TrackInfo().Position >= 0.833f)
 			{
 				if (m_bEventTrigger[2] == false)
 				{
@@ -9743,20 +10015,139 @@ void CPlayer::Play_Halverd_HeavyAtk()
 				}
 			}
 
+			if (m_pDynamicMesh->Get_TrackInfo().Position >= 1.267f && m_pDynamicMesh->Get_TrackInfo().Position < 2.1f)
+			{
+				if (m_bEventTrigger[1] == false)
+				{
+					m_bEventTrigger[1] = true;
 
-			if (m_pDynamicMesh->Get_TrackInfo().Position >= 0.133f && m_pDynamicMesh->Get_TrackInfo().Position < 1.667f)
+					m_fSkillMoveAccel_Cur = 0.f;
+					m_fSkillMoveSpeed_Cur = 10.f;
+					m_fSkillMoveMultiply = 1.5f;
+				}
+
+				Decre_Skill_Movement(m_fSkillMoveMultiply);
+				Skill_Movement(m_fSkillMoveSpeed_Cur, m_pTransform->Get_Axis(AXIS_Z));
+			}
+
+			else if (m_pDynamicMesh->Get_TrackInfo().Position >= 0.233f && m_pDynamicMesh->Get_TrackInfo().Position < 0.8f)
 			{
 				if (m_bEventTrigger[0] == false)
 				{
 					m_bEventTrigger[0] = true;
 
 					m_fSkillMoveAccel_Cur = 0.f;
-					m_fSkillMoveSpeed_Cur = 3.5f;
+					m_fSkillMoveSpeed_Cur = 2.5f;
 					m_fSkillMoveMultiply = 0.1f;
 				}
 
 				Decre_Skill_Movement(m_fSkillMoveMultiply);
+				Skill_Movement(m_fSkillMoveSpeed_Cur, m_pTransform->Get_Axis(AXIS_Z));
+			}
+
+			break;
+
+		}
+
+		case Halberd_DownAtk_03:
+		{
+			if (m_pDynamicMesh->Is_Finish_Animation_Lower(0.9f))
+			{
+				Reset_BattleState();
+
+				m_eActState = ACT_Idle;
+			}
+
+			else if (m_pDynamicMesh->Get_TrackInfo().Position >= 2.1f)
+			{
+				if (m_bEventTrigger[4] == false)
+				{
+					m_bEventTrigger[4] = true;
+
+					m_pWeapon[m_eActiveSlot]->Set_Enable_Trail(false);
+				}
+			}
+
+			else if (m_pDynamicMesh->Get_TrackInfo().Position >= 1.9f)
+			{
+				if (m_bEventTrigger[4] == false)
+				{
+					m_bEventTrigger[4] = true;
+
+					m_pWeapon[m_eActiveSlot]->Set_Target_CanAttack(false);
+					m_pWeapon[m_eActiveSlot]->Set_Enable_Record(false);
+
+					SHAKE_CAM_lv2
+				}
+			}
+
+			else if (m_pDynamicMesh->Get_TrackInfo().Position >= 1.7f)
+			{
+				if (m_bEventTrigger[3] == false)
+				{
+					m_bEventTrigger[3] = true;
+
+					m_pWeapon[m_eActiveSlot]->Set_Target_CanAttack(true);
+					m_pWeapon[m_eActiveSlot]->Set_Enable_Record(true);
+
+					g_pSoundManager->Stop_Sound(CSoundManager::Player_SFX_02);
+					g_pSoundManager->Play_Sound(L"Monster_Blade_Swing1.ogg", CSoundManager::Player_SFX_02, CSoundManager::Effect_Sound);
+				}
+			}
+
+			else if (m_pDynamicMesh->Get_TrackInfo().Position >= 1.6f)
+			{
+				if (m_bEventTrigger[2] == false)
+				{
+					m_bEventTrigger[2] = true;
+
+					m_pWeapon[m_eActiveSlot]->Set_Enable_Trail(true);
+				}
+			}
+
+			if (m_pDynamicMesh->Get_TrackInfo().Position >= 3.867f && m_pDynamicMesh->Get_TrackInfo().Position < 5.f)
+			{
+				if (m_bEventTrigger[5] == false)
+				{
+					m_bEventTrigger[5] = true;
+
+					m_fSkillMoveAccel_Cur = 0.f;
+					m_fSkillMoveSpeed_Cur = 0.5f;
+					m_fSkillMoveMultiply = 0.05f;
+				}
+
+				Decre_Skill_Movement(m_fSkillMoveMultiply);
 				Skill_Movement(m_fSkillMoveSpeed_Cur, -m_pTransform->Get_Axis(AXIS_Z));
+			}
+
+			else if (m_pDynamicMesh->Get_TrackInfo().Position >= 0.467f && m_pDynamicMesh->Get_TrackInfo().Position < 1.6f)
+			{
+				if (m_bEventTrigger[1] == false)
+				{
+					m_bEventTrigger[1] = true;
+
+					m_fSkillMoveAccel_Cur = 0.f;
+					m_fSkillMoveSpeed_Cur = 8.f;
+					m_fSkillMoveMultiply = 0.6f;
+				}
+
+				Decre_Skill_Movement(m_fSkillMoveMultiply);
+				Skill_Movement(m_fSkillMoveSpeed_Cur, m_pTransform->Get_Axis(AXIS_Z));
+			}
+
+			else if (m_pDynamicMesh->Get_TrackInfo().Position >= 0.133f && m_pDynamicMesh->Get_TrackInfo().Position < 0.467f)
+			{
+				if (m_bEventTrigger[0] == false)
+				{
+					m_bEventTrigger[0] = true;
+
+					m_fSkillMoveAccel_Cur = 0.f;
+					m_fSkillMoveSpeed_Cur = 1.5f;
+					m_fSkillMoveMultiply = 0.1f;
+				}
+
+				Decre_Skill_Movement(m_fSkillMoveMultiply);
+				Skill_Movement(m_fSkillMoveSpeed_Cur, m_pTransform->Get_Axis(AXIS_Z));
 			}
 
 			break;
@@ -9816,6 +10207,7 @@ void CPlayer::Play_Hammer_WeakAtk()
 
 			else if (m_sWeakAtkCnt == 3)
 			{
+				m_sWeakAtkCnt = 0;
 				m_eAnim_Lower = Hammer_WeakAtk_02;
 				fSpeed = 2.f;
 				fMultiply = 0.1f;
@@ -10162,7 +10554,8 @@ void CPlayer::Play_Hammer_HeavyAtk()
 				m_fSkillMoveAccel_Cur = 0.f;
 				m_fSkillMoveSpeed_Cur = 7.f;
 
-				m_eAnim_Lower = Hammer_WeakAtk_Down_01;
+				m_eAnim_Lower = Hammer_WeakAtk_01;
+				//m_eAnim_Lower = Hammer_WeakAtk_Down_01;
 			}
 		}
 
@@ -10211,9 +10604,6 @@ void CPlayer::Play_Hammer_HeavyAtk()
 					
 					g_pSoundManager->Stop_Sound(CSoundManager::Player_SFX_01);
 					g_pSoundManager->Play_Sound(L"Hammer_Ground_01.wav", CSoundManager::Player_SFX_01, CSoundManager::Effect_Sound);
-
-					g_pSoundManager->Stop_Sound(CSoundManager::Player_SFX_02);
-					g_pSoundManager->Play_Sound(L"Hammer_Ground_01.wav", CSoundManager::Player_SFX_02, CSoundManager::Effect_Sound);
 
 					g_pSoundManager->Stop_Sound(CSoundManager::Player_SFX_03);
 					g_pSoundManager->Play_Sound(L"HitGround_02.wav", CSoundManager::Player_SFX_03, CSoundManager::Effect_Sound);
@@ -10337,6 +10727,22 @@ void CPlayer::Play_Hammer_HeavyAtk()
 				}
 			}
 
+			if (m_pDynamicMesh->Get_TrackInfo().Position > 1.367f)
+			{
+				if (m_bEventTrigger[0] == false)
+				{
+					m_bEventTrigger[10] = true;
+
+					_mat matAttach = *m_matHandBone * m_pTransform->Get_WorldMat();
+					_v3 vEffPos = _v3(matAttach._41, matAttach._42, matAttach._43);
+
+					g_pManagement->Create_Effect_Delay(L"Player_ChargeSpark_Particle", 0.f, vEffPos, nullptr);
+					g_pManagement->Create_Effect_Delay(L"Player_ChargeSpark_Small", 0.f, vEffPos, nullptr);
+					g_pManagement->Create_Effect_Delay(L"Player_ChargeSpark_Big", 0.f, vEffPos, nullptr);
+				}
+			}
+
+
 
 			if (m_pDynamicMesh->Get_TrackInfo().Position >= 8.2f)
 			{
@@ -10405,6 +10811,15 @@ void CPlayer::Play_Hammer_HeavyAtk()
 
 					m_pWeapon[m_eActiveSlot]->Set_Target_CanAttack(false);
 					m_pWeapon[m_eActiveSlot]->Set_Enable_Record(false);
+
+					g_pSoundManager->Stop_Sound(CSoundManager::Player_SFX_01);
+					g_pSoundManager->Play_Sound(L"Hammer_Ground_01.wav", CSoundManager::Player_SFX_01, CSoundManager::Effect_Sound);
+
+					g_pSoundManager->Stop_Sound(CSoundManager::Player_SFX_02);
+					g_pSoundManager->Play_Sound(L"Metal_Smash.wav", CSoundManager::Player_SFX_02, CSoundManager::Effect_Sound);
+
+					g_pSoundManager->Stop_Sound(CSoundManager::Player_SFX_03);
+					g_pSoundManager->Play_Sound(L"HitGround_02.wav", CSoundManager::Player_SFX_03, CSoundManager::Effect_Sound);
 
 					g_pManagement->Create_Effect(L"Weapon_HeavyDust", m_pWeapon[m_eActiveSlot]->Get_HeadPos());
 					SHAKE_CAM_lv3
@@ -10500,6 +10915,15 @@ void CPlayer::Play_Hammer_DashAtk()
 
 			m_pWeapon[m_eActiveSlot]->Set_Target_CanAttack(false);
 			m_pWeapon[m_eActiveSlot]->Set_Enable_Record(false);
+
+			g_pSoundManager->Stop_Sound(CSoundManager::Player_SFX_01);
+			g_pSoundManager->Play_Sound(L"Hammer_Ground_01.wav", CSoundManager::Player_SFX_01, CSoundManager::Effect_Sound);
+
+			g_pSoundManager->Stop_Sound(CSoundManager::Player_SFX_02);
+			g_pSoundManager->Play_Sound(L"Metal_Smash.wav", CSoundManager::Player_SFX_02, CSoundManager::Effect_Sound);
+
+			g_pSoundManager->Stop_Sound(CSoundManager::Player_SFX_03);
+			g_pSoundManager->Play_Sound(L"HitGround_02.wav", CSoundManager::Player_SFX_03, CSoundManager::Effect_Sound);
 
 			g_pManagement->Create_Effect(L"Weapon_HeavyDust", m_pWeapon[m_eActiveSlot]->Get_HeadPos());
 			SHAKE_CAM_lv2
@@ -10608,6 +11032,7 @@ void CPlayer::Play_Lsword_WeakAtk()
 
 			else if (m_sWeakAtkCnt == 3)
 			{
+				m_sWeakAtkCnt = 0;
 				m_eAnim_Lower = LSword_WeakAtk_03;
 			}
 		}
@@ -10664,7 +11089,10 @@ void CPlayer::Play_Lsword_WeakAtk()
 					m_pWeapon[m_eActiveSlot]->Set_Enable_Record(true);
 
 					g_pSoundManager->Stop_Sound(CSoundManager::Player_SFX_01);
-					g_pSoundManager->Play_Sound(L"SE_BLACK_KNIGHT_SWING_000.ogg", CSoundManager::Player_SFX_01, CSoundManager::Effect_Sound);
+					g_pSoundManager->Play_Sound(L"Whoosh_Heavy_01.wav", CSoundManager::Player_SFX_01, CSoundManager::Effect_Sound);
+
+					g_pSoundManager->Stop_Sound(CSoundManager::Player_SFX_02);
+					g_pSoundManager->Play_Sound(L"Swing_Fast_02.wav", CSoundManager::Player_SFX_02, CSoundManager::Effect_Sound);
 				}
 			}
 
@@ -11049,28 +11477,42 @@ void CPlayer::Play_Lsword_HeavyAtk()
 				m_eActState = ACT_Idle;
 			}
 
-			else if (m_pDynamicMesh->Get_TrackInfo().Position >= 2.2f)
+			else if (m_pDynamicMesh->Get_TrackInfo().Position >= 2.f)
 			{
-				if (m_bEventTrigger[5] == false)
+				if (m_bEventTrigger[6] == false)
 				{
-					m_bEventTrigger[5] = true;
+					m_bEventTrigger[6] = true;
 
 					m_pWeapon[m_eActiveSlot]->Set_Enable_Trail(false);
 				}
 			}
 
-			else if (m_pDynamicMesh->Get_TrackInfo().Position >= 2.0f)
+			else if (m_pDynamicMesh->Get_TrackInfo().Position >= 1.8f)
 			{
-				if (m_bEventTrigger[4] == false)
+				if (m_bEventTrigger[5] == false)
 				{
-					m_bEventTrigger[4] = true;
+					m_bEventTrigger[5] = true;
 
 					m_pWeapon[m_eActiveSlot]->Set_Target_CanAttack(false);
 					m_pWeapon[m_eActiveSlot]->Set_Enable_Record(false);
 				}
 			}
 
-			else if (m_pDynamicMesh->Get_TrackInfo().Position >= 1.633f)
+			else if (m_pDynamicMesh->Get_TrackInfo().Position >= 1.667f)
+			{
+				if (m_bEventTrigger[4] == false)
+				{
+					m_bEventTrigger[4] = true;
+
+					g_pSoundManager->Stop_Sound(CSoundManager::Player_SFX_03);
+					g_pSoundManager->Play_Sound(L"LSword_Impact.wav", CSoundManager::Player_SFX_03, CSoundManager::Effect_Sound);
+
+					g_pManagement->Create_Effect(L"Weapon_HeavyDust", m_pWeapon[m_eActiveSlot]->Get_HeadPos());
+					SHAKE_CAM_lv2;
+				}
+			}
+
+			else if (m_pDynamicMesh->Get_TrackInfo().Position >= 1.533f)
 			{
 				if (m_bEventTrigger[3] == false)
 				{
@@ -11084,7 +11526,7 @@ void CPlayer::Play_Lsword_HeavyAtk()
 				}
 			}
 
-			else if (m_pDynamicMesh->Get_TrackInfo().Position >= 1.267f)
+			else if (m_pDynamicMesh->Get_TrackInfo().Position >= 1.3f)
 			{
 				if (m_bEventTrigger[2] == false)
 				{
@@ -11095,7 +11537,7 @@ void CPlayer::Play_Lsword_HeavyAtk()
 			}
 
 
-			if (m_pDynamicMesh->Get_TrackInfo().Position >= 3.4f && m_pDynamicMesh->Get_TrackInfo().Position < 4.533f)
+			if (m_pDynamicMesh->Get_TrackInfo().Position >= 3.5f && m_pDynamicMesh->Get_TrackInfo().Position < 4.533f)
 			{
 				if (m_bEventTrigger[1] == false)
 				{
@@ -11110,7 +11552,8 @@ void CPlayer::Play_Lsword_HeavyAtk()
 				Skill_Movement(m_fSkillMoveSpeed_Cur, m_pTransform->Get_Axis(AXIS_Z));
 			}
 
-			else if (m_pDynamicMesh->Get_TrackInfo().Position >= 0.267f && m_pDynamicMesh->Get_TrackInfo().Position < 1.567f)
+			//1.567f
+			else if (m_pDynamicMesh->Get_TrackInfo().Position >= 0.f && m_pDynamicMesh->Get_TrackInfo().Position < 2.067f)
 			{
 				if (m_bEventTrigger[0] == false)
 				{
@@ -11118,7 +11561,7 @@ void CPlayer::Play_Lsword_HeavyAtk()
 
 					m_fSkillMoveAccel_Cur = 0.f;
 					m_fSkillMoveSpeed_Cur = 3.f;
-					m_fSkillMoveMultiply = 0.2f;
+					m_fSkillMoveMultiply = 0.1f;
 				}
 
 				Decre_Skill_Movement(m_fSkillMoveMultiply);
@@ -11137,7 +11580,7 @@ void CPlayer::Play_Lsword_HeavyAtk()
 				m_eActState = ACT_Idle;
 			}
 
-			else if (m_pDynamicMesh->Get_TrackInfo().Position >= 2.567f)
+			else if (m_pDynamicMesh->Get_TrackInfo().Position >= 3.567f)
 			{
 				if (m_bEventTrigger[5] == false)
 				{
@@ -11147,7 +11590,7 @@ void CPlayer::Play_Lsword_HeavyAtk()
 				}
 			}
 
-			else if (m_pDynamicMesh->Get_TrackInfo().Position >= 2.367f)
+			else if (m_pDynamicMesh->Get_TrackInfo().Position >= 3.367f)
 			{
 				if (m_bEventTrigger[4] == false)
 				{
@@ -11158,7 +11601,7 @@ void CPlayer::Play_Lsword_HeavyAtk()
 				}
 			}
 
-			else if (m_pDynamicMesh->Get_TrackInfo().Position >= 1.933f)
+			else if (m_pDynamicMesh->Get_TrackInfo().Position >= 2.967f)
 			{
 				if (m_bEventTrigger[3] == false)
 				{
@@ -11172,7 +11615,7 @@ void CPlayer::Play_Lsword_HeavyAtk()
 				}
 			}
 
-			else if (m_pDynamicMesh->Get_TrackInfo().Position >= 1.667f)
+			else if (m_pDynamicMesh->Get_TrackInfo().Position >= 2.f)
 			{
 				if (m_bEventTrigger[2] == false)
 				{
@@ -11182,31 +11625,37 @@ void CPlayer::Play_Lsword_HeavyAtk()
 				}
 			}
 
-
-			if (m_pDynamicMesh->Get_TrackInfo().Position >= 1.133f && m_pDynamicMesh->Get_TrackInfo().Position < 2.533f)
+			else if (m_pDynamicMesh->Get_TrackInfo().Position >= 1.667f)
 			{
 				if (m_bEventTrigger[1] == false)
 				{
 					m_bEventTrigger[1] = true;
 
-					m_fSkillMoveAccel_Cur = 0.f;
-					m_fSkillMoveSpeed_Cur = 5.5f;
-					m_fSkillMoveMultiply = 0.05f;
-				}
+					_mat matAttach = *m_matHandBone * m_pTransform->Get_WorldMat();
+					_v3 vEffPos = _v3(matAttach._41, matAttach._42, matAttach._43);
 
-				Decre_Skill_Movement(m_fSkillMoveMultiply);
-				Skill_Movement(m_fSkillMoveSpeed_Cur, m_pTransform->Get_Axis(AXIS_Z));
+					g_pManagement->Create_Effect_Delay(L"Player_ChargeSpark_Particle", 0.f, vEffPos, nullptr);
+					g_pManagement->Create_Effect_Delay(L"Player_ChargeSpark_Small", 0.f, vEffPos, nullptr);
+					g_pManagement->Create_Effect_Delay(L"Player_ChargeSpark_Big", 0.f, vEffPos, nullptr);
+				}
 			}
 
-			else if (m_pDynamicMesh->Get_TrackInfo().Position >= 0.f && m_pDynamicMesh->Get_TrackInfo().Position < 0.833f)
+
+			if (m_pDynamicMesh->Get_TrackInfo().Position >= 1.8f && m_pDynamicMesh->Get_TrackInfo().Position < 2.9f)
 			{
 				if (m_bEventTrigger[0] == false)
 				{
+					g_pSoundManager->Stop_Sound(CSoundManager::Player_SFX_01);
+					g_pSoundManager->Play_Sound(L"Swing_Wind_01.wav", CSoundManager::Player_SFX_01, CSoundManager::Effect_Sound);
+
+					g_pSoundManager->Stop_Sound(CSoundManager::Player_SFX_02);
+					g_pSoundManager->Play_Sound(L"Swing_Fast_01.wav", CSoundManager::Player_SFX_02, CSoundManager::Effect_Sound);
+
 					m_bEventTrigger[0] = true;
 
 					m_fSkillMoveAccel_Cur = 0.f;
-					m_fSkillMoveSpeed_Cur = 1.1f;
-					m_fSkillMoveMultiply = 0.03f;
+					m_fSkillMoveSpeed_Cur = 10.f;
+					m_fSkillMoveMultiply = 1.f;
 				}
 
 				Decre_Skill_Movement(m_fSkillMoveMultiply);
@@ -11238,7 +11687,7 @@ void CPlayer::Play_Lsword_DashAtk()
 		m_eActState = ACT_Idle;
 	}
 
-	else if (m_pDynamicMesh->Get_TrackInfo().Position >= 2.067f)
+	else if (m_pDynamicMesh->Get_TrackInfo().Position >= 2.f)
 	{
 		if (m_bEventTrigger[5] == false)
 		{
@@ -11248,11 +11697,17 @@ void CPlayer::Play_Lsword_DashAtk()
 		}
 	}
 
-	else if (m_pDynamicMesh->Get_TrackInfo().Position >= 1.867f)
+	else if (m_pDynamicMesh->Get_TrackInfo().Position >= 1.8f)
 	{
 		if (m_bEventTrigger[4] == false)
 		{
 			m_bEventTrigger[4] = true;
+
+			g_pSoundManager->Stop_Sound(CSoundManager::Player_SFX_03);
+			g_pSoundManager->Play_Sound(L"LSword_Impact.wav", CSoundManager::Player_SFX_03, CSoundManager::Effect_Sound);
+
+			g_pManagement->Create_Effect(L"Weapon_HeavyDust", m_pWeapon[m_eActiveSlot]->Get_HeadPos());
+			SHAKE_CAM_lv2;
 
 			m_pWeapon[m_eActiveSlot]->Set_Target_CanAttack(false);
 			m_pWeapon[m_eActiveSlot]->Set_Enable_Record(false);
@@ -11273,7 +11728,7 @@ void CPlayer::Play_Lsword_DashAtk()
 		}
 	}
 
-	else if (m_pDynamicMesh->Get_TrackInfo().Position >= 1.4f)
+	else if (m_pDynamicMesh->Get_TrackInfo().Position >= 1.233f)
 	{
 		if (m_bEventTrigger[2] == false)
 		{
@@ -11283,8 +11738,59 @@ void CPlayer::Play_Lsword_DashAtk()
 		}
 	}
 
+	else if (m_pDynamicMesh->Get_TrackInfo().Position >= 0.633f)
+	{
+		if (m_bEventTrigger[1] == false)
+		{
+			m_bEventTrigger[1] = true;
 
-	if (m_pDynamicMesh->Get_TrackInfo().Position >= 0.3f && m_pDynamicMesh->Get_TrackInfo().Position < 1.833f)
+			_int iSwitchNum = CALC::Random_Num(0, 2);
+
+			switch (iSwitchNum)
+			{
+			case 0:
+			{
+				g_pSoundManager->Stop_Sound(CSoundManager::Player_FootStep);
+				g_pSoundManager->Play_Sound(L"FootHeel_01.wav", CSoundManager::Player_FootStep, CSoundManager::Effect_Sound);
+
+				break;
+			}
+			case 1:
+			{
+				g_pSoundManager->Stop_Sound(CSoundManager::Player_FootStep);
+				g_pSoundManager->Play_Sound(L"FootHeel_02.wav", CSoundManager::Player_FootStep, CSoundManager::Effect_Sound);
+
+
+				break;
+			}
+			case 2:
+			{
+				g_pSoundManager->Stop_Sound(CSoundManager::Player_FootStep);
+				g_pSoundManager->Play_Sound(L"FootHeel_03.wav", CSoundManager::Player_FootStep, CSoundManager::Effect_Sound);
+
+
+				break;
+			}
+			}
+		}
+	}
+
+	if (m_pDynamicMesh->Get_TrackInfo().Position >= 4.6f && m_pDynamicMesh->Get_TrackInfo().Position < 6.033f)
+	{
+		if (m_bEventTrigger[10] == false)
+		{
+			m_bEventTrigger[10] = true;
+
+			m_fSkillMoveAccel_Cur = 0.f;
+			m_fSkillMoveSpeed_Cur = 0.5f;
+			m_fSkillMoveMultiply = 0.0f;
+		}
+
+		Decre_Skill_Movement(m_fSkillMoveMultiply);
+		Skill_Movement(m_fSkillMoveSpeed_Cur, -m_pTransform->Get_Axis(AXIS_Z));
+	}
+
+	else if (m_pDynamicMesh->Get_TrackInfo().Position >= 0.267f && m_pDynamicMesh->Get_TrackInfo().Position < 1.8f)
 	{
 		if (m_bEventTrigger[0] == false)
 		{
@@ -11712,6 +12218,9 @@ void CPlayer::Reset_Attack_Bool()
 
 void CPlayer::Skill_Movement(_float _fspeed, _v3 _vDir)
 {
+	if (m_eActState == ACT_Dead)
+		return;
+
 	_v3 tmpLook;
 	_float fSpeed = _fspeed;
 
@@ -12104,8 +12613,8 @@ HRESULT CPlayer::SetUp_Default()
 	m_tObjParam.bCanCounter = true;
 	m_tObjParam.bCanHit = true;
 	m_tObjParam.bIsDodge = false;
-	m_tObjParam.fHp_Cur = 1000.f;
-	m_tObjParam.fHp_Max = 1000.f;
+	m_tObjParam.fHp_Cur = 2300.f;
+	m_tObjParam.fHp_Max = 2300.f;
 	
 	// Anim
 	m_fAnimMutiply = 1.f;
@@ -12245,6 +12754,7 @@ void CPlayer::Reset_BattleState()
 
 	if (nullptr != m_pWeapon[m_eActiveSlot])
 	{
+		m_pWeapon[m_eActiveSlot]->Set_SkillPercent(1);
 		m_pWeapon[m_eActiveSlot]->Set_Target_CanAttack(false);
 		m_pWeapon[m_eActiveSlot]->Set_Enable_Trail(false);
 		m_pWeapon[m_eActiveSlot]->Set_Enable_Record(false);

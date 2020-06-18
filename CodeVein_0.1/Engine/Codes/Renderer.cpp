@@ -704,8 +704,8 @@ HRESULT CRenderer::Render_Shadow()
 	m_pTarget_Manager->New_Stencil(L"Target_Shadow");
 	m_pGraphic_Dev->Clear(0, NULL, D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER, D3DXCOLOR(0.f, 0.f, 0.f, 0.f), 1.f, 0);
 
-	_float fOffsetX = 0.5f + (0.5f / 1280);
-	_float fOffsetY = 0.5f + (0.5f / 720);
+	_float fOffsetX = 0.5f + (0.5f / 1600);
+	_float fOffsetY = 0.5f + (0.5f / 900);
 
 	//_float fOffsetX = 0.5f + (0.5f / g_sShadow_X);
 	//_float fOffsetY = 0.5f + (0.5f / g_sShadow_Y);

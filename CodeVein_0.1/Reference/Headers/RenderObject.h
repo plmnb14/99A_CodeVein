@@ -71,7 +71,7 @@ public:
 	void Change_Mesh(const _tchar* _MeshName);
 
 public:
-	virtual void Set_RenderGroup(RENDERID _eGroup);
+	//virtual void Set_RenderGroup(RENDERID _eGroup);
 	virtual void Set_Index(_int _iIndex) { m_iIndex = _iIndex; }
 	virtual void Set_Selected(_bool _bSelected) { m_bIsSelected = _bSelected; }
 	virtual void Set_OnTool(_bool _bOnTool) { m_bOnTool = _bOnTool; }
@@ -93,7 +93,6 @@ protected:
 protected:
 	_tchar			m_szName[STR_128] = L"";
 	_int			m_iIndex = 0;
-	_ulong			m_dwPassNum = 0;
 
 
 private:
@@ -105,19 +104,18 @@ private:
 	_bool			m_bUpdated = false;
 
 	// For	MotionBlur
-	_mat	m_matLastWVP;
+	_mat	m_matLastWVP = {};
 
 
 	// 툴에서 사용되는 변수
 protected:
 	_bool			m_bIsSelected = false;
 	_bool			m_bOnTool = false;
-	_bool			m_bAdvencedCull = false;
 
 	// 오브젝트 렌더 그룹 변수
 private:
-	RENDERID		m_eGroup = RENDER_NONALPHA;
-	PBR				m_tPBRInfo;
+	//RENDERID		m_eGroup = RENDER_NONALPHA;
+	PBR				m_tPBRInfo = {};
 
 private:
 	virtual HRESULT Initialize_For_Protoype();
@@ -128,11 +126,11 @@ private:
 	virtual HRESULT Ready_GameObject(void* pAvg);
 	virtual HRESULT	Add_Components(_tchar * szMeshName);
 
-private:
-	virtual void Check_Stage_01();
-	virtual void Check_Stage_02();
-	virtual void Check_Stage_03();
-	virtual void Check_Stage_04();
+//private:
+//	virtual void Check_Stage_01();
+//	virtual void Check_Stage_02();
+//	virtual void Check_Stage_03();
+//	virtual void Check_Stage_04();
 
 public:
 	static CRenderObject* Create_For_Tool(_Device _pGraphicDev);

@@ -203,7 +203,7 @@ void CArmor_Inven::Click_Inven()
 				pTotal_Inven->Set_ArmorParam(tParam);
 
 				_float fMaxHP = tParam.fHP + tParam.fPlusHP;
-				m_pPlayer->Set_ArmorSlot((ARMOR_All_DATA)tParam.iArmorName, fMaxHP);
+				m_pPlayer->Set_ArmorSlot((ARMOR_All_DATA)tParam.iArmorName, &tParam);
 
 				CUI_Manager::Get_Instance()->Stop_Play_UISound(L"Slot_Regist.ogg", CSoundManager::CHANNELID::UI_Click, CSoundManager::Effect_Sound);
 			}
@@ -295,7 +295,7 @@ void CArmor_Inven::Late_Init()
 	Add_Armor(m_tRegistParam);
 	m_vecArmorSlot[0]->Set_Select(true);
 	_float fMaxHP = m_tRegistParam.fHP + m_tRegistParam.fPlusHP;
-	m_pPlayer->Set_ArmorSlot((ARMOR_All_DATA)m_tRegistParam.iArmorName, fMaxHP);
+	m_pPlayer->Set_ArmorSlot((ARMOR_All_DATA)m_tRegistParam.iArmorName, &m_tRegistParam);
 
 	CTotal_Inven* pTotal_Inven = CUI_Manager::Get_Instance()->Get_Total_Inven();
 	pTotal_Inven->Set_ArmorParam(m_tRegistParam);

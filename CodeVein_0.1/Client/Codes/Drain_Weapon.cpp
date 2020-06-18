@@ -266,13 +266,16 @@ void CDrain_Weapon::Set_Active(_bool _bActiveDrain)
 
 		if (Drain_Parry == m_eAnimnum)
 		{
+			//g_pSoundManager->Stop_Sound(CSoundManager::Player_SFX_05);
+			//g_pSoundManager->Play_Sound(L"DrainWeapon.wav", CSoundManager::Player_SFX_05, CSoundManager::Effect_Sound);
+
 			Start_Dissolve(1.5f, true);
 		}
 
 		else if (Drain_Charge_Start == m_eAnimnum)
 		{
-			g_pSoundManager->Stop_Sound(CSoundManager::Player_SFX_04);
-			g_pSoundManager->Play_Sound(L"DrainWeapon.wav", CSoundManager::Player_SFX_04, CSoundManager::Effect_Sound);
+			g_pSoundManager->Stop_Sound(CSoundManager::Player_SFX_05);
+			g_pSoundManager->Play_Sound(L"DrainWeapon.wav", CSoundManager::Player_SFX_05, CSoundManager::Effect_Sound);
 
 			Start_Dissolve(1.f, true);
 		}
