@@ -27,6 +27,8 @@ public:
 private:
 	void Create_Fog(_double TimeDelta);
 	void Create_Dust(_double TimeDelta);
+	// 동료 소환 및 소환 해제 함수
+	void Summons_Colleague();
 
 private:
 	CNavMesh*		m_pNavMesh = nullptr;

@@ -93,25 +93,26 @@ _int CScene_Stage_Training::Update_Scene(_double TimeDelta)
 
 		if (g_pInput_Device->Key_Down(DIK_O))
 		{
-			auto& Moniter = g_pManagement->Get_GameObjectList(L"Layer_Monster", SCENE_STAGE);
+			//auto& Moniter = g_pManagement->Get_GameObjectList(L"Layer_Monster", SCENE_STAGE);
 			//auto& Colleague = g_pManagement->Get_GameObjectList(L"Layer_Colleague", SCENE_STAGE);
 
 			CGameObject* Coll = g_pManagement->Get_GameObjectBack(L"Layer_Colleague", SCENE_STAGE);
 
-			if (!Moniter.empty())
-			{
-				for (auto& Monster_iter : Moniter)
-				{
-					Monster_iter->Set_Enable(false);
-					Monster_iter->Set_Dead();
-					Monster_iter = nullptr;
-				}
-			}
+			//if (!Moniter.empty())
+			//{
+			//	for (auto& Monster_iter : Moniter)
+			//	{
+			//		Monster_iter->Set_Enable(false);
+			//		Monster_iter->Set_Dead();
+			//		Monster_iter = nullptr;
+			//	}
+			//}
 			if (nullptr != Coll)
 			{
-				Coll->Set_Enable(false);
 				Coll->Set_Dead();
-				Coll = nullptr;
+				Coll->Set_Enable(false);
+				Coll->Set_Enable(false);
+				//Coll = nullptr;
 			}
 		}
 	}

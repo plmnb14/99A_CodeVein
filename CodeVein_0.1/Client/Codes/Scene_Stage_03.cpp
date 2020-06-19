@@ -77,6 +77,9 @@ _int CScene_Stage_03::Update_Scene(_double TimeDelta)
 		m_fCheck_ColleagueSummons = true;
 	}
 
+	// 동료 소환 및 소환 해제 함수
+	Summons_Colleague();
+
 	return S_OK;
 }
 
@@ -202,6 +205,55 @@ void CScene_Stage_03::Create_Dust(_double TimeDelta)
 			g_pManagement->Create_Effect(L"MapDust_2", vPlayerPos + vRandPos + _v3(0.f, _float(CCalculater::Random_Num_Double(0, 0.5)), 0.f), nullptr);
 		}
 	}
+}
+
+void CScene_Stage_03::Summons_Colleague()
+{
+	CGameObject* pInstance = nullptr;
+
+	if (true == g_bSummons_Mode)
+	{
+		if (false == m_fCheck_ColleagueSummons && g_pInput_Device->Key_Down(DIK_NUMPAD9))
+		{
+			m_fCheck_ColleagueSummons = true;
+			pInstance = g_pManagement->Clone_GameObject_Return(L"GameObject_Colleague",
+				&CPlayer_Colleague::JACK_INFO(_v3(0.f, 0.f, 0.f), 0.f, 0));
+			g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Colleague", nullptr);
+		}
+		//else if (g_pInput_Device->Key_Down(DIK_NUMPAD8))
+		//{
+		//	pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_Hunter",
+		//		&CMonster::MONSTER_STATUS(CMonster::MONSTER_COLOR_TYPE::COLOR_NONE, WEAPON_STATE::WEAPON_SSword,
+		//			true, _v3(4.f, 0.f, 4.f), V3_NULL, 0));
+		//	g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Monster", nullptr);
+		//}
+
+		if (g_pInput_Device->Key_Down(DIK_NUMPAD8))
+		{
+			//auto& Moniter = g_pManagement->Get_GameObjectList(L"Layer_Monster", SCENE_STAGE);
+			//auto& Colleague = g_pManagement->Get_GameObjectList(L"Layer_Colleague", SCENE_STAGE);
+
+			CGameObject* Coll = g_pManagement->Get_GameObjectBack(L"Layer_Colleague", SCENE_STAGE);
+
+			//if (!Moniter.empty())
+			//{
+			//	for (auto& Monster_iter : Moniter)
+			//	{
+			//		Monster_iter->Set_Enable(false);
+			//		Monster_iter->Set_Dead();
+			//		Monster_iter = nullptr;
+			//	}
+			//}
+			if (nullptr != Coll)
+			{
+				Coll->Set_Dead();
+				Coll->Set_Enable(false);
+				Coll->Set_Enable(false);
+				//Coll = nullptr;
+			}
+		}
+	}
+	return;
 }
 
 HRESULT CScene_Stage_03::Ready_LightDesc()
