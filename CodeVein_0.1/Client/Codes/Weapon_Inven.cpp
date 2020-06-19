@@ -205,7 +205,7 @@ void CWeapon_Inven::Click_Inven()
 		if (pSlot->Pt_InRect())
 		{
 			if (m_pSoundSlot != pSlot)
-				CUI_Manager::Get_Instance()->Stop_Play_UISound(L"Slot_Regist.ogg", CSoundManager::CHANNELID::UI_Click, CSoundManager::Effect_Sound);
+				CUI_Manager::Get_Instance()->Stop_Play_UISound(L"UI_CommonHover.wav", CSoundManager::CHANNELID::UI_Click, CSoundManager::Effect_Sound);
 			m_pSoundSlot = pSlot;
 
 			m_pExplainUI->Set_WeaponParam(pSlot->Get_WeaponParam());
@@ -213,7 +213,7 @@ void CWeapon_Inven::Click_Inven()
 			if (g_pInput_Device->Get_DIMouseState(CInput_Device::DIM_LB) &&
 				!pSlot->Get_Select())
 			{
-				CUI_Manager::Get_Instance()->Stop_Play_UISound(L"Slot_Regist.ogg", CSoundManager::CHANNELID::UI_Click, CSoundManager::Effect_Sound);
+				CUI_Manager::Get_Instance()->Stop_Play_UISound(L"UI_CommonClick.wav", CSoundManager::CHANNELID::UI_Click, CSoundManager::Effect_Sound);
 				Regist_Weapon(pSlot);
 			}
 			/*if (g_pInput_Device->Get_DIMouseState(CInput_Device::DIM_RB) &&

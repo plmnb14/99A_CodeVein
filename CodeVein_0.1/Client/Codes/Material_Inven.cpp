@@ -221,7 +221,7 @@ void CMaterial_Inven::Click_Inven()
 		if (pSlot->Pt_InRect() && pSlot->Get_Type() != CMaterial::MATERIAL_END)
 		{
 			if (m_pSoundSlot != pSlot)
-				CUI_Manager::Get_Instance()->Stop_Play_UISound(L"Slot_Regist.ogg", CSoundManager::CHANNELID::UI_Click, CSoundManager::Effect_Sound);
+				CUI_Manager::Get_Instance()->Stop_Play_UISound(L"UI_CommonHover.wav", CSoundManager::CHANNELID::UI_Click, CSoundManager::Effect_Sound);
 			m_pSoundSlot = pSlot;
 
 			m_pExplainUI->Set_Type(CMaterial::MATERIAL_TYPE(pSlot->Get_Type()));
@@ -231,12 +231,12 @@ void CMaterial_Inven::Click_Inven()
 			if (!pSlot->Get_Select() && pSlot->Get_Size() > 0 && g_pInput_Device->Get_DIMouseState(CInput_Device::DIM_LB))
 			{
 				// 마우스 왼쪽 버튼 눌렀을 때
-				CUI_Manager::Get_Instance()->Stop_Play_UISound(L"Slot_Regist.ogg", CSoundManager::CHANNELID::UI_Click, CSoundManager::Effect_Sound);
+				CUI_Manager::Get_Instance()->Stop_Play_UISound(L"UI_CommonClick.wav", CSoundManager::CHANNELID::UI_Click, CSoundManager::Effect_Sound);
 			}
 			else if (pSlot->Get_Select() && g_pInput_Device->Get_DIMouseState(CInput_Device::DIM_RB))
 			{
 				// 마우스 오른쪽 버튼 눌렀을 때
-				CUI_Manager::Get_Instance()->Stop_Play_UISound(L"Slot_Regist.ogg", CSoundManager::CHANNELID::UI_Click, CSoundManager::Effect_Sound);
+				CUI_Manager::Get_Instance()->Stop_Play_UISound(L"UI_CommonClick.wav", CSoundManager::CHANNELID::UI_Click, CSoundManager::Effect_Sound);
 			}
 		}
 	}

@@ -162,13 +162,13 @@ void CMaterialSellCollectionUI::Click_SubUI()
 		if (iter->Pt_InRect() && !iter->Get_Select() && iter->Get_Type() != CMaterial::MATERIAL_END)
 		{
 			if (m_pSoundSlot != iter)
-				CUI_Manager::Get_Instance()->Stop_Play_UISound(L"Slot_Regist.ogg", CSoundManager::CHANNELID::UI_Click, CSoundManager::Effect_Sound);
+				CUI_Manager::Get_Instance()->Stop_Play_UISound(L"UI_CommonHover.wav", CSoundManager::CHANNELID::UI_Click, CSoundManager::Effect_Sound);
 			m_pSoundSlot = iter;
 
 			if (g_pInput_Device->Get_DIMouseState(CInput_Device::DIM_LB))
 			{
 				m_pInfoUI->Set_Type(CMaterial::MATERIAL_TYPE(iter->Get_Type()));
-				CUI_Manager::Get_Instance()->Stop_Play_UISound(L"Slot_Regist.ogg", CSoundManager::CHANNELID::UI_Click, CSoundManager::Effect_Sound);
+				CUI_Manager::Get_Instance()->Stop_Play_UISound(L"UI_CommonClick.wav", CSoundManager::CHANNELID::UI_Click, CSoundManager::Effect_Sound);
 
 				m_pMtrlSellUI->Set_SellSlot(iter);
 				m_pMtrlSellUI->Set_Active(true);

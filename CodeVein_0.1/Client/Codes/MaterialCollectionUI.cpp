@@ -87,7 +87,7 @@ void CMaterialCollectionUI::Click_SubUI()
 		if (iter->Pt_InRect() && iter->Get_Type() != CMaterial::MATERIAL_END)
 		{	
 			if (m_pSoundOption != iter)
-				CUI_Manager::Get_Instance()->Stop_Play_UISound(L"Slot_Regist.ogg", CSoundManager::CHANNELID::UI_Click, CSoundManager::Effect_Sound);
+				CUI_Manager::Get_Instance()->Stop_Play_UISound(L"UI_CommonHover.wav", CSoundManager::CHANNELID::UI_Click, CSoundManager::Effect_Sound);
 			m_pSoundOption = iter;
 
 			m_pInfoUI->Set_Type(iter->Get_Type());
@@ -96,7 +96,7 @@ void CMaterialCollectionUI::Click_SubUI()
 				m_pBuyUI->Set_Active(true);
 				m_pBuyUI->Set_Type(iter->Get_Type());
 
-				CUI_Manager::Get_Instance()->Stop_Play_UISound(L"Slot_Regist.ogg", CSoundManager::CHANNELID::UI_Click, CSoundManager::Effect_Sound);
+				CUI_Manager::Get_Instance()->Stop_Play_UISound(L"UI_CommonClick.wav", CSoundManager::CHANNELID::UI_Click, CSoundManager::Effect_Sound);
 			}
 		}
 		iIdx++;
