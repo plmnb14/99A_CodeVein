@@ -1,9 +1,7 @@
 #pragma once
 
-#include "Client_Defines.h"
 #include "Client_Item_Enum.h"
 #include "UI.h"
-#include "Pet.h"
 
 BEGIN(Client)
 
@@ -23,10 +21,10 @@ public:
 
 public:
 	_bool Pt_InRect();
-	CPet::PET_TYPE Get_PetType() { return m_ePetType; }
+	ITEM_NAMETYPE Get_PetType() { return m_ePetName; }
 	_bool Get_Select() { return m_bIsSelect; }
 
-	void Set_PetType(CPet::PET_TYPE eType) { m_ePetType = eType; }
+	void Set_PetType(ITEM_NAMETYPE ePetName) { m_ePetName = ePetName; }
 	void Set_Select(_bool bIsSelect) { m_bIsSelect = bIsSelect; }
 
 private:
@@ -47,7 +45,7 @@ private:
 
 	_bool					m_bIsCollMouse = false;
 	_bool					m_bIsSelect = false;
-	CPet::PET_TYPE			m_ePetType = CPet::PET_TYPE::PET_TYPE_END;
+	ITEM_NAMETYPE			m_ePetName = ITEM_NAMETYPE::NAMETYPE_End;
 
 };
 

@@ -86,6 +86,9 @@ _int CPlayerGunBullet::Update_GameObject(_double TimeDelta)
 		CParticleMgr::Get_Instance()->Create_Effect_Delay(L"Colleague_Skill_BloodSmoke_1", 0.3f, m_pTransformCom->Get_Pos());
 		CParticleMgr::Get_Instance()->Create_Effect_Delay(L"Colleague_Skill_DistortionSmoke", 0.5f, m_pTransformCom->Get_Pos());
 
+		g_pSoundManager->Stop_Sound(CSoundManager::Effect_SFX_06);
+		g_pSoundManager->Play_Sound(L"PlayerBullet_Dead.ogg", CSoundManager::Effect_SFX_06, CSoundManager::Effect_Sound);
+
 		m_bDead = true;
 	}
 	// InComing
@@ -151,6 +154,7 @@ void CPlayerGunBullet::Enter_Collision()
 {
 	Update_Collider();
 	Check_CollisionEvent(g_pManagement->Get_GameObjectList(L"Layer_Monster", SCENE_STAGE));
+	Check_CollisionEvent(g_pManagement->Get_GameObjectList(L"Layer_Boss", SCENE_STAGE));
 
 	return;
 }

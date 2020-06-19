@@ -26,6 +26,10 @@ CMyPhysx*					g_pPhysx;
 Client::CSoundManager*		g_pSoundManager = nullptr;
 Client::CClothManager*		g_pClothManager = nullptr;
 
+// 몬스터 소환 모드인지 확인하는 bool 전역변수 
+bool				g_bSummons_Mode = false;
+
+
 // ================================================
 // 스테이지를 한번이라도 들렸는지 확인하는 전역변수 (MeshLoad를 위해)
 // ================================================
@@ -38,6 +42,8 @@ short				g_sQuadTreeCX = 0;
 short				g_sQuadTreeCY = 0;
 int					g_eSceneID_Cur = SCENE_END;
 int					g_eSTeleportID_Cur = TeleportID_End;
+
+
 
 // [0] - 최초 로딩 타이틀
 // [1] - 트레이닝

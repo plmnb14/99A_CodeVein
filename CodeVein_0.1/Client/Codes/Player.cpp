@@ -26,8 +26,10 @@ CPlayer::CPlayer(const CPlayer & rhs)
 
 }
 
-void CPlayer::Set_WeaponSlot(ACTIVE_WEAPON_SLOT eType, WEAPON_DATA eData)
+void CPlayer::Set_WeaponSlot(ACTIVE_WEAPON_SLOT eType, WPN_PARAM* pParam)
 {
+	WEAPON_DATA eData = (WEAPON_DATA)pParam->iWeaponName;
+	
 	if (WEAPON_DATA::WPN_DATA_End == eData)
 	{
 		if (m_pWeapon[eType])
@@ -52,10 +54,7 @@ void CPlayer::Set_WeaponSlot(ACTIVE_WEAPON_SLOT eType, WEAPON_DATA eData)
 
 	D3DXFRAME_DERIVED*	pFrame = (D3DXFRAME_DERIVED*)m_pDynamicMesh->Get_BonInfo(tmpChar, 2);
 
-	WPN_PARAM tmpParam = m_pUIManager->Get_Weapon_Inven()->Get_UseWeaponParam(eType);
-
 	m_pWeapon[eType] = static_cast<CWeapon*>(g_pManagement->Clone_GameObject_Return(L"GameObject_Weapon", NULL));
-	//m_pWeapon[eType]->Set_WeaponParam(tmpParam, tmpParam.iWeaponName);
 	m_pWeapon[eType]->Change_WeaponData(eData);
 	m_pWeapon[eType]->Set_Friendly(true);
 	m_pWeapon[eType]->Set_AttachBoneMartix(&pFrame->CombinedTransformationMatrix);
@@ -77,7 +76,17 @@ void CPlayer::Set_WeaponSlot(ACTIVE_WEAPON_SLOT eType, WEAPON_DATA eData)
 			);
 	}
 
+	m_pWeapon[eType]->Set_WeaponParam(*pParam, eData);
 	m_tObjParam.fDamage = m_pWeapon[eType]->Get_WeaponParam(eData).fDamage;
+}
+
+void CPlayer::Set_WeaponSlot_UpdateStatOnly(WPN_PARAM * pParam)
+{
+	WEAPON_DATA eData = (WEAPON_DATA)pParam->iWeaponName;
+
+	m_pWeapon[0]->Set_WeaponParam(*pParam, eData);
+	m_pWeapon[1]->Set_WeaponParam(*pParam, eData);
+	m_tObjParam.fDamage = m_pWeapon[m_eActiveSlot]->Get_WeaponParam(eData).fDamage;
 }
 
 void CPlayer::Set_ArmorSlot(ARMOR_All_DATA eType, ARMOR_PARAM* pParam)
@@ -87,10 +96,11 @@ void CPlayer::Set_ArmorSlot(ARMOR_All_DATA eType, ARMOR_PARAM* pParam)
 
 	m_pOuter->Change_OuterMesh(CClothManager::Cloth_Dynamic(eType + 1));
 
-	_float fHp_Max = pParam->fHP + pParam->fPlusHP + m_tObjParam.fHp_Max;
+	_float fHp_Max = pParam->fHP + pParam->fPlusHP;
 	_float fArmor_Max = pParam->fDef + pParam->fPlusDef;
 
 	m_tObjParam.fHp_Max = fHp_Max;
+	m_tObjParam.fHp_Cur = fHp_Max;
 	m_tObjParam.fArmor_Max = fArmor_Max;
 	m_tObjParam.fArmor_Cur = fArmor_Max;
 

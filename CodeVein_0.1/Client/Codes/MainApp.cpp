@@ -56,6 +56,15 @@ _int CMainApp::Update_MainApp(_double TimeDelta)
 		//cout << "현재 마스터 사운드 볼륨 : " << g_pSoundManager->Get_Volume() << endl;
 	}
 
+	
+	//-------------------------------------------//
+	// 몬스터 소환 모드 바꿔주는거
+	if (g_pInput_Device->Key_Down(DIK_F3))
+		g_bSummons_Mode = true;
+	else if (g_pInput_Device->Key_Down(DIK_F4))
+		g_bSummons_Mode = false;
+	//-------------------------------------------//
+
 	m_fFrameDeltaTimer = (_float)TimeDelta;
 
 	CCameraMgr::Get_Instance()->Update();

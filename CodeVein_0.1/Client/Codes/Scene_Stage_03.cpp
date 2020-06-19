@@ -77,6 +77,9 @@ _int CScene_Stage_03::Update_Scene(_double TimeDelta)
 		m_fCheck_ColleagueSummons = true;
 	}
 
+	// 동료 소환 및 소환 해제 함수
+	Summons_Colleague();
+
 	return S_OK;
 }
 
@@ -204,6 +207,49 @@ void CScene_Stage_03::Create_Dust(_double TimeDelta)
 	}
 }
 
+void CScene_Stage_03::Summons_Colleague()
+{
+	CGameObject* pInstance = nullptr;
+
+	if (true == g_bSummons_Mode && false == m_fCheck_ColleagueSummons)
+	{
+		pInstance = g_pManagement->Clone_GameObject_Return(L"GameObject_Colleague",
+			&CPlayer_Colleague::JACK_INFO(_v3(0.f, 0.f, 0.f), 0.f, 0));
+		g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Colleague", nullptr);
+		//else if (g_pInput_Device->Key_Down(DIK_NUMPAD8))
+		//{
+		//	pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_Hunter",
+		//		&CMonster::MONSTER_STATUS(CMonster::MONSTER_COLOR_TYPE::COLOR_NONE, WEAPON_STATE::WEAPON_SSword,
+		//			true, _v3(4.f, 0.f, 4.f), V3_NULL, 0));
+		//	g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Monster", nullptr);
+		//}
+		m_fCheck_ColleagueSummons = true;
+	}
+	else if (false == g_bSummons_Mode && true == m_fCheck_ColleagueSummons)
+	{
+		//auto& Moniter = g_pManagement->Get_GameObjectList(L"Layer_Monster", SCENE_STAGE);
+		CGameObject* Coll = g_pManagement->Get_GameObjectBack(L"Layer_Colleague", SCENE_STAGE);
+
+		//if (!Moniter.empty())
+		//{
+		//	for (auto& Monster_iter : Moniter)
+		//	{
+		//		Monster_iter->Set_Enable(false);
+		//		Monster_iter->Set_Dead();
+		//		Monster_iter = nullptr;
+		//	}
+		//}
+		if (nullptr != Coll)
+		{
+			Coll->Set_Dead();
+			Coll->Set_Enable(false);
+			//Coll = nullptr;
+		}
+	}
+	
+	return;
+}
+
 HRESULT CScene_Stage_03::Ready_LightDesc()
 {
 	NEW_LIGHT		LightDesc;
@@ -248,7 +294,73 @@ HRESULT CScene_Stage_03::Ready_LightDesc()
 	LightDesc.Position = _v3(-2.9f, 2.f, -90.f);
 	LightDesc.Range = 10.f;
 	LightDesc.fAlpha = 1.f;
-	
+
+	if (FAILED(g_pManagement->Add_Light(m_pGraphic_Device, LightDesc, CLight_Manager::Static_Light)))
+		return E_FAIL;
+
+	LightDesc.Type = D3DLIGHT_POINT;
+	LightDesc.Diffuse = D3DXCOLOR(1.f, 0.8f, 0.8f, 1.f)* 2.f;
+	LightDesc.Ambient = D3DXCOLOR(0.2f, 0.2f, 0.2f, 1.f);
+	LightDesc.Specular = LightDesc.Diffuse;
+	LightDesc.Position = _v3(50.f, -8.f, -1.3f);
+	LightDesc.Range = 10.f;
+	LightDesc.fAlpha = 1.f;
+
+	if (FAILED(g_pManagement->Add_Light(m_pGraphic_Device, LightDesc, CLight_Manager::Static_Light)))
+		return E_FAIL;
+
+	LightDesc.Type = D3DLIGHT_POINT;
+	LightDesc.Diffuse = D3DXCOLOR(1.f, 0.8f, 0.8f, 1.f)* 2.f;
+	LightDesc.Ambient = D3DXCOLOR(0.2f, 0.2f, 0.2f, 1.f);
+	LightDesc.Specular = LightDesc.Diffuse;
+	LightDesc.Position = _v3(51.f, -2.f, -14.5f);
+	LightDesc.Range = 10.f;
+	LightDesc.fAlpha = 1.f;
+
+	if (FAILED(g_pManagement->Add_Light(m_pGraphic_Device, LightDesc, CLight_Manager::Static_Light)))
+		return E_FAIL;
+
+	LightDesc.Type = D3DLIGHT_POINT;
+	LightDesc.Diffuse = D3DXCOLOR(1.f, 0.8f, 0.8f, 1.f)* 2.f;
+	LightDesc.Ambient = D3DXCOLOR(0.2f, 0.2f, 0.2f, 1.f);
+	LightDesc.Specular = LightDesc.Diffuse;
+	LightDesc.Position = _v3(51.f, -1.f, -29.5f);
+	LightDesc.Range = 10.f;
+	LightDesc.fAlpha = 1.f;
+
+	if (FAILED(g_pManagement->Add_Light(m_pGraphic_Device, LightDesc, CLight_Manager::Static_Light)))
+		return E_FAIL;
+
+	LightDesc.Type = D3DLIGHT_POINT;
+	LightDesc.Diffuse = D3DXCOLOR(1.f, 0.8f, 0.8f, 1.f)* 2.f;
+	LightDesc.Ambient = D3DXCOLOR(0.2f, 0.2f, 0.2f, 1.f);
+	LightDesc.Specular = LightDesc.Diffuse;
+	LightDesc.Position = _v3(49.f, 0.f, -43.5f);
+	LightDesc.Range = 10.f;
+	LightDesc.fAlpha = 1.f;
+
+	if (FAILED(g_pManagement->Add_Light(m_pGraphic_Device, LightDesc, CLight_Manager::Static_Light)))
+		return E_FAIL;
+
+	LightDesc.Type = D3DLIGHT_POINT;
+	LightDesc.Diffuse = D3DXCOLOR(1.f, 0.8f, 0.8f, 1.f)* 2.f;
+	LightDesc.Ambient = D3DXCOLOR(0.2f, 0.2f, 0.2f, 1.f);
+	LightDesc.Specular = LightDesc.Diffuse;
+	LightDesc.Position = _v3(36.f, 2.f, -55.5f);
+	LightDesc.Range = 10.f;
+	LightDesc.fAlpha = 1.f;
+
+	if (FAILED(g_pManagement->Add_Light(m_pGraphic_Device, LightDesc, CLight_Manager::Static_Light)))
+		return E_FAIL;
+
+	LightDesc.Type = D3DLIGHT_POINT;
+	LightDesc.Diffuse = D3DXCOLOR(1.f, 0.8f, 0.8f, 1.f)* 2.f;
+	LightDesc.Ambient = D3DXCOLOR(0.2f, 0.2f, 0.2f, 1.f);
+	LightDesc.Specular = LightDesc.Diffuse;
+	LightDesc.Position = _v3(35.f, 2.f, -85.5f);
+	LightDesc.Range = 10.f;
+	LightDesc.fAlpha = 1.f;
+
 	if (FAILED(g_pManagement->Add_Light(m_pGraphic_Device, LightDesc, CLight_Manager::Static_Light)))
 		return E_FAIL;
 

@@ -649,7 +649,7 @@ void CWeaponUpgradeUI::SetUp_Default()
 	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pFontPlusDamageAfterDesc, SCENE_MORTAL, L"Layer_PlayerUI", nullptr);
 
 	m_pFontPlusHPDesc = static_cast<CPlayerFontUI*>(g_pManagement->Clone_GameObject_Return(L"GameObject_PlayerFontUI", nullptr));
-	m_pFontPlusHPDesc->Set_UI_Pos(fPosX_2, fPosY_2);
+	m_pFontPlusHPDesc->Set_UI_Pos(fPosX_1, fPosY_2);
 	m_pFontPlusHPDesc->Set_UI_Size(20.4f * fMul, 35.f * fMul);
 	m_pFontPlusHPDesc->Set_ViewZ(m_fViewZ - 0.1f);
 	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pFontPlusHPDesc, SCENE_MORTAL, L"Layer_PlayerUI", nullptr);
@@ -661,7 +661,7 @@ void CWeaponUpgradeUI::SetUp_Default()
 	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pFontPlusHPAfterDesc, SCENE_MORTAL, L"Layer_PlayerUI", nullptr);
 
 	m_pFontTotalHPDesc = static_cast<CPlayerFontUI*>(g_pManagement->Clone_GameObject_Return(L"GameObject_PlayerFontUI", nullptr));
-	m_pFontTotalHPDesc->Set_UI_Pos(fPosX_2, fPosY_2);
+	m_pFontTotalHPDesc->Set_UI_Pos(fPosX_1, fPosY_2);
 	m_pFontTotalHPDesc->Set_UI_Size(20.4f * fMul, 35.f * fMul);
 	m_pFontTotalHPDesc->Set_ViewZ(m_fViewZ - 0.1f);
 	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pFontTotalHPDesc, SCENE_MORTAL, L"Layer_PlayerUI", nullptr);
@@ -1021,7 +1021,7 @@ void CWeaponUpgradeUI::Check_ItemOption_Armor()
 
 	if (!m_pFontPlusDamageAfterDesc)
 		return;
-	_float fPlus = m_pInven->Get_PlusDef(tParam.fPlusDef, tParam.iReinforce + 1);
+	_float fPlus = m_pInven->Get_PlusDef(tParam.fDef, tParam.iReinforce + 1);
 	m_pFontPlusDamageAfterDesc->Update_NumberValue(fPlus);
 	m_pFontPlusDamageAfterDesc->Set_Active(true);
 
@@ -1039,13 +1039,7 @@ void CWeaponUpgradeUI::Check_ItemOption_Armor()
 	if (!m_pFontPlusHPDesc)
 		return;
 
-	CGameObject* pPlayer = g_pManagement->Get_GameObjectBack(L"Layer_Player", SCENE_MORTAL);
-	if (!pPlayer)
-		return;
-	_float fPlayerHP = pPlayer->Get_Target_Hp();
-
-	fPlus = m_pInven->Get_PlusDamage(tParam.fPlusHP, tParam.iReinforce + 1);
-
+	fPlus = m_pInven->Get_PlusDamage(tParam.fHP, tParam.iReinforce + 1);
 	m_pFontPlusHPDesc->Update_NumberValue((_float)tParam.fPlusHP);
 	m_pFontPlusHPDesc->Set_Active(true);
 	if (!m_pFontPlusHPAfterDesc)
@@ -1055,12 +1049,12 @@ void CWeaponUpgradeUI::Check_ItemOption_Armor()
 
 	if (!m_pFontTotalHPDesc)
 		return;
-	m_pFontTotalHPDesc->Update_NumberValue(fPlayerHP + tParam.fHP + tParam.fPlusHP);
+	m_pFontTotalHPDesc->Update_NumberValue(tParam.fHP + tParam.fPlusHP);
 	m_pFontTotalHPDesc->Set_Active(true);
 
 	if (!m_pFontTotalHPAfterDesc)
 		return;
-	m_pFontTotalHPAfterDesc->Update_NumberValue(fPlayerHP + tParam.fHP + fPlus);
+	m_pFontTotalHPAfterDesc->Update_NumberValue(tParam.fHP + fPlus);
 	m_pFontTotalHPAfterDesc->Set_Active(true);
 	//==============================================================================================================
 	// Haze

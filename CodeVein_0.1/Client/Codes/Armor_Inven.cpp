@@ -18,6 +18,18 @@ ARMOR_PARAM CArmor_Inven::Get_UseArmorParam()
 	return m_tRegistParam;
 }
 
+void CArmor_Inven::Update_PlayerArmorStat(ARMOR_PARAM* pParam)
+{
+	//m_pPlayer->Set_ArmorSlot((ARMOR_All_DATA)pParam->iArmorName, pParam);
+
+	for (auto& pSlot : m_vecArmorSlot)
+	{
+		if(pSlot->Get_Select())
+			m_pPlayer->Set_ArmorSlot((ARMOR_All_DATA)pSlot->Get_ArmorParam().iArmorName, &pSlot->Get_ArmorParam());
+	}
+
+}
+
 HRESULT CArmor_Inven::Ready_GameObject_Prototype()
 {
 	CUI::Ready_GameObject_Prototype();
@@ -188,7 +200,7 @@ void CArmor_Inven::Click_Inven()
 		if (pSlot->Pt_InRect())
 		{
 			if (m_pSoundSlot != pSlot)
-				CUI_Manager::Get_Instance()->Stop_Play_UISound(L"UI_CommonHover.wav", CSoundManager::CHANNELID::UI_Click, CSoundManager::Effect_Sound);
+				CUI_Manager::Get_Instance()->Stop_Play_UISound(L"Slot_Regist.ogg", CSoundManager::CHANNELID::UI_Click, CSoundManager::Effect_Sound);
 			m_pSoundSlot = pSlot;
 
 			ARMOR_PARAM tParam = pSlot->Get_ArmorParam();
@@ -205,7 +217,7 @@ void CArmor_Inven::Click_Inven()
 				_float fMaxHP = tParam.fHP + tParam.fPlusHP;
 				m_pPlayer->Set_ArmorSlot((ARMOR_All_DATA)tParam.iArmorName, &tParam);
 
-				CUI_Manager::Get_Instance()->Stop_Play_UISound(L"UI_CommonClick.wav", CSoundManager::CHANNELID::UI_Click, CSoundManager::Effect_Sound);
+				CUI_Manager::Get_Instance()->Stop_Play_UISound(L"Slot_Regist.ogg", CSoundManager::CHANNELID::UI_Click, CSoundManager::Effect_Sound);
 			}
 		}
 	}
@@ -285,12 +297,12 @@ void CArmor_Inven::Late_Init()
 
 	m_tRegistParam.iArmorType = ARMOR_Drape;
 	m_tRegistParam.iArmorName = ArmorAll_Drape_DarkNightHook;
-	m_tRegistParam.fHP = 1000.f;
-	m_tRegistParam.fDef = 10.f;
-	m_tRegistParam.fPlusDef = 10.f;
-	m_tRegistParam.fPlusHP = 50.f;
-	m_tRegistParam.iPrice = 100;
 	m_tRegistParam.iReinforce = 0;
+	m_tRegistParam.fDef = 100;
+	m_tRegistParam.fPlusDef = 30;
+	m_tRegistParam.fHP = 2930;
+	m_tRegistParam.fPlusHP = 600;
+	m_tRegistParam.iPrice = 700;
 
 	Add_Armor(m_tRegistParam);
 	m_vecArmorSlot[0]->Set_Select(true);
@@ -300,16 +312,16 @@ void CArmor_Inven::Late_Init()
 	CTotal_Inven* pTotal_Inven = CUI_Manager::Get_Instance()->Get_Total_Inven();
 	pTotal_Inven->Set_ArmorParam(m_tRegistParam);
 
-	/*m_tRegistParam.iArmorType = ARMOR_Drape;
-	m_tRegistParam.iArmorName = ArmorAll_Drape_DarkNightHook;
-	m_tRegistParam.fHP = 1000.f;
-	m_tRegistParam.fDef = 50.f;
-	m_tRegistParam.fPlusDef = 10.f;
-	m_tRegistParam.fPlusHP = 50.f;
-	m_tRegistParam.iPrice = 100;
+	m_tRegistParam.iArmorType = ARMOR_Gauntlet;
+	m_tRegistParam.iArmorName = ArmorAll_Gauntlet_DarkNightHook;
 	m_tRegistParam.iReinforce = 0;
+	m_tRegistParam.fDef = 120;
+	m_tRegistParam.fPlusDef = 10;
+	m_tRegistParam.fHP = 3000;
+	m_tRegistParam.fPlusHP = 500;
+	m_tRegistParam.iPrice = 1200;
 
-	Add_Armor(m_tRegistParam);*/
+	Add_Armor(m_tRegistParam);
 }
 
 void CArmor_Inven::Add_Armor(ARMOR_PARAM tArmorParam)
