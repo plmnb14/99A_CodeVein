@@ -59,9 +59,9 @@ _int CMainApp::Update_MainApp(_double TimeDelta)
 	
 	//-------------------------------------------//
 	// 몬스터 소환 모드 바꿔주는거
-	if (g_pInput_Device->Key_Down(DIK_F1))
+	if (g_pInput_Device->Key_Down(DIK_F3))
 		g_bSummons_Mode = true;
-	else if (g_pInput_Device->Key_Down(DIK_F2))
+	else if (g_pInput_Device->Key_Down(DIK_F4))
 		g_bSummons_Mode = false;
 	//-------------------------------------------//
 
