@@ -1566,28 +1566,28 @@ void CPlayer::KeyDown()
 			case TYPE_HAIR:
 			{
 				m_pCamManager->Set_CustomizeCamIdx(1);
-				m_pCamManager->Set_MidDistance(1.3f);
+				m_pCamManager->Set_MidDistance(1.2f);
 				break;
 			}
 
 			case TYPE_FACE:
 			{
 				m_pCamManager->Set_CustomizeCamIdx(1);
-				m_pCamManager->Set_MidDistance(1.f);
+				m_pCamManager->Set_MidDistance(0.5f);
 				break;
 			}
 
 			case TYPE_EYE:
 			{
 				m_pCamManager->Set_CustomizeCamIdx(1);
-				m_pCamManager->Set_MidDistance(0.8f);
+				m_pCamManager->Set_MidDistance(0.3f);
 				break;
 			}
 
 			case TYPE_MASK:
 			{
 				m_pCamManager->Set_CustomizeCamIdx(2);
-				m_pCamManager->Set_MidDistance(1.2f);
+				m_pCamManager->Set_MidDistance(1.f);
 				break;
 			}
 
