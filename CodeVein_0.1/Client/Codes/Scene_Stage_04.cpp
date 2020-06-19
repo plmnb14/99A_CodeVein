@@ -257,15 +257,12 @@ void CScene_Stage_04::Summons_Colleague()
 {
 	CGameObject* pInstance = nullptr;
 
-	if (true == g_bSummons_Mode)
+	if (true == g_bSummons_Mode && false == m_fCheck_ColleagueSummons)
 	{
-		if (false == m_fCheck_ColleagueSummons && g_pInput_Device->Key_Down(DIK_NUMPAD9))
-		{
-			m_fCheck_ColleagueSummons = true;
-			pInstance = g_pManagement->Clone_GameObject_Return(L"GameObject_Colleague",
-				&CPlayer_Colleague::JACK_INFO(_v3(0.f, 0.f, 0.f), 0.f, 0));
-			g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Colleague", nullptr);
-		}
+		m_fCheck_ColleagueSummons = true;
+		pInstance = g_pManagement->Clone_GameObject_Return(L"GameObject_Colleague",
+			&CPlayer_Colleague::JACK_INFO(_v3(0.f, 0.f, 0.f), 0.f, 0));
+		g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Colleague", nullptr);
 		//else if (g_pInput_Device->Key_Down(DIK_NUMPAD8))
 		//{
 		//	pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_Hunter",
@@ -273,32 +270,29 @@ void CScene_Stage_04::Summons_Colleague()
 		//			true, _v3(4.f, 0.f, 4.f), V3_NULL, 0));
 		//	g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Monster", nullptr);
 		//}
+	}
+	else if (false == g_bSummons_Mode && true == m_fCheck_ColleagueSummons)
+	{
+		//auto& Moniter = g_pManagement->Get_GameObjectList(L"Layer_Monster", SCENE_STAGE);
+		CGameObject* Coll = g_pManagement->Get_GameObjectBack(L"Layer_Colleague", SCENE_STAGE);
 
-		if (g_pInput_Device->Key_Down(DIK_NUMPAD8))
+		//if (!Moniter.empty())
+		//{
+		//	for (auto& Monster_iter : Moniter)
+		//	{
+		//		Monster_iter->Set_Enable(false);
+		//		Monster_iter->Set_Dead();
+		//		Monster_iter = nullptr;
+		//	}
+		//}
+		if (nullptr != Coll)
 		{
-			//auto& Moniter = g_pManagement->Get_GameObjectList(L"Layer_Monster", SCENE_STAGE);
-			//auto& Colleague = g_pManagement->Get_GameObjectList(L"Layer_Colleague", SCENE_STAGE);
-
-			CGameObject* Coll = g_pManagement->Get_GameObjectBack(L"Layer_Colleague", SCENE_STAGE);
-
-			//if (!Moniter.empty())
-			//{
-			//	for (auto& Monster_iter : Moniter)
-			//	{
-			//		Monster_iter->Set_Enable(false);
-			//		Monster_iter->Set_Dead();
-			//		Monster_iter = nullptr;
-			//	}
-			//}
-			if (nullptr != Coll)
-			{
-				Coll->Set_Dead();
-				Coll->Set_Enable(false);
-				Coll->Set_Enable(false);
-				//Coll = nullptr;
-			}
+			Coll->Set_Dead();
+			Coll->Set_Enable(false);
+			//Coll = nullptr;
 		}
 	}
+
 	return;
 }
 
