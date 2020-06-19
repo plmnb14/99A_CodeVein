@@ -46,9 +46,9 @@ _int CExplainArmorUI::Update_GameObject(_double TimeDelta)
 	if(m_bIsActive)
 	{
 		m_pReinForceFont->Update_NumberValue(_float(m_tArmorParam.iReinforce));
-		m_pDefFont->Update_NumberValue(_float(m_tArmorParam.fDef));
+		m_pDefFont->Update_NumberValue(_float(m_tArmorParam.fDef + m_tArmorParam.fPlusDef));
 		m_pPlusDefFont->Update_NumberValue(_float(m_tArmorParam.fPlusDef));
-		m_pHPFont->Update_NumberValue(_float(m_tArmorParam.fHP));
+		m_pHPFont->Update_NumberValue(_float(m_tArmorParam.fHP + m_tArmorParam.fPlusHP));
 		m_pPlusHPFont->Update_NumberValue(_float(m_tArmorParam.fPlusHP));
 
 		m_pReinForceFont->Set_UI_Pos(630.f, 255.f);	

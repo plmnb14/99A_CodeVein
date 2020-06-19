@@ -92,7 +92,7 @@ _int CExplainWeaponUI::Update_GameObject(_double TimeDelta)
 	}
 	
 	
-	m_pAttackFont->Update_NumberValue(_float(m_tWeaponParam.fDamage));
+	m_pAttackFont->Update_NumberValue(_float(m_tWeaponParam.fDamage + m_tWeaponParam.fPlusDamage));
 	m_pAttackFont->Set_UI_Pos(630.f, 392.f);
 
 	m_pAddDamageFont->Update_NumberValue(_float(m_tWeaponParam.fPlusDamage));

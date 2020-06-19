@@ -988,7 +988,7 @@ CBT_Composite_Node * CDeerKing::Throwing()
 	CBT_CreateEffect* Effect0 = Node_CreateEffect_Finite("버프 전 손 오오라", L"DeerKing_IceBullet_Charge_Hand_Smoke_0"			, L"Bone_LeftHand", 0.1, 55, 0, 0);
 	CBT_CreateEffect* Effect1 = Node_CreateEffect_Finite("버프 전 손 오오라", L"DeerKing_IceBullet_Charge_Hand_Smoke_After_0"	, L"Bone_LeftHand", 1.35, 10, 0, 0);
 	CBT_CreateEffect* Effect2 = Node_CreateEffect_Finite("버프 전 손 오오라", L"DeerKing_IceBullet_Charge_Hand_Smoke_After_1"	, L"Bone_LeftHand", 1.35, 10, 0, 0);
-	CBT_CreateEffect* Effect3 = Node_CreateEffect_Finite("왜곡"				, L"DeerKing_Distortion_Circle"						, L"Bone_LeftHand", 1.45, 1, 0, 0);
+	CBT_CreateEffect* Effect3 = Node_CreateEffect_Finite("왜곡"				, L"DeerKing_Distortion_Circle"						, L"Bone_LeftHand", 1.55, 1, 0, 0);
 	
 	Root_Parallel->Add_Service(Effect0);
 	Root_Parallel->Add_Service(Effect1);
@@ -996,13 +996,13 @@ CBT_Composite_Node * CDeerKing::Throwing()
 	Root_Parallel->Add_Service(Effect3);
 
 	CBT_CreateBullet* Col0 = Node_CreateBullet("토네이도 충돌체", L"Monster_DeerKingBullet", L"Throwing_Pos0", L"Self_Dir", 20, 4, 1.516, 1, 0, 0, CBT_Service_Node::Finite);
-	CBT_CreateBullet* Col1 = Node_CreateBullet("토네이도 충돌체", L"Monster_DeerKingBullet", L"Throwing_Pos1", L"Self_Dir", 20, 4, 1.566, 1, 0, 0, CBT_Service_Node::Finite);
-	CBT_CreateBullet* Col2 = Node_CreateBullet("토네이도 충돌체", L"Monster_DeerKingBullet", L"Throwing_Pos2", L"Self_Dir", 20, 4, 1.616, 1, 0, 0, CBT_Service_Node::Finite);
-	CBT_CreateBullet* Col3 = Node_CreateBullet("토네이도 충돌체", L"Monster_DeerKingBullet", L"Throwing_Pos3", L"Self_Dir", 20, 4, 1.666, 1, 0, 0, CBT_Service_Node::Finite);
-	CBT_CreateBullet* Col4 = Node_CreateBullet("토네이도 충돌체", L"Monster_DeerKingBullet", L"Throwing_Pos4", L"Self_Dir", 20, 4, 1.716, 1, 0, 0, CBT_Service_Node::Finite);
-	CBT_CreateBullet* Col5 = Node_CreateBullet("토네이도 충돌체", L"Monster_DeerKingBullet", L"Throwing_Pos5", L"Self_Dir", 20, 4, 1.766, 1, 0, 0, CBT_Service_Node::Finite);
-	CBT_CreateBullet* Col6 = Node_CreateBullet("토네이도 충돌체", L"Monster_DeerKingBullet", L"Throwing_Pos6", L"Self_Dir", 20, 4, 1.816, 1, 0, 0, CBT_Service_Node::Finite);
-	CBT_CreateBullet* Col7 = Node_CreateBullet("토네이도 충돌체", L"Monster_DeerKingBullet", L"Throwing_Pos7", L"Self_Dir", 20, 4, 1.866, 1, 0, 0, CBT_Service_Node::Finite);
+	CBT_CreateBullet* Col1 = Node_CreateBullet("토네이도 충돌체", L"Monster_DeerKingBullet", L"Throwing_Pos1", L"Self_Dir", 20, 4, 1.666, 1, 0, 0, CBT_Service_Node::Finite);
+	CBT_CreateBullet* Col2 = Node_CreateBullet("토네이도 충돌체", L"Monster_DeerKingBullet", L"Throwing_Pos2", L"Self_Dir", 20, 4, 1.716, 1, 0, 0, CBT_Service_Node::Finite);
+	CBT_CreateBullet* Col3 = Node_CreateBullet("토네이도 충돌체", L"Monster_DeerKingBullet", L"Throwing_Pos3", L"Self_Dir", 20, 4, 1.866, 1, 0, 0, CBT_Service_Node::Finite);
+	CBT_CreateBullet* Col4 = Node_CreateBullet("토네이도 충돌체", L"Monster_DeerKingBullet", L"Throwing_Pos4", L"Self_Dir", 20, 4, 1.916, 1, 0, 0, CBT_Service_Node::Finite);
+	CBT_CreateBullet* Col5 = Node_CreateBullet("토네이도 충돌체", L"Monster_DeerKingBullet", L"Throwing_Pos5", L"Self_Dir", 20, 4, 2.066, 1, 0, 0, CBT_Service_Node::Finite);
+	CBT_CreateBullet* Col6 = Node_CreateBullet("토네이도 충돌체", L"Monster_DeerKingBullet", L"Throwing_Pos6", L"Self_Dir", 20, 4, 2.116, 1, 0, 0, CBT_Service_Node::Finite);
+	CBT_CreateBullet* Col7 = Node_CreateBullet("토네이도 충돌체", L"Monster_DeerKingBullet", L"Throwing_Pos7", L"Self_Dir", 20, 4, 2.266, 1, 0, 0, CBT_Service_Node::Finite);
 
 	Root_Parallel->Add_Service(Col0);
 	Root_Parallel->Add_Service(Col1);

@@ -602,6 +602,8 @@ void CWeapon_Inven_InShop::Upgrade_Weapon(WPN_PARAM tParam)
 				return;
 
 			(*pVecSlot)[idx]->Set_WeaponParam(tParam);
+			m_pWeaponInventory->Update_PlayerWeaponStat();
+
 			break;
 		}
 		++idx;
@@ -624,6 +626,8 @@ void CWeapon_Inven_InShop::Upgrade_Armor(ARMOR_PARAM tParam)
 				return;
 
 			(*pVecSlot)[idx]->Set_ArmorParam(tParam);
+			m_pArmorInventory->Update_PlayerArmorStat(&tParam);
+
 			break;
 		}
 		++idx;
@@ -633,12 +637,12 @@ void CWeapon_Inven_InShop::Upgrade_Armor(ARMOR_PARAM tParam)
 
 _float CWeapon_Inven_InShop::Get_UpgradePrice(_int iReinforce)
 {
-	return (iReinforce * 1.5f) * 80 + 50;
+	return (iReinforce * 1.5f) * 500 + 500;
 }
 
 _float CWeapon_Inven_InShop::Get_PlusDamage(_float fDamage, _int iReinforce)
 {
-	return fDamage + (fDamage * 0.3f * iReinforce);
+	return fDamage * 0.1f + (fDamage * 0.3f * iReinforce);
 }
 
 _float CWeapon_Inven_InShop::Get_PlusDef(_float fDef, _int iReinforce)
@@ -673,8 +677,8 @@ HRESULT CWeapon_Inven_InShop::SetUp_WeaponData(INVEN_SHOP_OPTION eShop)
 		tParam.iReinforce = 0;
 		tParam.fDef = 100;
 		tParam.fPlusDef = 30;
-		tParam.fHP = 930;
-		tParam.fPlusHP = 60;
+		tParam.fHP = 2930;
+		tParam.fPlusHP = 600;
 		tParam.iPrice = 700;
 		m_tArmorParam[tParam.iArmorName] = tParam;
 
@@ -683,8 +687,8 @@ HRESULT CWeapon_Inven_InShop::SetUp_WeaponData(INVEN_SHOP_OPTION eShop)
 		tParam.iReinforce = 0;
 		tParam.fDef = 120;
 		tParam.fPlusDef = 10;
-		tParam.fHP = 1000;
-		tParam.fPlusHP = 100;
+		tParam.fHP = 3000;
+		tParam.fPlusHP = 500;
 		tParam.iPrice = 1200;
 		m_tArmorParam[tParam.iArmorName] = tParam;
 
@@ -693,8 +697,8 @@ HRESULT CWeapon_Inven_InShop::SetUp_WeaponData(INVEN_SHOP_OPTION eShop)
 		tParam.iReinforce = 0;
 		tParam.fDef = 105;
 		tParam.fPlusDef = 30;
-		tParam.fHP = 1095;
-		tParam.fPlusHP = 60;
+		tParam.fHP = 3095;
+		tParam.fPlusHP = 600;
 		tParam.iPrice = 1200;
 		m_tArmorParam[tParam.iArmorName] = tParam;
 
@@ -703,8 +707,8 @@ HRESULT CWeapon_Inven_InShop::SetUp_WeaponData(INVEN_SHOP_OPTION eShop)
 		tParam.iReinforce = 0;
 		tParam.fDef = 110;
 		tParam.fPlusDef = 30;
-		tParam.fHP = 1400;
-		tParam.fPlusHP = 160;
+		tParam.fHP = 3400;
+		tParam.fPlusHP = 660;
 		tParam.iPrice = 1500;
 		m_tArmorParam[tParam.iArmorName] = tParam;
 
@@ -713,8 +717,8 @@ HRESULT CWeapon_Inven_InShop::SetUp_WeaponData(INVEN_SHOP_OPTION eShop)
 		tParam.iReinforce = 0;
 		tParam.fDef = 120;
 		tParam.fPlusDef = 30;
-		tParam.fHP = 1300;
-		tParam.fPlusHP = 120;
+		tParam.fHP = 3300;
+		tParam.fPlusHP = 620;
 		tParam.iPrice = 1500;
 		m_tArmorParam[tParam.iArmorName] = tParam;
 
@@ -723,8 +727,8 @@ HRESULT CWeapon_Inven_InShop::SetUp_WeaponData(INVEN_SHOP_OPTION eShop)
 		tParam.iReinforce = 0;
 		tParam.fDef = 100;
 		tParam.fPlusDef = 30;
-		tParam.fHP = 1900;
-		tParam.fPlusHP = 110;
+		tParam.fHP = 3900;
+		tParam.fPlusHP = 610;
 		tParam.iPrice = 1500;
 		m_tArmorParam[tParam.iArmorName] = tParam;
 
@@ -733,8 +737,8 @@ HRESULT CWeapon_Inven_InShop::SetUp_WeaponData(INVEN_SHOP_OPTION eShop)
 		tParam.iReinforce = 0;
 		tParam.fDef = 160;
 		tParam.fPlusDef = 30;
-		tParam.fHP = 1590;
-		tParam.fPlusHP = 140;
+		tParam.fHP = 3590;
+		tParam.fPlusHP = 640;
 		tParam.iPrice = 2000;
 		m_tArmorParam[tParam.iArmorName] = tParam;
 
@@ -743,8 +747,8 @@ HRESULT CWeapon_Inven_InShop::SetUp_WeaponData(INVEN_SHOP_OPTION eShop)
 		tParam.iReinforce = 0;
 		tParam.fDef = 140;
 		tParam.fPlusDef = 30;
-		tParam.fHP = 1550;
-		tParam.fPlusHP = 200;
+		tParam.fHP = 3550;
+		tParam.fPlusHP = 700;
 		tParam.iPrice = 2000;
 		m_tArmorParam[tParam.iArmorName] = tParam;
 

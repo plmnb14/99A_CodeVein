@@ -113,6 +113,7 @@ void CSky::Check_Scene()
 			Change_Mesh(L"Mesh_Sky_0");
 			break;
 		case SCENE_STAGE_TRAINING:
+			Change_Mesh(L"Mesh_Sky_4");
 			break;
 		case SCENE_STAGE_01:
 			Change_Mesh(L"Mesh_Sky_0");

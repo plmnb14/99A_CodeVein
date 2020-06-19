@@ -389,7 +389,7 @@ void CWeaponBuyUI::Check_ItemOption_Weapon()
 	// Damage
 	if (!m_pFontDamage)
 		return;
-	m_pFontDamage->Update_NumberValue((_float)tParam.fDamage);
+	m_pFontDamage->Update_NumberValue(tParam.fDamage + tParam.fPlusDamage);
 	m_pFontDamage->Set_Active(m_bIsActive);
 	//==============================================================================================================
 	// HazePrice
@@ -600,11 +600,7 @@ void CWeaponBuyUI::Check_ItemOption_Armor()
 	// HP
 	if (!m_pFontHP)
 		return;
-	CGameObject* pPlayer = g_pManagement->Get_GameObjectBack(L"Layer_Player", SCENE_MORTAL);
-	if (!pPlayer)
-		return;
-	_float fPlayerHP = pPlayer->Get_Target_Hp();
-	m_pFontHP->Update_NumberValue((_float)tParam.fHP + fPlayerHP);
+	m_pFontHP->Update_NumberValue(tParam.fHP + tParam.fPlusHP);
 	m_pFontHP->Set_Active(m_bIsActive);
 	//==============================================================================================================
 	// MoveType - false

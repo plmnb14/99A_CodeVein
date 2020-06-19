@@ -223,22 +223,22 @@ HRESULT CTexEffect::Render_GameObject_SetShader(CShader* pShader)
 	_int iPass = m_iPass;
 	if(m_pInfo->bDistortion)
 		iPass = m_iPass;
-	else if (m_pInfo->bUseRGBA && (m_pInfo->fMaskIndex != -1.f) && !m_pInfo->bDissolve)
+	else if (m_pInfo->bUseRGBA && (m_pInfo->fMaskIndex != -1.f))
 		iPass = 10;
-	else if (m_pInfo->bUseRGBA && (m_pInfo->fMaskIndex == -1.f) && !m_pInfo->bDissolve)
+	else if (m_pInfo->bUseRGBA && (m_pInfo->fMaskIndex == -1.f))
 		iPass = 11;
-	else if (m_pInfo->bUseColorTex && (m_pInfo->fMaskIndex != -1.f) && !m_pInfo->bDissolve)
+	else if (m_pInfo->bUseColorTex && (m_pInfo->fMaskIndex != -1.f))
 		iPass = 12;
-	else if (m_pInfo->bUseColorTex && (m_pInfo->fMaskIndex == -1.f) && !m_pInfo->bDissolve)
+	else if (m_pInfo->bUseColorTex && (m_pInfo->fMaskIndex == -1.f))
 		iPass = 13;
-	else if (m_pInfo->bUseRGBA && (m_pInfo->fMaskIndex != -1.f) && m_pInfo->bDissolve)
-		iPass = 14;
-	else if (m_pInfo->bUseRGBA && (m_pInfo->fMaskIndex == -1.f) && m_pInfo->bDissolve)
-		iPass = 15;
-	else if (m_pInfo->bUseColorTex && (m_pInfo->fMaskIndex != -1.f) && m_pInfo->bDissolve)
-		iPass = 16;
-	else if (m_pInfo->bUseColorTex && (m_pInfo->fMaskIndex == -1.f) && m_pInfo->bDissolve)
-		iPass = 17;
+	//else if (m_pInfo->bUseRGBA && (m_pInfo->fMaskIndex != -1.f) && m_pInfo->bDissolve)
+	//	iPass = 14;
+	//else if (m_pInfo->bUseRGBA && (m_pInfo->fMaskIndex == -1.f) && m_pInfo->bDissolve)
+	//	iPass = 15;
+	//else if (m_pInfo->bUseColorTex && (m_pInfo->fMaskIndex != -1.f) && m_pInfo->bDissolve)
+	//	iPass = 16;
+	//else if (m_pInfo->bUseColorTex && (m_pInfo->fMaskIndex == -1.f) && m_pInfo->bDissolve)
+	//	iPass = 17;
 
 	pShader->Begin_Pass(iPass);
 	
