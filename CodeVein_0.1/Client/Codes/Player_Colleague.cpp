@@ -109,6 +109,15 @@ _int CPlayer_Colleague::Update_GameObject(_double TimeDelta)
 		g_pSoundManager->Play_Sound(L"Jack_Let_Go.ogg", CSoundManager::Jack_Voice, CSoundManager::Voice_Sound);
 	}
 
+	//if (g_pInput_Device->Key_Down(DIK_F9))
+	//{
+	//	m_tObjParam.fHp_Cur -= 200.f;
+	//}
+	//if (g_pInput_Device->Key_Down(DIK_F10))
+	//{
+	//	m_tObjParam.fHp_Cur -= 300.f;
+	//}
+
 
 	Select_Heal(TimeDelta);
 
@@ -668,6 +677,37 @@ void CPlayer_Colleague::Check_Do_List(_double TimeDelta)
 		m_iCenter_Count = 0;
 	}
 
+	if (true == m_bStart_Fighting && true == m_bNear_byMonster)
+	{
+		m_fDodge_CoolTime += (_float)TimeDelta;
+
+		if (m_fDodge_CoolTime >= 7.f)
+		{
+			_float fAngle = D3DXToDegree(m_pTransformCom->Chase_Target_Angle(&TARGET_TO_TRANS(m_pObject_Mon)->Get_Pos()));
+
+			m_eMovetype = CPlayer_Colleague::Coll_Dodge;
+
+			if (0.f <= fAngle && 30.f > fAngle)
+				m_eColl_DodgeMoment = CPlayer_Colleague::Dodge_BackRoll;
+			else if (30.f <= fAngle && 90.f > fAngle)
+				m_eColl_DodgeMoment = CPlayer_Colleague::Dodge_LeftRoll;
+			else if (-150.f <= fAngle && -90.f > fAngle)
+				m_eColl_DodgeMoment = CPlayer_Colleague::Dodge_BackRoll;
+			else if (90.f <= fAngle && 150.f > fAngle)
+				m_eColl_DodgeMoment = CPlayer_Colleague::Dodge_BackRoll;
+			else if (150.f <= fAngle && 180.f > fAngle)
+				m_eColl_DodgeMoment = CPlayer_Colleague::Dodge_FrontRoll;
+			else if (-180.f <= fAngle && -150.f > fAngle)
+				m_eColl_DodgeMoment = CPlayer_Colleague::Dodge_FrontRoll;
+			else if (-90.f <= fAngle && -30.f > fAngle)
+				m_eColl_DodgeMoment = CPlayer_Colleague::Dodge_RightRoll;
+			else if (-30.f <= fAngle && 0 > fAngle)
+				m_eColl_DodgeMoment = CPlayer_Colleague::Dodge_BackRoll;
+
+			m_fDodge_CoolTime = 0;
+		}
+	}
+
 	if (m_eMovetype == CPlayer_Colleague::Coll_Hit ||
 		m_eMovetype == CPlayer_Colleague::Coll_Dead ||
 		m_eMovetype == CPlayer_Colleague::Coll_Heal ||
@@ -678,6 +718,7 @@ void CPlayer_Colleague::Check_Do_List(_double TimeDelta)
 
 	// Player와의 최대 거리 체크
 	m_fPlayer_DistDifference >= fPlayerLength ? m_bCheck_PlayerDist = true : m_bCheck_PlayerDist = false;
+
 
 
 	if (true == m_bCheck_PlayerDist)		// 최대 거리 안에 있을 때
@@ -785,33 +826,32 @@ void CPlayer_Colleague::Check_Action_List(_double TimeDelta)
 {
 	_float	fMonTarget_Dist = V3_LENGTH(&(TARGET_TO_TRANS(m_pObject_Mon)->Get_Pos() - m_pTransformCom->Get_Pos()));
 
-	m_fDodge_CoolTime += (_float)TimeDelta;
 
-	if ((true == m_bStart_Fighting && true == m_bNear_byMonster) && m_fDodge_CoolTime >= 10.f)
-	{
-		_float fAngle = D3DXToDegree(m_pTransformCom->Chase_Target_Angle(&TARGET_TO_TRANS(m_pObject_Mon)->Get_Pos()));
+	//if (m_fDodge_CoolTime >= 7.f)
+	//{
+	//	_float fAngle = D3DXToDegree(m_pTransformCom->Chase_Target_Angle(&TARGET_TO_TRANS(m_pObject_Mon)->Get_Pos()));
 
-		m_eMovetype = CPlayer_Colleague::Coll_Dodge;
+	//	m_eMovetype = CPlayer_Colleague::Coll_Dodge;
 
-		if (0.f <= fAngle && 30.f > fAngle)
-			m_eColl_DodgeMoment = CPlayer_Colleague::Dodge_BackRoll;
-		else if (30.f <= fAngle && 90.f > fAngle)
-			m_eColl_DodgeMoment = CPlayer_Colleague::Dodge_LeftRoll;
-		else if (-150.f <= fAngle && -90.f > fAngle)
-			m_eColl_DodgeMoment = CPlayer_Colleague::Dodge_BackRoll;
-		else if (90.f <= fAngle && 150.f > fAngle)
-			m_eColl_DodgeMoment = CPlayer_Colleague::Dodge_BackRoll;
-		else if (150.f <= fAngle && 180.f > fAngle)
-			m_eColl_DodgeMoment = CPlayer_Colleague::Dodge_FrontRoll;
-		else if (-180.f <= fAngle && -150.f > fAngle)
-			m_eColl_DodgeMoment = CPlayer_Colleague::Dodge_FrontRoll;
-		else if (-90.f <= fAngle && -30.f > fAngle)
-			m_eColl_DodgeMoment = CPlayer_Colleague::Dodge_RightRoll;
-		else if (-30.f <= fAngle && 0 > fAngle)
-			m_eColl_DodgeMoment = CPlayer_Colleague::Dodge_BackRoll;
+	//	if (0.f <= fAngle && 30.f > fAngle)
+	//		m_eColl_DodgeMoment = CPlayer_Colleague::Dodge_BackRoll;
+	//	else if (30.f <= fAngle && 90.f > fAngle)
+	//		m_eColl_DodgeMoment = CPlayer_Colleague::Dodge_LeftRoll;
+	//	else if (-150.f <= fAngle && -90.f > fAngle)
+	//		m_eColl_DodgeMoment = CPlayer_Colleague::Dodge_BackRoll;
+	//	else if (90.f <= fAngle && 150.f > fAngle)
+	//		m_eColl_DodgeMoment = CPlayer_Colleague::Dodge_BackRoll;
+	//	else if (150.f <= fAngle && 180.f > fAngle)
+	//		m_eColl_DodgeMoment = CPlayer_Colleague::Dodge_FrontRoll;
+	//	else if (-180.f <= fAngle && -150.f > fAngle)
+	//		m_eColl_DodgeMoment = CPlayer_Colleague::Dodge_FrontRoll;
+	//	else if (-90.f <= fAngle && -30.f > fAngle)
+	//		m_eColl_DodgeMoment = CPlayer_Colleague::Dodge_RightRoll;
+	//	else if (-30.f <= fAngle && 0 > fAngle)
+	//		m_eColl_DodgeMoment = CPlayer_Colleague::Dodge_BackRoll;
 
-		m_fDodge_CoolTime = 0;
-	}
+	//	m_fDodge_CoolTime = 0;
+	//}
 
 	switch (m_eTarget)
 	{
@@ -1367,8 +1407,8 @@ void CPlayer_Colleague::CollDodge_FrontRoll()
 	{
 		m_tObjParam.bCanDodge = false;
 		m_tObjParam.bIsDodge = true;
-		//g_pSoundManager->Stop_Sound(CSoundManager::Jack_Voice);
-		//g_pSoundManager->Play_Sound(L"Jack_Dodge.ogg", CSoundManager::Jack_Voice, CSoundManager::Voice_Sound);
+		g_pSoundManager->Stop_Sound(CSoundManager::Jack_Voice);
+		g_pSoundManager->Play_Sound(L"Jack_Dodge.ogg", CSoundManager::Jack_Voice, CSoundManager::Voice_Sound);
 	}
 	else
 	{
@@ -1404,8 +1444,8 @@ void CPlayer_Colleague::CollDodge_BackRoll()
 	{
 		m_tObjParam.bCanDodge = false;
 		m_tObjParam.bIsDodge = true;
-		//g_pSoundManager->Stop_Sound(CSoundManager::Jack_SFX_03);
-		//g_pSoundManager->Play_Sound(L"Jack_Dodge.ogg", CSoundManager::Jack_SFX_03, CSoundManager::Effect_Sound);
+		g_pSoundManager->Stop_Sound(CSoundManager::Jack_SFX_03);
+		g_pSoundManager->Play_Sound(L"Jack_Dodge.ogg", CSoundManager::Jack_SFX_03, CSoundManager::Effect_Sound);
 	}
 	else
 	{
@@ -1441,8 +1481,8 @@ void CPlayer_Colleague::CollDodge_LeftRoll()
 	{
 		m_tObjParam.bCanDodge = false;
 		m_tObjParam.bIsDodge = true;
-		//g_pSoundManager->Stop_Sound(CSoundManager::Jack_SFX_03);
-		//g_pSoundManager->Play_Sound(L"Jack_Dodge.ogg", CSoundManager::Jack_SFX_03, CSoundManager::Effect_Sound);
+		g_pSoundManager->Stop_Sound(CSoundManager::Jack_SFX_03);
+		g_pSoundManager->Play_Sound(L"Jack_Dodge.ogg", CSoundManager::Jack_SFX_03, CSoundManager::Effect_Sound);
 	}
 	else
 	{
@@ -1478,8 +1518,8 @@ void CPlayer_Colleague::CollDodge_RightRoll()
 	{
 		m_tObjParam.bCanDodge = false;
 		m_tObjParam.bIsDodge = true;
-		//g_pSoundManager->Stop_Sound(CSoundManager::Jack_SFX_03);
-		//g_pSoundManager->Play_Sound(L"Jack_Dodge.ogg", CSoundManager::Jack_SFX_03, CSoundManager::Effect_Sound);
+		g_pSoundManager->Stop_Sound(CSoundManager::Jack_SFX_03);
+		g_pSoundManager->Play_Sound(L"Jack_Dodge.ogg", CSoundManager::Jack_SFX_03, CSoundManager::Effect_Sound);
 	}
 	else
 	{
@@ -1728,6 +1768,7 @@ void CPlayer_Colleague::CollAtt_CenterDown()
 			g_pSoundManager->Stop_Sound(CSoundManager::Jack_SFX_02);
 			g_pSoundManager->Stop_Sound(CSoundManager::Jack_SFX_01);
 			m_iCenter_Count = 0;
+			++m_iNormalAtt_Count;
 			return;
 		}
 
@@ -1834,8 +1875,8 @@ void CPlayer_Colleague::CollAtt_CenterDown()
 				g_pManagement->Create_Effect_Delay(L"Hit_Slash_Particle_0", 0.f, vEffPos, m_pTransformCom);
 				g_pManagement->Create_ParticleEffect_Delay(L"Player_Skill_RedParticle_Explosion", 0.1f, 0.f, vEffPos, m_pTransformCom);
 
-				//g_pSoundManager->Stop_Sound(CSoundManager::Jack_SFX_01);
-				//g_pSoundManager->Play_Sound(L"SE_WEAPON_IMPACT_001.ogg", CSoundManager::Jack_SFX_01, CSoundManager::Effect_Sound);
+				g_pSoundManager->Stop_Sound(CSoundManager::Jack_SFX_01);
+				g_pSoundManager->Play_Sound(L"SE_WEAPON_IMPACT_001.ogg", CSoundManager::Jack_SFX_01, CSoundManager::Effect_Sound);
 				SHAKE_CAM_lv2;
 			}
 		}
@@ -1848,8 +1889,8 @@ void CPlayer_Colleague::CollAtt_CenterDown()
 
 				g_pManagement->Create_Effect_Delay(L"Player_Skill_WindMesh", 0.f, m_pTransformCom->Get_Pos() + _v3(0, 0.5f, 0.f), nullptr);
 
-				//g_pSoundManager->Stop_Sound(CSoundManager::Jack_SFX_02);
-				//g_pSoundManager->Play_Sound(L"SE_BLACK_KNIGHT_SWING_005.ogg", CSoundManager::Jack_SFX_02, CSoundManager::Effect_Sound);
+				g_pSoundManager->Stop_Sound(CSoundManager::Jack_SFX_02);
+				g_pSoundManager->Play_Sound(L"SE_BLACK_KNIGHT_SWING_005.ogg", CSoundManager::Jack_SFX_02, CSoundManager::Effect_Sound);
 			}
 		}
 
@@ -1989,7 +2030,7 @@ void CPlayer_Colleague::CollAtt_Normal()
 	}*/
 	else if ((fMonLenght <= 3.f))
 	{
-		if (m_iNormalAtt_Count > 4)
+		if (m_iNormalAtt_Count > 5)
 			m_iNormalAtt_Count = 0;
 
 		if (2 == m_iCenter_Count)
@@ -1999,7 +2040,12 @@ void CPlayer_Colleague::CollAtt_Normal()
 			m_iCenter_Count = 0;
 			return;
 		}
-		else if (m_iNormalAtt_Count >= 4)
+		if (m_iNormalAtt_Count == 5)
+		{
+			m_eColl_Sub_AttMoment = CPlayer_Colleague::Att_CenterDown;
+			m_iCenter_Count = 0;
+		}
+		else if (m_iNormalAtt_Count == 4)
 		{
 			// 여기서 삼단베기
 			//m_eMovetype = CPlayer_Colleague::Coll_Attack;
