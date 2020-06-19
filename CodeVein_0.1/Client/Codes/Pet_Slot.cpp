@@ -82,12 +82,12 @@ _int CPet_Slot::Update_GameObject(_double TimeDelta)
 
 	m_bIsCollMouse = Pt_InRect();
 
-	switch (m_ePetType)
+	switch (m_ePetName)
 	{
-	case CPet::PET_TYPE::PET_POISONBUTTERFLY:
+	case ITEM_NAMETYPE::NAMETYPE_Pet_PoisonButterfly:
 		m_iIndex = 3;
 		break;
-	case CPet::PET_TYPE::PET_DEERKING:
+	case ITEM_NAMETYPE::NAMETYPE_Pet_DeerKing:
 		m_iIndex = 4;
 		break;
 	}

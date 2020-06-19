@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Client_Defines.h"
+#include "Client_Item_Enum.h"
 #include "GameObject.h"
 #include "Management.h"
 #include "Haze.h"
@@ -96,13 +97,6 @@ public:
 		DEAD_END
 	};
 
-	enum PET_TYPE
-	{
-		PET_DEERKING,
-		PET_POISONBUTTERFLY,
-		PET_TYPE_END
-	};
-
 	enum PET_TARGET_TYPE
 	{
 		PET_TARGET_BOSS,
@@ -124,13 +118,12 @@ public:
 
 	struct PET_STATUS
 	{
-		PET_STATUS(PET_TYPE _eGrade)
-			:ePetType(_eGrade)
+		PET_STATUS(ITEM_NAMETYPE _eName)
+			:ePetName(_eName)
 		{
 		}
 
-		PET_TYPE		ePetType = PET_TYPE::PET_TYPE_END;
-		_ushort			eStageIdx = 0;
+		ITEM_NAMETYPE	ePetName = ITEM_NAMETYPE::NAMETYPE_End;
 	};
 
 	struct PET_BULLET_STATUS
@@ -181,8 +174,8 @@ protected:
 public:
 	virtual void Play_Deformation() PURE;
 	virtual void Set_Summon(_bool _Summon) { m_bCanSummon = _Summon; }
-	virtual PET_TYPE Get_PetType() { return m_eType; }
-	virtual void Set_PetType(PET_TYPE _eType) { m_eType = _eType; }
+	virtual ITEM_NAMETYPE Get_PetName() { return m_eType; }
+	virtual void Set_PetName(ITEM_NAMETYPE _eType) { m_eType = _eType; }
 
 	virtual void Function_FBLR(CGameObject* _pGameObject);
 	virtual void Function_RotateBody(CGameObject* _pGameObject);
@@ -223,7 +216,7 @@ protected:
 	PET_TARGET_TYPE		m_eTarget = PET_TARGET_TYPE::PET_TARGET_TYPE_END;
 	FBLR				m_eFBLR= FBLR::FRONT;
 
-	PET_TYPE			m_eType = PET_TYPE::PET_TYPE_END;
+	ITEM_NAMETYPE		m_eType = ITEM_NAMETYPE::NAMETYPE_End;
 
 	_double				m_dTimeDelta = 0;
 	_double				m_dAniPlayMul = 1;
@@ -241,8 +234,8 @@ protected:
 
 	//플레이어와 연관된 변수
 	_bool				m_bAbsoluteOrder = false; //우선 순위 결정
-	_float				m_fLimitRange = 40.f; //최대 제한 거리, 해당 범위 밖인 경우 무조건 복귀
-	_float				m_fActiveRange = 30.f; //행동 가능 거리, 행동 가능
+	_float				m_fLimitRange = 25.f; //최대 제한 거리, 해당 범위 밖인 경우 무조건 복귀
+	_float				m_fActiveRange = 20.f; //행동 가능 거리, 행동 가능
 	_bool				m_bInLimitRange = false; //최대 제한 거리
 	_bool				m_bInActiveRange = false; //자유 행동 거리
 

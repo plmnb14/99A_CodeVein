@@ -1218,22 +1218,12 @@ HRESULT CUrchin::Ready_Status(void * pArg)
 		m_pTransformCom->Set_Pos(Info.vPos);
 		m_pTransformCom->Set_Angle(Info.vAngle);
 
-		if (MONSTER_COLOR_TYPE::WHITE == Info.eMonsterColor)
-		{
-			m_eMonsterColor = Info.eMonsterColor;
-			m_tObjParam.fDamage = 200.f * pow(1.5f, g_eStageIdx_Cur - 1);
-			m_tObjParam.fHp_Max = 2200.f * pow(1.5f, g_eStageIdx_Cur - 1);
-			m_tObjParam.fArmor_Max = 50.f;
-		}
-		else
-		{
-			m_eMonsterColor = MONSTER_COLOR_TYPE::BLACK;
-			m_tObjParam.fDamage = 200.f * pow(1.5f, g_eStageIdx_Cur - 1);
-			m_tObjParam.fHp_Max = 2200.f * pow(1.5f, g_eStageIdx_Cur - 1);
-			m_tObjParam.fArmor_Max = 50.f;
-		}
 	}
 
+	m_eMonsterColor = MONSTER_COLOR_TYPE::BLACK;
+	m_tObjParam.fDamage = 200.f * pow(1.5f, g_eStageIdx_Cur - 1);
+	m_tObjParam.fHp_Max = 66666.f * pow(1.5f, g_eStageIdx_Cur - 1);
+	m_tObjParam.fArmor_Max = 50.f;
 
 	m_fRecognitionRange = 30.f;
 	m_fShotRange = 20.f;
