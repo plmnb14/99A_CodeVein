@@ -43,6 +43,9 @@ extern bool			g_bReleaseMode;
 extern short		g_eStageIdx_Cur;
 extern short		g_sPlayerLevel;
 
+// 몬스터 소환 모드인지 확인하는 bool 전역변수
+extern bool			g_bSummons_Mode;
+
 namespace Client
 {
 	class CSoundManager;
