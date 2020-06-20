@@ -52,6 +52,7 @@ HRESULT CYetiBullet::Ready_GameObject(void * pArg)
 	_float	fDot = acosf(D3DXVec3Dot(&_v3{ 0,0,1 }, &m_vDir));
 	if (vRight.z > 0)
 		fDot *= -1.f;
+	m_pTransformCom->Set_Angle(_v3(0.f, fDot, 0.f));
 
 	m_pBulletBody = CParticleMgr::Get_Instance()->Create_EffectReturn(L"DeerKing_IceBullet_0");
 	m_pBulletBody->Set_Desc(V3_NULL, nullptr);
@@ -135,7 +136,7 @@ void CYetiBullet::Update_Trails(_double TimeDelta)
 	{
 		m_pTrailEffect->Set_ParentTransform(&matWorld);
 		m_pTrailEffect->Ready_Info(vBegin + vDir * -0.05f, vBegin + vDir * 0.05f);
-		m_pTrailEffect->Update_GameObject(TimeDelta);
+		//m_pTrailEffect->Update_GameObject(TimeDelta);
 	}
 
 	return;
