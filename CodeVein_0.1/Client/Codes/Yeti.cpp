@@ -2699,7 +2699,7 @@ void CYeti::Play_IceThrowing()
 				memcpy(&vLook, &matTemp._21, sizeof(_v3)); //»ÀÀÇ ·è
 				vBirth += (vLook * fLength); //»ý¼ºÀ§Ä¡ = »ý¼ºÀ§Ä¡ +(·è*±æÀÌ)
 
-				CObjectPool_Manager::Get_Instance()->Create_Object(L"Monster_YetiBullet", &BULLET_INFO(vBirth, m_pTransformCom->Get_Axis(AXIS_Z), 8.f, 1.5));
+				CObjectPool_Manager::Get_Instance()->Create_Object(L"Monster_YetiBullet", &BULLET_INFO(vBirth, m_pTransformCom->Get_Axis(AXIS_Z), 16.f, 1.5));
 			}
 		}
 		else if (4.f <= AniTime)

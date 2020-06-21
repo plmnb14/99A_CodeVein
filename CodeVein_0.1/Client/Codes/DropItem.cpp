@@ -50,7 +50,8 @@ _int CDropItem::Update_GameObject(_double TimeDelta)
 
 	Check_Dist(); //상호작용 대상과 충돌 여부
 	Check_Condition(); //조건에 따른 획득 여부
-
+	Check_Effect(TimeDelta);
+	
 	return S_OK;
 }
 
@@ -1158,6 +1159,32 @@ void CDropItem::Check_Condition()
 	m_pGet_ItemUI->Set_Active(false);*/
 
 	return;
+}
+
+void CDropItem::Check_Effect(_double TimeDelta)
+{
+	m_fEffectTime += (_float)TimeDelta;
+	//0.05초마다 이펙트효과 발생
+	if (m_fEffectTime > 0.05f)
+	{
+		m_fEffectTime = 0.f;
+		//cout << "아이템 생성된 효과 발생" << endl;
+		switch (m_eItemGrade)
+		{
+		case ITEM_GRADE_NORMAL:
+			g_pManagement->Create_Effect(L"ItemObject", m_pTransform->Get_Pos());
+			break;
+		case ITEM_GRADE_RARE:
+			g_pManagement->Create_Effect(L"ItemObject_Purple", m_pTransform->Get_Pos());
+			break;
+		case ITEM_GRADE_UNIQUE:
+			g_pManagement->Create_Effect(L"ItemObject_Red", m_pTransform->Get_Pos());
+			break;
+		case ITEM_GRADE_LEGEND:
+			g_pManagement->Create_Effect(L"ItemObject_Yellow", m_pTransform->Get_Pos());
+			break;
+		}
+	}
 }
 
 HRESULT CDropItem::Add_Component(void* _pArg)

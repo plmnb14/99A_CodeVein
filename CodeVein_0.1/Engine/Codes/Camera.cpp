@@ -1414,6 +1414,15 @@ void CCamera::Set_CustomizeCamIdx(_ulong _dwCosIdx)
 		m_pTargetWorldMatrix = nullptr;
 	}
 
+	m_vOldPos = m_pTransform->Get_Pos();
+	m_vOldAt = m_pTransform->Get_At();
+
+	m_bOnLerpPos = true;
+	m_bOnLerpAt = true;
+
+	m_fAtLerpValue = 0.f;
+	m_fPosLerpValue = 0.f;
+
 	m_dwCustomIdx = _dwCosIdx;
 }
 

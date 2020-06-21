@@ -41,6 +41,7 @@ public:
 private:
 	void Check_Dist();
 	void Check_Condition();
+	void Check_Effect(_double TimeDelta);
 
 protected:
 	HRESULT Add_Component(void* _pArg);
@@ -66,7 +67,8 @@ private:
 	_double							m_dCanGetItemLimitTimeMax = 0; //시간값이라 double형, 해당 시간이 지나면 획득 불가, 사망
 
 	_float							m_fCanGetDist = 1.5f; //획득 가능범위
-	
+	_float							m_fEffectTime = 0.f;
+
 	_bool							m_bCanGetItem = false; //항시 false 상호작용시 true
 	_bool							m_bCheck_Start_GetItemUI = false;
 
