@@ -173,6 +173,12 @@ void CMaterialBuyUI::Update_SubUI(_double TimeDelta)
 	m_pDecisionOption->Set_Active(m_bIsActive);
 	m_pBuyCntFont->Set_Active(m_bIsActive);
 
+	m_pCntMinusOption->Set_ViewZ(m_fViewZ - 0.1f);
+	m_pCntPlusOption->Set_ViewZ(m_fViewZ - 0.1f);
+	m_pDecisionOption->Set_ViewZ(m_fViewZ - 0.1f);
+	m_pBuyCntFont->Set_ViewZ(m_fViewZ - 0.1f);
+	m_pBuyFailUI->Set_ViewZ(m_fViewZ - 0.2f);
+
 	m_pBuyCntFont->Update_NumberValue(_float(m_iBuyCnt));
 
 	if (m_bIsActive && m_fAlpha < 1.f)

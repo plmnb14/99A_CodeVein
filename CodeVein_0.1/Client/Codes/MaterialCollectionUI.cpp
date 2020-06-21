@@ -60,6 +60,7 @@ void CMaterialCollectionUI::SetUp_Default()
 
 	// 아이템 구매 UI 생성
 	m_pBuyUI = static_cast<CMaterialBuyUI*>(g_pManagement->Clone_GameObject_Return(L"GameObject_MaterialBuyUI", nullptr));
+	m_pBuyUI->Set_ViewZ(m_fViewZ - 0.1f);
 	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pBuyUI, SCENE_MORTAL, L"Layer_PlayerUI", nullptr);
 }
 

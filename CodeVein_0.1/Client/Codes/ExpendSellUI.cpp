@@ -24,6 +24,7 @@ HRESULT CExpendSellUI::Ready_GameObject(void * pArg)
 		return E_FAIL;
 	CUI::Ready_GameObject(pArg);
 
+	m_fViewZ = -0.5f;
 	SetUp_Default();
 
 	return NOERROR;
@@ -197,6 +198,11 @@ void CExpendSellUI::Click_SubUI()
 {
 	if (!m_bIsActive)
 		return;
+	m_pCntMinusOption->Set_ViewZ(m_fViewZ - 0.1f);
+	m_pCntPlusOption->Set_ViewZ(m_fViewZ - 0.1f);
+	m_pDecisionOption->Set_ViewZ(m_fViewZ - 0.1f);
+	m_pSellCntFont->Set_ViewZ(m_fViewZ - 0.1f);
+
 	if (m_pCntMinusOption->Pt_InRect() && g_pInput_Device->Get_DIMouseState(CInput_Device::DIM_LB))
 	{
 		if (m_iSellCnt > 0)

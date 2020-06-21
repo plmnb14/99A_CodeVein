@@ -61,6 +61,7 @@ void CExpendCollectionUI::SetUp_Default()
 	m_pInfoUI->Set_Type(CExpendables::Expend_MaximumUp);
 
 	m_pBuyUI = static_cast<CExpendBuyUI*>(g_pManagement->Clone_GameObject_Return(L"GameObject_ExpendBuyUI", nullptr));
+	m_pBuyUI->Set_ViewZ(m_fViewZ - 0.1f);
 	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pBuyUI, SCENE_MORTAL, L"Layer_PlayerUI", nullptr);
 }
 

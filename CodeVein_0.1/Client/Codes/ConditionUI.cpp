@@ -68,21 +68,21 @@ _int CConditionUI::Update_GameObject(_double TimeDelta)
 	{
 		m_iIndex = 0;
 		m_fCurValue = m_tObjParam.fHp_Cur;
-		m_fMaxValue = 1500.f;	
+		m_fMaxValue = m_tObjParam.fHp_Max;	
 	}		
 		break;
 	case CONDITION_ST:
 	{
 		m_iIndex = 1;
 		m_fCurValue = m_tObjParam.fStamina_Cur;
-		m_fMaxValue = 1000.f;
+		m_fMaxValue = m_tObjParam.fStamina_Max;
 	}	
 		break;
 	case CONDITION_BLOOD:
 	{
 		m_iIndex = 2;
 		m_fCurValue = _float(m_tObjParam.sMana_Cur);
-		m_fMaxValue = _float(20);
+		m_fMaxValue = _float(m_tObjParam.sMana_Max);
 	}		
 		break;
 	case CONDITION_ATT:
