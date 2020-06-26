@@ -2,12 +2,12 @@
 #include "..\Headers\CocoonBigBullet.h"
 
 CCocoonBigBullet::CCocoonBigBullet(LPDIRECT3DDEVICE9 pGraphic_Device)
-	: CMonster(pGraphic_Device)
+	: CMonster_Bullet(pGraphic_Device)
 {
 }
 
 CCocoonBigBullet::CCocoonBigBullet(const CCocoonBigBullet & rhs)
-	: CMonster(rhs)
+	: CMonster_Bullet(rhs)
 {
 }
 
@@ -48,17 +48,18 @@ HRESULT CCocoonBigBullet::Ready_GameObject(void * pArg)
 
 	switch (m_eBulletType)
 	{
-	case Client::CMonster::BULLET_NORMAL:
-	case Client::CMonster::BULLET_FIRE:
-	case Client::CMonster::BULLET_ELECTRON:
-		m_pBulletBody = CParticleMgr::Get_Instance()->Create_EffectReturn(L"Totem_Fire_BulletBody");
+	case CMonster_Bullet::BULLET_NORMAL:
+	case CMonster_Bullet::BULLET_FIRE:
+	case CMonster_Bullet::BULLET_ELECTRON:
+		m_pEffect = CParticleMgr::Get_Instance()->Create_EffectReturn(L"Totem_Fire_BulletBody");
 		break;
-	case Client::CMonster::BULLET_ICE:
-		m_pBulletBody = CParticleMgr::Get_Instance()->Create_EffectReturn(L"Totem_Ice_BulletBody");
+	case CMonster_Bullet::BULLET_ICE:
+		m_pEffect = CParticleMgr::Get_Instance()->Create_EffectReturn(L"Totem_Ice_BulletBody");
 		break;
 	}
-	m_pBulletBody->Set_Desc(V3_NULL, m_pTransformCom);
-	m_pBulletBody->Reset_Init();
+
+	m_pEffect->Set_Desc(V3_NULL, m_pTransformCom);
+	m_pEffect->Reset_Init();
 
 	return S_OK;
 }
@@ -80,19 +81,19 @@ _int CCocoonBigBullet::Update_GameObject(_double TimeDelta)
 	{
 		switch (m_eBulletType)
 		{
-		case Client::CMonster::BULLET_NORMAL:
-		case Client::CMonster::BULLET_FIRE:
-		case Client::CMonster::BULLET_ELECTRON:
+		case CMonster_Bullet::BULLET_NORMAL:
+		case CMonster_Bullet::BULLET_FIRE:
+		case CMonster_Bullet::BULLET_ELECTRON:
 			g_pManagement->Create_Effect(L"Totem_Fire_Bullet_Dead_0", m_pTransformCom->Get_Pos());
 			g_pManagement->Create_Effect(L"Totem_Fire_Bullet_Dead_1", m_pTransformCom->Get_Pos());
 			g_pManagement->Create_Effect(L"Totem_Fire_Bullet_Dead_Particle", m_pTransformCom->Get_Pos());
-			m_pBulletBody->Set_Dead();
+			m_pEffect->Set_Dead();
 			break;
-		case Client::CMonster::BULLET_ICE:
+		case CMonster_Bullet::BULLET_ICE:
 			g_pManagement->Create_Effect(L"Totem_Ice_Bullet_Dead_0", m_pTransformCom->Get_Pos());
 			g_pManagement->Create_Effect(L"Totem_Ice_Bullet_Dead_1", m_pTransformCom->Get_Pos());
 			g_pManagement->Create_Effect(L"Totem_Ice_Bullet_Dead_Particle", m_pTransformCom->Get_Pos());
-			m_pBulletBody->Set_Dead();
+			m_pEffect->Set_Dead();
 			break;
 		}
 
@@ -111,14 +112,14 @@ _int CCocoonBigBullet::Update_GameObject(_double TimeDelta)
 			m_fEffectOffset = 0.f;
 			switch (m_eBulletType)
 			{
-			case Client::CMonster::BULLET_NORMAL:
-			case Client::CMonster::BULLET_FIRE:
-			case Client::CMonster::BULLET_ELECTRON:
+			case CMonster_Bullet::BULLET_NORMAL:
+			case CMonster_Bullet::BULLET_FIRE:
+			case CMonster_Bullet::BULLET_ELECTRON:
 				g_pManagement->Create_Effect(L"Totem_Fire_BulletBody", m_pTransformCom->Get_Pos() + m_vDir * 1.3f);
 				g_pManagement->Create_Effect(L"FireBoy_FireBullet_Particle_01", m_pTransformCom->Get_Pos(), nullptr);
 				g_pManagement->Create_Effect(L"FireBoy_FireBullet_Particle_02", m_pTransformCom->Get_Pos(), nullptr);
 				break;
-			case Client::CMonster::BULLET_ICE:
+			case CMonster_Bullet::BULLET_ICE:
 				break;
 			}
 		}
@@ -145,97 +146,6 @@ HRESULT CCocoonBigBullet::Render_GameObject_Instancing_SetPass(CShader * pShader
 	return S_OK;
 }
 
-void CCocoonBigBullet::Update_Collider()
-{
-	_ulong matrixIdx = 0;
-
-	for (auto& iter : m_vecAttackCol)
-	{
-		_mat tmpMat;
-		tmpMat = m_pTransformCom->Get_WorldMat();
-
-		_v3 ColPos = _v3(tmpMat._41, tmpMat._42, tmpMat._43);
-
-		iter->Update(ColPos);
-
-		++matrixIdx;
-	}
-
-	return;
-}
-
-void CCocoonBigBullet::Render_Collider()
-{
-	for (auto& iter : m_vecAttackCol)
-		g_pManagement->Gizmo_Draw_Sphere(iter->Get_CenterPos(), iter->Get_Radius().x);
-
-	return;
-}
-
-void CCocoonBigBullet::Check_CollisionEvent()
-{
-	Update_Collider();
-	Check_CollisionHit(g_pManagement->Get_GameObjectList(L"Layer_Player", SCENE_MORTAL));
-	Check_CollisionHit(g_pManagement->Get_GameObjectList(L"Layer_Colleague", SCENE_STAGE));
-
-	return;
-}
-
-void CCocoonBigBullet::Check_CollisionHit(list<CGameObject*> plistGameObject)
-{
-	if (false == m_tObjParam.bCanAttack)
-		return;
-
-	_bool bFirst = true;
-
-	for (auto& iter : plistGameObject)
-	{
-		if (false == iter->Get_Target_CanHit())
-			continue;
-
-		for (auto& vecIter : m_vecAttackCol)
-		{
-			bFirst = true;
-
-			for (auto& vecCol : iter->Get_PhysicColVector())
-			{
-				if (vecIter->Check_Sphere(vecCol))
-				{
-					if (bFirst)
-					{
-						bFirst = false;
-						continue;
-					}
-
-					if (false == iter->Get_Target_IsDodge())
-					{
-						iter->Set_Target_CanHit(false);
-
-						if (true == iter->Get_Target_IsHit())
-							iter->Set_HitAgain(true);
-
-						if (false == iter->Get_Target_IsDodge())
-						{
-							iter->Hit_Target(m_tObjParam.fDamage);
-							g_pManagement->Create_Hit_Effect(vecIter, vecCol, TARGET_TO_TRANS(iter));
-
-							m_dCurTime = 100;
-						}
-					}
-					break;
-				}
-				else
-				{
-					if (bFirst)
-						break;
-				}
-			}
-		}
-	}
-
-	return;
-}
-
 HRESULT CCocoonBigBullet::Add_Component()
 {
 	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Transform", L"Com_Transform", (CComponent**)&m_pTransformCom)))
@@ -247,11 +157,6 @@ HRESULT CCocoonBigBullet::Add_Component()
 	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Collider", L"Com_Collider", (CComponent**)&m_pColliderCom)))
 		return E_FAIL;
 
-	return S_OK;
-}
-
-HRESULT CCocoonBigBullet::SetUp_ConstantTable()
-{
 	return S_OK;
 }
 
@@ -302,10 +207,10 @@ CGameObject * CCocoonBigBullet::Clone_GameObject(void * pArg)
 
 void CCocoonBigBullet::Free()
 {
-	IF_NOT_NULL(m_pBulletBody)
-		m_pBulletBody->Set_Dead();
+	IF_NOT_NULL(m_pEffect)
+		m_pEffect->Set_Dead();
 
-	CMonster::Free();
+	CMonster_Bullet::Free();
 
 	return;
 }

@@ -511,8 +511,8 @@ void CCocoon::Play_Shot()
 					g_pSoundManager->Stop_Sound(CSoundManager::Cocoon_Voice);
 					g_pSoundManager->Play_Sound(L"Cocoon_Bark.ogg", CSoundManager::Cocoon_Voice, CSoundManager::Effect_Sound);
 
-					CObjectPool_Manager::Get_Instance()->Create_Object(L"Monster_CocoonBigBullet", &MONSTER_BULLET_STATUS(
-						MONSTER_BULLET_TYPE::BULLET_ICE, vBirth, m_pTransformCom->Get_Axis(AXIS_Z), 6.f, 2.5f));
+					CObjectPool_Manager::Get_Instance()->Create_Object(L"Monster_CocoonBigBullet", &CMonster_Bullet::MONSTER_BULLET_STATUS(
+						CMonster_Bullet::MONSTER_BULLET_TYPE::BULLET_ICE, vBirth, m_pTransformCom->Get_Axis(AXIS_Z), 6.f, 2.5f));
 				}
 				else
 				{
@@ -525,8 +525,8 @@ void CCocoon::Play_Shot()
 					g_pSoundManager->Stop_Sound(CSoundManager::Cocoon_Voice);
 					g_pSoundManager->Play_Sound(L"Cocoon_Bark.ogg", CSoundManager::Cocoon_Voice, CSoundManager::Effect_Sound);
 
-					CObjectPool_Manager::Get_Instance()->Create_Object(L"Monster_CocoonBigBullet", &MONSTER_BULLET_STATUS(
-						MONSTER_BULLET_TYPE::BULLET_FIRE, vBirth, m_pTransformCom->Get_Axis(AXIS_Z), 6.f, 2.5f));
+					CObjectPool_Manager::Get_Instance()->Create_Object(L"Monster_CocoonBigBullet", &CMonster_Bullet::MONSTER_BULLET_STATUS(
+						CMonster_Bullet::MONSTER_BULLET_TYPE::BULLET_FIRE, vBirth, m_pTransformCom->Get_Axis(AXIS_Z), 6.f, 2.5f));
 				}
 			}
 		}
@@ -628,8 +628,8 @@ void CCocoon::Play_Mist()
 					g_pSoundManager->Play_Sound(L"Cocoon_Breath_Sub.ogg", CSoundManager::Cocoon_SFX_02, CSoundManager::Effect_Sound);
 					g_pSoundManager->Play_Sound(L"Cocoon_Bark.ogg", CSoundManager::Cocoon_Voice, CSoundManager::Effect_Sound);
 
-					CObjectPool_Manager::Get_Instance()->Create_Object(L"Monster_CocoonBullet", &MONSTER_BULLET_STATUS(
-						MONSTER_BULLET_TYPE::BULLET_ICE, vBirth, vShotDir, 7.f, 1.f));
+					CObjectPool_Manager::Get_Instance()->Create_Object(L"Monster_CocoonBullet", &CMonster_Bullet::MONSTER_BULLET_STATUS(
+						CMonster_Bullet::MONSTER_BULLET_TYPE::BULLET_ICE, vBirth, vShotDir, 7.f, 1.f));
 				}
 				else
 				{
@@ -637,8 +637,8 @@ void CCocoon::Play_Mist()
 					g_pSoundManager->Play_Sound(L"Cocoon_Breath_Sub.ogg", CSoundManager::Cocoon_SFX_02, CSoundManager::Effect_Sound);
 					g_pSoundManager->Play_Sound(L"Cocoon_Bark.ogg", CSoundManager::Cocoon_Voice, CSoundManager::Effect_Sound);
 
-					CObjectPool_Manager::Get_Instance()->Create_Object(L"Monster_CocoonBullet", &MONSTER_BULLET_STATUS(
-						MONSTER_BULLET_TYPE::BULLET_FIRE, vBirth, vShotDir, 4.f, 1.f));
+					CObjectPool_Manager::Get_Instance()->Create_Object(L"Monster_CocoonBullet", &CMonster_Bullet::MONSTER_BULLET_STATUS(
+						CMonster_Bullet::MONSTER_BULLET_TYPE::BULLET_FIRE, vBirth, vShotDir, 4.f, 1.f));
 				}
 			}
 		}

@@ -73,17 +73,8 @@
     <Filter Include="02.GameObject\Stage\2%29 Monster">
       <UniqueIdentifier>{71691d1d-2d69-411b-8330-bcd4d01bfd07}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02.GameObject\Stage\2%29 Monster\00%29 Dummy_Target">
-      <UniqueIdentifier>{30189a81-a048-468d-a30c-26360c03ccdb}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObject\Stage\2%29 Monster\Cocoon">
-      <UniqueIdentifier>{6c86a1b7-e934-4a45-9bf4-e48f97b7c27b}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02.GameObject\Stage\2%29 Monster\Genji">
       <UniqueIdentifier>{46c1a8dc-1d15-4b6e-97ef-572286d156a0}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObject\Stage\2%29 Monster\Wolf">
-      <UniqueIdentifier>{fc9f0418-2c4d-45ed-ade0-7b692d0fc94d}</UniqueIdentifier>
     </Filter>
     <Filter Include="02.GameObject\Stage\3%29 Effect">
       <UniqueIdentifier>{83e29ab0-c6ec-406c-85cf-0fdef8abded7}</UniqueIdentifier>
@@ -247,20 +238,11 @@
     <Filter Include="02.GameObject\Stage\1%29 Boss\IceGirl\Bullet">
       <UniqueIdentifier>{c3b3ceff-e5cb-4a51-9a99-9ee6263b5ede}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02.GameObject\Stage\2%29 Monster\Hunter">
-      <UniqueIdentifier>{9d1fcedc-7a87-43f7-9249-2bfd7cac9360}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObject\Stage\2%29 Monster\Monkey">
-      <UniqueIdentifier>{3476f351-4dca-4100-8afd-c35eafac557d}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02.GameObject\Stage\1%29 Boss\FireBoy">
       <UniqueIdentifier>{513f084f-d270-4483-b705-d20c5f6c1dcd}</UniqueIdentifier>
     </Filter>
     <Filter Include="02.GameObject\Stage\1%29 Boss\FireBoy\Bullet">
       <UniqueIdentifier>{1d51d55f-d3ac-469e-87df-0681117bbe47}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObject\Stage\2%29 Monster\YachaMan">
-      <UniqueIdentifier>{bfc4fef8-8742-4708-90db-12cc5deea4bc}</UniqueIdentifier>
     </Filter>
     <Filter Include="02.GameObject\Stage\1%29 Boss\QueensKnight\Bullet">
       <UniqueIdentifier>{02557925-0ab4-4d6f-acd5-074c828df50f}</UniqueIdentifier>
@@ -313,9 +295,6 @@
     <Filter Include="01.Scene\07.Stage_04">
       <UniqueIdentifier>{611068cf-9c1d-4742-a02d-bc7dcc4c9523}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02.GameObject\Stage\2%29 Monster\Yeti">
-      <UniqueIdentifier>{4c67a91e-485e-4b42-aa04-6f2f960e43cc}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02.GameObject\Stage\1%29 Boss\DeerKing">
       <UniqueIdentifier>{9fa46d4c-a75f-4503-a4b0-aadcb2b7a341}</UniqueIdentifier>
     </Filter>
@@ -324,12 +303,6 @@
     </Filter>
     <Filter Include="96.ScriptManager">
       <UniqueIdentifier>{9372b392-605d-4457-b3ad-1ab7fac2fc17}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObject\Stage\2%29 Monster\Urchin">
-      <UniqueIdentifier>{d5078eb0-dcf5-4078-8ad4-dfe766841a1d}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObject\Stage\2%29 Monster\ThaiMan">
-      <UniqueIdentifier>{a84f0e54-8d5e-4ead-973c-244a2a95b65a}</UniqueIdentifier>
     </Filter>
     <Filter Include="02.GameObject\Stage\5%29 UI\UI\08. FontNumUI\PlayerFontUI">
       <UniqueIdentifier>{0d91f626-46bc-46dc-a493-613d6097be46}</UniqueIdentifier>
@@ -571,9 +544,6 @@
     <Filter Include="02.GameObject\Stage\5%29 UI\UI\18. GeneralStoreUI%28잡화점%29\04. GeneralStoreNPCUI">
       <UniqueIdentifier>{816b7119-c148-4d21-abca-90bbb087d246}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02.GameObject\Stage\2%29 Monster\Yeti\YetiTrap">
-      <UniqueIdentifier>{528e16d8-34c1-40cd-a3f5-e6cd73494f2b}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02.GameObject\Stage\5%29 UI\UI\15. Colleague UI\00. Base_Colleague">
       <UniqueIdentifier>{4d703d90-b4cc-4d4a-b54e-77f6bd367b9d}</UniqueIdentifier>
     </Filter>
@@ -655,6 +625,51 @@
     <Filter Include="02.GameObject\Stage\7%29 Item\DropBox">
       <UniqueIdentifier>{9c2cf3e3-9959-45aa-acec-144964749189}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObject\Stage\2%29 Monster\01%29 Cocoon">
+      <UniqueIdentifier>{75c1e3a9-a7da-42bc-b2a9-cdab2883d68b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Stage\2%29 Monster\02%29 Hunter">
+      <UniqueIdentifier>{9d1fcedc-7a87-43f7-9249-2bfd7cac9360}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Stage\2%29 Monster\04%29 ThaiMan">
+      <UniqueIdentifier>{a84f0e54-8d5e-4ead-973c-244a2a95b65a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Stage\2%29 Monster\03%29 Monkey">
+      <UniqueIdentifier>{3476f351-4dca-4100-8afd-c35eafac557d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Stage\2%29 Monster\05%29 Urchin">
+      <UniqueIdentifier>{d5078eb0-dcf5-4078-8ad4-dfe766841a1d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Stage\2%29 Monster\06%29 Wolf">
+      <UniqueIdentifier>{fc9f0418-2c4d-45ed-ade0-7b692d0fc94d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Stage\2%29 Monster\07%29 YachaMan">
+      <UniqueIdentifier>{bfc4fef8-8742-4708-90db-12cc5deea4bc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Stage\2%29 Monster\08%29 Yeti">
+      <UniqueIdentifier>{4c67a91e-485e-4b42-aa04-6f2f960e43cc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Stage\2%29 Monster\08%29 Yeti\YetiTrap">
+      <UniqueIdentifier>{528e16d8-34c1-40cd-a3f5-e6cd73494f2b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Stage\2%29 Monster\지울 예정 Dummy_Target">
+      <UniqueIdentifier>{30189a81-a048-468d-a30c-26360c03ccdb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Stage\2%29 Monster\Monster_Bullet">
+      <UniqueIdentifier>{951326bc-ed5a-47b2-a89a-dff500b2e03a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Stage\2%29 Monster\Monster_Bullet\Cocoon">
+      <UniqueIdentifier>{b9f495b0-b826-4414-82b7-70a205619c81}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Stage\2%29 Monster\Monster_Bullet\Hunter">
+      <UniqueIdentifier>{7ad2ab8a-81ab-4325-972d-4ee89d009aa8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Stage\2%29 Monster\Monster_Bullet\Monkey">
+      <UniqueIdentifier>{c8cf69d4-4d91-42f3-824c-786794011741}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Stage\2%29 Monster\Monster_Bullet\Yeti">
+      <UniqueIdentifier>{8dd46fb0-fabf-4b53-9406-3f26f0cf4b4c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -715,7 +730,7 @@
       <Filter>02.GameObject\Stage\5%29 UI\Manager\Item_Manager</Filter>
     </ClInclude>
     <ClInclude Include="..\Headers\Dummy_Target.h">
-      <Filter>02.GameObject\Stage\2%29 Monster\00%29 Dummy_Target</Filter>
+      <Filter>02.GameObject\Stage\2%29 Monster\지울 예정 Dummy_Target</Filter>
     </ClInclude>
     <ClInclude Include="..\Headers\PoisonButterfly.h">
       <Filter>02.GameObject\Stage\1%29 Boss\PoisonButterfly</Filter>
@@ -1087,43 +1102,25 @@
       <Filter>02.GameObject\Stage\3%29 Effect\Effect_FireFlower</Filter>
     </ClInclude>
     <ClInclude Include="..\Headers\Hunter.h">
-      <Filter>02.GameObject\Stage\2%29 Monster\Hunter</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Headers\HunterBullet.h">
-      <Filter>02.GameObject\Stage\2%29 Monster\Hunter</Filter>
+      <Filter>02.GameObject\Stage\2%29 Monster\02%29 Hunter</Filter>
     </ClInclude>
     <ClInclude Include="..\Headers\Monkey.h">
-      <Filter>02.GameObject\Stage\2%29 Monster\Monkey</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Headers\MonkeyBullet.h">
-      <Filter>02.GameObject\Stage\2%29 Monster\Monkey</Filter>
+      <Filter>02.GameObject\Stage\2%29 Monster\03%29 Monkey</Filter>
     </ClInclude>
     <ClInclude Include="..\Headers\ThaiMan.h">
-      <Filter>02.GameObject\Stage\2%29 Monster\ThaiMan</Filter>
+      <Filter>02.GameObject\Stage\2%29 Monster\04%29 ThaiMan</Filter>
     </ClInclude>
     <ClInclude Include="..\Headers\Urchin.h">
-      <Filter>02.GameObject\Stage\2%29 Monster\Urchin</Filter>
+      <Filter>02.GameObject\Stage\2%29 Monster\05%29 Urchin</Filter>
     </ClInclude>
     <ClInclude Include="..\Headers\Wolf.h">
-      <Filter>02.GameObject\Stage\2%29 Monster\Wolf</Filter>
+      <Filter>02.GameObject\Stage\2%29 Monster\06%29 Wolf</Filter>
     </ClInclude>
     <ClInclude Include="..\Headers\YachaMan.h">
-      <Filter>02.GameObject\Stage\2%29 Monster\YachaMan</Filter>
+      <Filter>02.GameObject\Stage\2%29 Monster\07%29 YachaMan</Filter>
     </ClInclude>
     <ClInclude Include="..\Headers\Yeti.h">
-      <Filter>02.GameObject\Stage\2%29 Monster\Yeti</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Headers\YetiBullet.h">
-      <Filter>02.GameObject\Stage\2%29 Monster\Yeti</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Headers\Cocoon.h">
-      <Filter>02.GameObject\Stage\2%29 Monster\Cocoon</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Headers\CocoonBigBullet.h">
-      <Filter>02.GameObject\Stage\2%29 Monster\Cocoon</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Headers\CocoonBullet.h">
-      <Filter>02.GameObject\Stage\2%29 Monster\Cocoon</Filter>
+      <Filter>02.GameObject\Stage\2%29 Monster\08%29 Yeti</Filter>
     </ClInclude>
     <ClInclude Include="..\Headers\Monster.h">
       <Filter>02.GameObject\Stage\2%29 Monster</Filter>
@@ -1303,7 +1300,7 @@
       <Filter>02.GameObject\Stage\5%29 UI\UI\20. Custom\Category</Filter>
     </ClInclude>
     <ClInclude Include="..\Headers\YetiTrap.h">
-      <Filter>02.GameObject\Stage\2%29 Monster\Yeti\YetiTrap</Filter>
+      <Filter>02.GameObject\Stage\2%29 Monster\08%29 Yeti\YetiTrap</Filter>
     </ClInclude>
     <ClInclude Include="..\Headers\Colleague_UI.h">
       <Filter>02.GameObject\Stage\5%29 UI\UI\15. Colleague UI\00. Base_Colleague</Filter>
@@ -1374,6 +1371,27 @@
     <ClInclude Include="..\Headers\DropBox.h">
       <Filter>02.GameObject\Stage\7%29 Item\DropBox</Filter>
     </ClInclude>
+    <ClInclude Include="..\Headers\Cocoon.h">
+      <Filter>02.GameObject\Stage\2%29 Monster\01%29 Cocoon</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\Monster_Bullet.h">
+      <Filter>02.GameObject\Stage\2%29 Monster\Monster_Bullet</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\CocoonBullet.h">
+      <Filter>02.GameObject\Stage\2%29 Monster\Monster_Bullet\Cocoon</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\CocoonBigBullet.h">
+      <Filter>02.GameObject\Stage\2%29 Monster\Monster_Bullet\Cocoon</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\HunterBullet.h">
+      <Filter>02.GameObject\Stage\2%29 Monster\Monster_Bullet\Hunter</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\MonkeyBullet.h">
+      <Filter>02.GameObject\Stage\2%29 Monster\Monster_Bullet\Monkey</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\YetiBullet.h">
+      <Filter>02.GameObject\Stage\2%29 Monster\Monster_Bullet\Yeti</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -1425,7 +1443,7 @@
       <Filter>02.GameObject\Stage\5%29 UI\Manager\Item_Manager</Filter>
     </ClCompile>
     <ClCompile Include="..\Codes\Dummy_Target.cpp">
-      <Filter>02.GameObject\Stage\2%29 Monster\00%29 Dummy_Target</Filter>
+      <Filter>02.GameObject\Stage\2%29 Monster\지울 예정 Dummy_Target</Filter>
     </ClCompile>
     <ClCompile Include="..\Codes\PoisonButterfly.cpp">
       <Filter>02.GameObject\Stage\1%29 Boss\PoisonButterfly</Filter>
@@ -1794,43 +1812,25 @@
       <Filter>02.GameObject\Stage\3%29 Effect\Effect_FireFlower</Filter>
     </ClCompile>
     <ClCompile Include="..\Codes\Hunter.cpp">
-      <Filter>02.GameObject\Stage\2%29 Monster\Hunter</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Codes\HunterBullet.cpp">
-      <Filter>02.GameObject\Stage\2%29 Monster\Hunter</Filter>
+      <Filter>02.GameObject\Stage\2%29 Monster\02%29 Hunter</Filter>
     </ClCompile>
     <ClCompile Include="..\Codes\Monkey.cpp">
-      <Filter>02.GameObject\Stage\2%29 Monster\Monkey</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Codes\MonkeyBullet.cpp">
-      <Filter>02.GameObject\Stage\2%29 Monster\Monkey</Filter>
+      <Filter>02.GameObject\Stage\2%29 Monster\03%29 Monkey</Filter>
     </ClCompile>
     <ClCompile Include="..\Codes\ThaiMan.cpp">
-      <Filter>02.GameObject\Stage\2%29 Monster\ThaiMan</Filter>
+      <Filter>02.GameObject\Stage\2%29 Monster\04%29 ThaiMan</Filter>
     </ClCompile>
     <ClCompile Include="..\Codes\Urchin.cpp">
-      <Filter>02.GameObject\Stage\2%29 Monster\Urchin</Filter>
+      <Filter>02.GameObject\Stage\2%29 Monster\05%29 Urchin</Filter>
     </ClCompile>
     <ClCompile Include="..\Codes\Wolf.cpp">
-      <Filter>02.GameObject\Stage\2%29 Monster\Wolf</Filter>
+      <Filter>02.GameObject\Stage\2%29 Monster\06%29 Wolf</Filter>
     </ClCompile>
     <ClCompile Include="..\Codes\YachaMan.cpp">
-      <Filter>02.GameObject\Stage\2%29 Monster\YachaMan</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Codes\YetiBullet.cpp">
-      <Filter>02.GameObject\Stage\2%29 Monster\Yeti</Filter>
+      <Filter>02.GameObject\Stage\2%29 Monster\07%29 YachaMan</Filter>
     </ClCompile>
     <ClCompile Include="..\Codes\Yeti.cpp">
-      <Filter>02.GameObject\Stage\2%29 Monster\Yeti</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Codes\Cocoon.cpp">
-      <Filter>02.GameObject\Stage\2%29 Monster\Cocoon</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Codes\CocoonBigBullet.cpp">
-      <Filter>02.GameObject\Stage\2%29 Monster\Cocoon</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Codes\CocoonBullet.cpp">
-      <Filter>02.GameObject\Stage\2%29 Monster\Cocoon</Filter>
+      <Filter>02.GameObject\Stage\2%29 Monster\08%29 Yeti</Filter>
     </ClCompile>
     <ClCompile Include="..\Codes\Monster.cpp">
       <Filter>02.GameObject\Stage\2%29 Monster</Filter>
@@ -2007,7 +2007,7 @@
       <Filter>02.GameObject\Stage\5%29 UI\UI\20. Custom\Category</Filter>
     </ClCompile>
     <ClCompile Include="..\Codes\YetiTrap.cpp">
-      <Filter>02.GameObject\Stage\2%29 Monster\Yeti\YetiTrap</Filter>
+      <Filter>02.GameObject\Stage\2%29 Monster\08%29 Yeti\YetiTrap</Filter>
     </ClCompile>
     <ClCompile Include="..\Codes\Colleague_UI.cpp">
       <Filter>02.GameObject\Stage\5%29 UI\UI\15. Colleague UI\00. Base_Colleague</Filter>
@@ -2078,6 +2078,27 @@
     <ClCompile Include="..\Codes\DropBox.cpp">
       <Filter>02.GameObject\Stage\7%29 Item\DropBox</Filter>
     </ClCompile>
+    <ClCompile Include="..\Codes\Cocoon.cpp">
+      <Filter>02.GameObject\Stage\2%29 Monster\01%29 Cocoon</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\Monster_Bullet.cpp">
+      <Filter>02.GameObject\Stage\2%29 Monster\Monster_Bullet</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\CocoonBigBullet.cpp">
+      <Filter>02.GameObject\Stage\2%29 Monster\Monster_Bullet\Cocoon</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\CocoonBullet.cpp">
+      <Filter>02.GameObject\Stage\2%29 Monster\Monster_Bullet\Cocoon</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\HunterBullet.cpp">
+      <Filter>02.GameObject\Stage\2%29 Monster\Monster_Bullet\Hunter</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\MonkeyBullet.cpp">
+      <Filter>02.GameObject\Stage\2%29 Monster\Monster_Bullet\Monkey</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\YetiBullet.cpp">
+      <Filter>02.GameObject\Stage\2%29 Monster\Monster_Bullet\Yeti</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">
@@ -2131,5 +2152,8 @@
     <FxCompile Include="..\ShaderFiles\Shader_Skinned.fx">
       <Filter>97.ShaderFiles</Filter>
     </FxCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="ClassDiagram.cd" />
   </ItemGroup>
 </Project>

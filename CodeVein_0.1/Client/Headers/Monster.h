@@ -2,6 +2,9 @@
 
 #include "Client_Defines.h"
 #include "Client_Item_Enum.h"
+#include "Client_Monster_Enum.h"
+
+#include "Monster_Bullet.h"
 #include "GameObject.h"
 #include "Management.h"
 #include "ObjectPool_Manager.h"
@@ -106,14 +109,6 @@ public:
 		DEAD_END
 	};
 
-	enum MONSTER_BULLET_TYPE
-	{
-		BULLET_NORMAL, //±‚∫ª «Õµ¢¿Ã ªˆªÛ
-		BULLET_FIRE, //∫“¿Ã∆Â∆Æ
-		BULLET_ICE, //æÛ¿Ω¿Ã∆Â∆Æ
-		BULLET_ELECTRON //¿¸±‚¿Ã∆Â∆Æ
-	};
-
 	struct MONSTER_STATUS
 	{
 		MONSTER_COLOR_TYPE	eMonsterColor = MONSTER_COLOR_TYPE::COLOR_NONE;
@@ -129,19 +124,6 @@ public:
 			:eMonsterColor(_eColor), eUseWhatWeapon(_eWeapon) ,bSpawnOnTrigger(_bSpawn),
 			vPos(vPos), vAngle(vAngle), eStageIdx(eStageIdx)
 		{}
-	};
-
-	struct MONSTER_BULLET_STATUS
-	{
-		MONSTER_BULLET_STATUS(MONSTER_BULLET_TYPE _eType, _v3 _vCreatePos, _v3 _vDir, _float _fSpeed, _double _dLifeTime)
-			: eBulletType(_eType), vCreatePos(_vCreatePos), vDir(_vDir), fSpeed(_fSpeed), dLifeTime(_dLifeTime)
-		{}
-
-		_v3			vCreatePos = _v3(0.f, 0.f, 0.f);
-		_v3			vDir = _v3(0.f, 0.f, 0.f);
-		_float		fSpeed = 0.f;
-		_double		dLifeTime = 0;
-		MONSTER_BULLET_TYPE	eBulletType;
 	};
 
 protected:
@@ -228,7 +210,7 @@ protected:
 	MONSTER_DEAD_TYPE		m_eSecondCategory_DEAD = MONSTER_DEAD_TYPE::DEAD_END;
 
 	MONSTER_COLOR_TYPE		m_eMonsterColor = MONSTER_COLOR_TYPE::COLOR_NONE;
-	MONSTER_BULLET_TYPE		m_eBulletType = MONSTER_BULLET_TYPE::BULLET_NORMAL;
+	//MONSTER_BULLET_TYPE		m_eBulletType = MONSTER_BULLET_TYPE::BULLET_NORMAL;
 	WEAPON_STATE			m_eWeaponState = WEAPON_STATE::WEAPON_None;
 	FBLR					m_eFBLR = FBLR::FBLR_END;
 

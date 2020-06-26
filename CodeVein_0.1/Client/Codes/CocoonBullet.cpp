@@ -2,12 +2,12 @@
 #include "..\Headers\CocoonBullet.h"
 
 CCocoonBullet::CCocoonBullet(LPDIRECT3DDEVICE9 pGraphic_Device)
-	: CMonster(pGraphic_Device)
+	: CMonster_Bullet(pGraphic_Device)
 {
 }
 
 CCocoonBullet::CCocoonBullet(const CCocoonBullet & rhs)
-	: CMonster(rhs)
+	: CMonster_Bullet(rhs)
 {
 }
 
@@ -51,14 +51,14 @@ HRESULT CCocoonBullet::Ready_GameObject(void * pArg)
 	case MONSTER_BULLET_TYPE::BULLET_ELECTRON:
 	case MONSTER_BULLET_TYPE::BULLET_NORMAL:
 	case MONSTER_BULLET_TYPE::BULLET_FIRE:
-		m_pBulletBody = CParticleMgr::Get_Instance()->Create_EffectReturn(L"FireBoy_FireBullet_Mid");
+		m_pEffect = CParticleMgr::Get_Instance()->Create_EffectReturn(L"FireBoy_FireBullet_Mid");
 		break;
 	case MONSTER_BULLET_TYPE::BULLET_ICE:
-		m_pBulletBody = CParticleMgr::Get_Instance()->Create_EffectReturn(L"Totem_Ice_BulletBody");
+		m_pEffect = CParticleMgr::Get_Instance()->Create_EffectReturn(L"Totem_Ice_BulletBody");
 		break;
 	}
-	m_pBulletBody->Set_Desc(V3_NULL, m_pTransformCom);
-	m_pBulletBody->Reset_Init();
+	m_pEffect->Set_Desc(V3_NULL, m_pTransformCom);
+	m_pEffect->Reset_Init();
 
 	return S_OK;
 }
@@ -78,7 +78,7 @@ _int CCocoonBullet::Update_GameObject(_double TimeDelta)
 
 	if (m_dCurTime > m_dLifeTime)
 	{
-		m_pBulletBody->Set_Dead();
+		m_pEffect->Set_Dead();
 
 		m_bDead = true;
 	}
@@ -131,113 +131,17 @@ HRESULT CCocoonBullet::Render_GameObject_Instancing_SetPass(CShader * pShader)
 	return S_OK;
 }
 
-void CCocoonBullet::Update_Collider()
-{
-	_ulong matrixIdx = 0;
-
-	for (auto& iter : m_vecAttackCol)
-	{
-		_mat tmpMat;
-		tmpMat = m_pTransformCom->Get_WorldMat();
-
-		_v3 ColPos = _v3(tmpMat._41, tmpMat._42, tmpMat._43);
-
-		iter->Update(ColPos);
-
-		++matrixIdx;
-	}
-
-	return;
-}
-
-void CCocoonBullet::Render_Collider()
-{
-	for (auto& iter : m_vecAttackCol)
-		g_pManagement->Gizmo_Draw_Sphere(iter->Get_CenterPos(), iter->Get_Radius().x);
-
-	return;
-}
-
-void CCocoonBullet::Check_CollisionEvent()
-{
-	Update_Collider();
-	Check_CollisionHit(g_pManagement->Get_GameObjectList(L"Layer_Player", SCENE_MORTAL));
-	Check_CollisionHit(g_pManagement->Get_GameObjectList(L"Layer_Colleague", SCENE_STAGE));
-
-	return;
-}
-
-void CCocoonBullet::Check_CollisionHit(list<CGameObject*> plistGameObject)
-{
-	if (false == m_tObjParam.bCanAttack)
-		return;
-
-	_bool bFirst = true;
-
-	for (auto& iter : plistGameObject)
-	{
-		if (false == iter->Get_Target_CanHit())
-			continue;
-
-		for (auto& vecIter : m_vecAttackCol)
-		{
-			bFirst = true;
-
-			for (auto& vecCol : iter->Get_PhysicColVector())
-			{
-				if (vecIter->Check_Sphere(vecCol))
-				{
-					if (bFirst)
-					{
-						bFirst = false;
-						continue;
-					}
-
-					if (false == iter->Get_Target_IsDodge())
-					{
-						iter->Set_Target_CanHit(false);
-
-						if (true == iter->Get_Target_IsHit())
-							iter->Set_HitAgain(true);
-
-						if (false == iter->Get_Target_IsDodge())
-						{
-							iter->Hit_Target(m_tObjParam.fDamage);
-							g_pManagement->Create_Hit_Effect(vecIter, vecCol, TARGET_TO_TRANS(iter));
-
-							m_dCurTime = 100;
-						}
-					}
-					break;
-				}
-				else
-				{
-					if (bFirst)
-						break;
-				}
-			}
-		}
-	}
-
-	return;
-}
-
 HRESULT CCocoonBullet::Add_Component()
 {
-	if (FAILED(CMonster::Add_Component(SCENE_STATIC, L"Transform", L"Com_Transform", (CComponent**)&m_pTransformCom)))
+	if (FAILED(CMonster_Bullet::Add_Component(SCENE_STATIC, L"Transform", L"Com_Transform", (CComponent**)&m_pTransformCom)))
 		return E_FAIL;
 
-	if (FAILED(CMonster::Add_Component(SCENE_STATIC, L"Renderer", L"Com_Renderer", (CComponent**)&m_pRendererCom)))
+	if (FAILED(CMonster_Bullet::Add_Component(SCENE_STATIC, L"Renderer", L"Com_Renderer", (CComponent**)&m_pRendererCom)))
 		return E_FAIL;
 
-	if (FAILED(CMonster::Add_Component(SCENE_STATIC, L"Collider", L"Com_Collider", (CComponent**)&m_pColliderCom)))
+	if (FAILED(CMonster_Bullet::Add_Component(SCENE_STATIC, L"Collider", L"Com_Collider", (CComponent**)&m_pColliderCom)))
 		return E_FAIL;
 
-	return S_OK;
-}
-
-HRESULT CCocoonBullet::SetUp_ConstantTable()
-{
 	return S_OK;
 }
 
@@ -288,10 +192,10 @@ CGameObject* CCocoonBullet::Clone_GameObject(void * pArg)
 
 void CCocoonBullet::Free()
 {
-	IF_NOT_NULL(m_pBulletBody)
-		m_pBulletBody->Set_Dead();
+	IF_NOT_NULL(m_pEffect)
+		m_pEffect->Set_Dead();
 
-	CMonster::Free();
+	CMonster_Bullet::Free();
 
 	return;
 }

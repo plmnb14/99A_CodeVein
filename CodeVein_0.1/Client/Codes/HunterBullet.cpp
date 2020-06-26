@@ -1,14 +1,13 @@
 #include "stdafx.h"
 #include "..\Headers\HunterBullet.h"
-#include "ParticleMgr.h"
 
 CHunterBullet::CHunterBullet(LPDIRECT3DDEVICE9 pGraphic_Device)
-	: CMonster(pGraphic_Device)
+	: CMonster_Bullet(pGraphic_Device)
 {
 }
 
 CHunterBullet::CHunterBullet(const CHunterBullet & rhs)
-	: CMonster(rhs)
+	: CMonster_Bullet(rhs)
 {
 }
 
@@ -55,25 +54,25 @@ HRESULT CHunterBullet::Ready_GameObject(void * pArg)
 	m_bDead = false;
 	m_bEffect = true;
 
-	m_pBulletBody_0 = CParticleMgr::Get_Instance()->Create_EffectReturn(L"Hunter_Bullet_Body_Lightning_Hor_0");
-	m_pBulletBody_0->Set_Desc(V3_NULL, nullptr);
-	m_pBulletBody_0->Set_ParentObject(this);
-	m_pBulletBody_0->Reset_Init();
+	m_pEffect = CParticleMgr::Get_Instance()->Create_EffectReturn(L"Hunter_Bullet_Body_Lightning_Hor_0");
+	m_pEffect->Set_Desc(V3_NULL, nullptr);
+	m_pEffect->Set_ParentObject(this);
+	m_pEffect->Reset_Init();
 
-	m_pBulletBody_1 = CParticleMgr::Get_Instance()->Create_EffectReturn(L"Hunter_Bullet_Body_Lightning_Ver_0");
-	m_pBulletBody_1->Set_Desc(V3_NULL, nullptr);
-	m_pBulletBody_1->Set_ParentObject(this);
-	m_pBulletBody_1->Reset_Init();
+	m_pEffect1 = CParticleMgr::Get_Instance()->Create_EffectReturn(L"Hunter_Bullet_Body_Lightning_Ver_0");
+	m_pEffect1->Set_Desc(V3_NULL, nullptr);
+	m_pEffect1->Set_ParentObject(this);
+	m_pEffect1->Reset_Init();
 
-	m_pBulletBody_2 = CParticleMgr::Get_Instance()->Create_EffectReturn(L"Hunter_Bullet_Body_LinePoint_Hor");
-	m_pBulletBody_2->Set_Desc(V3_NULL, nullptr);
-	m_pBulletBody_2->Set_ParentObject(this);
-	m_pBulletBody_2->Reset_Init();
+	m_pEffect2 = CParticleMgr::Get_Instance()->Create_EffectReturn(L"Hunter_Bullet_Body_LinePoint_Hor");
+	m_pEffect2->Set_Desc(V3_NULL, nullptr);
+	m_pEffect2->Set_ParentObject(this);
+	m_pEffect2->Reset_Init();
 
-	m_pBulletBody_3 = CParticleMgr::Get_Instance()->Create_EffectReturn(L"Hunter_Bullet_Body_LinePoint_Ver");
-	m_pBulletBody_3->Set_Desc(V3_NULL, nullptr);
-	m_pBulletBody_3->Set_ParentObject(this);
-	m_pBulletBody_3->Reset_Init();
+	m_pEffect3 = CParticleMgr::Get_Instance()->Create_EffectReturn(L"Hunter_Bullet_Body_LinePoint_Ver");
+	m_pEffect3->Set_Desc(V3_NULL, nullptr);
+	m_pEffect3->Set_ParentObject(this);
+	m_pEffect3->Reset_Init();
 
 	m_pTrailEffect = g_pManagement->Create_Trail();
 	m_pTrailEffect->Set_TrailIdx(11);
@@ -88,8 +87,8 @@ _int CHunterBullet::Update_GameObject(_double TimeDelta)
 	if (m_bDead)
 		return DEAD_OBJ;
 
-	Update_Trails(TimeDelta);
 	Check_CollisionEvent();
+	Update_Trails();
 
 	m_pTransformCom->Add_Pos(m_fSpeed * (_float)TimeDelta, m_vDir);
 
@@ -104,10 +103,10 @@ _int CHunterBullet::Update_GameObject(_double TimeDelta)
 		CParticleMgr::Get_Instance()->Create_Effect(L"Hunter_Bullet_Dead_Lightning", m_pTransformCom->Get_Pos());
 		CParticleMgr::Get_Instance()->Create_Effect(L"Hunter_Bullet_Dead_Flash", m_pTransformCom->Get_Pos());
 		
-		m_pBulletBody_0->Set_Dead();
-		m_pBulletBody_1->Set_Dead();
-		m_pBulletBody_2->Set_Dead();
-		m_pBulletBody_3->Set_Dead();
+		m_pEffect->Set_Dead();
+		m_pEffect1->Set_Dead();
+		m_pEffect2->Set_Dead();
+		m_pEffect3->Set_Dead();
 
 		m_pTrailEffect->Set_Dead();
 
@@ -156,115 +155,6 @@ HRESULT CHunterBullet::Render_GameObject_Instancing_SetPass(CShader * pShader)
 	return S_OK;
 }
 
-void CHunterBullet::Update_Trails(_double TimeDelta)
-{
-	_mat matWorld = m_pTransformCom->Get_WorldMat();
-	_v3 vBegin, vDir;
-
-	memcpy(vBegin, &m_pTransformCom->Get_WorldMat()._41, sizeof(_v3));
-	memcpy(vDir, &m_pTransformCom->Get_WorldMat()._21, sizeof(_v3));
-
-	if (m_pTrailEffect)
-	{
-		m_pTrailEffect->Set_ParentTransform(&matWorld);
-		m_pTrailEffect->Ready_Info(vBegin + vDir * -0.05f, vBegin + vDir * 0.05f);
-		// m_pTrailEffect->Update_GameObject(TimeDelta);
-	}
-
-	return;
-}
-
-void CHunterBullet::Update_Collider()
-{
-	_ulong matrixIdx = 0;
-
-	for (auto& iter : m_vecAttackCol)
-	{
-		_mat tmpMat;
-		tmpMat = m_pTransformCom->Get_WorldMat();
-
-		_v3 ColPos = _v3(tmpMat._41, tmpMat._42, tmpMat._43);
-
-		iter->Update(ColPos);
-
-		++matrixIdx;
-	}
-
-	return;
-}
-
-void CHunterBullet::Render_Collider()
-{
-	for (auto& iter : m_vecAttackCol)
-		g_pManagement->Gizmo_Draw_Sphere(iter->Get_CenterPos(), iter->Get_Radius().x);
-
-	return;
-}
-
-void CHunterBullet::Check_CollisionEvent()
-{
-	Update_Collider();
-	Check_CollisionHit(g_pManagement->Get_GameObjectList(L"Layer_Player", SCENE_MORTAL));
-	Check_CollisionHit(g_pManagement->Get_GameObjectList(L"Layer_Colleague", SCENE_STAGE));
-
-	return;
-}
-
-void CHunterBullet::Check_CollisionHit(list<CGameObject*> plistGameObject)
-{
-	if (false == m_tObjParam.bCanAttack)
-		return;
-
-	_bool bFirst = true;
-
-	for (auto& iter : plistGameObject)
-	{
-		if (false == iter->Get_Target_CanHit())
-			continue;
-
-		for (auto& vecIter : m_vecAttackCol)
-		{
-			bFirst = true;
-
-			for (auto& vecCol : iter->Get_PhysicColVector())
-			{
-				if (vecIter->Check_Sphere(vecCol))
-				{
-					if (bFirst)
-					{
-						bFirst = false;
-						continue;
-					}
-
-					if (false == iter->Get_Target_IsDodge())
-					{
-						iter->Set_Target_CanHit(false);
-
-						if (true == iter->Get_Target_IsHit())
-							iter->Set_HitAgain(true);
-
-						if (false == iter->Get_Target_IsDodge())
-						{
-							iter->Hit_Target(m_tObjParam.fDamage);
-							g_pManagement->Create_Hit_Effect(vecIter, vecCol, TARGET_TO_TRANS(iter));
-
-							m_dCurTime = 100;
-						}
-					}
-					break;
-				}
-				else
-				{
-					if (bFirst)
-						break;
-				}
-			}
-		}
-	}
-
-	return;
-}
-
 HRESULT CHunterBullet::Add_Component()
 {
 	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Transform", L"Com_Transform", (CComponent**)&m_pTransformCom)))
@@ -274,11 +164,6 @@ HRESULT CHunterBullet::Add_Component()
 	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Collider", L"Com_Collider", (CComponent**)&m_pColliderCom)))
 		return E_FAIL;
 
-	return S_OK;
-}
-
-HRESULT CHunterBullet::SetUp_ConstantTable()
-{
 	return S_OK;
 }
 
@@ -330,25 +215,22 @@ CGameObject* CHunterBullet::Clone_GameObject(void * pArg)
 
 void CHunterBullet::Free()
 {
-	IF_NOT_NULL(m_pBulletBody_0)
-		m_pBulletBody_0->Set_Dead();
+	IF_NOT_NULL(m_pEffect)
+		m_pEffect->Set_Dead();
 
-	IF_NOT_NULL(m_pBulletBody_1)
-		m_pBulletBody_1->Set_Dead();
+	IF_NOT_NULL(m_pEffect1)
+		m_pEffect1->Set_Dead();
 
-	IF_NOT_NULL(m_pBulletBody_2)
-		m_pBulletBody_2->Set_Dead();
+	IF_NOT_NULL(m_pEffect2)
+		m_pEffect2->Set_Dead();
 
-	IF_NOT_NULL(m_pBulletBody_3)
-		m_pBulletBody_3->Set_Dead();
-
-	IF_NOT_NULL(m_pTrailEffect)
-		m_pTrailEffect->Set_Dead();
+	IF_NOT_NULL(m_pEffect3)
+		m_pEffect3->Set_Dead();
 
 	IF_NOT_NULL(m_pTrailEffect)
 		m_pTrailEffect->Set_Dead();
 
-	CMonster::Free();
+	CMonster_Bullet::Free();
 
 	return;
 }

@@ -1,10 +1,10 @@
 #pragma once
 
-#include "Monster.h"
+#include "Monster_Bullet.h"
 
 BEGIN(Client)
 
-class CHunterBullet final : public CMonster
+class CHunterBullet final : public CMonster_Bullet
 {
 protected:
 	explicit CHunterBullet(LPDIRECT3DDEVICE9 pGraphic_Device);
@@ -19,15 +19,7 @@ public:
 	virtual HRESULT Render_GameObject_Instancing_SetPass(CShader* pShader);
 
 private:
-	void Update_Trails(_double TimeDelta);
-	void Update_Collider();
-	void Render_Collider();
-	virtual void Check_CollisionEvent();
-	virtual void Check_CollisionHit(list<CGameObject*> plistGameObject);
-
-private:
 	HRESULT Add_Component();
-	HRESULT SetUp_ConstantTable();
 	HRESULT Ready_Collider();
 
 public:
@@ -36,20 +28,9 @@ public:
 	virtual void Free();
 
 private:
-	CTrail_VFX*			m_pTrailEffect = nullptr;
-	CEffect*			m_pBulletBody_0 = nullptr;
-	CEffect*			m_pBulletBody_1 = nullptr;
-	CEffect*			m_pBulletBody_2 = nullptr;
-	CEffect*			m_pBulletBody_3 = nullptr;
-
-	_v3					m_vDir = _v3(0.f, 0.f, 0.f);
-	_float				m_fSpeed = 0.f;
-	_double				m_dCurTime = 0;
-	_double				m_dLifeTime = 0;
-	_bool				m_bDead = false;
-
-	_bool				m_bEffect = true;
-	_bool				m_bPlayerFriendly = false;		// 플레이어 껀지
+	CEffect*			m_pEffect1 = nullptr;
+	CEffect*			m_pEffect2 = nullptr;
+	CEffect*			m_pEffect3 = nullptr;
 
 };
 
